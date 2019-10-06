@@ -1,0 +1,84 @@
+version: "3"
+services:
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "npm run start-dev"
+    env_file:
+      - .env
+    volumes:
+    - ./src:/home/node/app/src
+    - ./dist:/home/node/app/dist
+    ports:
+    - "${PORT:-3000}:${PORT:-3000}"
+    - "9229:9229"
+    depends_on:
+      - mongodb-dev
+      - build-dev
+    networks:
+      - rpgtools
+
+  prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "npm run start"
+    env_file:
+    - .env
+    volumes:
+    - ./src:/home/node/app/src
+    - ./dist:/home/node/app/dist
+    ports:
+    - "${PORT:-3000}:${PORT:-3000}"
+    - "9229:9229"
+    depends_on:
+      - mongodb-prod
+    networks:
+      - rpgtools
+
+  build-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+     - .env
+    volumes:
+     - ./src:/home/node/app/src
+     - ./dist:/home/node/app/dist
+    command: "npm run watch"
+    networks:
+     - rpgtools
+
+  build-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+     - ./src:/home/node/app/src
+     - ./dist:/home/node/app/dist
+    command: "npm run build"
+    networks:
+     - rpgtools
+
+  mongodb-dev:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    networks:
+    - rpgtools
+
+  mongodb-prod:
+    image: "mongo:latest"
+    ports:
+      - "27017"
+    volumes:
+      - ./data/mongodb:/data/db
+    networks:
+      - rpgtools
+
+networks:
+  rpgtools:
