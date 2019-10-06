@@ -1,6 +1,9 @@
 {
   "name": "rpgtools",
   "version": "0.1.0",
+  "description": "Tool set for playing an RPG game",
+  "licence": "MIT",
+  "repository": "https://github.com/zachanator070/rpgtools",
   "scripts": {
     "start": "nodejs -r esm src/server/index.js",
     "start-dev": "npx nodemon --delay 500ms --inspect=0.0.0.0 -- -r esm src/server/index.js",
