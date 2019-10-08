@@ -69,7 +69,9 @@ services:
     ports:
       - "27017:27017"
     networks:
-    - rpgtools
+      rpgtools:
+        aliases:
+        - "mongodb"
 
   mongodb-prod:
     image: "mongo:latest"
