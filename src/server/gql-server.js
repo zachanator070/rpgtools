@@ -1,5 +1,9 @@
 import { ApolloServer,  gql } from 'apollo-server-express';
-import { tradeTokenForUser, authenticated } from './auth-helpers.js';
+import { authenticated } from './auth-helpers.js';
+import MutationResolver from './resolvers/mutation';
+import QueryResolver from './resolvers/query';
+import jwt from 'jsonwebtoken';
+import User from './models/user';
 
 const HEADER_NAME = 'authorization';
 
@@ -8,42 +12,52 @@ const typeDefs = gql`
      me: User
      serverTime: String
   }
+  type Mutation{
+    login(username: String!, password:  String!): String!
+    register(email: String!, username: String!, password: String!): User!
+  }
   type User {
-     id: ID!
+     _id: ID!
      username: String!
+     email: String!
   }
 `;
 
 const resolvers = {
-    Query: {
-        me: authenticated((root, args, context) => context.currentUser),
-        serverTime: () => new Date(),
-    },
+    Query: QueryResolver,
+    Mutation: MutationResolver,
     User: {
-        id: user => user._id,
+        _id: user => user._id,
         username: user => user.username,
+        email: user => user.email,
     },
 };
 
 export default new ApolloServer({
     typeDefs,
     resolvers,
-    context: async ({ req }) => {
-        let authToken = null;
+    context: async ({ req, res }) => {
+        let accessToken = null;
+        let refreshToken = null;
         let currentUser = null;
 
         try {
-            authToken = req.headers[HEADER_NAME];
+            accessToken = req.cookies.accessToken;
+            refreshToken = req.cookies.refreshToken;
 
-            if (authToken) {
-                currentUser = await tradeTokenForUser(authToken);
+            if (accessToken && refreshToken) {
+                accessToken = jwt.decode(accessToken);
+                refreshToken = jwt.decode(refreshToken);
+                currentUser = await User.findOne({_id: accessToken.userId});
             }
         } catch (e) {
             console.warn(`Unable to authenticate using auth token: ${authToken}`);
         }
 
         return {
-            authToken,
+            res,
+            accessToken,
+            refreshToken,
             currentUser,
         };
     },
