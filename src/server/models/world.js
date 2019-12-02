@@ -1,25 +1,11 @@
 import mongoose from 'mongoose';
-
+import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
 const Schema = mongoose.Schema;
 
-const worldSchema = Schema({
+const worldSchema = new Schema({
 	name: {
 		type: String,
 		required: [true, 'name field required']
-	},
-	readUsers: [{
-		type: mongoose.Schema.ObjectId,
-		ref: 'User'
-	}],
-	writeUsers: [{
-		type: mongoose.Schema.ObjectId,
-		ref: 'User'
-	}],
-	public: Boolean,
-	owner: {
-		type: mongoose.Schema.ObjectId,
-		required: [true, 'owner field required'],
-		ref: 'User'
 	},
 	wikiPage: {
 		type: mongoose.Schema.ObjectId,
@@ -28,9 +14,13 @@ const worldSchema = Schema({
 	rootFolder: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'WikiFolder'
-	}
+	},
+	roles: [{
+		type: mongoose.Schema.ObjectId,
+		ref: 'Role'
+	}]
 });
 
-const World = mongoose.model('World', worldSchema);
+worldSchema.plugin(mongoosePaginate);
 
-export default World;
+export const World = mongoose.model('World', worldSchema);

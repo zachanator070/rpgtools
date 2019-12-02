@@ -1,0 +1,259 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
+.width-65 {
+    width: 65%
+}
+
+.width-40 {
+    width: 40%
+}
+
+.width-60 {
+    width: 60%
+}
+
+.height-100 {
+    height: 100%;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.padding-sm {
+    padding: 5px;
+}
+
+.padding-md {
+    padding: 15px;
+}
+
+.padding-md-left {
+    padding-left: 15px;
+}
+
+.padding-md-right {
+    padding-right: 15px;
+}
+
+.padding-lg {
+    padding: 30px;
+}
+
+.margin-none {
+    margin: 0px;
+}
+
+.margin-sm {
+    margin: 5px;
+}
+
+.margin-md {
+    margin: 15px;
+}
+
+.margin-lg {
+    margin: 30px;
+}
+
+.margin-lg-top {
+    margin-top: 30px;
+}
+
+.margin-sm-bottom {
+    margin-bottom: 5px;
+}
+
+.margin-sm-top {
+    margin-top: 5px;
+}
+
+.margin-md-top {
+    margin-top: 15px;
+}
+
+.margin-md-right {
+    margin-right: 15px;
+}
+
+.margin-md-left {
+    margin-left: 15px;
+}
+
+.shadow-sm {
+    box-shadow: 0px 0px 10px;
+}
+
+.background-white {
+    background-color: white;
+}
+
+.nav-bar {
+    background-color: white;
+    z-index: 10;
+    position: relative;
+    width: 100%;
+}
+
+.selected {
+    background-color: #1890ff;
+    color: white;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.map-tile {
+    z-index: 1;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    overflow: hidden;
+}
+
+.highlighted {
+    background-color: #1890ff;
+    color: white;
+}
+
+.upload-list-inline {
+    width: 200px;
+    margin-right: 8px;
+}
+
+div.ant-upload-list-item {
+    width: 200px;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.absolute-right {
+    position: absolute;
+    right: 0px;
+}
+
+.absolute-left {
+    position: absolute;
+    left: 0px;
+}
+
+.float-left {
+    position: relative;
+    float: left;
+}
+
+.float-right {
+    position: relative;
+    float: right;
+}
+
+.drawer {
+    display: inline;
+    z-index: 9;
+}
+
+.drawer-content {
+    display: inline-block;
+    padding: 15px;
+    width: 100%;
+    height: 100%;
+    border-right: thin lightgrey solid;
+    border-left: thin lightgrey solid;
+    background-color: white;
+    overflow: auto;
+}
+
+.drawer-button {
+    display: inline-block;
+    position: absolute;
+    margin-left: 15px;
+    margin-top: 15px;
+    margin-right: 15px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 0px 0px 5px;
+}
+
+.search-results {
+    position: relative;
+    top: 15px;
+    background-color: white;
+}
+
+.map-upload {
+    width: 260px;
+    padding: 30px;
+    margin: auto;
+}
+
+.message-box {
+    border: thin solid lightgrey;
+    border-radius: 5px;
+    padding: 15px;
+    height: 300px;
+    overflow: auto;
+}
+
+.breadcrumbs {
+    background-color: white;
+    z-index: 9;
+    padding: 5px;
+    position: relative;
+    border-bottom: thin solid lightgrey;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.folderItem {
+    display: flex;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+#viewer {
+    border: none;
+}

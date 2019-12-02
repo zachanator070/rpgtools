@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const wikiFolderSchema = Schema({
+const wikiPageSchema = new Schema({
 	name: {
 		type: String,
 		required: [true, 'name field required']
@@ -12,16 +12,10 @@ const wikiFolderSchema = Schema({
 		required: [true, 'world field required'],
 		ref: 'World'
 	},
-	pages: [{
+	coverImage: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiPage'
-	}],
-	children: [{
-		type: mongoose.Schema.ObjectId,
-		ref: 'WikiFolder'
-	}]
+		ref: 'Image'
+	},
+	content: String,
 });
-
-const WikiPage = mongoose.model('WikiFolder', wikiFolderSchema);
-
-export default WikiPage;
+export const WikiPage = mongoose.model('WikiPage', wikiPageSchema);

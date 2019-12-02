@@ -59,8 +59,8 @@ const gameSchema = Schema({
 			enum: ['circle', 'square', 'erase']
 		}
 	})],
-	messages:[Schema({
-		sender:{
+	messages: [Schema({
+		sender: {
 			type: String,
 			required: [true, 'sender required']
 		},
@@ -75,6 +75,4 @@ const gameSchema = Schema({
 	})]
 });
 
-const Game = mongoose.model('Game', gameSchema);
-
-export default Game;
+export const Game = mongoose.model('Game', gameSchema);
