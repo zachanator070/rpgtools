@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 
 const chunkSchema = Schema({
@@ -32,6 +31,4 @@ const chunkSchema = Schema({
 	}
 });
 
-const Chunk = mongoose.model('Chunk', chunkSchema);
-
-export default Chunk;
+export const Chunk = mongoose.model('Chunk', chunkSchema);

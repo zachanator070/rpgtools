@@ -33,6 +33,4 @@ const imageSchema = Schema({
 	name: String
 });
 
-const Image = mongoose.model('Image', imageSchema);
-
-export default Image;
+export const Image = mongoose.model('Image', imageSchema);

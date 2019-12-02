@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const userSchema = Schema({
+const userSchema = new Schema({
 	email: {
 		type: String,
 		required: [true, 'email field required']
@@ -15,12 +15,21 @@ const userSchema = Schema({
 		type: String,
 		required: [true, 'password missing']
 	},
+	tokenVersion: {
+		type: String
+	},
 	currentWorld: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'World'
-	}
+	},
+	roles: [{
+		type: mongoose.Schema.ObjectId,
+		ref: 'Role'
+	}],
+	permissions: [{
+		type: mongoose.Schema.ObjectId,
+		ref: 'PermissionAssignment'
+	}]
 });
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+export const User = mongoose.model('User', userSchema);

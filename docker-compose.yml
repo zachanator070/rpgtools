@@ -32,7 +32,6 @@ services:
     - ./dist:/home/node/app/dist
     ports:
     - "${PORT:-3000}:${PORT:-3000}"
-    - "9229:9229"
     depends_on:
       - mongodb-prod
     networks:

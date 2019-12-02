@@ -1,5 +1,5 @@
 
-dev: init-env build-docker dev-up logs
+dev: init-env build-docker-dev dev-up logs
 
 init-env:
 	touch .env
@@ -21,8 +21,11 @@ stop:
 build:
 	docker-compose up build-prod
 
-build-docker:
-	docker-compose build
+build-docker-dev:
+	docker-compose build dev mongodb-dev build-dev
 
-prod: build-docker
+build-docker-prod:
+	docker-compose build prod mongodb-prod build-prod
+
+prod: build-docker-prod
 	docker-compose up prod mongodb-prod redis-prod

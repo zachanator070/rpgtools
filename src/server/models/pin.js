@@ -22,6 +22,4 @@ const pinSchema = Schema({
 	}
 });
 
-const Pin = mongoose.model('Pin', pinSchema);
-
-export default Pin;
+export const Pin = mongoose.model('Pin', pinSchema);
