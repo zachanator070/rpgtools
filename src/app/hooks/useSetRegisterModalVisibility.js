@@ -8,5 +8,11 @@ const SET_REGISTER_MODAL_VISIBILITY = gql`
 `;
 
 export default () => {
-	return useMutation(SET_REGISTER_MODAL_VISIBILITY);
+	const [setRegisterModalVisibility, {data, loading, error}] = useMutation(SET_REGISTER_MODAL_VISIBILITY);
+	return {
+		setRegisterModalVisibility: async (visibility) => {await setRegisterModalVisibility({variables: {visibility}})},
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : [],
+		visibility: data ? data.visibility : null
+	};
 };

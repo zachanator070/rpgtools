@@ -4,10 +4,15 @@ import gqlServer from './gql-server';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import {seedDefaultRoles} from "./default-role-seeder";
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
-mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParser: true}).then(() => console.log('connected to mongodb'));
+mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParser: true}).then(
+	async () => {
+		console.log(`Connected to mongodb at mongodb://${mongodb_host}/${mongodb_db_name}`);
+		await seedDefaultRoles();
+});
 
 const server = express();
 

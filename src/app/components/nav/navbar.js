@@ -12,21 +12,18 @@ import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibi
 
 export default function NavBar() {
 
-	const {data: currentUserData} = useCurrentUser();
-	const {data: currentWorldData} = useCurrentWorld();
-	const {data: currentWikiData} = useCurrentWiki();
-	const [setLoginModalVisibility] = useSetLoginModalVisibility();
-	const [setRegisterModalVisibility] = useSetRegisterModalVisibility();
+	const {currentUser, loading} = useCurrentUser();
+	const {currentWorld} = useCurrentWorld();
+	const {currentWiki} = useCurrentWiki();
+	const {setLoginModalVisibility} = useSetLoginModalVisibility();
+	const {setRegisterModalVisibility} = useSetRegisterModalVisibility();
 
-	const [logout] = useLogout();
+	const {logout} = useLogout();
 
-	if (!currentUserData) {
+	if (loading) {
 		return <LoadingView/>;
 	}
 
-	let currentUser = currentUserData.currentUser;
-	let currentWorld = currentWorldData.currentWorld;
-	let currentWiki = currentWikiData.currentWiki;
 	let currentMap = null;
 	let loginOptions = null;
 

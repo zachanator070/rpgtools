@@ -3,7 +3,7 @@ import uuidv4 from "uuid/v4";
 
 export const authenticated = next => (root, args, context, info) => {
 	if (!context.currentUser) {
-		throw new Error(`Unauthenticated!`);
+		throw new Error(`Authentication is required for this action`);
 	}
 
 	return next(root, args, context, info);

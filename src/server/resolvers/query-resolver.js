@@ -1,9 +1,12 @@
 import {authenticated} from "../authentication-helpers";
 import {userHasPermission} from "../authorization-helpers";
 import {World} from '../models/world';
-import {ROLE_ADMIN, WIKI_READ_ALL, WORLD_READ} from "../../permission-constants";
+import {User} from '../models/user';
+import {Role} from '../models/role';
+import {WIKI_READ_ALL, WORLD_READ} from "../../permission-constants";
 import {EVERYONE} from "../../role-constants";
 import mongoose from 'mongoose';
+import {PermissionAssignment} from "../models/permission-assignement";
 
 export default {
 	currentUser: authenticated((parent, args, context) => context.currentUser),
@@ -18,11 +21,8 @@ export default {
 		if (!world) {
 			return null;
 		}
-		else{
-            await world.populate({path: 'wikiPage'}).populate({path: 'rootFolder'}).execPopulate();
-        }
 
-		if (!await userHasPermission(currentUser, WORLD_READ, worldId, worldId)) {
+		if (!await world.userCanRead(currentUser)) {
 			return null;
 		}
 
@@ -38,7 +38,7 @@ export default {
 			userPermissions.push(...userRole.permissions);
 		}
 		userPermissions = userPermissions.filter(permission => permission.permission === WORLD_READ);
-		const worldsUserCanRead = userPermissions.map(permission => new mongoose.Types.ObjectId(permission.subject));
+		const worldsUserCanRead = userPermissions.map(permission => new mongoose.Types.ObjectId(permission.subjectId));
 		const worldAggregate = World.aggregate([
 			{
 				'$lookup': {
@@ -114,5 +114,37 @@ export default {
 			limit: PAGE_SIZE
 		});
 	},
+	usersWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {
+		const users = [];
+		for(let permission of permissions){
+			const permissionAssignments = (await PermissionAssignment.find({permission: permission.permission, subjectId: permission.subjectId})).map(assignment => assignment._id);
+			if(permissionAssignments.length > 0){
+				for(let permissionAssignment of permissionAssignments){
+					if(!await permissionAssignment.userCanRead(currentUser)){
+						throw new Error(`You do not have administrative rights for the permission "${permissionAssignment.permission}" for the subject ${permissionAssignment.subjectId}`);
+					}
+				}
+				users.push(... await User.find({permissions: {$in: permissionAssignments}}));
+			}
+		}
+
+		return users;
+
+	}),
+	rolesWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {
+		const roles = [];
+		for(let permission of permissions){
+			const permissionAssignments = (await PermissionAssignment.find({permission: permission.permission, subjectId: permission.subjectId})).map(assignment => assignment._id);
+			if(permissionAssignments.length > 0){
+				for(let permissionAssignment of permissionAssignments){
+					if(!await permissionAssignment.userCanRead(currentUser)){
+						throw new Error(`You do not have administrative rights for the permission "${permissionAssignment.permission}" for the subject ${permissionAssignment.subjectId}`);
+					}
+				}
+				roles.push(... await Role.find({permissions: {$in: permissionAssignments}}));
+			}
+		}
+		return roles;
+	})
 
 };

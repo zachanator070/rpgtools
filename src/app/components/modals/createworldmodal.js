@@ -1,10 +1,20 @@
 import React, {useState} from 'react';
 import {Button, Checkbox, Form, Input, Modal} from "antd";
+import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModalVisibility";
+import useCreateWorld from "../../hooks/useCreateWorld";
+import useCreateWorldModalVisibility from "../../hooks/useCreateWorldModalVisibility";
 
-export default function CreateWorldModal({setShow, show, loading, createWorld, errors}) {
+export default function CreateWorldModal() {
 
 	const [name, setName] = useState('');
 	const [isPublic, setPublic] = useState(true);
+
+	const {setCreateWorldModalVisibility} = useSetCreateWorldModalVisibility();
+	const {createWorldModalVisibility} = useCreateWorldModalVisibility();
+
+	const {createWorld, loading, errors} = useCreateWorld(async () => {
+		await setCreateWorldModalVisibility(false);
+	});
 
 	const formItemLayout = {
 		labelCol: {span: 4},
@@ -16,13 +26,13 @@ export default function CreateWorldModal({setShow, show, loading, createWorld, e
 	return (
 		<Modal
 			title="Create World"
-			visible={show}
-			onCancel={() => {
-				setShow(false)
+			visible={createWorldModalVisibility}
+			onCancel={async () => {
+				await setCreateWorldModalVisibility(false);
 			}}
 			footer={null}
 		>
-			{errors.join('/n')}
+			{errors && errors.join('/n')}
 			<Form layout='horizontal'>
 				<Form.Item
 					label="Name"
@@ -37,13 +47,10 @@ export default function CreateWorldModal({setShow, show, loading, createWorld, e
 					</Checkbox>
 				</Form.Item>
 				<Form.Item {...noLabelItem}>
-					<Button type="primary" disabled={loading} onClick={() => {
-						createWorld(
+					<Button type="primary" disabled={loading} onClick={async () => {
+						await createWorld(
 							name,
-							isPublic,
-							() => {
-								setShow(false);
-							}
+							isPublic
 						);
 					}}>Submit</Button>
 				</Form.Item>

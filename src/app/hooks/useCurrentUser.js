@@ -12,5 +12,11 @@ const GET_CURRENT_USER = gql`
 `;
 
 export default () => {
-	return useQuery(GET_CURRENT_USER);
+	const {data: currentUserData, loading, error, refetch} = useQuery(GET_CURRENT_USER);
+	return {
+		currentUser: currentUserData ? currentUserData.currentUser : null,
+		loading,
+		error,
+		refetch
+	}
 }

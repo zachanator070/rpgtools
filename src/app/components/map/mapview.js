@@ -6,12 +6,12 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 
 export default function MapView() {
 
-	const {loading, error, data} = useCurrentUser();
+	const {currentUser, loading, errors} = useCurrentUser();
 
 	if (loading) return (<LoadingView/>);
-	if (error) return (<>{error}</>);
+	if (errors.length > 0) return (<>{errors.join('\n')}</>);
 
-	if (!data.currentUser || !data.currentUser.currentWorld) {
+	if (!currentUser || !currentUser.currentWorld) {
 		return (<WorldSelectPrompt/>);
 	}
 

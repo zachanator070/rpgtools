@@ -9,10 +9,10 @@ export default function LoginModal() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
-	const {data} = useLoginModalVisibility();
-	const [setLoginModalVisibility] = useSetLoginModalVisibility();
-	const [login, {loading, errors}] = useLogin(async () => {
-		await setLoginModalVisibility({variables: {visibility: false}})
+	const {loginModalVisibility} = useLoginModalVisibility();
+	const {setLoginModalVisibility} = useSetLoginModalVisibility();
+	const {login, loading, errors} = useLogin(async () => {
+		await setLoginModalVisibility(false)
 	});
 
 	const formItemLayout = {
@@ -26,12 +26,12 @@ export default function LoginModal() {
 	return (
 		<Modal
 			title="Login"
-			visible={data.loginModalVisibility}
+			visible={loginModalVisibility}
 			centered
-			onCancel={async () => await setLoginModalVisibility({variables: {visibility: false}})}
+			onCancel={async () => await setLoginModalVisibility(false)}
 			footer={null}
 		>
-			{errors && errors.graphQLErrors.map(error => error.message).join('/n')}
+			{errors.join('/n')}
 			<>
 				<Form layout='horizontal'>
 					<Form.Item
@@ -71,7 +71,7 @@ export default function LoginModal() {
 				<Button type="primary" disabled={loading} onClick={
 					async () => {
 						try {
-							await login({variables: {username, password}});
+							await login(username, password);
 						} catch {
 						}
 					}

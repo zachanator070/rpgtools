@@ -8,5 +8,11 @@ const SET_LOGIN_MODAL_VISIBILITY = gql`
 `;
 
 export default () => {
-	return useMutation(SET_LOGIN_MODAL_VISIBILITY);
+	const [setLoginModalVisibility, {data, loading, error}] = useMutation(SET_LOGIN_MODAL_VISIBILITY);
+	return {
+		setLoginModalVisibility: async (visibility) => {await setLoginModalVisibility({variables: {visibility}})},
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : [],
+		visibility: data ? data.visibility : null
+	};
 };

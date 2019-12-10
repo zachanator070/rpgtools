@@ -11,19 +11,18 @@ import RegisterModal from "./modals/registermodal";
 import CreateWorldModal from "./modals/createworldmodal";
 import useCurrentUser from "../hooks/useCurrentUser";
 import useCurrentWorld from "../hooks/useCurrentWorld";
-import SelectWorldModal from "./modals/selectworldmodal";
 
 export default () => {
 
-	const {loading: currentUserLoading, data: currentUserData} = useCurrentUser();
-	const {loading: currentWorldLoading, data: currentWorldData} = useCurrentWorld();
+	const {currentUser, loading: currentUserLoading} = useCurrentUser();
+	const {loading: currentWorldLoading, currentWorld} = useCurrentWorld();
 
 	if (currentUserLoading || currentWorldLoading) return (<LoadingView/>);
 
 	let redirectUrl = '/ui/world';
-	if (currentWorldData && currentWorldData.currentWorld && currentUserData) {
-		if (currentUserData.currentUser.currentWorld) {
-			redirectUrl += `${currentWorldData.currentWorld._id}`;
+	if (currentWorld && currentUser) {
+		if (currentUser.currentWorld) {
+			redirectUrl += `${currentWorld._id}`;
 		}
 	}
 
@@ -32,7 +31,6 @@ export default () => {
 			<LoginModal/>
 			<RegisterModal/>
 			<CreateWorldModal/>
-			<SelectWorldModal/>
 			<NavBar>
 				<Switch>
 					<Redirect exact from="/" to={redirectUrl}/>

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongooseAutopopulate from 'mongoose-autopopulate';
 
 const Schema = mongoose.Schema;
 
@@ -24,12 +25,16 @@ const userSchema = new Schema({
 	},
 	roles: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'Role'
+		ref: 'Role',
+		autopopulate: true,
 	}],
 	permissions: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'PermissionAssignment'
+		ref: 'PermissionAssignment',
+		autopopulate: true,
 	}]
 });
+
+userSchema.plugin(mongooseAutopopulate);
 
 export const User = mongoose.model('User', userSchema);

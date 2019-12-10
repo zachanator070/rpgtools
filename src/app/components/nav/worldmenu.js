@@ -4,29 +4,31 @@ import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModal
 import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
+import LoadingView from "../loadingview";
 
-export default function WorldMenu(props) {
+export default function WorldMenu() {
 
-	const [setCreateWorldModalVisibility] = useSetCreateWorldModalVisibility();
-	const [setSelectWorldModalVisibility] = useSetSelectWorldModalVisibility();
+	const {setCreateWorldModalVisibility} = useSetCreateWorldModalVisibility();
+	const {setSelectWorldModalVisibility} = useSetSelectWorldModalVisibility();
 
-	const {data: currentUserData} = useCurrentUser();
-	let currentUser = currentUserData.currentUser;
+	const {currentUser, loading} = useCurrentUser();
+	const {currentWorld} = useCurrentWorld();
 
-	const {data: currentWorldData} = useCurrentWorld();
-	let currentWorld = currentWorldData.currentWorld;
+	if(loading){
+		return (<LoadingView/>);
+	}
 
 	const menu = (
 		<Menu>
-			{(currentUser !== null ?
+			{currentUser &&
 				<Menu.Item key="0">
 					<a href="#"
-					   onClick={async () => await setCreateWorldModalVisibility({variables: {visibility: true}})}>New
+					   onClick={async () => await setCreateWorldModalVisibility(true)}>New
 						World</a>
 				</Menu.Item>
-				: null)}
+			}
 			<Menu.Item key="1">
-				<a href="#" onClick={async () => await setSelectWorldModalVisibility({variables: {visibility: true}})}>Select
+				<a href="#" onClick={async () => await setSelectWorldModalVisibility(true)}>Select
 					World</a>
 			</Menu.Item>
 		</Menu>
@@ -36,7 +38,7 @@ export default function WorldMenu(props) {
 		<div>
 			<Dropdown overlay={menu} trigger={['click']}>
 				<Button>
-					{currentUser && currentWorld ? currentWorld.name : 'No World Selected'} <Icon type="down"/>
+					{currentWorld ? currentWorld.name : 'No World Selected'} <Icon type="down"/>
 				</Button>
 			</Dropdown>
 			{currentWorld && currentWorld.canWrite &&
