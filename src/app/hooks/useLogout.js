@@ -16,7 +16,7 @@ const LOGIN_QUERY = gql`
 `;
 
 export default () => {
-	return useMutation(LOGOUT_QUERY, {
+	const [logout, {data, loading, error}] = useMutation(LOGOUT_QUERY, {
 		update: async (cache, data) => {
 			try {
 				// we can't just refetch the user b/c we will get an unauthenticated error
@@ -25,5 +25,11 @@ export default () => {
 			}
 		}
 	});
+	return {
+		logout,
+		result: data,
+		loading: loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	}
 
 }

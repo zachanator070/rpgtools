@@ -8,5 +8,10 @@ const REGISTER_MODAL_VISIBILITY = gql`
 `;
 
 export default () => {
-	return useQuery(REGISTER_MODAL_VISIBILITY);
+	const {data, loading, error}  = useQuery(REGISTER_MODAL_VISIBILITY);
+	return {
+		registerModalVisibility: data ? data.registerModalVisibility : null,
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	};
 }

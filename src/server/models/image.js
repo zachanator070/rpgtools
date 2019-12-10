@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import mongooseAutopopulate from "mongoose-autopopulate";
 
 const Schema = mongoose.Schema;
 
-const imageSchema = Schema({
+const imageSchema = new Schema({
 	world: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'World',
@@ -24,7 +25,8 @@ const imageSchema = Schema({
 	},
 	chunks: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'Chunk'
+		ref: 'Chunk',
+		autopopulate: true
 	}],
 	icon: {
 		type: mongoose.Schema.ObjectId,
@@ -32,5 +34,7 @@ const imageSchema = Schema({
 	},
 	name: String
 });
+
+imageSchema.plugin(mongooseAutopopulate);
 
 export const Image = mongoose.model('Image', imageSchema);

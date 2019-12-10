@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const chunkSchema = Schema({
+const chunkSchema = new mongoose.Schema({
 	image: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'Image',

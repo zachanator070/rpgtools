@@ -12,10 +12,15 @@ const LOGIN_QUERY = gql`
 
 export default (callback) => {
 	const {refetch} = useCurrentUser();
-	return useMutation(LOGIN_QUERY, {
-		async update(cache, {data: login}) {
-			refetch();
+	const [login, {loading, error}] = useMutation(LOGIN_QUERY, {
+		async update(cache, {data}) {
+			await refetch();
 		},
 		onCompleted: callback
 	});
+	return {
+		login: async(username, password) =>	await login({variables: {username, password}}),
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	};
 }

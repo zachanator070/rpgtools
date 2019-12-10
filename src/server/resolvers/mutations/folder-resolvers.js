@@ -1,0 +1,94 @@
+import {FOLDER_RW, FOLDER_RW_ALL, WIKI_RW, WIKI_RW_ALL} from "../../../permission-constants";
+import mongoose from 'mongoose';
+import {WikiFolder} from "../../models/wiki-folder";
+
+/**
+ * @typedef mongoose.Model
+ */
+
+/**
+ * @typedef mongoose.Document
+ */
+
+/**
+ * Whether or not a given user has permission defined by give permission code and subject
+ * @callback userHasPermission
+ * @param {mongoose.Document} user
+ * @param {string} permission
+ * @param {string | mongoose.Types.ObjectId} subjectId
+ * @return {Promise<Boolean>}
+ */
+
+/**
+ * Throws an error if the user does not have write access to any of the children folders or pages.
+ * Requires pre-validation that the folderId exists.
+ * @param {mongoose.Document} user
+ * @param {string} folderId
+ * @returns {Promise<void>}
+ * @throws {Error} - Thrown when you do not have permission to a child of the given folder
+ */
+const checkUserWritePermissionForFolderContents = async (user, folderId) => {
+
+	const folder = await WikiFolder.findById(folderId);
+
+	if(!await folder.userCanWrite(user)){
+		throw new Error(`You do not have the permission: ${FOLDER_RW} for the folder ${folderId}`);
+	}
+
+	// pages are auto populated
+	for(let childPage of folder.pages){
+		if(await childPage.userCanWrite(user)){
+			throw new Error(`You do not have the permission: ${WIKI_RW} for the page ${childPage}`);
+		}
+	}
+
+	// children folders are not auto populated
+	for(let childFolder of folder.children){
+		await checkUserWritePermissionForFolderContents(user, childFolder);
+	}
+
+};
+
+export const folderResolvers = {
+	createFolder: async (_, {name, parentFolderId}, {currentUser}) => {
+
+		const parentFolder = await WikiFolder.findById(parentFolderId);
+		if(!parentFolder){
+			throw new Error('Parent folder does not exist');
+		}
+
+		if(!await parentFolder.userCanWrite(currentUser)){
+			throw new Error(`You do not have the permission: ${FOLDER_RW} for the folder ${parentFolderId}`);
+		}
+
+		const newFolder = await WikiFolder.create({name, world: parentFolder.world});
+		parentFolder.children.push(newFolder._id);
+		await parentFolder.save();
+		return newFolder;
+	},
+	renameFolder: async (_, {folderId, name}, {currentUser}) => {
+		const folder = await WikiFolder.findById(folderId);
+		if(!folder){
+			throw new Error('Folder does not exist');
+		}
+		if(!await folder.userCanWrite(currentUser)){
+			throw new Error(`You do not have the permission: ${FOLDER_RW} for the folder ${folderId}`);
+		}
+
+		folder.name = name;
+		await folder.save();
+		return folder;
+	},
+	deleteFolder: async (_, {folderId}, {currentUser}) => {
+		const folder = await WikiFolder.findById(folderId).populate('pages children');
+		if(!folder){
+			throw new Error('Folder does not exist');
+		}
+
+		await checkUserWritePermissionForFolderContents(currentUser, folderId);
+
+		await folder.remove();
+		return folder;
+
+	}
+};

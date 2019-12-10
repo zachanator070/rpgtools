@@ -1,8 +1,10 @@
 import {ApolloServer} from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
+
 import {User} from './models/user';
+
 import {ACCESS_TOKEN_MAX_AGE, createTokens, REFRESH_TOKEN_MAX_AGE} from "./authentication-helpers";
-import {typeDefs} from './gql-schema';
+import {typeDefs} from './gql-server-schema';
 import {serverResolvers} from "./resolvers/server-resolvers";
 
 
@@ -38,22 +40,12 @@ export default new ApolloServer({
 		if (refreshToken && accessToken) {
 			try {
 				let data = jwt.verify(accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
-				currentUser = await User.findOne({_id: data.userId}).populate({path: 'permissions'}).populate({
-					path: 'roles',
-					populate: {
-						path: 'permissions'
-					}
-				});
+				currentUser = await User.findOne({_id: data.userId});
 			} catch (e) {
 				// accessToken is expired
 				try {
 					let data = jwt.verify(refreshToken, process.env['REFRESH_TOKEN_SECRET'], {maxAge: REFRESH_TOKEN_MAX_AGE.string});
-					currentUser = await User.findOne({_id: data.userId}).populate({path: 'permissions'}).populate({
-						path: 'roles',
-						populate: {
-							path: 'permissions'
-						}
-					});
+					currentUser = await User.findOne({_id: data.userId});
 					// if refreshToken is still valid issue new access token and refresh token
 					if (currentUser && currentUser.tokenVersion === data.version) {
 						let tokens = await createTokens(currentUser);
@@ -71,7 +63,7 @@ export default new ApolloServer({
 
 		return {
 			res,
-			currentUser,
+			currentUser
 		};
 	},
 });

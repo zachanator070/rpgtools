@@ -8,5 +8,11 @@ const SET_CREATE_WORLD_MODAL_VISIBILITY = gql`
 `;
 
 export default () => {
-	return useMutation(SET_CREATE_WORLD_MODAL_VISIBILITY);
+	const [setCreateWorldModalVisibility, {data, loading, error}] = useMutation(SET_CREATE_WORLD_MODAL_VISIBILITY);
+	return {
+		setCreateWorldModalVisibility: async (visibility) => {await setCreateWorldModalVisibility({variables: {visibility}})},
+		visibility: data ? data : null,
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	}
 };

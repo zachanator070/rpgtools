@@ -23,5 +23,10 @@ const GET_CURRENT_WIKI = gql`
 `;
 
 export default () => {
-	return useQuery(GET_CURRENT_WIKI);
+	const {data, loading, error} = useQuery(GET_CURRENT_WIKI);
+	return {
+		currentWiki: data ? data.currentWiki : null,
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	};
 }

@@ -10,5 +10,11 @@ const REGISTER_MUTATION = gql`
 `;
 
 export default (callback) => {
-	return useMutation(REGISTER_MUTATION, {onCompleted: callback})
+	const [register, {data, loading, error}] = useMutation(REGISTER_MUTATION, {onCompleted: callback});
+	return {
+		register: async (email, username, password) => {await register({variables: {email, username, password}})},
+		loading,
+		user: data ? data.register : null,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	};
 }

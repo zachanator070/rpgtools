@@ -3,10 +3,43 @@ import {useQuery} from "@apollo/react-hooks";
 
 const GET_CURRENT_WORLD = gql`
     query {
-        currentWorld @client
+        currentWorld{
+			name
+			wikiPage {
+				name
+			}
+			rootFolder{
+				_id
+				name
+				children{
+					_id
+				}
+				pages{
+					_id
+					name
+					type
+				}
+			}
+			roles{
+				_id
+				name
+				world{
+					_id
+				}
+				permissions{
+					permission
+					subjectId
+				}
+			}
+	    }
     }
 `;
 
 export default () => {
-	return useQuery(GET_CURRENT_WORLD);
+	const {data, loading, error} = useQuery(GET_CURRENT_WORLD);
+	return {
+		currentWorld: data ? data.currentWorld : null,
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	};
 }

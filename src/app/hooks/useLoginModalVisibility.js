@@ -8,5 +8,10 @@ const LOGIN_MODAL_VISIBILITY = gql`
 `;
 
 export default () => {
-	return useQuery(LOGIN_MODAL_VISIBILITY);
+	const {data, loading, error} = useQuery(LOGIN_MODAL_VISIBILITY);
+	return {
+		loginModalVisibility: data ? data.loginModalVisibility : null,
+		loading,
+		errors: error ? error.graphQLErrors.map(error => error.message) : []
+	};
 }

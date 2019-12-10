@@ -12,10 +12,10 @@ export default function RegisterModal() {
 	const [password, setPassword] = useState('');
 	const [repeatPassword, setRepeatPassword] = useState('');
 
-	const {data} = useRegisterModalVisibility();
-	const [setRegisterModalVisibility] = useSetRegisterModalVisibility();
-	const [register, {loading, errors}] = useRegister(async () => await setRegisterModalVisibility({variables: {visibility: false}}));
-	const [login] = useLogin();
+	const {registerModalVisibility} = useRegisterModalVisibility();
+	const {setRegisterModalVisibility} = useSetRegisterModalVisibility();
+	const {register, loading, errors} = useRegister(async () => await setRegisterModalVisibility(false));
+	const {login} = useLogin();
 
 	const formItemLayout = {
 		labelCol: {span: 5},
@@ -29,13 +29,13 @@ export default function RegisterModal() {
 		<div>
 			<Modal
 				title="Register"
-				visible={data.registerModalVisibility}
+				visible={registerModalVisibility}
 				centered
-				onCancel={async () => await setRegisterModalVisibility({variables: {visibility: false}})}
+				onCancel={async () => await setRegisterModalVisibility(false)}
 				footer={null}
 				width={720}
 			>
-				{errors && errors.graphQLErrors.map(error => error.message).join('/n')}
+				{errors.join('/n')}
 				<Form layout='horizontal'>
 					<Form.Item label="Email" {...formItemLayout}>
 						<Input
@@ -86,8 +86,8 @@ export default function RegisterModal() {
 				</Form>
 				<Button type="primary" htmlType="submit" disabled={loading} onClick={async () => {
 					try {
-						await register({variables: {email, username, password}});
-						await login({variables: {username, password}});
+						await register(email, username, password);
+						await login(username, password);
 						setEmail('');
 						setUsername('');
 						setPassword('');
