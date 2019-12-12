@@ -7,6 +7,7 @@ import {InMemoryCache} from "apollo-cache-inmemory";
 import {ApolloProvider} from "@apollo/react-common";
 import Resolvers from "./local-resolvers";
 import {typeDefs} from "./gql-local-schema";
+import {BrowserRouter} from "react-router-dom";
 
 const cache = new InMemoryCache();
 cache.writeData(
@@ -34,4 +35,4 @@ const client = new ApolloClient({
 	connectToDevTools: true
 });
 
-ReactDOM.render(<> <ApolloProvider client={client}><App/></ApolloProvider></>, document.getElementById('app'));
+ReactDOM.render(<BrowserRouter> <ApolloProvider client={client}><App/></ApolloProvider></BrowserRouter>, document.getElementById('app'));

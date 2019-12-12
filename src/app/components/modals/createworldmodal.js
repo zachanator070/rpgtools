@@ -3,8 +3,9 @@ import {Button, Checkbox, Form, Input, Modal} from "antd";
 import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModalVisibility";
 import useCreateWorld from "../../hooks/useCreateWorld";
 import useCreateWorldModalVisibility from "../../hooks/useCreateWorldModalVisibility";
+import {withRouter} from 'react-router-dom';
 
-export default function CreateWorldModal() {
+export default withRouter(function CreateWorldModal({history}) {
 
 	const [name, setName] = useState('');
 	const [isPublic, setPublic] = useState(true);
@@ -48,13 +49,14 @@ export default function CreateWorldModal() {
 				</Form.Item>
 				<Form.Item {...noLabelItem}>
 					<Button type="primary" disabled={loading} onClick={async () => {
-						await createWorld(
+						const newWorld = await createWorld(
 							name,
 							isPublic
 						);
+						// history.push(`/ui/world/${newWorld._id}/map`);
 					}}>Submit</Button>
 				</Form.Item>
 			</Form>
 		</Modal>
 	);
-}
+});

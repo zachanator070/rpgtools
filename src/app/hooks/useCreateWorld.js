@@ -17,12 +17,15 @@ export default (callback) => {
 	const [createWorld, {data, loading, error}] = useMutation(CREATE_WORLD, {
 		async update(cache, response) {
 			await refetch();
-			await setCurrentWorld({variables: {worldId: response.data.createWorld._id}});
+			await setCurrentWorld(response.data.createWorld._id);
 		},
 		onCompleted: callback
 	});
  	return {
- 	    createWorld: async (name, isPublic) => {await createWorld({variables: {name, public: isPublic}})},
+ 	    createWorld: async (name, isPublic) => {
+ 	    	const response = await createWorld({variables: {name, public: isPublic}});
+ 	    	return response.data.createWorld;
+        },
 	    world: data ? data.createWorld : null,
 	    errors: error ? error.graphQLErrors.map(error => error.message) : [],
 	    loading

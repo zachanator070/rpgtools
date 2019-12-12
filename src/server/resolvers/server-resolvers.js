@@ -26,6 +26,9 @@ export const serverResolvers = {
 			}
 			return null;
 		},
+		canWrite: async (world, _, {currentUser}) => {
+			return await world.userCanWrite(currentUser);
+		},
 	},
 	User: {
 		email: async (user, _, {currentUser}) => {
@@ -80,7 +83,10 @@ export const serverResolvers = {
 	WikiPage: {
 		__resolveType: async (page, {currentUser}, info) => {
 			return page.type;
-		}
+		},
+		canWrite: async (page, _, {currentUser}) => {
+			return await page.userCanWrite(currentUser);
+		},
 	},
 	WikiFolder: {
 		children: async (folder, _, {currentUser}) => {
@@ -100,6 +106,24 @@ export const serverResolvers = {
 				}
 			}
 			return pages;
+		},
+		canWrite: async (folder, _, {currentUser}) => {
+			return await folder.userCanWrite(currentUser);
+		},
+	},
+	Person: {
+		canWrite: async (person, _, {currentUser}) => {
+			return await person.userCanWrite(currentUser);
+		},
+	},
+	Place: {
+		canWrite: async (place, _, {currentUser}) => {
+			return await place.userCanWrite(currentUser);
+		},
+	},
+	Image: {
+		canWrite: async (image, _, {currentUser}) => {
+			return await image.userCanWrite(currentUser);
 		},
 	}
 };

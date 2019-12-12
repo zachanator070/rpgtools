@@ -4,9 +4,6 @@ import {useMutation} from "@apollo/react-hooks";
 const SET_CURRENT_WORLD = gql`
     mutation setCurrentWorld($worldId: ID!){
         setCurrentWorld(worldId: $worldId) @client
-        setCurrentWorld(worldId: $worldId){
-            _id
-        }
     }
 `;
 

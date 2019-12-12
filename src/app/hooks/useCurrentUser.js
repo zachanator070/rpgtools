@@ -7,6 +7,9 @@ const GET_CURRENT_USER = gql`
             _id
             username
             email
+            currentWorld{
+                _id
+            }
         }
     }
 `;
@@ -16,7 +19,7 @@ export default () => {
 	return {
 		currentUser: currentUserData ? currentUserData.currentUser : null,
 		loading,
-		error,
+		errors: error ? error.graphQLErrors.map(error => error.message) : [],
 		refetch
 	}
 }

@@ -62,12 +62,10 @@ export default function NavBar() {
 						<Col span={4}>
 							<div className='margin-sm-top'>
 								<Divider type='vertical'/>
-								<Link to={`ui/world/${currentWorld._id}/map/${
-									currentMap ? currentMap.image :
-										currentWorld.wikiPage.mapImage ? currentWorld.wikiPage.mapImage._id : null}`}>Map</Link>
+								<Link to={`/ui/world/${currentWorld._id}/map/${currentMap ? currentMap._id : currentWorld.wikiPage._id}`}>Map</Link>
 								<Divider type='vertical'/>
 								<Link
-									to={`ui/world/${currentWorld._id}/${currentWiki ? currentWiki._id : currentWorld.wikiPage._id}`}>Wiki</Link>
+									to={`/ui/world/${currentWorld._id}/wiki/${currentWiki ? currentWiki._id : currentWorld.wikiPage._id}`}>Wiki</Link>
 								<Divider type='vertical'/>
 							</div>
 						</Col>

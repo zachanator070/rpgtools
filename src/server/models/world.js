@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
-import {WORLD_READ} from "../../permission-constants";
+import {ROLE_ADMIN, WORLD_READ} from "../../permission-constants";
 const Schema = mongoose.Schema;
 
 const worldSchema = new Schema({
@@ -29,6 +29,10 @@ const worldSchema = new Schema({
 
 worldSchema.methods.userCanRead = async function(user){
 	return await userHasPermission(user, WORLD_READ, this._id);
+};
+
+worldSchema.methods.userCanWrite = async function(user){
+	return await userHasPermission(user, ROLE_ADMIN, this.world);
 };
 
 worldSchema.plugin(mongooseAutopopulate);
