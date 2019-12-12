@@ -1,56 +1,61 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useRef, useState} from 'react';
 import {Icon, Modal} from "antd";
+import useCurrentWiki from "../../hooks/useCurrentWiki";
+import useSetCurrentWiki from "../../hooks/useSetCurrentWiki";
+import useCurrentWorld from "../../hooks/useCurrentWorld";
+import {useRenameFolder} from "../../hooks/useRenameFolder";
+import {useDeleteFolder} from "../../hooks/useDeleteFolder";
+import {useCreateWiki} from "../../hooks/useCreateWiki";
 
-class FolderView extends Component {
+function withRouter(param) {
+	return undefined;
+}
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			selected: null,
-			opened: [],
-			editing: null,
-			newName: null,
-			mouseOn: null
+export const FolderView = withRouter(({history}) => {
+
+	const [opened, setOpened] = useState([]);
+	const [folderBeingEdited, setFolderBeingEdited] = useState(null);
+	const [newFolderName, setNewFolderName] = useState('');
+	const [folderBeingHovered, setFolderBeingHovered] = useState(null);
+
+	const {currentWiki, loading} = useCurrentWiki();
+	const {currentWorld} = useCurrentWorld();
+
+	const {renameFolder} = useRenameFolder();
+	const {deleteFolder} = useDeleteFolder();
+	const {createWiki} = useCreateWiki();
+
+	const editingInput = useRef(null);
+
+	useEffect(() => {
+		const currentPagePath = findPage(currentWorld.rootFolder, currentWiki ? currentWiki._id : null, []);
+		setOpened(opened.concat(currentPagePath));
+	}, []);
+	
+	useEffect(() => {
+		if (editingInput.current) {
+			editingInput.current.focus();
 		}
-	}
+	});
 
-	componentDidMount() {
-		const currentPagePath = this.findPage(this.props.currentWorld.rootFolder, this.props.currentWiki ? this.props.currentWiki._id : null, []);
-		this.setState({
-			opened: this.state.opened.concat(currentPagePath)
-		});
-	}
+	useEffect(() => {
+		const currentPagePath = findPage(currentWorld.rootFolder, currentWiki._id, []);
+		setOpened(opened.concat(currentPagePath));
+	}, [currentWiki]);
 
-	componentDidUpdate(prevProps, prevState) {
-		if (this.refs.editing) {
-			this.refs.editing.focus();
-		}
-		if (this.props.currentWiki && (!prevProps.currentWiki || this.props.currentWiki._id !== prevProps.currentWiki._id)) {
-
-			const currentPagePath = this.findPage(this.props.currentWorld.rootFolder, this.props.currentWiki._id, []);
-			this.setState({
-				opened: this.state.opened.concat(currentPagePath)
-			});
-		}
-	}
-
-	openFolder = (folderId) => {
+	const openFolder = (folderId) => {
 		// if we are opened already, remove from list
-		if (this.state.opened.includes(folderId)) {
-			let copy = this.state.opened.slice();
+		if (opened.includes(folderId)) {
+			let copy = opened.slice();
 			copy.splice(copy.indexOf(folderId), 1);
-			this.setState({
-				opened: copy
-			});
+			setOpened(copy);
 		} else {
 			// otherwise if we aren't opened, add to list
-			this.setState({
-				opened: this.state.opened.concat(folderId)
-			});
+			setOpened(opened.concat(folderId));
 		}
 	};
 
-	findPage = (folder, wikiId, path) => {
+	const findPage = (folder, wikiId, path) => {
 		if (folder.pages.filter((page) => {
 			return page._id === wikiId;
 		}).length > 0) {
@@ -58,7 +63,7 @@ class FolderView extends Component {
 		}
 
 		for (let child of folder.children) {
-			let childResults = this.findPage(child, wikiId, path.concat([folder._id]));
+			let childResults = findPage(child, wikiId, path.concat([folder._id]));
 			if (childResults.length > 0) {
 				return childResults;
 			}
@@ -67,10 +72,10 @@ class FolderView extends Component {
 		return [];
 	};
 
-	renderPage = (page, indent) => {
+	const renderPage = (page, indent) => {
 		const style = {'marginLeft': 5 * indent + 5 + 'px'};
 		let className = '';
-		if (page._id === this.props.currentWiki ? this.props.currentWiki._id : null) {
+		if (page._id === currentWiki ? currentWiki._id : null) {
 			className = 'highlighted';
 		}
 		return (
@@ -80,7 +85,7 @@ class FolderView extends Component {
 					className={className}
 					onClick={
 						() => {
-							this.props.gotoPage('/ui/wiki/view', {wiki: page._id})
+							history.push(`/ui/world/${currentWorld._id}/wiki/${page._id}/view`);
 						}
 					}
 					style={style}
@@ -91,76 +96,66 @@ class FolderView extends Component {
 		);
 	};
 
-	setEditing = (folder) => {
+	const setEditing = (folder) => {
 		if (folder) {
-			this.setState({
-				editing: folder._id,
-				newName: folder.name
-			});
+			setFolderBeingEdited(folder._id);
+			setNewFolderName(folder.name);
 		} else {
-			this.setState({
-				editing: null,
-				newName: null
-			});
+			setFolderBeingEdited(null);
+			setNewFolderName(null);
 		}
 	};
 
-	stopEditing = (event) => {
+	const stopEditing = async (event) => {
 		if (event.key === 'Enter') {
-			this.props.updateFolder({_id: this.state.editing, name: this.state.newName});
-			this.setEditing(null);
+			await renameFolder(folderBeingEdited, newFolderName);
+			setEditing(null);
 		}
 		if (event.key === 'Esc') {
-			this.setEditing(null);
+			setEditing(null);
 		}
 	};
 
-	setNewName = (event) => {
-		this.setState({
-			newName: event.target.value
-		});
-	};
-
-	createFolder = (parent) => {
-		this.props.createFolder(parent, {name: 'New Folder'});
-		if (!this.state.opened.includes(parent._id)) {
-			this.openFolder(parent._id);
+	const createFolder = (parent) => {
+		createFolder(parent, {name: 'New Folder'});
+		if (!opened.includes(parent._id)) {
+			openFolder(parent._id);
 		}
 	};
 
-	renderFolder = (folder, indent) => {
+	const renderFolder = (folder, indent) => {
 
 		let icon = <Icon type="right" theme="outlined"/>;
 		const children = [];
 		const pages = [];
 		// if we are opened, populate children folders and pages then change icon
-		if (this.state.opened.includes(folder._id)) {
+		if (opened.includes(folder._id)) {
 			icon = <Icon type="down" theme="outlined"/>;
 			for (let otherFolder of folder.children) {
-				children.push(this.renderFolder(otherFolder, indent + 1));
+				children.push(renderFolder(otherFolder, indent + 1));
 			}
 			for (let page of folder.pages) {
 
-				pages.push(this.renderPage(page, indent));
+				pages.push(renderPage(page, indent));
 			}
 		}
 
 		let menu = [
-			<a href='#' key='new page' onClick={() => {
-				this.props.createWiki('New Page', 'article', folder)
+			<a href='#' key='new page' onClick={async () => {
+				await createWiki('New Page', 'article', folder)
 			}}><Icon type="file-add"/></a>,
 			<a href='#' key='new folder' onClick={() => {
-				this.createFolder(folder)
+				createFolder(folder)
 			}}><Icon type="folder-add"/></a>,
 			<a href='#' key='rename' onClick={() => {
-				this.setEditing(folder)
+				setEditing(folder)
 			}}><Icon type="edit"/></a>,
 			<a href='#' key='delete' onClick={() => {
 				Modal.confirm({
 					title: 'Confirm Delete',
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
-					onOk: () => {
-						this.props.deleteFolder(folder)
+					onOk: async () => {
+						await deleteFolder(folder)
 					},
 					onCancel: () => {
 					},
@@ -168,7 +163,7 @@ class FolderView extends Component {
 			}}><Icon type="delete"/></a>
 		];
 
-		if (!this.props.currentWorld.canWrite || this.state.mouseOver !== folder._id) {
+		if (!currentWorld.canWrite || folderBeingHovered !== folder._id) {
 			menu = [];
 		}
 
@@ -176,30 +171,30 @@ class FolderView extends Component {
 			<div
 				className='flex'
 				onMouseEnter={() => {
-					this.setState({mouseOver: folder._id})
+					setFolderBeingHovered(folder._id);
 				}}
 				onMouseLeave={() => {
-					this.setState({mouseOver: null})
+					setFolderBeingHovered(null);
 				}}
 			>
 				<a href='#' className='flex-grow-1' style={{'marginLeft': 5 * indent + 'px'}} onClick={() => {
-					this.openFolder(folder._id)
+					openFolder(folder._id)
 				}}>
-						<span>
-							{icon} {folder.name}
-						</span>
+					<span>
+						{icon} {folder.name}
+					</span>
 				</a>
 				{menu}
 			</div>
 		);
 
-		if (folder._id === this.state.editing) {
+		if (folder._id === folderBeingEdited) {
 			folderItem = (
 				<span style={{'marginLeft': 5 * indent + 'px'}}>
-					{icon} <input type='text' ref='editing' onBlur={() => {
-					this.setEditing(null)
-				}} onChange={this.setNewName} onKeyDown={this.stopEditing} value={this.state.newName}/>
-				</span>
+				{icon} <input type='text' ref={editingInput} onBlur={() => {
+					setEditing(null)
+				}} onChange={event => setNewFolderName(event.target.value)} onKeyDown={stopEditing} value={newFolderName}/>
+			</span>
 			);
 		}
 
@@ -212,24 +207,19 @@ class FolderView extends Component {
 		);
 	};
 
-	render() {
-
-		const toRender = [];
-		for (let folder of this.props.currentWorld.rootFolder.children) {
-			toRender.push(this.renderFolder(folder, 0));
-		}
-		const pages = [];
-		for (let page of this.props.currentWorld.rootFolder.pages) {
-			pages.push(this.renderPage(page, 0))
-		}
-		return (
-			<div className='margin-md' style={{fontSize: '17px'}}>
-				{toRender}
-				{pages}
-			</div>
-		);
-
+	const folders = [];
+	for (let folder of currentWorld.rootFolder.children) {
+		folders.push(renderFolder(folder, 0));
 	}
-}
+	const pages = [];
+	for (let page of currentWorld.rootFolder.pages) {
+		pages.push(renderPage(page, 0))
+	}
+	return (
+		<div className='margin-md' style={{fontSize: '17px'}}>
+			{folders}
+			{pages}
+		</div>
+	);
 
-export default FolderView;
+});

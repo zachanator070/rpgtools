@@ -5,8 +5,10 @@ const GET_CURRENT_WORLD = gql`
     query {
         currentWorld{
 			name
+			_id
 			wikiPage {
 				name
+				_id
 			}
 			rootFolder{
 				_id

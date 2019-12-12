@@ -69,6 +69,7 @@ export const typeDefs = gql`
 		wikiPage: Place
 		rootFolder: WikiFolder
 		roles: [Role!]!
+		canWrite: Boolean!
 	}
 	
 	type WorldsPaginatedResult {
@@ -91,6 +92,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		canWrite: Boolean!
 	}
 	
 	type Place implements WikiPage {
@@ -101,6 +103,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		mapImage: Image
 		type: String!
+		canWrite: Boolean!
 	}
 	
 	type Person implements WikiPage {
@@ -110,6 +113,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		canWrite: Boolean!
 	}
 	
 	type WikiFolder {
@@ -118,6 +122,7 @@ export const typeDefs = gql`
 		world: World!
 		pages: [WikiPage!]!
 		children: [WikiFolder!]!
+		canWrite: Boolean!
 	}
 	
 	type Image {
@@ -129,6 +134,7 @@ export const typeDefs = gql`
 		chunkWidth: Int!
 		chunks: [Chunk!]!
 		Icon: Image!
+		canWrite: Boolean!
 	}
 	
 	type Chunk {

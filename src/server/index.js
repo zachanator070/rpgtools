@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import {seedDefaultRoles} from "./default-role-seeder";
+import path from 'path';
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -17,6 +18,10 @@ mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParse
 const server = express();
 
 server.use(express.static('dist'));
+
+server.get('/ui*', (req, res) => {
+	res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+});
 
 server.use(bodyParser.json());
 server.use(morgan('tiny'));
