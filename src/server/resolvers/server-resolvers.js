@@ -29,6 +29,15 @@ export const serverResolvers = {
 		canWrite: async (world, _, {currentUser}) => {
 			return await world.userCanWrite(currentUser);
 		},
+		pins: async (world, _, {currentUser}) => {
+			const pins = [];
+			for(let pin of world.pins){
+				if(await pin.userCanRead(currentUser)){
+					pins.push(pin);
+				}
+			}
+			return pins;
+		}
 	},
 	User: {
 		email: async (user, _, {currentUser}) => {
@@ -125,5 +134,10 @@ export const serverResolvers = {
 		canWrite: async (image, _, {currentUser}) => {
 			return await image.userCanWrite(currentUser);
 		},
+	},
+	Pin: {
+		canWrite: async (pin, _, {currentUser}) => {
+			return await pin.userCanWrite(currentUser);
+		}
 	}
 };

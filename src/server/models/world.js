@@ -3,6 +3,7 @@ import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
 import {ROLE_ADMIN, WORLD_READ} from "../../permission-constants";
+import {Pin} from './pin.js';
 const Schema = mongoose.Schema;
 
 const worldSchema = new Schema({
@@ -23,6 +24,11 @@ const worldSchema = new Schema({
 	roles: [{
 		type: mongoose.Schema.ObjectId,
 		ref: 'Role',
+		autopopulate: true
+	}],
+	pins: [{
+		type: mongoose.Schema.ObjectId,
+		ref: 'Pin',
 		autopopulate: true
 	}]
 });

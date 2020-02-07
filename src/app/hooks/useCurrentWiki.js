@@ -1,13 +1,14 @@
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
-
+import {useParams} from 'react-router-dom';
 
 const GET_CURRENT_WIKI = gql`
-    query {
-        currentWiki @client {
+    query getWiki($wikiId: Int!){
+        wiki(wikiId: $wikiId) {
+            _id
             name
             content
-            public
+            canWrite
             world {
                 _id
             }
@@ -23,7 +24,8 @@ const GET_CURRENT_WIKI = gql`
 `;
 
 export default () => {
-	const {data, loading, error} = useQuery(GET_CURRENT_WIKI);
+	const {wiki_id} = useParams();
+	const {data, loading, error} = useQuery(GET_CURRENT_WIKI, {variables: {wikiId: wiki_id}});
 	return {
 		currentWiki: data ? data.currentWiki : null,
 		loading,

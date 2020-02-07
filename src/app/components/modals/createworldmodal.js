@@ -3,17 +3,23 @@ import {Button, Checkbox, Form, Input, Modal} from "antd";
 import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModalVisibility";
 import useCreateWorld from "../../hooks/useCreateWorld";
 import useCreateWorldModalVisibility from "../../hooks/useCreateWorldModalVisibility";
-import {withRouter} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
+import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
 
-export default withRouter(function CreateWorldModal({history}) {
+export const CreateWorldModal = () => {
 
+	const history = useHistory();
 	const [name, setName] = useState('');
 	const [isPublic, setPublic] = useState(true);
 
 	const {setCreateWorldModalVisibility} = useSetCreateWorldModalVisibility();
 	const {createWorldModalVisibility} = useCreateWorldModalVisibility();
 
-	const {createWorld, loading, errors} = useCreateWorld(async () => {
+	const {setCurrentWorld} = useSetCurrentWorld();
+
+	const {createWorld, loading, errors} = useCreateWorld(async (data) => {
+		await setCurrentWorld(data.createWorld._id);
+		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 		await setCreateWorldModalVisibility(false);
 	});
 
@@ -53,10 +59,9 @@ export default withRouter(function CreateWorldModal({history}) {
 							name,
 							isPublic
 						);
-						// history.push(`/ui/world/${newWorld._id}/map`);
 					}}>Submit</Button>
 				</Form.Item>
 			</Form>
 		</Modal>
 	);
-});
+};

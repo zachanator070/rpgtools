@@ -1,6 +1,6 @@
 import React from 'react';
 import {Icon} from 'antd';
 
-export default function LoadingView() {
+export const LoadingView = () => {
 	return (<Icon type="loading"/>);
-}
+};

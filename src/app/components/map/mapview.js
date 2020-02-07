@@ -1,10 +1,8 @@
 import React from 'react';
-import WorldSelectPrompt from "../prompts/worldselectprompt";
-import LoadingView from "../loadingview";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import {LoadingView} from "../loadingview";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 
-export default function MapView() {
+export const MapView = () => {
 
 	const {currentWorld, loading} = useCurrentWorld();
 

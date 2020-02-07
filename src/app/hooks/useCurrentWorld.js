@@ -1,9 +1,10 @@
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
+import {useParams} from 'react-router-dom';
 
 const GET_CURRENT_WORLD = gql`
-    query {
-        currentWorld{
+    query getCurrentWorld($worldId: ID!){
+        world(worldId: $worldId){
 			name
 			_id
 			wikiPage {
@@ -38,9 +39,10 @@ const GET_CURRENT_WORLD = gql`
 `;
 
 export default () => {
-	const {data, loading, error} = useQuery(GET_CURRENT_WORLD);
+	const {world_id} = useParams();
+	const {data, loading, error} = useQuery(GET_CURRENT_WORLD, {variables: {worldId: world_id}});
 	return {
-		currentWorld: data ? data.currentWorld : null,
+		currentWorld: data ? data.world : null,
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []
 	};

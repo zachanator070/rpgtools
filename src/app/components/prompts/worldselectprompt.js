@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function WorldSelectPrompt() {
+export const WorldSelectPrompt = () => {
 	return (<>Please select a world</>);
-}
+};

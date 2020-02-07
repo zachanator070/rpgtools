@@ -1,5 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-
+import gql from "graphql-tag";
 
 const CREATE_WIKI = gql`
 	mutation createWiki($name: String!, $folderId: ID!){
@@ -18,7 +18,7 @@ export const useCreateWiki = () => {
 		},
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : [],
-		wiki: data.createWiki
+		wiki: error ? data.createWiki : null
 	}
 
 };

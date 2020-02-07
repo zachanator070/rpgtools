@@ -1,5 +1,4 @@
 import {authenticated} from "../authentication-helpers";
-import {userHasPermission} from "../authorization-helpers";
 import {World} from '../models/world';
 import {User} from '../models/user';
 import {Role} from '../models/role';
@@ -7,6 +6,7 @@ import {WIKI_READ_ALL, WORLD_READ} from "../../permission-constants";
 import {EVERYONE} from "../../role-constants";
 import mongoose from 'mongoose';
 import {PermissionAssignment} from "../models/permission-assignement";
+import {WikiPage} from "../models/wiki-page";
 
 export default {
 	currentUser: authenticated((parent, args, context) => context.currentUser),
@@ -113,6 +113,23 @@ export default {
 			page: page,
 			limit: PAGE_SIZE
 		});
+	},
+	searchWikiPages: async (_, {phrase, worldId}, {currentUser}) => {
+		const foundWikis = await WikiPage.find({ $regex: `^${phrase}.*` , $options: 'i'});
+		const returnWikis = [];
+		for(let wiki of foundWikis){
+			if(await wiki.userCanRead(currentUser)){
+				returnWikis.push(wiki);
+			}
+		}
+		return returnWikis;
+	},
+	wiki: async (_, {wikiId}, {currentUser}) => {
+		const foundWiki = await WikiPage.findOne({_id: wikiId});
+		if(foundWiki && ! await foundWiki.userCanRead(currentUser)){
+			throw new Error(`You do not have permission to read wiki ${wikiId}`);
+		}
+		return foundWiki;
 	},
 	usersWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {
 		const users = [];

@@ -7,50 +7,6 @@ import {WIKI_RW} from "../../../permission-constants";
 import {WikiPage} from "../../models/wiki-page";
 
 export const wikiResolvers = {
-	createPlace: async (parent, {name, folderId}, {currentUser}) => {
-		const folder = await WikiFolder.findById(folderId);
-		if(!folder){
-			throw new Error('Folder does not exist');
-		}
-
-		if(!await folder.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to write to the folder ${folderId}`)
-		}
-
-		const newPlace = await Place.create({name, world: folder.world});
-		folder.pages.push(newPlace);
-		await folder.save();
-
-		if(!await newPlace.userCanWrite(currentUser)){
-			const readPermission = await PermissionAssignment.create({permission: WIKI_RW, subjectId: newPlace._id});
-			currentUser.permissions.push(readPermission);
-			await currentUser.save();
-		}
-
-		return newPlace;
-	},
-	createPerson: async (parent, {name, folderId}, {currentUser}) => {
-		const folder = await WikiFolder.findById(folderId);
-		if(!folder){
-			throw new Error('Folder does not exist');
-		}
-
-		if(!await folder.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to write to the folder ${folderId}`)
-		}
-
-		const newPerson = await Person.create({name, world: folder.world});
-		folder.pages.push(newPerson);
-		await folder.save();
-
-		if(!await newPerson.userCanWrite(currentUser)){
-			const readPermission = await PermissionAssignment.create({permission: WIKI_RW, subjectId: newPerson._id});
-			currentUser.permissions.push(readPermission);
-			await currentUser.save();
-		}
-
-		return newPerson;
-	},
 	createWiki: async (parent, {name, folderId}, {currentUser}) => {
 		const folder = await WikiFolder.findById(folderId);
 		if(!folder){

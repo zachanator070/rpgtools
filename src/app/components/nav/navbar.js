@@ -1,30 +1,28 @@
 import React from 'react';
 import {Button, Col, Divider, Row} from 'antd';
 import {Link} from "react-router-dom";
-import WorldMenu from "./worldmenu";
+import {WorldMenu} from "./worldmenu";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useLogout from "../../hooks/useLogout";
-import LoadingView from "../loadingview";
+import {LoadingView} from "../loadingview";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
 import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
 
-export default function NavBar() {
+export const NavBar = () => {
 
-	const {currentUser, loading} = useCurrentUser();
-	const {currentWorld} = useCurrentWorld();
-	const {currentWiki} = useCurrentWiki();
+	const {currentUser, loading: userLoading} = useCurrentUser();
+	const {currentWorld, loading: worldLoading} = useCurrentWorld();
 	const {setLoginModalVisibility} = useSetLoginModalVisibility();
 	const {setRegisterModalVisibility} = useSetRegisterModalVisibility();
 
 	const {logout} = useLogout();
 
-	if (loading) {
+	if (userLoading || worldLoading) {
 		return <LoadingView/>;
 	}
 
-	let currentMap = null;
 	let loginOptions = null;
 
 	if (currentUser) {
@@ -62,10 +60,10 @@ export default function NavBar() {
 						<Col span={4}>
 							<div className='margin-sm-top'>
 								<Divider type='vertical'/>
-								<Link to={`/ui/world/${currentWorld._id}/map/${currentMap ? currentMap._id : currentWorld.wikiPage._id}`}>Map</Link>
+								<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>Map</Link>
 								<Divider type='vertical'/>
 								<Link
-									to={`/ui/world/${currentWorld._id}/wiki/${currentWiki ? currentWiki._id : currentWorld.wikiPage._id}`}>Wiki</Link>
+									to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>Wiki</Link>
 								<Divider type='vertical'/>
 							</div>
 						</Col>

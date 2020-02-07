@@ -5,7 +5,7 @@ import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibi
 import useRegister from "../../hooks/useRegister";
 import useLogin from "../../hooks/useLogin";
 
-export default function RegisterModal() {
+export const RegisterModal = () => {
 
 	const [email, setEmail] = useState('');
 	const [username, setUsername] = useState('');

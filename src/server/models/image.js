@@ -30,7 +30,8 @@ const imageSchema = new Schema({
 	}],
 	icon: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Image'
+		ref: 'Image',
+		autopopulate: true
 	},
 	name: String
 });
