@@ -5,15 +5,15 @@ export const typeDefs = gql`
     type Query {
         currentUser: User
         
-        """
-        Search for a world by id or name.
-        """
+        """Search for a world by id or name."""
         world(worldId: ID, name: String): World
-        
-        """
-        Get all worlds
-        """
+        """Get all worlds"""
         worlds(page: Int): WorldsPaginatedResult
+        
+        """Search for a wiki page using a phrase"""
+        searchWikiPages(phrase: String!, worldId: ID!): [WikiPage!]!
+        """Search for a wiki by id"""
+        wiki(wikiId: ID!): WikiPage
         
         usersWithPermissions(permissions: [PermissionParam!]!): [User!]!
         rolesWithPermissions(permissions: [PermissionParam!]!): [Role!]!
@@ -39,8 +39,6 @@ export const typeDefs = gql`
         renameFolder(folderId: ID!, name: String!): WikiFolder!
         deleteFolder(folderId: ID!): WikiFolder!
         
-        createPlace(name: String!, folderId: ID!): Place!
-        createPerson(name: String!, folderId: ID!): Person!
         """ Creates a generic wiki page """
         createWiki(name: String!, folderId: ID!): WikiPage!
         
@@ -49,8 +47,10 @@ export const typeDefs = gql`
         
         """ Updates any wiki page of any type (Ex: Person, Place, ... ) """
         updateWiki(wikiId: ID!, name: String, content: String, coverImageId: ID): WikiPage!
-        updatePlace(placeId: ID!, name: String, content: String, coverImageId: ID, mapImageId: ID): WikiPage!
-        updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Place! 
+        updatePlace(placeId: ID!, name: String, content: String, coverImageId: ID, mapImageId: ID): Place!
+        updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Place!
+        
+        createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
     }
   
@@ -69,6 +69,7 @@ export const typeDefs = gql`
 		wikiPage: Place
 		rootFolder: WikiFolder
 		roles: [Role!]!
+		pins: [Pin!]!
 		canWrite: Boolean!
 	}
 	
@@ -157,6 +158,14 @@ export const typeDefs = gql`
 		_id: ID!
 		permission: String!
 		subjectId: ID
+	}
+	
+	type Pin {
+		_id: ID!
+		x: Int!
+		y: Int!
+		page: WikiPage!
+		canWrite: Boolean!
 	}
 	
 	input PermissionParam {

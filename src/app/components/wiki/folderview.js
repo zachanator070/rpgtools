@@ -1,18 +1,15 @@
-import React, {Component, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Icon, Modal} from "antd";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
-import useSetCurrentWiki from "../../hooks/useSetCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useRenameFolder} from "../../hooks/useRenameFolder";
 import {useDeleteFolder} from "../../hooks/useDeleteFolder";
 import {useCreateWiki} from "../../hooks/useCreateWiki";
+import {useHistory} from "react-router-dom";
 
-function withRouter(param) {
-	return undefined;
-}
+export const FolderView = () => {
 
-export const FolderView = withRouter(({history}) => {
-
+	const history = useHistory();
 	const [opened, setOpened] = useState([]);
 	const [folderBeingEdited, setFolderBeingEdited] = useState(null);
 	const [newFolderName, setNewFolderName] = useState('');
@@ -39,8 +36,10 @@ export const FolderView = withRouter(({history}) => {
 	});
 
 	useEffect(() => {
-		const currentPagePath = findPage(currentWorld.rootFolder, currentWiki._id, []);
-		setOpened(opened.concat(currentPagePath));
+		if(currentWiki){
+			const currentPagePath = findPage(currentWorld.rootFolder, currentWiki._id, []);
+			setOpened(opened.concat(currentPagePath));
+		}
 	}, [currentWiki]);
 
 	const openFolder = (folderId) => {
@@ -222,4 +221,4 @@ export const FolderView = withRouter(({history}) => {
 		</div>
 	);
 
-});
+};

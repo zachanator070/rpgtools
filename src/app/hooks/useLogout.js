@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useApolloClient, useMutation} from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 const LOGOUT_QUERY = gql`
@@ -16,13 +16,13 @@ const LOGIN_QUERY = gql`
 `;
 
 export default () => {
+
+	const client = useApolloClient();
+
 	const [logout, {data, loading, error}] = useMutation(LOGOUT_QUERY, {
 		update: async (cache, data) => {
-			try {
-				// we can't just refetch the user b/c we will get an unauthenticated error
-				cache.writeQuery({query: LOGIN_QUERY, data: {currentUser: null}});
-			} catch {
-			}
+			// cache.writeQuery({query: LOGIN_QUERY, data: {currentUser: null}});
+			await client.resetStore();
 		}
 	});
 	return {

@@ -40,7 +40,7 @@ export default new ApolloServer({
 		if (refreshToken && accessToken) {
 			try {
 				let data = jwt.verify(accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
-				currentUser = await User.findOne({_id: data.userId});
+				currentUser = await User.findOne({_id: data.userId}).populate("currentWorld");
 			} catch (e) {
 				// accessToken is expired
 				try {

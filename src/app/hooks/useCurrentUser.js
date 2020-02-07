@@ -9,6 +9,9 @@ const GET_CURRENT_USER = gql`
             email
             currentWorld{
                 _id
+                wikiPage {
+                    _id
+                }
             }
         }
     }

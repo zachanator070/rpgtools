@@ -1,18 +1,23 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 import {useMutation} from "@apollo/react-hooks";
+import useCurrentUser from "./useCurrentUser";
 
 const SET_CURRENT_WORLD = gql`
-    mutation setCurrentWorld($worldId: ID!){
-        setCurrentWorld(worldId: $worldId) @client
-    }
+	mutation setCurrentWorld($worldId: ID!){
+		setCurrentWorld(worldId: $worldId){
+			_id
+		}
+	}
 `;
 
-export default () => {
-	const [setCurrentWorld, {data, loading, error}] = useMutation(SET_CURRENT_WORLD);
+export const useSetCurrentWorld = () => {
+	const [setCurrentWorld, {loading}] = useMutation(SET_CURRENT_WORLD);
+	const {refetch} = useCurrentUser();
 	return {
-		setCurrentWorld: async (worldId) => {await setCurrentWorld({variables: {worldId}})},
-		loading,
-		errors: error ? error.graphQLErrors.map(error => error.message) : [],
-		world: data ? data.setCurrentWorld : null
-	};
-}
+		setCurrentWorld: async (world_id) => {
+			await setCurrentWorld({variables: {worldId: world_id}});
+			await refetch();
+		},
+		loading
+	}
+};

@@ -1,219 +1,169 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {Button, Icon, Input, Modal, Select, Upload} from "antd";
-import Editor from "./editor";
+import {Editor} from "./editor";
+import useCurrentWiki from "../../hooks/useCurrentWiki";
+import {LoadingView} from "../loadingview";
+import {useHistory} from 'react-router-dom';
+import {useDeleteWiki} from "../../hooks/useDeleteWiki";
+import {useCreateImage} from "../../hooks/useCreateImage";
+import useCurrentWorld from "../../hooks/useCurrentWorld";
 
-class WikiEdit extends Component {
+export const WikiEdit = () => {
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			mapToUpload: false,
-			coverToUpload: false,
-			name: props.currentWiki ? props.currentWiki.name : null,
-			type: props.currentWiki ? props.currentWiki.type : null,
-			coverImageList: [],
-			mapImageList: [],
-			saving: false
-		}
+	const history = useHistory();
+	const {currentWiki, loading} = useCurrentWiki();
+	const {currentWorld} = useCurrentWorld();
+
+	const [mapToUpload, setMapToUpload] = useState( false);
+	const [coverToUpload, setCoverToUpload] = useState( false);
+	const [name, setName] = useState(currentWiki ?? currentWiki.name);
+	const [type, setType] = useState(currentWiki ?? currentWiki.type);
+	const [coverImageList, setCoverImageList] = useState([]);
+	const [mapImageList, setMapImageList] = useState([]);
+	const {deleteWiki} = useDeleteWiki();
+	const {createImage} = useCreateImage();
+
+	if(loading){
+		return <LoadingView/>
 	}
 
-	loadCoverImageList = () => {
-		this.setState({
-			coverImageList: this.props.currentWiki.coverImage ? [{
-				uid: '-1',
-				url: `/api/chunks/data/${this.props.currentWiki.coverImage.chunks[0]._id}`,
-				name: this.props.currentWiki.coverImage.name
-			}] : []
-		});
+	if (!currentWiki) {
+		return (<div>Please Search for or select a wiki on the side</div>);
+	}
+
+	const loadCoverImageList = async () => {
+		await setCoverImageList(currentWiki.coverImage ? [{
+			uid: '-1',
+			url: `data:image/png;base64,${currentWiki.coverImage.chunks[0].data}`,
+			name: currentWiki.coverImage.name
+		}] : []);
 	};
 
-	setCoverImageList = (files) => {
-		this.setState({
-			coverImageList: files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []
-		});
-		if (files.fileList.length === 0) {
-			this.setState({
-				coverToUpload: null
-			});
-		}
+	const loadMapImageList = async () => {
+		await setMapImageList(currentWiki.mapImage ? [{
+			uid: '-1',
+			url: `data:image/png;base64,${currentWiki.mapImage.chunks[0].data}`,
+			name: currentWiki.mapImage.name
+		}] : []);
 	};
 
-	setMapImageList = (files) => {
-		this.setState({
-			mapImageList: files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []
-		});
-		if (files.fileList.length === 0) {
-			this.setState({
-				mapToUpload: null
-			});
-		}
-	};
-
-	loadMapImageList = () => {
-		this.setState({
-			mapImageList: this.props.currentWiki.mapImage ? [{
-				uid: '-1',
-				url: `/api/chunks/data/${this.props.currentWiki.mapImage.chunks[0]._id}`,
-				name: this.props.currentWiki.mapImage.name
-			}] : []
-		});
-	};
-
-	componentDidMount() {
-		if (!this.props.currentWiki) {
+	useEffect(() => {
+		if (!currentWiki) {
 			return;
 		}
+		(async () => {
+			await loadCoverImageList();
+			await loadMapImageList();
+		})();
 
-		this.loadCoverImageList();
-		this.loadMapImageList();
+	}, []);
+
+	const wikiTypes = ['person', 'place', 'item', 'ability', 'spell', 'article', 'monster'];
+	const options = [];
+	for (let type of wikiTypes) {
+		options.push(<Select.Option key={type} value={type}>{type}</Select.Option>);
 	}
 
-	save = () => {
-		this.setState({saving: true});
-		this.props.saveWiki(
-			this.state.name,
-			this.state.type,
-			this.state.coverToUpload,
-			this.state.mapToUpload,
-			this.refs.editor.editor.getContents()
-		);
-	};
+	let coverRevert = null;
+	if (coverToUpload !== false) {
+		coverRevert = <Button onClick={async () => {
+			await setCoverToUpload(null);
+			await loadCoverImageList();
+		}}>Revert</Button>;
+	}
 
-	setMapToUpload = (file) => {
-		this.setState({
-			mapToUpload: file
-		});
-		return false;
-	};
+	let mapRevert = null;
+	if (mapToUpload !== false) {
+		mapRevert = <Button type='danger' onClick={async () => {
+			await setMapToUpload(false);
+			await loadMapImageList();
+		}}>Revert</Button>;
+	}
 
-	setCoverToUpload = (file) => {
-		this.setState({
-			coverToUpload: file
-		});
-		return false;
-	};
-
-	setType = (value) => {
-		this.setState({
-			type: value
-		});
-	};
-
-	setName = (value) => {
-		this.setState({
-			name: value.target.value
-		});
-	};
-
-	render() {
-		if (!this.props.currentWiki) {
-			return (<div></div>);
-		}
-
-		const wikiTypes = ['person', 'place', 'item', 'ability', 'spell', 'article', 'monster'];
-		const options = [];
-		for (let type of wikiTypes) {
-			options.push(<Select.Option key={type} value={type}>{type}</Select.Option>);
-		}
-
-		let coverRevert = null;
-		if (this.state.coverToUpload !== false) {
-			coverRevert = <Button onClick={() => {
-				this.setCoverToUpload(false);
-				this.loadCoverImageList();
-			}}>Revert</Button>;
-		}
-
-		let mapRevert = null;
-		if (this.state.mapToUpload !== false) {
-			mapRevert = <Button type='danger' onClick={() => {
-				this.setMapToUpload(false);
-				this.loadMapImageList();
-			}}>Revert</Button>;
-		}
-
-		return (
-			<div>
-				<div className='margin-lg'>
-					Article Name: <Input placeholder="Article Name" style={{width: 120}} value={this.state.name}
-					                     onChange={this.setName}/>
-				</div>
-				<div className='margin-lg'>
-					Type: <Select defaultValue={this.props.currentWiki.type} style={{width: 120}}
-					              onChange={this.setType}>
-					{options}
-				</Select>
-				</div>
+	return (
+		<div>
+			<div className='margin-lg'>
+				Article Name: <Input placeholder="Article Name" style={{width: 120}} value={name}
+				                     onChange={async (event) => await setName(event.target.value)}/>
+			</div>
+			<div className='margin-lg'>
+				Type: <Select defaultValue={currentWiki.type} style={{width: 120}}
+				              onChange={setType}>
+				{options}
+			</Select>
+			</div>
+			<div className='margin-lg'>
+				<Upload
+					action="/api/images"
+					beforeUpload={setCoverToUpload}
+					multiple={false}
+					listType={'picture'}
+					coverImage={coverToUpload}
+					fileList={coverImageList}
+					className='upload-list-inline'
+					onChange={async (files) => {
+						await setCoverImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
+						if (files.fileList.length === 0) {
+							await setCoverToUpload(null);
+						}
+					}}
+				>
+					<Button>
+						<Icon type="upload"/> Select Cover Image
+					</Button>
+				</Upload>
+				{coverRevert}
+			</div>
+			{type === 'place' ?
 				<div className='margin-lg'>
 					<Upload
 						action="/api/images"
-						beforeUpload={this.setCoverToUpload}
+						beforeUpload={setMapToUpload}
 						multiple={false}
 						listType={'picture'}
-						coverImage={this.state.coverToUpload}
-						fileList={this.state.coverImageList}
+						coverImage={mapToUpload}
+						fileList={mapImageList}
 						className='upload-list-inline'
-						onChange={this.setCoverImageList}
+						onChange={async (files) => {
+							await setMapImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
+							if (files.fileList.length === 0) {
+								await setMapToUpload(null);
+							}
+						}}
 					>
 						<Button>
-							<Icon type="upload"/> Select Cover Image
+							<Icon type="upload"/> Select Map Image
 						</Button>
 					</Upload>
-					{coverRevert}
+					{mapRevert}
 				</div>
-				{this.state.type === 'place' ?
-					<div className='margin-lg'>
-						<Upload
-							action="/api/images"
-							beforeUpload={this.setMapToUpload}
-							multiple={false}
-							listType={'picture'}
-							coverImage={this.state.mapToUpload}
-							fileList={this.state.mapImageList}
-							className='upload-list-inline'
-							onChange={this.setMapImageList}
-						>
-							<Button>
-								<Icon type="upload"/> Select Map Image
-							</Button>
-						</Upload>
-						{mapRevert}
-					</div>
-					: null
-				}
+				: null
+			}
 
-				<div className='margin-lg'>
-					<Editor
-						content={this.props.currentWiki.content}
-						currentWorld={this.props.currentWorld}
-						currentMap={this.props.currentMap}
-						currentWiki={this.props.currentWiki}
-						searchWikis={this.props.searchWikis}
-						ref="editor"
-					/>
-				</div>
+			<div className='margin-lg'>
+				<Editor
+					content={currentWiki.content}
+				/>
+			</div>
 
-				<div>
-					<Button type='primary' disabled={this.state.saving} onClick={this.save}><Icon
-						type="save"/>Save</Button>
-					<Button type='danger' disabled={this.state.saving} className='margin-md-left' onClick={() => {
-						this.props.gotoPage('/ui/wiki/view')
-					}}><Icon type="undo"/>Discard</Button>
-					<span className='absolute-right'>
-						<Button type='danger' disabled={this.state.saving} onClick={() => {
+			<div>
+				<Button type='primary' disabled={saving} onClick={save}><Icon
+					type="save"/>Save</Button>
+				<Button type='danger' disabled={saving} className='margin-md-left' onClick={() => {
+					history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
+				}}><Icon type="undo"/>Discard</Button>
+				<span className='absolute-right'>
+						<Button type='danger' disabled={saving} onClick={() => {
 							Modal.confirm({
 								title: "Confirm Delete",
-								content: `Are you sure you want to delete the wiki page ${this.props.currentWiki.name}?`,
-								onOk: () => {
-									this.props.deleteWikiPage(this.props.currentWiki);
+								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
+								onOk: async () => {
+									await deleteWiki(currentWiki._id);
 								}
 							});
 						}}><Icon type="delete"/>Delete Page</Button>
 					</span>
-				</div>
 			</div>
-		);
-	}
-}
-
-export default WikiEdit;
+		</div>
+	);
+};

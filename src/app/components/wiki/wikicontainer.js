@@ -1,11 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Col, Row} from "antd";
-import FolderView from "./folderview";
-import WikiView from "./wikiview";
-import WikiEdit from "./wikiedit";
-import {Route, Switch} from "react-router";
+import {FolderView} from "./folderview";
+import {WikiView} from "./wikiview";
+import {WikiEdit} from "./wikiedit";
+import {Route, Switch, useParams} from "react-router-dom";
+import useCurrentWiki from "../../hooks/useCurrentWiki";
+import {LoadingView} from "../loadingview";
 
 export const WikiContainer = () => {
+
+	const {currentWiki, loading} = useCurrentWiki();
+	const {wiki_id} = useParams();
+
+	if(!currentWiki || loading || currentWiki._id !== wiki_id){
+		return (<LoadingView/>);
+	}
 
 	return (
 		<Row>
@@ -18,7 +27,9 @@ export const WikiContainer = () => {
 						<WikiEdit/>
 					</Route>
 					<Route path='/ui/world/:world_id/wiki/:wiki_id/view'>
-						<WikiView/>
+						<div>
+							<WikiView/>
+						</div>
 					</Route>
 				</Switch>
 			</Col>

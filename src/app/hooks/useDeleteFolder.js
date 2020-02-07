@@ -1,4 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
+import gql from "graphql-tag";
 
 const DELETE_FOLDER = gql`
 	mutation deleteFolder($folderId: ID!){

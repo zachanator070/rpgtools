@@ -25,9 +25,13 @@ export const worldResolvers = {
 		const world = await World.create({name, public: isPublic});
 		const rootWiki = await Place.create({name, public: isPublic, world: world._id});
 		const rootFolder = await WikiFolder.create({world: world._id, name: 'root', pages: [rootWiki._id]});
+		const placeFolder = await WikiFolder.create({world: world._id, name: 'Places', pages: [rootWiki._id]});
+		const peopleFolder = await WikiFolder.create({world: world._id, name: 'People', pages: [rootWiki._id]});
+		rootFolder.pages.push(placeFolder, peopleFolder);
+		await rootFolder.save();
+
 		world.rootFolder = rootFolder._id;
 		world.wikiPage = rootWiki._id;
-
 
 		const ownerPermissions = [];
 		for (const permission of [ROLE_ADMIN, WORLD_READ, WIKI_READ_ALL, WIKI_RW_ALL, FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST]) {

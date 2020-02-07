@@ -4,17 +4,17 @@ import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModal
 import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import LoadingView from "../loadingview";
+import {LoadingView} from "../loadingview";
 
-export default function WorldMenu() {
+export const WorldMenu = () => {
 
 	const {setCreateWorldModalVisibility} = useSetCreateWorldModalVisibility();
 	const {setSelectWorldModalVisibility} = useSetSelectWorldModalVisibility();
 
 	const {currentUser, loading} = useCurrentUser();
-	const {currentWorld} = useCurrentWorld();
+	const {currentWorld, loading: worldLoading} = useCurrentWorld();
 
-	if(loading){
+	if(loading || worldLoading){
 		return (<LoadingView/>);
 	}
 

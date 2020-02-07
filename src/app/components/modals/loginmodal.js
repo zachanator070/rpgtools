@@ -4,7 +4,7 @@ import useLogin from "../../hooks/useLogin";
 import useLoginModalVisibility from "../../hooks/useLoginModalVisibility";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
 
-export default function LoginModal() {
+export const LoginModal = () => {
 
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
