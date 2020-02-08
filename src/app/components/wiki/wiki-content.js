@@ -1,18 +1,18 @@
 import React, {useEffect} from 'react';
 import {Col, Row} from "antd";
-import {FolderView} from "./folderview";
+import {FolderView} from "./folder-view";
 import {WikiView} from "./wikiview";
 import {WikiEdit} from "./wikiedit";
-import {Route, Switch, useParams} from "react-router-dom";
+import {Route, Switch, useParams, useRouteMatch} from "react-router-dom";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import {LoadingView} from "../loadingview";
 
-export const WikiContainer = () => {
+export const WikiContent = () => {
 
-	const {currentWiki, loading} = useCurrentWiki();
-	const {wiki_id} = useParams();
+	const {loading} = useCurrentWiki();
+	const match = useRouteMatch();
 
-	if(!currentWiki || loading || currentWiki._id !== wiki_id){
+	if(loading){
 		return (<LoadingView/>);
 	}
 
@@ -23,10 +23,10 @@ export const WikiContainer = () => {
 			</Col>
 			<Col span={16}>
 				<Switch>
-					<Route path='/ui/world/:world_id/wiki/:wiki_id/edit'>
+					<Route path={`${match.path}/edit`}>
 						<WikiEdit/>
 					</Route>
-					<Route path='/ui/world/:world_id/wiki/:wiki_id/view'>
+					<Route path={`${match.path}/view`}>
 						<div>
 							<WikiView/>
 						</div>

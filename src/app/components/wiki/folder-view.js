@@ -6,6 +6,7 @@ import {useRenameFolder} from "../../hooks/useRenameFolder";
 import {useDeleteFolder} from "../../hooks/useDeleteFolder";
 import {useCreateWiki} from "../../hooks/useCreateWiki";
 import {useHistory} from "react-router-dom";
+import {LoadingView} from "../loadingview";
 
 export const FolderView = () => {
 
@@ -15,7 +16,7 @@ export const FolderView = () => {
 	const [newFolderName, setNewFolderName] = useState('');
 	const [folderBeingHovered, setFolderBeingHovered] = useState(null);
 
-	const {currentWiki, loading} = useCurrentWiki();
+	const {currentWiki} = useCurrentWiki();
 	const {currentWorld} = useCurrentWorld();
 
 	const {renameFolder} = useRenameFolder();
@@ -23,11 +24,6 @@ export const FolderView = () => {
 	const {createWiki} = useCreateWiki();
 
 	const editingInput = useRef(null);
-
-	useEffect(() => {
-		const currentPagePath = findPage(currentWorld.rootFolder, currentWiki ? currentWiki._id : null, []);
-		setOpened(opened.concat(currentPagePath));
-	}, []);
 	
 	useEffect(() => {
 		if (editingInput.current) {
@@ -36,11 +32,11 @@ export const FolderView = () => {
 	});
 
 	useEffect(() => {
-		if(currentWiki){
+		if(currentWiki && currentWorld){
 			const currentPagePath = findPage(currentWorld.rootFolder, currentWiki._id, []);
 			setOpened(opened.concat(currentPagePath));
 		}
-	}, [currentWiki]);
+	}, [currentWiki, currentWorld]);
 
 	const openFolder = (folderId) => {
 		// if we are opened already, remove from list

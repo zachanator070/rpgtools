@@ -34,6 +34,11 @@ const GET_CURRENT_WORLD = gql`
 					subjectId
 				}
 			}
+			pins{
+				page{
+					_id
+				}
+			}
 	    }
     }
 `;
