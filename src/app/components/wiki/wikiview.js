@@ -27,7 +27,7 @@ export const WikiView = () => {
 
 	const getPinFromPageId = (pageId) => {
 		for (let pin of currentWorld.pins) {
-			if (pin.page && pin.page === pageId) {
+			if (pin.page._id && pin.page._id === pageId) {
 				return pin;
 			}
 		}

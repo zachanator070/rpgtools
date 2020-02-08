@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import "@babel/polyfill";
 import {useRouteMatch, Route, Switch} from "react-router-dom";
 import '../css/index.css';
@@ -8,8 +8,10 @@ import {MapView} from './map/mapview';
 import {LoginModal} from "./modals/loginmodal";
 import {RegisterModal} from "./modals/registermodal";
 import {CreateWorldModal} from "./modals/createworldmodal";
-import {WikiContainer} from "./wiki/wikicontainer";
+import {WikiContent} from "./wiki/wiki-content";
 import {DefaultView} from "./default-view";
+import useCurrentWorld from "../hooks/useCurrentWorld";
+import {LoadingView} from "./loadingview";
 
 const Header = () => {
 	return (
@@ -24,13 +26,27 @@ const Header = () => {
 
 const Content = () => {
 	const match = useRouteMatch();
+	const {currentWorld, loading: worldLoading} = useCurrentWorld();
+
+	if(worldLoading){
+		return <LoadingView/>;
+	}
+
+	if(!currentWorld){
+		return (
+			<div>
+				{`404 - World ${match.params.world_id} not found`}
+			</div>
+		);
+	}
+
 	return (
 	<Switch>
-		<Route path={match.url + "/map/:map_id"}>
+		<Route path={`${match.path}/map/:map_id`}>
 			<MapView/>
 		</Route>
-		<Route path={match.url +  "/wiki/:wiki_id"}>
-			<WikiContainer/>
+		<Route path={`${match.path}/wiki/:wiki_id`}>
+			<WikiContent/>
 		</Route>
 		{/*<Route path="/ui/game">*/}
 		{/*    <GameContainer/>*/}

@@ -3,7 +3,7 @@ import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
 
 const GET_CURRENT_WIKI = gql`
-    query getWiki($wikiId: Int!){
+    query getWiki($wikiId: ID!){
         wiki(wikiId: $wikiId) {
             _id
             name
@@ -27,7 +27,7 @@ export default () => {
 	const {wiki_id} = useParams();
 	const {data, loading, error} = useQuery(GET_CURRENT_WIKI, {variables: {wikiId: wiki_id}});
 	return {
-		currentWiki: data ? data.currentWiki : null,
+		currentWiki: data ? data.wiki : null,
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []
 	};
