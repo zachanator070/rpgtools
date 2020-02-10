@@ -16,7 +16,7 @@ export const useCreateImage = async () => {
 			return await createImage({variables: {file, worldId, chunkify}});
 		},
 		loading,
-		image: data ?? data.createImage,
+		image: data ? data.createImage : null,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []
 	}
 };

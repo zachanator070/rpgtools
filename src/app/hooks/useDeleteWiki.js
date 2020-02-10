@@ -15,7 +15,7 @@ export const useDeleteWiki = () => {
 		deleteWiki: async (wikiId) => {
 			return await deleteWiki({variables: {wikiId}});
 		},
-		wikiPage: data ?? data.deleteWiki,
+		wikiPage: data ? data.deleteWiki : null,
 		loading: loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []
 	}

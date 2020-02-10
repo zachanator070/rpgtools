@@ -46,9 +46,9 @@ export const typeDefs = gql`
         deleteWiki(wikiId: ID!): WikiPage!
         
         """ Updates any wiki page of any type (Ex: Person, Place, ... ) """
-        updateWiki(wikiId: ID!, name: String, content: String, coverImageId: ID): WikiPage!
+        updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID): WikiPage!
         updatePlace(placeId: ID!, name: String, content: String, coverImageId: ID, mapImageId: ID): Place!
-        updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Place!
+        updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Person!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
@@ -70,6 +70,7 @@ export const typeDefs = gql`
 		rootFolder: WikiFolder
 		roles: [Role!]!
 		pins: [Pin!]!
+		folders: [WikiFolder!]!
 		canWrite: Boolean!
 	}
 	

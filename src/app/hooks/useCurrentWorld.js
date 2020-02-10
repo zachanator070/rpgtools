@@ -21,7 +21,9 @@ const GET_CURRENT_WORLD = gql`
 					_id
 					name
 					type
+					canWrite
 				}
+				canWrite
 			}
 			roles{
 				_id
@@ -39,6 +41,20 @@ const GET_CURRENT_WORLD = gql`
 					_id
 				}
 			}
+			folders{
+			    _id
+			    canWrite
+			    name
+			    children{
+			      _id
+			    }
+			    pages{
+			      _id
+			      name
+			      type
+			      canWrite
+			    }
+		    }
 	    }
     }
 `;

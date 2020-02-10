@@ -6,6 +6,7 @@ const GET_CURRENT_WIKI = gql`
     query getWiki($wikiId: ID!){
         wiki(wikiId: $wikiId) {
             _id
+            type
             name
             content
             canWrite

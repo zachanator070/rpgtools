@@ -6,7 +6,6 @@ import {useRenameFolder} from "../../hooks/useRenameFolder";
 import {useDeleteFolder} from "../../hooks/useDeleteFolder";
 import {useCreateWiki} from "../../hooks/useCreateWiki";
 import {useHistory} from "react-router-dom";
-import {LoadingView} from "../loadingview";
 
 export const FolderView = () => {
 
@@ -32,7 +31,7 @@ export const FolderView = () => {
 	});
 
 	useEffect(() => {
-		if(currentWiki && currentWorld){
+		if(currentWiki && currentWorld && currentWorld.rootFolder){
 			const currentPagePath = findPage(currentWorld.rootFolder, currentWiki._id, []);
 			setOpened(opened.concat(currentPagePath));
 		}
@@ -58,6 +57,11 @@ export const FolderView = () => {
 		}
 
 		for (let child of folder.children) {
+			for(let otherFolder of currentWorld.folders){
+				if(otherFolder._id === child._id){
+					child = otherFolder;
+				}
+			}
 			let childResults = findPage(child, wikiId, path.concat([folder._id]));
 			if (childResults.length > 0) {
 				return childResults;
@@ -126,11 +130,14 @@ export const FolderView = () => {
 		// if we are opened, populate children folders and pages then change icon
 		if (opened.includes(folder._id)) {
 			icon = <Icon type="down" theme="outlined"/>;
-			for (let otherFolder of folder.children) {
-				children.push(renderFolder(otherFolder, indent + 1));
+			for(let child of folder.children){
+				for (let otherFolder of currentWorld.folders) {
+					if(child._id === otherFolder._id){
+						children.push(renderFolder(otherFolder, indent + 1));
+					}
+				}
 			}
 			for (let page of folder.pages) {
-
 				pages.push(renderPage(page, indent));
 			}
 		}
@@ -158,7 +165,7 @@ export const FolderView = () => {
 			}}><Icon type="delete"/></a>
 		];
 
-		if (!currentWorld.canWrite || folderBeingHovered !== folder._id) {
+		if (!folder.canWrite || folderBeingHovered !== folder._id) {
 			menu = [];
 		}
 
@@ -202,18 +209,9 @@ export const FolderView = () => {
 		);
 	};
 
-	const folders = [];
-	for (let folder of currentWorld.rootFolder.children) {
-		folders.push(renderFolder(folder, 0));
-	}
-	const pages = [];
-	for (let page of currentWorld.rootFolder.pages) {
-		pages.push(renderPage(page, 0))
-	}
 	return (
 		<div className='margin-md' style={{fontSize: '17px'}}>
-			{folders}
-			{pages}
+			{currentWorld.rootFolder && renderFolder(currentWorld.rootFolder, 0)}
 		</div>
 	);
 

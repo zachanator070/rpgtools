@@ -7,6 +7,7 @@ import {EVERYONE} from "../../role-constants";
 import mongoose from 'mongoose';
 import {PermissionAssignment} from "../models/permission-assignement";
 import {WikiPage} from "../models/wiki-page";
+import {WikiFolder} from "../models/wiki-folder";
 
 export default {
 	currentUser: authenticated((parent, args, context) => context.currentUser),

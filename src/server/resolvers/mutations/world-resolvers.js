@@ -24,10 +24,10 @@ export const worldResolvers = {
 
 		const world = await World.create({name, public: isPublic});
 		const rootWiki = await Place.create({name, public: isPublic, world: world._id});
-		const rootFolder = await WikiFolder.create({world: world._id, name: 'root', pages: [rootWiki._id]});
+		const rootFolder = await WikiFolder.create({world: world._id, name: name});
 		const placeFolder = await WikiFolder.create({world: world._id, name: 'Places', pages: [rootWiki._id]});
-		const peopleFolder = await WikiFolder.create({world: world._id, name: 'People', pages: [rootWiki._id]});
-		rootFolder.pages.push(placeFolder, peopleFolder);
+		const peopleFolder = await WikiFolder.create({world: world._id, name: 'People'});
+		rootFolder.children.push(placeFolder, peopleFolder);
 		await rootFolder.save();
 
 		world.rootFolder = rootFolder._id;

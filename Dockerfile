@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:current
 
 WORKDIR /home/node/app
 ADD package.json package.json
