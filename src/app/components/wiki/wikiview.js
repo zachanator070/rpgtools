@@ -4,7 +4,7 @@ import {ScaledImage} from "./scaledimage";
 import {Editor} from "./editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 
 export const WikiView = () => {
 
@@ -17,6 +17,8 @@ export const WikiView = () => {
 	const {currentWorld} = useCurrentWorld();
 
 	const wikiView = useRef(null);
+
+	const {wiki_id} = useParams();
 
 	useEffect(() => {
 		if (wikiView.content) {
@@ -34,7 +36,7 @@ export const WikiView = () => {
 	};
 
 	if (!currentWiki) {
-		return (<div>No Wiki Selected</div>);
+		return (<div>{`404 - wiki ${wiki_id} not found`}</div>);
 	}
 
 	let coverImage = null;
@@ -77,7 +79,7 @@ export const WikiView = () => {
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
 			{mapIcon}
-			{currentWiki.content ??
+			{currentWiki.content &&
 				<div className='padding-md'>
 					<Editor
 						content={currentWiki.content}
@@ -86,9 +88,9 @@ export const WikiView = () => {
 				</div>
 			}
 			<div className='padding-md'>
-				{currentWiki.canWrite ??
+				{currentWiki.canWrite &&
 					<a href='#' onClick={() => {
-						history.push(`/ui/world/${currentWorld._id}/map/${currentWiki._id}/edit`);
+						history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`);
 					}}>
 						<Icon type="edit" theme="outlined"/>Edit
 					</a>

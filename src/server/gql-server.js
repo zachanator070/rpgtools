@@ -23,7 +23,7 @@ export default new ApolloServer({
             "prettier.tabWidth": 2,
             "prettier.useTabs": false,
             "schema.disableComments": true,
-            "schema.polling.enable": true,
+            "schema.polling.enable": false,
             "schema.polling.endpointFilter": "*localhost*",
             "schema.polling.interval": 2000,
             "tracing.hideTracingResponse": true,

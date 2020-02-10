@@ -32,13 +32,13 @@ const checkUserWritePermissionForFolderContents = async (user, folderId) => {
 	const folder = await WikiFolder.findById(folderId);
 
 	if(!await folder.userCanWrite(user)){
-		throw new Error(`You do not have the permission: ${FOLDER_RW} for the folder ${folderId}`);
+		throw new Error(`You do not have write permission for the folder ${folderId}`);
 	}
 
 	// pages are auto populated
 	for(let childPage of folder.pages){
-		if(await childPage.userCanWrite(user)){
-			throw new Error(`You do not have the permission: ${WIKI_RW} for the page ${childPage}`);
+		if(!await childPage.userCanWrite(user)){
+			throw new Error(`You do not have write permission for the page ${childPage._id}`);
 		}
 	}
 
@@ -80,12 +80,16 @@ export const folderResolvers = {
 		return folder;
 	},
 	deleteFolder: async (_, {folderId}, {currentUser}) => {
-		const folder = await WikiFolder.findById(folderId).populate('pages children');
+		const folder = await WikiFolder.findById(folderId).populate('pages children world');
 		if(!folder){
 			throw new Error('Folder does not exist');
 		}
 
 		await checkUserWritePermissionForFolderContents(currentUser, folderId);
+
+		if(folder.world.rootFolder._id.equals(folder._id)){
+			throw new Error('You cannot delete the root folder of a world');
+		}
 
 		await folder.remove();
 		return folder;

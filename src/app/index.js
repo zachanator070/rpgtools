@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app';
 import {ApolloClient} from "apollo-client";
-import {HttpLink} from "apollo-link-http";
+import { createUploadLink } from 'apollo-upload-client'
 import {InMemoryCache} from "apollo-cache-inmemory";
 import {ApolloProvider} from "@apollo/react-common";
 import Resolvers from "./local-resolvers";
@@ -25,7 +25,7 @@ cache.writeData(
 );
 
 const client = new ApolloClient({
-	link: new HttpLink({
+	link: createUploadLink({
 		uri: '/api',
 		credentials: 'same-origin',
 	}),

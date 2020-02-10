@@ -24,6 +24,10 @@ export const userHasPermission = async function (user, permission, subjectId) {
 		subjectId = new mongoose.Types.ObjectId(subjectId);
 	}
 
+	if(subjectId instanceof mongoose.Model){
+		subjectId = subjectId._id;
+	}
+
 	// first check direct assignment
 	if (user) {
 		for (const userPermission of user.permissions) {

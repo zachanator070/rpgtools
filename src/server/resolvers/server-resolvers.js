@@ -1,5 +1,6 @@
 import QueryResolver from "./query-resolver";
 import MutationResolver from "./mutations/mutation-resolver";
+import {WikiFolder} from "../models/wiki-folder";
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -37,6 +38,19 @@ export const serverResolvers = {
 				}
 			}
 			return pins;
+		},
+		folders: async (world, _, {currentUser}) => {
+			const folders = [];
+			const foundFolders = await WikiFolder.find({world: world._id}).populate("children pages");
+			for(let folder of foundFolders){
+				if(await folder.userCanRead(currentUser)){
+					folder.pages = folder.pages.filter(async (page) => {
+						return await page.userCanRead(currentUser)
+					});
+					folders.push(folder);
+				}
+			}
+			return folders;
 		}
 	},
 	User: {
@@ -100,6 +114,7 @@ export const serverResolvers = {
 	WikiFolder: {
 		children: async (folder, _, {currentUser}) => {
 			const children = [];
+			await folder.populate('children').execPopulate();
 			for(let child of folder.children){
 				if(await child.userCanRead(currentUser)){
 					children.push(child);

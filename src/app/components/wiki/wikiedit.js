@@ -1,12 +1,15 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {Component, useEffect, useRef, useState} from 'react';
 import {Button, Icon, Input, Modal, Select, Upload} from "antd";
 import {Editor} from "./editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import {LoadingView} from "../loadingview";
-import {useHistory} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {useDeleteWiki} from "../../hooks/useDeleteWiki";
 import {useCreateImage} from "../../hooks/useCreateImage";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useUpdateWiki from "../../hooks/useUpdateWiki";
+import useUpdatePerson from "../../hooks/useUpdatePerson";
+import useUpdatePlace from "../../hooks/useUpdatePlace";
 
 export const WikiEdit = () => {
 
@@ -16,20 +19,19 @@ export const WikiEdit = () => {
 
 	const [mapToUpload, setMapToUpload] = useState( false);
 	const [coverToUpload, setCoverToUpload] = useState( false);
-	const [name, setName] = useState(currentWiki ?? currentWiki.name);
-	const [type, setType] = useState(currentWiki ?? currentWiki.type);
+	const [name, setName] = useState(currentWiki && currentWiki.name);
+	const [type, setType] = useState(currentWiki && currentWiki.type);
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
 	const {deleteWiki} = useDeleteWiki();
 	const {createImage} = useCreateImage();
+	const {updateWiki, loading: updateWikiLoading} = useUpdateWiki();
+	const {updatePlace, loading: updatePlaceLoading} = useUpdatePlace();
+	const {updatePerson, loading: updatePersonLoading} = useUpdatePerson();
 
-	if(loading){
-		return <LoadingView/>
-	}
+	const [editor, setEditor] = useState(null);
 
-	if (!currentWiki) {
-		return (<div>Please Search for or select a wiki on the side</div>);
-	}
+	const {wiki_id} = useParams();
 
 	const loadCoverImageList = async () => {
 		await setCoverImageList(currentWiki.coverImage ? [{
@@ -58,7 +60,19 @@ export const WikiEdit = () => {
 
 	}, []);
 
-	const wikiTypes = ['person', 'place', 'item', 'ability', 'spell', 'article', 'monster'];
+	if(loading){
+		return <LoadingView/>
+	}
+
+	if (!currentWiki) {
+		return (<div>{`404 - wiki ${wiki_id} not found`}</div>);
+	}
+
+	if(!currentWiki.canWrite){
+		return (<div>{`You do not have permission to edit wiki ${wiki_id}`}</div>);
+	}
+
+	const wikiTypes = ['Person', 'Place', 'Item', 'Ability', 'Spell', 'WikiPage', 'Monster'];
 	const options = [];
 	for (let type of wikiTypes) {
 		options.push(<Select.Option key={type} value={type}>{type}</Select.Option>);
@@ -80,6 +94,37 @@ export const WikiEdit = () => {
 		}}>Revert</Button>;
 	}
 
+	let saving = updateWikiLoading || updatePersonLoading || updatePlaceLoading;
+
+	const save = async () => {
+
+		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
+		if(coverToUpload){
+			const coverUploadResult = await createImage(coverToUpload, currentWorld._id, false);
+			coverImageId = coverUploadResult.createImage._id
+		}
+
+		switch(type){
+			// case 'Place':
+			// 	let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
+			// 	if(mapToUpload){
+			// 		const mapUploadResult = await createImage(mapToUpload, currentWorld._id, true);
+			// 		mapImageId = mapUploadResult.createImage._id
+			// 	}
+			// 	await updatePlace(currentWiki._id, name, JSON.stringify(editor.getContents()), coverImageId, mapImageId);
+			// 	break;
+			default:
+				const contents = new File([JSON.stringify(editor.getContents())], 'contents.json', {
+					type: "text/plain",
+				});
+				console.log(await contents.text());
+				await updateWiki(currentWiki._id, name, contents, coverImageId);
+				break;
+		}
+
+		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
+	};
+
 	return (
 		<div>
 			<div className='margin-lg'>
@@ -94,7 +139,7 @@ export const WikiEdit = () => {
 			</div>
 			<div className='margin-lg'>
 				<Upload
-					action="/api/images"
+					action={async (file) => {}}
 					beforeUpload={setCoverToUpload}
 					multiple={false}
 					listType={'picture'}
@@ -114,10 +159,10 @@ export const WikiEdit = () => {
 				</Upload>
 				{coverRevert}
 			</div>
-			{type === 'place' ?
+			{type === 'Place' ?
 				<div className='margin-lg'>
 					<Upload
-						action="/api/images"
+						action={async (file) => {}}
 						beforeUpload={setMapToUpload}
 						multiple={false}
 						listType={'picture'}
@@ -143,6 +188,7 @@ export const WikiEdit = () => {
 			<div className='margin-lg'>
 				<Editor
 					content={currentWiki.content}
+					onInit={async (editor) => {await setEditor(editor)}}
 				/>
 			</div>
 
