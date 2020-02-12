@@ -3,14 +3,14 @@ import {withRouter} from "react-router-dom";
 import {connect} from 'react-redux';
 import DefaultViewContainer from "../defaultviewcontainer";
 import WikiActionFactory from "../../redux/actions/wikiactionfactory";
-import Map from "./map";
+import Map from "./Map";
 import MapActionFactory from "../../redux/actions/mapactionfactory";
-import WikiView from "../wiki/wikiview";
+import WikiView from "../wiki/WikiView";
 import UIActionFactory from "../../redux/actions/uiactionfactory";
 import DefaultMapView from "./defaultmapview";
-import SlidingDrawer from "../slidingdrawer";
-import MapBreadCrumbs from "./mapbreadcrumbs";
-import Pin from "./pin";
+import SlidingDrawer from "../SlidingDrawer";
+import MapBreadCrumbs from "./MapBreadCrumbs";
+import Pin from "./Pin";
 
 class MapView extends Component {
 

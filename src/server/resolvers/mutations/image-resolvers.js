@@ -49,7 +49,7 @@ function createChunk(x, y, height, width, image, parentImage){
 					y: y,
 					width: width,
 					height: height,
-					fileId: file._id,
+					filelId: file._id,
 					image: parentImage._id
 				}, (err, chunk) => {
 					Image.findOneAndUpdate({_id: parentImage._id}, {$push: {chunks: chunk._id}}, {new: true}, (err, image) => {

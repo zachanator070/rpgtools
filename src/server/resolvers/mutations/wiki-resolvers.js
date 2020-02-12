@@ -1,10 +1,10 @@
 import {WikiFolder} from "../../models/wiki-folder";
-import {Place} from '../../models/place';
-import {Image} from "../../models/image";
-import {Person} from "../../models/person";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {WIKI_RW} from "../../../permission-constants";
 import {WikiPage} from "../../models/wiki-page";
+import {GridFSBucket} from "mongodb";
+import mongoose from "mongoose";
+import {ARTICLE} from "../../../wiki-page-types";
 
 export const wikiResolvers = {
 	createWiki: async (parent, {name, folderId}, {currentUser}) => {
@@ -17,7 +17,7 @@ export const wikiResolvers = {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`)
 		}
 
-		const newPage = await WikiPage.create({name, world: folder.world});
+		const newPage = await WikiPage.create({name, world: folder.world, type: ARTICLE});
 		folder.pages.push(newPage);
 		await folder.save();
 
@@ -29,23 +29,61 @@ export const wikiResolvers = {
 
 		return newPage;
 	},
-	updateWiki: async (parent, {wikiId, name, content, coverImageId}, {currentUser}) => {
-		const wikiPage = await WikiPage.findById(wikiId).populate('world');
+	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
+		const wikiPage = await WikiPage.findById(wikiId).populate('world content');
 		if(!await wikiPage.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to write to this page');
 		}
 
-		content = await content;
-		const chunks = [];
-		const stream = await content.createReadStream();
-		const text = await new Promise((resolve, reject) => {
-			stream.on('data', chunk => chunks.push(chunk));
-			stream.on('error', reject);
-			stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-		});
-		wikiPage.name = name;
-		wikiPage.content = text;
-		wikiPage.coverImage = coverImageId;
+		if(content !== null){
+			content = await content;
+			const stream = await content.createReadStream();
+
+			const gfs = new GridFSBucket(mongoose.connection.db);
+
+			let wikiPageContent = await gfs.find({_id: wikiPage.contentId}).next();
+			if(content){
+
+				let writeStream = null;
+				if(wikiPageContent){
+					writeStream = gfs.openUploadStream(wikiPageContent.filename);
+				}
+				else{
+					writeStream = gfs.openUploadStream(`wikiContent.${wikiPage._id}`);
+				}
+				await new Promise((resolve, reject) => {
+
+					stream.pipe(writeStream);
+
+					stream.on('end', () => {
+						wikiPage.contentId = writeStream.id;
+						resolve();
+					});
+					stream.on('error', (err) => {
+						reject(err);
+					});
+				});
+			}
+			else{
+				if(wikiPageContent){
+					await gfs.delete(wikiPageContent._id);
+					wikiPage.contentId = null;
+				}
+			}
+		}
+
+
+		if(name !== null){
+			wikiPage.name = name;
+		}
+
+		if(coverImageId){
+			wikiPage.coverImage = coverImageId;
+		}
+
+		if(type !== null){
+			wikiPage.type = type;
+		}
 		await wikiPage.save();
 		return wikiPage;
 	},

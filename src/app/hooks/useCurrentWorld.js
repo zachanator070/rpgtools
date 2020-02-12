@@ -61,10 +61,11 @@ const GET_CURRENT_WORLD = gql`
 
 export default () => {
 	const {world_id} = useParams();
-	const {data, loading, error} = useQuery(GET_CURRENT_WORLD, {variables: {worldId: world_id}});
+	const {data, loading, error, refetch} = useQuery(GET_CURRENT_WORLD, {variables: {worldId: world_id}});
 	return {
 		currentWorld: data ? data.world : null,
 		loading,
-		errors: error ? error.graphQLErrors.map(error => error.message) : []
+		errors: error ? error.graphQLErrors.map(error => error.message) : [],
+		refetch
 	};
 }

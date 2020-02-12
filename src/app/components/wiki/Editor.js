@@ -69,7 +69,7 @@ export const Editor = ({content, readOnly, onInit}) => {
 					},
 				}
 			},
-			placeholder: 'Compose an epic...',
+			placeholder: readOnly ? 'This tale has yet to be told' : 'Compose an epic...',
 		};
 		editor = new Quill('#editor', options);
 		if(onInit){

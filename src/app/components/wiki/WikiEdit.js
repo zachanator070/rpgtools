@@ -1,8 +1,8 @@
 import React, {Component, useEffect, useRef, useState} from 'react';
 import {Button, Icon, Input, Modal, Select, Upload} from "antd";
-import {Editor} from "./editor";
+import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
-import {LoadingView} from "../loadingview";
+import {LoadingView} from "../LoadingView";
 import {useHistory, useParams} from 'react-router-dom';
 import {useDeleteWiki} from "../../hooks/useDeleteWiki";
 import {useCreateImage} from "../../hooks/useCreateImage";
@@ -10,6 +10,7 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useUpdateWiki from "../../hooks/useUpdateWiki";
 import useUpdatePerson from "../../hooks/useUpdatePerson";
 import useUpdatePlace from "../../hooks/useUpdatePlace";
+import {ALL_TYPES, PLACE} from "../../../wiki-page-types";
 
 export const WikiEdit = () => {
 
@@ -72,7 +73,7 @@ export const WikiEdit = () => {
 		return (<div>{`You do not have permission to edit wiki ${wiki_id}`}</div>);
 	}
 
-	const wikiTypes = ['Person', 'Place', 'Item', 'Ability', 'Spell', 'WikiPage', 'Monster'];
+	const wikiTypes = ALL_TYPES;
 	const options = [];
 	for (let type of wikiTypes) {
 		options.push(<Select.Option key={type} value={type}>{type}</Select.Option>);
@@ -105,7 +106,7 @@ export const WikiEdit = () => {
 		}
 
 		switch(type){
-			// case 'Place':
+			// case PLACE:
 			// 	let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
 			// 	if(mapToUpload){
 			// 		const mapUploadResult = await createImage(mapToUpload, currentWorld._id, true);
@@ -118,7 +119,7 @@ export const WikiEdit = () => {
 					type: "text/plain",
 				});
 				console.log(await contents.text());
-				await updateWiki(currentWiki._id, name, contents, coverImageId);
+				await updateWiki(currentWiki._id, name, contents, coverImageId, type );
 				break;
 		}
 
@@ -159,7 +160,7 @@ export const WikiEdit = () => {
 				</Upload>
 				{coverRevert}
 			</div>
-			{type === 'Place' ?
+			{type === PLACE ?
 				<div className='margin-lg'>
 					<Upload
 						action={async (file) => {}}
@@ -205,6 +206,7 @@ export const WikiEdit = () => {
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {
 									await deleteWiki(currentWiki._id);
+									history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
 								}
 							});
 						}}><Icon type="delete"/>Delete Page</Button>

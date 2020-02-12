@@ -144,7 +144,8 @@ export const FolderView = () => {
 
 		let menu = [
 			<a href='#' key='new page' onClick={async () => {
-				await createWiki('New Page', 'article', folder)
+				const newWiki = await createWiki('New Page', folder._id);
+				history.push(`/ui/world/${currentWorld._id}/wiki/${newWiki._id}/view`)
 			}}><Icon type="file-add"/></a>,
 			<a href='#' key='new folder' onClick={() => {
 				createFolder(folder)

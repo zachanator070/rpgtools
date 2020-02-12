@@ -26,10 +26,11 @@ const GET_CURRENT_WIKI = gql`
 
 export default () => {
 	const {wiki_id} = useParams();
-	const {data, loading, error} = useQuery(GET_CURRENT_WIKI, {variables: {wikiId: wiki_id}});
+	const {data, loading, error, refetch} = useQuery(GET_CURRENT_WIKI, {variables: {wikiId: wiki_id}});
 	return {
 		currentWiki: data ? data.wiki : null,
 		loading,
-		errors: error ? error.graphQLErrors.map(error => error.message) : []
+		errors: error ? error.graphQLErrors.map(error => error.message) : [],
+		refetch
 	};
 }

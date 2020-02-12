@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {Col, Row} from "antd";
-import {FolderView} from "./folder-view";
-import {WikiView} from "./wikiview";
-import {WikiEdit} from "./wikiedit";
+import {FolderView} from "./FolderView";
+import {WikiView} from "./WikiView";
+import {WikiEdit} from "./WikiEdit";
 import {Route, Switch, useParams, useRouteMatch} from "react-router-dom";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
-import {LoadingView} from "../loadingview";
+import {LoadingView} from "../LoadingView";
 
 export const WikiContent = () => {
 

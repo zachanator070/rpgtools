@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../permission-constants";
 import {userHasPermission} from "../authorization-helpers";
+import {GridFSBucket} from "mongodb";
 
 const Schema = mongoose.Schema;
 
@@ -20,8 +21,34 @@ const wikiPageSchema = new Schema({
 		ref: 'Image',
 		autopopulate: true
 	},
-	content: String,
-	type: {type: String, default: "WikiPage"},
+	contentId: {
+		type: mongoose.Schema.ObjectId,
+	},
+	content: {
+		type: String,
+		get: async function () {
+			const gfs = new GridFSBucket(mongoose.connection.db);
+			const file = await gfs.find({_id: this.contentId}).next();
+			if(file){
+				const stream = gfs.openDownloadStream(file._id);
+				const chunks = [];
+				await new Promise((resolve, reject) => {
+					stream.on('data', (data) => {
+						chunks.push(data);
+					});
+					stream.on('err', (err) => {
+						reject(err);
+					});
+					stream.on('end', () => {
+						resolve();
+					});
+				});
+				return Buffer.concat(chunks).toString('utf8');
+			}
+			return null;
+		}
+	},
+	type: {type: String, default: null},
 });
 
 wikiPageSchema.methods.userCanWrite = async function(user){

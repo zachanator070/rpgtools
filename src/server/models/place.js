@@ -3,6 +3,7 @@ import {WikiPage} from "./wiki-page";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
 import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../permission-constants";
+import {PLACE} from "../../wiki-page-types";
 
 const Schema = mongoose.Schema;
 
@@ -12,9 +13,9 @@ const placeSchema = new Schema({
 		ref: 'Image',
 		autopopulate: true
 	},
-	type: {type: String, default: "Place"},
+	type: {type: String, default: PLACE},
 });
 
 placeSchema.plugin(mongooseAutopopulate);
 
-export const Place = WikiPage.discriminator('Place', placeSchema);
+export const Place = WikiPage.discriminator(PLACE, placeSchema);

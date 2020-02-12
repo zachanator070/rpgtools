@@ -46,7 +46,7 @@ export const typeDefs = gql`
         deleteWiki(wikiId: ID!): WikiPage!
         
         """ Updates any wiki page of any type (Ex: Person, Place, ... ) """
-        updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID): WikiPage!
+        updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         updatePlace(placeId: ID!, name: String, content: String, coverImageId: ID, mapImageId: ID): Place!
         updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Person!
         
@@ -88,6 +88,16 @@ export const typeDefs = gql`
     }
 	
 	interface WikiPage {
+		_id: ID!
+		name: String!
+		content: String
+		world: World!
+		coverImage: Image
+		type: String!
+		canWrite: Boolean!
+	}
+	
+	type Article implements WikiPage {
 		_id: ID!
 		name: String!
 		content: String

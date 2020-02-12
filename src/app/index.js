@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/app';
+import App from './components/App';
 import {ApolloClient} from "apollo-client";
-import { createUploadLink } from 'apollo-upload-client'
+import {createUploadLink} from 'apollo-upload-client'
 import {InMemoryCache} from "apollo-cache-inmemory";
 import {ApolloProvider} from "@apollo/react-common";
-import Resolvers from "./local-resolvers";
-import {typeDefs} from "./gql-local-schema";
+import {clientResolvers} from "./clientResolvers";
+import {clientTypeDefs} from "./clientTypeDefs";
 import {BrowserRouter} from "react-router-dom";
 
 const cache = new InMemoryCache();
@@ -30,8 +30,8 @@ const client = new ApolloClient({
 		credentials: 'same-origin',
 	}),
 	cache: cache,
-	typeDefs,
-	resolvers: Resolvers,
+	typeDefs: clientTypeDefs,
+	resolvers: clientResolvers,
 	connectToDevTools: true
 });
 

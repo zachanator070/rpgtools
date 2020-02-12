@@ -1,7 +1,7 @@
 import React, {Component, useEffect, useRef, useState} from 'react';
 import {Icon} from "antd";
-import {ScaledImage} from "./scaledimage";
-import {Editor} from "./editor";
+import {ScaledImage} from "./ScaledImage";
+import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
@@ -36,7 +36,7 @@ export const WikiView = () => {
 	};
 
 	if (!currentWiki) {
-		return (<div>{`404 - wiki ${wiki_id} not found`}</div>);
+		return (<div>{`404 - Wiki ${wiki_id} not found`}</div>);
 	}
 
 	let coverImage = null;
@@ -79,14 +79,12 @@ export const WikiView = () => {
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
 			{mapIcon}
-			{currentWiki.content &&
-				<div className='padding-md'>
-					<Editor
-						content={currentWiki.content}
-						readOnly={true}
-					/>
-				</div>
-			}
+			<div className='padding-md'>
+				<Editor
+					content={currentWiki.content}
+					readOnly={true}
+				/>
+			</div>
 			<div className='padding-md'>
 				{currentWiki.canWrite &&
 					<a href='#' onClick={() => {

@@ -1,17 +1,18 @@
 import React from 'react';
 import "@babel/polyfill";
-import {useRouteMatch, Route, Switch} from "react-router-dom";
+import {useRouteMatch, Route, Switch, Redirect} from "react-router-dom";
 import '../css/index.css';
 import 'antd/dist/antd.css';
-import {NavBar} from './nav/navbar';
-import {MapView} from './map/mapview';
-import {LoginModal} from "./modals/loginmodal";
-import {RegisterModal} from "./modals/registermodal";
-import {CreateWorldModal} from "./modals/createworldmodal";
-import {WikiContent} from "./wiki/wiki-content";
-import {DefaultView} from "./default-view";
+import {NavBar} from './nav/NavBar';
+import {MapView} from './map/MapView';
+import {LoginModal} from "./modals/LoginModal";
+import {RegisterModal} from "./modals/RegisterModal";
+import {CreateWorldModal} from "./modals/CreateWorldModal";
+import {WikiContent} from "./wiki/WikiContent";
+import {DefaultView} from "./DefaultView";
 import useCurrentWorld from "../hooks/useCurrentWorld";
-import {LoadingView} from "./loadingview";
+import {LoadingView} from "./LoadingView";
+import {SelectWorldModal} from "./modals/SelectWorldModal";
 
 const Header = () => {
 	return (
@@ -19,6 +20,7 @@ const Header = () => {
 			<LoginModal/>
 			<RegisterModal/>
 			<CreateWorldModal/>
+			<SelectWorldModal/>
 			<NavBar/>
 		</>
 	);
@@ -51,6 +53,9 @@ const Content = () => {
 		{/*<Route path="/ui/game">*/}
 		{/*    <GameContainer/>*/}
 		{/*</Route>*/}
+		<Route>
+			<Redirect to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}/>
+		</Route>
 	</Switch>
 	);
 };
@@ -63,9 +68,12 @@ export default () => {
 				<Header/>
 				<Content/>
 			</Route>
-			<Route>
+			<Route exact path={'/'}>
 				<Header/>
 				<DefaultView/>
+			</Route>
+			<Route>
+				<Redirect to={'/'}/>
 			</Route>
 		</Switch>
 	);

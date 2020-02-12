@@ -110,13 +110,20 @@ export default {
 		if(!page){
 			page = 1;
 		}
-		return await World.aggregatePaginate(worldAggregate, {
+		const results = await World.aggregatePaginate(worldAggregate, {
 			page: page,
 			limit: PAGE_SIZE
 		});
+		// convert objects to mongoose Models
+		const docs = [];
+		for(let world of results.docs){
+			docs.push(await World.findById(world._id));
+		}
+		results.docs = docs;
+		return results;
 	},
 	searchWikiPages: async (_, {phrase, worldId}, {currentUser}) => {
-		const foundWikis = await WikiPage.find({ $regex: `^${phrase}.*` , $options: 'i'});
+		const foundWikis = await WikiPage.find({name: { $regex: `^${phrase}.*` , $options: 'i'}});
 		const returnWikis = [];
 		for(let wiki of foundWikis){
 			if(await wiki.userCanRead(currentUser)){
