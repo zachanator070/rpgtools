@@ -52,11 +52,16 @@ export const worldResolvers = {
 				subjectId: world._id
 			});
 
+			const folderReadAllPermission = await PermissionAssignment.create({
+				permission: FOLDER_READ_ALL,
+				subjectId: world._id
+			});
+
 			const worldRead = await PermissionAssignment.create({
 				permission: WORLD_READ,
 				subjectId: world._id
 			});
-			everyonePerms.push(wikiReadAllPermission, worldRead);
+			everyonePerms.push(wikiReadAllPermission, worldRead, folderReadAllPermission);
 		}
 		const everyoneRole = await Role.create({name: EVERYONE, world: world._id, permissions: everyonePerms});
 

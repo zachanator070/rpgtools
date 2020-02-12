@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
+import useCurrentWorld from "./useCurrentWorld";
 
 const DELETE_WIKI = gql`
 	mutation deleteWiki($wikiId: ID!){
@@ -11,9 +12,12 @@ const DELETE_WIKI = gql`
 
 export const useDeleteWiki = () => {
 	const [deleteWiki, {data, loading, error}] = useMutation(DELETE_WIKI);
+	const {refetch} = useCurrentWorld();
 	return {
 		deleteWiki: async (wikiId) => {
-			return await deleteWiki({variables: {wikiId}});
+			const deletedWiki = await deleteWiki({variables: {wikiId}});
+			await refetch();
+			return deletedWiki;
 		},
 		wikiPage: data ? data.deleteWiki : null,
 		loading: loading,

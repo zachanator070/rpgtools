@@ -1,14 +1,15 @@
 import React from 'react';
 import {Button, Col, Divider, Row} from 'antd';
 import {Link} from "react-router-dom";
-import {WorldMenu} from "./worldmenu";
+import {WorldMenu} from "./WorldMenu";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useLogout from "../../hooks/useLogout";
-import {LoadingView} from "../loadingview";
+import {LoadingView} from "../LoadingView";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
 import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
+import {SearchBar} from "./SearchBar";
 
 export const NavBar = () => {
 
@@ -68,7 +69,7 @@ export const NavBar = () => {
 							</div>
 						</Col>
 						<Col span={10}>
-							Search Bar
+							<SearchBar/>
 						</Col>
 					</>
 					:

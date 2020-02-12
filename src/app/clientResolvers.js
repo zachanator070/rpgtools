@@ -1,30 +1,5 @@
-import gql from "graphql-tag";
 
-const LOGIN_MODAL_VISIBILITY = gql`
-    query{
-        loginModalVisibility @client
-    }
-`;
-
-const REGISTER_MODAL_VISIBILITY = gql`
-    query{
-        registerModalVisibility @client
-    }
-`;
-
-const CREATE_WORLD_MODAL_VISIBILITY = gql`
-    query{
-        createWorldModalVisibility @client
-    }
-`;
-
-const SELECT_WORLD_MODAL_VISIBILITY = gql`
-    query {
-        selectWorldModalVisibility @client
-    }
-`;
-
-export default {
+export const clientResolvers = {
 	Mutation: {
 		setLoginModalVisibility: (_root, {visibility}, {client, cache}) => {
 			cache.writeData({data: {loginModalVisibility: visibility}});

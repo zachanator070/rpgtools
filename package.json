@@ -30,6 +30,7 @@
     "gridfs-stream": "^1.1.1",
     "jimp": "^0.9.3",
     "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.2",
     "mongoose": ">=5.7.5",
     "mongoose-aggregate-paginate-v2": "^1.0.2",
     "mongoose-autopopulate": "^0.9.1",

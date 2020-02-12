@@ -3,7 +3,7 @@ import {useLazyQuery} from "@apollo/react-hooks";
 
 const SEARCH_WIKI_PAGES = gql`
 	query searchWikiPages($phrase: String!, $worldId: ID!){
-		searchWIkiPages(phrase: $phrase, worldId: $worldId){
+		searchWikiPages(phrase: $phrase, worldId: $worldId){
 			_id
 			name
 		}

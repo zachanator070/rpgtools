@@ -1,6 +1,8 @@
 import QueryResolver from "./query-resolver";
 import MutationResolver from "./mutations/mutation-resolver";
 import {WikiFolder} from "../models/wiki-folder";
+import {GridFSBucket} from "mongodb";
+import mongoose from "mongoose";
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -107,9 +109,21 @@ export const serverResolvers = {
 		__resolveType: async (page, {currentUser}, info) => {
 			return page.type;
 		},
+	},
+	Article: {
 		canWrite: async (page, _, {currentUser}) => {
 			return await page.userCanWrite(currentUser);
 		},
+	},
+	Person: {
+		canWrite: async (person, _, {currentUser}) => {
+			return await person.userCanWrite(currentUser);
+		}
+	},
+	Place: {
+		canWrite: async (place, _, {currentUser}) => {
+			return await place.userCanWrite(currentUser);
+		}
 	},
 	WikiFolder: {
 		children: async (folder, _, {currentUser}) => {
@@ -133,16 +147,6 @@ export const serverResolvers = {
 		},
 		canWrite: async (folder, _, {currentUser}) => {
 			return await folder.userCanWrite(currentUser);
-		},
-	},
-	Person: {
-		canWrite: async (person, _, {currentUser}) => {
-			return await person.userCanWrite(currentUser);
-		},
-	},
-	Place: {
-		canWrite: async (place, _, {currentUser}) => {
-			return await place.userCanWrite(currentUser);
 		},
 	},
 	Image: {

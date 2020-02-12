@@ -1,5 +1,5 @@
 import React from 'react';
-import {LoadingView} from "../loadingview";
+import {LoadingView} from "../LoadingView";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 
 export const MapView = () => {

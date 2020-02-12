@@ -4,7 +4,7 @@ import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModal
 import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import {LoadingView} from "../loadingview";
+import {LoadingView} from "../LoadingView";
 
 export const WorldMenu = () => {
 

@@ -1,8 +1,8 @@
 import {useHistory} from "react-router-dom";
 import useCurrentUser from "../hooks/useCurrentUser";
-import {LoadingView} from "./loadingview";
+import {LoadingView} from "./LoadingView";
 import React, {useEffect} from "react";
-import {WorldSelectPrompt} from "./prompts/worldselectprompt";
+import {WorldSelectPrompt} from "./prompts/WorldSelectPrompt";
 
 export const DefaultView = () => {
 
