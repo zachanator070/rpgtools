@@ -15,7 +15,7 @@ import {PermissionAssignment} from "../../models/permission-assignement";
 import {Role} from "../../models/role";
 import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
 
-export const worldResolvers = {
+export const worldMutations = {
 	createWorld: authenticated(async (parent, {name, public: isPublic}, {currentUser}) => {
 
 		if (!await userHasPermission(currentUser, WORLD_CREATE, null)) {

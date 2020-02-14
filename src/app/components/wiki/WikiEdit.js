@@ -24,8 +24,8 @@ export const WikiEdit = () => {
 	const [type, setType] = useState(currentWiki && currentWiki.type);
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
-	const {deleteWiki} = useDeleteWiki();
-	const {createImage} = useCreateImage();
+	const {deleteWiki, loading: deleteWikiLoading} = useDeleteWiki();
+	const {createImage, loading: createImageLoading} = useCreateImage();
 	const {updateWiki, loading: updateWikiLoading} = useUpdateWiki();
 	const {updatePlace, loading: updatePlaceLoading} = useUpdatePlace();
 	const {updatePerson, loading: updatePersonLoading} = useUpdatePerson();
@@ -37,7 +37,7 @@ export const WikiEdit = () => {
 	const loadCoverImageList = async () => {
 		await setCoverImageList(currentWiki.coverImage ? [{
 			uid: '-1',
-			url: `data:image/png;base64,${currentWiki.coverImage.chunks[0].data}`,
+			url: `/images/${currentWiki.coverImage.icon.chunks[0].fileId}`,
 			name: currentWiki.coverImage.name
 		}] : []);
 	};
@@ -45,7 +45,7 @@ export const WikiEdit = () => {
 	const loadMapImageList = async () => {
 		await setMapImageList(currentWiki.mapImage ? [{
 			uid: '-1',
-			url: `data:image/png;base64,${currentWiki.mapImage.chunks[0].data}`,
+			url: `/images/${currentWiki.mapImage.icon.chunks[0].fileId}`,
 			name: currentWiki.mapImage.name
 		}] : []);
 	};
@@ -81,47 +81,49 @@ export const WikiEdit = () => {
 
 	let coverRevert = null;
 	if (coverToUpload !== false) {
-		coverRevert = <Button onClick={async () => {
-			await setCoverToUpload(null);
+		coverRevert = <Button type='danger' className={'margin-md'} onClick={async () => {
+			await setCoverToUpload(false);
 			await loadCoverImageList();
 		}}>Revert</Button>;
 	}
 
 	let mapRevert = null;
 	if (mapToUpload !== false) {
-		mapRevert = <Button type='danger' onClick={async () => {
+		mapRevert = <Button type='danger' className={'margin-md'} onClick={async () => {
 			await setMapToUpload(false);
 			await loadMapImageList();
 		}}>Revert</Button>;
 	}
 
-	let saving = updateWikiLoading || updatePersonLoading || updatePlaceLoading;
+	let saving = updateWikiLoading || updatePersonLoading || updatePlaceLoading || deleteWikiLoading || createImageLoading;
 
 	const save = async () => {
 
 		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
-		if(coverToUpload){
+		if(coverToUpload instanceof File){
 			const coverUploadResult = await createImage(coverToUpload, currentWorld._id, false);
-			coverImageId = coverUploadResult.createImage._id
+			coverImageId = coverUploadResult.data.createImage._id
+		}
+		if(coverToUpload === null) {
+			coverImageId = null;
 		}
 
-		switch(type){
-			// case PLACE:
-			// 	let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
-			// 	if(mapToUpload){
-			// 		const mapUploadResult = await createImage(mapToUpload, currentWorld._id, true);
-			// 		mapImageId = mapUploadResult.createImage._id
-			// 	}
-			// 	await updatePlace(currentWiki._id, name, JSON.stringify(editor.getContents()), coverImageId, mapImageId);
-			// 	break;
-			default:
-				const contents = new File([JSON.stringify(editor.getContents())], 'contents.json', {
-					type: "text/plain",
-				});
-				console.log(await contents.text());
-				await updateWiki(currentWiki._id, name, contents, coverImageId, type );
-				break;
+		if(type === PLACE){
+			let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
+			if(mapToUpload){
+				const mapUploadResult = await createImage(mapToUpload, currentWorld._id, true);
+				mapImageId = mapUploadResult.data.createImage._id
+			}
+			if(mapToUpload === null) {
+				mapImageId = null;
+			}
+			await updatePlace(currentWiki._id, mapImageId);
 		}
+
+		const contents = new File([JSON.stringify(editor.getContents())], 'contents.json', {
+			type: "text/plain",
+		});
+		await updateWiki(currentWiki._id, name, contents, coverImageId, type );
 
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 	};
@@ -140,8 +142,12 @@ export const WikiEdit = () => {
 			</div>
 			<div className='margin-lg'>
 				<Upload
-					action={async (file) => {}}
+					customRequest={({onProgress, onSuccess}) => {
+						onProgress({percent: 100});
+						onSuccess({status: 'success'});
+					}}
 					beforeUpload={setCoverToUpload}
+					showUploadList={{showDownloadIcon: false}}
 					multiple={false}
 					listType={'picture'}
 					coverImage={coverToUpload}
@@ -163,7 +169,11 @@ export const WikiEdit = () => {
 			{type === PLACE ?
 				<div className='margin-lg'>
 					<Upload
-						action={async (file) => {}}
+						customRequest={async ({onProgress, onSuccess}) => {
+							await onProgress({percent: 100});
+							await onSuccess({status: 'success'});
+						}}
+						showUploadList={{showDownloadIcon: false}}
 						beforeUpload={setMapToUpload}
 						multiple={false}
 						listType={'picture'}
@@ -194,6 +204,7 @@ export const WikiEdit = () => {
 			</div>
 
 			<div>
+				{saving && <div>Saving ... </div>}
 				<Button type='primary' disabled={saving} onClick={save}><Icon
 					type="save"/>Save</Button>
 				<Button type='danger' disabled={saving} className='margin-md-left' onClick={() => {

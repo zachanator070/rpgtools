@@ -1,8 +1,6 @@
 import QueryResolver from "./query-resolver";
-import MutationResolver from "./mutations/mutation-resolver";
+import MutationResolver from "./mutation-resolver";
 import {WikiFolder} from "../models/wiki-folder";
-import {GridFSBucket} from "mongodb";
-import mongoose from "mongoose";
 
 export const serverResolvers = {
 	Query: QueryResolver,

@@ -25,9 +25,6 @@ const chunkSchema = new mongoose.Schema({
 	fileId: {
 		type: String,
 		required: [true, 'fileId required']
-	},
-	data: {
-		type: Buffer
 	}
 });
 

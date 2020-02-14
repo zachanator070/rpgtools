@@ -2,9 +2,12 @@ import {useMutation} from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 const UPDATE_PLACE = gql`
-	mutation updatePlace($placeId: ID!, $name: String, $content: String, $coverImageId: ID, $mapImageId: ID){
-		updatePlace(placeId: $placeId, name: $name, content: $content, coverImageId: $coverImageId, mapImageId: $mapImageId){
+	mutation updatePlace($placeId: ID!, $mapImageId: ID){
+		updatePlace(placeId: $placeId, mapImageId: $mapImageId){
 			_id
+			mapImage{
+				_id
+			}
 		}
 	}
 `;
@@ -12,8 +15,8 @@ const UPDATE_PLACE = gql`
 export default () => {
 	const [updatePlace, {data, loading, error}] = useMutation(UPDATE_PLACE);
 	return {
-		updatePlace: async (placeId, name, content, coverImageId, mapImageId) => {
-			await updatePlace({variables: {placeId, name, content, coverImageId, mapImageId}})
+		updatePlace: async (placeId, mapImageId) => {
+			await updatePlace({variables: {placeId, mapImageId}})
 		},
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : [],

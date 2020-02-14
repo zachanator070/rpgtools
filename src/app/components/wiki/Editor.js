@@ -83,5 +83,3 @@ export const Editor = ({content, readOnly, onInit}) => {
 
 	return <div id="editor"/>;
 };
-
-export default Editor;

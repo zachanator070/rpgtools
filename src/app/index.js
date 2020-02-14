@@ -8,6 +8,7 @@ import {ApolloProvider} from "@apollo/react-common";
 import {clientResolvers} from "./clientResolvers";
 import {clientTypeDefs} from "./clientTypeDefs";
 import {BrowserRouter} from "react-router-dom";
+import './favicon.ico';
 
 const cache = new InMemoryCache();
 cache.writeData(

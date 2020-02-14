@@ -1,6 +1,6 @@
-import {authenticationResolvers} from './authentication-resolvers';
+import {authenticationMutations} from './authentication-mutations';
 import bcrypt from 'bcrypt';
-import {SALT_ROUNDS} from './authentication-resolvers';
+import {SALT_ROUNDS} from './authentication-mutations';
 
 test('login', async () => {
 
@@ -46,7 +46,7 @@ test('login', async () => {
 		const res = {cookie: (name, value, options) => {}};
 
 		try{
-			expect(await authenticationResolvers.login(
+			expect(await authenticationMutations.login(
 				{},
 				{username: 'user', password: testCase.testPassword},
 				{res, imports: {User, createTokens: (user) => {return {accessToken: '1234', refreshToken: '567'}}}}
@@ -83,7 +83,7 @@ test('logout', async () => {
 		const res = {clearCookie: (name) => {}};
 
 		try{
-			expect(await authenticationResolvers.logout(
+			expect(await authenticationMutations.logout(
 				{},
 				{username: 'user', password: testCase.testPassword},
 				{res, currentUser: testCase.currentUser}
@@ -146,7 +146,7 @@ test('register', async () => {
 		const res = {cookie: (name, value, options) => {}};
 
 		try{
-			expect(await authenticationResolvers.register(
+			expect(await authenticationMutations.register(
 				{},
 				{email: 'email', username: 'user', password: testCase.password},
 				{res, imports: {User}}

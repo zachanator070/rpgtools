@@ -1,4 +1,4 @@
-import {authorizationResolver} from "./authorization-resolver";
+import {authorizationMutations} from "./authorization-mutations";
 
 test('create role', async () => {
 
@@ -57,7 +57,7 @@ test('create role', async () => {
 		};
 
 		try{
-			expect(await authorizationResolver.createRole({}, {...testCase}, {currentUser: {}, imports: {World, Role, userHasPermission}})).toBe(createdRole);
+			expect(await authorizationMutations.createRole({}, {...testCase}, {currentUser: {}, imports: {World, Role, userHasPermission}})).toBe(createdRole);
 		} catch (error) {
 			if(testCase.success){
 				throw error;

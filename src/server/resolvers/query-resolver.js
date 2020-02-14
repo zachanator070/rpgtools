@@ -137,6 +137,7 @@ export default {
 		if(foundWiki && ! await foundWiki.userCanRead(currentUser)){
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
+		await foundWiki.populate('mapImage coverImage').execPopulate();
 		return foundWiki;
 	},
 	usersWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {

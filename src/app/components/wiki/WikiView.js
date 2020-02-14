@@ -41,17 +41,17 @@ export const WikiView = () => {
 
 	let coverImage = null;
 	if (currentWiki.coverImage) {
-		coverImage = <div className='padding-md'>
-			<ScaledImage width={width} height={height}
-			             src={`data:image/png;base64,${currentWiki.coverImage.chunks[0].data}`}/>
+		coverImage = <div className='padding-md' style={{width: '100%'}}>
+			<img alt={currentWiki.coverImage.name} style={{"objectFit": "contain", width: '100%'}}
+			      src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}/>
 		</div>;
 	}
 
 	let mapIcon = null;
 	if (currentWiki.type === 'Place' && currentWiki.mapImage) {
-		mapIcon = <div>
-			<ScaledImage width={width} height={height}
-			             src={`data:image/png;base64,${currentWiki.mapImage.chunks[0].data}`}/>
+		mapIcon = <div className='padding-md' style={{width: '100%'}}>
+			<img alt={currentWiki.mapImage.name} style={{"objectFit": "contain"}}
+			     src={`/images/${currentWiki.mapImage.icon.chunks[0].fileId}`}/>
 			<span className='margin-md-left'>
 					<a href='#' onClick={() => {
 						history.push(`/ui/world/${currentWorld._id}/map/${currentWiki._id}`);
@@ -74,15 +74,20 @@ export const WikiView = () => {
 
 	return (
 		<div ref={wikiView} className='margin-md-top'>
-			{coverImage}
+
 			<h1>{currentWiki.name}</h1>
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
+			{coverImage}
 			{mapIcon}
 			<div className='padding-md'>
 				<Editor
 					content={currentWiki.content}
 					readOnly={true}
+					onInit={(editor) => {
+						setHeight(editor.container.offsetWidth);
+						setWidth(editor.container.offsetWidth)
+					}}
 				/>
 			</div>
 			<div className='padding-md'>

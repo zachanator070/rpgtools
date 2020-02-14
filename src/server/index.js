@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import {seedDefaultRoles} from "./default-role-seeder";
 import path from 'path';
+import {ImageRouter} from "./routers/image-router";
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -18,6 +19,8 @@ mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParse
 const server = express();
 
 server.use(express.static('dist'));
+
+server.use('/images', ImageRouter);
 
 server.get('/ui*', (req, res) => {
 	res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
