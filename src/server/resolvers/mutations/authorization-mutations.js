@@ -7,7 +7,7 @@ import {World} from "../../models/world";
 import {User} from "../../models/user";
 import {PermissionAssignment} from "../../models/permission-assignement";
 
-export const authorizationResolver = {
+export const authorizationMutations = {
 	createRole: async (_, {name, worldId}, {currentUser}) => {
 
 		const newRole = new Role({name, world: worldId});

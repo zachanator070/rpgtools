@@ -33,7 +33,10 @@ const imageSchema = new Schema({
 		ref: 'Image',
 		autopopulate: true
 	},
-	name: String
+	name: {
+		type: String,
+		required: [true, 'name required']
+	},
 });
 
 imageSchema.plugin(mongooseAutopopulate);

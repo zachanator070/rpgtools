@@ -70,9 +70,9 @@ module.exports = {
 				]
 			},
 			{
-				test: /\.(png|jpg|gif)$/,
+				test: /\.(png|jpg|gif|ico)$/,
 				use: [
-					'file-loader'
+					'file-loader?name=[name].[ext]'
 				]
 			},
 			{

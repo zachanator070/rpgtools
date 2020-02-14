@@ -49,7 +49,7 @@ const checkUserWritePermissionForFolderContents = async (user, folderId) => {
 
 };
 
-export const folderResolvers = {
+export const folderMutations = {
 	createFolder: async (_, {name, parentFolderId}, {currentUser}) => {
 
 		const parentFolder = await WikiFolder.findById(parentFolderId);

@@ -1,17 +1,17 @@
-import React, {Component, useRef, useState} from 'react';
+import React, {Component, useRef, useState, useEffect} from 'react';
 
-export const ScaledImage = ({src, propWidth, propHeight}) => {
+export const ScaledImage = ({src, width: propWidth, height: propHeight}) => {
 
 	const scaledImage = useRef();
 	const [width, setWidth] = useState(propWidth);
 	const [height, setHeight] = useState(propHeight);
 
 	const resize = () => {
-		if (propWidth === 0 || propHeight === 0 || !scaledImage.content) {
+		if (!propWidth || !propHeight || !scaledImage.current) {
 			return;
 		}
-		const currentHeight = scaledImage.content.naturalHeight;
-		const currentWidth = scaledImage.content.naturalWidth;
+		const currentHeight = scaledImage.current.naturalHeight;
+		const currentWidth = scaledImage.current.naturalWidth;
 		const widthScale = propWidth / currentWidth;
 		const heightScale = propHeight / currentHeight;
 		let biggestScale = widthScale;

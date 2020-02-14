@@ -4,7 +4,7 @@ import uuidv4 from "uuid/v4";
 import {User} from '../../models/user';
 export const SALT_ROUNDS = 10;
 
-export const authenticationResolvers = {
+export const authenticationMutations = {
 	login: async (parent, {username, password}, {res}) => {
 		let user = await User.findOne({username}).populate('roles');
 		if (user && bcrypt.compareSync(password, user.password)) {

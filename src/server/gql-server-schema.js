@@ -47,7 +47,7 @@ export const typeDefs = gql`
         
         """ Updates any wiki page of any type (Ex: Person, Place, ... ) """
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
-        updatePlace(placeId: ID!, name: String, content: String, coverImageId: ID, mapImageId: ID): Place!
+        updatePlace(placeId: ID!, mapImageId: ID): Place!
         updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Person!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
@@ -145,8 +145,9 @@ export const typeDefs = gql`
 		chunkHeight: Int!
 		chunkWidth: Int!
 		chunks: [Chunk!]!
-		Icon: Image!
+		icon: Image!
 		canWrite: Boolean!
+		name: String!
 	}
 	
 	type Chunk {
@@ -156,6 +157,7 @@ export const typeDefs = gql`
 		y: Int!
 		width: Int!
 		height: Int!
+		fileId: ID!
 	}
 	
 	type Role {

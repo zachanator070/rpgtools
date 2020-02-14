@@ -9,7 +9,7 @@ const CREATE_IMAGE = gql`
 	}
 `;
 
-export const useCreateImage = async () => {
+export const useCreateImage = () => {
 	const [createImage, {data, loading, error}] = useMutation(CREATE_IMAGE);
 	return {
 		createImage: async (file, worldId, chunkify) => {

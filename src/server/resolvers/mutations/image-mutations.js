@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import {Image} from '../../models/image';
 import {Chunk} from '../../models/chunk';
-import Grid from 'gridfs-stream';
+import {GridFSBucket} from "mongodb";
 import Jimp from 'jimp';
 
 const chunkSize = 250;
@@ -31,25 +31,25 @@ async function createChunkRecurse(x, y, image, parentImage){
 
 function createChunk(x, y, height, width, image, parentImage){
 	return new Promise((resolve, reject) => {
-		const gfs = Grid(mongoose.connection.db, mongoose.mongo);
+		const gfs = new GridFSBucket(mongoose.connection.db);
 
 		console.time(`createChunk.${parentImage._id}.${x}.${y}`);
 		Jimp.read(image).then((copy) => {
 			copy.crop( x * chunkSize, y * chunkSize, width, height);
 			const newFilename = `chunk.${x}.${y}.${parentImage.name}`;
-			const writeStream = gfs.createWriteStream({
-				filename: newFilename,
-				content_type: image.getMIME()
-			});
+			const writeStream = gfs.openUploadStream(
+				newFilename,
+				{contentType: image.getMIME()}
+			);
 
-			writeStream.on('close', (file) => {
+			writeStream.on('finish', (file) => {
 
 				Chunk.create({
 					x: x,
 					y: y,
 					width: width,
 					height: height,
-					filelId: file._id,
+					fileId: file._id,
 					image: parentImage._id
 				}, (err, chunk) => {
 					Image.findOneAndUpdate({_id: parentImage._id}, {$push: {chunks: chunk._id}}, {new: true}, (err, image) => {
@@ -75,39 +75,39 @@ function createChunk(x, y, height, width, image, parentImage){
 	});
 }
 
-function makeIcon(req, newImageId) {
+function makeIcon(jimpImage, newImage) {
 	return new Promise((resolve, reject) => {
-		Image.findOne({_id: newImageId}, (err, foundImage) => {
+		Image.findOne({_id: newImage._id}, (err, foundImage) => {
 			if(err){
 				return reject(err);
 			}
 			if(!foundImage){
 				return reject(new Error('Root image not found'));
 			}
-			const gfs = Grid(mongoose.connection.db, mongoose.mongo);
+			const gfs = new GridFSBucket(mongoose.connection.db);
 
-			Jimp.read(req.files.data.data)
+			Jimp.read(jimpImage)
 				.then(image => {
 
 					image.scaleToFit(chunkSize, chunkSize, (err, scaledImage) => {
-						const newFilename = `chunk.0.0.${req.files.data.name}`;
-						const writeStream = gfs.createWriteStream({
-							filename: newFilename,
-							content_type: req.files.data.mimetype
-						});
+						const newFilename = `chunk.0.0.${newImage.name}`;
+						const writeStream = gfs.openUploadStream(
+							newFilename,
+							{contentType: jimpImage.getMIME()}
+						);
 
-						const newImageSchema = {
-							name: 'icon.' + req.files.data.name,
+						const iconSchema = {
+							name: 'icon.' + newImage.name,
 							chunkList: [],
-							world: req.user.currentWorld,
+							world: newImage.world._id,
 							chunkHeight: 1,
 							chunkWidth: 1,
 							width: scaledImage.bitmap.width,
 							height: scaledImage.bitmap.height
 						};
 
-						writeStream.on('close', (file) => {
-							Image.create(newImageSchema, (err, newImage) => {
+						writeStream.on('finish', (file) => {
+							Image.create(iconSchema, (err, newImage) => {
 								if (err) {
 									return reject(err);
 								}
@@ -141,7 +141,7 @@ function makeIcon(req, newImageId) {
 						writeStream.on('error', function (err) {
 							return reject(err);
 						});
-						scaledImage.getBuffer(Jimp.AUTO, (err, buffer) => {
+						scaledImage.getBuffer(jimpImage.getMIME(), (err, buffer) => {
 							writeStream.end(buffer);
 						});
 					});
@@ -152,14 +152,30 @@ function makeIcon(req, newImageId) {
 	});
 }
 
-export const imageResolvers = {
+export const imageMutations = {
 	createImage: async (parent, {file, worldId, chunkify}, {currentUser}) => {
+		// @TODO need to check a permission here
 		if(chunkify === null){
 			chunkify = true;
 		}
 		console.time('jimp read image');
-		const image = await Jimp.read(file.stream);
+		file = await file;
+		const stream = file.createReadStream();
 
+		const rawData = await new Promise((resolve, reject) => {
+			const rawData = [];
+			stream.on('data', (data) => {
+				rawData.push(data);
+			});
+			stream.on('end', () => {
+				resolve(rawData);
+			});
+			stream.on('error', (err) => {
+				reject(err);
+			})
+		});
+
+		const image = await Jimp.read(Buffer.concat(rawData));
 		const newImage = await Image.create({
 			name: file.filename,
 			chunkList: [],
@@ -181,7 +197,7 @@ export const imageResolvers = {
 			newImage.chunkWidth = Math.ceil(image.bitmap.width/chunkSize);
 		}
 		await newImage.save();
-		await makeIcon(req, newImage._id);
+		await makeIcon(image, newImage);
 		return newImage;
 	}
 };

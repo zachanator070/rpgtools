@@ -14,11 +14,40 @@ const GET_CURRENT_WIKI = gql`
                 _id
             }
             coverImage {
+                _id
+                name
                 width
                 height
                 chunks{
                     _id
+                    fileId
                 }
+                icon{
+                    _id
+                    chunks{
+                        _id
+                        fileId
+                    }
+                }
+            }
+            ... on Place {
+                mapImage {
+	                _id
+	                name
+	                width
+	                height
+	                chunks{
+	                    _id
+	                    fileId
+	                }
+	                icon{
+	                    _id
+	                    chunks{
+	                        _id
+	                        fileId
+	                    }
+	                }
+	            }
             }
         }
     }

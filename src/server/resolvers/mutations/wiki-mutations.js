@@ -6,7 +6,7 @@ import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {ARTICLE} from "../../../wiki-page-types";
 
-export const wikiResolvers = {
+export const wikiMutations = {
 	createWiki: async (parent, {name, folderId}, {currentUser}) => {
 		const folder = await WikiFolder.findById(folderId);
 		if(!folder){
@@ -31,6 +31,9 @@ export const wikiResolvers = {
 	},
 	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
 		const wikiPage = await WikiPage.findById(wikiId).populate('world content');
+		if(!wikiPage){
+			throw new Error(`Wiki ${wikiId} does not exist`);
+		}
 		if(!await wikiPage.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to write to this page');
 		}
@@ -72,14 +75,11 @@ export const wikiResolvers = {
 			}
 		}
 
-
 		if(name !== null){
 			wikiPage.name = name;
 		}
 
-		if(coverImageId){
-			wikiPage.coverImage = coverImageId;
-		}
+		wikiPage.coverImage = coverImageId;
 
 		if(type !== null){
 			wikiPage.type = type;
