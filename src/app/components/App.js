@@ -4,7 +4,7 @@ import {useRouteMatch, Route, Switch, Redirect} from "react-router-dom";
 import '../css/index.css';
 import 'antd/dist/antd.css';
 import {NavBar} from './nav/NavBar';
-import {MapView} from './map/MapView';
+import {MapContent} from './map/MapContent';
 import {LoginModal} from "./modals/LoginModal";
 import {RegisterModal} from "./modals/RegisterModal";
 import {CreateWorldModal} from "./modals/CreateWorldModal";
@@ -45,7 +45,7 @@ const Content = () => {
 	return (
 	<Switch>
 		<Route path={`${match.path}/map/:map_id`}>
-			<MapView/>
+			<MapContent/>
 		</Route>
 		<Route path={`${match.path}/wiki/:wiki_id`}>
 			<WikiContent/>

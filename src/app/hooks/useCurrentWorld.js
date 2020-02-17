@@ -40,6 +40,11 @@ const GET_CURRENT_WORLD = gql`
 				page{
 					_id
 				}
+				map{
+					_id
+				}
+				x
+				y
 			}
 			folders{
 			    _id

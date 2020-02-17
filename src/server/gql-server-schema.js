@@ -52,6 +52,8 @@ export const typeDefs = gql`
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
+        createPin(mapId: ID!, x: Int!, y: Int!, wikiId: ID): Pin!
+        
     }
   
     type User {
@@ -175,9 +177,10 @@ export const typeDefs = gql`
 	
 	type Pin {
 		_id: ID!
+		map: Place!
 		x: Int!
 		y: Int!
-		page: WikiPage!
+		page: WikiPage
 		canWrite: Boolean!
 	}
 	
