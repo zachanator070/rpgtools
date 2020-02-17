@@ -1,170 +1,158 @@
-import React, {Component} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dropdown, Icon, Menu} from "antd";
-import GameActionFactory from "../../redux/actions/gameactionfactory";
+import useCurrentMap from "../../hooks/useCurrentMap";
+import {LoadingView} from "../LoadingView";
 
-class Map extends Component {
+export const Map = ({menuItems, extras}) => {
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			lastMouseX: null,
-			lastMouseY: null,
-			width: 0,
-			height: 0,
-			defaultCalculated: true,
-			listenersAdded: false,
+	const [width, setWidth] = useState(0);
+	const [height, setHeight] = useState(0);
+
+	const zoom = useRef(1);
+	const lastMouseY = useRef(0);
+	const lastMouseX = useRef(0);
+	const x = useRef(0);
+	const y = useRef(0);
+	const [coordsHash, setCoordsHash] = useState(null);
+
+	const mapContainer = useRef({offsetWidth: 1, offsetHeight: 1});
+	const map = useRef(null);
+
+	const {currentMap, loading} = useCurrentMap();
+
+	const updateWindowDimensions = async () => {
+		if (mapContainer.current && (mapContainer.current.offsetWidth !== width || mapContainer.current.offsetHeight !== height)) {
+			await setWidth(mapContainer.current.offsetWidth);
+			await setHeight(mapContainer.current.offsetHeight);
+		}
+	};
+
+	useEffect(() => {
+		window.addEventListener('resize', updateWindowDimensions);
+		return () => {
+			window.removeEventListener('resize', updateWindowDimensions);
 		};
-	}
+	}, []);
 
-	updateWindowDimensions = () => {
-		if (this.refs.mapContainer && (this.refs.mapContainer.offsetWidth !== this.state.width || this.refs.mapContainer.offsetHeight !== this.state.height)) {
-			this.setState({
-				width: this.refs.mapContainer.offsetWidth,
-				height: this.refs.mapContainer.offsetHeight,
-				defaultCalculated: false
-			});
+	useEffect(() => {
+		(async () => {
+			await updateWindowDimensions();
+		})();
+	}, [mapContainer.current]);
+
+	const updateMapPosition = async (evt) => {
+		const eventX = evt.clientX;
+		const eventY = evt.clientY;
+		if (lastMouseX.current && lastMouseY.current) {
+			let newX = x.current + (eventX - lastMouseX.current) / zoom.current;
+			let newY = y.current + (eventY - lastMouseY.current) / zoom.current;
+			// console.log(`Setting map coords to ${newX}, ${newY}`);
+			x.current = newX;
+			y.current = newY;
 		}
+		lastMouseX.current = eventX;
+		lastMouseY.current = eventY;
+		await setCoordsHash(`${x.current}.${y.current}`);
 	};
 
-	updateMapPosition = (evt) => {
-		if (this.state.lastMouseX && this.state.lastMouseY) {
-			let newX = this.props.currentMap.x + (evt.clientX - this.state.lastMouseX) / this.props.currentMap.zoom;
-			let newY = this.props.currentMap.y + (evt.clientY - this.state.lastMouseY) / this.props.currentMap.zoom;
-			this.props.setCurrentMapPosition(newX, newY);
-		}
-		this.setState({
-			lastMouseX: evt.clientX,
-			lastMouseY: evt.clientY
-		});
+	const startMoving = () => {
+		map.current.addEventListener('mousemove', updateMapPosition);
 	};
 
-	startMapUpdate = (mousedownEvent) => {
-		if (mousedownEvent.button !== 0) {
-			return;
-		}
-		this.refs.map.addEventListener('mousemove', this.updateMapPosition, false);
+	const stopMoving = () => {
+		map.current.removeEventListener('mousemove', updateMapPosition);
 	};
+	useEffect(() => {
+		map.current.addEventListener('mousedown', startMoving);
+		map.current.addEventListener('mouseup', stopMoving);
+		return () => {
+			map.current.removeEventListener('mousedown', startMoving);
+			map.current.removeEventListener('mouseup', stopMoving);
+		};
+	}, []);
 
-	stopMapUpdate = (mouseUpEvent) => {
-		this.refs.map.removeEventListener('mousemove', this.updateMapPosition);
-	};
+	useEffect(() => {
+		(async () => {
+			await calcDefaultPosition();
+		})();
 
-	addMapPanListener = () => {
-		const map = this.refs.map;
-		if (map) {
-			map.addEventListener('mousedown', this.startMapUpdate, false);
-			map.addEventListener('mouseup', this.stopMapUpdate, false);
-			this.setState({listenersAdded: true});
-		}
-	};
-
-	removeMapPanListener = () => {
-		const map = this.refs.map;
-		if (map) {
-			map.removeEventListener('mousedown', this.startMapUpdate, false);
-			map.removeEventListener('mouseup', this.stopMapUpdate, false);
-			this.setState({listenersAdded: false});
-		}
-	};
-
-	componentDidMount() {
-		this.updateWindowDimensions();
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		this.updateWindowDimensions();
-		if (!this.props.currentGame || this.props.currentGame.brushOptions.on === GameActionFactory.BRUSH_OFF) {
-			if (!this.state.listenersAdded) {
-				this.addMapPanListener();
-			}
-		} else if (this.state.listenersAdded) {
-			this.removeMapPanListener();
-		}
-		if (this.props.currentMap.zoom === 0 || prevProps.currentMap.image._id !== this.props.currentMap.image._id) {
-			this.setState({
-				defaultCalculated: false
-			});
-		}
-		if (!this.state.defaultCalculated) {
-			this.calcDefaultPosition();
-		}
-	}
-
-	calcDefaultPosition = () => {
-		if (this.state.width === 0 || this.state.height === 0) {
+	}, [currentMap, width, height]);
+	
+	const calcDefaultPosition = async () => {
+		if (width === 0 || height === 0) {
 			return;
 		}
 
-		this.setState({
-			defaultCalculated: true
-		});
-
-		let smallestRatio = this.state.width / this.props.currentMap.image.width;
-		if (this.state.height / this.props.currentMap.image.height < smallestRatio) {
-			smallestRatio = this.state.height / this.props.currentMap.image.height;
+		let smallestRatio = width / currentMap.mapImage.width;
+		if (height / currentMap.mapImage.height < smallestRatio) {
+			smallestRatio = height / currentMap.mapImage.height;
 		}
-		this.props.setCurrentMapZoom(smallestRatio);
-		this.props.setCurrentMapPosition(-this.props.currentMap.image.width / 2, -this.props.currentMap.image.height / 2);
+		zoom.current = smallestRatio;
+		x.current = -currentMap.mapImage.width / 2;
+		y.current = -currentMap.mapImage.height / 2;
+		await setCoordsHash(`${x.current}.${y.current}`);
 	};
 
-	handleWheelEvent = (event) => {
-		let zoomRate = .1;
-		if (event.deltaY > 0) {
-			zoomRate *= -1;
-		}
-		const newZoom = this.props.currentMap.zoom + zoomRate;
-		if (newZoom < 2 && newZoom > 0) {
-			this.props.setCurrentMapZoom(newZoom);
-		}
+	// const handleWheelEvent = async (event) => {
+	// 	let zoomRate = .1;
+	// 	if (event.deltaY > 0) {
+	// 		zoomRate *= -1;
+	// 	}
+	// 	const newZoom = zoom + zoomRate;
+	// 	if (newZoom < 2 && newZoom > 0) {
+	// 		await setZoom(newZoom);
+	// 	}
+	//
+	// };
+
+	// translates world to view coordinates
+	const translate = (worldX, worldY) => {
+
+		worldX += x.current;
+		worldY += y.current;
+
+		worldX *= zoom.current;
+		worldY *= zoom.current;
+
+		worldX += width / 2;
+		worldY += height / 2;
+
+		worldX = Math.floor(worldX);
+		worldY = Math.floor(worldY);
+
+		return [worldX, worldY];
 
 	};
 
-	translate = (x, y) => {
+	// const reverseTranslate = (x, y) => {
+	// 	return [
+	// 		(x - width / 2) / zoom - x,
+	// 		(y - height / 2) / zoom - y
+	// 	];
+	// };
 
-		x += this.props.currentMap.x;
-		y += this.props.currentMap.y;
-
-		x *= this.props.currentMap.zoom;
-		y *= this.props.currentMap.zoom;
-
-		x += this.state.width / 2;
-		y += this.state.height / 2;
-
-		x = Math.floor(x);
-		y = Math.floor(y);
-
-		return [x, y];
-
-	};
-
-	reverseTranslate = (x, y) => {
-		return [
-			(x - this.state.width / 2) / this.props.currentMap.zoom - this.props.currentMap.x,
-			(y - this.state.height / 2) / this.props.currentMap.zoom - this.props.currentMap.y
-		];
-	};
-
-	getChunks = () => {
+	const getChunks = () => {
 		let chunks = [];
-		for (let chunk of this.props.currentMap.image.chunks) {
+		for (let chunk of currentMap.mapImage.chunks) {
 
-			const coordinates = this.translate(chunk.x * 250, chunk.y * 250);
-			const x = coordinates[0];
-			const y = coordinates[1];
+			const coordinates = translate(chunk.x * 250, chunk.y * 250);
+			const newX = coordinates[0];
+			const newY = coordinates[1];
 
 			let width = chunk.width;
-			width *= this.props.currentMap.zoom;
+			width *= zoom.current;
 			width = Math.ceil(width);
 
 			let height = chunk.height;
-			height *= this.props.currentMap.zoom;
+			height *= zoom.current;
 			height = Math.ceil(height);
 
 			chunks.push(
 				<img
+					alt=''
 					key={chunk._id}
-					src={`/api/chunks/data/${chunk._id}`}
-					style={{position: 'absolute', left: x, top: y, width: width, height: height}}
+					src={`/images/${chunk.fileId}`}
+					style={{position: 'absolute', left: newX, top: newY, width: width, height: height}}
 					draggable="false"
 					className='map-tile'
 				/>
@@ -172,82 +160,70 @@ class Map extends Component {
 		}
 		return chunks;
 	};
+	//
+	// const getDropdownMenu = () => {
+	// 	const menu = [];
+	// 	for (let item of menuItems || []) {
+	// 		menuItems.push(
+	// 			<Menu.Item key={item.name} onClick={() => {
+	// 				const boundingBox = map.current.getBoundingClientRect();
+	// 				const x = lastMouseX.current - boundingBox.x;
+	// 				const y = lastMouseY.current - boundingBox.y;
+	// 				const coords = reverseTranslate(x, y);
+	// 				item.onClick(coords[0], coords[1]);
+	// 			}}>{item.name}</Menu.Item>
+	// 		);
+	// 	}
+	//
+	// 	return menu;
+	// };
 
-	getDropdownMenu = () => {
-		const menuItems = [];
-		for (let item of this.props.menuItems || []) {
-			menuItems.push(
-				<Menu.Item key={item.name} onClick={() => {
-					const boundingBox = this.refs.map.getBoundingClientRect();
-					const x = this.state.lastMouseX - boundingBox.x;
-					const y = this.state.lastMouseY - boundingBox.y;
-					const coords = this.reverseTranslate(x, y);
-					item.onClick(coords[0], coords[1]);
-				}}>{item.name}</Menu.Item>
-			);
-		}
 
-		return menuItems;
-	};
-
-	render() {
-		if (!this.props.currentMap) {
-			return <div>No Current Map</div>;
-		}
-		if (!this.props.currentWorld) {
-			return <div>No Current World</div>;
-		}
-		if (this.props.currentMap.image.chunks.length < this.props.currentMap.image.chunkHeight * this.props.currentMap.image.chunkWidth) {
-			setTimeout(() => {
-				this.props.getAndSetMap(this.props.currentMap.image._id);
-			}, 10000);
-			return <div className='text-align-center margin-lg'><Icon type="loading"
-			                                                          style={{fontSize: 24, marginRight: '15px'}} spin/>Map
-				is rendering. This may take a few minutes...</div>;
-		}
-		let images = this.getChunks();
-
-		const extras = [];
-
-		for (let extra of this.props.extras || []) {
-			extras.push(
-				React.cloneElement(extra, {translate: this.translate, reverseTranslate: this.reverseTranslate})
-			);
-		}
-
-		const map = <div
-			ref='map'
-			className='margin-none overflow-hidden flex-grow-1 position-relative flex-column'
-			onWheel={this.handleWheelEvent}
-			onMouseDown={(event) => {
-				this.setState({lastMouseX: event.clientX, lastMouseY: event.clientY})
-			}}
-		>
-			{images}
-			{extras}
-		</div>;
-		const menuItems = this.getDropdownMenu();
-		const mapContainer =
-			<div ref='mapContainer' className='flex-grow-1 flex-column'>
-				{this.props.currentWorld.canWrite && menuItems.length > 0 ?
-					<Dropdown
-						overlay={
-							<Menu>
-								{menuItems}
-							</Menu>
-						}
-						trigger={['contextMenu']}
-					>
-						{map}
-					</Dropdown>
-					:
-					map
-				}
-			</div>;
-
-		return mapContainer;
+	if (loading) {
+		return <LoadingView/>;
 	}
 
-}
+	let images = getChunks();
 
-export default Map;
+	// const clonedExtras = [];
+	//
+	// for (let extra of extras || []) {
+	// 	clonedExtras.push(
+	// 		React.cloneElement(extra, {translate: translate, reverseTranslate: reverseTranslate})
+	// 	);
+	// }
+
+	const mapComponent = <div
+		ref={map}
+		className='margin-none overflow-hidden flex-grow-1 position-relative flex-column'
+		// onWheel={handleWheelEvent}
+		onMouseDown={(event) => {
+			lastMouseX.current = event.clientX;
+			lastMouseY.current = event.clientY;
+		}}
+	>
+		{images}
+		{/*{clonedExtras}*/}
+	</div>;
+	// const menu = getDropdownMenu();
+	return (
+		<div ref={mapContainer} className='flex-grow-1 flex-column'>
+			{/*{currentMap.canWrite && menu.length > 0 ?*/}
+			{/*	<Dropdown*/}
+			{/*		overlay={*/}
+			{/*			<Menu>*/}
+			{/*				{menu}*/}
+			{/*			</Menu>*/}
+			{/*		}*/}
+			{/*		trigger={['contextMenu']}*/}
+			{/*	>*/}
+			{/*		{mapComponent}*/}
+			{/*	</Dropdown>*/}
+			{/*	:*/}
+			{/*	mapComponent*/}
+			{/*}*/}
+			{mapComponent}
+		</div>
+	);
+};
+

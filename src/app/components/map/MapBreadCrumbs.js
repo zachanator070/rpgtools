@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Breadcrumb} from "antd";
 
-class MapBreadCrumbs extends Component {
+export const MapBreadCrumbs = () => {
 
 	getWikiPageFromMapId = (mapId) => {
 		for (let page of this.props.allWikis) {
@@ -19,52 +19,48 @@ class MapBreadCrumbs extends Component {
 		}
 	};
 
-	render() {
-		if (!this.props.currentMap.image || !this.props.currentWorld || this.props.allWikis.length === 0) {
-			return <div></div>;
+	if (!this.props.currentMap.image || !this.props.currentWorld || this.props.allWikis.length === 0) {
+		return <div></div>;
+	}
+
+	let currentMap = this.props.currentMap.image;
+	const path = [];
+	while (true) {
+		const currentPage = this.getWikiPageFromMapId(currentMap._id);
+		if (!currentPage) {
+			break;
 		}
+		const currentPin = this.getPinFromPageId(currentPage._id);
+		path.push({
+			name: currentPage.name,
+			id: currentMap._id
+		});
 
-		let currentMap = this.props.currentMap.image;
-		const path = [];
-		while (true) {
-			const currentPage = this.getWikiPageFromMapId(currentMap._id);
-			if (!currentPage) {
-				break;
-			}
-			const currentPin = this.getPinFromPageId(currentPage._id);
-			path.push({
-				name: currentPage.name,
-				id: currentMap._id
-			});
-
-			if (currentPage._id === this.props.currentWorld.wikiPage._id) {
-				break;
-			}
-			if (!currentPin) {
-				break;
-			}
-			currentMap = currentPin.map;
+		if (currentPage._id === this.props.currentWorld.wikiPage._id) {
+			break;
 		}
-
-		const breadCrumbs = [];
-		for (let map of path.reverse()) {
-			breadCrumbs.push(
-				<Breadcrumb.Item key={map.id}>
-					<a href="#" onClick={() => {
-						this.props.gotoPage('/ui/map', {map: map.id})
-					}}>{map.name}</a>
-				</Breadcrumb.Item>
-			);
+		if (!currentPin) {
+			break;
 		}
+		currentMap = currentPin.map;
+	}
 
-		return (
-			<div className='breadcrumbs'>
-				<Breadcrumb>
-					{breadCrumbs}
-				</Breadcrumb>
-			</div>
+	const breadCrumbs = [];
+	for (let map of path.reverse()) {
+		breadCrumbs.push(
+			<Breadcrumb.Item key={map.id}>
+				<a href="#" onClick={() => {
+					this.props.gotoPage('/ui/map', {map: map.id})
+				}}>{map.name}</a>
+			</Breadcrumb.Item>
 		);
 	}
-}
 
-export default MapBreadCrumbs;
+	return (
+		<div className='breadcrumbs'>
+			<Breadcrumb>
+				{breadCrumbs}
+			</Breadcrumb>
+		</div>
+	);
+};

@@ -14,6 +14,9 @@ import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {Role} from "../../models/role";
 import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
+import {PLACE} from "../../../wiki-page-types";
+import {WikiPage} from "../../models/wiki-page";
+import {Pin} from "../../models/pin";
 
 export const worldMutations = {
 	createWorld: authenticated(async (parent, {name, public: isPublic}, {currentUser}) => {
@@ -71,5 +74,29 @@ export const worldMutations = {
 		await world.populate('wikiPage rootFolder roles').execPopulate();
 
 		return world;
-	})
+	}),
+	createPin: async (parent, {mapId, x, y, wikiId}, {currentUser}) => {
+
+		const map = await Place.findById(mapId);
+		if(!map){
+			throw new Error(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
+		}
+
+		const wiki = await WikiPage.findById(wikiId);
+		if(!wiki){
+			throw new Error(`Wiki with id ${wikiId} does not exist`);
+		}
+
+		if(!await map.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to add pins to wiki ${wikiId}`);
+		}
+
+		const newPin = await Pin.create({
+			map,
+			x,
+			y,
+			page: wiki
+		});
+		return newPin;
+	}
 };
