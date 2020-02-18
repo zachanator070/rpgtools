@@ -55,8 +55,10 @@ export const Map = ({menuItems, extras}) => {
 		await setCoordsHash(`${x.current}.${y.current}`);
 	};
 
-	const startMoving = () => {
-		map.current.addEventListener('mousemove', updateMapPosition);
+	const startMoving = (event) => {
+		if(event.button === 0){
+			map.current.addEventListener('mousemove', updateMapPosition);
+		}
 	};
 
 	const stopMoving = () => {
@@ -93,17 +95,18 @@ export const Map = ({menuItems, extras}) => {
 		await setCoordsHash(`${x.current}.${y.current}`);
 	};
 
-	// const handleWheelEvent = async (event) => {
-	// 	let zoomRate = .1;
-	// 	if (event.deltaY > 0) {
-	// 		zoomRate *= -1;
-	// 	}
-	// 	const newZoom = zoom + zoomRate;
-	// 	if (newZoom < 2 && newZoom > 0) {
-	// 		await setZoom(newZoom);
-	// 	}
-	//
-	// };
+	const handleWheelEvent = async (event) => {
+		let zoomRate = .1;
+		if (event.deltaY > 0) {
+			zoomRate *= -1;
+		}
+		const newZoom = zoom.current + zoomRate;
+		if (newZoom < 2 && newZoom > 0) {
+			zoom.current = newZoom;
+			await setCoordsHash(`${x.current}.${y.current}.${zoom.current}`);
+		}
+
+	};
 
 	// translates world to view coordinates
 	const translate = (worldX, worldY) => {
@@ -124,12 +127,12 @@ export const Map = ({menuItems, extras}) => {
 
 	};
 
-	// const reverseTranslate = (x, y) => {
-	// 	return [
-	// 		(x - width / 2) / zoom - x,
-	// 		(y - height / 2) / zoom - y
-	// 	];
-	// };
+	const reverseTranslate = (worldX, worldY) => {
+		return [
+			(worldX - width / 2) / zoom.current - x.current,
+			(worldY - height / 2) / zoom.current - y.current
+		];
+	};
 
 	const getChunks = () => {
 		let chunks = [];
@@ -160,23 +163,26 @@ export const Map = ({menuItems, extras}) => {
 		}
 		return chunks;
 	};
-	//
-	// const getDropdownMenu = () => {
-	// 	const menu = [];
-	// 	for (let item of menuItems || []) {
-	// 		menuItems.push(
-	// 			<Menu.Item key={item.name} onClick={() => {
-	// 				const boundingBox = map.current.getBoundingClientRect();
-	// 				const x = lastMouseX.current - boundingBox.x;
-	// 				const y = lastMouseY.current - boundingBox.y;
-	// 				const coords = reverseTranslate(x, y);
-	// 				item.onClick(coords[0], coords[1]);
-	// 			}}>{item.name}</Menu.Item>
-	// 		);
-	// 	}
-	//
-	// 	return menu;
-	// };
+
+	if(!menuItems){
+		menuItems = [];
+	}
+	const getDropdownMenu = () => {
+		const items = [];
+		for (let item of menuItems) {
+			items.push(
+				<Menu.Item key={item.name} onClick={() => {
+					const boundingBox = map.current.getBoundingClientRect();
+					const newPinX = lastMouseX.current - boundingBox.x;
+					const newPinY = lastMouseY.current - boundingBox.y;
+					const coords = reverseTranslate(newPinX, newPinY);
+					item.onClick(coords[0], coords[1]);
+				}}>{item.name}</Menu.Item>
+			);
+		}
+
+		return items;
+	};
 
 
 	if (loading) {
@@ -185,44 +191,45 @@ export const Map = ({menuItems, extras}) => {
 
 	let images = getChunks();
 
-	// const clonedExtras = [];
-	//
-	// for (let extra of extras || []) {
-	// 	clonedExtras.push(
-	// 		React.cloneElement(extra, {translate: translate, reverseTranslate: reverseTranslate})
-	// 	);
-	// }
+	const clonedExtras = [];
+
+	for (let extra of extras || []) {
+		clonedExtras.push(
+			React.cloneElement(extra, {translate: translate, reverseTranslate: reverseTranslate})
+		);
+	}
 
 	const mapComponent = <div
 		ref={map}
 		className='margin-none overflow-hidden flex-grow-1 position-relative flex-column'
-		// onWheel={handleWheelEvent}
+		onWheel={handleWheelEvent}
 		onMouseDown={(event) => {
 			lastMouseX.current = event.clientX;
 			lastMouseY.current = event.clientY;
 		}}
 	>
 		{images}
-		{/*{clonedExtras}*/}
+		{clonedExtras}
 	</div>;
-	// const menu = getDropdownMenu();
+
+	const menu = getDropdownMenu();
+
 	return (
 		<div ref={mapContainer} className='flex-grow-1 flex-column'>
-			{/*{currentMap.canWrite && menu.length > 0 ?*/}
-			{/*	<Dropdown*/}
-			{/*		overlay={*/}
-			{/*			<Menu>*/}
-			{/*				{menu}*/}
-			{/*			</Menu>*/}
-			{/*		}*/}
-			{/*		trigger={['contextMenu']}*/}
-			{/*	>*/}
-			{/*		{mapComponent}*/}
-			{/*	</Dropdown>*/}
-			{/*	:*/}
-			{/*	mapComponent*/}
-			{/*}*/}
-			{mapComponent}
+			{currentMap.canWrite && menu.length > 0 ?
+				<Dropdown
+					overlay={
+						<Menu>
+							{menu}
+						</Menu>
+					}
+					trigger={['contextMenu']}
+				>
+					{mapComponent}
+				</Dropdown>
+				:
+				mapComponent
+			}
 		</div>
 	);
 };

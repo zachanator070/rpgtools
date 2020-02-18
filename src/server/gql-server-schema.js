@@ -52,7 +52,9 @@ export const typeDefs = gql`
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
-        createPin(mapId: ID!, x: Int!, y: Int!, wikiId: ID): Pin!
+        createPin(mapId: ID!, x: Float!, y: Float!, wikiId: ID): Pin!
+        updatePin(pinId: ID!, pageId: ID): Pin!
+        deletePin(pinId: ID!): Pin!
         
     }
   
@@ -178,8 +180,8 @@ export const typeDefs = gql`
 	type Pin {
 		_id: ID!
 		map: Place!
-		x: Int!
-		y: Int!
+		x: Float!
+		y: Float!
 		page: WikiPage
 		canWrite: Boolean!
 	}

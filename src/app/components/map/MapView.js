@@ -7,7 +7,7 @@ import {LoadingView} from "../LoadingView";
 import useCreatePin from "../../hooks/useCreatePin";
 import {Link} from "react-router-dom";
 
-export const MapContent = () => {
+export const MapView = () => {
 
 	const {currentWorld, loading} = useCurrentWorld();
 	const {currentMap, loading: mapLoading} = useCurrentMap();
@@ -39,12 +39,7 @@ export const MapContent = () => {
 		menuItems={[
 			{
 				onClick: async (mouseX, mouseY) => {
-					let pin = {
-						x: mouseX,
-						y: mouseY,
-						map: currentMap._id
-					};
-					await createPin(...pin);
+					await createPin(currentMap._id, mouseX, mouseY, null);
 				},
 				name: 'New Pin'
 			}

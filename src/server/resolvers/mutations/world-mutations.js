@@ -83,20 +83,68 @@ export const worldMutations = {
 		}
 
 		const wiki = await WikiPage.findById(wikiId);
-		if(!wiki){
-			throw new Error(`Wiki with id ${wikiId} does not exist`);
-		}
 
 		if(!await map.userCanWrite(currentUser)){
 			throw new Error(`You do not have permission to add pins to wiki ${wikiId}`);
 		}
 
-		const newPin = await Pin.create({
+		const newPin = (await Pin.create({
 			map,
 			x,
 			y,
 			page: wiki
-		});
+		}));
+		await map.populate('world').execPopulate();
+		const world = map.world;
+		world.pins.push(newPin);
+		await world.save();
+		await newPin.populate({
+			path: 'map',
+			populate: {
+				path: 'world'
+			}
+		}).execPopulate();
 		return newPin;
-	}
+	},
+	updatePin: async (_, {pinId, pageId}, {currentUser}) => {
+
+		const pin = await Pin.findById(pinId);
+		if(!pin){
+			throw new Error(`Pin ${pinId} does not exist`);
+		}
+
+		if(!await pin.userCanRead(currentUser)){
+			throw new Error(`You do not have permission to update this pin`);
+		}
+
+		pin.page = pageId;
+		await pin.save();
+		await pin.populate({
+			path: 'map',
+			populate: {
+				path: 'world'
+			}
+		}).execPopulate();
+		return pin;
+	},
+	deletePin: async (_, {pinId}, {currentUser}) => {
+
+		const pin = await Pin.findById(pinId);
+		if(!pin){
+			throw new Error(`Pin ${pinId} does not exist`);
+		}
+
+		if(!await pin.userCanRead(currentUser)){
+			throw new Error(`You do not have permission to delete this pin`);
+		}
+
+		await pin.delete();
+		await pin.populate({
+			path: 'map',
+			populate: {
+				path: 'world'
+			}
+		}).execPopulate();
+		return pin;
+	},
 };
