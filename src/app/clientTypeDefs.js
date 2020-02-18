@@ -8,6 +8,9 @@ export const clientTypeDefs = gql`
 		createWorldModalVisibility: Boolean!
 		selectWorldModalVisibility: Boolean!
 		worldPermissionModalVisibility: Boolean!
+		editPinModalVisibility: Boolean!
+		
+		pinBeingEdited: ID
     }
     
     extend type Mutation{
@@ -16,6 +19,9 @@ export const clientTypeDefs = gql`
         setRegisterModalVisibility(visibility: Boolean!): Boolean!
         setSelectWorldModalVisibility(visibility: Boolean!): Boolean!
         setWorldPermissionModalVisibility(visibility: Boolean!): Boolean!
+        setEditPinModalVisibility(visibility: Boolean!): Boolean!
+        
+        setPinBeingEdited(pinId: ID!): ID
     }
     
 `;

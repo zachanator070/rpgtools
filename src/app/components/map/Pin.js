@@ -2,14 +2,17 @@ import React, {Component} from 'react';
 import {Popover} from "antd";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useSetEditPinModalVisibility from "../../hooks/useSetEditPinModalVisibility";
 
 export const Pin = ({pin, translate}) => {
 
 	const history = useHistory();
 	const {currentWorld} = useCurrentWorld();
+	const {setEditPinModalVisibility} = useSetEditPinModalVisibility();
 
 	const editButton = pin.canWrite ?
-		<a href='#' className='margin-md-left' onClick={() => {
+		<a href='#' className='margin-md-left' onClick={async () => {
+			await setEditPinModalVisibility(true);
 		}}>Edit Pin</a>
 		: null;
 

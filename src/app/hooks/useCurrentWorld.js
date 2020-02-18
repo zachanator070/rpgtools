@@ -37,6 +37,8 @@ const GET_CURRENT_WORLD = gql`
 				}
 			}
 			pins{
+				_id
+				canWrite
 				page{
 					_id
 				}

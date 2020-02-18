@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 import {Place} from './place';
 import {WikiPage} from "./wiki-page";
+import mongooseAutopopulate from "mongoose-autopopulate";
 
 const Schema = mongoose.Schema;
 
-const pinSchema = Schema({
+const pinSchema = new Schema({
 	x: {
 		type: Number,
 		required: [true, 'x position required']
@@ -26,13 +27,14 @@ const pinSchema = Schema({
 pinSchema.methods.userCanRead = async function(user){
 	const map = await Place.findById(this.map);
 	const page = await WikiPage.findById(this.page);
-	return await map.userCanRead(user) && await page.userCanRead(user);
+	return await map.userCanRead(user) && (page ? await page.userCanRead(user) : true);
 };
 
 pinSchema.methods.userCanWrite = async function(user){
 	const map = await Place.findById(this.map);
-	const page = await WikiPage.findById(this.page);
-	return await map.userCanWrite(user) && await page.userCanWrite(user);
+	return await map.userCanWrite(user);
 };
+
+pinSchema.plugin(mongooseAutopopulate);
 
 export const Pin = mongoose.model('Pin', pinSchema);

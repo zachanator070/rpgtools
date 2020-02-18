@@ -14,7 +14,7 @@ export const useSearchWikiPages = () => {
 	const [search, {loading, data, error}] = useLazyQuery(SEARCH_WIKI_PAGES);
 	return {
 		searchWikiPages: async (phrase, worldId) => {
-			return await search({variables: {phrase, worldId}});
+			return search({variables: {phrase, worldId}});
 		},
 		loading,
 		wikis: data ? data.searchWikiPages : [],
