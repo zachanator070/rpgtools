@@ -27,7 +27,7 @@ export const wikiMutations = {
 			await currentUser.save();
 		}
 
-		return newPage;
+		return newPage.world;
 	},
 	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
 		const wikiPage = await WikiPage.findById(wikiId).populate('world content');
@@ -83,8 +83,11 @@ export const wikiMutations = {
 
 		if(type !== null){
 			wikiPage.type = type;
+			wikiPage.__t = type;
 		}
+
 		await wikiPage.save();
+		await wikiPage.populate('coverImage').execPopulate();
 		return wikiPage;
 	},
 	deleteWiki: async (parent, {wikiId}, {currentUser}) => {
@@ -109,6 +112,6 @@ export const wikiMutations = {
 		}
 
 		await wikiPage.remove();
-		return wikiPage;
+		return wikiPage.world;
 	},
 };

@@ -8,6 +8,8 @@ import mongoose from 'mongoose';
 import {PermissionAssignment} from "../models/permission-assignement";
 import {WikiPage} from "../models/wiki-page";
 import {WikiFolder} from "../models/wiki-folder";
+import {Place} from '../models/place';
+import {PLACE} from "../../wiki-page-types";
 
 export default {
 	currentUser: authenticated((parent, args, context) => context.currentUser),
@@ -133,11 +135,14 @@ export default {
 		return returnWikis;
 	},
 	wiki: async (_, {wikiId}, {currentUser}) => {
-		const foundWiki = await WikiPage.findOne({_id: wikiId});
+		let foundWiki = await WikiPage.findOne({_id: wikiId});
 		if(foundWiki && ! await foundWiki.userCanRead(currentUser)){
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
-		await foundWiki.populate('mapImage coverImage').execPopulate();
+		if(foundWiki.type === PLACE){
+			foundWiki = await Place.findById(wikiId).populate('mapImage coverImage');
+		}
+
 		return foundWiki;
 	},
 	usersWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {

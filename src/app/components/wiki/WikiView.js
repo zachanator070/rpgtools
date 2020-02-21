@@ -1,6 +1,5 @@
 import React, {Component, useEffect, useRef, useState} from 'react';
 import {Icon} from "antd";
-import {ScaledImage} from "./ScaledImage";
 import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
@@ -29,7 +28,7 @@ export const WikiView = () => {
 
 	const getPinFromPageId = (pageId) => {
 		for (let pin of currentWorld.pins) {
-			if (pin.page._id && pin.page._id === pageId) {
+			if (pin.page && pin.page._id === pageId) {
 				return pin;
 			}
 		}

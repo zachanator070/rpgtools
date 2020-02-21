@@ -20,8 +20,8 @@ export const WikiEdit = () => {
 
 	const [mapToUpload, setMapToUpload] = useState( false);
 	const [coverToUpload, setCoverToUpload] = useState( false);
-	const [name, setName] = useState(currentWiki && currentWiki.name);
-	const [type, setType] = useState(currentWiki && currentWiki.type);
+	const [name, setName] = useState(null);
+	const [type, setType] = useState(null);
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
 	const {deleteWiki, loading: deleteWikiLoading} = useDeleteWiki();
@@ -59,7 +59,15 @@ export const WikiEdit = () => {
 			await loadMapImageList();
 		})();
 
-	}, []);
+	}, [currentWiki]);
+
+	useEffect(() => {
+		if(currentWiki){
+			setName(currentWiki.name);
+			setType(currentWiki.type);
+		}
+
+	}, [currentWiki]);
 
 	if(loading){
 		return <LoadingView/>
@@ -108,6 +116,11 @@ export const WikiEdit = () => {
 			coverImageId = null;
 		}
 
+		const contents = new File([JSON.stringify(editor.getContents())], 'contents.json', {
+			type: "text/plain",
+		});
+		await updateWiki(currentWiki._id, name, contents, coverImageId, type );
+
 		if(type === PLACE){
 			let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
 			if(mapToUpload){
@@ -119,11 +132,6 @@ export const WikiEdit = () => {
 			}
 			await updatePlace(currentWiki._id, mapImageId);
 		}
-
-		const contents = new File([JSON.stringify(editor.getContents())], 'contents.json', {
-			type: "text/plain",
-		});
-		await updateWiki(currentWiki._id, name, contents, coverImageId, type );
 
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 	};
@@ -142,9 +150,9 @@ export const WikiEdit = () => {
 			</div>
 			<div className='margin-lg'>
 				<Upload
-					customRequest={({onProgress, onSuccess}) => {
-						onProgress({percent: 100});
-						onSuccess({status: 'success'});
+					customRequest={async ({onProgress, onSuccess}) => {
+						await onProgress({percent: 100});
+						await onSuccess({status: 'success'});
 					}}
 					beforeUpload={setCoverToUpload}
 					showUploadList={{showDownloadIcon: false}}

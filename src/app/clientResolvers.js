@@ -16,6 +16,14 @@ export const clientResolvers = {
 		setSelectWorldModalVisibility: (_root, {visibility}, {client, cache}) => {
 			cache.writeData({data: {selectWorldModalVisibility: visibility}});
 			return visibility;
+		},
+		setEditPinModalVisibility: (_root, {visibility}, {client, cache}) => {
+			cache.writeData({data: {editPinModalVisibility: visibility}});
+			return visibility;
+		},
+		setPinBeingEdited: (_, {pinId}, {client, cache}) => {
+			cache.writeData({data: {pinBeingEdited: pinId}});
+			return pinId;
 		}
 	},
 };

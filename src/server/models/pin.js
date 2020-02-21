@@ -16,11 +16,13 @@ const pinSchema = new Schema({
 	},
 	map: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Place'
+		ref: 'Place',
+		autopopulate: true
 	},
 	page: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiPage'
+		ref: 'WikiPage',
+		autopopulate: true
 	}
 });
 

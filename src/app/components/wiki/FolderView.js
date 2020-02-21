@@ -6,6 +6,7 @@ import {useRenameFolder} from "../../hooks/useRenameFolder";
 import {useDeleteFolder} from "../../hooks/useDeleteFolder";
 import {useCreateWiki} from "../../hooks/useCreateWiki";
 import {useHistory} from "react-router-dom";
+import useCreateFolder from "../../hooks/useCreateFolder";
 
 export const FolderView = () => {
 
@@ -21,6 +22,7 @@ export const FolderView = () => {
 	const {renameFolder} = useRenameFolder();
 	const {deleteFolder} = useDeleteFolder();
 	const {createWiki} = useCreateWiki();
+	const {createFolder} = useCreateFolder();
 
 	const editingInput = useRef(null);
 	
@@ -115,13 +117,6 @@ export const FolderView = () => {
 		}
 	};
 
-	const createFolder = (parent) => {
-		createFolder(parent, {name: 'New Folder'});
-		if (!opened.includes(parent._id)) {
-			openFolder(parent._id);
-		}
-	};
-
 	const renderFolder = (folder, indent) => {
 
 		let icon = <Icon type="right" theme="outlined"/>;
@@ -144,11 +139,13 @@ export const FolderView = () => {
 
 		let menu = [
 			<a href='#' key='new page' onClick={async () => {
-				const newWiki = await createWiki('New Page', folder._id);
-				history.push(`/ui/world/${currentWorld._id}/wiki/${newWiki._id}/view`)
+				await createWiki('New Page', folder._id);
 			}}><Icon type="file-add"/></a>,
-			<a href='#' key='new folder' onClick={() => {
-				createFolder(folder)
+			<a href='#' key='new folder' onClick={async () => {
+				await createFolder(folder._id, 'New Folder');
+				if (!opened.includes(folder._id)) {
+					openFolder(folder._id);
+				}
 			}}><Icon type="folder-add"/></a>,
 			<a href='#' key='rename' onClick={() => {
 				setEditing(folder)
@@ -158,7 +155,7 @@ export const FolderView = () => {
 					title: 'Confirm Delete',
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
 					onOk: async () => {
-						await deleteFolder(folder)
+						await deleteFolder(folder._id)
 					},
 					onCancel: () => {
 					},

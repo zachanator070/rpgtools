@@ -35,20 +35,19 @@ export const typeDefs = gql`
         """ Revoke a directly assigned permission from a user """        
         revokeUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionAssignment!
         
-        createFolder(name: String!, parentFolderId: ID!): WikiFolder!
+        createFolder(name: String!, parentFolderId: ID!): World!
         renameFolder(folderId: ID!, name: String!): WikiFolder!
-        deleteFolder(folderId: ID!): WikiFolder!
+        deleteFolder(folderId: ID!): World!
         
         """ Creates a generic wiki page """
-        createWiki(name: String!, folderId: ID!): WikiPage!
+        createWiki(name: String!, folderId: ID!): World!
         
         """ Deletes any wiki page of any type (Ex: Person, Place, ... ) """
-        deleteWiki(wikiId: ID!): WikiPage!
+        deleteWiki(wikiId: ID!): World!
         
         """ Updates any wiki page of any type (Ex: Person, Place, ... ) """
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         updatePlace(placeId: ID!, mapImageId: ID): Place!
-        updatePerson(personId: ID!, name: String, content: String, coverImageId: ID): Person!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         

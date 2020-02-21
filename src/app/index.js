@@ -3,24 +3,32 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import {ApolloClient} from "apollo-client";
 import {createUploadLink} from 'apollo-upload-client'
-import {InMemoryCache} from "apollo-cache-inmemory";
+import {InMemoryCache, IntrospectionFragmentMatcher} from "apollo-cache-inmemory";
 import {ApolloProvider} from "@apollo/react-common";
 import {clientResolvers} from "./clientResolvers";
 import {clientTypeDefs} from "./clientTypeDefs";
 import {BrowserRouter} from "react-router-dom";
 import './favicon.ico';
 
-const cache = new InMemoryCache();
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+	introspectionQueryResultData: {
+		__schema: {
+			types: [],
+		},
+	}
+});
+
+const cache = new InMemoryCache({fragmentMatcher});
 cache.writeData(
 	{
 		data: {
-			currentWorld: null,
-			currentWiki: null,
 			loginModalVisibility: false,
 			registerModalVisibility: false,
 			createWorldModalVisibility: false,
 			selectWorldModalVisibility: false,
 			worldPermissionModalVisibility: false,
+			editPinModalVisibility: false,
+			pinBeingEdited: null
 		}
 	}
 );

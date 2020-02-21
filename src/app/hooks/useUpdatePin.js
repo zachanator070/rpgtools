@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
+import {CURRENT_WORLD_PINS} from "./useCurrentWorld";
 
 const UPDATE_PIN = gql`
 	mutation updatePin($pinId: ID!, $pageId: ID){
@@ -8,21 +9,11 @@ const UPDATE_PIN = gql`
 				_id
 				world{
 					_id
-					pins{
-						_id
-						canWrite
-						page{
-							_id
-						}
-						map{
-							_id
-						}
-						x
-						y
-					}
+					${CURRENT_WORLD_PINS}
 				}
 			}
 			page {
+				name
 				_id
 			}
 		}
