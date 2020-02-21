@@ -37,7 +37,7 @@ export default new ApolloServer({
 
 		const refreshToken = req.cookies["refreshToken"];
 		const accessToken = req.cookies["accessToken"];
-		if (refreshToken && accessToken) {
+		if (refreshToken || accessToken) {
 			try {
 				let data = jwt.verify(accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
 				currentUser = await User.findOne({_id: data.userId}).populate("currentWorld");

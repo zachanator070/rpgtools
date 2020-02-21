@@ -12,13 +12,9 @@ export const wikiPageMutations = {
 			throw new Error(`You do not have permission to write to this page`);
 		}
 
-		const mapImage = await Image.findById(mapImageId);
-		if(!mapImage){
-			throw new Error(`Image ${mapImageId} does not exist`);
-		}
-
-		place.mapImage = mapImage;
+		place.mapImage = mapImageId;
 		await place.save();
+		await place.populate('mapImage').execPopulate();
 		return place;
 	}
 };

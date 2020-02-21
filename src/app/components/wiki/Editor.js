@@ -13,6 +13,8 @@ import "quill/dist/quill.bubble.css";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
 
+Quill.debug('error');
+
 Quill.register({
 	'modules/toolbar': Toolbar,
 	'themes/snow': Snow,

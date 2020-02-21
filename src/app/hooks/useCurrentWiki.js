@@ -2,52 +2,60 @@ import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
 
-const GET_CURRENT_WIKI = gql`
-    query getWiki($wikiId: ID!){
-        wiki(wikiId: $wikiId) {
+export const CURRENT_WIKI_ATTRIBUTES = `
+	_id
+    type
+    name
+    content
+    canWrite
+    world {
+        _id
+    }
+    coverImage {
+        _id
+        name
+        width
+        height
+        chunks{
             _id
-            type
-            name
-            content
-            canWrite
-            world {
+            fileId
+        }
+        icon{
+            _id
+            chunks{
                 _id
+                fileId
             }
-            coverImage {
+        }
+    }
+`;
+
+export const CURRENT_WIKI_PLACE_ATTRIBUTES = `
+	mapImage {
+        _id
+        name
+        width
+        height
+        chunks{
+            _id
+            fileId
+        }
+        icon{
+            _id
+            chunks{
                 _id
-                name
-                width
-                height
-                chunks{
-                    _id
-                    fileId
-                }
-                icon{
-                    _id
-                    chunks{
-                        _id
-                        fileId
-                    }
-                }
+                fileId
             }
+        }
+    }
+`;
+
+const GET_CURRENT_WIKI = gql`
+    query currentWiki($wikiId: ID!){
+        wiki(wikiId: $wikiId) {
+            ${CURRENT_WIKI_ATTRIBUTES}
             ... on Place {
-                mapImage {
-	                _id
-	                name
-	                width
-	                height
-	                chunks{
-	                    _id
-	                    fileId
-	                }
-	                icon{
-	                    _id
-	                    chunks{
-	                        _id
-	                        fileId
-	                    }
-	                }
-	            }
+                ${CURRENT_WIKI_PLACE_ATTRIBUTES}
             }
         }
     }

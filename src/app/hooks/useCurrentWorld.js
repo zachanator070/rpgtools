@@ -2,28 +2,53 @@ import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
 
+export const CURRENT_WORLD_WIKIS = `
+	_id
+	name
+	type
+	canWrite	
+`;
+
+export const CURRENT_WORLD_FOLDERS = `
+	_id
+	name
+	canWrite
+	children{
+		_id
+	}
+	pages{
+		${CURRENT_WORLD_WIKIS}
+	}
+`;
+
+export const CURRENT_WORLD_PINS = `
+	pins{
+		_id
+		canWrite
+		page{
+			name
+			_id
+		}
+		map{
+			name
+			_id
+		}
+		x
+		y
+	}
+`;
+
 const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID!){
         world(worldId: $worldId){
 			name
 			_id
 			wikiPage {
-				name
 				_id
+				name
 			}
 			rootFolder{
-				_id
-				name
-				children{
-					_id
-				}
-				pages{
-					_id
-					name
-					type
-					canWrite
-				}
-				canWrite
+				${CURRENT_WORLD_FOLDERS}
 			}
 			roles{
 				_id
@@ -36,34 +61,13 @@ const GET_CURRENT_WORLD = gql`
 					subjectId
 				}
 			}
-			pins{
-				_id
-				canWrite
-				page{
-					_id
-				}
-				map{
-					_id
-				}
-				x
-				y
-			}
+			${CURRENT_WORLD_PINS}
 			folders{
-			    _id
-			    canWrite
-			    name
-			    children{
-			      _id
-			    }
-			    pages{
-			      _id
-			      name
-			      type
-			      canWrite
-			    }
+			    ${CURRENT_WORLD_FOLDERS}
 		    }
 	    }
     }
+    
 `;
 
 export default () => {

@@ -64,6 +64,7 @@ export const SearchBar = () => {
 							className='search-results shadow-sm'
 							style={{position: 'absolute', width: 'inherit'}}
 							dataSource={wikis}
+							locale={{emptyText: <div>No results :(</div>}}
 							renderItem={item => (
 								<a href='#' onClick={() => {
 								}}>

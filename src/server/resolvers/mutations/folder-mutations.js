@@ -64,7 +64,7 @@ export const folderMutations = {
 		const newFolder = await WikiFolder.create({name, world: parentFolder.world});
 		parentFolder.children.push(newFolder._id);
 		await parentFolder.save();
-		return newFolder;
+		return newFolder.world;
 	},
 	renameFolder: async (_, {folderId, name}, {currentUser}) => {
 		const folder = await WikiFolder.findById(folderId);
@@ -92,7 +92,7 @@ export const folderMutations = {
 		}
 
 		await folder.remove();
-		return folder;
+		return folder.world;
 
 	}
 };

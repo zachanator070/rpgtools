@@ -117,12 +117,23 @@ export const worldMutations = {
 			throw new Error(`You do not have permission to update this pin`);
 		}
 
-		pin.page = pageId;
+		let page = null;
+		if(pageId){
+			page = await WikiPage.findById(pageId);
+			if(!page){
+				throw new Error(`Wiki page does not exist for id ${pageId}`);
+			}
+		}
+
+		pin.page = page;
 		await pin.save();
 		await pin.populate({
 			path: 'map',
 			populate: {
-				path: 'world'
+				path: 'world',
+				populate: {
+					path: 'pins'
+				}
 			}
 		}).execPopulate();
 		return pin;

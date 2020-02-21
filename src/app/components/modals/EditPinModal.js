@@ -37,14 +37,15 @@ export const EditPinModal = () => {
 	}
 
 	let pinBeingEdited = null;
-	for(let pin of currentWorld.pins){
+	let possiblePins = currentWorld ? currentWorld.pins : [];
+	for(let pin of possiblePins){
 		if(pin._id === pinId){
 			pinBeingEdited = pin;
 		}
 	}
 
 	const save = async () => {
-		await updatePin(pinId, page._id);
+		await updatePin(pinId, page);
 		await setEditPinModalVisibility(false);
 	};
 
@@ -82,7 +83,7 @@ export const EditPinModal = () => {
 							showSearch
 							style={{width: 200}}
 							placeholder="Select a Wiki Page"
-							defaultValue={pinBeingEdited ? pinBeingEdited.page._id : null}
+							defaultValue={pinBeingEdited && pinBeingEdited.page ? pinBeingEdited.page._id : null}
 							optionFilterProp="children"
 							onChange={handleChange}
 							filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
