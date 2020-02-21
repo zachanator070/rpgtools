@@ -5,6 +5,7 @@ import {CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES} from "./useCurre
 const UPDATE_PLACE = gql`
 	mutation updatePlace($placeId: ID!, $mapImageId: ID){
 		updatePlace(placeId: $placeId, mapImageId: $mapImageId){
+			_id
             ${CURRENT_WIKI_PLACE_ATTRIBUTES}
 		}
 	}
