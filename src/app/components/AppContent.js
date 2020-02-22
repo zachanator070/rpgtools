@@ -10,7 +10,7 @@ import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
 
 const WikiContent = () => {
-	const {loading: wikiLoading} = useCurrentWiki();
+	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
 	const match = useRouteMatch();
 
 	return wikiLoading ? <LoadingView/> :
@@ -25,7 +25,7 @@ const WikiContent = () => {
 						</Route>
 						<Route path={`${match.path}/view`}>
 							<div>
-								<WikiView/>
+								<WikiView currentWiki={currentWiki}/>
 							</div>
 						</Route>
 					</Switch>

@@ -21,9 +21,17 @@ export const clientResolvers = {
 			cache.writeData({data: {editPinModalVisibility: visibility}});
 			return visibility;
 		},
+		setMapWikiVisibility: (_root, {visibility}, {client, cache}) => {
+			cache.writeData({data: {mapWikiVisibility: visibility}});
+			return visibility;
+		},
 		setPinBeingEdited: (_, {pinId}, {client, cache}) => {
 			cache.writeData({data: {pinBeingEdited: pinId}});
 			return pinId;
+		},
+		setMapWiki: (_, {mapWikiId}, {client, cache}) => {
+			cache.writeData({data: {mapWiki: mapWikiId}});
+			return mapWikiId;
 		}
 	},
 };
