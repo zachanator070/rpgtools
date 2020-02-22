@@ -79,25 +79,23 @@ export const SelectWorldModal = () => {
 				</Button>
 			]}
 		>
-			<div>
-				<Row>
-					<Col span={10}>
-						<div className='padding-md-left padding-md-right text-align-center'>
-							<h3 className='text-align-center'>Available Worlds</h3>
-							<List
-								bordered={true}
-								itemLayout="horizontal"
-								dataSource={worlds ? worlds.docs : []}
-								renderItem={getListItemComponent}
-							/>
-						</div>
-						<Divider type="vertical" />
-					</Col>
-					<Col span={14}>
-						{content}
-					</Col>
-				</Row>
-			</div>
+			<Row>
+				<Col span={10}>
+					<div className='padding-md-left padding-md-right text-align-center'>
+						<List
+							bordered={true}
+							itemLayout="horizontal"
+							dataSource={worlds ? worlds.docs : []}
+							renderItem={getListItemComponent}
+						/>
+					</div>
+				</Col>
+				<Col span={1} style={{borderRight: 'thin solid lightgrey'}}>
+				</Col>
+				<Col span={13}>
+					{content}
+				</Col>
+			</Row>
 		</Modal>
 	);
 };

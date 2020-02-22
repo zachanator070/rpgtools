@@ -6,12 +6,22 @@ import useCurrentMap from "../../hooks/useCurrentMap";
 import {LoadingView} from "../LoadingView";
 import useCreatePin from "../../hooks/useCreatePin";
 import {Link} from "react-router-dom";
+import {WikiView} from "../wiki/WikiView";
+import useMapWikiVisibility from "../../hooks/useMapWikiVisibility";
+import useSetMapWikiVisibility from "../../hooks/useSetMapWikiVisibility";
+import {SlidingDrawer} from "../SlidingDrawer";
+import useMapWiki from "../../hooks/useMapWiki";
+import {MapBreadCrumbs} from "./MapBreadCrumbs";
 
 export const MapView = () => {
 
 	const {currentWorld, loading} = useCurrentWorld();
 	const {currentMap, loading: mapLoading} = useCurrentMap();
 	const {createPin} = useCreatePin();
+
+	const {mapWikiVisibility} = useMapWikiVisibility();
+	const {setMapWikiVisibility} = useSetMapWikiVisibility();
+	const {mapWiki} = useMapWiki();
 
 	const getPins = () => {
 		let pins = [];
@@ -59,24 +69,17 @@ export const MapView = () => {
 	return (
 		<div id='mapContainer' style={{position: 'relative', height: '100%'}}
 		     className='overflow-hidden flex-column flex-grow-1'>
-			{/*<MapBreadCrumbs/>*/}
+			<MapBreadCrumbs/>
 			<div className='flex-grow-1 flex-column'>
-				{/*{this.props.displayWiki ?*/}
-				{/*	<SlidingDrawer*/}
-				{/*		side='left'*/}
-				{/*		show={this.props.ui.showLeftDrawer}*/}
-				{/*		setShow={this.props.showLeftDrawer}*/}
-				{/*		height={this.state.height}*/}
-				{/*		maxWidth={this.state.width}*/}
-				{/*	>*/}
-				{/*		<WikiView*/}
-				{/*			gotoPage={this.props.gotoPage}*/}
-				{/*			currentWiki={this.props.displayWiki}*/}
-				{/*			currentWorld={this.props.currentWorld}*/}
-				{/*			allPins={this.props.allPins}*/}
-				{/*		/>*/}
-				{/*	</SlidingDrawer>*/}
-				{/*	: null}*/}
+				{mapWiki &&
+					<SlidingDrawer
+						side='left'
+						show={mapWikiVisibility}
+						setShow={setMapWikiVisibility}
+					>
+						<WikiView currentWiki={mapWiki}/>
+					</SlidingDrawer>
+				}
 				{map}
 			</div>
 		</div>

@@ -28,7 +28,9 @@ cache.writeData(
 			selectWorldModalVisibility: false,
 			worldPermissionModalVisibility: false,
 			editPinModalVisibility: false,
-			pinBeingEdited: null
+			mapWikiVisibility: false,
+			pinBeingEdited: null,
+			mapWiki: null,
 		}
 	}
 );

@@ -4,6 +4,8 @@ import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useSetEditPinModalVisibility from "../../hooks/useSetEditPinModalVisibility";
 import useSetPinBeingEdited from "../../hooks/useSetPinBeingEdited";
+import useSetMapWikiVisibility from "../../hooks/useSetMapWikiVisibility";
+import useSetMapWiki from "../../hooks/useSetMapWiki";
 
 export const Pin = ({pin, translate}) => {
 
@@ -11,6 +13,9 @@ export const Pin = ({pin, translate}) => {
 	const {currentWorld} = useCurrentWorld();
 	const {setEditPinModalVisibility} = useSetEditPinModalVisibility();
 	const {setPinBeingEdited} = useSetPinBeingEdited();
+
+	const {setMapWikiVisibility} = useSetMapWikiVisibility();
+	const {setMapWiki} = useSetMapWiki();
 
 	const editButton = pin.canWrite ?
 		<a href='#' className='margin-md-left' onClick={async () => {
@@ -28,7 +33,9 @@ export const Pin = ({pin, translate}) => {
 		pinPopupContent = <div>
 			<h2>{pin.page.name}</h2>
 			<h3>{pin.page.type}</h3>
-			<a href='#' onClick={() => {
+			<a href='#' onClick={async () => {
+				await setMapWikiVisibility(true);
+				await setMapWiki(pin.page._id);
 			}}>Details</a>
 			{pin.page.type === 'place' ?
 				<a className='margin-md-left' href='#' onClick={() => {
@@ -57,6 +64,7 @@ export const Pin = ({pin, translate}) => {
 				height: "15px",
 				backgroundColor: "crimson",
 				border: "3px solid powderblue"
+				cursor: 'pointer'
 			}}/>
 		</Popover>
 	);

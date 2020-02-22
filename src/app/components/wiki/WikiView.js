@@ -1,18 +1,16 @@
 import React, {Component, useEffect, useRef, useState} from 'react';
 import {Icon} from "antd";
 import {Editor} from "./Editor";
-import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 
-export const WikiView = () => {
+export const WikiView = ({currentWiki}) => {
 
 	const history = useHistory();
 
 	const [height, setHeight] = useState(0);
 	const [width, setWidth] = useState(0);
 
-	const {currentWiki} = useCurrentWiki();
 	const {currentWorld} = useCurrentWorld();
 
 	const wikiView = useRef(null);
@@ -65,7 +63,7 @@ export const WikiView = () => {
 	let pin = getPinFromPageId(currentWiki._id);
 	if (pin) {
 		gotoMap = <a href='#' onClick={() => {
-			history.push(`/ui/world/${currentWorld._id}/map/${pin.map}`);
+			history.push(`/ui/world/${currentWorld._id}/map/${pin.map._id}`);
 		}}>
 			See on map <Icon type="export"/>
 		</a>;

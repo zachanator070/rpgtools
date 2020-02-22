@@ -1,48 +1,40 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Breadcrumb} from "antd";
+import useCurrentMap from "../../hooks/useCurrentMap";
+import useCurrentWorld from "../../hooks/useCurrentWorld";
+import {useHistory} from 'react-router-dom';
+import {useAllWikis} from "../../hooks/useAllWikis";
 
 export const MapBreadCrumbs = () => {
 
-	getWikiPageFromMapId = (mapId) => {
-		for (let page of this.props.allWikis) {
-			if (page.mapImage && page.mapImage._id === mapId) {
-				return page;
-			}
-		}
-	};
+	const {currentMap} = useCurrentMap();
+	const {currentWorld} = useCurrentWorld();
+	const history = useHistory();
 
-	getPinFromPageId = (pageId) => {
-		for (let pin of this.props.allPins) {
+	const getPinFromPageId = (pageId) => {
+		for (let pin of currentWorld.pins) {
 			if (pin.page && pin.page._id === pageId) {
 				return pin;
 			}
 		}
 	};
 
-	if (!this.props.currentMap.image || !this.props.currentWorld || this.props.allWikis.length === 0) {
-		return <div></div>;
-	}
-
-	let currentMap = this.props.currentMap.image;
 	const path = [];
+	let nextMapToRender = currentMap;
 	while (true) {
-		const currentPage = this.getWikiPageFromMapId(currentMap._id);
-		if (!currentPage) {
-			break;
-		}
-		const currentPin = this.getPinFromPageId(currentPage._id);
+		const currentPin = getPinFromPageId(currentMap._id);
 		path.push({
-			name: currentPage.name,
-			id: currentMap._id
+			name: nextMapToRender.name,
+			id: nextMapToRender._id
 		});
 
-		if (currentPage._id === this.props.currentWorld.wikiPage._id) {
+		if (nextMapToRender._id === currentWorld.wikiPage._id) {
 			break;
 		}
 		if (!currentPin) {
 			break;
 		}
-		currentMap = currentPin.map;
+		nextMapToRender = currentPin.map;
 	}
 
 	const breadCrumbs = [];
@@ -50,7 +42,7 @@ export const MapBreadCrumbs = () => {
 		breadCrumbs.push(
 			<Breadcrumb.Item key={map.id}>
 				<a href="#" onClick={() => {
-					this.props.gotoPage('/ui/map', {map: map.id})
+					history.push(`/ui/world/${currentWorld._id}/map/${map.id}`);
 				}}>{map.name}</a>
 			</Breadcrumb.Item>
 		);
