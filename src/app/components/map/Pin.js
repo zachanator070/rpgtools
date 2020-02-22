@@ -63,7 +63,7 @@ export const Pin = ({pin, translate}) => {
 				width: "15px",
 				height: "15px",
 				backgroundColor: "crimson",
-				border: "3px solid powderblue"
+				border: "3px solid powderblue",
 				cursor: 'pointer'
 			}}/>
 		</Popover>
