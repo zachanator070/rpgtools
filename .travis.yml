@@ -1,0 +1,13 @@
+sudo: true
+dist: trusty
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y install make
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+        - make build
+        - make publish
