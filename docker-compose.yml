@@ -44,8 +44,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    env_file:
-      - .env
     volumes:
      - ./src:/home/node/app/src
      - ./dist:/home/node/app/dist
