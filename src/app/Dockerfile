@@ -1,9 +1,9 @@
-FROM node:current
+FROM node:12.16.1
 
 WORKDIR /home/node/app
-ADD package.json package.json
-ADD package-lock.json package-lock.json
+ADD src/app/package.json package.json
 RUN npm install
-RUN npm install -g kill-port
 ADD webpack.config.js webpack.config.js
 ADD webpack-dev.config.js webpack-dev.config.js
+
+CMD ["npm", "run", "start"]
