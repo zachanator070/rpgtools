@@ -1,5 +1,5 @@
 os: linux
-dist: trusty
+dist: bionic
 before_install:
 - sudo apt-get update
 - sudo apt-get -y install make docker-compose
