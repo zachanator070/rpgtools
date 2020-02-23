@@ -1,8 +1,9 @@
 os: linux
 dist: bionic
+language: minimal
 before_install:
 - sudo apt-get update
-- sudo apt-get -y install make docker-compose
+- sudo apt-get -y install make docker-compose gnupg2 pass
 jobs:
   include:
   - stage: build docker image
