@@ -1,0 +1,9 @@
+[Unit]
+Description=Tool set for playing an RPG game
+Documentation=https://github.com/zachanator070/rpgtools
+After=docker.service mongodb.service
+Wants=docker.service mongodb.service
+
+[Service]
+ExecStart=docker run -p 3000:3000 --env-file=/etc/rpgtools/.env --network="host" zachanator070/rpgtools
+Restart=always
