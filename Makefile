@@ -29,6 +29,6 @@ prod: build
 	docker-compose up prod mongodb-prod redis-prod
 
 publish:
-	docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
 	docker tag rpgtools $DOCKER_USERNAME/rpgtools
 	docker push $DOCKER_USERNAME/rpgtools
