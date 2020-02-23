@@ -33,7 +33,7 @@ server.use(cookieParser());
 
 gqlServer.applyMiddleware({app: server, path: '/api'});
 
-const port = process.env['PORT'] || 3000;
+const port = process.env.SERVER_PORT || 3000;
 
 server.listen(port, () => {
 	console.log(`The server is running and listening at http://localhost:${port}`);

@@ -30,3 +30,13 @@ publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
 	docker tag rpgtools ${DOCKER_USERNAME}/rpgtools
 	docker push ${DOCKER_USERNAME}/rpgtools
+
+install:
+	sudo apt update
+	sudo apt install mongodb
+	sudo mkdir /etc/rpgtools
+	sudo cp .env.exmaple /etc/rpgtools/.env
+	sudo cp rpgtools.service /lib/systemd/system
+	sudo systemd daemon-reload
+	sudo systemd start rpgtools
+	echo rpgtools is now available
