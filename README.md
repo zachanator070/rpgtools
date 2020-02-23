@@ -1,4 +1,4 @@
-# rpgtools
+# rpgtools ![build](https://travis-ci.org/zachanator070/rpgtools.svg?branch=master)
 
 Tool set for playing an RPG game
 
