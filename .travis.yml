@@ -1,5 +1,6 @@
-sudo: true
+os: linux
 dist: trusty
+language: node_js
 before_install:
 - sudo apt-get update
 - sudo apt-get -y install make
