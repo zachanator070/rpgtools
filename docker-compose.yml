@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.dev
     command: "npm run start-dev"
     env_file:
-      - old.env
+      - .env
     volumes:
     - ./src:/home/node/app/src
     - ./dist:/home/node/app/dist
@@ -32,7 +32,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     env_file:
-     - old.env
+     - .env
     volumes:
      - ./src:/home/node/app/src
      - ./dist:/home/node/app/dist

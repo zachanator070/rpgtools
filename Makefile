@@ -18,7 +18,7 @@ restart: down dev
 stop:
 	docker-compose stop
 
-build:
+build: init-env
 	docker-compose up build-prod
 	docker build -t rpgtools .
 
