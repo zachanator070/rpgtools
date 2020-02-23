@@ -4,7 +4,7 @@ services:
   dev:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     command: "npm run start-dev"
     env_file:
       - .env
@@ -21,17 +21,7 @@ services:
       - rpgtools
 
   prod:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: "npm run start"
-    env_file:
-    - .env
-    volumes:
-    - ./src:/home/node/app/src
-    - ./dist:/home/node/app/dist
-    ports:
-    - "${PORT:-3000}:${PORT:-3000}"
+    image: rpgtools
     depends_on:
       - mongodb-prod
     networks:
@@ -40,7 +30,7 @@ services:
   build-dev:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     env_file:
      - .env
     volumes:
@@ -53,7 +43,7 @@ services:
   build-prod:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     env_file:
       - .env
     volumes:

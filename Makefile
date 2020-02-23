@@ -20,12 +20,15 @@ stop:
 
 build:
 	docker-compose up build-prod
+	docker build -t rpgtools .
 
 build-docker-dev:
 	docker-compose build dev mongodb-dev build-dev
 
-build-docker-prod:
-	docker-compose build prod mongodb-prod build-prod
-
-prod: build-docker-prod
+prod: build
 	docker-compose up prod mongodb-prod redis-prod
+
+publish:
+	docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+	docker tag rpgtools $DOCKER_USERNAME/rpgtools
+	docker push $DOCKER_USERNAME/rpgtools
