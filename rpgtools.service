@@ -4,6 +4,9 @@ Documentation=https://github.com/zachanator070/rpgtools
 After=docker.service mongodb.service
 Wants=docker.service mongodb.service
 
+[Install]
+WantedBy=multi-user.target
+
 [Service]
-ExecStart=docker run --env-file=/etc/rpgtools/.env --network="host" zachanator070/rpgtools
+ExecStart=/usr/bin/docker run -p 3000:3000 --env-file=/etc/rpgtools/.env --network="host" zachanator070/rpgtools
 Restart=always
