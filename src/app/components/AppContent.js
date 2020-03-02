@@ -4,10 +4,11 @@ import {LoadingView} from "./LoadingView";
 import {MapView} from "./map/MapView";
 import React from "react";
 import useCurrentWiki from "../hooks/useCurrentWiki";
-import {Col, Row} from "antd";
+import {Col, Row, Icon} from "antd";
 import {FolderView} from "./wiki/FolderView";
 import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
+import {TeamOutlined} from '@ant-design/icons';
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
@@ -31,6 +32,11 @@ const WikiContent = () => {
 					</Switch>
 				</Col>
 				<Col span={4} className='padding-md'>
+					<Route path={`${match.path}/view`}>
+						{currentWiki.canWrite &&
+							<a title={'View permissions for this page'} ><Icon type='team' theme='outlined' style={{fontSize: '20px'}}/></a>
+						}
+					</Route>
 				</Col>
 			</Row>
 

@@ -28,6 +28,10 @@ To run this simple install use the command:
 This simple install is not secure. To tighten security for an install please take the following actions
 to address security vulnerabilities:
 - replace private keys in /etc/rpgtools/.env
+    - You can generate a new key by using the openssl unix utility with the command `openssl rand -base64 x`
+    where x is the number of bytes you want the key to have. 
+    - If you don't want the NSA or quantum computers to crack your authentication tokens, use a private key
+    of at least 384 bytes (3072-bit) see [wikipedia](https://en.wikipedia.org/wiki/Key_size#Asymmetric_algorithm_key_lengths)
 - use https
     - recommended config would be to use a reverse proxy like nginx or apache with a generated certificate
     using letsencrypt
