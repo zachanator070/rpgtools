@@ -8,6 +8,7 @@ export const clientTypeDefs = gql`
 		createWorldModalVisibility: Boolean!
 		selectWorldModalVisibility: Boolean!
 		worldPermissionModalVisibility: Boolean!
+		permissionModalVisibility: Boolean!
 		editPinModalVisibility: Boolean!
 		mapWikiVisibility: Boolean!
 		

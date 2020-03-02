@@ -28,6 +28,7 @@ cache.writeData(
 			selectWorldModalVisibility: false,
 			worldPermissionModalVisibility: false,
 			editPinModalVisibility: false,
+			permissionModalVisibility: false,
 			mapWikiVisibility: false,
 			pinBeingEdited: null,
 			mapWiki: null,

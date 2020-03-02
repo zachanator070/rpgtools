@@ -23,7 +23,7 @@ const MAP_WIKI=gql`
 export default () => {
 
 	const {data: mapWikiIdData} = useQuery(MAP_WIKI_ID);
-	const {data, loading, error} = useQuery(MAP_WIKI, {variables: {wikiId: mapWikiIdData.mapWiki}});
+	const {data, loading, error} = useQuery(MAP_WIKI, {variables: {wikiId: mapWikiIdData && mapWikiIdData.mapWiki}});
 
 	return {
 		mapWiki: data ? data.wiki : null,
