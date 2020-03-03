@@ -8,10 +8,12 @@ import {Col, Row, Icon} from "antd";
 import {FolderView} from "./wiki/FolderView";
 import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
-import {TeamOutlined} from '@ant-design/icons';
+import useSetPermissionModalVisibility from "../hooks/useSetPermissionModalVisibility";
+import {Modals} from "./App";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
+	const {setPermissionModalVisibility} = useSetPermissionModalVisibility();
 	const match = useRouteMatch();
 
 	return wikiLoading ? <LoadingView/> :
@@ -34,7 +36,9 @@ const WikiContent = () => {
 				<Col span={4} className='padding-md'>
 					<Route path={`${match.path}/view`}>
 						{currentWiki.canWrite &&
-							<a title={'View permissions for this page'} ><Icon type='team' theme='outlined' style={{fontSize: '20px'}}/></a>
+							<a title={'View permissions for this page'} onClick={async () => {await setPermissionModalVisibility(true);}}>
+								<Icon type='team' theme='outlined' style={{fontSize: '20px'}}/>
+							</a>
 						}
 					</Route>
 				</Col>
@@ -62,9 +66,11 @@ export const AppContent = () => {
 	return (
 		<Switch>
 			<Route path={`${match.path}/map/:map_id`}>
+				<Modals/>
 				<MapView/>
 			</Route>
 			<Route path={`${match.path}/wiki/:wiki_id`}>
+				<Modals/>
 				<WikiContent/>
 			</Route>
 			{/*<Route path="/ui/game">*/}

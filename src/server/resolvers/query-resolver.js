@@ -145,37 +145,5 @@ export default {
 
 		return foundWiki;
 	},
-	usersWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {
-		const users = [];
-		for(let permission of permissions){
-			const permissionAssignments = (await PermissionAssignment.find({permission: permission.permission, subjectId: permission.subjectId})).map(assignment => assignment._id);
-			if(permissionAssignments.length > 0){
-				for(let permissionAssignment of permissionAssignments){
-					if(!await permissionAssignment.userCanRead(currentUser)){
-						throw new Error(`You do not have administrative rights for the permission "${permissionAssignment.permission}" for the subject ${permissionAssignment.subjectId}`);
-					}
-				}
-				users.push(... await User.find({permissions: {$in: permissionAssignments}}));
-			}
-		}
-
-		return users;
-
-	}),
-	rolesWithPermissions: authenticated( async (_, {permissions, subjectId}, {currentUser}) => {
-		const roles = [];
-		for(let permission of permissions){
-			const permissionAssignments = (await PermissionAssignment.find({permission: permission.permission, subjectId: permission.subjectId})).map(assignment => assignment._id);
-			if(permissionAssignments.length > 0){
-				for(let permissionAssignment of permissionAssignments){
-					if(!await permissionAssignment.userCanRead(currentUser)){
-						throw new Error(`You do not have administrative rights for the permission "${permissionAssignment.permission}" for the subject ${permissionAssignment.subjectId}`);
-					}
-				}
-				roles.push(... await Role.find({permissions: {$in: permissionAssignments}}));
-			}
-		}
-		return roles;
-	})
 
 };

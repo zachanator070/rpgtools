@@ -1,4 +1,11 @@
 
+install-all:
+	cp src/server/package.json package.json
+	npm install
+	cp src/app/package.json package.json
+	npm install
+	rm package.json
+
 dev: init-env dev-up logs
 
 init-env:

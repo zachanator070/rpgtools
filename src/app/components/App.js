@@ -11,14 +11,16 @@ import {DefaultView} from "./DefaultView";
 import {SelectWorldModal} from "./modals/SelectWorldModal";
 import {AppContent} from "./AppContent";
 import {EditPinModal} from "./modals/EditPinModal";
+import {PermissionModal} from "./modals/PermissionModal";
 
-const Header = () => {
+export const Modals = () => {
 	return (
 		<>
 			<LoginModal/>
 			<RegisterModal/>
 			<CreateWorldModal/>
 			<SelectWorldModal/>
+			<PermissionModal/>
 			<EditPinModal/>
 			<NavBar/>
 		</>
@@ -30,11 +32,10 @@ export default () => {
 	return (
 		<Switch>
 			<Route path="/ui/world/:world_id">
-				<Header/>
 				<AppContent/>
 			</Route>
 			<Route exact path={'/'}>
-				<Header/>
+				<Modals/>
 				<DefaultView/>
 			</Route>
 			<Route>

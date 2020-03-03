@@ -1,6 +1,68 @@
 import QueryResolver from "./query-resolver";
 import MutationResolver from "./mutation-resolver";
 import {WikiFolder} from "../models/wiki-folder";
+import {PermissionAssignment} from "../models/permission-assignement";
+import {User} from "../models/user";
+import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
+import {Role} from '../models/role';
+
+const getUserPermissionAssignments = async (permissions, subject, currentUser) => {
+	const assignments = [];
+	for(let permission of permissions){
+		let assignment = await PermissionAssignment.findOne({permission, subjectId: subject._id});
+		if(!assignment){
+			assignment = await PermissionAssignment.create({permission: permission, subjectId: subject._id});
+		}
+		if(!await assignment.userCanRead(currentUser)){
+			continue;
+		}
+		const users = await User.find({permissions: assignment._id});
+		for(let user of users){
+			assignments.push({permission, subjectId: subject._id, user: user});
+		}
+	}
+	return assignments;
+};
+const getRolePermissionAssignments = async (permissions, subject, currentUser) => {
+	const assignments = [];
+	for(let permission of permissions){
+		let assignment = await PermissionAssignment.findOne({permission, subjectId: subject._id});
+		if(!assignment){
+			assignment = await PermissionAssignment.create({permission: permission, subjectId: subject._id});
+		}
+		if(!await assignment.userCanRead(currentUser)){
+			continue;
+		}
+		const users = await Role.find({permissions: assignment._id});
+		for(let user of users){
+			assignments.push({permission, subjectId: subject._id, user: user});
+		}
+	}
+	return assignments;
+};
+
+const permissionResolvers = {
+	userPermissionAssignments: async (wikiPage, _, {currentUser}) => {
+		return getUserPermissionAssignments(WIKI_PERMISSIONS, wikiPage, currentUser);
+	},
+	rolePermissionAssignments: async (wikiPage, _, {currentUser}) => {
+		const assignments = [];
+		for(let permission of WIKI_PERMISSIONS){
+			let assignment = await PermissionAssignment.findOne({permission, subjectId: wikiPage._id});
+			if(!assignment){
+				assignment = await PermissionAssignment.create({permission, subjectId: wikiPage._id});
+			}
+			if(!await assignment.userCanRead(currentUser)){
+				continue;
+			}
+			const roles = await Role.find({permissions: assignment._id});
+			for(let role of roles){
+				assignments.push({permission, subjectId: wikiPage._id, role: role});
+			}
+		}
+		return assignments;
+	}
+};
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -51,6 +113,40 @@ export const serverResolvers = {
 				}
 			}
 			return folders;
+		},
+		userPermissionAssignments: async (world, _, {currentUser}) => {
+			const assignments = [];
+			for(let permission of WORLD_PERMISSIONS){
+				let assignment = await PermissionAssignment.findOne({permission: permission, subjectId: world._id});
+				if(!assignment){
+					assignment = await PermissionAssignment.create({permission: permission, subjectId: world._id});
+				}
+				if(!await assignment.userCanRead(currentUser)){
+					continue;
+				}
+				const users = await User.find({permissions: assignment._id});
+				for(let user of users){
+					assignments.push({permission, subjectId: world._id, user: user});
+				}
+			}
+			return assignments;
+		},
+		rolePermissionAssignments: async (world, _, {currentUser}) => {
+			const assignments = [];
+			for(let permission of WORLD_PERMISSIONS){
+				let assignment = await PermissionAssignment.findOne({permission, subjectId: world._id});
+				if(!assignment){
+					assignment = await PermissionAssignment.create({permission, subjectId: world._id});
+				}
+				if(!await assignment.userCanRead(currentUser)){
+					continue;
+				}
+				const roles = await Role.find({permissions: assignment._id});
+				for(let role of roles){
+					assignments.push({permission, subjectId: world._id, role: role});
+				}
+			}
+			return assignments;
 		}
 	},
 	User: {
@@ -112,16 +208,19 @@ export const serverResolvers = {
 		canWrite: async (page, _, {currentUser}) => {
 			return await page.userCanWrite(currentUser);
 		},
+		...permissionResolvers,
 	},
 	Person: {
 		canWrite: async (person, _, {currentUser}) => {
 			return await person.userCanWrite(currentUser);
-		}
+		},
+		...permissionResolvers,
 	},
 	Place: {
 		canWrite: async (place, _, {currentUser}) => {
 			return await place.userCanWrite(currentUser);
-		}
+		},
+		...permissionResolvers,
 	},
 	WikiFolder: {
 		children: async (folder, _, {currentUser}) => {

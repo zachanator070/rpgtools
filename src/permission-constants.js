@@ -1,21 +1,23 @@
-export const ROLE_ADMIN = 'Able to Assign Roles or Permissions to Users and Create or Change Role Definitions';
-export const WORLD_READ = 'See this World in Search Results';
-export const WIKI_READ_ALL = 'Read All Wiki Pages';
-export const WIKI_RW_ALL = 'Write to Any Wiki Page';
-export const WIKI_READ = 'Read Access to a Single Wiki Page';
-export const WIKI_RW = 'Write Access to a Single Wiki Page';
-export const FOLDER_READ_ALL = 'Read All Wiki Folders';
-export const FOLDER_RW_ALL = 'Write to Any Wiki Folder';
-export const FOLDER_READ = 'Read Access to a Single Wiki Folder';
-export const FOLDER_RW = 'Write Access to a Single Wiki Folder';
-export const GAME_HOST = 'Able to Host Games';
-export const GAME_READ = 'Read Access to a Single Game';
-export const GAME_WRITE = 'Edit Access to a Single Game';
-export const WORLD_CREATE = 'Create World Access';
+export const ROLE_ADMIN = 'Able to add or remove members from a role';
+export const ROLE_ADMIN_ALL = 'Able to edit any role in this world';
+export const WORLD_READ = 'See this world in search results';
+export const WIKI_READ_ALL = 'Read all wiki pages';
+export const WIKI_RW_ALL = 'Write to any wiki page';
+export const WIKI_READ = 'Read access to a single wiki page';
+export const WIKI_RW = 'Write access to a single wiki page';
+export const FOLDER_READ_ALL = 'Read all wiki folders';
+export const FOLDER_RW_ALL = 'Write to any wiki folder';
+export const FOLDER_READ = 'Read access to a single wiki folder';
+export const FOLDER_RW = 'Write access to a single wiki folder';
+export const GAME_HOST = 'Able to host games';
+export const GAME_READ = 'Read access to a single game';
+export const GAME_WRITE = 'Edit access to a single game';
+export const WORLD_CREATE = 'Create world access';
 
 // probably a better way to do this
 export const ALL_PERMISSIONS = [
 	ROLE_ADMIN,
+	ROLE_ADMIN_ALL,
 	WORLD_READ,
 	WIKI_READ_ALL,
 	WIKI_RW_ALL,
@@ -30,3 +32,9 @@ export const ALL_PERMISSIONS = [
 	GAME_WRITE,
 	WORLD_CREATE
 ];
+
+export const WIKI_PERMISSIONS = [WIKI_READ, WIKI_RW];
+
+export const WORLD_PERMISSIONS = [ROLE_ADMIN_ALL, WORLD_READ, WIKI_READ_ALL, WIKI_RW_ALL, FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST];
+
+export const PUBLIC_WORLD_PERMISSIONS = [WIKI_READ_ALL, FOLDER_READ_ALL, WORLD_READ];

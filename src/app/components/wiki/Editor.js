@@ -6,7 +6,7 @@ import Snow from 'quill/themes/snow';
 import Bold from 'quill/formats/bold';
 import Italic from 'quill/formats/italic';
 import Header from 'quill/formats/header';
-import "quill-mention";
+import mention from "quill-mention";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
@@ -20,7 +20,8 @@ Quill.register({
 	'themes/snow': Snow,
 	'formats/bold': Bold,
 	'formats/italic': Italic,
-	'formats/header': Header
+	'formats/header': Header,
+	'modules/mention': mention
 });
 
 export const Editor = ({content, readOnly, onInit}) => {

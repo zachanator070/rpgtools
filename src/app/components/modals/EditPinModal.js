@@ -1,9 +1,8 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Form, Modal, Select} from "antd";
 import useEditPinModalVisibility from "../../hooks/useEditPinModalVisibility";
 import usePinBeingEdited from "../../hooks/usePinBeingEdited";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import {LoadingView} from "../LoadingView";
 import useSetEditPinModalVisibility from "../../hooks/useSetEditPinModalVisibility";
 import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
 import {useUpdatePin} from "../../hooks/useUpdatePin";
@@ -33,7 +32,7 @@ export const EditPinModal = () => {
 	}, [currentWorld, searchPhrase]);
 
 	if(worldLoading){
-		return <LoadingView/>;
+		return <></>;
 	}
 
 	let pinBeingEdited = null;

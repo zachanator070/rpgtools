@@ -31,58 +31,58 @@ export const authorizationMutations = {
 			throw Error(`You do not have the required permission: ${ROLE_ADMIN}`)
 		}
 	},
-	setRolePermissions: async (_, {roleId, permissions}, {currentUser}) => {
-
-		const role = await Role.findById(roleId);
-		if(!role){
-			throw new Error('Role does not exist');
-		}
-
-		if(!await role.userCanWrite(currentUser)){
-			throw new Error(`You do not have the required permission: ${ROLE_ADMIN}`);
-		}
-
-		const newPermissions = [];
-
-		for(let rolePermission of role.permissions){
-			let found = false;
-			for(let requestedPermission of permissions){
-				if(rolePermission.permission === requestedPermission.permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
-					found = true;
-				}
-			}
-			if(!found){
-				if(!await rolePermission.userCanWrite(currentUser)){
-					throw new Error(`You do not have administrative rights for the permission ${rolePermission.permission} for subject ${rolePermission.subjectId}`);
-				}
-				await rolePermission.remove();
-			}
-			else{
-				newPermissions.push(rolePermission);
-			}
-		}
-
-
-		for (let requestedPermission of permissions) {
-			let found = false;
-			for (let rolePermission of role.permissions) {
-				if(rolePermission.permission === requestedPermission.permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
-					found = true;
-				}
-			}
-			if(!found){
-				const newPermission = new PermissionAssignment({...requestedPermission});
-				if(!await newPermission.userCanWrite(currentUser)){
-					throw new Error(`You do not have administrative rights for the permission ${newPermission.permission} for subject ${newPermission.subjectId}`);
-				}
-				await newPermission.save();
-				newPermissions.push(newPermission);
-			}
-		}
-
-		role.permissions = newPermissions;
-		return await role.save();
-	},
+	// setRolePermissions: async (_, {roleId, permissions}, {currentUser}) => {
+	//
+	// 	const role = await Role.findById(roleId);
+	// 	if(!role){
+	// 		throw new Error('Role does not exist');
+	// 	}
+	//
+	// 	if(!await role.userCanWrite(currentUser)){
+	// 		throw new Error(`You do not have the required permission: ${ROLE_ADMIN}`);
+	// 	}
+	//
+	// 	const newPermissions = [];
+	//
+	// 	for(let rolePermission of role.permissions){
+	// 		let found = false;
+	// 		for(let requestedPermission of permissions){
+	// 			if(rolePermission.permission === requestedPermission.permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
+	// 				found = true;
+	// 			}
+	// 		}
+	// 		if(!found){
+	// 			if(!await rolePermission.userCanWrite(currentUser)){
+	// 				throw new Error(`You do not have administrative rights for the permission ${rolePermission.permission} for subject ${rolePermission.subjectId}`);
+	// 			}
+	// 			await rolePermission.remove();
+	// 		}
+	// 		else{
+	// 			newPermissions.push(rolePermission);
+	// 		}
+	// 	}
+	//
+	//
+	// 	for (let requestedPermission of permissions) {
+	// 		let found = false;
+	// 		for (let rolePermission of role.permissions) {
+	// 			if(rolePermission.permission === requestedPermission.permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
+	// 				found = true;
+	// 			}
+	// 		}
+	// 		if(!found){
+	// 			const newPermission = new PermissionAssignment({...requestedPermission});
+	// 			if(!await newPermission.userCanWrite(currentUser)){
+	// 				throw new Error(`You do not have administrative rights for the permission ${newPermission.permission} for subject ${newPermission.subjectId}`);
+	// 			}
+	// 			await newPermission.save();
+	// 			newPermissions.push(newPermission);
+	// 		}
+	// 	}
+	//
+	// 	role.permissions = newPermissions;
+	// 	return await role.save();
+	// },
 	giveUserPermission: async (_, {userId, requestedPermission}, {currentUser}) => {
 
 		const newPermission = new PermissionAssignment({...requestedPermission});
