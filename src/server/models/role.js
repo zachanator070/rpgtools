@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
-import {ROLE_ADMIN} from "../../permission-constants";
+import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../permission-constants";
 
 const Schema = mongoose.Schema;
 
@@ -22,7 +22,7 @@ const roleSchema = new Schema({
 });
 
 roleSchema.methods.userCanWrite = async function(user) {
-	return await userHasPermission(user, ROLE_ADMIN, this.world);
+	return await userHasPermission(user, ROLE_ADMIN, this._id) || await userHasPermission(user, ROLE_ADMIN_ALL, this.world);
 };
 
 roleSchema.methods.userCanRead = async function(user){

@@ -68,6 +68,37 @@ export const userHasPermission = async function (user, permission, subjectId) {
 	return false;
 };
 
+export const getSubjectFromPermission = async (permission, subjectId) => {
+	let subject = null;
+	switch(permission){
+		case ROLE_ADMIN:
+		case WORLD_READ:
+		case WIKI_READ_ALL:
+		case WIKI_RW_ALL:
+		case FOLDER_READ_ALL:
+		case FOLDER_RW_ALL:
+		case GAME_HOST:
+			subject = await World.findById(subjectId);
+			break;
+		case WIKI_READ:
+		case WIKI_RW:
+			subject = await WikiPage.findById(subjectId);
+			break;
+		case FOLDER_READ:
+		case FOLDER_RW:
+			subject= await WikiFolder.findById(subjectId);
+			break;
+		case GAME_READ:
+		case GAME_WRITE:
+			subject = await Game.findById(subjectId);
+			break;
+		case WORLD_CREATE:
+		default:
+			break;
+	}
+	return subject;
+};
+
 export const getWorldFromPermission = async (permission, subjectId) => {
 	let world = null;
 	switch(permission){

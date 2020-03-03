@@ -31,6 +31,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.2.0",
     "file-loader": "^5.0.2",
+    "gql-tag": "^1.0.1",
     "graphql": "^14.6.0",
     "graphql-tag": "latest",
     "html-loader": "^0.5.5",

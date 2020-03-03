@@ -38,6 +38,25 @@ export const CURRENT_WORLD_PINS = `
 	}
 `;
 
+export const CURRENT_WORLD_PERMISSIONS = `
+
+	userPermissionAssignments {
+		permission
+		user {
+			_id
+			username
+		}
+	}
+	rolePermissionAssignments {
+		permission
+		role {
+			_id
+			name
+		}
+	}
+	
+`;
+
 const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID!){
         world(worldId: $worldId){
@@ -65,6 +84,7 @@ const GET_CURRENT_WORLD = gql`
 			folders{
 			    ${CURRENT_WORLD_FOLDERS}
 		    }
+		    ${CURRENT_WORLD_PERMISSIONS}
 	    }
     }
     

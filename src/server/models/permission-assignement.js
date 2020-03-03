@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import {ALL_PERMISSIONS, ROLE_ADMIN} from '../../permission-constants';
-import {getWorldFromPermission, userHasPermission} from "../authorization-helpers";
+import {ALL_PERMISSIONS} from '../../permission-constants';
+import {getSubjectFromPermission, getWorldFromPermission, userHasPermission} from "../authorization-helpers";
 
 const Schema = mongoose.Schema;
 
@@ -15,9 +15,9 @@ const permissionAssignmentSchema = new Schema({
 });
 
 permissionAssignmentSchema.methods.userCanWrite = async function(user) {
-	const world = await getWorldFromPermission(this.permission, this.subjectId);
-	if(world){
-		return await userHasPermission(user, ROLE_ADMIN, world._id);
+	const subject = await getSubjectFromPermission(this.permission, this.subjectId);
+	if(subject){
+		return await subject.userCanRead(user);
 	}
 	else {
 		return false;

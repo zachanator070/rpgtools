@@ -14,9 +14,6 @@ export const typeDefs = gql`
         searchWikiPages(phrase: String!, worldId: ID!): [WikiPage!]!
         """Search for a wiki by id"""
         wiki(wikiId: ID!): WikiPage
-        
-        usersWithPermissions(permissions: [PermissionParam!]!): [User!]!
-        rolesWithPermissions(permissions: [PermissionParam!]!): [Role!]!
     }
   
     type Mutation{
@@ -28,10 +25,9 @@ export const typeDefs = gql`
         createWorld(name: String!, public: Boolean!): World!
         
         createRole(name: String!, worldId: ID!): Role!
-        setRolePermissions(roleId: ID!, permissions: [PermissionParam!]!): Role!
         
         """ Directly assign a permission to a user """
-        giveUserPermission(userId: ID!, requestedPermission: PermissionParam!): PermissionAssignment!
+        giveUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionAssignment!
         """ Revoke a directly assigned permission from a user """        
         revokeUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionAssignment!
         
@@ -66,7 +62,12 @@ export const typeDefs = gql`
         permissions: [PermissionAssignment!]!
     }
   
-	type World {
+    interface PermissionControlled {
+        userPermissionAssignments: [userPermissionAssignment!]!
+		rolePermissionAssignments: [rolePermissionAssignment!]!
+    }
+  
+	type World implements PermissionControlled {
 		_id: ID!
 		name: String!
 		wikiPage: Place
@@ -75,6 +76,8 @@ export const typeDefs = gql`
 		pins: [Pin!]!
 		folders: [WikiFolder!]!
 		canWrite: Boolean!
+		userPermissionAssignments: [userPermissionAssignment!]!
+		rolePermissionAssignments: [rolePermissionAssignment!]!
 	}
 	
 	type WorldsPaginatedResult {
@@ -100,7 +103,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 	}
 	
-	type Article implements WikiPage {
+	type Article implements WikiPage & PermissionControlled {
 		_id: ID!
 		name: String!
 		content: String
@@ -108,9 +111,11 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		canWrite: Boolean!
+		userPermissionAssignments: [userPermissionAssignment!]!
+		rolePermissionAssignments: [rolePermissionAssignment!]!
 	}
 	
-	type Place implements WikiPage {
+	type Place implements WikiPage & PermissionControlled {
 		_id: ID!
 		name: String!
 		content: String
@@ -119,9 +124,11 @@ export const typeDefs = gql`
 		mapImage: Image
 		type: String!
 		canWrite: Boolean!
+		userPermissionAssignments: [userPermissionAssignment!]!
+		rolePermissionAssignments: [rolePermissionAssignment!]!
 	}
 	
-	type Person implements WikiPage {
+	type Person implements WikiPage & PermissionControlled {
 		_id: ID!
 		name: String!
 		content: String
@@ -129,6 +136,8 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		canWrite: Boolean!
+		userPermissionAssignments: [userPermissionAssignment!]!
+		rolePermissionAssignments: [rolePermissionAssignment!]!
 	}
 	
 	type WikiFolder {
@@ -185,9 +194,15 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 	}
 	
-	input PermissionParam {
+	type userPermissionAssignment {
 		permission: String!
-		subjectId: ID
+		subjectId: ID!
+		user: User!
 	}
 
+	type rolePermissionAssignment {
+		permission: String!
+		subjectId: ID!
+		role: Role!
+	}
 `;

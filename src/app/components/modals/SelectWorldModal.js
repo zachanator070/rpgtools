@@ -5,7 +5,6 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useSelectWorldModalVisibility from "../../hooks/useSelectWorldModalVisibility";
 import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useWorlds from "../../hooks/useWorlds";
-import {LoadingView} from "../LoadingView";
 
 export const SelectWorldModal = () => {
 
@@ -55,7 +54,7 @@ export const SelectWorldModal = () => {
 		: 'No world selected';
 
 	if(loading){
-		return <LoadingView/>;
+		return <></>;
 	}
 
 	return (
