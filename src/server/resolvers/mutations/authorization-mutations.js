@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import {ROLE_ADMIN} from "../../../permission-constants";
 import {ALL_USERS, EVERYONE, WORLD_OWNER} from "../../../role-constants";
-import {userHasPermission} from "../../authorization-helpers";
+import {getSubjectFromPermission, userHasPermission} from "../../authorization-helpers";
 import {Role} from "../../models/role";
 import {World} from "../../models/world";
 import {User} from "../../models/user";
@@ -31,64 +31,14 @@ export const authorizationMutations = {
 			throw Error(`You do not have the required permission: ${ROLE_ADMIN}`)
 		}
 	},
-	// setRolePermissions: async (_, {roleId, permissions}, {currentUser}) => {
-	//
-	// 	const role = await Role.findById(roleId);
-	// 	if(!role){
-	// 		throw new Error('Role does not exist');
-	// 	}
-	//
-	// 	if(!await role.userCanWrite(currentUser)){
-	// 		throw new Error(`You do not have the required permission: ${ROLE_ADMIN}`);
-	// 	}
-	//
-	// 	const newPermissions = [];
-	//
-	// 	for(let rolePermission of role.permissions){
-	// 		let found = false;
-	// 		for(let requestedPermission of permissions){
-	// 			if(rolePermission.permission === requestedPermission.permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
-	// 				found = true;
-	// 			}
-	// 		}
-	// 		if(!found){
-	// 			if(!await rolePermission.userCanWrite(currentUser)){
-	// 				throw new Error(`You do not have administrative rights for the permission ${rolePermission.permission} for subject ${rolePermission.subjectId}`);
-	// 			}
-	// 			await rolePermission.remove();
-	// 		}
-	// 		else{
-	// 			newPermissions.push(rolePermission);
-	// 		}
-	// 	}
-	//
-	//
-	// 	for (let requestedPermission of permissions) {
-	// 		let found = false;
-	// 		for (let rolePermission of role.permissions) {
-	// 			if(rolePermission.permission === requestedPermission.permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
-	// 				found = true;
-	// 			}
-	// 		}
-	// 		if(!found){
-	// 			const newPermission = new PermissionAssignment({...requestedPermission});
-	// 			if(!await newPermission.userCanWrite(currentUser)){
-	// 				throw new Error(`You do not have administrative rights for the permission ${newPermission.permission} for subject ${newPermission.subjectId}`);
-	// 			}
-	// 			await newPermission.save();
-	// 			newPermissions.push(newPermission);
-	// 		}
-	// 	}
-	//
-	// 	role.permissions = newPermissions;
-	// 	return await role.save();
-	// },
-	giveUserPermission: async (_, {userId, requestedPermission}, {currentUser}) => {
+	grantUserPermission: async (_, {userId, permission, subjectId}, {currentUser}) => {
 
-		const newPermission = new PermissionAssignment({...requestedPermission});
-
+		let newPermission = await PermissionAssignment.findOne({permission, subjectId});
+		if(!newPermission){
+			newPermission = new PermissionAssignment({permission, subjectId});
+		}
 		if(!await newPermission.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to assign the permission "${requestedPermission.permission}" with the subject ${requestedPermission.subjectId}`);
+			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
 		}
 
 		const user = await User.findById(userId).populate('permissions');
@@ -97,40 +47,75 @@ export const authorizationMutations = {
 		}
 		// check if user already has that permission
 		for(let userPermission of user.permissions){
-			if(userPermission.permission === requestedPermission.permission && userPermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
-				return userPermission;
+			if(userPermission.permission === permission && userPermission.subjectId.equals(new mongoose.Types.ObjectId(subjectId))){
+				return getSubjectFromPermission(permission, subjectId);
 			}
 		}
 
 		await newPermission.save();
 		user.permissions.push(newPermission._id);
 		await user.save();
-		return newPermission;
+		return getSubjectFromPermission(permission, subjectId);
 	},
-	revokeUserPermission: async (_, {userId, requestedPermission}, {currentUser}) => {
+	revokeUserPermission: async (_, {userId, permission, subjectId}, {currentUser}) => {
 
 		const user = await User.findById(userId).populate('permissions');
 		if(!user){
 			throw new Error("User does not exist");
 		}
 
-		let foundPermission = null;
+		let permissionAssignment = await PermissionAssignment.findOne({permission, subjectId});
+		if(permissionAssignment){
+			if(!await permissionAssignment.userCanWrite(currentUser)){
+				throw new Error(`You do not have permission to revoke the permission "${permission}" with the subject ${subjectId}`);
+			}
+			user.permissions = user.permissions.filter((userPermission) => userPermission.permission !== permission || ! userPermission.subjectId.equals(new mongoose.Types.ObjectId(subjectId)));
+			await user.save();
+		}
 
+		return getSubjectFromPermission(permission, subjectId);
+	},
+	grantRolePermission: async (_, {roleId, permission, subjectId}, {currentUser}) => {
+
+		let newPermission = await PermissionAssignment.findOne({permission, subjectId});
+		if(!newPermission){
+			newPermission = new PermissionAssignment({permission, subjectId});
+		}
+		if(!await newPermission.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
+		}
+
+		const role = await Role.findById(roleId).populate('permissions');
+		if(!role){
+			throw new Error("Role does not exist");
+		}
 		// check if user already has that permission
-		for(let userPermission of user.permissions){
-			if(userPermission.permission === requestedPermission.permission && userPermission.subjectId.equals(new mongoose.Types.ObjectId(requestedPermission.subjectId))){
-				foundPermission = userPermission;
+		for(let rolePermission of role.permissions){
+			if(rolePermission.permission === permission && rolePermission.subjectId.equals(new mongoose.Types.ObjectId(subjectId))){
+				return getSubjectFromPermission(permission, subjectId);
 			}
 		}
-		if(foundPermission){
-			if(!await foundPermission.userCanWrite(currentUser)){
-				throw new Error(`You do not have permission to assign the permission "${requestedPermission.permission}" with the subject ${requestedPermission.subjectId}`);
+
+		await newPermission.save();
+		role.permissions.push(newPermission._id);
+		await role.save();
+		return getSubjectFromPermission(permission, subjectId);
+	},
+	revokeRolePermission: async (_, {userId, requestedPermission: permission, subjectId}, {currentUser}) => {
+
+		const role = await Role.findById(userId).populate('permissions');
+		if(!role){
+			throw new Error("User does not exist");
+		}
+
+		let permissionAssignment = await PermissionAssignment.findOne({permission: permission, subjectId});
+		if(permissionAssignment){
+			if(!await permissionAssignment.userCanWrite(currentUser)){
+				throw new Error(`You do not have permission to revoke the permission "${permission}" with the subject ${subjectId}`);
 			}
-			await foundPermission.remove();
+			role.permissions = role.permissions.filter((userPermission) => userPermission.permission !== permission || ! userPermission.subjectId.equals(new mongoose.Types.ObjectId(subjectId)));
+			await role.save();
 		}
-		else {
-			throw new Error('User does not have that permission');
-		}
-		return foundPermission;
-	}
+		return getSubjectFromPermission(permission, subjectId);
+	},
 };

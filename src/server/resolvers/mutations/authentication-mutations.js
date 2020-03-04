@@ -9,10 +9,8 @@ export const authenticationMutations = {
 		let user = await User.findOne({username}).populate('roles');
 		if (user && bcrypt.compareSync(password, user.password)) {
 			let tokens = await createTokens(user);
-			// expires after 15 min
-			res.cookie('accessToken', tokens.accessToken, {expires: new Date(Date.now() + ACCESS_TOKEN_MAX_AGE.ms)});
-			// expires after 24 hours
-			res.cookie('refreshToken', tokens.refreshToken, {expires: new Date(Date.now() + REFRESH_TOKEN_MAX_AGE.ms)});
+			res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms});
+			res.cookie('refreshToken', tokens.refreshToken, {maxAge: REFRESH_TOKEN_MAX_AGE.ms});
 			return user;
 		}
 		throw Error('Login failure: username or password are incorrect');

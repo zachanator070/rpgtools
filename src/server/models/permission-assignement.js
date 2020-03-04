@@ -17,7 +17,7 @@ const permissionAssignmentSchema = new Schema({
 permissionAssignmentSchema.methods.userCanWrite = async function(user) {
 	const subject = await getSubjectFromPermission(this.permission, this.subjectId);
 	if(subject){
-		return await subject.userCanRead(user);
+		return await subject.userCanWrite(user);
 	}
 	else {
 		return false;

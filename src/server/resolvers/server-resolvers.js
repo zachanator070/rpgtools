@@ -149,6 +149,11 @@ export const serverResolvers = {
 			return assignments;
 		}
 	},
+	PermissionControlled: {
+		__resolveType: async (subject, {currentUser}, info) => {
+			return subject.constructor.modelName;
+		},
+	},
 	User: {
 		email: async (user, _, {currentUser}) => {
 			if(!user._id.equals(currentUser._id)){
@@ -192,7 +197,7 @@ export const serverResolvers = {
 			await role.populate('permissions');
 			const permissions = [];
 			for(let permission of role.permissions){
-				if(await permission.userCanWrite(currentUser)){
+				if(await permission.userCanRead(currentUser)){
 					permissions.push(permission);
 				}
 			}

@@ -1,9 +1,8 @@
 import {ApolloServer} from 'apollo-server-express';
-import jwt from 'jsonwebtoken';
 
-import {User} from './models/user';
-
-import {ACCESS_TOKEN_MAX_AGE, createTokens, REFRESH_TOKEN_MAX_AGE} from "./authentication-helpers";
+import {
+	createSessionContext,
+} from "./authentication-helpers";
 import {typeDefs} from './gql-server-schema';
 import {serverResolvers} from "./resolvers/server-resolvers";
 
@@ -31,39 +30,5 @@ export default new ApolloServer({
             "request.credentials": "same-origin"
         },
     },
-	context: async ({req, res}) => {
-
-		let currentUser = null;
-
-		const refreshToken = req.cookies["refreshToken"];
-		const accessToken = req.cookies["accessToken"];
-		if (refreshToken || accessToken) {
-			try {
-				let data = jwt.verify(accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
-				currentUser = await User.findOne({_id: data.userId}).populate("currentWorld");
-			} catch (e) {
-				// accessToken is expired
-				try {
-					let data = jwt.verify(refreshToken, process.env['REFRESH_TOKEN_SECRET'], {maxAge: REFRESH_TOKEN_MAX_AGE.string});
-					currentUser = await User.findOne({_id: data.userId});
-					// if refreshToken is still valid issue new access token and refresh token
-					if (currentUser && currentUser.tokenVersion === data.version) {
-						let tokens = await createTokens(currentUser);
-						res.cookie("refresh-token", tokens.refreshToken);
-						res.cookie("access-token", tokens.accessToken);
-					} else {
-						// refreshToken was invalidated
-						currentUser = null;
-					}
-				} catch {
-					// refreshToken is expired
-				}
-			}
-		}
-
-		return {
-			res,
-			currentUser
-		};
-	},
+	context: createSessionContext,
 });

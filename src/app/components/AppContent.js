@@ -10,6 +10,7 @@ import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
 import useSetPermissionModalVisibility from "../hooks/useSetPermissionModalVisibility";
 import {Modals} from "./App";
+import WorldSettings from "./WorldSettings";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
@@ -43,7 +44,6 @@ const WikiContent = () => {
 					</Route>
 				</Col>
 			</Row>
-
 };
 
 export const AppContent = () => {
@@ -65,6 +65,10 @@ export const AppContent = () => {
 
 	return (
 		<Switch>
+			<Route path={`${match.path}/settings`}>
+				<Modals/>
+				<WorldSettings/>
+			</Route>
 			<Route path={`${match.path}/map/:map_id`}>
 				<Modals/>
 				<MapView/>

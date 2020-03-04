@@ -4,6 +4,7 @@ import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
 import {ROLE_ADMIN, WORLD_READ} from "../../permission-constants";
 import {Pin} from './pin.js';
+import {WORLD_OWNER} from "../../role-constants";
 const Schema = mongoose.Schema;
 
 const worldSchema = new Schema({
@@ -37,8 +38,14 @@ worldSchema.methods.userCanRead = async function(user){
 	return await userHasPermission(user, WORLD_READ, this._id);
 };
 
+// basically if the user can give out permissions defined in WORLD_PERMISSIONS and change the world name
 worldSchema.methods.userCanWrite = async function(user){
-	return await userHasPermission(user, ROLE_ADMIN, this.world);
+	for(let role of user.roles){
+		if(role.name === WORLD_OWNER){
+			return true;
+		}
+	}
+	return false;
 };
 
 worldSchema.plugin(mongooseAutopopulate);
