@@ -60,8 +60,9 @@ export const CURRENT_WORLD_PERMISSIONS = `
 const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID!){
         world(worldId: $worldId){
-			name
 			_id
+			name
+			canWrite
 			wikiPage {
 				_id
 				name

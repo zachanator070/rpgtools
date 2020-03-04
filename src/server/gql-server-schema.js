@@ -14,6 +14,10 @@ export const typeDefs = gql`
         searchWikiPages(phrase: String!, worldId: ID!): [WikiPage!]!
         """Search for a wiki by id"""
         wiki(wikiId: ID!): WikiPage
+        """Search for users by username"""
+        users(username: String!): [User!]!
+        """Search for roles by name"""
+        roles(name: String!): [Role!]!
     }
   
     type Mutation{
@@ -26,10 +30,14 @@ export const typeDefs = gql`
         
         createRole(name: String!, worldId: ID!): Role!
         
-        """ Directly assign a permission to a user """
-        giveUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionAssignment!
-        """ Revoke a directly assigned permission from a user """        
-        revokeUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionAssignment!
+        """ Grant a permission to a user """
+        grantUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionControlled!
+        """ Revoke a assigned permission from a user """        
+        revokeUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionControlled!
+        """ Grant a permission to a role """
+        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID): PermissionControlled!
+        """ Revoke a permission from a role """
+        revokeRolePermission(roleId: ID!, permission: String!, subjectId: ID): PermissionControlled!
         
         createFolder(name: String!, parentFolderId: ID!): World!
         renameFolder(folderId: ID!, name: String!): WikiFolder!
@@ -37,12 +45,11 @@ export const typeDefs = gql`
         
         """ Creates a generic wiki page """
         createWiki(name: String!, folderId: ID!): World!
-        
-        """ Deletes any wiki page of any type (Ex: Person, Place, ... ) """
+        """ Deletes any wiki page of any type """
         deleteWiki(wikiId: ID!): World!
-        
-        """ Updates any wiki page of any type (Ex: Person, Place, ... ) """
+        """ Updates any wiki page of any type """
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
+        """ Update place specific attributes """
         updatePlace(placeId: ID!, mapImageId: ID): Place!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
@@ -63,6 +70,7 @@ export const typeDefs = gql`
     }
   
     interface PermissionControlled {
+        _id: ID!
         userPermissionAssignments: [userPermissionAssignment!]!
 		rolePermissionAssignments: [rolePermissionAssignment!]!
     }

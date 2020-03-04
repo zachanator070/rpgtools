@@ -145,5 +145,10 @@ export default {
 
 		return foundWiki;
 	},
-
+	users: async (_, {username}, {currentUser}) => {
+		return User.find({username: { $regex: `^${username}.*` , $options: 'i'}});
+	},
+	roles: async (_, {name}, {currentUser}) => {
+		return Role.find({username: { $regex: `^${name}.*` , $options: 'i'}});
+	}
 };

@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 import {
 	FOLDER_READ,
 	FOLDER_READ_ALL, FOLDER_RW, FOLDER_RW_ALL,
-	GAME_HOST, GAME_READ, GAME_WRITE,
-	ROLE_ADMIN,
+	GAME_HOST, GAME_PERMISSIONS, GAME_READ, GAME_WRITE,
+	ROLE_ADMIN, WIKI_FOLDER_PERMISSIONS, WIKI_PERMISSIONS,
 	WIKI_READ,
 	WIKI_READ_ALL,
 	WIKI_RW,
-	WIKI_RW_ALL, WORLD_CREATE,
+	WIKI_RW_ALL, WORLD_CREATE, WORLD_PERMISSIONS,
 	WORLD_READ
 } from "../permission-constants";
 
@@ -69,75 +69,49 @@ export const userHasPermission = async function (user, permission, subjectId) {
 };
 
 export const getSubjectFromPermission = async (permission, subjectId) => {
-	let subject = null;
-	switch(permission){
-		case ROLE_ADMIN:
-		case WORLD_READ:
-		case WIKI_READ_ALL:
-		case WIKI_RW_ALL:
-		case FOLDER_READ_ALL:
-		case FOLDER_RW_ALL:
-		case GAME_HOST:
-			subject = await World.findById(subjectId);
-			break;
-		case WIKI_READ:
-		case WIKI_RW:
-			subject = await WikiPage.findById(subjectId);
-			break;
-		case FOLDER_READ:
-		case FOLDER_RW:
-			subject= await WikiFolder.findById(subjectId);
-			break;
-		case GAME_READ:
-		case GAME_WRITE:
-			subject = await Game.findById(subjectId);
-			break;
-		case WORLD_CREATE:
-		default:
-			break;
+	if(WORLD_PERMISSIONS.includes(permission)){
+		return World.findById(subjectId).populate('userPermissionAssignments rolePermissionAssignments');
 	}
-	return subject;
+	else if(WIKI_PERMISSIONS.includes(permission)){
+		return WikiPage.findById(subjectId).populate('userPermissionAssignments rolePermissionAssignments');
+	}
+	else if(WIKI_FOLDER_PERMISSIONS.includes(permission)){
+		return WikiFolder.findById(subjectId).populate('userPermissionAssignments rolePermissionAssignments');
+	}
+	else if(GAME_PERMISSIONS.includes(permission)){
+		return Game.findById(subjectId).populate('userPermissionAssignments rolePermissionAssignments');
+	}
+	return null;
 };
 
 export const getWorldFromPermission = async (permission, subjectId) => {
-	let world = null;
-	switch(permission){
-		case ROLE_ADMIN:
-		case WORLD_READ:
-		case WIKI_READ_ALL:
-		case WIKI_RW_ALL:
-		case FOLDER_READ_ALL:
-		case FOLDER_RW_ALL:
-		case GAME_HOST:
-			world = subjectId;
-			break;
-		case WIKI_READ:
-		case WIKI_RW:
-			const wiki = await WikiPage.findById(subjectId);
-			if(wiki){
-				world = wiki.world;
-			}
-			break;
-		case FOLDER_READ:
-		case FOLDER_RW:
-			const folder = await WikiFolder.findById(subjectId);
-			if(folder){
-				world = folder.world;
-			}
-			break;
-		case GAME_READ:
-		case GAME_WRITE:
-			const game = await Game.findById(subjectId);
-			if(game){
-				world = game.world;
-			}
-			break;
-		case WORLD_CREATE:
-		default:
-			break;
+
+	let worldId = null;
+
+	if(WORLD_PERMISSIONS.includes(permission)){
+		worldId = subjectId;
 	}
-	if(world) {
-		world = await World.findById(world);
+	else if(WIKI_PERMISSIONS.includes(permission)){
+		const wiki = await WikiPage.findById(subjectId);
+		if(wiki){
+			worldId = wiki.world;
+		}
 	}
-	return world;
+	else if(WIKI_FOLDER_PERMISSIONS.includes(permission)){
+		const folder = await WikiFolder.findById(subjectId);
+		if(folder){
+			worldId = folder.world;
+		}
+	}
+	else if(GAME_PERMISSIONS.includes(permission)){
+		const game = await Game.findById(subjectId);
+		if(game){
+			worldId = game.world;
+		}
+	}
+
+	if(worldId){
+		return World.findById(worldId).populate('userPermissionAssignments rolePermissionAssignments');
+	}
+
 };

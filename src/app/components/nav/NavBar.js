@@ -1,10 +1,9 @@
 import React from 'react';
-import {Button, Col, Divider, Row} from 'antd';
+import {Button, Col, Divider, Icon, Row} from 'antd';
 import {Link} from "react-router-dom";
 import {WorldMenu} from "./WorldMenu";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useLogout from "../../hooks/useLogout";
 import {LoadingView} from "../LoadingView";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
@@ -54,6 +53,14 @@ export const NavBar = () => {
 				<Col span={4}>
 					<div className='margin-md-left'>
 						<WorldMenu currentUser={currentUser}/>
+						{
+							currentWorld && currentWorld.canWrite &&
+							<span className='margin-md-left'>
+								<Link to={`/ui/world/${currentWorld._id}/settings`}>
+									<Icon type='setting' theme='outlined'/> World Settings
+								</Link>
+							</span>
+						}
 					</div>
 				</Col>
 				{currentWorld ?

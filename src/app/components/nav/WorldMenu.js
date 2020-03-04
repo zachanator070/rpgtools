@@ -35,28 +35,12 @@ export const WorldMenu = () => {
 	);
 
 	return (
-		<div>
+		<span>
 			<Dropdown overlay={menu} trigger={['click']}>
 				<Button>
 					{currentWorld ? currentWorld.name : 'No World Selected'} <Icon type="down"/>
 				</Button>
 			</Dropdown>
-			{currentWorld && currentWorld.canWrite &&
-			<span className='margin-md-left'>
-					<Dropdown
-						overlay={
-							<Menu>
-								<Menu.Item key="2">
-									<a href="#" onClick={setShowWorldPermissionsModal}>World Permissions</a>
-								</Menu.Item>
-							</Menu>
-						}
-						trigger={['click']}
-					>
-						<Icon type="setting" className='pointer'/>
-					</Dropdown>
-				</span>
-			}
-		</div>
+		</span>
 	);
 };
