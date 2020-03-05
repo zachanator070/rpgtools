@@ -5,6 +5,8 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useSelectWorldModalVisibility from "../../hooks/useSelectWorldModalVisibility";
 import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useWorlds from "../../hooks/useWorlds";
+import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 export const SelectWorldModal = () => {
 
@@ -17,6 +19,8 @@ export const SelectWorldModal = () => {
 
 	const {selectWorldModalVisibility} = useSelectWorldModalVisibility();
 	const {setSelectWorldModalVisibility} = useSetSelectWorldModalVisibility();
+	const {setCurrentWorld} = useSetCurrentWorld();
+	const {currentUser} = useCurrentUser();
 
 	const history = useHistory();
 
@@ -69,6 +73,9 @@ export const SelectWorldModal = () => {
 					type={'primary'}
 					key='select button'
 					onClick={async () => {
+						if(currentUser){
+							await setCurrentWorld(selectedWorld._id);
+						}
 						history.push(`/ui/world/${selectedWorld._id}/map/${selectedWorld.wikiPage._id}`);
 						await setSelectWorldModalVisibility(false);
 					}}

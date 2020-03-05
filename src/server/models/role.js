@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
 import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../permission-constants";
+import {ALL_USERS, EVERYONE} from "../../role-constants";
 
 const Schema = mongoose.Schema;
 
@@ -26,7 +27,7 @@ roleSchema.methods.userCanWrite = async function(user) {
 };
 
 roleSchema.methods.userCanRead = async function(user){
-	return await this.userCanWrite(user);
+	return await this.userCanWrite(user) || this.name === EVERYONE || this.name === ALL_USERS;
 };
 
 roleSchema.plugin(mongooseAutopopulate);

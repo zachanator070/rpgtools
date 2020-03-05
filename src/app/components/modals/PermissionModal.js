@@ -1,14 +1,10 @@
-import React, {useState} from 'react';
-import {Radio, Modal, Tabs, List} from "antd";
+import React from 'react';
+import {Modal} from "antd";
 import usePermissionModalVisibility from "../../hooks/usePermissionModalVisibility";
 import useSetPermissionModalVisibility from "../../hooks/useSetPermissionModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
-import {
-	WIKI_PERMISSIONS,
-	WORLD_PERMISSIONS,
-} from "../../../permission-constants";
-import PermissionView from "../PermissionView";
+import PermissionEditor from "../PermissionEditor";
 
 export const PermissionModal = () => {
 
@@ -38,7 +34,7 @@ export const PermissionModal = () => {
 			footer={[]}
 			width={'750px'}
 		>
-			<PermissionView/>
+			<PermissionEditor/>
 		</Modal>
 	);
 };

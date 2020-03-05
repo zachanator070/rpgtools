@@ -13,6 +13,20 @@ const GET_CURRENT_USER = gql`
                     _id
                 }
             }
+            permissions{
+                _id
+                permission
+                subjectId
+            }
+            roles{
+                _id
+                name
+                permissions{
+	                _id
+	                permission
+	                subjectId
+                }
+            }
         }
     }
 `;

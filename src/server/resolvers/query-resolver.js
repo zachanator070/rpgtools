@@ -5,9 +5,7 @@ import {Role} from '../models/role';
 import {WIKI_READ_ALL, WORLD_READ} from "../../permission-constants";
 import {EVERYONE} from "../../role-constants";
 import mongoose from 'mongoose';
-import {PermissionAssignment} from "../models/permission-assignement";
 import {WikiPage} from "../models/wiki-page";
-import {WikiFolder} from "../models/wiki-folder";
 import {Place} from '../models/place';
 import {PLACE} from "../../wiki-page-types";
 
@@ -149,6 +147,6 @@ export default {
 		return User.find({username: { $regex: `^${username}.*` , $options: 'i'}});
 	},
 	roles: async (_, {name}, {currentUser}) => {
-		return Role.find({username: { $regex: `^${name}.*` , $options: 'i'}});
+		return Role.find({name: { $regex: `^${name}.*` , $options: 'i'}});
 	}
 };

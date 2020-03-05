@@ -38,10 +38,16 @@ export const worldMutations = {
 
 		const ownerPermissions = [];
 		for (const permission of WORLD_PERMISSIONS) {
-			const permissionAssignment = await PermissionAssignment.create({
+			let permissionAssignment = await PermissionAssignment.findOne({
 				permission: permission,
 				subjectId: world._id
 			});
+			if(!permissionAssignment){
+				permissionAssignment = await PermissionAssignment.create({
+					permission: permission,
+					subjectId: world._id
+				});
+			}
 			ownerPermissions.push(permissionAssignment);
 		}
 		const ownerRole = await Role.create({name: WORLD_OWNER, world: world._id, permissions: ownerPermissions});
@@ -51,16 +57,22 @@ export const worldMutations = {
 		const everyonePerms = [];
 		if (isPublic) {
 			for(let permission of PUBLIC_WORLD_PERMISSIONS){
-				const assignment = await PermissionAssignment.create({
+				let permissionAssignment = await PermissionAssignment.findOne({
 					permission: permission,
 					subjectId: world._id
 				});
-				everyonePerms.push(assignment)
+				if(!permissionAssignment){
+					permissionAssignment = await PermissionAssignment.create({
+						permission: permission,
+						subjectId: world._id
+					});
+				}
+				everyonePerms.push(permissionAssignment);
 			}
 		}
 		const everyoneRole = await Role.create({name: EVERYONE, world: world._id, permissions: everyonePerms});
 
-		world.roles = [everyoneRole._id, ownerRole._id];
+		world.roles = [ownerRole, everyoneRole];
 		await world.save();
 
 		await world.populate('wikiPage rootFolder roles').execPopulate();

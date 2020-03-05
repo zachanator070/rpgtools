@@ -2,8 +2,8 @@ import {useLazyQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 const SEARCH_ROLES = gql`
-	query searchRoles($username: String!){
-		roles(username: $username){
+	query searchRoles($name: String!){
+		roles(name: $name){
 			_id
 			name
 		}

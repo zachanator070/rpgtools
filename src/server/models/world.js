@@ -40,9 +40,11 @@ worldSchema.methods.userCanRead = async function(user){
 
 // basically if the user can give out permissions defined in WORLD_PERMISSIONS and change the world name
 worldSchema.methods.userCanWrite = async function(user){
-	for(let role of user.roles){
-		if(role.name === WORLD_OWNER){
-			return true;
+	if(user){
+		for(let role of user.roles){
+			if(role.name === WORLD_OWNER){
+				return true;
+			}
 		}
 	}
 	return false;

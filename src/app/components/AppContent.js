@@ -11,6 +11,7 @@ import {WikiView} from "./wiki/WikiView";
 import useSetPermissionModalVisibility from "../hooks/useSetPermissionModalVisibility";
 import {Modals} from "./App";
 import WorldSettings from "./WorldSettings";
+import PermissionView from "./PermissionView";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
@@ -68,6 +69,10 @@ export const AppContent = () => {
 			<Route path={`${match.path}/settings`}>
 				<Modals/>
 				<WorldSettings/>
+			</Route>
+			<Route path={`${match.path}/permissions`}>
+				<Modals/>
+				<PermissionView/>
 			</Route>
 			<Route path={`${match.path}/map/:map_id`}>
 				<Modals/>
