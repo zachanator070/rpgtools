@@ -19,8 +19,8 @@ export const CreateWorldModal = () => {
 
 	const {createWorld, loading, errors} = useCreateWorld(async (data) => {
 		await setCurrentWorld(data.createWorld._id);
-		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 		await setCreateWorldModalVisibility(false);
+		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 	});
 
 	const formItemLayout = {

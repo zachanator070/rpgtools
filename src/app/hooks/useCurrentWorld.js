@@ -77,6 +77,7 @@ const GET_CURRENT_WORLD = gql`
 					_id
 				}
 				permissions{
+					_id
 					permission
 					subjectId
 				}

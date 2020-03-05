@@ -3,8 +3,8 @@ import gql from "graphql-tag";
 import {CURRENT_WORLD_PERMISSIONS} from "./useCurrentWorld";
 
 const GRANT_ROLE_PERMISSION = gql`
-	mutation grantRolePermission($userId: ID!, $permission: String!, $subjectId: ID){
-		grantRolePermission(userId: $userId, permission: $permission, subjectId: $subjectId){
+	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID){
+		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId){
 			_id
 			${CURRENT_WORLD_PERMISSIONS}
 		}

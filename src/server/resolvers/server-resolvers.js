@@ -5,6 +5,7 @@ import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
 import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
 import {Role} from '../models/role';
+import {ALL_USERS, EVERYONE} from "../../role-constants";
 
 const getUserPermissionAssignments = async (permissions, subject, currentUser) => {
 	const assignments = [];
@@ -195,6 +196,9 @@ export const serverResolvers = {
 	Role: {
 		permissions: async (role, _, {currentUser}) => {
 			await role.populate('permissions');
+			if(role.name === EVERYONE || role.name === ALL_USERS){
+				return role.permissions;
+			}
 			const permissions = [];
 			for(let permission of role.permissions){
 				if(await permission.userCanRead(currentUser)){

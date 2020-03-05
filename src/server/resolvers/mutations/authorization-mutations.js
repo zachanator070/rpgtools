@@ -23,8 +23,6 @@ export const authorizationMutations = {
 				throw new Error("World does not exist");
 			}
 			await newRole.save();
-			world.roles.push(newRole._id);
-			await world.save();
 			return newRole;
 		}
 		else{
@@ -101,14 +99,14 @@ export const authorizationMutations = {
 		await role.save();
 		return getSubjectFromPermission(permission, subjectId);
 	},
-	revokeRolePermission: async (_, {userId, requestedPermission: permission, subjectId}, {currentUser}) => {
+	revokeRolePermission: async (_, {roleId, permission, subjectId}, {currentUser}) => {
 
-		const role = await Role.findById(userId).populate('permissions');
+		const role = await Role.findById(roleId).populate('permissions');
 		if(!role){
-			throw new Error("User does not exist");
+			throw new Error("Role does not exist");
 		}
 
-		let permissionAssignment = await PermissionAssignment.findOne({permission: permission, subjectId});
+		let permissionAssignment = await PermissionAssignment.findOne({permission, subjectId});
 		if(permissionAssignment){
 			if(!await permissionAssignment.userCanWrite(currentUser)){
 				throw new Error(`You do not have permission to revoke the permission "${permission}" with the subject ${subjectId}`);

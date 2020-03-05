@@ -1,6 +1,6 @@
 import React from 'react';
 import useCurrentWorld from "../hooks/useCurrentWorld";
-import PermissionView from "./PermissionView";
+import PermissionEditor from "./PermissionEditor";
 import {Col, Row} from "antd";
 
 export default () => {
@@ -15,7 +15,7 @@ export default () => {
 		<Row>
 			<Col span={1}></Col>
 			<Col span={14}>
-				<PermissionView/>
+				<PermissionEditor/>
 			</Col>
 			<Col span={9}></Col>
 		</Row>

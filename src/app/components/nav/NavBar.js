@@ -73,6 +73,9 @@ export const NavBar = () => {
 								<Link
 									to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>Wiki</Link>
 								<Divider type='vertical'/>
+								<Link
+									to={`/ui/world/${currentWorld._id}/permissions`}>Permissions</Link>
+								<Divider type='vertical'/>
 							</div>
 						</Col>
 						<Col span={10}>
