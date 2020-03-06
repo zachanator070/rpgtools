@@ -5,6 +5,7 @@ import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {ARTICLE} from "../../../wiki-page-types";
+import {cleanUpPermissions} from "../../db-helpers";
 
 export const wikiMutations = {
 	createWiki: async (parent, {name, folderId}, {currentUser}) => {
@@ -111,6 +112,7 @@ export const wikiMutations = {
 			await parentFolder.save();
 		}
 
+		await cleanUpPermissions(wikiPage._id);
 		await wikiPage.remove();
 		return wikiPage.world;
 	},
