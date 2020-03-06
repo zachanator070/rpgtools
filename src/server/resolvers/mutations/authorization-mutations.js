@@ -1,34 +1,14 @@
 import mongoose from "mongoose";
-import {ROLE_ADMIN} from "../../../permission-constants";
+import {ROLE_ADD, ROLE_ADMIN} from "../../../permission-constants";
 import {ALL_USERS, EVERYONE, WORLD_OWNER} from "../../../role-constants";
 import {getSubjectFromPermission, userHasPermission} from "../../authorization-helpers";
 import {Role} from "../../models/role";
 import {World} from "../../models/world";
 import {User} from "../../models/user";
 import {PermissionAssignment} from "../../models/permission-assignement";
+import {cleanUpPermissions} from "../../db-helpers";
 
 export const authorizationMutations = {
-	createRole: async (_, {name, worldId}, {currentUser}) => {
-
-		const newRole = new Role({name, world: worldId});
-
-		if(await newRole.userCanWrite(currentUser)){
-
-			if([WORLD_OWNER, EVERYONE, ALL_USERS].includes(name)){
-				throw new Error(`Role name cannot be reserved role name ${name}`);
-			}
-
-			const world = await World.findById(worldId).populate('roles');
-			if(!world){
-				throw new Error("World does not exist");
-			}
-			await newRole.save();
-			return newRole;
-		}
-		else{
-			throw Error(`You do not have the required permission: ${ROLE_ADMIN}`)
-		}
-	},
 	grantUserPermission: async (_, {userId, permission, subjectId}, {currentUser}) => {
 
 		let newPermission = await PermissionAssignment.findOne({permission, subjectId});
@@ -116,4 +96,35 @@ export const authorizationMutations = {
 		}
 		return getSubjectFromPermission(permission, subjectId);
 	},
+	createRole: async (_, {worldId, name}, {currentUser}) => {
+		const world = await World.findById(worldId).populate('roles');
+		if(!world){
+			throw new Error(`World with id ${worldId} doesn't exist`);
+		}
+		if(!await userHasPermission(currentUser, ROLE_ADD, worldId)){
+			throw new Error(`You do not have permission to add roles to world ${worldId}`);
+		}
+		const newRole = await Role.create({name, world});
+		world.roles.push(newRole);
+		await world.save();
+		const adminRole = await PermissionAssignment.create({permission: ROLE_ADMIN, subjectId: newRole._id});
+		currentUser.permissions.push(adminRole);
+		await currentUser.save();
+		return world;
+	},
+	deleteRole: async (_, {roleId}, {currentUser}) => {
+		const role = await Role.findById(roleId);
+		if(!role){
+			throw new Error(`Role ${roleId} doesn't exist`);
+		}
+		if(!await role.userCanWrite(currentUser)){
+			throw new Error(`You do not have write permissions for role ${roleId}`);
+		}
+		const world = await World.findOne({roles: role._id}).populate('roles');
+		world.roles = world.roles.filter((otherRole) => {return !otherRole._id.equals(role._id);});
+		await world.save();
+		await cleanUpPermissions(role._id);
+		await Role.deleteOne({_id: role._id});
+		return world;
+	}
 };

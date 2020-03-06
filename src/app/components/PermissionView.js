@@ -1,5 +1,5 @@
-import React from 'react';
-import {Col, List, Row, Table} from "antd";
+import React, {useState} from 'react';
+import {Button, Col, Icon, Input, List, Row, Select, Table, Tabs} from "antd";
 import useCurrentUser from "../hooks/useCurrentUser";
 import {LoadingView} from "./LoadingView";
 import {
@@ -10,11 +10,18 @@ import {
 } from "../../permission-constants";
 import useCurrentWorld from "../hooks/useCurrentWorld";
 import {EVERYONE} from "../../role-constants";
+import useCreateRole from "../hooks/useCreateRole";
+import useDeleteRole from "../hooks/useDeleteRole";
 
 export default () => {
 
-	const {currentUser, loading} = useCurrentUser();
+	const {currentUser, loading, refetch} = useCurrentUser();
 	const {currentWorld} = useCurrentWorld();
+	const {createRole, loading: createRoleLoading} = useCreateRole();
+	const {deleteRole} = useDeleteRole();
+	const [newRoleName, setNewRoleName] = useState();
+	const [selectedRole, setSelectedRole] = useState(null);
+
 	if(loading){
 		return <LoadingView/>;
 	}
@@ -124,11 +131,17 @@ export default () => {
 		},
 	];
 
-	return <div className={'margin-lg'}>
+	return <div className={'margin-md'}>
 		<h1>Permissions</h1>
 		<hr/>
-		<h2>My Permissions</h2>
-		<Row>
+		<Row className={'margin-lg-top'}>
+			<Col span={4}></Col>
+			<Col span={16}>
+				<h2>My Permissions</h2>
+			</Col>
+			<Col span={4}></Col>
+		</Row>
+		<Row className={'margin-lg-top'}>
 			<Col span={4}></Col>
 			<Col span={16}>
 				<Table
@@ -136,6 +149,98 @@ export default () => {
 					columns={columns}
 					pagination={{pageSize: 10}}
 				/>
+			</Col>
+			<Col span={4}></Col>
+		</Row>
+
+		<Row className={'margin-lg-top'}>
+			<Col span={4}></Col>
+			<Col span={16}>
+				<h2>Role List</h2>
+			</Col>
+			<Col span={4}></Col>
+		</Row>
+		<Row className={'margin-lg-top'}>
+			<Col span={4}></Col>
+			<Col span={16}>
+				Role:
+				<Select
+					showSearch
+					style={{ width: 200 }}
+					placeholder="Select a role"
+					optionFilterProp="children"
+					onChange={async value => {
+						for(let role of currentWorld.roles){
+							if(role._id === value){
+								await setSelectedRole(role);
+							}
+						}
+					 }}
+					filterOption={(input, option) =>
+						option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+					}
+				>
+					{currentWorld.roles.map(role => <Select.Option key={role._id} value={role._id}>{role.name}</Select.Option>)}
+				</Select>
+				{selectedRole ?
+					<Tabs defaultActiveKey="1">
+						<Tabs.TabPane tab="Permissions in this role" key="1">
+							<Table columns={[
+								{
+									title: 'Permission',
+									dataIndex: 'permission',
+									key: 'permission'
+								},
+								{
+									title: 'Subject Type',
+									dataIndex: 'subjectType',
+									key: 'subjectType'
+								},
+								{
+									title: 'Subject Id',
+									dataIndex: 'subjectId',
+									key: 'subjectId'
+								},
+								{
+									title: 'Delete',
+									dataIndex: '_id',
+									key: '_id',
+									render: (_id, assignment) => {
+										return <Button className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(item._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>;
+									}
+								}
+							]}
+							       dataSource={selectedRole.permissions}
+					        />
+						</Tabs.TabPane>
+						<Tabs.TabPane tab="Users with this role" key="2">
+							<List
+								dataSource={currentWorld.roles.members}
+								renderItem={(item) => {
+									return <List.Item>
+										{item.username}
+										{selectedRole.canWrite &&
+											<Button className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(item._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>
+										}
+									</List.Item>;
+								}}
+							/>
+						</Tabs.TabPane>
+						<Tabs.TabPane tab="Delete this role" key="3">
+							<Button disabled={!selectedRole.canWrite} className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(selectedRole._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>
+						</Tabs.TabPane>
+					</Tabs>
+					:
+					<div className={'margin-md-top'}>Please select a role</div>
+				}
+				{currentWorld.canAddRoles &&
+					<div className={'flex margin-lg-top'}>
+						<div>Add New Role:</div>
+						<div className={'margin-lg-left'}><Input value={newRoleName} onChange={async (e) => {await setNewRoleName(e.target.value)}}/></div>
+						<Button className={'margin-lg-left'} disabled={createRoleLoading} onClick={async () => {await createRole(currentWorld._id, newRoleName); await refetch();}} type={'primary'}>Create</Button>
+					</div>
+				}
+
 			</Col>
 			<Col span={4}></Col>
 		</Row>

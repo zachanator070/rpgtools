@@ -3,9 +3,10 @@ import MutationResolver from "./mutation-resolver";
 import {WikiFolder} from "../models/wiki-folder";
 import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
-import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
+import {ROLE_ADD, WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
 import {Role} from '../models/role';
 import {ALL_USERS, EVERYONE} from "../../role-constants";
+import {getSubjectFromPermission, userHasPermission} from "../authorization-helpers";
 
 const getUserPermissionAssignments = async (permissions, subject, currentUser) => {
 	const assignments = [];
@@ -148,6 +149,9 @@ export const serverResolvers = {
 				}
 			}
 			return assignments;
+		},
+		canAddRoles: async (world, _, {currentUser}) => {
+			return userHasPermission(currentUser, ROLE_ADD, world._id);
 		}
 	},
 	PermissionControlled: {
@@ -207,6 +211,17 @@ export const serverResolvers = {
 			}
 			return permissions;
 		},
+		canWrite: async (role, _, {currentUser}) => {
+			return role.userCanWrite(currentUser);
+		},
+		members: async (role, _, {currentUser}) => {
+
+			if(! await role.userCanWrite(currentUser)){
+				return [];
+			}
+			return User.find({roles: role._id});
+
+		},
 	},
 	WikiPage: {
 		__resolveType: async (page, {currentUser}, info) => {
@@ -263,6 +278,11 @@ export const serverResolvers = {
 	Pin: {
 		canWrite: async (pin, _, {currentUser}) => {
 			return await pin.userCanWrite(currentUser);
+		}
+	},
+	PermissionAssignment: {
+		subjectType: async (assignment, _, {currentUser}) => {
+			return (await getSubjectFromPermission(assignment.permission, assignment.subjectId)).constructor.modelName;
 		}
 	}
 };

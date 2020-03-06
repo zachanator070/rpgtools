@@ -57,12 +57,34 @@ export const CURRENT_WORLD_PERMISSIONS = `
 	
 `;
 
+export const CURRENT_WORLD_ROLES = `
+	roles{
+		_id
+		name
+		canWrite
+		world{
+			_id
+		}
+		permissions{
+			_id
+			permission
+			subjectId
+			subjectType
+		}
+		members{
+			_id
+			username
+		}
+	}
+`;
+
 const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID!){
         world(worldId: $worldId){
 			_id
 			name
 			canWrite
+			canAddRoles
 			wikiPage {
 				_id
 				name
@@ -70,18 +92,7 @@ const GET_CURRENT_WORLD = gql`
 			rootFolder{
 				${CURRENT_WORLD_FOLDERS}
 			}
-			roles{
-				_id
-				name
-				world{
-					_id
-				}
-				permissions{
-					_id
-					permission
-					subjectId
-				}
-			}
+			${CURRENT_WORLD_ROLES}
 			${CURRENT_WORLD_PINS}
 			folders{
 			    ${CURRENT_WORLD_FOLDERS}

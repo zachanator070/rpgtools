@@ -1,7 +1,7 @@
 import {authenticated} from "../../authentication-helpers";
-import {userHasPermission} from "../../authorization-helpers";
+import {getSubjectFromPermission, userHasPermission} from "../../authorization-helpers";
 import {
-	FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST, PUBLIC_WORLD_PERMISSIONS,
+	FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST, PUBLIC_WORLD_PERMISSIONS, ROLE_ADD,
 	ROLE_ADMIN,
 	WIKI_READ_ALL,
 	WIKI_RW_ALL,
@@ -17,6 +17,7 @@ import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
 import {PLACE} from "../../../wiki-page-types";
 import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
+import {cleanUpPermissions} from "../../db-helpers";
 
 export const worldMutations = {
 	createWorld: authenticated(async (parent, {name, public: isPublic}, {currentUser}) => {
@@ -161,5 +162,17 @@ export const worldMutations = {
 			}
 		}).execPopulate();
 		return pin;
+	},
+	renameWorld: async (_, {worldId, newName}, {currentUser}) => {
+		const world = await World.findById(worldId);
+		if(!world){
+			throw new Error(`World with id ${worldId} doesn't exist`);
+		}
+		if(!await world.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to rename this world');
+		}
+		world.name = newName;
+		await world.save();
+		return world;
 	},
 };

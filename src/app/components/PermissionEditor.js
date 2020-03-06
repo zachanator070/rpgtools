@@ -3,6 +3,7 @@ import {Button, Col, Icon, Input, List, Modal, Radio, Row, Tabs} from "antd";
 import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
 import useCurrentWorld from "../hooks/useCurrentWorld";
 import useCurrentWiki from "../hooks/useCurrentWiki";
+import useCurrentUser from "../hooks/useCurrentUser";
 import {useSearchUsers} from "../hooks/useSearchUsers";
 import {useSearchRoles} from "../hooks/useSearchRoles";
 import {useGrantUserPermission} from "../hooks/useGrantUserPermisison";
@@ -121,7 +122,7 @@ export default () => {
 					{permissions.map(permission =>
 						<Tabs.TabPane
 							tab={permission}
-							key={permission + '.' + permissionGroup}
+							key={permission}
 						>
 							<List
 								bordered

@@ -1,5 +1,6 @@
-export const ROLE_ADMIN = 'Able to add or remove members from a role';
+export const ROLE_ADMIN = 'Able to add or remove members from a role or delete a role';
 export const ROLE_ADMIN_ALL = 'Able to edit any role in this world';
+export const ROLE_ADD = 'Able to create roles in this world';
 export const WORLD_READ = 'See this world in search results';
 export const WIKI_READ_ALL = 'Read all wiki pages';
 export const WIKI_RW_ALL = 'Write to any wiki page';
@@ -18,6 +19,7 @@ export const WORLD_CREATE = 'Create world access';
 export const ALL_PERMISSIONS = [
 	ROLE_ADMIN,
 	ROLE_ADMIN_ALL,
+	ROLE_ADD,
 	WORLD_READ,
 	WIKI_READ_ALL,
 	WIKI_RW_ALL,
@@ -37,7 +39,7 @@ export const ROLE_PERMISSIONS = [ROLE_ADMIN];
 
 export const WIKI_PERMISSIONS = [WIKI_READ, WIKI_RW];
 
-export const WORLD_PERMISSIONS = [ROLE_ADMIN_ALL, WORLD_READ, WIKI_READ_ALL, WIKI_RW_ALL, FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST];
+export const WORLD_PERMISSIONS = [ROLE_ADD, ROLE_ADMIN_ALL, WORLD_READ, WIKI_READ_ALL, WIKI_RW_ALL, FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST];
 
 export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW];
 

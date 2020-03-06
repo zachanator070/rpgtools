@@ -27,8 +27,10 @@ export const typeDefs = gql`
         setCurrentWorld(worldId: ID!): User!
         
         createWorld(name: String!, public: Boolean!): World!
+        renameWorld(worldId: ID!, newName: String!): World!
         
-        createRole(name: String!, worldId: ID!): Role!
+        createRole(worldId: ID!, name: String!): World!
+        deleteRole(roleId: ID!): World!
         
         """ Grant a permission to a user """
         grantUserPermission(userId: ID!, permission: String!, subjectId: ID): PermissionControlled!
@@ -86,6 +88,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		userPermissionAssignments: [userPermissionAssignment!]!
 		rolePermissionAssignments: [rolePermissionAssignment!]!
+		canAddRoles: Boolean!
 	}
 	
 	type WorldsPaginatedResult {
@@ -184,13 +187,16 @@ export const typeDefs = gql`
 		_id: ID!
 		name: String!
 		permissions: [PermissionAssignment!]!
+		members: [User!]!
 		world: World!
+		canWrite: Boolean!
 	}
 	
 	type PermissionAssignment {
 		_id: ID!
 		permission: String!
 		subjectId: ID
+		subjectType: String!
 	}
 	
 	type Pin {
