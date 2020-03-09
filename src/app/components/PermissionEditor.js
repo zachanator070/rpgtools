@@ -88,15 +88,15 @@ export default () => {
 	let userAssignments = [];
 	let roleAssignments = [];
 	let permissions = [];
-	let subjectId = null;
+	let subject = null;
 	if(currentWiki){
 		permissions = WIKI_PERMISSIONS;
-		subjectId = currentWiki._id;
+		subject = currentWiki;
 		userAssignments = currentWiki.userPermissionAssignments;
 		roleAssignments = currentWiki.rolePermissionAssignments;
 	} else if(currentWorld){
 		permissions = WORLD_PERMISSIONS;
-		subjectId = currentWorld._id;
+		subject = currentWorld;
 		userAssignments = currentWorld.userPermissionAssignments;
 		roleAssignments = currentWorld.rolePermissionAssignments;
 	}
@@ -140,7 +140,7 @@ export default () => {
 											<List.Item key={item.permission + '.' + item.user._id}>
 												{item.user.username}
 												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
-													await revokeUserPermission(item.user._id, item.permission, subjectId);
+													await revokeUserPermission(item.user._id, item.permission, subject._id, );
 													await refetch();
 												}}>
 													<Icon type='delete' theme='outlined'/>

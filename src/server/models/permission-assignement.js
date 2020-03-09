@@ -1,16 +1,25 @@
 import mongoose from 'mongoose';
 import {ALL_PERMISSIONS} from '../../permission-constants';
-import {getSubjectFromPermission, getWorldFromPermission, userHasPermission} from "../authorization-helpers";
+import {getSubjectFromPermission} from "../authorization-helpers";
+import {ALL_TYPES} from "../../wiki-page-types";
 
 const Schema = mongoose.Schema;
 
 const permissionAssignmentSchema = new Schema({
 	permission: {
 		type: String,
+		required: true,
 		enum: ALL_PERMISSIONS
 	},
-	subjectId: {
-		type: mongoose.Schema.ObjectId
+	subject: {
+		type: mongoose.Schema.ObjectId,
+		required: true,
+		refPath: 'subjectType'
+	},
+	subjectType: {
+		type: String,
+		required: true,
+		enum: [...ALL_TYPES, 'World', 'Role', 'WikiFolder', 'Game']
 	}
 });
 
