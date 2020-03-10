@@ -1,9 +1,10 @@
 import {useLazyQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import useCurrentWorld from "./useCurrentWorld";
 
 const SEARCH_ROLES = gql`
-	query searchRoles($name: String!){
-		roles(name: $name){
+	query searchRoles($worldId: ID!, $name: String!){
+		roles(worldId: $worldId, name: $name){
 			_id
 			name
 		}
@@ -12,8 +13,9 @@ const SEARCH_ROLES = gql`
 
 export const useSearchRoles = () => {
 	const [searchRoles, {data, loading, error}] = useLazyQuery(SEARCH_ROLES);
+	const {currentWorld} = useCurrentWorld();
 	return {
-		searchRoles: async (name) => {return searchRoles({variables: {name}});},
+		searchRoles: async (name) => {return searchRoles({variables: {worldId: currentWorld._id, name}});},
 		roles: data ? data.roles : [],
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []

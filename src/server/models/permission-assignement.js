@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import {ALL_PERMISSIONS} from '../../permission-constants';
-import {getSubjectFromPermission} from "../authorization-helpers";
-import {ALL_TYPES} from "../../wiki-page-types";
+import {ALL_WIKI_TYPES, GAME, PERMISSION_ASSIGNMENT, PIN, ROLE, SERVER, WIKI_FOLDER, WORLD} from "../../type-constants";
+
+export const SUBJECT_TYPES = [...ALL_WIKI_TYPES, WORLD, ROLE, WIKI_FOLDER, GAME, PIN, SERVER];
 
 const Schema = mongoose.Schema;
 
@@ -19,22 +20,17 @@ const permissionAssignmentSchema = new Schema({
 	subjectType: {
 		type: String,
 		required: true,
-		enum: [...ALL_TYPES, 'World', 'Role', 'WikiFolder', 'Game']
+		enum: SUBJECT_TYPES
 	}
 });
 
 permissionAssignmentSchema.methods.userCanWrite = async function(user) {
-	const subject = await getSubjectFromPermission(this.permission, this.subjectId);
-	if(subject){
-		return await subject.userCanWrite(user);
-	}
-	else {
-		return false;
-	}
+	await this.populate('subject').execPopulate();
+	return await this.subject.userCanWrite(user);
 };
 
 permissionAssignmentSchema.methods.userCanRead = async function(user){
 	return await this.userCanWrite(user);
 };
 
-export const PermissionAssignment = mongoose.model('PermissionAssignment', permissionAssignmentSchema);
+export const PermissionAssignment = mongoose.model(PERMISSION_ASSIGNMENT, permissionAssignmentSchema);

@@ -2,6 +2,29 @@ import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
 
+export const CURRENT_WORLD_PERMISSIONS = `
+	permissions{
+		_id
+		permission
+		subjectType
+		subject {
+			_id
+			... on World{
+				name
+			}
+			... on WikiPage{
+				name
+			}
+			... on WikiFolder{
+				name
+			}
+			... on Role{
+				name
+			}
+		}
+	}
+`;
+
 export const CURRENT_WORLD_WIKIS = `
 	_id
 	name
@@ -38,24 +61,6 @@ export const CURRENT_WORLD_PINS = `
 	}
 `;
 
-export const CURRENT_WORLD_PERMISSIONS = `
-
-	userPermissionAssignments {
-		permission
-		user {
-			_id
-			username
-		}
-	}
-	rolePermissionAssignments {
-		permission
-		role {
-			_id
-			name
-		}
-	}
-	
-`;
 
 export const CURRENT_WORLD_ROLES = `
 	roles{
@@ -65,16 +70,19 @@ export const CURRENT_WORLD_ROLES = `
 		world{
 			_id
 		}
-		permissions{
-			_id
-			permission
-			subjectId
-			subjectType
-		}
+		${CURRENT_WORLD_PERMISSIONS}
 		members{
 			_id
 			username
 		}
+	}
+`;
+
+export const CURRENT_WORLD_USERS_WITH_PERMISSIONS = `
+	usersWithPermissions{
+		_id
+		name
+		${CURRENT_WORLD_PERMISSIONS}
 	}
 `;
 
@@ -92,12 +100,12 @@ const GET_CURRENT_WORLD = gql`
 			rootFolder{
 				${CURRENT_WORLD_FOLDERS}
 			}
+			${CURRENT_WORLD_USERS_WITH_PERMISSIONS}
 			${CURRENT_WORLD_ROLES}
 			${CURRENT_WORLD_PINS}
 			folders{
 			    ${CURRENT_WORLD_FOLDERS}
 		    }
-		    ${CURRENT_WORLD_PERMISSIONS}
 	    }
     }
     

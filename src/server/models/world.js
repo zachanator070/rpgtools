@@ -2,9 +2,10 @@ import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
-import {ROLE_ADMIN, WORLD_READ} from "../../permission-constants";
-import {Pin} from './pin.js';
+import {WORLD_READ} from "../../permission-constants";
 import {WORLD_OWNER} from "../../role-constants";
+import {PIN, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../type-constants";
+
 const Schema = mongoose.Schema;
 
 const worldSchema = new Schema({
@@ -14,22 +15,22 @@ const worldSchema = new Schema({
 	},
 	wikiPage: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiPage',
+		ref: WIKI_PAGE,
 		autopopulate: true
 	},
 	rootFolder: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiFolder',
+		ref: WIKI_FOLDER,
 		autopopulate: true
 	},
 	roles: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'Role',
+		ref: ROLE,
 		autopopulate: true
 	}],
 	pins: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'Pin',
+		ref: PIN,
 		autopopulate: true
 	}]
 });
@@ -54,4 +55,4 @@ worldSchema.plugin(mongooseAutopopulate);
 
 worldSchema.plugin(mongoosePaginate);
 
-export const World = mongoose.model('World', worldSchema);
+export const World = mongoose.model(WORLD, worldSchema);

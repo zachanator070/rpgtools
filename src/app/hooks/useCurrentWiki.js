@@ -50,32 +50,12 @@ export const CURRENT_WIKI_PLACE_ATTRIBUTES = `
     }
 `;
 
-export const CURRENT_WIKI_PERMISSIONS = `
-
-	userPermissionAssignments {
-		permission
-		user {
-			_id
-			username
-		}
-	}
-	rolePermissionAssignments {
-		permission
-		role {
-			_id
-			name
-		}
-	}
-	
-`;
-
 const GET_CURRENT_WIKI = gql`
     query currentWiki($wikiId: ID!){
         wiki(wikiId: $wikiId) {
             ${CURRENT_WIKI_ATTRIBUTES}
             ... on Place {
                 ${CURRENT_WIKI_PLACE_ATTRIBUTES}
-                ${CURRENT_WIKI_PERMISSIONS}
             }
         }
     }

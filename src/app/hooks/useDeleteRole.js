@@ -7,7 +7,6 @@ const DELETE_ROLE = gql`
 		deleteRole(roleId: $roleId){
 			_id
 			${CURRENT_WORLD_ROLES}
-			${CURRENT_WORLD_PERMISSIONS}
 		}
 	}
 `;

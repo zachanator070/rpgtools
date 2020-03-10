@@ -2,22 +2,19 @@ import React, {useState} from 'react';
 import {Button, Col, Icon, Input, List, Row, Select, Table, Tabs} from "antd";
 import useCurrentUser from "../hooks/useCurrentUser";
 import {LoadingView} from "./LoadingView";
-import {
-	ROLE_PERMISSIONS,
-	WIKI_FOLDER_PERMISSIONS,
-	WIKI_PERMISSIONS,
-	WORLD_PERMISSIONS
-} from "../../permission-constants";
 import useCurrentWorld from "../hooks/useCurrentWorld";
 import {EVERYONE} from "../../role-constants";
 import useCreateRole from "../hooks/useCreateRole";
 import useDeleteRole from "../hooks/useDeleteRole";
+import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../type-constants";
+import {useRevokeRolePermission} from "../hooks/useRevokeRolePermission";
 
 export default () => {
 
 	const {currentUser, loading, refetch} = useCurrentUser();
 	const {currentWorld} = useCurrentWorld();
 	const {createRole, loading: createRoleLoading} = useCreateRole();
+	const {revokeRolePermission} = useRevokeRolePermission();
 	const {deleteRole} = useDeleteRole();
 	const [newRoleName, setNewRoleName] = useState();
 	const [selectedRole, setSelectedRole] = useState(null);
@@ -26,32 +23,19 @@ export default () => {
 		return <LoadingView/>;
 	}
 
-	const getPermissionSubjectName = (permission, subjectId) => {
-		if(WORLD_PERMISSIONS.includes(permission) && subjectId === currentWorld._id){
-			return `World: ${currentWorld.name}`;
+	const getPermissionSubjectName = (assignment) => {
+
+		if(assignment.subjectType === WORLD){
+			return `World: ${assignment.subject.name}`;
 		}
-		else if(WIKI_PERMISSIONS.includes(permission)){
-			for(let folder of currentWorld.folders){
-				for(let page of folder.pages){
-					if(page._id === subjectId){
-						return `Wiki Page: ${page.name}`;
-					}
-				}
-			}
+		else if(ALL_WIKI_TYPES.includes(assignment.subjectType) || assignment.subjectType === WIKI_PAGE){
+			return `Wiki Page: ${assignment.subject.name}`;
 		}
-		else if(WIKI_FOLDER_PERMISSIONS.includes(permission)){
-			for(let folder of currentWorld.folders){
-				if(folder._id === subjectId){
-					return `Wiki Folder: ${folder.name}`;
-				}
-			}
+		else if(assignment.subjectType === WIKI_FOLDER){
+			return `Wiki Folder: ${assignment.subject.name}`;
 		}
-		else if(ROLE_PERMISSIONS.includes(permission)){
-			for(let role of currentWorld.roles){
-				if(role._id === subjectId){
-					return `Role: ${role.name}`;
-				}
-			}
+		else if(assignment.subjectType === ROLE){
+			return `Role: ${assignment.subject.name}`;
 		}
 		return null;
 	};
@@ -59,7 +43,7 @@ export default () => {
 	const permissionAssignments = [];
 	if(currentUser){
 		for(let assignment of currentUser.permissions){
-			const subjectName = getPermissionSubjectName(assignment.permission, assignment.subjectId);
+			const subjectName = getPermissionSubjectName(assignment);
 			if(!subjectName){
 				continue;
 			}
@@ -68,7 +52,7 @@ export default () => {
 
 		for(let role of currentUser.roles){
 			for(let assignment of role.permissions){
-				const subjectName = getPermissionSubjectName(assignment.permission, assignment.subjectId);
+				const subjectName = getPermissionSubjectName(assignment);
 				if(!subjectName){
 					continue;
 				}
@@ -88,7 +72,7 @@ export default () => {
 
 	if(everyoneRole){
 		for(let assignment of everyoneRole.permissions){
-			const subjectName = getPermissionSubjectName(assignment.permission, assignment.subjectId);
+			const subjectName = getPermissionSubjectName(assignment);
 			const sourceName = `Role: ${everyoneRole.name}`;
 			permissionAssignments.push({permission: assignment.permission, subject: subjectName, key:`${assignment._id}${subjectName}${sourceName}`, source: sourceName});
 		}
@@ -197,20 +181,22 @@ export default () => {
 									key: 'subjectType'
 								},
 								{
-									title: 'Subject Id',
-									dataIndex: 'subjectId',
-									key: 'subjectId'
+									title: 'Subject Name',
+									dataIndex: 'subjectName',
+									key: 'subjectName'
 								},
 								{
-									title: 'Delete',
+									title: 'Remove Permission',
 									dataIndex: '_id',
 									key: '_id',
 									render: (_id, assignment) => {
-										return <Button className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(item._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>;
+										return <Button className={'margin-md-left'} type={'primary'} onClick={async () => {await revokeRolePermission(selectedRole._id, item._id);}}>
+											<Icon type={'delete'} theme={'outlined'}/>
+										</Button>;
 									}
 								}
 							]}
-							       dataSource={selectedRole.permissions}
+							       dataSource={selectedRole.permissions.map(permission => {return {permission: permission.permission, subjectType: permission.subjectType, subjectName: permission.subject.name};})}
 					        />
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Users with this role" key="2">

@@ -7,14 +7,6 @@ const LOGOUT_QUERY = gql`
     }
 `;
 
-const LOGIN_QUERY = gql`
-    query {
-        currentUser {
-            _id
-        }
-    }
-`;
-
 export default () => {
 
 	const client = useApolloClient();

@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
+import {CHUNK, IMAGE} from "../../type-constants";
 
 const chunkSchema = new mongoose.Schema({
 	image: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Image',
+		ref: IMAGE,
 		required: [true, 'image id required']
 	},
 	x: {
@@ -28,4 +29,4 @@ const chunkSchema = new mongoose.Schema({
 	}
 });
 
-export const Chunk = mongoose.model('Chunk', chunkSchema);
+export const Chunk = mongoose.model(CHUNK, chunkSchema);

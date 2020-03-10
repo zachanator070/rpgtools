@@ -1,5 +1,6 @@
 import {useQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import {CURRENT_WORLD_PERMISSIONS, CURRENT_WORLD_ROLES} from "./useCurrentWorld";
 
 const GET_CURRENT_USER = gql`
     query {
@@ -13,20 +14,8 @@ const GET_CURRENT_USER = gql`
                     _id
                 }
             }
-            permissions{
-                _id
-                permission
-                subjectId
-            }
-            roles{
-                _id
-                name
-                permissions{
-	                _id
-	                permission
-	                subjectId
-                }
-            }
+            ${CURRENT_WORLD_PERMISSIONS}
+            ${CURRENT_WORLD_ROLES}
         }
     }
 `;

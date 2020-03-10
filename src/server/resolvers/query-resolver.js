@@ -7,7 +7,7 @@ import {EVERYONE} from "../../role-constants";
 import mongoose from 'mongoose';
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
-import {PLACE} from "../../wiki-page-types";
+import {PLACE} from "../../type-constants";
 
 export default {
 	currentUser: authenticated((parent, args, context) => context.currentUser),
@@ -39,7 +39,7 @@ export default {
 			userPermissions.push(...userRole.permissions);
 		}
 		userPermissions = userPermissions.filter(permission => permission.permission === WORLD_READ);
-		const worldsUserCanRead = userPermissions.map(permission => new mongoose.Types.ObjectId(permission.subjectId));
+		const worldsUserCanRead = userPermissions.map(permission => permission.subject);
 		const worldAggregate = World.aggregate([
 			{
 				'$lookup': {
@@ -146,7 +146,7 @@ export default {
 	users: async (_, {username}, {currentUser}) => {
 		return User.find({username: { $regex: `^${username}.*` , $options: 'i'}});
 	},
-	roles: async (_, {name}, {currentUser}) => {
-		return Role.find({name: { $regex: `^${name}.*` , $options: 'i'}});
+	roles: async (_, {worldId, name}, {currentUser}) => {
+		return Role.find({world: worldId, name: { $regex: `^${name}.*` , $options: 'i'}});
 	}
 };

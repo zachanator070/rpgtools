@@ -1,21 +1,22 @@
 import mongoose from 'mongoose';
+import {GAME, IMAGE, WORLD} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
-const gameSchema = Schema({
+const gameSchema = new Schema({
 	password_hash: {
 		type: String
 	},
 	world: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'World',
+		ref: WORLD,
 		required: [true, 'worldId required']
 	},
 	mapImage: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Image',
+		ref: IMAGE,
 	},
-	players: [Schema({
+	players: [new Schema({
 		socketId: {
 			type: String,
 			required: [true, 'socketId required']
@@ -26,10 +27,10 @@ const gameSchema = Schema({
 			required: [true, 'player id required']
 		}
 	})],
-	icons: [Schema({
+	icons: [new Schema({
 		image: {
 			type: mongoose.Schema.ObjectId,
-			ref: 'Image',
+			ref: IMAGE,
 			required: [true, 'icon image id required']
 		},
 		x: {
@@ -41,12 +42,12 @@ const gameSchema = Schema({
 			required: [true, 'y position required']
 		}
 	})],
-	strokes: [Schema({
-		path: [Schema({
+	strokes: [new Schema({
+		path: [new Schema({
 			x: Number,
 			y: Number,
 		})],
-		color: Schema({
+		color: new Schema({
 			r: Number,
 			g: Number,
 			b: Number,
@@ -59,7 +60,7 @@ const gameSchema = Schema({
 			enum: ['circle', 'square', 'erase']
 		}
 	})],
-	messages: [Schema({
+	messages: [new Schema({
 		sender: {
 			type: String,
 			required: [true, 'sender required']
@@ -75,4 +76,4 @@ const gameSchema = Schema({
 	})]
 });
 
-export const Game = mongoose.model('Game', gameSchema);
+export const Game = mongoose.model(GAME, gameSchema);

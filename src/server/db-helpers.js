@@ -3,7 +3,7 @@ import {Role} from './models/role';
 import {User} from './models/user';
 
 export const cleanUpPermissions = async (subjectId) => {
-	const assignments = await PermissionAssignment.find({subjectId});
+	const assignments = await PermissionAssignment.find({subject: subjectId});
 	for(let assignment of assignments){
 		const roles = await Role.find({permissions: assignment._id});
 		for(let role of roles){

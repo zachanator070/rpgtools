@@ -4,8 +4,8 @@ import {WIKI_RW} from "../../../permission-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
-import {ARTICLE} from "../../../wiki-page-types";
 import {cleanUpPermissions} from "../../db-helpers";
+import {ARTICLE} from "../../../type-constants";
 
 export const wikiMutations = {
 	createWiki: async (parent, {name, folderId}, {currentUser}) => {

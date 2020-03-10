@@ -10,6 +10,7 @@ import {useGrantUserPermission} from "../hooks/useGrantUserPermisison";
 import {useGrantRolePermission} from "../hooks/useGrantRolePermission";
 import {useRevokeUserPermission} from "../hooks/useRevokeUserPermission";
 import {useRevokeRolePermission} from "../hooks/useRevokeRolePermission";
+import {WIKI_PAGE, WORLD} from "../../type-constants";
 
 export default () => {
 
@@ -85,24 +86,41 @@ export default () => {
 		})();
 	}, [permissionGroup]);
 
-	let userAssignments = [];
-	let roleAssignments = [];
 	let permissions = [];
 	let subject = null;
+	let subjectType = null;
 	if(currentWiki){
 		permissions = WIKI_PERMISSIONS;
 		subject = currentWiki;
-		userAssignments = currentWiki.userPermissionAssignments;
-		roleAssignments = currentWiki.rolePermissionAssignments;
+		subjectType = WIKI_PAGE;
 	} else if(currentWorld){
 		permissions = WORLD_PERMISSIONS;
 		subject = currentWorld;
-		userAssignments = currentWorld.userPermissionAssignments;
-		roleAssignments = currentWorld.rolePermissionAssignments;
+		subjectType = WORLD;
+	} else {
+		return <>Unknown Subject Type</>;
 	}
 
 	if(currentWorldLoading || currentWikiLoading){
 		return <></>;
+	}
+
+	let userPermissions = [];
+	for(let user of currentWorld.usersWithPermissions){
+		for(let permission of user.permissions){
+			if(permission.subject._id === subject._id){
+				userPermissions.push({user: user, permission: permission});
+			}
+		}
+	}
+
+	let rolePermissions = [];
+	for(let role of currentWorld.roles){
+		for(let permission of role.permissions){
+			if(permission.subject._id === subject._id){
+				rolePermissions.push({role: role, permission: permission});
+			}
+		}
 	}
 
 	return <>
@@ -127,11 +145,9 @@ export default () => {
 							<List
 								bordered
 								dataSource={permissionGroup === 'users' ?
-									userAssignments.filter((assignment) => {
-										return assignment.permission === permission
-									}) : roleAssignments.filter((assignment) => {
-										return assignment.permission === permission
-									})
+									userPermissions
+									:
+									rolePermissions
 								}
 								locale={{emptyText: <div>No Users</div>}}
 								renderItem={(item) => {
@@ -140,7 +156,7 @@ export default () => {
 											<List.Item key={item.permission + '.' + item.user._id}>
 												{item.user.username}
 												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
-													await revokeUserPermission(item.user._id, item.permission, subject._id, );
+													await revokeUserPermission(item.user._id, item.permission._id);
 													await refetch();
 												}}>
 													<Icon type='delete' theme='outlined'/>
@@ -153,7 +169,7 @@ export default () => {
 											<List.Item key={item.permission + '.' + item.role._id}>
 												{item.role.name}
 												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
-													await revokeRolePermission(item.role._id, item.permission, subjectId);
+													await revokeRolePermission(item.role._id, item.permission._id);
 													await refetch();
 												}}>
 													<Icon type='delete' theme='outlined'/>
@@ -192,11 +208,11 @@ export default () => {
 						permission = permissions[0];
 					}
 					if(permissionGroup === 'users'){
-						await grantUserPermission(permissionAssigneeId, permission, subjectId);
+						await grantUserPermission(permissionAssigneeId, permission, subject._id, subjectType);
 						await refetch();
 					}
 					else{
-						await grantRolePermission(permissionAssigneeId, permission, subjectId);
+						await grantRolePermission(permissionAssigneeId, permission, subject._id, subjectType);
 						await refetch();
 					}
 				}}>Add {permissionGroup === 'users' ? 'user' : 'role'}</Button>

@@ -3,6 +3,7 @@ import mongooseAutopopulate from "mongoose-autopopulate";
 import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../permission-constants";
 import {userHasPermission} from "../authorization-helpers";
 import {GridFSBucket} from "mongodb";
+import {IMAGE, WIKI_PAGE, WORLD} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -14,11 +15,11 @@ const wikiPageSchema = new Schema({
 	world: {
 		type: mongoose.Schema.ObjectId,
 		required: [true, 'world field required'],
-		ref: 'World'
+		ref: WORLD
 	},
 	coverImage: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Image',
+		ref: IMAGE,
 		autopopulate: true
 	},
 	contentId: {
@@ -65,4 +66,4 @@ wikiPageSchema.methods.userCanRead = async function(user){
 
 wikiPageSchema.plugin(mongooseAutopopulate);
 
-export const WikiPage = mongoose.model('WikiPage', wikiPageSchema);
+export const WikiPage = mongoose.model(WIKI_PAGE, wikiPageSchema);

@@ -17,7 +17,7 @@ export const typeDefs = gql`
         """Search for users by username"""
         users(username: String!): [User!]!
         """Search for roles by name"""
-        roles(name: String!): [Role!]!
+        roles(worldId: ID!, name: String!): [Role!]!
     }
   
     type Mutation{
@@ -33,11 +33,11 @@ export const typeDefs = gql`
         deleteRole(roleId: ID!): World!
         
         """ Grant a permission to a user """
-        grantUserPermission(userId: ID!, permission: String!, subjectId: ID): World!
+        grantUserPermission(userId: ID!, permission: String!, subjectId: ID!, subjectType: String!): World!
         """ Revoke a assigned permission from a user """
         revokeUserPermission(userId: ID!, permissionAssignmentId: ID!): World!
         """ Grant a permission to a role """
-        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID): World!
+        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): World!
         """ Revoke a permission from a role """
         revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): World!
         
@@ -142,7 +142,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 	}
 	
-	type WikiFolder {
+	type WikiFolder implements PermissionControlled{
 		_id: ID!
 		name: String!
 		world: World!
@@ -174,7 +174,7 @@ export const typeDefs = gql`
 		fileId: ID!
 	}
 	
-	type Role {
+	type Role implements PermissionControlled{
 		_id: ID!
 		name: String!
 		permissions: [PermissionAssignment!]!
@@ -186,7 +186,7 @@ export const typeDefs = gql`
 	type PermissionAssignment {
 		_id: ID!
 		permission: String!
-		subjectId: ID
+		subject: PermissionControlled!
 		subjectType: String!
 	}
 	

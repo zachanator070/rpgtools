@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import mongooseAutopopulate from 'mongoose-autopopulate';
+import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -21,20 +22,20 @@ const userSchema = new Schema({
 	},
 	currentWorld: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'World'
+		ref: WORLD
 	},
 	roles: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'Role',
+		ref: ROLE,
 		autopopulate: true,
 	}],
 	permissions: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'PermissionAssignment',
+		ref: PERMISSION_ASSIGNMENT,
 		autopopulate: true,
 	}]
 });
 
 userSchema.plugin(mongooseAutopopulate);
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model(USER, userSchema);
