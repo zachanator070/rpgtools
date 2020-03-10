@@ -1,12 +1,8 @@
 import {authenticated} from "../../authentication-helpers";
-import {getSubjectFromPermission, userHasPermission} from "../../authorization-helpers";
+import { userHasPermission} from "../../authorization-helpers";
 import {
-	FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST, PUBLIC_WORLD_PERMISSIONS, ROLE_ADD,
-	ROLE_ADMIN,
-	WIKI_READ_ALL,
-	WIKI_RW_ALL,
+	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE, WORLD_PERMISSIONS,
-	WORLD_READ
 } from "../../../permission-constants";
 import {World} from "../../models/world";
 import {Place} from "../../models/place";
@@ -14,15 +10,19 @@ import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {Role} from "../../models/role";
 import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
-import {PLACE} from "../../../wiki-page-types";
 import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
-import {cleanUpPermissions} from "../../db-helpers";
+import {PLACE, WORLD} from "../../../type-constants";
+import {Server} from '../../models/server';
 
 export const worldMutations = {
 	createWorld: authenticated(async (parent, {name, public: isPublic}, {currentUser}) => {
 
-		if (!await userHasPermission(currentUser, WORLD_CREATE, null)) {
+		const server = await Server.findOne();
+		if(!server){
+			throw new Error('Server config doesnt exist!');
+		}
+		if (!await userHasPermission(currentUser, WORLD_CREATE, server._id)) {
 			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
 		}
 
@@ -41,12 +41,14 @@ export const worldMutations = {
 		for (const permission of WORLD_PERMISSIONS) {
 			let permissionAssignment = await PermissionAssignment.findOne({
 				permission: permission,
-				subjectId: world._id
+				subject: world._id,
+				subjectType: WORLD
 			});
 			if(!permissionAssignment){
 				permissionAssignment = await PermissionAssignment.create({
 					permission: permission,
-					subjectId: world._id
+					subject: world._id,
+					subjectType: WORLD
 				});
 			}
 			ownerPermissions.push(permissionAssignment);
@@ -60,12 +62,14 @@ export const worldMutations = {
 			for(let permission of PUBLIC_WORLD_PERMISSIONS){
 				let permissionAssignment = await PermissionAssignment.findOne({
 					permission: permission,
-					subjectId: world._id
+					subject: world._id,
+					subjectType: WORLD
 				});
 				if(!permissionAssignment){
 					permissionAssignment = await PermissionAssignment.create({
 						permission: permission,
-						subjectId: world._id
+						subject: world._id,
+						subjectType: WORLD
 					});
 				}
 				everyonePerms.push(permissionAssignment);

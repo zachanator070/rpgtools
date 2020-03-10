@@ -4,7 +4,7 @@ import gqlServer from './gql-server';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import {seedDefaultRoles} from "./default-role-seeder";
+import {defaultSeeders} from "./default-seeders";
 import path from 'path';
 import {ImageRouter} from "./routers/image-router";
 
@@ -13,7 +13,7 @@ const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
 mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParser: true}).then(
 	async () => {
 		console.log(`Connected to mongodb at mongodb://${mongodb_host}/${mongodb_db_name}`);
-		await seedDefaultRoles();
+		await defaultSeeders();
 });
 
 const server = express();

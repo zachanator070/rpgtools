@@ -10,7 +10,7 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useUpdateWiki from "../../hooks/useUpdateWiki";
 import useUpdatePerson from "../../hooks/useUpdatePerson";
 import useUpdatePlace from "../../hooks/useUpdatePlace";
-import {ALL_TYPES, PLACE} from "../../../wiki-page-types";
+import {ALL_WIKI_TYPES, PLACE} from "../../../type-constants";
 
 export const WikiEdit = () => {
 
@@ -81,7 +81,7 @@ export const WikiEdit = () => {
 		return (<div>{`You do not have permission to edit wiki ${wiki_id}`}</div>);
 	}
 
-	const wikiTypes = ALL_TYPES;
+	const wikiTypes = ALL_WIKI_TYPES;
 	const options = [];
 	for (let type of wikiTypes) {
 		options.push(<Select.Option key={type} value={type}>{type}</Select.Option>);

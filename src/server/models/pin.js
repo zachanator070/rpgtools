@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import {Place} from './place';
 import {WikiPage} from "./wiki-page";
 import mongooseAutopopulate from "mongoose-autopopulate";
+import {PIN, PLACE} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -16,7 +17,7 @@ const pinSchema = new Schema({
 	},
 	map: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Place',
+		ref: PLACE,
 		autopopulate: true
 	},
 	page: {
@@ -39,4 +40,4 @@ pinSchema.methods.userCanWrite = async function(user){
 
 pinSchema.plugin(mongooseAutopopulate);
 
-export const Pin = mongoose.model('Pin', pinSchema);
+export const Pin = mongoose.model(PIN, pinSchema);

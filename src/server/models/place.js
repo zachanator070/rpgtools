@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
 import {WikiPage} from "./wiki-page";
 import mongooseAutopopulate from "mongoose-autopopulate";
-import {userHasPermission} from "../authorization-helpers";
-import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../permission-constants";
-import {PLACE} from "../../wiki-page-types";
+import {PLACE} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 

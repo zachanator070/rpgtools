@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
 import mongooseAutopopulate from "mongoose-autopopulate";
+import {CHUNK, IMAGE, WORLD} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
 const imageSchema = new Schema({
 	world: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'World',
+		ref: WORLD,
 		required: [true, 'worldId required']
 	},
 	width: {
@@ -25,12 +26,12 @@ const imageSchema = new Schema({
 	},
 	chunks: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'Chunk',
+		ref: CHUNK,
 		autopopulate: true
 	}],
 	icon: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'Image',
+		ref: IMAGE,
 		autopopulate: true
 	},
 	name: {
@@ -41,4 +42,4 @@ const imageSchema = new Schema({
 
 imageSchema.plugin(mongooseAutopopulate);
 
-export const Image = mongoose.model('Image', imageSchema);
+export const Image = mongoose.model(IMAGE, imageSchema);

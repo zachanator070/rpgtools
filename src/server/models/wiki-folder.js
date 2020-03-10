@@ -3,6 +3,8 @@ import {WikiPage} from './wiki-page';
 import mongooseAutopopulate from "mongoose-autopopulate";
 import {FOLDER_READ, FOLDER_READ_ALL, FOLDER_RW, FOLDER_RW_ALL} from "../../permission-constants";
 import {userHasPermission} from "../authorization-helpers";
+import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../type-constants";
+
 const Schema = mongoose.Schema;
 
 const wikiFolderSchema = new Schema({
@@ -13,16 +15,16 @@ const wikiFolderSchema = new Schema({
 	world: {
 		type: mongoose.Schema.ObjectId,
 		required: [true, 'world field required'],
-		ref: 'World'
+		ref: WORLD
 	},
 	pages: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiPage',
+		ref: WIKI_PAGE,
 		autopopulate: true
 	}],
 	children: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiFolder'
+		ref: WIKI_FOLDER
 	}]
 });
 
@@ -49,5 +51,5 @@ wikiFolderSchema.post('remove', async function(folder) {
 	}
 });
 
-export const WikiFolder = mongoose.model('WikiFolder', wikiFolderSchema);
+export const WikiFolder = mongoose.model(WIKI_FOLDER, wikiFolderSchema);
 

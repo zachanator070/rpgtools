@@ -3,6 +3,7 @@ import mongooseAutopopulate from "mongoose-autopopulate";
 import {userHasPermission} from "../authorization-helpers";
 import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../permission-constants";
 import {ALL_USERS, EVERYONE} from "../../role-constants";
+import {PERMISSION_ASSIGNMENT, WORLD} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -13,11 +14,11 @@ const roleSchema = new Schema({
 	},
 	world: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'World'
+		ref: WORLD
 	},
 	permissions: [{
 		type: mongoose.Schema.ObjectId,
-		ref: 'PermissionAssignment',
+		ref: PERMISSION_ASSIGNMENT,
 		autopopulate: true
 	}]
 });

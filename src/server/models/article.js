@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {WikiPage} from "./wiki-page";
 import mongooseAutopopulate from "mongoose-autopopulate";
-import {ARTICLE} from "../../wiki-page-types";
+import {ARTICLE} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
