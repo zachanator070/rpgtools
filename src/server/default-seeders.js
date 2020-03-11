@@ -3,18 +3,19 @@ import {Role} from './models/role';
 import {PermissionAssignment} from './models/permission-assignement';
 import {ALL_USERS} from "../role-constants";
 import {WORLD_CREATE} from "../permission-constants";
-import {Server} from './models/server';
-import {SERVER} from "../type-constants";
+import {ServerConfig} from './models/server-config';
+import {SERVER_CONFIG} from "../type-constants";
+import { v4 as uuidv4 } from 'uuid';
 
 export const seedDefaultRoles = async () => {
 	let allUsersRole = await Role.find({name: ALL_USERS});
 	if(allUsersRole.length === 0){
-		const server = await Server.findOne();
+		const server = await ServerConfig.findOne();
 		if(!server){
 			throw new Error('Server needs to exist!');
 		}
 		allUsersRole = await Role.create({name: ALL_USERS});
-		const createWorldPermissions = await PermissionAssignment.create({permission: WORLD_CREATE, subject: server._id, subjectType: SERVER});
+		const createWorldPermissions = await PermissionAssignment.create({permission: WORLD_CREATE, subject: server._id, subjectType: SERVER_CONFIG});
 		allUsersRole.permissions.push(createWorldPermissions._id);
 		await allUsersRole.save();
 		console.log(`Created default role "${ALL_USERS}"`);
@@ -22,10 +23,13 @@ export const seedDefaultRoles = async () => {
 };
 
 export const seedServer = async () => {
-	const server = await Server.findOne();
+	let server = await ServerConfig.findOne();
 	if(!server){
-		await Server.create({});
+		server = await ServerConfig.create({unlockCode: uuidv4(), version: '1.0'});
 		console.log(`Created server config ${server._id}`);
+		console.log(`====================================================`);
+		console.log(`Server unlock code: ${server.unlockCode}`);
+		console.log(`====================================================`);
 	}
 };
 

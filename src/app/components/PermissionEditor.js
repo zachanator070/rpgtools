@@ -145,18 +145,28 @@ export default () => {
 							<List
 								bordered
 								dataSource={permissionGroup === 'users' ?
-									userPermissions
+									userPermissions.filter(
+										rolePermission => rolePermission.permission.permission === permission
+									).map(
+										userPermission => userPermission.user
+									).filter(
+										(user, currentIndex, self) => self.findIndex(otherUser => otherUser._id === user._id) === currentIndex)
 									:
-									rolePermissions
+									rolePermissions.filter(
+										rolePermission => rolePermission.permission.permission === permission
+									).map(
+										rolePermission => rolePermission.role
+									).filter(
+										(role, currentIndex, self) => self.findIndex(otherRole => otherRole._id === role._id) === currentIndex)
 								}
 								locale={{emptyText: <div>No Users</div>}}
 								renderItem={(item) => {
 									if(permissionGroup === 'users'){
 										return (
-											<List.Item key={item.permission + '.' + item.user._id}>
-												{item.user.username}
+											<List.Item key={permission._id + '.' + item._id}>
+												{item.username}
 												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
-													await revokeUserPermission(item.user._id, item.permission._id);
+													await revokeUserPermission(item._id, permission._id);
 													await refetch();
 												}}>
 													<Icon type='delete' theme='outlined'/>
@@ -166,10 +176,10 @@ export default () => {
 									}
 									else{
 										return (
-											<List.Item key={item.permission + '.' + item.role._id}>
-												{item.role.name}
+											<List.Item key={permission._id + '.' + item._id}>
+												{item.name}
 												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
-													await revokeRolePermission(item.role._id, item.permission._id);
+													await revokeRolePermission(item._id, permission._id);
 													await refetch();
 												}}>
 													<Icon type='delete' theme='outlined'/>

@@ -81,7 +81,7 @@ export const CURRENT_WORLD_ROLES = `
 export const CURRENT_WORLD_USERS_WITH_PERMISSIONS = `
 	usersWithPermissions{
 		_id
-		name
+		username
 		${CURRENT_WORLD_PERMISSIONS}
 	}
 `;

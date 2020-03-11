@@ -6,6 +6,7 @@ import {User} from "../models/user";
 import {ROLE_ADD, WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
 import {ALL_USERS, EVERYONE} from "../../role-constants";
 import {userHasPermission} from "../authorization-helpers";
+import {WORLD} from "../../type-constants";
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -62,12 +63,17 @@ export const serverResolvers = {
 			for(let permission of WORLD_PERMISSIONS){
 				let assignment = await PermissionAssignment.findOne({permission: permission, subjectId: world._id});
 				if(!assignment){
-					assignment = await PermissionAssignment.create({permission: permission, subjectId: world._id});
+					continue;
 				}
 				if(!await assignment.userCanRead(currentUser)){
 					continue;
 				}
-				const users = await User.find({permissions: assignment._id});
+				const users = await User.find({permissions: assignment._id}).populate({
+					path: 'permissions',
+					populate: {
+						path: 'subject'
+					}
+				});
 				allUsers.concat(users);
 			}
 			return allUsers;
@@ -197,6 +203,21 @@ export const serverResolvers = {
 	Pin: {
 		canWrite: async (pin, _, {currentUser}) => {
 			return await pin.userCanWrite(currentUser);
+		}
+	},
+	Server: {
+		registerCodes: async (server, _, {currentUser}) => {
+			if(!server.adminUsers.includes(currentUser._id)){
+				return [];
+			}
+			return server.registerCodes;
+		},
+		adminUsers: async (server, _, {currentUser}) => {
+			if(!server.adminUsers.includes(currentUser._id)){
+				return [];
+			}
+			await server.populate('adminUsers');
+			return server.adminUsers;
 		}
 	}
 };

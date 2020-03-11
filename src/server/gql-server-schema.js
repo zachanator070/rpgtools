@@ -5,6 +5,8 @@ export const typeDefs = gql`
     type Query {
         currentUser: User
         
+        server: Server!
+        
         """Search for a world by id or name."""
         world(worldId: ID, name: String): World
         """Get all worlds"""
@@ -21,6 +23,8 @@ export const typeDefs = gql`
     }
   
     type Mutation{
+        unlockServer(unlockCode: String!, email: String!, username: String!, password: String!): Boolean
+    
         login(username: String!, password:  String!): User!
         logout: String!
         register(email: String!, username: String!, password: String!): User!
@@ -31,6 +35,8 @@ export const typeDefs = gql`
         
         createRole(worldId: ID!, name: String!): World!
         deleteRole(roleId: ID!): World!
+        addUserRole(userId: ID!, roleId: ID!): World!
+        removeUserRole(userId: ID!, roleId: ID!): World!
         
         """ Grant a permission to a user """
         grantUserPermission(userId: ID!, permission: String!, subjectId: ID!, subjectType: String!): World!
@@ -197,6 +203,13 @@ export const typeDefs = gql`
 		y: Float!
 		page: WikiPage
 		canWrite: Boolean!
+	}
+	
+	type Server {
+		_id: ID!
+		version: String!
+		registerCodes: [String!]!
+		adminUsers: [User!]!
 	}
 	
 `;

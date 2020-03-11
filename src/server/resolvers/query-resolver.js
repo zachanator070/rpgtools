@@ -4,13 +4,16 @@ import {User} from '../models/user';
 import {Role} from '../models/role';
 import {WIKI_READ_ALL, WORLD_READ} from "../../permission-constants";
 import {EVERYONE} from "../../role-constants";
-import mongoose from 'mongoose';
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
 import {PLACE} from "../../type-constants";
+import {ServerConfig} from '../models/server-config';
 
 export default {
 	currentUser: authenticated((parent, args, context) => context.currentUser),
+	server: async (_, __, {currentUser}) => {
+		return ServerConfig.findOne();
+	},
     world: async (parent, {worldId, name}, {currentUser}) => {
 		let world = null;
 		if(worldId){
