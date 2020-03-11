@@ -142,7 +142,7 @@ export default () => {
 		<Row className={'margin-lg-top'}>
 			<Col span={4}></Col>
 			<Col span={16}>
-				<h2>Role List</h2>
+				<h2>Manage Roles</h2>
 			</Col>
 			<Col span={4}></Col>
 		</Row>

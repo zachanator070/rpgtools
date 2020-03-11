@@ -5,6 +5,7 @@ import {World} from "../../models/world";
 import {User} from "../../models/user";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {cleanUpPermissions} from "../../db-helpers";
+import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
 
 export const authorizationMutations = {
 	grantUserPermission: async (_, {userId, permission, subjectId, subjectType}, {currentUser}) => {
@@ -157,6 +158,13 @@ export const authorizationMutations = {
 
 		if(!await role.userCanWrite(currentUser)){
 			throw new Error(`You do not have permission to manage role ${roleId}`);
+		}
+
+		if(role.name === WORLD_OWNER){
+			const otherOwners = await User.find({roles: role._id});
+			if(otherOwners.length === 1){
+				throw new Error('World must have at least one owner');
+			}
 		}
 
 		user.roles = user.roles.filter(userRole => !userRole._id.equals(role._id));
