@@ -198,7 +198,7 @@ export default () => {
 									}
 								}
 							]}
-							       dataSource={selectedRole.permissions.map(permission => {return {permission: permission.permission, subjectType: permission.subjectType, subjectName: permission.subject.name};})}
+							       dataSource={selectedRole.permissions.map(permission => {return {key: permission._id, permission: permission.permission, subjectType: permission.subjectType, subjectName: permission.subject.name};})}
 					        />
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Users with this role" key="2">
