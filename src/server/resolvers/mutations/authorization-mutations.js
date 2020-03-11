@@ -118,6 +118,9 @@ export const authorizationMutations = {
 		if(!await role.userCanWrite(currentUser)){
 			throw new Error(`You do not have write permissions for role ${roleId}`);
 		}
+		if(role.name === WORLD_OWNER || role.name === EVERYONE){
+			throw new Error('You cannot delete this role');
+		}
 		const world = await World.findOne({roles: role._id}).populate('roles');
 		world.roles = world.roles.filter((otherRole) => {return !otherRole._id.equals(role._id);});
 		await world.save();
