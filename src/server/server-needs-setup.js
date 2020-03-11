@@ -4,9 +4,7 @@ let needsSetup = false;
 
 export const checkConfig = async () => {
 	let server = await ServerConfig.findOne();
-	if(server.adminUsers.length === 0){
-		needsSetup = true;
-	}
+	needsSetup = server.adminUsers.length === 0;
 };
 
 export const serverNeedsSetup = () => {

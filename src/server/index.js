@@ -22,14 +22,14 @@ mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParse
 const createServer = async () => {
 	const server = express();
 
-	server.use(express.static('dist'));
-
 	await checkConfig();
 
-	server.get('/ui*', (req, res, next) => {
+	server.use('/images', ImageRouter);
+
+	server.get('*', (req, res, next) => {
 		const needsSetup = serverNeedsSetup();
 		if(needsSetup){
-			if (req.url === '/api' || req.url === '/ui/setup'){
+			if (['/api', '/ui/setup', '/app.bundle.js'].includes(req.url)){
 				return next();
 			}
 			return res.redirect(302, '/ui/setup');
@@ -39,11 +39,11 @@ const createServer = async () => {
 		}
 	});
 
-	server.use('/images', ImageRouter);
-
 	server.get('/ui*', (req, res) => {
-		res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+		return res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
 	});
+
+	server.use(express.static('dist'));
 
 	server.use(bodyParser.json());
 	server.use(morgan('tiny'));
