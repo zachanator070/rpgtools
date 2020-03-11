@@ -8,6 +8,7 @@ import useCreateRole from "../hooks/useCreateRole";
 import useDeleteRole from "../hooks/useDeleteRole";
 import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../type-constants";
 import {useRevokeRolePermission} from "../hooks/useRevokeRolePermission";
+import useRemoveUserRole from "../hooks/useRemoveUserRole";
 
 export default () => {
 
@@ -16,6 +17,7 @@ export default () => {
 	const {createRole, loading: createRoleLoading} = useCreateRole();
 	const {revokeRolePermission} = useRevokeRolePermission();
 	const {deleteRole} = useDeleteRole();
+	const {removeUserRole} = useRemoveUserRole();
 	const [newRoleName, setNewRoleName] = useState();
 	const [selectedRole, setSelectedRole] = useState(null);
 
@@ -201,12 +203,12 @@ export default () => {
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Users with this role" key="2">
 							<List
-								dataSource={currentWorld.roles.members}
+								dataSource={selectedRole.members}
 								renderItem={(item) => {
 									return <List.Item>
 										{item.username}
 										{selectedRole.canWrite &&
-											<Button className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(item._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>
+											<Button className={'margin-md-left'} type={'primary'} onClick={async () => {await removeUserRole(item._id, selectedRole._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>
 										}
 									</List.Item>;
 								}}

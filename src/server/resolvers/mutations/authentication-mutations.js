@@ -4,6 +4,20 @@ import uuidv4 from "uuid/v4";
 import {User} from '../../models/user';
 export const SALT_ROUNDS = 10;
 
+export const registerUser = async (email, username, password) => {
+	password = bcrypt.hashSync(password, SALT_ROUNDS);
+	let existingUsers = await User.find({email});
+	if (existingUsers.length > 1) {
+		throw Error('Registration Error: Email already used')
+	}
+	existingUsers = await User.find({username});
+	if (existingUsers.length > 1) {
+		throw Error('Registration Error: Username already used')
+	}
+
+	return await User.create({email, username, password, roles: [], permissions: []});
+};
+
 export const authenticationMutations = {
 	login: async (parent, {username, password}, {res}) => {
 		let user = await User.findOne({username}).populate('roles');
@@ -24,17 +38,7 @@ export const authenticationMutations = {
 
 	}),
 	register: async (parent, {email, username, password}, context) => {
-		password = bcrypt.hashSync(password, SALT_ROUNDS);
-		let existingUsers = await User.find({email});
-		if (existingUsers.length > 1) {
-			throw Error('Registration Error: Email already used')
-		}
-		existingUsers = await User.find({username});
-		if (existingUsers.length > 1) {
-			throw Error('Registration Error: Username already used')
-		}
-
-		return await User.create({email, username, password, roles: [], permissions: []});
+		return registerUser(email, username, password);
 	},
 
 };

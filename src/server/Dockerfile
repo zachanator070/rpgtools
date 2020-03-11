@@ -2,6 +2,7 @@ FROM node:12.16.1
 
 WORKDIR /home/node/app
 ADD src/server/package.json package.json
+ADD src/server/package-lock.json package-lock.json
 RUN npm install
 RUN npm install -g kill-port
 

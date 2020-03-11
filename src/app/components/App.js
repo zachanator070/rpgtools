@@ -12,6 +12,7 @@ import {SelectWorldModal} from "./modals/SelectWorldModal";
 import {AppContent} from "./AppContent";
 import {EditPinModal} from "./modals/EditPinModal";
 import {PermissionModal} from "./modals/PermissionModal";
+import {ServerSetup} from "./ServerSetup";
 
 export const Modals = () => {
 	return (
@@ -33,6 +34,9 @@ export default () => {
 		<Switch>
 			<Route path="/ui/world/:world_id">
 				<AppContent/>
+			</Route>
+			<Route path="/ui/setup">
+				<ServerSetup/>
 			</Route>
 			<Route exact path={'/'}>
 				<Modals/>

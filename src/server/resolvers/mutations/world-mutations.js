@@ -13,12 +13,12 @@ import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
 import {PLACE, WORLD} from "../../../type-constants";
-import {Server} from '../../models/server';
+import {ServerConfig} from '../../models/server-config';
 
 export const worldMutations = {
 	createWorld: authenticated(async (parent, {name, public: isPublic}, {currentUser}) => {
 
-		const server = await Server.findOne();
+		const server = await ServerConfig.findOne();
 		if(!server){
 			throw new Error('Server config doesnt exist!');
 		}

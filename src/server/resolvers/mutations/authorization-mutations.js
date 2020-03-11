@@ -123,5 +123,45 @@ export const authorizationMutations = {
 		await cleanUpPermissions(role._id);
 		await Role.deleteOne({_id: role._id});
 		return world;
+	},
+	addUserRole: async (_, {userId, roleId}, {currentUser}) => {
+		const role = await Role.findById(roleId);
+		if(!role){
+			throw new Error(`Role ${roleId} doesn't exist`);
+		}
+
+		const user = await User.findById(userId);
+		if(!user){
+			throw new Error(`Role ${userId} doesn't exist`);
+		}
+
+		if(!await role.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to manage role ${roleId}`);
+		}
+
+		user.roles.push(role);
+		await user.save();
+		await role.populate('world').populate('roles usersWithPermissions');
+		return role.world;
+	},
+	removeUserRole: async (_, {userId, roleId}, {currentUser}) => {
+		const role = await Role.findById(roleId);
+		if(!role){
+			throw new Error(`Role ${roleId} doesn't exist`);
+		}
+
+		const user = await User.findById(userId).populate('roles');
+		if(!user){
+			throw new Error(`Role ${userId} doesn't exist`);
+		}
+
+		if(!await role.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to manage role ${roleId}`);
+		}
+
+		user.roles = user.roles.filter(userRole => !userRole._id.equals(role._id));
+		await user.save();
+		await role.populate('world').populate('roles usersWithPermissions');
+		return role.world;
 	}
 };

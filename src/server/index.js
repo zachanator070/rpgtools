@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import {defaultSeeders} from "./default-seeders";
 import path from 'path';
 import {ImageRouter} from "./routers/image-router";
+import {checkConfig, serverNeedsSetup} from './server-needs-setup'
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -14,27 +15,47 @@ mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParse
 	async () => {
 		console.log(`Connected to mongodb at mongodb://${mongodb_host}/${mongodb_db_name}`);
 		await defaultSeeders();
-});
+		await createServer();
+	}
+);
 
-const server = express();
+const createServer = async () => {
+	const server = express();
 
-server.use(express.static('dist'));
+	server.use(express.static('dist'));
 
-server.use('/images', ImageRouter);
+	await checkConfig();
 
-server.get('/ui*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
-});
+	server.get('/ui*', (req, res, next) => {
+		const needsSetup = serverNeedsSetup();
+		if(needsSetup){
+			if (req.url === '/api' || req.url === '/ui/setup'){
+				return next();
+			}
+			return res.redirect(302, '/ui/setup');
+		}
+		else {
+			return next();
+		}
+	});
 
-server.use(bodyParser.json());
-server.use(morgan('tiny'));
+	server.use('/images', ImageRouter);
 
-server.use(cookieParser());
+	server.get('/ui*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+	});
 
-gqlServer.applyMiddleware({app: server, path: '/api'});
+	server.use(bodyParser.json());
+	server.use(morgan('tiny'));
 
-const port = process.env.SERVER_PORT || 3000;
+	server.use(cookieParser());
 
-server.listen(port, () => {
-	console.log(`The server is running and listening at http://localhost:${port}`);
-});
+	gqlServer.applyMiddleware({app: server, path: '/api'});
+
+	const port = process.env.SERVER_PORT || 3000;
+
+	server.listen(port, () => {
+		console.log(`The server is running and listening at http://localhost:${port}`);
+	});
+
+};
