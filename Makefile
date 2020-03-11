@@ -42,7 +42,7 @@ install:
 	sudo apt update
 	sudo apt install mongodb
 	sudo mkdir /etc/rpgtools
-	sudo cp example.env /etc/rpgtools/.env
+	sudo cp .env.example /etc/rpgtools/.env
 	sudo cp rpgtools.service /lib/systemd/system
 	sudo systemd daemon-reload
 	sudo systemd start rpgtools

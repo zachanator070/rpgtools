@@ -1,6 +1,7 @@
 
 import {ServerConfig} from '../../models/server-config';
 import {registerUser} from "./authentication-mutations";
+import {checkConfig} from "../../server-needs-setup";
 
 export const serverMutations = {
 	unlockServer: async (_, {unlockCode, email, username, password}, {currentUser}) => {
@@ -14,6 +15,7 @@ export const serverMutations = {
 		const admin = await registerUser(email, username, password);
 		server.adminUsers.push(admin);
 		await server.save();
+		await checkConfig();
 		return true;
 	}
 };
