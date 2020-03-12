@@ -12,7 +12,13 @@ export const CURRENT_WORLD_PERMISSIONS = `
 			... on World{
 				name
 			}
-			... on WikiPage{
+			... on Article{
+				name
+			}
+			... on Place{
+				name
+			}
+			... on Person{
 				name
 			}
 			... on WikiFolder{
@@ -23,6 +29,14 @@ export const CURRENT_WORLD_PERMISSIONS = `
 			}
 		}
 	}
+`;
+
+export const USERS_WITH_PERMISSIONS = `
+    usersWithPermissions{
+            _id
+            username
+            ${CURRENT_WORLD_PERMISSIONS}
+        }
 `;
 
 export const CURRENT_WORLD_WIKIS = `
@@ -78,14 +92,6 @@ export const CURRENT_WORLD_ROLES = `
 	}
 `;
 
-export const CURRENT_WORLD_USERS_WITH_PERMISSIONS = `
-	usersWithPermissions{
-		_id
-		username
-		${CURRENT_WORLD_PERMISSIONS}
-	}
-`;
-
 const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID!){
         world(worldId: $worldId){
@@ -100,7 +106,7 @@ const GET_CURRENT_WORLD = gql`
 			rootFolder{
 				${CURRENT_WORLD_FOLDERS}
 			}
-			${CURRENT_WORLD_USERS_WITH_PERMISSIONS}
+			${USERS_WITH_PERMISSIONS}
 			${CURRENT_WORLD_ROLES}
 			${CURRENT_WORLD_PINS}
 			folders{

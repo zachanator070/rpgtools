@@ -4,7 +4,7 @@ import usePermissionModalVisibility from "../../hooks/usePermissionModalVisibili
 import useSetPermissionModalVisibility from "../../hooks/useSetPermissionModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
-import PermissionEditor from "../PermissionEditor";
+import PermissionEditor from "../permissions/PermissionEditor";
 
 export const PermissionModal = () => {
 

@@ -1,12 +1,12 @@
 import {useMutation} from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
+import {USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
 
 const GRANT_USER_PERMISSION = gql`
 	mutation grantUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
 		grantUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
-			${CURRENT_WORLD_USERS_WITH_PERMISSIONS}
+			${USERS_WITH_PERMISSIONS}
 		}
 	}
 `;

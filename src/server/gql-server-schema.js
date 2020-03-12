@@ -7,19 +7,21 @@ export const typeDefs = gql`
         
         server: Server!
         
-        """Search for a world by id or name."""
-        world(worldId: ID, name: String): World
+        """Get a world by id"""
+        world(worldId: ID!): World
         """Get all worlds"""
-        worlds(page: Int): WorldsPaginatedResult
+        worlds(page: Int): WorldPaginatedResult
         
-        """Search for a wiki page using a phrase"""
-        searchWikiPages(phrase: String!, worldId: ID!): [WikiPage!]!
-        """Search for a wiki by id"""
+        """Get a wiki by id"""
         wiki(wikiId: ID!): WikiPage
+        """Search for a wiki page by name"""
+        wikis(worldId: ID!, name: String!): WikiPagePaginatedResult!
+        
         """Search for users by username"""
-        users(username: String!): [User!]!
+        users(username: String!): UserPaginatedResult!
+        
         """Search for roles by name"""
-        roles(worldId: ID!, name: String!): [Role!]!
+        roles(worldId: ID!, name: String!): RolePaginatedResult!
     }
   
     type Mutation{
@@ -39,13 +41,13 @@ export const typeDefs = gql`
         removeUserRole(userId: ID!, roleId: ID!): World!
         
         """ Grant a permission to a user """
-        grantUserPermission(userId: ID!, permission: String!, subjectId: ID!, subjectType: String!): World!
+        grantUserPermission(userId: ID!, permission: String!, subjectId: ID!, subjectType: String!): PermissionControlled!
         """ Revoke a assigned permission from a user """
-        revokeUserPermission(userId: ID!, permissionAssignmentId: ID!): World!
+        revokeUserPermission(userId: ID!, permissionAssignmentId: ID!): PermissionControlled!
         """ Grant a permission to a role """
-        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): World!
+        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): PermissionControlled!
         """ Revoke a permission from a role """
-        revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): World!
+        revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): PermissionControlled!
         
         createFolder(name: String!, parentFolderId: ID!): World!
         renameFolder(folderId: ID!, name: String!): WikiFolder!
@@ -78,6 +80,7 @@ export const typeDefs = gql`
     }
   
     interface PermissionControlled {
+        usersWithPermissions: [User!]!
         _id: ID!
     }
   
@@ -94,8 +97,47 @@ export const typeDefs = gql`
 		canAddRoles: Boolean!
 	}
 	
-	type WorldsPaginatedResult {
+	type WorldPaginatedResult {
         docs: [World!]!
+        totalDocs: Int!
+        limit: Int!
+        page: Int!
+        totalPages: Int!
+        pagingCounter: Int!
+        hasPrevPage: Boolean!
+        hasNextPage: Boolean!
+        prevPage: Int
+        nextPage: Int
+    }
+    
+    type UserPaginatedResult {
+        docs: [User!]!
+        totalDocs: Int!
+        limit: Int!
+        page: Int!
+        totalPages: Int!
+        pagingCounter: Int!
+        hasPrevPage: Boolean!
+        hasNextPage: Boolean!
+        prevPage: Int
+        nextPage: Int
+    }
+    
+    type RolePaginatedResult {
+        docs: [Role!]!
+        totalDocs: Int!
+        limit: Int!
+        page: Int!
+        totalPages: Int!
+        pagingCounter: Int!
+        hasPrevPage: Boolean!
+        hasNextPage: Boolean!
+        prevPage: Int
+        nextPage: Int
+    }
+    
+    type WikiPagePaginatedResult {
+        docs: [Role!]!
         totalDocs: Int!
         limit: Int!
         page: Int!
@@ -115,6 +157,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		canWrite: Boolean!
+		usersWithPermissions: [User!]!
 	}
 	
 	type Article implements WikiPage & PermissionControlled {
@@ -125,6 +168,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		canWrite: Boolean!
+		usersWithPermissions: [User!]!
 	}
 	
 	type Place implements WikiPage & PermissionControlled {
@@ -136,6 +180,7 @@ export const typeDefs = gql`
 		mapImage: Image
 		type: String!
 		canWrite: Boolean!
+		usersWithPermissions: [User!]!
 	}
 	
 	type Person implements WikiPage & PermissionControlled {
@@ -146,6 +191,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		canWrite: Boolean!
+		usersWithPermissions: [User!]!
 	}
 	
 	type WikiFolder implements PermissionControlled{
@@ -155,6 +201,7 @@ export const typeDefs = gql`
 		pages: [WikiPage!]!
 		children: [WikiFolder!]!
 		canWrite: Boolean!
+		usersWithPermissions: [User!]!
 	}
 	
 	type Image {
@@ -187,6 +234,7 @@ export const typeDefs = gql`
 		members: [User!]!
 		world: World!
 		canWrite: Boolean!
+		usersWithPermissions: [User!]!
 	}
 	
 	type PermissionAssignment {

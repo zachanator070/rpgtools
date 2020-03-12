@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon} from "antd";
+import {DoubleLeftOutlined, DoubleRightOutlined} from "@ant-design/icons";
 
 export const SlidingDrawer = ({side, show, setShow, children}) => {
 
@@ -10,7 +10,7 @@ export const SlidingDrawer = ({side, show, setShow, children}) => {
 			<a href='#' onClick={() => {
 				setShow(!show)
 			}}>
-				{show ? <Icon type="double-left"/> : <Icon type="double-right"/>}
+				{show ? <DoubleLeftOutlined /> : <DoubleRightOutlined />}
 			</a>
 		</div>;
 	} else {
@@ -18,7 +18,7 @@ export const SlidingDrawer = ({side, show, setShow, children}) => {
 			<a href='#' onClick={() => {
 				setShow(!show)
 			}}>
-				{show ? <Icon type="double-right"/> : <Icon type="double-left"/>}
+				{show ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
 			</a>
 		</div>;
 	}

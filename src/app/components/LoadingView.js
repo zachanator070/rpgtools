@@ -1,6 +1,6 @@
 import React from 'react';
-import {Icon} from 'antd';
+import {LoadingOutlined} from "@ant-design/icons";
 
 export const LoadingView = () => {
-	return (<Icon type="loading"/>);
+	return (<LoadingOutlined/>);
 };

@@ -4,14 +4,15 @@ import {LoadingView} from "./LoadingView";
 import {MapView} from "./map/MapView";
 import React from "react";
 import useCurrentWiki from "../hooks/useCurrentWiki";
-import {Col, Row, Icon} from "antd";
+import {Col, Row} from "antd";
 import {FolderView} from "./wiki/FolderView";
 import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
 import useSetPermissionModalVisibility from "../hooks/useSetPermissionModalVisibility";
 import {Modals} from "./App";
 import WorldSettings from "./WorldSettings";
-import PermissionView from "./PermissionView";
+import PermissionView from "./permissions/ManagePermissionView";
+import {TeamOutlined} from "@ant-design/icons";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
@@ -39,7 +40,7 @@ const WikiContent = () => {
 					<Route path={`${match.path}/view`}>
 						{currentWiki.canWrite &&
 							<a title={'View permissions for this page'} onClick={async () => {await setPermissionModalVisibility(true);}}>
-								<Icon type='team' theme='outlined' style={{fontSize: '20px'}}/>
+								<TeamOutlined style={{fontSize: '20px'}}/>
 							</a>
 						}
 					</Route>

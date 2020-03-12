@@ -1,6 +1,6 @@
 import React, {Component, useEffect, useRef, useState} from 'react';
-import {Icon} from "antd";
 import {Editor} from "./Editor";
+import {ExportOutlined, EditOutlined} from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 
@@ -53,7 +53,7 @@ export const WikiView = ({currentWiki}) => {
 					<a href='#' onClick={() => {
 						history.push(`/ui/world/${currentWorld._id}/map/${currentWiki._id}`);
 					}}>
-						Go to Map <Icon type="export"/>
+						Go to Map <ExportOutlined />
 					</a>
 				</span>
 		</div>;
@@ -65,7 +65,7 @@ export const WikiView = ({currentWiki}) => {
 		gotoMap = <a href='#' onClick={() => {
 			history.push(`/ui/world/${currentWorld._id}/map/${pin.map._id}`);
 		}}>
-			See on map <Icon type="export"/>
+			See on map <ExportOutlined />
 		</a>;
 	}
 
@@ -92,7 +92,7 @@ export const WikiView = ({currentWiki}) => {
 					<a href='#' onClick={() => {
 						history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`);
 					}}>
-						<Icon type="edit" theme="outlined"/>Edit
+						<EditOutlined />Edit
 					</a>
 				}
 			</div>

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Icon, Input, Modal, Select, Upload} from "antd";
+import {Button, Input, Modal, Select, Upload} from "antd";
+import {UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined} from "@ant-design/icons";
 import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import {LoadingView} from "../LoadingView";
@@ -169,7 +170,7 @@ export const WikiEdit = () => {
 					}}
 				>
 					<Button>
-						<Icon type="upload"/> Select Cover Image
+						<UploadOutlined /> Select Cover Image
 					</Button>
 				</Upload>
 				{coverRevert}
@@ -196,7 +197,7 @@ export const WikiEdit = () => {
 						}}
 					>
 						<Button>
-							<Icon type="upload"/> Select Map Image
+							<UploadOutlined /> Select Map Image
 						</Button>
 					</Upload>
 					{mapRevert}
@@ -213,11 +214,13 @@ export const WikiEdit = () => {
 
 			<div>
 				{saving && <div>Saving ... </div>}
-				<Button type='primary' disabled={saving} onClick={save}><Icon
-					type="save"/>Save</Button>
+				<Button type='primary' disabled={saving} onClick={save}>
+					<SaveOutlined />
+					Save
+				</Button>
 				<Button type='danger' disabled={saving} className='margin-md-left' onClick={() => {
 					history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
-				}}><Icon type="undo"/>Discard</Button>
+				}}><UndoOutlined />Discard</Button>
 				<span className='absolute-right'>
 						<Button type='danger' disabled={saving} onClick={() => {
 							Modal.confirm({
@@ -228,7 +231,7 @@ export const WikiEdit = () => {
 									history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
 								}
 							});
-						}}><Icon type="delete"/>Delete Page</Button>
+						}}><DeleteOutlined />Delete Page</Button>
 					</span>
 			</div>
 		</div>

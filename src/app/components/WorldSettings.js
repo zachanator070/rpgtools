@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import useCurrentWorld from "../hooks/useCurrentWorld";
-import PermissionEditor from "./PermissionEditor";
+import PermissionEditor from "./permissions/PermissionEditor";
 import {Button, Col, Input, Row} from "antd";
 import {useRenameWorld} from "../hooks/useRenameWorld";
 

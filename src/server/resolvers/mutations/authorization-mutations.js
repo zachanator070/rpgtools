@@ -10,9 +10,9 @@ import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
 export const authorizationMutations = {
 	grantUserPermission: async (_, {userId, permission, subjectId, subjectType}, {currentUser}) => {
 
-		let newPermission = await PermissionAssignment.findOne({permission, subjectId}).populate('subject');
+		let newPermission = await PermissionAssignment.findOne({permission, subject: subjectId}).populate('subject');
 		if(!newPermission){
-			newPermission = new PermissionAssignment({permission, subjectId, subjectType}).populate('subject');
+			newPermission = new PermissionAssignment({permission, subject: subjectId, subjectType}).populate('subject');
 		}
 		if(!await newPermission.userCanWrite(currentUser)){
 			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
@@ -29,9 +29,10 @@ export const authorizationMutations = {
 			}
 		}
 
+		await newPermission.save();
 		user.permissions.push(newPermission._id);
 		await user.save();
-		return newPermission.subject.world;
+		return newPermission.subject;
 	},
 	revokeUserPermission: async (_, {userId, permissionAssignmentId}, {currentUser}) => {
 
@@ -49,13 +50,13 @@ export const authorizationMutations = {
 			await user.save();
 		}
 
-		return permissionAssignment.subject.world;
+		return permissionAssignment.subject;
 	},
 	grantRolePermission: async (_, {roleId, permission, subjectId, subjectType}, {currentUser}) => {
 
-		let newPermission = await PermissionAssignment.findOne({permission, subjectId}).populate('subject');
+		let newPermission = await PermissionAssignment.findOne({permission, subject: subjectId}).populate('subject');
 		if(!newPermission){
-			newPermission = new PermissionAssignment({permission, subjectId, subjectType}).populate('subject');
+			newPermission = new PermissionAssignment({permission, subjectId, subject: subjectType}).populate('subject');
 		}
 		if(!await newPermission.userCanWrite(currentUser)){
 			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
@@ -72,9 +73,10 @@ export const authorizationMutations = {
 			}
 		}
 
+		await newPermission.save();
 		role.permissions.push(newPermission._id);
 		await role.save();
-		return newPermission.subject.world;
+		return newPermission.subject;
 	},
 	revokeRolePermission: async (_, {roleId, permissionAssignmentId}, {currentUser}) => {
 
@@ -92,7 +94,7 @@ export const authorizationMutations = {
 			await role.save();
 		}
 
-		return permissionAssignment.subject.world;
+		return permissionAssignment.subject;
 	},
 	createRole: async (_, {worldId, name}, {currentUser}) => {
 		const world = await World.findById(worldId).populate('roles');

@@ -1,12 +1,12 @@
 import {useMutation} from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_PERMISSIONS} from "./useCurrentWorld";
+import {USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
 
 const REVOKE_USER_PERMISSION = gql`
-	mutation revokeUserPermission($userId: ID!, $permissionId: ID!){
-		revokeUserPermission(userId: $userId, permissionId: $permissionId){
+	mutation revokeUserPermission($userId: ID!, $permissionAssignmentId: ID!){
+		revokeUserPermission(userId: $userId, permissionAssignmentId: $permissionAssignmentId){
 			_id
-			${CURRENT_WORLD_PERMISSIONS}
+			${USERS_WITH_PERMISSIONS}
 		}
 	}
 `;
@@ -14,8 +14,8 @@ const REVOKE_USER_PERMISSION = gql`
 export const useRevokeUserPermission = () => {
 	const [revokeUserPermission, {data, loading, error}] = useMutation(REVOKE_USER_PERMISSION);
 	return {
-		revokeUserPermission: async (userId, permissionId) => {
-			return await revokeUserPermission({variables: {userId, permissionId}});
+		revokeUserPermission: async (userId, permissionAssignmentId) => {
+			return await revokeUserPermission({variables: {userId, permissionAssignmentId}});
 		},
 		loading,
 		subject: data ? data.revokeUserPermission : null,

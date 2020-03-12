@@ -1,12 +1,12 @@
 import {useMutation} from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_PERMISSIONS} from "./useCurrentWorld";
+import {CURRENT_WORLD_PERMISSIONS, CURRENT_WORLD_ROLES} from "./useCurrentWorld";
 
 const REVOKE_ROLE_PERMISSION = gql`
 	mutation revokeRolePermission($roleId: ID!, $permissionId: ID!){
 		revokeRolePermission(roleId: $roleId, permissionId: $permissionId){
 			_id
-			${CURRENT_WORLD_PERMISSIONS}
+			${CURRENT_WORLD_ROLES}
 		}
 	}
 `;
