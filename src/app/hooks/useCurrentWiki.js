@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
-import {CURRENT_WORLD_PERMISSIONS, USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
+import {USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
 
 export const CURRENT_WIKI_ATTRIBUTES = `
 	_id

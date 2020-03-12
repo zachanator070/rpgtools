@@ -157,7 +157,6 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		canWrite: Boolean!
-		usersWithPermissions: [User!]!
 	}
 	
 	type Article implements WikiPage & PermissionControlled {
