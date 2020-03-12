@@ -219,7 +219,7 @@ export default () => {
 									</List.Item>;
 								}}
 							/>
-							<SelectUser onChange={async () => {}}/>
+							<SelectUser/>
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Delete this role" key="3">
 							<Button disabled={!selectedRole.canWrite} className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(selectedRole._id);}}><DeleteOutlined /></Button>

@@ -16,7 +16,9 @@ export default ({onChange}) => {
 		onSearch={async (term) => {await searchUsers(term)}}
 		onChange={async (newValue) => {
 			await setValue(newValue);
-			await onChange(newValue);
+			if(onChange){
+				await onChange(newValue);
+			}
 		}}
 		placeholder="Search for a user"
 		style={{ width: 200 }}
