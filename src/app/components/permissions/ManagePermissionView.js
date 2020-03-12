@@ -10,6 +10,7 @@ import useDeleteRole from "../../hooks/useDeleteRole";
 import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../type-constants";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/useRemoveUserRole";
+import SelectUser from "../SelectUser";
 
 export default () => {
 
@@ -218,6 +219,7 @@ export default () => {
 									</List.Item>;
 								}}
 							/>
+							<SelectUser onChange={() => {}}/>
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Delete this role" key="3">
 							<Button disabled={!selectedRole.canWrite} className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(selectedRole._id);}}><DeleteOutlined /></Button>
