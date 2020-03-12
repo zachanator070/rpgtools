@@ -1,18 +1,13 @@
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
-import {CURRENT_WORLD_PERMISSIONS} from "./useCurrentWorld";
+import {CURRENT_WORLD_ROLES, USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
 
 const ADD_USER_ROLE = gql`
 	mutation addUserRole($userId: ID!, $roleId: ID!){
 		addUserRole(userId: $userId, roleId: $roleId){
-			usersWithPermissions{
-				_id
-				${CURRENT_WORLD_PERMISSIONS}
-			}
-			roles{
-				_id
-				${CURRENT_WORLD_PERMISSIONS}
-			}
+			_id
+			${USERS_WITH_PERMISSIONS}
+			${CURRENT_WORLD_ROLES}
 		}
 	}
 `;

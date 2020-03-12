@@ -15,7 +15,7 @@ const roleSchema = new Schema({
 	},
 	world: {
 		type: mongoose.Schema.ObjectId,
-		ref: WORLD
+		ref: WORLD,
 	},
 	permissions: [{
 		type: mongoose.Schema.ObjectId,
