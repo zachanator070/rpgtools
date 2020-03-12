@@ -6,6 +6,7 @@ import {User} from "../../models/user";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {cleanUpPermissions} from "../../db-helpers";
 import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
+import {ROLE} from "../../../type-constants";
 
 export const authorizationMutations = {
 	grantUserPermission: async (_, {userId, permission, subjectId, subjectType}, {currentUser}) => {
@@ -107,7 +108,7 @@ export const authorizationMutations = {
 		const newRole = await Role.create({name, world});
 		world.roles.push(newRole);
 		await world.save();
-		const adminRole = await PermissionAssignment.create({permission: ROLE_ADMIN, subjectId: newRole._id});
+		const adminRole = await PermissionAssignment.create({permission: ROLE_ADMIN, subject: newRole._id, subjectType: ROLE});
 		currentUser.permissions.push(adminRole);
 		await currentUser.save();
 		return world;
@@ -147,7 +148,7 @@ export const authorizationMutations = {
 
 		user.roles.push(role);
 		await user.save();
-		await role.populate('world').populate('roles usersWithPermissions');
+		await role.populate('world').populate('roles usersWithPermissions').execPopulate();
 		return role.world;
 	},
 	removeUserRole: async (_, {userId, roleId}, {currentUser}) => {
@@ -174,7 +175,7 @@ export const authorizationMutations = {
 
 		user.roles = user.roles.filter(userRole => !userRole._id.equals(role._id));
 		await user.save();
-		await role.populate('world').populate('roles usersWithPermissions');
+		await role.populate('world').populate('roles usersWithPermissions').execPopulate();
 		return role.world;
 	}
 };
