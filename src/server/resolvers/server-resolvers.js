@@ -3,10 +3,36 @@ import MutationResolver from "./mutation-resolver";
 import {WikiFolder} from "../models/wiki-folder";
 import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
-import {ROLE_ADD, WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../permission-constants";
+import {
+	ROLE_ADD,
+	ROLE_PERMISSIONS,
+	WIKI_FOLDER_PERMISSIONS,
+	WIKI_PERMISSIONS,
+	WORLD_PERMISSIONS
+} from "../../permission-constants";
 import {ALL_USERS, EVERYONE} from "../../role-constants";
 import {userHasPermission} from "../authorization-helpers";
-import {WORLD} from "../../type-constants";
+
+const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}) => {
+	let allUsers = [];
+	for(let permission of permissionSet){
+		let assignment = await PermissionAssignment.findOne({permission: permission, subject: subject._id});
+		if(!assignment){
+			continue;
+		}
+		if(!await assignment.userCanRead(currentUser)){
+			continue;
+		}
+		const users = await User.find({permissions: assignment._id}).populate({
+			path: 'permissions',
+			populate: {
+				path: 'subject'
+			}
+		});
+		allUsers = allUsers.concat(users);
+	}
+	return allUsers;
+};
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -58,26 +84,7 @@ export const serverResolvers = {
 			}
 			return folders;
 		},
-		usersWithPermissions: async (world, _, {currentUser}) => {
-			const allUsers = [];
-			for(let permission of WORLD_PERMISSIONS){
-				let assignment = await PermissionAssignment.findOne({permission: permission, subjectId: world._id});
-				if(!assignment){
-					continue;
-				}
-				if(!await assignment.userCanRead(currentUser)){
-					continue;
-				}
-				const users = await User.find({permissions: assignment._id}).populate({
-					path: 'permissions',
-					populate: {
-						path: 'subject'
-					}
-				});
-				allUsers.concat(users);
-			}
-			return allUsers;
-		},
+		usersWithPermissions: usersWithPermissions(WORLD_PERMISSIONS),
 		canAddRoles: async (world, _, {currentUser}) => {
 			return userHasPermission(currentUser, ROLE_ADD, world._id);
 		}
@@ -150,6 +157,7 @@ export const serverResolvers = {
 			return User.find({roles: role._id});
 
 		},
+		usersWithPermissions: usersWithPermissions(ROLE_PERMISSIONS)
 	},
 	WikiPage: {
 		__resolveType: async (page, {currentUser}, info) => {
@@ -160,16 +168,19 @@ export const serverResolvers = {
 		canWrite: async (page, _, {currentUser}) => {
 			return await page.userCanWrite(currentUser);
 		},
+		usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
 	},
 	Person: {
 		canWrite: async (person, _, {currentUser}) => {
 			return await person.userCanWrite(currentUser);
 		},
+		usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
 	},
 	Place: {
 		canWrite: async (place, _, {currentUser}) => {
 			return await place.userCanWrite(currentUser);
 		},
+		usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
 	},
 	WikiFolder: {
 		children: async (folder, _, {currentUser}) => {
@@ -194,6 +205,7 @@ export const serverResolvers = {
 		canWrite: async (folder, _, {currentUser}) => {
 			return await folder.userCanWrite(currentUser);
 		},
+		usersWithPermissions: usersWithPermissions(WIKI_FOLDER_PERMISSIONS)
 	},
 	Image: {
 		canWrite: async (image, _, {currentUser}) => {

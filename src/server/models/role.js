@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import mongooseAutopopulate from "mongoose-autopopulate";
+import mongoosePaginate from 'mongoose-paginate-v2'
 import {userHasPermission} from "../authorization-helpers";
 import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../permission-constants";
 import {ALL_USERS, EVERYONE} from "../../role-constants";
@@ -32,5 +33,6 @@ roleSchema.methods.userCanRead = async function(user){
 };
 
 roleSchema.plugin(mongooseAutopopulate);
+roleSchema.plugin(mongoosePaginate);
 
 export const Role = mongoose.model('Role', roleSchema);

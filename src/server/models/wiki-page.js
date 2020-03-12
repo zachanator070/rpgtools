@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import mongooseAutopopulate from "mongoose-autopopulate";
+import mongoosePaginate from 'mongoose-paginate-v2'
 import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../permission-constants";
 import {userHasPermission} from "../authorization-helpers";
 import {GridFSBucket} from "mongodb";
@@ -65,5 +66,6 @@ wikiPageSchema.methods.userCanRead = async function(user){
 // @TODO add post remove hook to delete cover image
 
 wikiPageSchema.plugin(mongooseAutopopulate);
+wikiPageSchema.plugin(mongoosePaginate);
 
 export const WikiPage = mongoose.model(WIKI_PAGE, wikiPageSchema);

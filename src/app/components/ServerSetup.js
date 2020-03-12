@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {Button, Col, Form, Icon, Input, Modal, Row} from "antd";
+import {Button, Col, Form, Input, Modal, Row} from "antd";
 import useUnlockServer from "../hooks/useUnlockServer";
 import {useHistory} from 'react-router-dom';
+import {KeyOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 
 export const ServerSetup = () => {
 	const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ export const ServerSetup = () => {
 				<Form.Item label="Server Unlock Code" {...formItemLayout}>
 					<Input
 						placeholder="somesecret12345"
-						prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+						prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 						value={unlockCode}
 						onChange={(e) => setUnlockCode(e.target.value)}
 						name='adminSecret'
@@ -42,7 +43,7 @@ export const ServerSetup = () => {
 				<Form.Item label="Email" {...formItemLayout}>
 					<Input
 						placeholder="zach@thezachcave.com"
-						prefix={<Icon type="mail" style={{color: 'rgba(0,0,0,.25)'}}/>}
+						prefix={<MailOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						name='registerEmail'
@@ -53,7 +54,7 @@ export const ServerSetup = () => {
 				<Form.Item label="Username" {...formItemLayout}>
 					<Input
 						placeholder="DragonSlayer1234"
-						prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+						prefix={<UserOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 						value={username}
 						onChange={(e) => setUsername(e.target.value)}
 						name='registerDisplayName'
@@ -64,7 +65,7 @@ export const ServerSetup = () => {
 				<Form.Item label="Password" {...formItemLayout} >
 					<Input
 						placeholder="$up3r$3cr37"
-						prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+						prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						type='password'
@@ -76,7 +77,7 @@ export const ServerSetup = () => {
 				<Form.Item label="Repeat Password" {...formItemLayout} >
 					<Input
 						placeholder="$up3r$3cr37"
-						prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+						prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 						value={repeatPassword}
 						onChange={(e) => setRepeatPassword(e.target.value)}
 						type='password'

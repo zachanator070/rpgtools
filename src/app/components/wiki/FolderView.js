@@ -1,5 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Icon, Modal} from "antd";
+import {Modal} from "antd";
+import {
+	FileTextOutlined,
+	RightOutlined,
+	DownOutlined,
+	FileAddOutlined,
+	FolderAddOutlined,
+	EditOutlined,
+	DeleteOutlined
+} from '@ant-design/icons';
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useRenameFolder} from "../../hooks/useRenameFolder";
@@ -91,7 +100,7 @@ export const FolderView = () => {
 					}
 					style={style}
 				>
-					<Icon type="file-text" theme="outlined"/> {page.name}
+					<FileTextOutlined /> {page.name}
 				</a>
 			</div>
 		);
@@ -119,12 +128,12 @@ export const FolderView = () => {
 
 	const renderFolder = (folder, indent) => {
 
-		let icon = <Icon type="right" theme="outlined"/>;
+		let icon = <RightOutlined />;
 		const children = [];
 		const pages = [];
 		// if we are opened, populate children folders and pages then change icon
 		if (opened.includes(folder._id)) {
-			icon = <Icon type="down" theme="outlined"/>;
+			icon = <DownOutlined />;
 			for(let child of folder.children){
 				for (let otherFolder of currentWorld.folders) {
 					if(child._id === otherFolder._id){
@@ -140,16 +149,16 @@ export const FolderView = () => {
 		let menu = [
 			<a href='#' key='new page' onClick={async () => {
 				await createWiki('New Page', folder._id);
-			}}><Icon type="file-add"/></a>,
+			}}><FileAddOutlined /></a>,
 			<a href='#' key='new folder' onClick={async () => {
 				await createFolder(folder._id, 'New Folder');
 				if (!opened.includes(folder._id)) {
 					openFolder(folder._id);
 				}
-			}}><Icon type="folder-add"/></a>,
+			}}><FolderAddOutlined /></a>,
 			<a href='#' key='rename' onClick={() => {
 				setEditing(folder)
-			}}><Icon type="edit"/></a>,
+			}}><EditOutlined /></a>,
 			<a href='#' key='delete' onClick={() => {
 				Modal.confirm({
 					title: 'Confirm Delete',
@@ -160,7 +169,7 @@ export const FolderView = () => {
 					onCancel: () => {
 					},
 				});
-			}}><Icon type="delete"/></a>
+			}}><DeleteOutlined/></a>
 		];
 
 		if (!folder.canWrite || folderBeingHovered !== folder._id) {

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Button, Form, Icon, Input, Modal} from "antd";
+import {Button, Form, Input, Modal} from "antd";
+import { UserOutlined, KeyOutlined} from '@ant-design/icons';
 import useLogin from "../../hooks/useLogin";
 import useLoginModalVisibility from "../../hooks/useLoginModalVisibility";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
@@ -40,7 +41,7 @@ export const LoginModal = () => {
 					>
 						<Input
 							placeholder="zach"
-							prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+							prefix={<UserOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 							value={username}
 							onChange={(event) => {
 								setUsername(event.target.value)
@@ -56,7 +57,7 @@ export const LoginModal = () => {
 					>
 						<Input
 							placeholder="$up3r$3cr37"
-							prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+							prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 							value={password}
 							onChange={(event) => {
 								setPassword(event.target.value)

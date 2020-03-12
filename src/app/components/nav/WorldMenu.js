@@ -1,10 +1,11 @@
 import React from 'react';
-import {Button, Dropdown, Icon, Menu} from "antd";
+import {Button, Dropdown, Menu} from "antd";
 import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModalVisibility";
 import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {LoadingView} from "../LoadingView";
+import {DownOutlined} from "@ant-design/icons";
 
 export const WorldMenu = () => {
 
@@ -38,7 +39,7 @@ export const WorldMenu = () => {
 		<span>
 			<Dropdown overlay={menu} trigger={['click']}>
 				<Button>
-					{currentWorld ? currentWorld.name : 'No World Selected'} <Icon type="down"/>
+					{currentWorld ? currentWorld.name : 'No World Selected'} <DownOutlined/>
 				</Button>
 			</Dropdown>
 		</span>

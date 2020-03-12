@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
-import {Button, Col, Icon, Input, List, Row, Select, Table, Tabs} from "antd";
-import useCurrentUser from "../hooks/useCurrentUser";
-import {LoadingView} from "./LoadingView";
-import useCurrentWorld from "../hooks/useCurrentWorld";
-import {EVERYONE} from "../../role-constants";
-import useCreateRole from "../hooks/useCreateRole";
-import useDeleteRole from "../hooks/useDeleteRole";
-import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../type-constants";
-import {useRevokeRolePermission} from "../hooks/useRevokeRolePermission";
-import useRemoveUserRole from "../hooks/useRemoveUserRole";
+import {Button, Col, Input, List, Row, Select, Table, Tabs} from "antd";
+import {DeleteOutlined} from "@ant-design/icons";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import {LoadingView} from "../LoadingView";
+import useCurrentWorld from "../../hooks/useCurrentWorld";
+import {EVERYONE} from "../../../role-constants";
+import useCreateRole from "../../hooks/useCreateRole";
+import useDeleteRole from "../../hooks/useDeleteRole";
+import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../type-constants";
+import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
+import useRemoveUserRole from "../../hooks/useRemoveUserRole";
 
 export default () => {
 
@@ -133,7 +134,8 @@ export default () => {
 				<Table
 					dataSource={permissionAssignments}
 					columns={columns}
-					pagination={{pageSize: 10}}
+					pagination={false}
+					scroll={{y:250}}
 				/>
 			</Col>
 			<Col span={4}></Col>
@@ -171,7 +173,8 @@ export default () => {
 				{selectedRole ?
 					<Tabs defaultActiveKey="1">
 						<Tabs.TabPane tab="Permissions in this role" key="1">
-							<Table columns={[
+							<Table
+								columns={[
 								{
 									title: 'Permission',
 									dataIndex: 'permission',
@@ -193,12 +196,14 @@ export default () => {
 									key: '_id',
 									render: (_id, assignment) => {
 										return <Button className={'margin-md-left'} type={'primary'} onClick={async () => {await revokeRolePermission(selectedRole._id, item._id);}}>
-											<Icon type={'delete'} theme={'outlined'}/>
+											<DeleteOutlined />
 										</Button>;
 									}
 								}
 							]}
-							       dataSource={selectedRole.permissions.map(permission => {return {key: permission._id, permission: permission.permission, subjectType: permission.subjectType, subjectName: permission.subject.name};})}
+								dataSource={selectedRole.permissions.map(permission => {return {key: permission._id, permission: permission.permission, subjectType: permission.subjectType, subjectName: permission.subject.name};})}
+								pagination={false}
+								scroll={{y:250}}
 					        />
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Users with this role" key="2">
@@ -208,14 +213,14 @@ export default () => {
 									return <List.Item>
 										{item.username}
 										{selectedRole.canWrite &&
-											<Button className={'margin-md-left'} type={'primary'} onClick={async () => {await removeUserRole(item._id, selectedRole._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>
+											<Button className={'margin-md-left'} type={'primary'} onClick={async () => {await removeUserRole(item._id, selectedRole._id);}}><DeleteOutlined /></Button>
 										}
 									</List.Item>;
 								}}
 							/>
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Delete this role" key="3">
-							<Button disabled={!selectedRole.canWrite} className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(selectedRole._id);}}><Icon type={'delete'} theme={'outlined'}/></Button>
+							<Button disabled={!selectedRole.canWrite} className={'margin-md-left'} type={'primary'} onClick={async () => {await deleteRole(selectedRole._id);}}><DeleteOutlined /></Button>
 						</Tabs.TabPane>
 					</Tabs>
 					:

@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
+import {CURRENT_WORLD_PERMISSIONS, USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
 
 export const CURRENT_WIKI_ATTRIBUTES = `
 	_id
@@ -54,9 +55,11 @@ const GET_CURRENT_WIKI = gql`
     query currentWiki($wikiId: ID!){
         wiki(wikiId: $wikiId) {
             ${CURRENT_WIKI_ATTRIBUTES}
+            ${USERS_WITH_PERMISSIONS}
             ... on Place {
                 ${CURRENT_WIKI_PLACE_ATTRIBUTES}
             }
+            
         }
     }
 `;

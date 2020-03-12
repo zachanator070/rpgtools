@@ -14,14 +14,8 @@ export default {
 	server: async (_, __, {currentUser}) => {
 		return ServerConfig.findOne();
 	},
-    world: async (parent, {worldId, name}, {currentUser}) => {
-		let world = null;
-		if(worldId){
-            world = await World.findOne({_id: worldId});
-        }
-		if(name){
-            world = await World.findOne({name: worldId});
-        }
+    world: async (parent, {worldId}, {currentUser}) => {
+       const world = await World.findOne({_id: worldId});
 		if (!world) {
 			return null;
 		}
@@ -125,16 +119,6 @@ export default {
 		results.docs = docs;
 		return results;
 	},
-	searchWikiPages: async (_, {phrase, worldId}, {currentUser}) => {
-		const foundWikis = await WikiPage.find({name: { $regex: `^${phrase}.*` , $options: 'i'}});
-		const returnWikis = [];
-		for(let wiki of foundWikis){
-			if(await wiki.userCanRead(currentUser)){
-				returnWikis.push(wiki);
-			}
-		}
-		return returnWikis;
-	},
 	wiki: async (_, {wikiId}, {currentUser}) => {
 		let foundWiki = await WikiPage.findOne({_id: wikiId});
 		if(foundWiki && ! await foundWiki.userCanRead(currentUser)){
@@ -146,10 +130,20 @@ export default {
 
 		return foundWiki;
 	},
+	wikis: async (_, {name, worldId}, {currentUser}) => {
+		const foundWikis = await WikiPage.find({name: { $regex: `^${name}.*` , $options: 'i'}});
+		const returnWikis = [];
+		for(let wiki of foundWikis){
+			if(await wiki.userCanRead(currentUser)){
+				returnWikis.push(wiki);
+			}
+		}
+		return returnWikis;
+	},
 	users: async (_, {username}, {currentUser}) => {
-		return User.find({username: { $regex: `^${username}.*` , $options: 'i'}});
+		return User.paginate({username: { $regex: `^${username}.*` , $options: 'i'}});
 	},
 	roles: async (_, {worldId, name}, {currentUser}) => {
-		return Role.find({world: worldId, name: { $regex: `^${name}.*` , $options: 'i'}});
+		return Role.paginate({world: worldId, name: { $regex: `^${name}.*` , $options: 'i'}});
 	}
 };

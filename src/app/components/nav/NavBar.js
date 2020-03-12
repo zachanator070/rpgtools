@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Divider, Icon, Row} from 'antd';
+import {Button, Col, Divider, Row} from 'antd';
 import {Link} from "react-router-dom";
 import {WorldMenu} from "./WorldMenu";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -9,6 +9,7 @@ import {LoadingView} from "../LoadingView";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
 import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
 import {SearchBar} from "./SearchBar";
+import {SettingOutlined} from "@ant-design/icons";
 
 export const NavBar = () => {
 
@@ -57,7 +58,7 @@ export const NavBar = () => {
 							currentWorld && currentWorld.canWrite &&
 							<span className='margin-md-left'>
 								<Link to={`/ui/world/${currentWorld._id}/settings`}>
-									<Icon type='setting' theme='outlined'/> World Settings
+									<SettingOutlined/> World Settings
 								</Link>
 							</span>
 						}

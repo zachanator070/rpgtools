@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {Button, Form, Icon, Input, Modal} from "antd";
+import {Button, Form, Input, Modal} from "antd";
 import useRegisterModalVisibility from "../../hooks/useRegisterModalVisibility";
 import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
 import useRegister from "../../hooks/useRegister";
 import useLogin from "../../hooks/useLogin";
+import {KeyOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 
 export const RegisterModal = () => {
 
@@ -40,7 +41,7 @@ export const RegisterModal = () => {
 					<Form.Item label="Email" {...formItemLayout}>
 						<Input
 							placeholder="zach@thezachcave.com"
-							prefix={<Icon type="mail" style={{color: 'rgba(0,0,0,.25)'}}/>}
+							prefix={<MailOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							name='registerEmail'
@@ -51,7 +52,7 @@ export const RegisterModal = () => {
 					<Form.Item label="Username" {...formItemLayout}>
 						<Input
 							placeholder="DragonSlayer1234"
-							prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+							prefix={<UserOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
 							name='registerDisplayName'
@@ -62,7 +63,7 @@ export const RegisterModal = () => {
 					<Form.Item label="Password" {...formItemLayout} >
 						<Input
 							placeholder="$up3r$3cr37"
-							prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+							prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							type='password'
@@ -74,7 +75,7 @@ export const RegisterModal = () => {
 					<Form.Item label="Repeat Password" {...formItemLayout} >
 						<Input
 							placeholder="$up3r$3cr37"
-							prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+							prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
 							value={repeatPassword}
 							onChange={(e) => setRepeatPassword(e.target.value)}
 							type='password'

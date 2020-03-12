@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2'
 import mongooseAutopopulate from 'mongoose-autopopulate';
 import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "../../type-constants";
 
@@ -37,5 +38,6 @@ const userSchema = new Schema({
 });
 
 userSchema.plugin(mongooseAutopopulate);
+userSchema.plugin(mongoosePaginate);
 
 export const User = mongoose.model(USER, userSchema);
