@@ -12,13 +12,7 @@ export const CURRENT_WORLD_PERMISSIONS = `
 			... on World{
 				name
 			}
-			... on Article{
-				name
-			}
-			... on Place{
-				name
-			}
-			... on Person{
+			... on WikiPage{
 				name
 			}
 			... on WikiFolder{
@@ -32,11 +26,14 @@ export const CURRENT_WORLD_PERMISSIONS = `
 `;
 
 export const USERS_WITH_PERMISSIONS = `
-    usersWithPermissions{
+	... on PermissionControlled{
+		usersWithPermissions{
             _id
             username
             ${CURRENT_WORLD_PERMISSIONS}
         }
+	}
+    
 `;
 
 export const CURRENT_WORLD_WIKIS = `
