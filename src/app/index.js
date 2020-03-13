@@ -30,6 +30,8 @@ getIntrospectionData().then((introspectionData) => {
 				mapWikiVisibility: false,
 				pinBeingEdited: null,
 				mapWiki: null,
+				permissionEditorSubject: null,
+				permissionEditorSubjectType: null,
 			}
 		}
 	);

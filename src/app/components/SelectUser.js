@@ -9,7 +9,7 @@ export default ({onChange}) => {
 	useEffect(() => {
 		let found = false;
 		for(let user of users){
-			if(user.includes(value)){
+			if(user.username.includes(value)){
 				found = true;
 			}
 		}
@@ -18,7 +18,7 @@ export default ({onChange}) => {
 				setValue('');
 			})();
 		}
-	}, users);
+	}, [users]);
 
 	const options = users.map((user) => {return <Select.Option key={user._id} value={user._id}>{user.username}</Select.Option>});
 

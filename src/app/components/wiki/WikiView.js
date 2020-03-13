@@ -3,6 +3,8 @@ import {Editor} from "./Editor";
 import {ExportOutlined, EditOutlined} from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
+import useSetPermissionEditorSubject from "../../hooks/useSetPermissionEditorSubject";
+import useSetPermissionEditorSubjectType from "../../hooks/useSetPermissionEditorSubjectType";
 
 export const WikiView = ({currentWiki}) => {
 

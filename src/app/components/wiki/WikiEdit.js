@@ -3,7 +3,6 @@ import {Button, Input, Modal, Select, Upload} from "antd";
 import {UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined} from "@ant-design/icons";
 import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
-import {LoadingView} from "../LoadingView";
 import {useHistory, useParams} from 'react-router-dom';
 import {useDeleteWiki} from "../../hooks/useDeleteWiki";
 import {useCreateImage} from "../../hooks/useCreateImage";
@@ -16,7 +15,7 @@ import {ALL_WIKI_TYPES, PLACE} from "../../../type-constants";
 export const WikiEdit = () => {
 
 	const history = useHistory();
-	const {currentWiki, loading} = useCurrentWiki();
+	const {currentWiki} = useCurrentWiki();
 	const {currentWorld} = useCurrentWorld();
 
 	const [mapToUpload, setMapToUpload] = useState( false);
@@ -25,11 +24,12 @@ export const WikiEdit = () => {
 	const [type, setType] = useState(null);
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
-	const {deleteWiki, loading: deleteWikiLoading} = useDeleteWiki();
-	const {createImage, loading: createImageLoading} = useCreateImage();
-	const {updateWiki, loading: updateWikiLoading} = useUpdateWiki();
-	const {updatePlace, loading: updatePlaceLoading} = useUpdatePlace();
-	const {updatePerson, loading: updatePersonLoading} = useUpdatePerson();
+	const [saving, setSaving] = useState(false);
+	const {deleteWiki} = useDeleteWiki();
+	const {createImage} = useCreateImage();
+	const {updateWiki} = useUpdateWiki();
+	const {updatePlace} = useUpdatePlace();
+	const {updatePerson} = useUpdatePerson();
 
 	const [editor, setEditor] = useState(null);
 
@@ -58,21 +58,11 @@ export const WikiEdit = () => {
 		(async () => {
 			await loadCoverImageList();
 			await loadMapImageList();
+			await setName(currentWiki.name);
+			await setType(currentWiki.type);
 		})();
 
-	}, [currentWiki]);
-
-	useEffect(() => {
-		if(currentWiki){
-			setName(currentWiki.name);
-			setType(currentWiki.type);
-		}
-
-	}, [currentWiki]);
-
-	if(loading){
-		return <LoadingView/>
-	}
+	}, []);
 
 	if (!currentWiki) {
 		return (<div>{`404 - wiki ${wiki_id} not found`}</div>);
@@ -104,9 +94,9 @@ export const WikiEdit = () => {
 		}}>Revert</Button>;
 	}
 
-	let saving = updateWikiLoading || updatePersonLoading || updatePlaceLoading || deleteWikiLoading || createImageLoading;
-
 	const save = async () => {
+
+		await setSaving(true);
 
 		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
 		if(coverToUpload instanceof File){
@@ -151,15 +141,9 @@ export const WikiEdit = () => {
 			</div>
 			<div className='margin-lg'>
 				<Upload
-					customRequest={async ({onProgress, onSuccess}) => {
-						await onProgress({percent: 100});
-						await onSuccess({status: 'success'});
-					}}
 					beforeUpload={setCoverToUpload}
-					showUploadList={{showDownloadIcon: false}}
 					multiple={false}
 					listType={'picture'}
-					coverImage={coverToUpload}
 					fileList={coverImageList}
 					className='upload-list-inline'
 					onChange={async (files) => {
@@ -175,18 +159,12 @@ export const WikiEdit = () => {
 				</Upload>
 				{coverRevert}
 			</div>
-			{type === PLACE ?
+			{type === PLACE &&
 				<div className='margin-lg'>
 					<Upload
-						customRequest={async ({onProgress, onSuccess}) => {
-							await onProgress({percent: 100});
-							await onSuccess({status: 'success'});
-						}}
-						showUploadList={{showDownloadIcon: false}}
 						beforeUpload={setMapToUpload}
 						multiple={false}
 						listType={'picture'}
-						coverImage={mapToUpload}
 						fileList={mapImageList}
 						className='upload-list-inline'
 						onChange={async (files) => {
@@ -202,7 +180,6 @@ export const WikiEdit = () => {
 					</Upload>
 					{mapRevert}
 				</div>
-				: null
 			}
 
 			<div className='margin-lg'>

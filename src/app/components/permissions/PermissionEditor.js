@@ -12,6 +12,8 @@ import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import {WIKI_PAGE, WORLD} from "../../../type-constants";
 import SelectUser from "../SelectUser";
 import SelectRole from "../SelectRole";
+import usePermissionEditorSubject from "../../hooks/usePermissionEditorSubject";
+import usePermissionEditorSubjectType from "../../hooks/usePermissionEditorSubjectType";
 
 export default () => {
 
@@ -26,22 +28,11 @@ export default () => {
 	const [permissionAssigneeId, setPermissionAssigneeId] = useState(null);
 	const [selectedPermission, setSelectedPermission] = useState(null);
 
-	let permissions = [];
-	let subject = null;
-	let subjectType = null;
-	if(currentWiki){
-		permissions = WIKI_PERMISSIONS;
-		subject = currentWiki;
-		subjectType = currentWiki.type;
-	} else if(currentWorld){
-		permissions = WORLD_PERMISSIONS;
-		subject = currentWorld;
-		subjectType = WORLD;
-	} else {
-		return <>Unknown Subject Type</>;
-	}
+	const {permissionEditorSubject: subject} = usePermissionEditorSubject();
+	const {permissionEditorSubjectType: subjectType} = usePermissionEditorSubjectType();
+	let permissions = subjectType === WORLD ? WORLD_PERMISSIONS : WIKI_PERMISSIONS;
 
-	if(currentWorldLoading || currentWikiLoading){
+	if(subject === null || subjectType === null){
 		return <></>;
 	}
 

@@ -2,27 +2,23 @@ import React from 'react';
 import {Modal} from "antd";
 import usePermissionModalVisibility from "../../hooks/usePermissionModalVisibility";
 import useSetPermissionModalVisibility from "../../hooks/useSetPermissionModalVisibility";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useCurrentWiki from "../../hooks/useCurrentWiki";
 import PermissionEditor from "../permissions/PermissionEditor";
+import usePermissionEditorSubject from "../../hooks/usePermissionEditorSubject";
+import usePermissionEditorSubjectType from "../../hooks/usePermissionEditorSubjectType";
 
 export const PermissionModal = () => {
 
 	const {permissionModalVisibility} = usePermissionModalVisibility();
 	const {setPermissionModalVisibility} = useSetPermissionModalVisibility();
-	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
-	const {currentWiki, loading: currentWikiLoading} = useCurrentWiki();
 
-	let subjectName = null;
-	if(currentWiki){
-		subjectName = currentWiki.name;
-	} else if(currentWorld){
-		subjectName = currentWorld.name;
-	}
+	const {permissionEditorSubject: subject} = usePermissionEditorSubject();
+	const {permissionEditorSubjectType: subjectType} = usePermissionEditorSubjectType();
 
-	if(currentWorldLoading || currentWikiLoading){
+	if(subject === null || subjectType === null){
 		return <></>;
 	}
+
+	let subjectName = subject.name;
 
 	return (
 		<Modal

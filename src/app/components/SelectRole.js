@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSearchUsers} from "../hooks/useSearchUsers";
 import {Select, Spin} from "antd";
 import {useSearchRoles} from "../hooks/useSearchRoles";
@@ -6,6 +6,20 @@ import {useSearchRoles} from "../hooks/useSearchRoles";
 export default ({onChange}) => {
 	const {searchRoles, roles, loading} = useSearchRoles();
 	const [value, setValue] = useState('');
+
+	useEffect(() => {
+		let found = false;
+		for(let role of roles){
+			if(role.name.includes(value)){
+				found = true;
+			}
+		}
+		if(!found){
+			(async () => {
+				setValue('');
+			})();
+		}
+	}, [roles]);
 
 	const options = roles.map((user) => {return <Select.Option key={user._id} value={user._id}>{user.username}</Select.Option>});
 

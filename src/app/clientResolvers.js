@@ -36,6 +36,14 @@ export const clientResolvers = {
 		setMapWiki: (_, {mapWikiId}, {client, cache}) => {
 			cache.writeData({data: {mapWiki: mapWikiId}});
 			return mapWikiId;
+		},
+		setPermissionEditorSubject: (_, {subject}, {client, cache}) => {
+			cache.writeData({data: {permissionEditorSubject: subject}});
+			return subject;
+		},
+		setPermissionEditorSubjectType: (_, {subjectType}, {client, cache}) => {
+			cache.writeData({data: {permissionEditorSubjectType: subjectType}});
+			return subjectType;
 		}
 	},
 };
