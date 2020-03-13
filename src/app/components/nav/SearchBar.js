@@ -38,7 +38,7 @@ export const SearchBar = () => {
 
 	return (
 		<div>
-			<Row className='text-align-center'>
+			<Row className='text-align-center' style={{paddingLeft: '10%', paddingRight: '10%'}}>
 				<Input.Search
 					placeholder="input search text"
 					onChange={event => search(event.target.value)}
@@ -48,7 +48,6 @@ export const SearchBar = () => {
 							setShowResults(true);
 						}
 					}}
-					style={{width: '80%'}}
 					type='text'
 				/>
 			</Row>

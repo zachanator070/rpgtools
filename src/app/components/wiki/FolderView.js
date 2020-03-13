@@ -147,29 +147,56 @@ export const FolderView = () => {
 		}
 
 		let menu = [
-			<a href='#' key='new page' onClick={async () => {
-				await createWiki('New Page', folder._id);
-			}}><FileAddOutlined /></a>,
-			<a href='#' key='new folder' onClick={async () => {
-				await createFolder(folder._id, 'New Folder');
-				if (!opened.includes(folder._id)) {
-					openFolder(folder._id);
-				}
-			}}><FolderAddOutlined /></a>,
-			<a href='#' key='rename' onClick={() => {
-				setEditing(folder)
-			}}><EditOutlined /></a>,
-			<a href='#' key='delete' onClick={() => {
-				Modal.confirm({
-					title: 'Confirm Delete',
-					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
-					onOk: async () => {
-						await deleteFolder(folder._id)
-					},
-					onCancel: () => {
-					},
-				});
-			}}><DeleteOutlined/></a>
+			<a
+				title={'Create new wiki page'}
+				href='#'
+				key='new page'
+				onClick={async () => {
+					await createWiki('New Page', folder._id);
+				}}
+			>
+				<FileAddOutlined /></a>,
+			<a
+				title={'Create new folder'}
+				href='#'
+				key='new folder'
+				onClick={async () => {
+					await createFolder(folder._id, 'New Folder');
+					if (!opened.includes(folder._id)) {
+						openFolder(folder._id);
+					}
+				}}
+			>
+				<FolderAddOutlined />
+			</a>,
+			<a
+				title={'Rename this folder'}
+				href='#'
+				key='rename'
+				onClick={() => {
+					setEditing(folder)
+				}}
+			>
+				<EditOutlined />
+			</a>,
+			<a
+				title={'Delete this folder'}
+				href='#'
+				key='delete'
+				onClick={() => {
+					Modal.confirm({
+						title: 'Confirm Delete',
+						content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
+						onOk: async () => {
+							await deleteFolder(folder._id)
+						},
+						onCancel: () => {
+						},
+					});
+				}}
+			>
+				<DeleteOutlined/>
+			</a>
 		];
 
 		if (!folder.canWrite || folderBeingHovered !== folder._id) {

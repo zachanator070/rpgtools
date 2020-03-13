@@ -11,13 +11,18 @@ import {WikiView} from "./wiki/WikiView";
 import useSetPermissionModalVisibility from "../hooks/useSetPermissionModalVisibility";
 import {Modals} from "./App";
 import WorldSettings from "./WorldSettings";
-import PermissionView from "./permissions/ManagePermissionView";
+import RolesView from "./permissions/RolesView";
 import {TeamOutlined} from "@ant-design/icons";
+import useSetPermissionEditorSubject from "../hooks/useSetPermissionEditorSubject";
+import useSetPermissionEditorSubjectType from "../hooks/useSetPermissionEditorSubjectType";
+import MyPermissionsView from "./permissions/MyPermissionsView";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
 	const {setPermissionModalVisibility} = useSetPermissionModalVisibility();
 	const match = useRouteMatch();
+	const {setPermissionEditorSubject} = useSetPermissionEditorSubject();
+	const {setPermissionEditorSubjectType} = useSetPermissionEditorSubjectType();
 
 	return wikiLoading ? <LoadingView/> :
 			<Row>
@@ -39,7 +44,11 @@ const WikiContent = () => {
 				<Col span={4} className='padding-md'>
 					<Route path={`${match.path}/view`}>
 						{currentWiki.canWrite &&
-							<a title={'View permissions for this page'} onClick={async () => {await setPermissionModalVisibility(true);}}>
+							<a title={'View permissions for this page'} onClick={async () => {
+								await setPermissionEditorSubject(currentWiki);
+								await setPermissionEditorSubjectType(currentWiki.type);
+								await setPermissionModalVisibility(true);
+							}}>
 								<TeamOutlined style={{fontSize: '20px'}}/>
 							</a>
 						}
@@ -71,9 +80,13 @@ export const AppContent = () => {
 				<Modals/>
 				<WorldSettings/>
 			</Route>
-			<Route path={`${match.path}/permissions`}>
+			<Route path={`${match.path}/myPermissions`}>
 				<Modals/>
-				<PermissionView/>
+				<MyPermissionsView/>
+			</Route>
+			<Route path={`${match.path}/roles`}>
+				<Modals/>
+				<RolesView/>
 			</Route>
 			<Route path={`${match.path}/map/:map_id`}>
 				<Modals/>

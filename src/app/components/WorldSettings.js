@@ -1,13 +1,27 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import useCurrentWorld from "../hooks/useCurrentWorld";
 import PermissionEditor from "./permissions/PermissionEditor";
 import {Button, Col, Input, Row} from "antd";
 import {useRenameWorld} from "../hooks/useRenameWorld";
+import useSetPermissionEditorSubject from "../hooks/useSetPermissionEditorSubject";
+import useSetPermissionEditorSubjectType from "../hooks/useSetPermissionEditorSubjectType";
+import {WORLD} from "../../type-constants";
 
 export default () => {
 	const {currentWorld} = useCurrentWorld();
 	const [newName, setNewName] = useState();
 	const {renameWorld, loading} = useRenameWorld();
+
+	const {setPermissionEditorSubject} = useSetPermissionEditorSubject();
+	const {setPermissionEditorSubjectType} = useSetPermissionEditorSubjectType();
+
+	useEffect(() =>{
+		(async () => {
+			await setPermissionEditorSubject(currentWorld);
+			await setPermissionEditorSubjectType(WORLD);
+		})();
+
+	}, []);
 
 	if(!currentWorld){
 		return <div>404 - World not found</div>;

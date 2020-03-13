@@ -9,7 +9,7 @@ import {LoadingView} from "../LoadingView";
 import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
 import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
 import {SearchBar} from "./SearchBar";
-import {SettingOutlined} from "@ant-design/icons";
+import {SettingOutlined,UserOutlined} from "@ant-design/icons";
 
 export const NavBar = () => {
 
@@ -54,14 +54,24 @@ export const NavBar = () => {
 				<Col span={4}>
 					<div className='margin-md-left'>
 						<WorldMenu currentUser={currentUser}/>
-						{
-							currentWorld && currentWorld.canWrite &&
-							<span className='margin-md-left'>
-								<Link to={`/ui/world/${currentWorld._id}/settings`}>
-									<SettingOutlined/> World Settings
+						{currentWorld && currentWorld.canWrite &&
+							<span className='margin-lg-left'>
+								<Link
+									to={`/ui/world/${currentWorld._id}/settings`}
+									title={'World Settings'}
+								>
+									<SettingOutlined/>
 								</Link>
 							</span>
 						}
+						<span className={'margin-lg-left'}>
+							<Link
+								to={`/ui/world/${currentWorld._id}/myPermissions`}
+								title={'My permissions on this world'}
+							>
+								<UserOutlined />
+							</Link>
+						</span>
 					</div>
 				</Col>
 				{currentWorld ?
@@ -75,7 +85,7 @@ export const NavBar = () => {
 									to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>Wiki</Link>
 								<Divider type='vertical'/>
 								<Link
-									to={`/ui/world/${currentWorld._id}/permissions`}>Permissions</Link>
+									to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
 								<Divider type='vertical'/>
 							</div>
 						</Col>
