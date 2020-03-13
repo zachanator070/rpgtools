@@ -5,22 +5,19 @@ import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../../permission-constants
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import {useSearchUsers} from "../../hooks/useSearchUsers";
-import {useSearchRoles} from "../../hooks/useSearchRoles";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
 import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import {WIKI_PAGE, WORLD} from "../../../type-constants";
 import SelectUser from "../SelectUser";
+import SelectRole from "../SelectRole";
 
 export default () => {
 
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {currentWiki, loading: currentWikiLoading} = useCurrentWiki();
 	const {refetch} = useCurrentUser();
-	const [searchText, setSearchText] = useState('');
-	const [showResults, setShowResults] = useState(false);
 	const [permissionGroup, setPermissionGroup] = useState('users');
 	const {grantUserPermission} = useGrantUserPermission();
 	const {grantRolePermission} = useGrantRolePermission();
@@ -28,19 +25,6 @@ export default () => {
 	const {revokeRolePermission} = useRevokeRolePermission();
 	const [permissionAssigneeId, setPermissionAssigneeId] = useState(null);
 	const [selectedPermission, setSelectedPermission] = useState(null);
-
-	const hideDropdown = (event) => {
-		if (!event.target.matches('.searchResult') && !event.target.matches('.ant-input') && !event.target.matches('.ant-list-item-content')) {
-			setShowResults(false);
-		}
-	};
-
-	useEffect(() => {
-		window.addEventListener('mousedown', hideDropdown);
-		return () => {
-			window.removeEventListener('mousedown', hideDropdown);
-		}
-	});
 
 	let permissions = [];
 	let subject = null;
@@ -154,9 +138,19 @@ export default () => {
 
 		<Row className='margin-md-top'>
 			<Col span={20} style={{textAlign: 'right'}}>
-				<SelectUser
-					onChange={async (value) => {await setPermissionAssigneeId(value);}}
-				/>
+				{permissionGroup === 'users' ?
+					<SelectUser
+						onChange={async (value) => {
+							await setPermissionAssigneeId(value);
+						}}
+					/>
+					:
+					<SelectRole
+						onChange={async (value) => {
+							await setPermissionAssigneeId(value);
+						}}
+					/>
+				}
 			</Col>
 			<Col span={4}>
 				<Button disabled={permissionAssigneeId === null} className='margin-md-left' onClick={async () => {
