@@ -64,14 +64,16 @@ export const NavBar = () => {
 								</Link>
 							</span>
 						}
-						<span className={'margin-lg-left'}>
-							<Link
-								to={`/ui/world/${currentWorld._id}/myPermissions`}
-								title={'My permissions on this world'}
-							>
-								<UserOutlined />
-							</Link>
-						</span>
+						{currentWorld &&
+							<span className={'margin-lg-left'}>
+								<Link
+									to={`/ui/world/${currentWorld._id}/myPermissions`}
+									title={'My permissions on this world'}
+								>
+									<UserOutlined/>
+								</Link>
+							</span>
+						}
 					</div>
 				</Col>
 				{currentWorld ?
