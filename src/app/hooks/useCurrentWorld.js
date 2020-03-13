@@ -86,6 +86,7 @@ export const CURRENT_WORLD_ROLES = `
 			_id
 			username
 		}
+		${USERS_WITH_PERMISSIONS}
 	}
 `;
 

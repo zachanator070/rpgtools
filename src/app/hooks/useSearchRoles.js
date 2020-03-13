@@ -5,8 +5,12 @@ import useCurrentWorld from "./useCurrentWorld";
 const SEARCH_ROLES = gql`
 	query searchRoles($worldId: ID!, $name: String!){
 		roles(worldId: $worldId, name: $name){
-			_id
-			name
+			page
+			totalPages
+			docs{
+				_id
+				name
+			}
 		}
 	}
 `;
@@ -16,7 +20,7 @@ export const useSearchRoles = () => {
 	const {currentWorld} = useCurrentWorld();
 	return {
 		searchRoles: async (name) => {return searchRoles({variables: {worldId: currentWorld._id, name}});},
-		roles: data ? data.roles : [],
+		roles: data ? data.roles.docs : [],
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []
 	}

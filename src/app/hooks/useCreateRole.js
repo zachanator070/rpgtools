@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
 import {CURRENT_WORLD_PERMISSIONS, CURRENT_WORLD_ROLES, USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
+import useCurrentUser from "./useCurrentUser";
 
 const CREATE_ROLE = gql`
 	mutation createRole($worldId: ID!, $name: String!){
@@ -14,9 +15,11 @@ const CREATE_ROLE = gql`
 
 export default () => {
 	const [createRole, {loading, error, data}] = useMutation(CREATE_ROLE);
+	const {refetch} = useCurrentUser();
 	return {
 		createRole: async (worldId, name) => {
 			await createRole({variables: {worldId, name}});
+			await refetch();
 		},
 		loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : [],

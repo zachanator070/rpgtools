@@ -12,12 +12,14 @@ import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/useRemoveUserRole";
 import SelectUser from "../SelectUser";
 import useAddUserRole from "../../hooks/useAddUserRole";
-import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../../permission-constants";
+import {ROLE_ADMIN} from "../../../permission-constants";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
+import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
+import SelectRole from "../SelectRole";
 
 export default () => {
 
-	const {currentUser, loading, refetch} = useCurrentUser();
+	const {currentUser, loading} = useCurrentUser();
 	const {currentWorld} = useCurrentWorld();
 	const {createRole, loading: createRoleLoading} = useCreateRole();
 	const {revokeRolePermission} = useRevokeRolePermission();
@@ -26,8 +28,10 @@ export default () => {
 	const [newRoleName, setNewRoleName] = useState();
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
 	const [userIdToAdd, setUserIdToAdd] = useState(null);
+	const [adminUserIdToAdd, setAdminUserIdToAdd] = useState(null);
 	const {addUserRole} = useAddUserRole();
 	const {revokeUserPermission} = useRevokeUserPermission();
+	const {grantUserPermission} = useGrantUserPermission();
 
 	if (loading) {
 		return <LoadingView/>;
@@ -181,7 +185,6 @@ export default () => {
 					}}/></div>
 					<Button className={'margin-lg-left'} disabled={createRoleLoading} onClick={async () => {
 						await createRole(currentWorld._id, newRoleName);
-						await refetch();
 					}} type={'primary'}>Create</Button>
 				</div>
 				}
@@ -202,16 +205,9 @@ export default () => {
 					style={{width: 200}}
 					placeholder="Select a role"
 					optionFilterProp="children"
-					onChange={async value => {
-						for (let role of currentWorld.roles) {
-							if (role._id === value) {
-								await setSelectedRoleId(role._id);
-							}
-						}
-					}}
-					filterOption={(input, option) =>
-						option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-					}
+					value={selectedRoleId}
+					onChange={setSelectedRoleId}
+
 				>
 					{currentWorld.roles.map(role =>
 						<Select.Option key={role._id} value={role._id}>{role.name}</Select.Option>)}
@@ -315,7 +311,7 @@ export default () => {
 						{selectedRole.canWrite &&
 							<Tabs.TabPane tab="Role admins" key="4">
 								<List
-									dataSource={currentWorld.usersWithPermissions.filter(
+									dataSource={selectedRole.usersWithPermissions.filter(
 										user => user.permissions.filter(
 											permission => permission.permission === ROLE_ADMIN && permission.subject._id === selectedRole._id
 										).length > 0
@@ -337,6 +333,17 @@ export default () => {
 										</List.Item>
 									}
 								/>
+								<SelectUser onChange={setAdminUserIdToAdd}/>
+								<Button
+									className={'margin-md-left'}
+									type={'primary'}
+									onClick={async () => {
+										await grantUserPermission(adminUserIdToAdd, ROLE_ADMIN, selectedRole._id, ROLE);
+									}}
+									disabled={adminUserIdToAdd === null}
+								>
+									Add Admin
+								</Button>
 							</Tabs.TabPane>
 						}
 					</Tabs>
