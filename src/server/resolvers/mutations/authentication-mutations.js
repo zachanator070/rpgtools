@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import {ACCESS_TOKEN_MAX_AGE, authenticated, createTokens, REFRESH_TOKEN_MAX_AGE} from "../../authentication-helpers";
 import uuidv4 from "uuid/v4";
 import {User} from '../../models/user';
+import {ServerConfig} from "../../models/server-config";
 export const SALT_ROUNDS = 10;
 
 export const registerUser = async (email, username, password) => {
@@ -37,7 +38,13 @@ export const authenticationMutations = {
 		return "success";
 
 	}),
-	register: async (parent, {email, username, password}, context) => {
+	register: async (parent, {registerCode, email, username, password}, context) => {
+		const config = await ServerConfig.findOne();
+		if(!config.registerCodes.includes(registerCode)){
+			throw new Error('Register code not valid');
+		}
+		config.registerCodes = config.registerCodes.filter(code => code !== registerCode);
+		await config.save();
 		return registerUser(email, username, password);
 	},
 

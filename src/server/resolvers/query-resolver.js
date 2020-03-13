@@ -10,9 +10,9 @@ import {PLACE} from "../../type-constants";
 import {ServerConfig} from '../models/server-config';
 
 export default {
-	currentUser: authenticated((parent, args, context) => context.currentUser),
-	server: async (_, __, {currentUser}) => {
-		return ServerConfig.findOne();
+	currentUser: (parent, args, context) => context.currentUser,
+	serverConfig: async (_, __, {currentUser}) => {
+		return ServerConfig.findOne().populate('admins');
 	},
     world: async (parent, {worldId}, {currentUser}) => {
        const world = await World.findOne({_id: worldId});

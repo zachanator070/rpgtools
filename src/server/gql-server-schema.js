@@ -5,10 +5,10 @@ export const typeDefs = gql`
     type Query {
         currentUser: User
         
-        server: Server!
+        serverConfig: ServerConfig!
         
         """Get a world by id"""
-        world(worldId: ID!): World
+        world(worldId: ID): World
         """Get all worlds"""
         worlds(page: Int): WorldPaginatedResult
         
@@ -26,10 +26,11 @@ export const typeDefs = gql`
   
     type Mutation{
         unlockServer(unlockCode: String!, email: String!, username: String!, password: String!): Boolean
-    
+        generateRegisterCodes(amount: Int!): ServerConfig!
+        
         login(username: String!, password:  String!): User!
         logout: String!
-        register(email: String!, username: String!, password: String!): User!
+        register(registerCode: String!, email: String!, username: String!, password: String!): User!
         setCurrentWorld(worldId: ID!): User!
         
         createWorld(name: String!, public: Boolean!): World!
@@ -252,7 +253,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 	}
 	
-	type Server {
+	type ServerConfig {
 		_id: ID!
 		version: String!
 		registerCodes: [String!]!

@@ -12,6 +12,7 @@ export const RegisterModal = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [repeatPassword, setRepeatPassword] = useState('');
+	const [registerCode, setRegisterCode] = useState('');
 
 	const {registerModalVisibility} = useRegisterModalVisibility();
 	const {setRegisterModalVisibility} = useSetRegisterModalVisibility();
@@ -38,6 +39,17 @@ export const RegisterModal = () => {
 			>
 				{errors.join('/n')}
 				<Form layout='horizontal'>
+					<Form.Item label="Register Code" {...formItemLayout} >
+						<Input
+							placeholder="$up3r$3cr37"
+							prefix={<KeyOutlined style={{color: 'rgba(0,0,0,.25)'}}/>}
+							value={registerCode}
+							onChange={(e) => setRegisterCode(e.target.value)}
+							name='registerCode'
+							id='registerCode'
+							autoComplete='registerCode'
+						/>
+					</Form.Item>
 					<Form.Item label="Email" {...formItemLayout}>
 						<Input
 							placeholder="zach@thezachcave.com"
@@ -87,7 +99,7 @@ export const RegisterModal = () => {
 				</Form>
 				<Button type="primary" htmlType="submit" disabled={loading} onClick={async () => {
 					try {
-						await register(email, username, password);
+						await register(registerCode, email, username, password);
 						await login(username, password);
 						setEmail('');
 						setUsername('');

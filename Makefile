@@ -26,7 +26,7 @@ restart:
 stop:
 	docker-compose stop
 
-build: init-env
+build: clean init-env
 	docker-compose up --build prod-builder
 	docker build -t rpgtools -f src/server/Dockerfile .
 
@@ -47,3 +47,8 @@ install:
 	sudo systemd daemon-reload
 	sudo systemd start rpgtools
 	echo rpgtools is now available
+
+clean:
+	rm -rf node_modules
+	rm -rf src/app/node_modules
+	rm -rf src/server/node_modules

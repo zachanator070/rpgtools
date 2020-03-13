@@ -2,6 +2,7 @@ import {ALL_USERS, EVERYONE} from "../role-constants";
 import mongoose from 'mongoose';
 import {Role} from './models/role';
 import {PermissionAssignment} from "./models/permission-assignement";
+import {WORLD} from "../type-constants";
 
 
 export const userHasPermission = async function (user, permission, subjectId) {
@@ -40,7 +41,13 @@ export const userHasPermission = async function (user, permission, subjectId) {
 		userRoles.push(allUsersRole);
 	}
 
-	if(assignment.subject.world){
+	if(assignment.subjectType === WORLD){
+		const everyoneRole = await Role.findOne({name: EVERYONE, world: assignment.subject._id});
+		if (everyoneRole) {
+			userRoles.push(everyoneRole);
+		}
+	}
+	else if(assignment.subject.world){
 		// add "Everyone" default role assigned to world to be checked
 		const everyoneRole = await Role.findOne({name: EVERYONE, world: assignment.subject.world._id});
 		if (everyoneRole) {

@@ -16,6 +16,7 @@ import {TeamOutlined} from "@ant-design/icons";
 import useSetPermissionEditorSubject from "../hooks/useSetPermissionEditorSubject";
 import useSetPermissionEditorSubjectType from "../hooks/useSetPermissionEditorSubjectType";
 import MyPermissionsView from "./permissions/MyPermissionsView";
+import ServerSettings from "./server/ServerSettings";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
