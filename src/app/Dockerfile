@@ -1,4 +1,4 @@
-FROM node:12.16.1
+FROM node:12.16.1-slim
 
 WORKDIR /home/node/app
 ADD src/app/package.json package.json

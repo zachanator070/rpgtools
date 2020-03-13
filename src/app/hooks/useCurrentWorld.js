@@ -91,7 +91,7 @@ export const CURRENT_WORLD_ROLES = `
 `;
 
 const GET_CURRENT_WORLD = gql`
-    query getCurrentWorld($worldId: ID!){
+    query getCurrentWorld($worldId: ID){
         world(worldId: $worldId){
 			_id
 			name

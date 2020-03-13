@@ -12,7 +12,8 @@ import {SelectWorldModal} from "./modals/SelectWorldModal";
 import {AppContent} from "./AppContent";
 import {EditPinModal} from "./modals/EditPinModal";
 import {PermissionModal} from "./modals/PermissionModal";
-import {ServerSetup} from "./ServerSetup";
+import {ServerSetup} from "./server/ServerSetup";
+import ServerSettings from "./server/ServerSettings";
 
 export const Modals = () => {
 	return (
@@ -37,6 +38,9 @@ export default () => {
 			</Route>
 			<Route path="/ui/setup">
 				<ServerSetup/>
+			</Route>
+			<Route path={`/ui/serverSettings`}>
+				<ServerSettings/>
 			</Route>
 			<Route exact path={'/'}>
 				<Modals/>

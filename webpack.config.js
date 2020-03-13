@@ -1,6 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const webpack = require('webpack');
+const StatsPlugin = require('stats-webpack-plugin');
+const Visualizer = require('webpack-visualizer-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
 	entry: {
@@ -8,11 +13,26 @@ module.exports = {
 	},
 	mode: "production",
 	plugins: [
+		new CompressionPlugin({
+			filename: "[path].gz[query]",
+			algorithm: "gzip",
+			test: /\.js$|\.css$|\.html$/,
+			threshold: 10240,
+			minRatio: 0.8
+	    }),
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
 			title: 'rpgtools',
 			template: __dirname + "/src/app/index.html"
-		})
+		}),
+		new StatsPlugin('stats.json', {
+			chunkModules: true,
+			exclude: [/node_modules[\\\/]react/]
+		}),
+		new Visualizer({
+			filename: './statistics.html'
+		}),
+		new MiniCssExtractPlugin()
 	],
 	output: {
 		filename: '[name].bundle.js',
@@ -65,7 +85,7 @@ module.exports = {
 			{
 				test: /\.css$/,
 				use: [
-					'style-loader',
+					MiniCssExtractPlugin.loader,
 					'css-loader'
 				]
 			},

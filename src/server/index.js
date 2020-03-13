@@ -24,6 +24,19 @@ const createServer = async () => {
 
 	await checkConfig();
 
+	server.get('*.js', function (req, res, next) {
+		req.url = req.url + '.gz';
+		res.set('Content-Encoding', 'gzip');
+		next();
+	});
+	server.get('*.css', function (req, res, next) {
+		req.url = req.url + '.gz';
+		console.log(req.url);
+		res.set('Content-Encoding', 'gzip');
+		res.set('Content-Type', 'text/css');
+		next();
+	});
+
 	server.use('/images', ImageRouter);
 
 	server.get('*', (req, res, next) => {

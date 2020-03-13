@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {Button, Col, Form, Input, Modal, Row} from "antd";
-import useUnlockServer from "../hooks/useUnlockServer";
+import useUnlockServer from "../../hooks/useUnlockServer";
 import {useHistory} from 'react-router-dom';
 import {KeyOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
+import useLogin from "../../hooks/useLogin";
 
 export const ServerSetup = () => {
 	const [email, setEmail] = useState('');
@@ -12,6 +13,9 @@ export const ServerSetup = () => {
 	const [repeatPassword, setRepeatPassword] = useState('');
 	const {unlockServer, loading} = useUnlockServer();
 	const history = useHistory();
+	const {login} = useLogin( () => {
+		history.push('/');
+	});
 	const formItemLayout = {
 		labelCol: {span: 5},
 		wrapperCol: {span: 14},
@@ -87,10 +91,10 @@ export const ServerSetup = () => {
 					/>
 				</Form.Item>
 			</Form>
-			<Button type="primary" htmlType="submit" disabled={false} onClick={async () => {
+			<Button type="primary" htmlType="submit" disabled={loading} onClick={async () => {
 				try {
 					await unlockServer(unlockCode, email, username, password);
-					history.push('/');
+					await login(username, password);
 				} catch {
 				}
 

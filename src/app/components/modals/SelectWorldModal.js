@@ -10,9 +10,8 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 
 export const SelectWorldModal = () => {
 
-	const {currentWorld} = useCurrentWorld();
 
-	const [selectedWorld, setSelectedWorld] = useState(currentWorld);
+	const [selectedWorld, setSelectedWorld] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const {worlds, loading} = useWorlds(currentPage);

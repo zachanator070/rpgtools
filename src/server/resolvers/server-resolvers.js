@@ -217,18 +217,24 @@ export const serverResolvers = {
 			return await pin.userCanWrite(currentUser);
 		}
 	},
-	Server: {
+	ServerConfig: {
 		registerCodes: async (server, _, {currentUser}) => {
+			if(!currentUser){
+				return [];
+			}
 			if(!server.adminUsers.includes(currentUser._id)){
 				return [];
 			}
 			return server.registerCodes;
 		},
 		adminUsers: async (server, _, {currentUser}) => {
+			if(!currentUser){
+				return [];
+			}
 			if(!server.adminUsers.includes(currentUser._id)){
 				return [];
 			}
-			await server.populate('adminUsers');
+			await server.populate('adminUsers').execPopulate();
 			return server.adminUsers;
 		}
 	}
