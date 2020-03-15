@@ -48,6 +48,8 @@ services:
     build:
       context: .
       dockerfile: src/app/Dockerfile
+    environment:
+      - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
      - ./src:/home/node/app/src
      - ./dist:/home/node/app/dist

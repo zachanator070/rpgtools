@@ -7,6 +7,8 @@ const Visualizer = require('webpack-visualizer-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+console.log(`building with stats=${process.env.BUILD_WITH_STATS === 'true'}`);
+
 module.exports = {
 	entry: {
 		app: './src/app/index.js'
@@ -25,15 +27,20 @@ module.exports = {
 			title: 'rpgtools',
 			template: __dirname + "/src/app/index.html"
 		}),
-		new StatsPlugin('stats.json', {
-			chunkModules: true,
-			exclude: [/node_modules[\\\/]react/]
-		}),
-		new Visualizer({
-			filename: './statistics.html'
-		}),
 		new MiniCssExtractPlugin()
-	],
+	].concat(
+		process.env.BUILD_WITH_STATS === 'true' ?
+		[
+			new StatsPlugin('stats.json', {
+				chunkModules: true,
+				exclude: [/node_modules[\\\/]react/]
+			}),
+			new Visualizer({
+				filename: './statistics.html'
+			}),
+		]
+		: []
+	),
 	output: {
 		filename: '[name].bundle.js',
 		path: path.resolve(__dirname, 'dist'),

@@ -1,4 +1,18 @@
 
+
+prod: build
+	docker-compose up --build prod-server
+
+build: prod-builder clean-uncompressed
+	docker build -t rpgtools -f src/server/Dockerfile .
+
+prod-builder: clean init-env
+	docker-compose up --build prod-builder
+
+build-with-stats: BUILD_WITH_STATS=true
+	export BUILD_WITH_STATS
+build-with-stats: build
+
 install-all:
 	cp src/server/package.json package.json
 	npm install
@@ -26,13 +40,6 @@ restart:
 stop:
 	docker-compose stop
 
-build: clean init-env
-	docker-compose up --build prod-builder
-	docker build -t rpgtools -f src/server/Dockerfile .
-
-prod: build
-	docker-compose up --build prod-server
-
 publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
 	docker tag rpgtools ${DOCKER_USERNAME}/rpgtools
@@ -52,3 +59,7 @@ clean:
 	rm -rf node_modules
 	rm -rf src/app/node_modules
 	rm -rf src/server/node_modules
+
+clean-uncompressed:
+	rm dist/app.bundle.js
+	rm dist/app.css
