@@ -48,6 +48,7 @@ services:
     build:
       context: .
       dockerfile: src/app/Dockerfile
+    user: ${CURRENT_UID}
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
