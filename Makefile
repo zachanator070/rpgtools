@@ -1,10 +1,8 @@
-
-
-prod: build
-	docker-compose up --build prod-server
+VERSION=`git describe --abbrev=0 --tags`
 
 build: prod-builder clean-uncompressed
-	docker build -t rpgtools -f src/server/Dockerfile .
+	echo "Building version ${VERSION}"
+	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f src/server/Dockerfile .
 
 prod-builder: clean init-env
 	docker-compose up --build prod-builder
@@ -19,6 +17,9 @@ install-all:
 	cp src/app/package.json package.json
 	npm install
 	rm package.json
+
+prod: build
+	docker-compose up --build prod-server
 
 dev: init-env dev-up logs
 
@@ -42,8 +43,10 @@ stop:
 
 publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-	docker tag rpgtools ${DOCKER_USERNAME}/rpgtools
-	docker push ${DOCKER_USERNAME}/rpgtools
+	docker tag rpgtools:${VERSION} ${DOCKER_USERNAME}/rpgtools:${VERSION}
+	docker tag rpgtools:latest ${DOCKER_USERNAME}/rpgtools:latest
+	docker push ${DOCKER_USERNAME}/rpgtools:latest
+	docker push ${DOCKER_USERNAME}/rpgtools:${VERSION}
 
 install:
 	sudo apt update
