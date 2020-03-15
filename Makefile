@@ -1,10 +1,13 @@
 VERSION=`git describe --abbrev=0 --tags`
+CURRENT_UID=$(id -u):$(id -g)
+export CURRENT_UID
 
 build: prod-builder clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f src/server/Dockerfile .
 
 prod-builder: clean init-env
+	mkdir dist
 	docker-compose up --build prod-builder
 
 build-with-stats: BUILD_WITH_STATS=true
@@ -60,9 +63,10 @@ install:
 
 clean:
 	rm -rf node_modules
+	rm -rf dist
 	rm -rf src/app/node_modules
 	rm -rf src/server/node_modules
 
 clean-uncompressed:
-	rm dist/app.bundle.js
-	rm dist/app.css
+	rm -f dist/app.bundle.js
+	rm -f dist/app.css

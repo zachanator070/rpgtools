@@ -6,5 +6,6 @@ ADD src/app/package-lock.json package-lock.json
 RUN npm install
 ADD webpack.config.js webpack.config.js
 ADD webpack-dev.config.js webpack-dev.config.js
-
+RUN mkdir dist
+RUN chmod o+w dist
 CMD ["npm", "run", "start"]
