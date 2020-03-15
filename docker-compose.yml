@@ -21,7 +21,7 @@ services:
       - rpgtools
 
   prod-server:
-    image: rpgtools
+    image: rpgtools:latest
     env_file:
       - .env
     ports:
