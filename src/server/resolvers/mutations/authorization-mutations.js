@@ -57,31 +57,32 @@ export const authorizationMutations = {
 
 		let newPermission = await PermissionAssignment.findOne({permission, subject: subjectId}).populate('subject');
 		if(!newPermission){
-			newPermission = new PermissionAssignment({permission, subjectId, subject: subjectType}).populate('subject');
+			newPermission = new PermissionAssignment({permission,  subject: subjectId, subjectType}).populate('subject');
 		}
 		if(!await newPermission.userCanWrite(currentUser)){
 			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
 		}
 
-		const role = await Role.findById(userId).populate('permissions');
+		const role = await Role.findById(roleId).populate('permissions');
 		if(!role){
 			throw new Error("User does not exist");
 		}
 		// check if role already has that permission
 		for(let rolePermission of role.permissions){
 			if(rolePermission._id.equals(newPermission._id)){
-				return newPermission.subject.world;
+				return role;
 			}
 		}
 
 		await newPermission.save();
-		role.permissions.push(newPermission._id);
+		role.permissions.push(newPermission);
 		await role.save();
-		return newPermission.subject;
+		await role.populate({path: 'permissions', populate:{path: 'subject'}}).execPopulate();
+		return role;
 	},
 	revokeRolePermission: async (_, {roleId, permissionAssignmentId}, {currentUser}) => {
 
-		const role = await Role.findById(userId).populate('permissions');
+		const role = await Role.findById(roleId).populate('permissions');
 		if(!role){
 			throw new Error("User does not exist");
 		}
@@ -95,7 +96,7 @@ export const authorizationMutations = {
 			await role.save();
 		}
 
-		return permissionAssignment.subject;
+		return role;
 	},
 	createRole: async (_, {worldId, name}, {currentUser}) => {
 		const world = await World.findById(worldId).populate('roles');

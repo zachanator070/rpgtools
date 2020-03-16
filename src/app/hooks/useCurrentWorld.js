@@ -6,6 +6,7 @@ export const CURRENT_WORLD_PERMISSIONS = `
 	permissions{
 		_id
 		permission
+		canWrite
 		subjectType
 		subject {
 			_id

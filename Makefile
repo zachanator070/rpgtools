@@ -2,48 +2,62 @@ VERSION=`git describe --abbrev=0 --tags`
 CURRENT_UID=$(id -u):$(id -g)
 export CURRENT_UID
 
+# Builds rpgtools docker image
 build: prod-builder clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f src/server/Dockerfile .
 
+# cleans built transpiled js and node modules
+clean:
+	rm -rf node_modules
+	rm -rf dist
+	rm -rf src/app/node_modules
+	rm -rf src/server/node_modules
+
+# cleans up uncompressed artifacts that bloat the built docker image
+clean-uncompressed:
+	rm -f dist/app.bundle.js
+	rm -f dist/app.css
+
+# runs the js transpiler docker image
 prod-builder: clean init-env
 	mkdir dist
 	docker-compose up --build prod-builder
 
+# builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
 	export BUILD_WITH_STATS
-build-with-stats: build
+build-with-stats: prod-builder
 
-install-all:
-	cp src/server/package.json package.json
-	npm install
-	cp src/app/package.json package.json
-	npm install
-	rm package.json
-
+# runs production version of docker image with minimal depending services
 prod: build
 	docker-compose up --build prod-server
 
+# runs development docker environment with auto transpiling and restarting services upon file change
 dev: init-env dev-up logs
 
+# intializes environment file
 init-env:
 	touch .env
 
+# runs developement docker images
 dev-up:
+	mkdir dist
 	docker-compose up --build -d dev-server
 
+# stops and destroys any running containers
 down:
 	docker-compose down
 
+# watch logs of running docker containers
 logs:
 	docker-compose logs -f
 
+# restart any running containers
 restart:
 	docker-compose restart
 
-stop:
-	docker-compose stop
-
+# pushes built docker container to dockerhub
 publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
 	docker tag rpgtools:${VERSION} ${DOCKER_USERNAME}/rpgtools:${VERSION}
@@ -51,6 +65,7 @@ publish:
 	docker push ${DOCKER_USERNAME}/rpgtools:latest
 	docker push ${DOCKER_USERNAME}/rpgtools:${VERSION}
 
+# performs minimal isntall on a debian host
 install:
 	sudo apt update
 	sudo apt install mongodb
@@ -61,12 +76,7 @@ install:
 	sudo systemd start rpgtools
 	echo rpgtools is now available
 
-clean:
-	rm -rf node_modules
-	rm -rf dist
-	rm -rf src/app/node_modules
-	rm -rf src/server/node_modules
-
-clean-uncompressed:
-	rm -f dist/app.bundle.js
-	rm -f dist/app.css
+# installs development dependencies to allow ide autocomplete
+install-deps:
+	cd src/server && npm install
+	cd src/app && npm install

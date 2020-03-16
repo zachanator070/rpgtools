@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import {ACCESS_TOKEN_MAX_AGE, authenticated, createTokens, REFRESH_TOKEN_MAX_AGE} from "../../authentication-helpers";
-import uuidv4 from "uuid/v4";
+import {v4 as uuidv4} from "uuid";
 import {User} from '../../models/user';
 import {ServerConfig} from "../../models/server-config";
 export const SALT_ROUNDS = 10;

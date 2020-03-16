@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import uuidv4 from "uuid/v4";
+import {v4 as uuidv4} from "uuid";
 import {User} from "./models/user";
 
 export const authenticated = next => (root, args, context, info) => {

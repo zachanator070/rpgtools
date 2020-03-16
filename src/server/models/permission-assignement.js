@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 import {ALL_PERMISSIONS} from '../../permission-constants';
 import mongooseAutopopulate from "mongoose-autopopulate";
-import {ALL_WIKI_TYPES, GAME, PERMISSION_ASSIGNMENT, PIN, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../type-constants";
-
-export const SUBJECT_TYPES = [...ALL_WIKI_TYPES, WORLD, ROLE, WIKI_FOLDER, GAME, PIN, SERVER_CONFIG];
+import {
+	PERMISSION_ASSIGNMENT,
+	PERMISSION_CONTROLLED_TYPES,
+} from "../../type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -22,7 +23,7 @@ const permissionAssignmentSchema = new Schema({
 	subjectType: {
 		type: String,
 		required: true,
-		enum: SUBJECT_TYPES
+		enum: PERMISSION_CONTROLLED_TYPES
 	}
 });
 

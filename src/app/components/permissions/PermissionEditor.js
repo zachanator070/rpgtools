@@ -3,22 +3,20 @@ import {Button, Col, Input, List, Modal, Radio, Row, Select, Tabs} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../../permission-constants";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
 import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
-import {WIKI_PAGE, WORLD} from "../../../type-constants";
-import SelectUser from "../SelectUser";
-import SelectRole from "../SelectRole";
+import {WORLD} from "../../../type-constants";
+import SelectUser from "../select/SelectUser";
+import SelectRole from "../select/SelectRole";
 import usePermissionEditorSubject from "../../hooks/usePermissionEditorSubject";
 import usePermissionEditorSubjectType from "../../hooks/usePermissionEditorSubjectType";
 
 export default () => {
 
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
-	const {currentWiki, loading: currentWikiLoading} = useCurrentWiki();
 	const {refetch} = useCurrentUser();
 	const [permissionGroup, setPermissionGroup] = useState('users');
 	const {grantUserPermission} = useGrantUserPermission();
@@ -96,7 +94,7 @@ export default () => {
 										return (
 											<List.Item key={permission + '.' + item._id}>
 												{item.username}
-												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
+												<Button className='margin-md-left' type='primary' danger onClick={async () => {
 													await revokeUserPermission(item._id, item.permissions.filter(userPermission => userPermission.permission === permission)[0]._id);
 													await refetch();
 												}}>
@@ -109,7 +107,7 @@ export default () => {
 										return (
 											<List.Item key={permission + '.' + item._id}>
 												{item.name}
-												<Button className='margin-md-left' type='primary' danger='true' onClick={async () => {
+												<Button className='margin-md-left' type='primary' danger onClick={async () => {
 													await revokeRolePermission(item._id, item.permissions.filter(userPermission => userPermission.permission === permission)[0]._id);
 													await refetch();
 												}}>

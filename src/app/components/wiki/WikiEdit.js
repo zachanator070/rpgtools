@@ -199,16 +199,23 @@ export const WikiEdit = () => {
 					history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 				}}><UndoOutlined />Discard</Button>
 				<span className='absolute-right'>
-						<Button type='danger' disabled={saving} onClick={() => {
-							Modal.confirm({
-								title: "Confirm Delete",
-								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
-								onOk: async () => {
-									await deleteWiki(currentWiki._id);
-									history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
-								}
-							});
-						}}><DeleteOutlined />Delete Page</Button>
+						<Button
+							type='primary'
+							danger
+							disabled={saving}
+							onClick={() => {
+								Modal.confirm({
+									title: "Confirm Delete",
+									content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
+									onOk: async () => {
+										await deleteWiki(currentWiki._id);
+										history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
+									}
+								});
+							}}
+						>
+							<DeleteOutlined />Delete Page
+						</Button>
 					</span>
 			</div>
 		</div>

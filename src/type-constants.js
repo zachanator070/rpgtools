@@ -14,3 +14,4 @@ export const WIKI_PAGE = 'WikiPage';
 export const WORLD = 'World';
 
 export const ALL_WIKI_TYPES = [ARTICLE, PERSON, PLACE];
+export const PERMISSION_CONTROLLED_TYPES = [...ALL_WIKI_TYPES, WORLD, ROLE, WIKI_FOLDER, GAME, PIN, SERVER_CONFIG];

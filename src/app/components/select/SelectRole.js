@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {useSearchUsers} from "../hooks/useSearchUsers";
 import {Select, Spin} from "antd";
+import {useSearchRoles} from "../../hooks/useSearchRoles";
 
 export default ({onChange}) => {
-	const {searchUsers, users, loading} = useSearchUsers();
+	const {searchRoles, roles, loading} = useSearchRoles();
 	const [value, setValue] = useState('');
 
 	useEffect(() => {
 		let found = false;
-		for(let user of users){
-			if(user.username.includes(value)){
+		for(let role of roles){
+			if(role.name.includes(value)){
 				found = true;
 			}
 		}
@@ -18,23 +18,23 @@ export default ({onChange}) => {
 				setValue('');
 			})();
 		}
-	}, [users]);
+	}, [roles]);
 
-	const options = users.map((user) => {return <Select.Option key={user._id} value={user._id}>{user.username}</Select.Option>});
+	const options = roles.map((role) => {return <Select.Option key={role._id} value={role._id}>{role.name}</Select.Option>});
 
 	return <Select
 		showSearch
 		value={value}
 		filterOption={false}
 		notFoundContent={loading ? <Spin size="small" /> : null}
-		onSearch={async (term) => {await searchUsers(term)}}
+		onSearch={async (term) => {await searchRoles(term)}}
 		onChange={async (newValue) => {
 			await setValue(newValue);
 			if(onChange){
 				await onChange(newValue);
 			}
 		}}
-		placeholder="Search for a user"
+		placeholder="Search for a role"
 		style={{ width: 200 }}
 	>
 		{options}

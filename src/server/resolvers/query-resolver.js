@@ -130,8 +130,12 @@ export default {
 
 		return foundWiki;
 	},
-	wikis: async (_, {name, worldId}, {currentUser}) => {
-		const foundWikis = await WikiPage.paginate({name: { $regex: `^${name}.*` , $options: 'i'}});
+	wikis: async (_, {name, worldId, type}, {currentUser}) => {
+		const searchParams = {name: { $regex: `^${name}.*` , $options: 'i'}};
+		if(type){
+			searchParams.type = type;
+		}
+		const foundWikis = await WikiPage.paginate(searchParams);
 		const returnWikis = [];
 		for(let wiki of foundWikis.docs){
 			if(await wiki.userCanRead(currentUser)){

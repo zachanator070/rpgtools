@@ -134,7 +134,6 @@ export const serverResolvers = {
 	},
 	Role: {
 		permissions: async (role, _, {currentUser}) => {
-			await role.populate('permissions');
 			if(role.name === EVERYONE || role.name === ALL_USERS){
 				return role.permissions;
 			}
@@ -236,6 +235,11 @@ export const serverResolvers = {
 			}
 			await server.populate('adminUsers').execPopulate();
 			return server.adminUsers;
+		}
+	},
+	PermissionAssignment: {
+		canWrite: async (assignment, _, {currentUser}) => {
+			return await assignment.userCanWrite(currentUser);
 		}
 	}
 };
