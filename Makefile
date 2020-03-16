@@ -21,7 +21,7 @@ clean-uncompressed:
 
 # runs the js transpiler docker image
 prod-builder: clean init-env
-	mkdir dist
+	mkdir -p dist
 	docker-compose up --build prod-builder
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
@@ -42,7 +42,7 @@ init-env:
 
 # runs developement docker images
 dev-up:
-	mkdir dist
+	mkdir -p dist
 	docker-compose up --build -d dev-server
 
 # stops and destroys any running containers

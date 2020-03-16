@@ -1,4 +1,3 @@
-import {authenticated} from "../authentication-helpers";
 import {World} from '../models/world';
 import {User} from '../models/user';
 import {Role} from '../models/role';

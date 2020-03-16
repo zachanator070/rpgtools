@@ -34,6 +34,7 @@ const userSchema = new Schema({
 		type: mongoose.Schema.ObjectId,
 		ref: PERMISSION_ASSIGNMENT,
 		autopopulate: true,
+		index: true
 	}]
 });
 
