@@ -11,11 +11,13 @@ const Schema = mongoose.Schema;
 const roleSchema = new Schema({
 	name: {
 		type: String,
-		required: [true, 'name field required']
+		required: [true, 'name field required'],
+		index: true
 	},
 	world: {
 		type: mongoose.Schema.ObjectId,
 		ref: WORLD,
+		index: true
 	},
 	permissions: [{
 		type: mongoose.Schema.ObjectId,

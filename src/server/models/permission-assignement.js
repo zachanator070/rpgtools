@@ -5,6 +5,7 @@ import {
 	PERMISSION_ASSIGNMENT,
 	PERMISSION_CONTROLLED_TYPES,
 } from "../../type-constants";
+import {ObjectId} from "bson";
 
 const Schema = mongoose.Schema;
 
@@ -12,13 +13,15 @@ const permissionAssignmentSchema = new Schema({
 	permission: {
 		type: String,
 		required: true,
-		enum: ALL_PERMISSIONS
+		enum: ALL_PERMISSIONS,
+		index: true
 	},
 	subject: {
 		type: mongoose.Schema.ObjectId,
 		required: true,
 		refPath: 'subjectType',
-		autopopulate: true
+		autopopulate: true,
+		index: true
 	},
 	subjectType: {
 		type: String,
@@ -27,13 +30,18 @@ const permissionAssignmentSchema = new Schema({
 	}
 });
 
-permissionAssignmentSchema.methods.userCanWrite = async function(user) {
-	await this.populate('subject').execPopulate();
+permissionAssignmentSchema.methods.userCanWrite = async function(user){
+	if(this.subject instanceof ObjectId){
+		await this.populate('subject').execPopulate();
+	}
 	return await this.subject.userCanWrite(user);
 };
 
 permissionAssignmentSchema.methods.userCanRead = async function(user){
-	return await this.userCanWrite(user);
+	if(this.subject instanceof ObjectId){
+		await this.populate('subject').execPopulate();
+	}
+	return await this.subject.userCanRead(user);
 };
 
 permissionAssignmentSchema.plugin(mongooseAutopopulate);
