@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import {ApolloProvider} from "@apollo/react-common";
 import {BrowserRouter} from "react-router-dom";
-import './favicon.ico';
 import {getIntrospectionData} from "./components/get-introspection-data";
 import {InMemoryCache, IntrospectionFragmentMatcher} from "apollo-cache-inmemory";
 import {ApolloClient} from "apollo-client";
 import {createUploadLink} from "apollo-upload-client";
 import {clientTypeDefs} from "./clientTypeDefs";
 import {clientResolvers} from "./clientResolvers";
+import './favicon.ico';
 
 getIntrospectionData().then((introspectionData) => {
 	const fragmentMatcher = new IntrospectionFragmentMatcher({

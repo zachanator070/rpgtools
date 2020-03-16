@@ -1,3 +1,5 @@
+import {ALL_WIKI_TYPES, GAME, ROLE, WIKI_FOLDER, WORLD} from "./type-constants";
+
 export const ROLE_ADMIN = 'Able to add or remove members from a role or delete a role';
 export const ROLE_ADMIN_ALL = 'Able to edit any role in this world';
 export const ROLE_ADD = 'Able to create roles in this world';
@@ -46,3 +48,22 @@ export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW];
 export const GAME_PERMISSIONS = [GAME_READ, GAME_WRITE];
 
 export const PUBLIC_WORLD_PERMISSIONS = [WIKI_READ_ALL, FOLDER_READ_ALL, WORLD_READ];
+
+export const getPermissionsBySubjectType = (subjectType) => {
+	if(subjectType === ROLE){
+		return ROLE_PERMISSIONS;
+	}
+	else if(ALL_WIKI_TYPES.includes(subjectType)){
+		return WIKI_PERMISSIONS;
+	}
+	else if(subjectType === WORLD){
+		return WORLD_PERMISSIONS;
+	}
+	else if(subjectType === WIKI_FOLDER){
+		return WIKI_FOLDER_PERMISSIONS;
+	}
+	else if(subjectType === GAME){
+		return GAME_PERMISSIONS;
+	}
+	return null;
+};

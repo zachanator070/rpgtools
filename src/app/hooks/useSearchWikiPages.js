@@ -2,8 +2,8 @@ import gql from "graphql-tag";
 import {useLazyQuery} from "@apollo/react-hooks";
 
 const SEARCH_WIKI_PAGES = gql`
-	query searchWikiPages($name: String!, $worldId: ID!){
-		wikis(name: $name, worldId: $worldId){
+	query searchWikiPages($name: String!, $worldId: ID!, $type: String){
+		wikis(name: $name, worldId: $worldId, type: $type){
 			docs{
 				_id
 				name
@@ -15,8 +15,8 @@ const SEARCH_WIKI_PAGES = gql`
 export const useSearchWikiPages = () => {
 	const [search, {loading, data, error}] = useLazyQuery(SEARCH_WIKI_PAGES);
 	return {
-		searchWikiPages: async (name, worldId) => {
-			return search({variables: {name, worldId}});
+		searchWikiPages: async (name, worldId, type) => {
+			return search({variables: {name, worldId, type}});
 		},
 		loading,
 		wikis: data ? data.wikis.docs : [],

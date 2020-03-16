@@ -16,16 +16,16 @@ import {TeamOutlined} from "@ant-design/icons";
 import useSetPermissionEditorSubject from "../hooks/useSetPermissionEditorSubject";
 import useSetPermissionEditorSubjectType from "../hooks/useSetPermissionEditorSubjectType";
 import MyPermissionsView from "./permissions/MyPermissionsView";
-import ServerSettings from "./server/ServerSettings";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
+	const {currentWorld, loading: worldLoading} = useCurrentWorld();
 	const {setPermissionModalVisibility} = useSetPermissionModalVisibility();
 	const match = useRouteMatch();
 	const {setPermissionEditorSubject} = useSetPermissionEditorSubject();
 	const {setPermissionEditorSubjectType} = useSetPermissionEditorSubjectType();
 
-	return wikiLoading ? <LoadingView/> :
+	return wikiLoading || worldLoading ? <LoadingView/> :
 			<Row>
 				<Col span={4} className='padding-md'>
 					<FolderView/>

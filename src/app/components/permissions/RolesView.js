@@ -7,19 +7,24 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {EVERYONE} from "../../../role-constants";
 import useCreateRole from "../../hooks/useCreateRole";
 import useDeleteRole from "../../hooks/useDeleteRole";
-import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../type-constants";
+import {
+	ALL_WIKI_TYPES,
+	PERMISSION_CONTROLLED_TYPES,
+	ROLE,
+} from "../../../type-constants";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/useRemoveUserRole";
-import SelectUser from "../SelectUser";
+import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/useAddUserRole";
 import {ROLE_ADMIN} from "../../../permission-constants";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
+import AddRolePermission from "./AddRolePermission";
 
 export default () => {
 
 	const {currentUser, loading} = useCurrentUser();
-	const {currentWorld} = useCurrentWorld();
+	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {createRole, loading: createRoleLoading} = useCreateRole();
 	const {revokeRolePermission} = useRevokeRolePermission();
 	const {deleteRole} = useDeleteRole();
@@ -32,7 +37,7 @@ export default () => {
 	const {revokeUserPermission} = useRevokeUserPermission();
 	const {grantUserPermission} = useGrantUserPermission();
 
-	if (loading) {
+	if (loading || currentWorldLoading) {
 		return <LoadingView/>;
 	}
 
@@ -48,28 +53,26 @@ export default () => {
 	return <div className={'margin-md'}>
 		<h1>Roles</h1>
 		<hr/>
-
-		<Row className={'margin-xlg-top'}>
-			<Col span={4}></Col>
-			<Col span={16}>
-				<h2>
-					Add New Role
-				</h2>
-				{currentWorld.canAddRoles &&
-				<div className={'flex margin-lg-top'}>
-					<span>Role Name:</span>
-					<div className={'margin-lg-left'}><Input value={newRoleName} onChange={async (e) => {
-						await setNewRoleName(e.target.value)
-					}}/></div>
-					<Button className={'margin-lg-left'} disabled={createRoleLoading} onClick={async () => {
-						await createRole(currentWorld._id, newRoleName);
-					}} type={'primary'}>Create</Button>
-				</div>
-				}
-			</Col>
-			<Col span={4}></Col>
-		</Row>
-
+		{currentWorld.canAddRoles &&
+			<Row className={'margin-xlg-top'}>
+				<Col span={4}></Col>
+				<Col span={16}>
+					<h2>
+						Add New Role
+					</h2>
+					<div className={'flex margin-lg-top'}>
+						<span>Role Name:</span>
+						<div className={'margin-lg-left'}><Input value={newRoleName} onChange={async (e) => {
+							await setNewRoleName(e.target.value)
+						}}/></div>
+						<Button className={'margin-lg-left'} disabled={createRoleLoading} onClick={async () => {
+							await createRole(currentWorld._id, newRoleName);
+						}} type={'primary'}>Create</Button>
+					</div>
+				</Col>
+				<Col span={4}></Col>
+			</Row>
+		}
 		<Row className={'margin-xlg-top'}>
 			<Col span={4}></Col>
 
@@ -114,15 +117,20 @@ export default () => {
 										title: 'Remove Permission',
 										dataIndex: '_id',
 										key: '_id',
-										render: (_id, assignment) =>
-											<Button
-												className={'margin-md-left'} type={'primary'}
-												onClick={async () => {
-									               await revokeRolePermission(selectedRole._id, item._id);
-												}}
-											>
-												<DeleteOutlined/>
-											</Button>
+										render: (text, assignment) => {
+											return assignment.canWrite ?
+												<Button
+													className={'margin-md-left'} type={'primary'}
+													onClick={async () => {
+														await revokeRolePermission(selectedRole._id, assignment.key);
+													}}
+													danger
+												>
+													<DeleteOutlined/>
+												</Button>
+												:
+												<></>;
+										}
 									}
 								]}
 								dataSource={selectedRole.permissions.map(permission => {
@@ -130,12 +138,14 @@ export default () => {
 										key: permission._id,
 										permission: permission.permission,
 										subjectType: permission.subjectType,
-										subjectName: permission.subject.name
+										subjectName: permission.subject.name,
+										canWrite: permission.canWrite
 									};
 								})}
 								pagination={false}
 								scroll={{y: 250}}
 							/>
+							<AddRolePermission role={selectedRole}/>
 						</Tabs.TabPane>
 						<Tabs.TabPane tab="Users with this role" key="2">
 							<List
@@ -150,6 +160,7 @@ export default () => {
 												onClick={async () => {
 													await removeUserRole(item._id, selectedRole._id);
 												}}
+												danger
 											>
 												<DeleteOutlined/>
 											</Button>
@@ -172,21 +183,6 @@ export default () => {
 							</>}
 						</Tabs.TabPane>
 						{selectedRole.canWrite &&
-							<Tabs.TabPane tab="Delete this role" key="3">
-								<Button
-									disabled={!selectedRole.canWrite}
-									className={'margin-md-left'}
-									type={'primary'}
-									onClick={async () => {
-										await deleteRole(selectedRole._id);
-										await setSelectedRoleId(null);
-									}}
-								>
-									<DeleteOutlined/>
-								</Button>
-							</Tabs.TabPane>
-						}
-						{selectedRole.canWrite &&
 							<Tabs.TabPane tab="Role admins" key="4">
 								<List
 									dataSource={selectedRole.usersWithPermissions.filter(
@@ -205,6 +201,7 @@ export default () => {
 														permission => permission.permission === ROLE_ADMIN && permission.subject._id === selectedRole._id
 													)[0]._id);
 												}}
+												danger
 											>
 												<DeleteOutlined/>
 											</Button>
@@ -223,6 +220,23 @@ export default () => {
 									Add Admin
 								</Button>
 							</Tabs.TabPane>
+						}
+						{selectedRole.canWrite &&
+						<Tabs.TabPane tab="Delete this role" key="3">
+							<Button
+								disabled={!selectedRole.canWrite}
+								className={'margin-md-left'}
+								type={'primary'}
+								onClick={async () => {
+									await deleteRole(selectedRole._id);
+									await setSelectedRoleId(null);
+								}}
+								danger
+							>
+								Delete this role
+								<DeleteOutlined/>
+							</Button>
+						</Tabs.TabPane>
 						}
 					</Tabs>
 					:

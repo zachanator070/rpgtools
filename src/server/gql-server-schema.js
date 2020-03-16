@@ -15,7 +15,7 @@ export const typeDefs = gql`
         """Get a wiki by id"""
         wiki(wikiId: ID!): WikiPage
         """Search for a wiki page by name"""
-        wikis(worldId: ID!, name: String!): WikiPagePaginatedResult!
+        wikis(worldId: ID!, name: String!, type: String): WikiPagePaginatedResult!
         
         """Search for users by username"""
         users(username: String!): UserPaginatedResult!
@@ -46,9 +46,9 @@ export const typeDefs = gql`
         """ Revoke a assigned permission from a user """
         revokeUserPermission(userId: ID!, permissionAssignmentId: ID!): PermissionControlled!
         """ Grant a permission to a role """
-        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): PermissionControlled!
+        grantRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): Role!
         """ Revoke a permission from a role """
-        revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): PermissionControlled!
+        revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): Role!
         
         createFolder(name: String!, parentFolderId: ID!): World!
         renameFolder(folderId: ID!, name: String!): WikiFolder!
@@ -242,6 +242,7 @@ export const typeDefs = gql`
 		permission: String!
 		subject: PermissionControlled!
 		subjectType: String!
+		canWrite: Boolean!
 	}
 	
 	type Pin {
