@@ -3,13 +3,13 @@ services:
 
   dev-server:
     build:
-      context: .
-      dockerfile: src/server/Dockerfile
+      context: server
+      dockerfile: ./Dockerfile
     command: "npm run start-dev"
     env_file:
       - .env
     volumes:
-    - ./src:/home/node/app/src
+    - ./server/src:/home/node/app/src
     - ./dist:/home/node/app/dist
     ports:
     - "${PORT:-3000}:${PORT:-3000}"
@@ -33,12 +33,12 @@ services:
 
   dev-builder:
     build:
-      context: .
-      dockerfile: src/app/Dockerfile
+      context: app
+      dockerfile: ./Dockerfile
     env_file:
      - .env
     volumes:
-     - ./src:/home/node/app/src
+     - ./app/src:/home/node/app/src
      - ./dist:/home/node/app/dist
     command: "npm run start-dev"
     networks:
@@ -46,13 +46,13 @@ services:
 
   prod-builder:
     build:
-      context: .
-      dockerfile: src/app/Dockerfile
+      context: app
+      dockerfile: ./Dockerfile
     user: ${CURRENT_UID}
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
-     - ./src:/home/node/app/src
+     - ./app/src:/home/node/app/src
      - ./dist:/home/node/app/dist
     networks:
      - rpgtools
@@ -69,6 +69,17 @@ services:
       rpgtools:
         aliases:
         - "mongodb"
+
+  test-db:
+    image: "mongo:latest"
+    environment:
+      MONGO_INITDB_DATABASE: 'rpgtools'
+    ports:
+      - "27017:27017"
+    networks:
+      rpgtools:
+        aliases:
+          - "mongodb"
 
 networks:
   rpgtools:

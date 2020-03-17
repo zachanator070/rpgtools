@@ -11,8 +11,8 @@ build: prod-builder clean-uncompressed
 clean:
 	rm -rf node_modules
 	rm -rf dist
-	rm -rf src/app/node_modules
-	rm -rf src/server/node_modules
+	rm -rf app/node_modules
+	rm -rf server/node_modules
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
@@ -78,5 +78,9 @@ install:
 
 # installs development dependencies to allow ide autocomplete
 install-deps:
-	cd src/server && npm install
-	cd src/app && npm install
+	cp server/package.json . && npm install
+	cd app && npm install
+
+test:
+	- docker-compose up -d mongodb
+	cd server && npm run test
