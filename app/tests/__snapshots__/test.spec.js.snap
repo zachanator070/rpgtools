@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test module 1 test1 1`] = `
+Object {
+  "attr": 1,
+}
+`;
+
+exports[`test module 1 test2 1`] = `
+Object {
+  "attr": 2,
+}
+`;
