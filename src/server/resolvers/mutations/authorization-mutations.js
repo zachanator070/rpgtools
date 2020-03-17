@@ -1,5 +1,4 @@
 import {ROLE_ADD, ROLE_ADMIN} from "../../../permission-constants";
-import { userHasPermission} from "../../authorization-helpers";
 import {Role} from "../../models/role";
 import {World} from "../../models/world";
 import {User} from "../../models/user";
@@ -7,6 +6,7 @@ import {PermissionAssignment} from "../../models/permission-assignement";
 import {cleanUpPermissions} from "../../db-helpers";
 import {EVERYONE, WORLD_OWNER} from "../../../role-constants";
 import {ROLE} from "../../../type-constants";
+import {authenticated} from "../../authentication-helpers";
 
 export const authorizationMutations = {
 	grantUserPermission: async (_, {userId, permission, subjectId, subjectType}, {currentUser}) => {
@@ -98,12 +98,12 @@ export const authorizationMutations = {
 
 		return role;
 	},
-	createRole: async (_, {worldId, name}, {currentUser}) => {
+	createRole: authenticated(async (_, {worldId, name}, {currentUser}) => {
 		const world = await World.findById(worldId).populate('roles');
 		if(!world){
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
-		if(!await userHasPermission(currentUser, ROLE_ADD, worldId)){
+		if(!await currentUser.hasPermission(ROLE_ADD, worldId)){
 			throw new Error(`You do not have permission to add roles to world ${worldId}`);
 		}
 		const newRole = await Role.create({name, world});
@@ -113,7 +113,7 @@ export const authorizationMutations = {
 		currentUser.permissions.push(adminRole);
 		await currentUser.save();
 		return world;
-	},
+	}),
 	deleteRole: async (_, {roleId}, {currentUser}) => {
 		const role = await Role.findById(roleId);
 		if(!role){

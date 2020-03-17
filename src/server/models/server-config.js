@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import mongooseAutopopulate from 'mongoose-autopopulate';
 import {SERVER_CONFIG, USER} from "../../type-constants";
 
 const Schema = mongoose.Schema;
@@ -20,7 +19,5 @@ const serverSchema = new Schema({
 		type: String
 	}
 });
-
-serverSchema.plugin(mongooseAutopopulate);
 
 export const ServerConfig = mongoose.model(SERVER_CONFIG, serverSchema);

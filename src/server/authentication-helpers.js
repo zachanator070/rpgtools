@@ -2,8 +2,10 @@ import jwt from "jsonwebtoken";
 import {v4 as uuidv4} from "uuid";
 import {User} from "./models/user";
 
+export const ANON_USERNAME = 'Anonymous';
+
 export const authenticated = next => (root, args, context, info) => {
-	if (!context.currentUser) {
+	if (!context.currentUser || context.currentUser.username === ANON_USERNAME) {
 		throw new Error(`Authentication is required for this action`);
 	}
 
@@ -28,21 +30,23 @@ export const createSessionContext = async ({req, res}) => {
 	if (refreshToken || accessToken) {
 		try {
 			let data = jwt.verify(accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
-			currentUser = await User.findOne({_id: data.userId}).populate("currentWorld roles");
+			currentUser = await User.findOne({_id: data.userId}).populate('permissions').populate({path: 'roles', populate: {path:'permissions'}});
 		} catch (e) {
 			// accessToken is expired
 			console.log(`Access token expired because ${e.message}`);
 			res.clearCookie('accessToken');
 			try {
 				let data = jwt.verify(refreshToken, process.env['REFRESH_TOKEN_SECRET'], {maxAge: REFRESH_TOKEN_MAX_AGE.string});
-				currentUser = await User.findOne({_id: data.userId});
+				currentUser = await User.findOne({_id: data.userId}).populate('permissions').populate({path: 'roles', populate: {path:'permissions'}});
 				// if refreshToken is still valid issue new access token and refresh token
 				if (currentUser && currentUser.tokenVersion === data.version) {
+					console.log('Access token and refresh token renewed b/c refresh token still valid');
 					let tokens = await createTokens(currentUser);
 					res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms});
 					res.cookie('refreshToken', tokens.refreshToken, {maxAge: REFRESH_TOKEN_MAX_AGE.ms});
 				} else {
 					// refreshToken was invalidated
+					console.log(`Refresh token expired because version did not match ${currentUser.tokenVersion} !== ${data.version}`);
 					currentUser = null;
 					res.clearCookie('refreshToken');
 				}
@@ -52,6 +56,13 @@ export const createSessionContext = async ({req, res}) => {
 			}
 		}
 	}
+
+	if(!currentUser){
+		currentUser = new User({username: ANON_USERNAME});
+	}
+
+	await currentUser.recalculateAllUsersPermissions();
+	await currentUser.recalculateRolePermissions();
 
 	return {
 		res,

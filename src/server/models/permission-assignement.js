@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import {ALL_PERMISSIONS} from '../../permission-constants';
-import mongooseAutopopulate from "mongoose-autopopulate";
 import {
 	PERMISSION_ASSIGNMENT,
 	PERMISSION_CONTROLLED_TYPES,
@@ -20,7 +19,6 @@ const permissionAssignmentSchema = new Schema({
 		type: mongoose.Schema.ObjectId,
 		required: true,
 		refPath: 'subjectType',
-		autopopulate: true,
 		index: true
 	},
 	subjectType: {
@@ -43,7 +41,5 @@ permissionAssignmentSchema.methods.userCanRead = async function(user){
 	}
 	return await this.subject.userCanRead(user);
 };
-
-permissionAssignmentSchema.plugin(mongooseAutopopulate);
 
 export const PermissionAssignment = mongoose.model(PERMISSION_ASSIGNMENT, permissionAssignmentSchema);

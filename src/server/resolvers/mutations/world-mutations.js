@@ -1,5 +1,4 @@
 import {authenticated} from "../../authentication-helpers";
-import { userHasPermission} from "../../authorization-helpers";
 import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE, WORLD_PERMISSIONS,
@@ -22,7 +21,7 @@ export const worldMutations = {
 		if(!server){
 			throw new Error('Server config doesnt exist!');
 		}
-		if (!await userHasPermission(currentUser, WORLD_CREATE, server._id)) {
+		if (!await currentUser.hasPermission(WORLD_CREATE, server._id)) {
 			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
 		}
 
@@ -80,8 +79,12 @@ export const worldMutations = {
 		world.roles = [ownerRole, everyoneRole];
 		await world.save();
 
-		await world.populate('wikiPage rootFolder roles').execPopulate();
+		await currentUser.recalculateRolePermissions();
+		await currentUser.recalculateEveryonePermissions(world._id);
 
+		await world
+			.populate('wikiPage')
+			.execPopulate();
 		return world;
 	}),
 	createPin: async (parent, {mapId, x, y, wikiId}, {currentUser}) => {

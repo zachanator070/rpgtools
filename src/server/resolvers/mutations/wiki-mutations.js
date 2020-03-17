@@ -6,9 +6,10 @@ import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {cleanUpPermissions} from "../../db-helpers";
 import {ARTICLE} from "../../../type-constants";
+import {authenticated} from "../../authentication-helpers";
 
 export const wikiMutations = {
-	createWiki: async (parent, {name, folderId}, {currentUser}) => {
+	createWiki: authenticated(async (parent, {name, folderId}, {currentUser}) => {
 		const folder = await WikiFolder.findById(folderId);
 		if(!folder){
 			throw new Error('Folder does not exist');
@@ -29,7 +30,7 @@ export const wikiMutations = {
 		}
 
 		return newPage.world;
-	},
+	}),
 	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
 		const wikiPage = await WikiPage.findById(wikiId).populate('world content');
 		if(!wikiPage){

@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
-import mongooseAutopopulate from "mongoose-autopopulate";
 import mongoosePaginate from 'mongoose-paginate-v2'
 import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../permission-constants";
-import {userHasPermission} from "../authorization-helpers";
 import {GridFSBucket} from "mongodb";
 import {IMAGE, WIKI_PAGE, WORLD} from "../../type-constants";
 
@@ -21,7 +19,6 @@ const wikiPageSchema = new Schema({
 	coverImage: {
 		type: mongoose.Schema.ObjectId,
 		ref: IMAGE,
-		autopopulate: true
 	},
 	contentId: {
 		type: mongoose.Schema.ObjectId,
@@ -54,18 +51,17 @@ const wikiPageSchema = new Schema({
 });
 
 wikiPageSchema.methods.userCanWrite = async function(user){
-	return await userHasPermission(user, WIKI_RW, this._id) ||
-		await userHasPermission(user, WIKI_RW_ALL, this.world);
+	return await user.hasPermission(WIKI_RW, this._id) ||
+		await user.hasPermission(WIKI_RW_ALL, this.world);
 };
 
 wikiPageSchema.methods.userCanRead = async function(user){
-	return await userHasPermission(user, WIKI_READ, this._id) ||
-	await userHasPermission(user, WIKI_READ_ALL, this.world) || await this.userCanWrite(user);
+	return await user.hasPermission(WIKI_READ, this._id) ||
+	await user.hasPermission(WIKI_READ_ALL, this.world) || await this.userCanWrite(user);
 };
 
 // @TODO add post remove hook to delete cover image
 
-wikiPageSchema.plugin(mongooseAutopopulate);
 wikiPageSchema.plugin(mongoosePaginate);
 
 export const WikiPage = mongoose.model(WIKI_PAGE, wikiPageSchema);
