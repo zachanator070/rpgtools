@@ -21,7 +21,7 @@ export const registerUser = async (email, username, password) => {
 
 export const authenticationMutations = {
 	login: async (parent, {username, password}, {res}) => {
-		let user = await User.findOne({username}).populate('roles');
+		let user = await User.findOne({username});
 		if (user && bcrypt.compareSync(password, user.password)) {
 			let tokens = await createTokens(user);
 			res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms});
@@ -38,7 +38,7 @@ export const authenticationMutations = {
 		return "success";
 
 	}),
-	register: async (parent, {registerCode, email, username, password}, context) => {
+	register: async (parent, {registerCode, email, username, password}, _) => {
 		const config = await ServerConfig.findOne();
 		if(!config.registerCodes.includes(registerCode)){
 			throw new Error('Register code not valid');

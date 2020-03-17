@@ -11,7 +11,6 @@ import {
 	WORLD_PERMISSIONS
 } from "../../permission-constants";
 import {ALL_USERS, EVERYONE} from "../../role-constants";
-import {userHasPermission} from "../authorization-helpers";
 
 const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}) => {
 	let allUsers = [];
@@ -86,7 +85,7 @@ export const serverResolvers = {
 		},
 		usersWithPermissions: usersWithPermissions(WORLD_PERMISSIONS),
 		canAddRoles: async (world, _, {currentUser}) => {
-			return userHasPermission(currentUser, ROLE_ADD, world._id);
+			return currentUser.hasPermission(ROLE_ADD, world._id);
 		}
 	},
 	PermissionControlled: {
