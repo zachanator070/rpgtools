@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import {cleanUpPermissions} from "../../db-helpers";
 import {ARTICLE} from "../../../../common/type-constants";
 import {authenticated} from "../../authentication-helpers";
+import {Place} from "../../models/place";
 
 export const wikiMutations = {
 	createWiki: authenticated(async (parent, {name, folderId}, {currentUser}) => {
@@ -117,4 +118,19 @@ export const wikiMutations = {
 		await wikiPage.remove();
 		return wikiPage.world;
 	},
+	updatePlace: async (parent, {placeId, mapImageId}, {currentUser}) => {
+		const place = await Place.findById(placeId);
+		if(!place){
+			throw new Error(`Place ${placeId} does not exist`);
+		}
+
+		if(!await place.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to write to this page`);
+		}
+
+		place.mapImage = mapImageId;
+		await place.save();
+		await place.populate('mapImage').execPopulate();
+		return place;
+	}
 };

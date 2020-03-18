@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`authentication-mutations login 1`] = `
+Object {
+  "data": Object {
+    "login": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations login bad password 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Login failure: username or password are incorrect],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations login bad username 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Login failure: username or password are incorrect],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations register bad code 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Register code not valid],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations register good 1`] = `
+Object {
+  "data": Object {
+    "register": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations register use code twice 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Register code not valid],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations register use email twice 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Registration Error: Email already used],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`authentication-mutations register use username twice 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Registration Error: Username already used],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

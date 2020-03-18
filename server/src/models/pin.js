@@ -17,6 +17,7 @@ const pinSchema = new Schema({
 	map: {
 		type: mongoose.Schema.ObjectId,
 		ref: PLACE,
+		required: [true, 'map required']
 	},
 	page: {
 		type: mongoose.Schema.ObjectId,

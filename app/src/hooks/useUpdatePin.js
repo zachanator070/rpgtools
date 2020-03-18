@@ -5,17 +5,8 @@ import {CURRENT_WORLD_PINS} from "./useCurrentWorld";
 const UPDATE_PIN = gql`
 	mutation updatePin($pinId: ID!, $pageId: ID){
 		updatePin(pinId: $pinId, pageId: $pageId){
-			map {
-				_id
-				world{
-					_id
-					${CURRENT_WORLD_PINS}
-				}
-			}
-			page {
-				name
-				_id
-			}
+			_id
+			${CURRENT_WORLD_PINS}
 		}
 	}
 `;
