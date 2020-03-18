@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
 import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../../common/permission-constants";
 import {GridFSBucket} from "mongodb";
-import {IMAGE, WIKI_PAGE, WORLD} from "../../../common/type-constants";
+import { IMAGE, WIKI_PAGE, WORLD} from "../../../common/type-constants";
 
 const Schema = mongoose.Schema;
 

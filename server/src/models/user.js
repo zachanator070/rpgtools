@@ -82,6 +82,12 @@ userSchema.methods.recalculateAllUsersPermissions = async function(){
 	this.allUsersPermissions = await getAllUserPermissions();
 };
 
+userSchema.methods.recalculateAllPermissions = async function(){
+	await this.recalculateRolePermissions();
+	await this.recalculateEveryonePermissions();
+	await this.recalculateAllUsersPermissions();
+};
+
 userSchema.methods.hasPermission = async function (permission, subjectId) {
 	if(subjectId instanceof String){
 		subjectId = new mongoose.Types.ObjectId(subjectId);

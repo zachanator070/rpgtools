@@ -1,30 +1,12 @@
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
+import {CURRENT_WORLD_PINS} from "./useCurrentWorld";
 
 const DELETE_PIN = gql`
 	mutation deletePin($pinId: ID!){
 		deletePin(pinId: $pinId){
-			map {
-				_id
-				world{
-					_id
-					pins{
-						_id
-						canWrite
-						page{
-							_id
-						}
-						map{
-							_id
-						}
-						x
-						y
-					}
-				}
-			}
-			page {
-				_id
-			}
+			_id
+			${CURRENT_WORLD_PINS}
 		}
 	}
 `;

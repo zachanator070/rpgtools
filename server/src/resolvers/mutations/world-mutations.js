@@ -87,6 +87,18 @@ export const worldMutations = {
 			.execPopulate();
 		return world;
 	}),
+	renameWorld: async (_, {worldId, newName}, {currentUser}) => {
+		const world = await World.findById(worldId);
+		if(!world){
+			throw new Error(`World with id ${worldId} doesn't exist`);
+		}
+		if(!await world.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to rename this world');
+		}
+		world.name = newName;
+		await world.save();
+		return world;
+	},
 	createPin: async (parent, {mapId, x, y, wikiId}, {currentUser}) => {
 
 		const map = await Place.findById(mapId);
@@ -97,7 +109,7 @@ export const worldMutations = {
 		const wiki = await WikiPage.findById(wikiId);
 
 		if(!await map.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to add pins to wiki ${wikiId}`);
+			throw new Error(`You do not have permission to add pins to this map`);
 		}
 
 		const newPin = (await Pin.create({
@@ -110,13 +122,10 @@ export const worldMutations = {
 		const world = map.world;
 		world.pins.push(newPin);
 		await world.save();
-		await newPin.populate({
-			path: 'map',
-			populate: {
-				path: 'world'
-			}
-		}).execPopulate();
-		return newPin;
+		await world.populate({path: 'pins', populate:{
+			path: 'page map'
+			}}).execPopulate();
+		return world;
 	},
 	updatePin: async (_, {pinId, pageId}, {currentUser}) => {
 
@@ -139,16 +148,12 @@ export const worldMutations = {
 
 		pin.page = page;
 		await pin.save();
-		await pin.populate({
-			path: 'map',
-			populate: {
-				path: 'world',
-				populate: {
-					path: 'pins'
-				}
-			}
-		}).execPopulate();
-		return pin;
+		await pin.populate({path: 'map', populate: {path: 'world'}}).execPopulate();
+		const world = pin.map.world;
+		await world.populate({path: 'pins', populate:{
+				path: 'page map'
+			}}).execPopulate();
+		return world;
 	},
 	deletePin: async (_, {pinId}, {currentUser}) => {
 
@@ -161,25 +166,12 @@ export const worldMutations = {
 			throw new Error(`You do not have permission to delete this pin`);
 		}
 
+		await pin.populate({path: 'map', populate: {path: 'world'}}).execPopulate();
+		const world = pin.map.world;
 		await pin.delete();
-		await pin.populate({
-			path: 'map',
-			populate: {
-				path: 'world'
-			}
-		}).execPopulate();
-		return pin;
-	},
-	renameWorld: async (_, {worldId, newName}, {currentUser}) => {
-		const world = await World.findById(worldId);
-		if(!world){
-			throw new Error(`World with id ${worldId} doesn't exist`);
-		}
-		if(!await world.userCanWrite(currentUser)){
-			throw new Error('You do not have permission to rename this world');
-		}
-		world.name = newName;
-		await world.save();
+		await world.populate({path: 'pins', populate:{
+				path: 'page map'
+			}}).execPopulate();
 		return world;
-	},
+	}
 };

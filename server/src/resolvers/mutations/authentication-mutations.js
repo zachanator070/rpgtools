@@ -8,11 +8,11 @@ export const SALT_ROUNDS = 10;
 export const registerUser = async (email, username, password) => {
 	password = bcrypt.hashSync(password, SALT_ROUNDS);
 	let existingUsers = await User.find({email});
-	if (existingUsers.length > 1) {
+	if (existingUsers.length > 0) {
 		throw Error('Registration Error: Email already used')
 	}
 	existingUsers = await User.find({username});
-	if (existingUsers.length > 1) {
+	if (existingUsers.length > 0) {
 		throw Error('Registration Error: Username already used')
 	}
 

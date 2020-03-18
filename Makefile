@@ -78,7 +78,7 @@ install:
 
 # installs development dependencies to allow ide autocomplete
 install-deps:
-	cp server/package.json . && npm install
+	cd server && npm install
 	cd app && npm install
 
 test:
