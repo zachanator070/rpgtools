@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodejs -r esm src/index.js",
     "start-dev": "npx nodemon --watch src/server --delay 80ms --exec 'kill-port --port 9229; node --inspect=0.0.0.0:9229 -r esm src/index.js'",
-    "test-integration": "jest --config=jest-integration.config.js",
+    "test-integration": "jest",
     "lint": "npx eslint src"
   },
   "dependencies": {
