@@ -81,6 +81,6 @@ install-deps:
 	cd server && npm install
 	cd app && npm install
 
-test:
+test-integration:
 	- docker-compose up -d mongodb
-	cd server && npm run test
+	export JEST_SETUP_FILES=./tests/integration/setup.js && cd server && npm run test-integration

@@ -126,7 +126,7 @@ module.exports = {
   // setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ["./tests/integration/setup.js"],
+  setupFilesAfterEnv: process.env.JEST_SETUP_FILES ? process.env.JEST_SETUP_FILES.split(',') : [],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
