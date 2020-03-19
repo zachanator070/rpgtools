@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Select, Tabs} from "antd";
-import {ALL_WIKI_TYPES, PERMISSION_CONTROLLED_TYPES, ROLE, WORLD} from "../../../../common/type-constants";
-import {getPermissionsBySubjectType} from "../../../../common/permission-constants";
+import {ALL_WIKI_TYPES, PERMISSION_CONTROLLED_TYPES, ROLE, WORLD} from "../../../../common/src/type-constants";
+import {getPermissionsBySubjectType} from "../../../../common/src/permission-constants";
 import SelectRole from "../select/SelectRole";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import SelectWiki from "../select/SelectWiki";

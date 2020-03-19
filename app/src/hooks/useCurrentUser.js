@@ -1,23 +1,5 @@
 import {useQuery} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import {CURRENT_WORLD_PERMISSIONS} from "./useCurrentWorld";
-
-const GET_CURRENT_USER = gql`
-    query {
-        currentUser {
-            _id
-            username
-            email
-            currentWorld{
-                _id
-                wikiPage {
-                    _id
-                }
-            }
-            ${CURRENT_WORLD_PERMISSIONS}
-        }
-    }
-`;
+import {GET_CURRENT_USER} from "../../../common/src/gql-queries";
 
 export default () => {
 	const {data: currentUserData, loading, error, refetch} = useQuery(GET_CURRENT_USER);

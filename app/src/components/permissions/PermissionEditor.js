@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Col, Input, List, Modal, Radio, Row, Select, Tabs} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
-import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../../../common/permission-constants";
+import {WIKI_PERMISSIONS, WORLD_PERMISSIONS} from "../../../../common/src/permission-constants";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
 import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
-import {WORLD} from "../../../../common/type-constants";
+import {WORLD} from "../../../../common/src/type-constants";
 import SelectUser from "../select/SelectUser";
 import SelectRole from "../select/SelectRole";
 import usePermissionEditorSubject from "../../hooks/usePermissionEditorSubject";

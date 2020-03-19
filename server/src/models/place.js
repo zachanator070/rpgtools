@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import {WikiPage} from "./wiki-page";
-import {PLACE} from "../../../common/type-constants";
+import {PLACE} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

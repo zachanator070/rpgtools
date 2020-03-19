@@ -1,15 +1,5 @@
-import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
-import {CURRENT_WORLD_PINS} from "./useCurrentWorld";
-
-const UPDATE_PIN = gql`
-	mutation updatePin($pinId: ID!, $pageId: ID){
-		updatePin(pinId: $pinId, pageId: $pageId){
-			_id
-			${CURRENT_WORLD_PINS}
-		}
-	}
-`;
+import {UPDATE_PIN} from "../../../common/src/gql-queries";
 
 export const useUpdatePin = () => {
 	const [updatePin, {loading, data, error}] = useMutation(UPDATE_PIN);

@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
-import {ALL_PERMISSIONS} from '../../../common/permission-constants';
+import {ALL_PERMISSIONS} from '../../../common/src/permission-constants';
 import {
 	PERMISSION_ASSIGNMENT,
 	PERMISSION_CONTROLLED_TYPES,
-} from "../../../common/type-constants";
-import {ObjectId} from "bson";
+} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -29,14 +28,14 @@ const permissionAssignmentSchema = new Schema({
 });
 
 permissionAssignmentSchema.methods.userCanWrite = async function(user){
-	if(this.subject instanceof ObjectId){
+	if(this.subject instanceof mongoose.Types.ObjectId){
 		await this.populate('subject').execPopulate();
 	}
 	return await this.subject.userCanWrite(user);
 };
 
 permissionAssignmentSchema.methods.userCanRead = async function(user){
-	if(this.subject instanceof ObjectId){
+	if(this.subject instanceof mongoose.Types.ObjectId){
 		await this.populate('subject').execPopulate();
 	}
 	return await this.subject.userCanRead(user);

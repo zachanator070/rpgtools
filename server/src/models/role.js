@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
-import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../../common/permission-constants";
-import {ALL_USERS, EVERYONE} from "../../../common/role-constants";
-import {PERMISSION_ASSIGNMENT, WORLD} from "../../../common/type-constants";
+import {ROLE_ADMIN, ROLE_ADMIN_ALL} from "../../../common/src/permission-constants";
+import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
+import {PERMISSION_ASSIGNMENT, WORLD} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

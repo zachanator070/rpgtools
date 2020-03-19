@@ -5,7 +5,7 @@ import {Button, Col, Input, Row} from "antd";
 import {useRenameWorld} from "../hooks/useRenameWorld";
 import useSetPermissionEditorSubject from "../hooks/useSetPermissionEditorSubject";
 import useSetPermissionEditorSubjectType from "../hooks/useSetPermissionEditorSubjectType";
-import {WORLD} from "../../../common/type-constants";
+import {WORLD} from "../../../common/src/type-constants";
 
 export default () => {
 	const {currentWorld} = useCurrentWorld();

@@ -2,10 +2,10 @@ import {User} from "../../src/models/user";
 import {SALT_ROUNDS} from "../../src/resolvers/mutations/authentication-mutations";
 import {ServerConfig} from "../../src/models/server-config";
 import {Role} from "../../src/models/role";
-import {ALL_USERS} from "../../../common/role-constants";
+import {ALL_USERS} from "../../../common/src/role-constants";
 import {PermissionAssignment} from "../../src/models/permission-assignement";
-import {WORLD_CREATE} from "../../../common/permission-constants";
-import {SERVER_CONFIG} from "../../../common/type-constants";
+import {WORLD_CREATE} from "../../../common/src/permission-constants";
+import {SERVER_CONFIG} from "../../../common/src/type-constants";
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');

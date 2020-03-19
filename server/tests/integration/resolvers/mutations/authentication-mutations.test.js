@@ -5,6 +5,7 @@ import {typeDefs} from '../../../../src/gql-server-schema';
 import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {User} from "../../../../src/models/user";
 import gql from 'graphql-tag';
+import {LOGIN_QUERY, REGISTER_MUTATION} from "../../../../../common/src/gql-queries";
 
 process.env.TEST_SUITE = 'authentication-mutations-test';
 
@@ -20,13 +21,6 @@ describe('authentication-mutations', () => {
 
 	const { mutate } = createTestClient(server);
 
-	const LOGIN_QUERY = gql`
-			mutation login($username: String!, $password: String!){
-		        login(username: $username, password: $password){
-		            _id
-		        }
-		    }
-		`;
 
 	test('login', async () => {
 		const result = await mutate({mutation: LOGIN_QUERY, variables: {username: 'tester', password: 'tester'}});
@@ -48,14 +42,6 @@ describe('authentication-mutations', () => {
 		const result = await mutate({mutation: LOGIN_QUERY, variables: {username: 'tester', password: 'asdf'}});
 		expect(result).toMatchSnapshot();
 	});
-
-	const REGISTER_MUTATION = gql`
-	    mutation register($registerCode: String!, $email: String!, $username: String!, $password: String!){
-	        register(registerCode: $registerCode, email: $email, username: $username, password: $password){
-	            _id
-	        }
-	    }
-	`;
 
 	test('register good', async () => {
 		const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});

@@ -1,17 +1,6 @@
-import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
-import {CURRENT_WORLD_PERMISSIONS, CURRENT_WORLD_ROLES, USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
 import useCurrentUser from "./useCurrentUser";
-
-const CREATE_ROLE = gql`
-	mutation createRole($worldId: ID!, $name: String!){
-		createRole(worldId: $worldId, name: $name){
-			_id
-			${USERS_WITH_PERMISSIONS}
-			${CURRENT_WORLD_ROLES}
-		}
-	}
-`;
+import {CREATE_ROLE} from "../../../common/src/gql-queries";
 
 export default () => {
 	const [createRole, {loading, error, data}] = useMutation(CREATE_ROLE);

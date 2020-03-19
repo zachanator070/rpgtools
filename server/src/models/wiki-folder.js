@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {WikiPage} from './wiki-page';
-import {FOLDER_READ, FOLDER_READ_ALL, FOLDER_RW, FOLDER_RW_ALL} from "../../../common/permission-constants";
-import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/type-constants";
+import {FOLDER_READ, FOLDER_READ_ALL, FOLDER_RW, FOLDER_RW_ALL} from "../../../common/src/permission-constants";
+import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

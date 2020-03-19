@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
-import {USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
+import {USERS_WITH_PERMISSIONS} from "../../../common/src/gql-queries";
 
 const PERMISSION_EDITOR_SUBJECT = gql`
     query {

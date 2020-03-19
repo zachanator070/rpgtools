@@ -1,13 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-const REGISTER_MUTATION = gql`
-    mutation register($registerCode: String!, $email: String!, $username: String!, $password: String!){
-        register(registerCode: $registerCode, email: $email, username: $username, password: $password){
-            _id
-        }
-    }
-`;
+import {REGISTER_MUTATION} from "../../../common/src/gql-queries";
 
 export default (callback) => {
 	const [register, {data, loading, error}] = useMutation(REGISTER_MUTATION, {onCompleted: callback});

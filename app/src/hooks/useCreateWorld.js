@@ -1,16 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-export const CREATE_WORLD = gql`
-    mutation createWorld($name: String!, $public: Boolean!){
-        createWorld(name: $name, public: $public){
-            _id
-            wikiPage {
-                _id
-            }
-        }
-    }
-`;
+import {CREATE_WORLD} from "../../../common/src/gql-queries";
 
 export default (callback) => {
 	const [createWorld, {data, loading, error}] = useMutation(CREATE_WORLD, {

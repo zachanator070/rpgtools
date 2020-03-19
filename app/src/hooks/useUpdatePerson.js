@@ -1,13 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-const UPDATE_PERSON = gql`
-	mutation updatePerson($personId: ID!, $name: String, $content: String, $coverImageId: ID){
-		updatePerson(personId: $personId, name: $name, content: $content, coverImageId: $coverImageId){
-			_id
-		}
-	}
-`;
+import {UPDATE_PERSON} from "../../../common/src/gql-queries";
 
 export default () => {
 	const [updatePerson, {data, loading, error}] = useMutation(UPDATE_PERSON);

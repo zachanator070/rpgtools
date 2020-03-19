@@ -1,17 +1,5 @@
-import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
-import {CURRENT_WORLD_FOLDERS} from "./useCurrentWorld";
-
-const CREATE_FOLDER = gql`
-	mutation createFolder($parentFolderId: ID!, $name: String!){
-		createFolder(parentFolderId: $parentFolderId, name: $name){
-			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
-		}
-	}
-`;
+import {CREATE_FOLDER} from "../../../common/src/gql-queries";
 
 export default () => {
 	const [createFolder, {loading, error, data}] = useMutation(CREATE_FOLDER);

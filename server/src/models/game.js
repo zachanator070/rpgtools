@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {GAME, IMAGE, WORLD} from "../../../common/type-constants";
+import {GAME, IMAGE, WORLD} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

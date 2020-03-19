@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {Place} from './place';
 import {WikiPage} from "./wiki-page";
-import {PIN, PLACE} from "../../../common/type-constants";
+import {PIN, PLACE} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

@@ -46,9 +46,11 @@ Object {
           "canWrite": true,
           "map": Object {
             "_id": Any<String>,
+            "name": "Earth",
           },
           "page": Object {
             "_id": Any<String>,
+            "name": "Earth",
           },
           "x": 0,
           "y": 0,

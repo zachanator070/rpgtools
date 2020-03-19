@@ -1,15 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import {CURRENT_WIKI_PLACE_ATTRIBUTES} from "./useCurrentWiki";
-
-const UPDATE_PLACE = gql`
-	mutation updatePlace($placeId: ID!, $mapImageId: ID){
-		updatePlace(placeId: $placeId, mapImageId: $mapImageId){
-			_id
-            ${CURRENT_WIKI_PLACE_ATTRIBUTES}
-		}
-	}
-`;
+import {UPDATE_PLACE} from "../../../common/src/gql-queries";
 
 export default () => {
 	const [updatePlace, {data, loading, error}] = useMutation(UPDATE_PLACE);

@@ -9,8 +9,8 @@ import {
 	WIKI_FOLDER_PERMISSIONS,
 	WIKI_PERMISSIONS,
 	WORLD_PERMISSIONS
-} from "../../../common/permission-constants";
-import {ALL_USERS, EVERYONE} from "../../../common/role-constants";
+} from "../../../common/src/permission-constants";
+import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
 
 const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}) => {
 	let allUsers = [];

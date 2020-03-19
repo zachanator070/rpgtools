@@ -1,11 +1,11 @@
 import {World} from '../models/world';
 import {User} from '../models/user';
 import {Role} from '../models/role';
-import {WIKI_READ_ALL, WORLD_READ} from "../../../common/permission-constants";
-import {EVERYONE} from "../../../common/role-constants";
+import {WIKI_READ_ALL, WORLD_READ} from "../../../common/src/permission-constants";
+import {EVERYONE} from "../../../common/src/role-constants";
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
-import {PLACE} from "../../../common/type-constants";
+import {PLACE} from "../../../common/src/type-constants";
 import {ServerConfig} from '../models/server-config';
 
 export default {

@@ -1,13 +1,5 @@
 import {useApolloClient, useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-export const LOGIN_QUERY = gql`
-    mutation login($username: String!, $password: String!){
-        login(username: $username, password: $password){
-            _id
-        }
-    }
-`;
+import {LOGIN_QUERY} from "../../../common/src/gql-queries";
 
 export default (callback) => {
 	const client = useApolloClient();

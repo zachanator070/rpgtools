@@ -1,15 +1,5 @@
-import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
-import {CURRENT_WORLD_PINS} from "./useCurrentWorld";
-
-const DELETE_PIN = gql`
-	mutation deletePin($pinId: ID!){
-		deletePin(pinId: $pinId){
-			_id
-			${CURRENT_WORLD_PINS}
-		}
-	}
-`;
+import {DELETE_PIN} from "../../../common/src/gql-queries";
 
 export const useDeletePin = () => {
 	const [deletePin, {loading, data, error}] = useMutation(DELETE_PIN);
