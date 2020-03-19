@@ -76,11 +76,27 @@ install:
 	sudo systemd start rpgtools
 	echo rpgtools is now available
 
-# installs development dependencies to allow ide autocomplete
+ci: install-deps lint test
+
+# installs all dependencies for dev and CI work
 install-deps:
+	# installs node modules needed by CI
+	npm install
 	cd server && npm install
 	cd app && npm install
+	cd common && npm install
+
+lint:
+	npx eslint server/src app/src common/src
+
+test: test-integration
+
+JEST_OPTIONS=
 
 test-integration:
 	- docker-compose up -d mongodb
-	export JEST_SETUP_FILES=./tests/integration/setup.js && cd server && npm run test-integration
+	export JEST_SETUP_FILES=./server/tests/integration/setup.js && npx jest ${JEST_OPTIONS} server/tests/integration
+
+test-integration-update-snapshots: JEST_OPTIONS:=-u
+test-integration-update-snapshots: test-integration
+

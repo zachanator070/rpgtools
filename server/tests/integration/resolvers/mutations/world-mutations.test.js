@@ -4,10 +4,11 @@ import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {User} from "../../../../src/models/user";
 import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {createTestClient} from "apollo-server-testing";
-import gql from 'graphql-tag';
 import {Pin} from "../../../../src/models/pin";
 import {World} from '../../../../src/models/world'
 import {Article} from "../../../../src/models/article";
+import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
+import {CREATE_PIN, CREATE_WORLD, DELETE_PIN, RENAME_WORLD, UPDATE_PIN} from "../../../../../common/src/gql-queries";
 
 process.env.TEST_SUITE = 'world-mutations-test';
 
@@ -30,17 +31,6 @@ describe('world-mutations', () => {
 	});
 
 	const {mutate} = createTestClient(server);
-
-	const CREATE_WORLD = gql`
-	    mutation createWorld($name: String!, $public: Boolean!){
-	        createWorld(name: $name, public: $public){
-	            _id
-	            wikiPage {
-	                _id
-	            }
-	        }
-	    }
-	`;
 
 	test('create world', async () => {
 		currentUser = await User.findOne({username: 'tester'});
@@ -70,20 +60,11 @@ describe('world-mutations', () => {
 		beforeEach(async () => {
 			currentUser = await User.findOne({username: 'tester'});
 			await currentUser.recalculateAllPermissions();
-			world = (await mutate({mutation: CREATE_WORLD, variables: {name: 'Earth', public: false}})).data.createWorld;
+			world = await createWorld('Earth', false, currentUser);
 		});
 
-		const RENAME_WORLD = gql`
-			mutation renameWorld($worldId: ID!, $newName: String!){
-				renameWorld(worldId: $worldId, newName: $newName){
-					_id
-					name
-				}
-			}
-		`;
-
 		test('rename world', async () => {
-			const result = await mutate({mutation: RENAME_WORLD, variables: {worldId: world._id, newName: 'Azeroth'}});
+			const result = await mutate({mutation: RENAME_WORLD, variables: {worldId: world._id.toString(), newName: 'Azeroth'}});
 			expect(result).toMatchSnapshot({
 				data: {
 					renameWorld: {
@@ -96,33 +77,13 @@ describe('world-mutations', () => {
 		test('rename world no permission', async () => {
 			currentUser = new User({username: ANON_USERNAME});
 			await currentUser.recalculateAllPermissions();
-			const result = await mutate({mutation: RENAME_WORLD, variables: {worldId: world._id, newName: 'Azeroth'}});
+			const result = await mutate({mutation: RENAME_WORLD, variables: {worldId: world._id.toString(), newName: 'Azeroth'}});
 			expect(result).toMatchSnapshot();
 		});
 
-		const CREATE_PIN = gql`
-		mutation createPin($mapId: ID!, $x: Float!, $y: Float!, $wikiId: ID){
-			createPin(mapId: $mapId, x: $x, y: $y, wikiId: $wikiId){
-				_id
-				pins{
-					_id
-					canWrite
-					page{
-						_id
-					}
-					map{
-						_id
-					}
-					x
-					y
-				}
-			}
-		}
-	`;
-
 		test('create pin', async () => {
 
-			const result = await mutate({mutation: CREATE_PIN, variables: {mapId: world.wikiPage._id, x: 0, y: 0, wikiId: world.wikiPage._id}});
+			const result = await mutate({mutation: CREATE_PIN, variables: {mapId: world.wikiPage._id.toString(), x: 0, y: 0, wikiId: world.wikiPage._id.toString()}});
 			expect(result).toMatchSnapshot({
 				data:{
 					createPin: {
@@ -144,7 +105,7 @@ describe('world-mutations', () => {
 		test('create pin no permission', async () => {
 			currentUser = new User({username: ANON_USERNAME});
 			await currentUser.recalculateAllPermissions();
-			const result = await mutate({mutation: CREATE_PIN, variables: {mapId: world.wikiPage._id, x: 0, y: 0, wikiId: world.wikiPage._id}});
+			const result = await mutate({mutation: CREATE_PIN, variables: {mapId: world.wikiPage._id.toString(), x: 0, y: 0, wikiId: world.wikiPage._id.toString()}});
 			expect(result).toMatchSnapshot();
 		});
 
@@ -159,28 +120,6 @@ describe('world-mutations', () => {
 				worldDoc.pins = [pin];
 				await worldDoc.save();
 			});
-
-			const UPDATE_PIN = gql`
-				mutation updatePin($pinId: ID!, $pageId: ID){
-					updatePin(pinId: $pinId, pageId: $pageId){
-						_id
-						pins{
-							_id
-							canWrite
-							page{
-								name
-								_id
-							}
-							map{
-								name
-								_id
-							}
-							x
-							y
-						}
-					}
-				}
-			`;
 
 			test('update pin', async () => {
 
@@ -209,28 +148,6 @@ describe('world-mutations', () => {
 				const result = await mutate({mutation: UPDATE_PIN, variables: {pinId: pin._id.toString(), pageId: page._id.toString()}});
 				expect(result).toMatchSnapshot();
 			});
-
-			const DELETE_PIN = gql`
-				mutation deletePin($pinId: ID!){
-					deletePin(pinId: $pinId){
-						_id
-						pins{
-							_id
-							canWrite
-							page{
-								name
-								_id
-							}
-							map{
-								name
-								_id
-							}
-							x
-							y
-						}
-					}
-				}
-			`;
 
 			test('delete pin', async () => {
 				const result = await mutate({mutation: DELETE_PIN, variables: {pinId: pin._id.toString()}});

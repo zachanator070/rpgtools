@@ -1,15 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import {CURRENT_WORLD_ROLES} from "./useCurrentWorld";
-
-const GENERATE_REGISTER_CODES = gql`
-	mutation generateRegisterCodes($amount: Int!){
-		generateRegisterCodes(amount: $amount){
-			_id
-			registerCodes
-		}
-	}
-`;
+import {GENERATE_REGISTER_CODES} from "../../../common/src/gql-queries";
 
 export const useGenerateRegisterCodes = () => {
 	const [generateRegisterCodes, {data, loading, error}] = useMutation(GENERATE_REGISTER_CODES);

@@ -1,22 +1,5 @@
-import {FOLDER_RW} from "../../../../common/permission-constants";
+import {FOLDER_RW} from "../../../../common/src/permission-constants";
 import {WikiFolder} from "../../models/wiki-folder";
-
-/**
- * @typedef mongoose.Model
- */
-
-/**
- * @typedef mongoose.Document
- */
-
-/**
- * Whether or not a given user has permission defined by give permission code and subject
- * @callback userHasPermission
- * @param {mongoose.Document} user
- * @param {string} permission
- * @param {string | mongoose.Types.ObjectId} subjectId
- * @return {Promise<Boolean>}
- */
 
 /**
  * Throws an error if the user does not have write access to any of the children folders or pages.

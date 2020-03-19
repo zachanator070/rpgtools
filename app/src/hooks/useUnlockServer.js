@@ -1,11 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-const UNLOCK_SERVER = gql`
-    mutation unlockServer($unlockCode: String!, $email: String!, $username: String!, $password: String!){
-        unlockServer(unlockCode: $unlockCode, email: $email, username: $username, password: $password)
-    }
-`;
+import {UNLOCK_SERVER} from "../../../common/src/gql-queries";
 
 export default (callback) => {
 	const [unlockServer, {data, loading, error}] = useMutation(UNLOCK_SERVER, {onCompleted: callback});

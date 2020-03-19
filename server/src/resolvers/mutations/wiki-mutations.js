@@ -1,11 +1,11 @@
 import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {WIKI_RW} from "../../../../common/permission-constants";
+import {WIKI_RW} from "../../../../common/src/permission-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {cleanUpPermissions} from "../../db-helpers";
-import {ARTICLE} from "../../../../common/type-constants";
+import {ARTICLE} from "../../../../common/src/type-constants";
 import {authenticated} from "../../authentication-helpers";
 import {Place} from "../../models/place";
 

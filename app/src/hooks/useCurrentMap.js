@@ -1,36 +1,6 @@
-import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useParams} from 'react-router-dom';
-
-const GET_CURRENT_MAP = gql`
-    query getWiki($wikiId: ID!){
-        wiki(wikiId: $wikiId) {
-            _id
-            type
-            name
-            content
-            canWrite
-            ... on Place {
-                mapImage {
-	                _id
-	                name
-	                width
-	                height
-	                chunkWidth
-	                chunkHeight
-	                chunks{
-	                    _id
-	                    fileId
-	                    width
-	                    height
-	                    x
-	                    y
-	                }
-	            }
-            }
-        }
-    }
-`;
+import {GET_CURRENT_MAP} from "../../../common/src/gql-queries";
 
 export default () => {
 	const {map_id} = useParams();

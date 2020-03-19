@@ -1,22 +1,10 @@
-
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
-import {CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES} from "./useCurrentWiki";
+import {MAP_WIKI} from "../../../common/src/gql-queries";
 
 const MAP_WIKI_ID = gql`
     query {
         mapWiki @client
-    }
-`;
-
-const MAP_WIKI=gql`
-	query currentWiki($wikiId: ID!){
-        wiki(wikiId: $wikiId) {
-            ${CURRENT_WIKI_ATTRIBUTES}
-            ... on Place {
-                ${CURRENT_WIKI_PLACE_ATTRIBUTES}
-            }
-        }
     }
 `;
 

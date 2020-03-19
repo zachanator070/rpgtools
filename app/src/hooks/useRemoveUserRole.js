@@ -1,16 +1,5 @@
-import gql from "graphql-tag";
 import {useMutation} from "@apollo/react-hooks";
-import {CURRENT_WORLD_PERMISSIONS, CURRENT_WORLD_ROLES, USERS_WITH_PERMISSIONS} from "./useCurrentWorld";
-
-const REMOVE_USER_ROLE = gql`
-	mutation removeUserRole($userId: ID!, $roleId: ID!){
-		removeUserRole(userId: $userId, roleId: $roleId){
-			_id
-			${USERS_WITH_PERMISSIONS}
-			${CURRENT_WORLD_ROLES}
-		}
-	}
-`;
+import {REMOVE_USER_ROLE} from "../../../common/src/gql-queries";
 
 export default () => {
 	const [removeUserRole, {loading, error, data}] = useMutation(REMOVE_USER_ROLE);

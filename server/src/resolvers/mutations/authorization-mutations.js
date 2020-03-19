@@ -1,11 +1,11 @@
-import {ROLE_ADD, ROLE_ADMIN} from "../../../../common/permission-constants";
+import {ROLE_ADD, ROLE_ADMIN} from "../../../../common/src/permission-constants";
 import {Role} from "../../models/role";
 import {World} from "../../models/world";
 import {User} from "../../models/user";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {cleanUpPermissions} from "../../db-helpers";
-import {EVERYONE, WORLD_OWNER} from "../../../../common/role-constants";
-import {ROLE} from "../../../../common/type-constants";
+import {EVERYONE, WORLD_OWNER} from "../../../../common/src/role-constants";
+import {ROLE} from "../../../../common/src/type-constants";
 import {authenticated} from "../../authentication-helpers";
 
 export const authorizationMutations = {
@@ -16,7 +16,7 @@ export const authorizationMutations = {
 			newPermission = new PermissionAssignment({permission, subject: subjectId, subjectType}).populate('subject');
 		}
 		if(!await newPermission.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
+			throw new Error(`You do not have permission to assign the permission "${permission}" for this subject`);
 		}
 
 		const user = await User.findById(userId).populate('permissions');
@@ -60,7 +60,7 @@ export const authorizationMutations = {
 			newPermission = new PermissionAssignment({permission,  subject: subjectId, subjectType}).populate('subject');
 		}
 		if(!await newPermission.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to assign the permission "${permission}" with the subject ${subjectId}`);
+			throw new Error(`You do not have permission to assign the permission "${permission}" for this subject`);
 		}
 
 		const role = await Role.findById(roleId).populate('permissions');
@@ -99,12 +99,12 @@ export const authorizationMutations = {
 		return role;
 	},
 	createRole: authenticated(async (_, {worldId, name}, {currentUser}) => {
-		const world = await World.findById(worldId).populate('roles');
+		const world = await World.findById(worldId);
 		if(!world){
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
 		if(!await currentUser.hasPermission(ROLE_ADD, worldId)){
-			throw new Error(`You do not have permission to add roles to world ${worldId}`);
+			throw new Error(`You do not have permission to add roles to this world`);
 		}
 		const newRole = await Role.create({name, world});
 		world.roles.push(newRole);
@@ -112,6 +112,15 @@ export const authorizationMutations = {
 		const adminRole = await PermissionAssignment.create({permission: ROLE_ADMIN, subject: newRole._id, subjectType: ROLE});
 		currentUser.permissions.push(adminRole);
 		await currentUser.save();
+		await world.populate({
+			path: 'roles',
+			populate: {
+				path: 'permissions members world',
+				populate: {
+					path: 'subject'
+				}
+			}
+		}).execPopulate();
 		return world;
 	}),
 	deleteRole: async (_, {roleId}, {currentUser}) => {
@@ -120,7 +129,7 @@ export const authorizationMutations = {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
 		if(!await role.userCanWrite(currentUser)){
-			throw new Error(`You do not have write permissions for role ${roleId}`);
+			throw new Error(`You do not have write permissions for this role`);
 		}
 		if(role.name === WORLD_OWNER || role.name === EVERYONE){
 			throw new Error('You cannot delete this role');
@@ -130,10 +139,18 @@ export const authorizationMutations = {
 		await world.save();
 		await cleanUpPermissions(role._id);
 		await Role.deleteOne({_id: role._id});
-		return world;
+		return world.populate({
+			path: 'roles',
+			populate: {
+				path: 'permissions members world',
+				populate: {
+					path: 'subject'
+				}
+			}
+		}).execPopulate();
 	},
 	addUserRole: async (_, {userId, roleId}, {currentUser}) => {
-		const role = await Role.findById(roleId);
+		const role = await Role.findById(roleId).populate('world');
 		if(!role){
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
@@ -144,16 +161,24 @@ export const authorizationMutations = {
 		}
 
 		if(!await role.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to manage role ${roleId}`);
+			throw new Error(`You do not have permission to manage this role`);
 		}
 
 		user.roles.push(role);
 		await user.save();
-		await role.populate('world').populate('roles usersWithPermissions').execPopulate();
+		await role.world.populate({
+			path: 'roles',
+			populate: {
+				path: 'permissions members world',
+				populate: {
+					path: 'subject'
+				}
+			}
+		}).execPopulate();
 		return role.world;
 	},
 	removeUserRole: async (_, {userId, roleId}, {currentUser}) => {
-		const role = await Role.findById(roleId);
+		const role = await Role.findById(roleId).populate('world');
 		if(!role){
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
@@ -164,7 +189,7 @@ export const authorizationMutations = {
 		}
 
 		if(!await role.userCanWrite(currentUser)){
-			throw new Error(`You do not have permission to manage role ${roleId}`);
+			throw new Error(`You do not have permission to manage this role`);
 		}
 
 		if(role.name === WORLD_OWNER){
@@ -176,7 +201,15 @@ export const authorizationMutations = {
 
 		user.roles = user.roles.filter(userRole => !userRole._id.equals(role._id));
 		await user.save();
-		await role.populate('world').populate('roles usersWithPermissions').execPopulate();
+		await role.world.populate({
+			path: 'roles',
+			populate: {
+				path: 'permissions members world',
+				populate: {
+					path: 'subject'
+				}
+			}
+		}).execPopulate();
 		return role.world;
 	}
 };

@@ -1,17 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import {CURRENT_WORLD_FOLDERS} from "./useCurrentWorld";
-
-const CREATE_WIKI = gql`
-	mutation createWiki($name: String!, $folderId: ID!){
-		createWiki(name: $name, folderId: $folderId){
-			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
-		}
-	}
-`;
+import {CREATE_WIKI} from "../../../common/src/gql-queries";
 
 export const useCreateWiki = () => {
 	const [createWiki, {data, loading, error}] = useMutation(CREATE_WIKI);

@@ -1,14 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-const RENAME_FOLDER = gql`
-	mutation renameFolder($folderId: ID!, $name: String!){
-		renameFolder(folderId: $folderId, name: $name){
-			_id
-			name
-		}
-	}
-`;
+import {RENAME_FOLDER} from "../../../common/src/gql-queries";
 
 export const useRenameFolder = () => {
 	const [renameFolder, {data, loading, error}] = useMutation(RENAME_FOLDER);

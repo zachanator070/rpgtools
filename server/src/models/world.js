@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
-import {WORLD_READ} from "../../../common/permission-constants";
-import {WORLD_OWNER} from "../../../common/role-constants";
-import {PIN, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/type-constants";
+import {WORLD_READ} from "../../../common/src/permission-constants";
+import {WORLD_OWNER} from "../../../common/src/role-constants";
+import {PIN, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

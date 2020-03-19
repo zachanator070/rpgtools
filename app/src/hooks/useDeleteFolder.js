@@ -1,17 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import {CURRENT_WORLD_FOLDERS} from "./useCurrentWorld";
-
-const DELETE_FOLDER = gql`
-	mutation deleteFolder($folderId: ID!){
-		deleteFolder(folderId: $folderId){
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
-		}
-	}
-	
-`;
+import {DELETE_FOLDER} from "../../../common/src/gql-queries";
 
 export const useDeleteFolder = () => {
 	const [deleteFolder, {data, loading, error}] = useMutation(DELETE_FOLDER);

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {SERVER_CONFIG, USER} from "../../../common/type-constants";
+import {SERVER_CONFIG, USER} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

@@ -1,7 +1,7 @@
 import {Col, Row, Table} from "antd";
 import React from "react";
-import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../../common/type-constants";
-import {EVERYONE} from "../../../../common/role-constants";
+import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../../common/src/type-constants";
+import {EVERYONE} from "../../../../common/src/role-constants";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 

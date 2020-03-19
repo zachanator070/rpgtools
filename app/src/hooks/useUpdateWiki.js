@@ -1,14 +1,6 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-import useCurrentWiki, {CURRENT_WIKI_ATTRIBUTES} from "./useCurrentWiki";
-
-const UPDATE_WIKI = gql`
-	mutation updateWiki($wikiId: ID!, $name: String!, $content: Upload, $coverImageId: ID, $type: String){
-		updateWiki(wikiId: $wikiId, name: $name, content: $content, coverImageId: $coverImageId, type: $type){
-			${CURRENT_WIKI_ATTRIBUTES}
-		}
-	}
-`;
+import useCurrentWiki from "./useCurrentWiki";
+import {UPDATE_WIKI} from "../../../common/src/gql-queries";
 
 export default () => {
 	const [updateWiki, {data, loading, error}] = useMutation(UPDATE_WIKI);

@@ -1,14 +1,5 @@
 import {useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-const RENAME_WORLD = gql`
-	mutation renameWorld($worldId: ID!, $newName: String!){
-		renameWorld(worldId: $worldId, newName: $newName){
-			_id
-			name
-		}
-	}
-`;
+import {RENAME_WORLD} from "../../../common/src/gql-queries";
 
 export const useRenameWorld = () => {
 	const [renameWorld, {data, loading, error}] = useMutation(RENAME_WORLD);

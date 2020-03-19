@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {CHUNK, IMAGE} from "../../../common/type-constants";
+import {CHUNK, IMAGE} from "../../../common/src/type-constants";
 
 const chunkSchema = new mongoose.Schema({
 	image: {

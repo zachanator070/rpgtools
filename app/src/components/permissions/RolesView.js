@@ -8,12 +8,12 @@ import useCreateRole from "../../hooks/useCreateRole";
 import useDeleteRole from "../../hooks/useDeleteRole";
 import {
 	ROLE,
-} from "../../../../common/type-constants";
+} from "../../../../common/src/type-constants";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/useRemoveUserRole";
 import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/useAddUserRole";
-import {ROLE_ADMIN} from "../../../../common/permission-constants";
+import {ROLE_ADMIN} from "../../../../common/src/permission-constants";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
 import AddRolePermission from "./AddRolePermission";

@@ -10,7 +10,7 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useUpdateWiki from "../../hooks/useUpdateWiki";
 import useUpdatePerson from "../../hooks/useUpdatePerson";
 import useUpdatePlace from "../../hooks/useUpdatePlace";
-import {ALL_WIKI_TYPES, PLACE} from "../../../../common/type-constants";
+import {ALL_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
 
 export const WikiEdit = () => {
 

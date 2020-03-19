@@ -1,11 +1,5 @@
 import {useApolloClient, useMutation} from "@apollo/react-hooks";
-import gql from "graphql-tag";
-
-const LOGOUT_QUERY = gql`
-    mutation {
-        logout
-    }
-`;
+import {LOGOUT_QUERY} from "../../../common/src/gql-queries";
 
 export default () => {
 
