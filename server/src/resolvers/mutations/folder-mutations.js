@@ -12,6 +12,7 @@ import {WikiFolder} from "../../models/wiki-folder";
 const checkUserWritePermissionForFolderContents = async (user, folderId) => {
 
 	const folder = await WikiFolder.findById(folderId);
+	await folder.populate('pages childFolder').execPopulate();
 
 	if(!await folder.userCanWrite(user)){
 		throw new Error(`You do not have write permission for the folder ${folderId}`);
@@ -40,7 +41,7 @@ export const folderMutations = {
 		}
 
 		if(!await parentFolder.userCanWrite(currentUser)){
-			throw new Error(`You do not have the permission: ${FOLDER_RW} for the folder ${parentFolderId}`);
+			throw new Error(`You do not have permission for this folder`);
 		}
 
 		const newFolder = await WikiFolder.create({name, world: parentFolder.world});
@@ -54,7 +55,7 @@ export const folderMutations = {
 			throw new Error('Folder does not exist');
 		}
 		if(!await folder.userCanWrite(currentUser)){
-			throw new Error(`You do not have the permission: ${FOLDER_RW} for the folder ${folderId}`);
+			throw new Error(`You do not have permission for this folder`);
 		}
 
 		folder.name = name;
@@ -69,7 +70,7 @@ export const folderMutations = {
 
 		await checkUserWritePermissionForFolderContents(currentUser, folderId);
 
-		if(folder.world.rootFolder._id.equals(folder._id)){
+		if(folder.world.rootFolder.equals(folder._id)){
 			throw new Error('You cannot delete the root folder of a world');
 		}
 
