@@ -1,0 +1,176 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`folder-mutations with existing world with authenticated user create folder 1`] = `
+Object {
+  "data": Object {
+    "createFolder": Object {
+      "_id": Any<String>,
+      "folders": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "children": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+            },
+          ],
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with authenticated user delete folder 1`] = `
+Object {
+  "data": Object {
+    "deleteFolder": Object {
+      "_id": Any<String>,
+      "folders": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "children": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+            },
+          ],
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with authenticated user delete root folder 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You cannot delete the root folder of a world],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with authenticated user rename folder 1`] = `
+Object {
+  "data": Object {
+    "renameFolder": Object {
+      "_id": Any<String>,
+      "name": "new folder",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with third user no permission to child 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": Any<String>,
+      "path": Array [
+        "deleteFolder",
+      ],
+    },
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with unauthenticated user create folder permission denied 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission for this folder],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with unauthenticated user delete folder permission denied 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": Any<String>,
+      "path": Array [
+        "deleteFolder",
+      ],
+    },
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`folder-mutations with existing world with unauthenticated user rename folder permission denied 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission for this folder],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

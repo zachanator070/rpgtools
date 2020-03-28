@@ -263,6 +263,7 @@ export const CURRENT_WIKI_PLACE_ATTRIBUTES = `
 export const DELETE_FOLDER = gql`
 	mutation deleteFolder($folderId: ID!){
 		deleteFolder(folderId: $folderId){
+			_id
 			folders{
 				${CURRENT_WORLD_FOLDERS}
 			}
