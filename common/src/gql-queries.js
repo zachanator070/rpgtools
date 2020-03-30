@@ -476,7 +476,7 @@ export const UPDATE_PLACE = gql`
 	}
 `;
 export const UPDATE_WIKI = gql`
-	mutation updateWiki($wikiId: ID!, $name: String!, $content: Upload, $coverImageId: ID, $type: String){
+	mutation updateWiki($wikiId: ID!, $name: String, $content: Upload, $coverImageId: ID, $type: String){
 		updateWiki(wikiId: $wikiId, name: $name, content: $content, coverImageId: $coverImageId, type: $type){
 			${CURRENT_WIKI_ATTRIBUTES}
 		}

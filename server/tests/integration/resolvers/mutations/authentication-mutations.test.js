@@ -4,8 +4,8 @@ import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {typeDefs} from '../../../../src/gql-server-schema';
 import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {User} from "../../../../src/models/user";
-import gql from 'graphql-tag';
 import {LOGIN_QUERY, REGISTER_MUTATION} from "../../../../../common/src/gql-queries";
+import {ServerConfig} from "../../../../src/models/server-config";
 
 process.env.TEST_SUITE = 'authentication-mutations-test';
 
@@ -43,37 +43,46 @@ describe('authentication-mutations', () => {
 		expect(result).toMatchSnapshot();
 	});
 
-	test('register good', async () => {
-		const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
-		expect(result).toMatchSnapshot({
-			data: {
-				register: {
-					_id: expect.any(String)
+	describe('with good register code available', () => {
+		beforeEach(async () => {
+			const serverConfig = await ServerConfig.findOne();
+			serverConfig.registerCodes.push('asdf');
+			await serverConfig.save();
+		});
+
+		test('register good', async () => {
+
+			const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
+			expect(result).toMatchSnapshot({
+				data: {
+					register: {
+						_id: expect.any(String)
+					}
 				}
-			}
+			});
+		});
+
+		test('register use code twice', async () => {
+			await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
+			const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
+			expect(result).toMatchSnapshot();
+		});
+
+		test('register use email twice', async () => {
+			await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
+			const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'qwerty', email: 'asdf@gmail.com', username: 'tester3', password: 'tester'}});
+			expect(result).toMatchSnapshot();
+		});
+
+		test('register use username twice', async () => {
+			await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'tester2@gmail.com', username: 'tester2', password: 'tester'}});
+			const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'qwerty', email: 'tester3@gmail.com', username: 'tester2', password: 'tester'}});
+			expect(result).toMatchSnapshot();
 		});
 	});
 
 	test('register bad code', async () => {
 		const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: '1234', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
-		expect(result).toMatchSnapshot();
-	});
-
-	test('register use code twice', async () => {
-		await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
-		const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
-		expect(result).toMatchSnapshot();
-	});
-
-	test('register use email twice', async () => {
-		await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'asdf@gmail.com', username: 'tester2', password: 'tester'}});
-		const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'qwerty', email: 'asdf@gmail.com', username: 'tester3', password: 'tester'}});
-		expect(result).toMatchSnapshot();
-	});
-
-	test('register use username twice', async () => {
-		await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'asdf', email: 'tester2@gmail.com', username: 'tester2', password: 'tester'}});
-		const result = await mutate({mutation: REGISTER_MUTATION, variables: {registerCode: 'qwerty', email: 'tester3@gmail.com', username: 'tester2', password: 'tester'}});
 		expect(result).toMatchSnapshot();
 	});
 });

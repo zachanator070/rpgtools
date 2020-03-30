@@ -68,7 +68,6 @@ export const createSessionContext = async ({req, res}) => {
 	}
 
 	await currentUser.recalculateAllUsersPermissions();
-	await currentUser.recalculateRolePermissions();
 
 	return {
 		res,

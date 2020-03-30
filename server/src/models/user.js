@@ -45,13 +45,14 @@ const getRolePermissions = async (user) => {
 	return allPermissions;
 };
 
-const getEveryonePermissions = async (worldId) => {
-	const everyoneRole = await Role.findOne({name: EVERYONE, world: worldId}).populate({path: 'permissions'});
-	if (everyoneRole) {
-		return everyoneRole.permissions;
+const getEveryonePermissions = async () => {
+	const everyoneRoles = await Role.find({name: EVERYONE}).populate({path: 'permissions'});
+	const permissions = [];
+	for(let role of everyoneRoles){
+		permissions.push(...role.permissions)
 	}
 
-	return [];
+	return permissions;
 };
 
 const getAllUserPermissions = async () => {
@@ -74,8 +75,8 @@ userSchema.methods.recalculateRolePermissions = async function(){
 	this.rolePermissions = await getRolePermissions(this);
 };
 
-userSchema.methods.recalculateEveryonePermissions = async function(worldId){
-	this.everyonePermissions = await getEveryonePermissions(worldId);
+userSchema.methods.recalculateEveryonePermissions = async function(){
+	this.everyonePermissions = await getEveryonePermissions();
 };
 
 userSchema.methods.recalculateAllUsersPermissions = async function(){

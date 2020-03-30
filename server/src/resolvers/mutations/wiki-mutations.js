@@ -41,7 +41,7 @@ export const wikiMutations = {
 			throw new Error('You do not have permission to write to this page');
 		}
 
-		if(content !== null){
+		if(content){
 			content = await content;
 			const stream = await content.createReadStream();
 
@@ -59,15 +59,24 @@ export const wikiMutations = {
 				}
 				await new Promise((resolve, reject) => {
 
-					stream.pipe(writeStream);
+					// NOTE: readable.pipe was having weird behavior where a fs.files document was not being created
+					stream.on('data', (data) => {
+						writeStream.write(data);
+					});
 
 					stream.on('end', () => {
-						wikiPage.contentId = writeStream.id;
-						resolve();
+						writeStream.end();
 					});
+
 					stream.on('error', (err) => {
 						reject(err);
 					});
+
+					writeStream.on('finish', (file) => {
+						wikiPage.contentId = file._id;
+						resolve();
+					});
+
 				});
 			}
 			else{
@@ -78,13 +87,13 @@ export const wikiMutations = {
 			}
 		}
 
-		if(name !== null){
+		if(name){
 			wikiPage.name = name;
 		}
 
 		wikiPage.coverImage = coverImageId;
 
-		if(type !== null){
+		if(type){
 			wikiPage.type = type;
 			wikiPage.__t = type;
 		}
