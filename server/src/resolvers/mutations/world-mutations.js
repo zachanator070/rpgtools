@@ -70,8 +70,7 @@ export const createWorld = async (name, isPublic, currentUser) => {
 	world.roles = [ownerRole, everyoneRole];
 	await world.save();
 
-	await currentUser.recalculateRolePermissions();
-	await currentUser.recalculateEveryonePermissions(world._id);
+	await currentUser.recalculateAllPermissions();
 
 	await world
 		.populate('wikiPage')

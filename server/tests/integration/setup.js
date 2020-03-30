@@ -60,7 +60,7 @@ beforeEach(async function(done) {
 beforeEach(async () => {
 	await User.ensureIndexes({ loc: '2d' });
 	await User.create({username: 'tester', password: bcrypt.hashSync('tester', SALT_ROUNDS)});
-	const server = await ServerConfig.create({version: '1.0', registerCodes: ['asdf', 'qwerty']});
+	const server = await ServerConfig.create({version: '1.0', unlockCode: 'asdf', registerCodes: []});
 	const allUsersRole = await Role.create({name: ALL_USERS});
 	const createWorldPermissions = await PermissionAssignment.create({permission: WORLD_CREATE, subject: server._id, subjectType: SERVER_CONFIG});
 	allUsersRole.permissions.push(createWorldPermissions._id);

@@ -33,7 +33,6 @@ function createChunk(x, y, height, width, image, parentImage){
 	return new Promise((resolve, reject) => {
 		const gfs = new GridFSBucket(mongoose.connection.db);
 
-		console.time(`createChunk.${parentImage._id}.${x}.${y}`);
 		Jimp.read(image).then((copy) => {
 			copy.crop( x * chunkSize, y * chunkSize, width, height);
 			const newFilename = `chunk.${x}.${y}.${parentImage.name}`;
@@ -53,7 +52,6 @@ function createChunk(x, y, height, width, image, parentImage){
 					image: parentImage._id
 				}, (err, chunk) => {
 					Image.findOneAndUpdate({_id: parentImage._id}, {$push: {chunks: chunk._id}}, {new: true}, (err) => {
-						console.timeEnd(`createChunk.${parentImage._id}.${x}.${y}`);
 						resolve();
 						if(err){
 							reject(err);
@@ -158,7 +156,6 @@ export const imageMutations = {
 		if(chunkify === null){
 			chunkify = true;
 		}
-		console.time('jimp read image');
 		file = await file;
 		const stream = file.createReadStream();
 
@@ -184,7 +181,6 @@ export const imageMutations = {
 			height: image.bitmap.height
 		});
 
-		console.timeEnd('jimp read image');
 
 		if(!chunkify){
 			await createChunk(0, 0, image.bitmap.height, image.bitmap.width, image, newImage);

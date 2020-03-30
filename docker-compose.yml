@@ -3,13 +3,13 @@ services:
 
   dev-server:
     build:
-      context: server
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./server/Dockerfile
     command: "npm run start-dev"
     env_file:
       - .env
     volumes:
-    - ./server/src:/home/node/app/src
+    - ./server/src:/home/node/app/server/src
     - ./dist:/home/node/app/dist
     ports:
     - "${PORT:-3000}:${PORT:-3000}"
@@ -33,13 +33,13 @@ services:
 
   dev-builder:
     build:
-      context: app
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./app/Dockerfile
     env_file:
      - .env
     volumes:
-     - ./app/src:/home/node/app/src
-     - ./dist:/home/node/app/dist
+     - ./app/src:/home/node/app/app/src
+     - ./dist:/home/node/app/app/dist
     command: "npm run start-dev"
     networks:
      - rpgtools

@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`user mutations with world create wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Authentication is required for this action],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`user mutations with world update wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission to write to this page],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`user mutations with world with authenticated user create wiki 1`] = `
+Object {
+  "data": Object {
+    "createWiki": Object {
+      "_id": Any<String>,
+      "folders": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "pages": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+            },
+          ],
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`user mutations with world with authenticated user update wiki just content 1`] = `
+Object {
+  "data": Object {
+    "updateWiki": Object {
+      "_id": Any<String>,
+      "canWrite": true,
+      "content": Any<String>,
+      "coverImage": null,
+      "name": "Earth",
+      "type": "Place",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`user mutations with world with authenticated user update wiki just name 1`] = `
+Object {
+  "data": Object {
+    "updateWiki": Object {
+      "_id": Any<String>,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "name": "new name",
+      "type": "Place",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

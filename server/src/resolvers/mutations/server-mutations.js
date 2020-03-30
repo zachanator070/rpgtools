@@ -13,6 +13,9 @@ export const serverMutations = {
 		if(server.unlockCode !== unlockCode){
 			throw new Error('Unlock code is incorrect');
 		}
+		if(server.adminUsers.length > 0){
+			throw new Error('Server is already unlocked');
+		}
 		const admin = await registerUser(email, username, password);
 		server.adminUsers.push(admin);
 		await server.save();

@@ -7,7 +7,8 @@ import mongoose from 'mongoose';
 import {defaultSeeders} from "./default-seeders";
 import path from 'path';
 import {ImageRouter} from "./routers/image-router";
-import {checkConfig, serverNeedsSetup} from './server-needs-setup'
+import {checkConfig, serverNeedsSetup} from './server-needs-setup';
+import crypto from 'crypto';
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -67,6 +68,16 @@ const createServer = async () => {
 	server.use(cookieParser());
 
 	gqlServer.applyMiddleware({app: server, path: '/api'});
+
+	if(!process.env.ACCESS_TOKEN_SECRET){
+		console.warn("environment variable ACCESS_TOKEN_SECRET is not set, restarting server will log out all users");
+		process.env.ACCESS_TOKEN_SECRET = crypto.randomBytes(2048);
+	}
+
+	if(!process.env.REFRESH_TOKEN_SECRET){
+		console.log("environment variable REFRESH_TOKEN_SECRET is not set, restarting server will log out all users");
+		process.env.REFRESH_TOKEN_SECRET = crypto.randomBytes(2048);
+	}
 
 	const port = process.env.SERVER_PORT || 3000;
 

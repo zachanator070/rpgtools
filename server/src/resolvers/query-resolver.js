@@ -19,7 +19,6 @@ export default {
 		if (!world) {
 			return null;
 		}
-		await currentUser.recalculateEveryonePermissions(world._id);
 		if (!await world.userCanRead(currentUser)) {
 			return null;
 		}
