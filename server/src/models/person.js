@@ -4,8 +4,6 @@ import {PERSON} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 
-const personSchema = new Schema({
-	type: {type: String, default: PERSON},
-});
+const personSchema = new Schema({});
 
 export const Person = WikiPage.discriminator(PERSON, personSchema);

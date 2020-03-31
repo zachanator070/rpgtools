@@ -12,6 +12,7 @@ import crypto from 'crypto';
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
+
 mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParser: true}).then(
 	async () => {
 		console.log(`Connected to mongodb at mongodb://${mongodb_host}/${mongodb_db_name}`);
@@ -19,6 +20,10 @@ mongoose.connect(`mongodb://${mongodb_host}/${mongodb_db_name}`, {useNewUrlParse
 		await createServer();
 	}
 );
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
 const createServer = async () => {
 	const server = express();

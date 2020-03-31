@@ -36,8 +36,8 @@ wikiFolderSchema.methods.userCanRead = async function(user){
 };
 
 wikiFolderSchema.post('remove', async function(folder) {
-	await WikiPage.remove({_id: {$in: folder.pages}});
-	await WikiFolder.remove({_id: {$in: folder.children}});
+	await WikiPage.deleteMany({_id: {$in: folder.pages}});
+	await WikiFolder.deleteMany({_id: {$in: folder.children}});
 
 	const parentFolder = await WikiFolder.findOne({children: folder._id});
 	if(parentFolder){

@@ -9,7 +9,9 @@ import {SERVER_CONFIG} from "../../../common/src/type-constants";
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+
 mongoose.set('useCreateIndex', true);
+
 process.env.ACCESS_TOKEN_SECRET = 'asdf1234';
 process.env.REFRESH_TOKEN_SECRET = 'asdf1234';
 
@@ -42,17 +44,16 @@ beforeEach(async function(done) {
 	*/
 	if (mongoose.connection.readyState === 0) {
 		await mongoose.connect(
-			`mongodb://localhost:27017/${process.env.TEST_SUITE}`,
-		{
-					useNewUrlParser: true,
-					useUnifiedTopology: true,
-					autoIndex: false
-				}
-			);
-		await clearDB();
-	} else {
-		await clearDB();
+		`mongodb://localhost:27017/${process.env.TEST_SUITE}`,
+	{
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+				autoIndex: false
+			}
+		);
 	}
+
+	await clearDB();
 
 	return done();
 });

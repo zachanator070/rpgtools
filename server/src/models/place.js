@@ -9,7 +9,6 @@ const placeSchema = new Schema({
 		type: mongoose.Schema.ObjectId,
 		ref: 'Image',
 	},
-	type: {type: String, default: PLACE},
 });
 
 export const Place = WikiPage.discriminator(PLACE, placeSchema);

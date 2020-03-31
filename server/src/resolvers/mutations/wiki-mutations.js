@@ -5,9 +5,12 @@ import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {cleanUpPermissions} from "../../db-helpers";
-import {ARTICLE} from "../../../../common/src/type-constants";
+import {ARTICLE, PERSON, PLACE} from "../../../../common/src/type-constants";
 import {authenticated} from "../../authentication-helpers";
 import {Place} from "../../models/place";
+import {Image} from "../../models/image";
+import {Person} from '../../models/person';
+import {Article} from "../../models/article";
 
 export const wikiMutations = {
 	createWiki: authenticated(async (parent, {name, folderId}, {currentUser}) => {
@@ -33,7 +36,7 @@ export const wikiMutations = {
 		return newPage.world;
 	}),
 	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
-		const wikiPage = await WikiPage.findById(wikiId).populate('world content');
+		let wikiPage = await WikiPage.findById(wikiId).populate('world content');
 		if(!wikiPage){
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
@@ -48,58 +51,73 @@ export const wikiMutations = {
 			const gfs = new GridFSBucket(mongoose.connection.db);
 
 			let wikiPageContent = await gfs.find({_id: wikiPage.contentId}).next();
-			if(content){
 
-				let writeStream = null;
-				if(wikiPageContent){
-					writeStream = gfs.openUploadStream(wikiPageContent.filename);
-				}
-				else{
-					writeStream = gfs.openUploadStream(`wikiContent.${wikiPage._id}`);
-				}
-				await new Promise((resolve, reject) => {
-
-					// NOTE: readable.pipe was having weird behavior where a fs.files document was not being created
-					stream.on('data', (data) => {
-						writeStream.write(data);
-					});
-
-					stream.on('end', () => {
-						writeStream.end();
-					});
-
-					stream.on('error', (err) => {
-						reject(err);
-					});
-
-					writeStream.on('finish', (file) => {
-						wikiPage.contentId = file._id;
-						resolve();
-					});
-
-				});
+			let writeStream = null;
+			if(wikiPageContent){
+				writeStream = gfs.openUploadStream(wikiPageContent.filename);
 			}
 			else{
-				if(wikiPageContent){
-					await gfs.delete(wikiPageContent._id);
-					wikiPage.contentId = null;
-				}
+				writeStream = gfs.openUploadStream(`wikiContent.${wikiPage._id}`);
 			}
+			await new Promise((resolve, reject) => {
+
+				// NOTE: readable.pipe was having weird behavior where a fs.files document was not being created
+				stream.on('data', (data) => {
+					writeStream.write(data);
+				});
+
+				stream.on('end', () => {
+					writeStream.end();
+				});
+
+				stream.on('error', (err) => {
+					reject(err);
+				});
+
+				writeStream.on('finish', (file) => {
+					wikiPage.contentId = file._id;
+					resolve();
+				});
+
+			});
 		}
 
 		if(name){
 			wikiPage.name = name;
 		}
 
+		if(coverImageId){
+			const image = await Image.findById(coverImageId);
+			if(!image){
+				throw new Error(`No image exists with id ${coverImageId}`);
+			}
+		}
 		wikiPage.coverImage = coverImageId;
 
 		if(type){
-			wikiPage.type = type;
-			wikiPage.__t = type;
+			// NOTE: Hydrate causes error on save if object ref is used in hydration
+			const wikiPageObject = wikiPage.toObject();
+			switch (type) {
+				case PERSON:
+					wikiPage = Person.hydrate({_id: wikiPageObject._id});
+					break;
+				case PLACE:
+					wikiPage = Place.hydrate({_id: wikiPageObject._id});
+					break;
+				case ARTICLE:
+					wikiPage = Article.hydrate({_id: wikiPageObject._id});
+					break;
+			}
+			wikiPage.world = wikiPageObject.world._id;
+			wikiPage.name = wikiPageObject.name;
+			wikiPage.content = wikiPageObject.content;
+			if(wikiPageObject.coverImage){
+				wikiPage.coverImage = wikiPageObject.coverImage._id;
+			}
 		}
 
 		await wikiPage.save();
-		await wikiPage.populate('coverImage').execPopulate();
+		await wikiPage.populate({path: 'coverImage', populate: {path: 'chunks icon', populate: {path: 'chunks'}}}).execPopulate();
 		return wikiPage;
 	},
 	deleteWiki: async (parent, {wikiId}, {currentUser}) => {
@@ -124,7 +142,7 @@ export const wikiMutations = {
 		}
 
 		await cleanUpPermissions(wikiPage._id);
-		await wikiPage.remove();
+		await WikiPage.deleteOne({_id: wikiId});
 		return wikiPage.world;
 	},
 	updatePlace: async (parent, {placeId, mapImageId}, {currentUser}) => {
@@ -137,9 +155,16 @@ export const wikiMutations = {
 			throw new Error(`You do not have permission to write to this page`);
 		}
 
+		if(mapImageId){
+			const image = await Image.findById(mapImageId);
+			if(!image){
+				throw new Error(`Image with id ${mapImageId} does not exist`);
+			}
+		}
+
 		place.mapImage = mapImageId;
 		await place.save();
-		await place.populate('mapImage').execPopulate();
+		await place.populate({path: 'mapImage', populate: {path: 'chunks icon', populate: {path: 'chunks'}}}).execPopulate();
 		return place;
 	}
 };

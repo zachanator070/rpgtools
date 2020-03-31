@@ -46,8 +46,10 @@ const wikiPageSchema = new Schema({
 			}
 			return null;
 		}
-	},
-	type: {type: String, default: null},
+	}
+},
+{
+	discriminatorKey: 'type'
 });
 
 wikiPageSchema.methods.userCanWrite = async function(user){
