@@ -8,6 +8,8 @@ import {WORLD_CREATE} from "../../../common/src/permission-constants";
 import {SERVER_CONFIG} from "../../../common/src/type-constants";
 
 const mongoose = require('mongoose');
+mongoose.set('useFindAndModify', false);
+
 const bcrypt = require('bcrypt');
 
 mongoose.set('useCreateIndex', true);
