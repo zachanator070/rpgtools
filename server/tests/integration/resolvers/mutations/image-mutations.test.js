@@ -67,7 +67,7 @@ describe('folder-mutations', () => {
 			});
 
 			test('create image no permission', async () => {
-				const result = await mutate({mutation: CREATE_IMAGE, variables: {file: testFile, worldId: world._id.toString(), chunkify: true}})
+				const result = await mutate({mutation: CREATE_IMAGE, variables: {file: testFile, worldId: world._id.toString(), chunkify: true}});
 				expect(result).toMatchSnapshot({
 					data: {
 						createImage: {

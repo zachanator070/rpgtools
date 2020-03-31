@@ -74,7 +74,7 @@ export const folderMutations = {
 			throw new Error('You cannot delete the root folder of a world');
 		}
 
-		await folder.remove();
+		await WikiFolder.deleteOne({_id: folderId});
 		return folder.world;
 
 	}

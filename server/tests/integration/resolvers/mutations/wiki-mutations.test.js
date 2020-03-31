@@ -4,9 +4,13 @@ import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
-import {CREATE_WIKI, UPDATE_WIKI} from "../../../../../common/src/gql-queries";
+import {CREATE_IMAGE, CREATE_WIKI, DELETE_WIKI, UPDATE_PLACE, UPDATE_WIKI} from "../../../../../common/src/gql-queries";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
 import {Readable} from 'stream';
+import fs from "fs";
+import {ARTICLE, PERSON} from "../../../../../common/src/type-constants";
+import {WikiPage} from "../../../../src/models/wiki-page";
+import {Article} from "../../../../src/models/article";
 
 process.env.TEST_SUITE = 'wiki-mutations-test';
 
@@ -46,6 +50,21 @@ describe('user mutations', () => {
 
 		test('update wiki no permission', async () => {
 			const result = await mutate({mutation: UPDATE_WIKI, variables: {wikiId: world.wikiPage._id.toString(), name: 'new name'}});
+			expect(result).toMatchSnapshot();
+		});
+
+		test('update cover image no permission', async () => {
+			const result = await mutate({mutation: UPDATE_WIKI, variables: {wikiId: world.wikiPage._id.toString(), coverImageId: '12345'}});
+			expect(result).toMatchSnapshot();
+		});
+
+		test('delete wiki no permission', async () => {
+			const result = await mutate({mutation: DELETE_WIKI, variables: {wikiId: world.wikiPage._id.toString()}});
+			expect(result).toMatchSnapshot();
+		});
+
+		test('update place no permission', async () => {
+			const result = await mutate({mutation: UPDATE_PLACE, variables: {placeId: world.wikiPage._id.toString(), mapImageId: null}});
 			expect(result).toMatchSnapshot();
 		});
 
@@ -99,6 +118,121 @@ describe('user mutations', () => {
 								_id : expect.any(String)
 							},
 							content: expect.any(String)
+						}
+					}
+				});
+			});
+
+			test('update cover image', async () => {
+				let testFile = {
+					filename: 'server/tests/integration/resolvers/mutations/testmap.png',
+					createReadStream: () => fs.createReadStream('server/tests/integration/resolvers/mutations/testmap.png')
+				};
+				const imageResult = await mutate({mutation: CREATE_IMAGE, variables: {file: testFile, worldId: world._id.toString(), chunkify: true}});
+				const result = await mutate({mutation: UPDATE_WIKI, variables: {wikiId: world.wikiPage._id.toString(), coverImageId: imageResult.data.createImage._id}});
+				expect(result).toMatchSnapshot({
+					data: {
+						updateWiki: {
+							_id: expect.any(String),
+							world: {
+								_id: expect.any(String)
+							},
+							coverImage: {
+								_id: expect.any(String),
+								chunks: expect.arrayContaining([expect.objectContaining({
+									_id: expect.any(String),
+									fileId: expect.any(String)
+								})]),
+								icon: {
+									_id: expect.any(String),
+									chunks: expect.arrayContaining([expect.objectContaining({
+										_id: expect.any(String),
+										fileId: expect.any(String)
+									})]),
+								}
+							}
+						}
+					}
+				});
+			});
+
+			test('update type', async () => {
+				const result = await mutate({mutation: UPDATE_WIKI, variables: {wikiId: world.wikiPage._id.toString(), type: ARTICLE}});
+				expect(result).toMatchSnapshot({
+					data: {
+						updateWiki: {
+							_id: expect.any(String),
+							world: {
+								_id: expect.any(String)
+							}
+						}
+					}
+				});
+			});
+
+			test('delete wiki root wiki', async () => {
+				const result = await mutate({mutation: DELETE_WIKI, variables: {wikiId: world.wikiPage._id.toString()}});
+				expect(result).toMatchSnapshot();
+			});
+
+			test('delete wiki', async () => {
+				const wiki = await Article.create({name: 'some wiki', world: world._id});
+				const result = await mutate({mutation: DELETE_WIKI, variables: {wikiId: wiki._id.toString()}});
+				expect(result).toMatchSnapshot({
+					data: {
+						deleteWiki: {
+							_id: expect.any(String),
+							folders: expect.arrayContaining([
+
+								expect.objectContaining({
+									_id: expect.any(String),
+									children: expect.arrayContaining([
+										expect.objectContaining({
+											_id: expect.any(String),
+										})
+									]),
+									pages: [],
+								}),
+								expect.objectContaining({
+									_id: expect.any(String),
+									children: [],
+									pages: expect.arrayContaining([
+										expect.objectContaining({
+											_id: expect.any(String),
+										})
+									]),
+								})
+							])
+						}
+					}
+				});
+			});
+
+			test('update place', async () => {
+				let testFile = {
+					filename: 'server/tests/integration/resolvers/mutations/testmap.png',
+					createReadStream: () => fs.createReadStream('server/tests/integration/resolvers/mutations/testmap.png')
+				};
+				const imageResult = await mutate({mutation: CREATE_IMAGE, variables: {file: testFile, worldId: world._id.toString(), chunkify: true}});
+				const result = await mutate({mutation: UPDATE_PLACE, variables: {placeId: world.wikiPage._id.toString(), mapImageId: imageResult.data.createImage._id}});
+				expect(result).toMatchSnapshot({
+					data: {
+						updatePlace: {
+							_id: expect.any(String),
+							mapImage: {
+								_id: expect.any(String),
+								chunks: expect.arrayContaining([expect.objectContaining({
+									_id: expect.any(String),
+									fileId: expect.any(String)
+								})]),
+								icon: {
+									_id: expect.any(String),
+									chunks: expect.arrayContaining([expect.objectContaining({
+										_id: expect.any(String),
+										fileId: expect.any(String)
+									})]),
+								}
+							}
 						}
 					}
 				});
