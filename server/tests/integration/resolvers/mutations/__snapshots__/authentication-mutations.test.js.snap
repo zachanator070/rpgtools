@@ -62,68 +62,6 @@ Object {
 }
 `;
 
-exports[`authentication-mutations register good 1`] = `
-Object {
-  "data": Object {
-    "register": Object {
-      "_id": Any<String>,
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
-
-exports[`authentication-mutations register use code twice 1`] = `
-Object {
-  "data": null,
-  "errors": Array [
-    [GraphQLError: Register code not valid],
-  ],
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
-
-exports[`authentication-mutations register use email twice 1`] = `
-Object {
-  "data": null,
-  "errors": Array [
-    [GraphQLError: Registration Error: Email already used],
-  ],
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
-
-exports[`authentication-mutations register use username twice 1`] = `
-Object {
-  "data": null,
-  "errors": Array [
-    [GraphQLError: Registration Error: Username already used],
-  ],
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
-
 exports[`authentication-mutations with good register code available register good 1`] = `
 Object {
   "data": Object {

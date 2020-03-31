@@ -206,21 +206,6 @@ Object {
 }
 `;
 
-exports[`authorization-mutations grantRolePermission permission denied 2`] = `
-Object {
-  "data": null,
-  "errors": Array [
-    [GraphQLError: You do not have permission to assign the permission "Read access to a single wiki page" for this subject],
-  ],
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
-
 exports[`authorization-mutations grantUserPermission 1`] = `
 Object {
   "data": Object {
