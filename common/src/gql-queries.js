@@ -37,7 +37,7 @@ export const CURRENT_WORLD_WIKIS = `
 	_id
 	name
 	type
-	canWrite	
+	canWrite
 `;
 export const CURRENT_WORLD_FOLDERS = `
 	_id
@@ -392,18 +392,7 @@ export const REVOKE_USER_PERMISSION = gql`
 		}
 	}
 `;
-export const SEARCH_ROLES = gql`
-	query searchRoles($worldId: ID!, $name: String!){
-		roles(worldId: $worldId, name: $name){
-			page
-			totalPages
-			docs{
-				_id
-				name
-			}
-		}
-	}
-`;
+
 export const SEARCH_USERS = gql`
 	query searchUsers($username: String!){
 		users(username: $username){
@@ -416,16 +405,7 @@ export const SEARCH_USERS = gql`
 		}
 	}
 `;
-export const SEARCH_WIKI_PAGES = gql`
-	query searchWikiPages($name: String!, $worldId: ID!, $type: String){
-		wikis(name: $name, worldId: $worldId, type: $type){
-			docs{
-				_id
-				name
-			}
-		}
-	}
-`;
+
 export const GET_SERVER_CONFIG = gql`
     query serverConfig{
         serverConfig{
@@ -496,4 +476,16 @@ export const GET_WORLDS = gql`
 			totalPages
 		}	
 	}
+`;
+export const GET_CURRENT_WIKI = gql`
+    query currentWiki($wikiId: ID!){
+        wiki(wikiId: $wikiId) {
+            ${CURRENT_WIKI_ATTRIBUTES}
+            ${USERS_WITH_PERMISSIONS}
+            ... on Place {
+                ${CURRENT_WIKI_PLACE_ATTRIBUTES}
+            }
+            
+        }
+    }
 `;

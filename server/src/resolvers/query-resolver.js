@@ -42,6 +42,8 @@ export default {
 		}
 		userPermissions = userPermissions.filter(permission => permission.permission === WORLD_READ);
 		const worldsUserCanRead = userPermissions.map(permission => permission.subject);
+		// NOTE: unsure that this is actually more efficient than using World.find and filtering based on permissions the
+		// user has in currentUser.allPermissions
 		const worldAggregate = World.aggregate([
 			{
 				'$lookup': {
@@ -119,7 +121,7 @@ export default {
 		// convert objects to mongoose Models
 		const docs = [];
 		for(let world of results.docs){
-			docs.push(await World.findById(world._id));
+			docs.push(await World.findById(world._id).populate('wikiPage'));
 		}
 		results.docs = docs;
 		return results;
@@ -135,25 +137,7 @@ export default {
 
 		return foundWiki;
 	},
-	wikis: async (_, {name, worldId, type}, {currentUser}) => {
-		const searchParams = {name: { $regex: `^${name}.*` , $options: 'i'}, world: worldId};
-		if(type){
-			searchParams.type = type;
-		}
-		const foundWikis = await WikiPage.paginate(searchParams);
-		const returnWikis = [];
-		for(let wiki of foundWikis.docs){
-			if(await wiki.userCanRead(currentUser)){
-				returnWikis.push(wiki);
-			}
-		}
-		foundWikis.docs = returnWikis;
-		return foundWikis;
-	},
 	users: async (_, {username}) => {
 		return User.paginate({username: { $regex: `^${username}.*` , $options: 'i'}});
-	},
-	roles: async (_, {worldId, name}) => {
-		return Role.paginate({world: worldId, name: { $regex: `^${name}.*` , $options: 'i'}});
 	}
 };

@@ -1,14 +1,28 @@
-import {useLazyQuery} from "@apollo/react-hooks";
-import {SEARCH_WIKI_PAGES} from "../../../common/src/gql-queries";
+import useCurrentWorld from "./useCurrentWorld";
+import {useEffect, useState} from "react";
+import {ARTICLE} from "../../../common/src/type-constants";
 
 export const useSearchWikiPages = () => {
-	const [search, {loading, data, error}] = useLazyQuery(SEARCH_WIKI_PAGES);
+	const {currentWorld, loading} = useCurrentWorld();
+	const [allWikis, setAllWikis] = useState([]);
+	const [filter, setFilter] = useState({name: '', type: ARTICLE});
+	useEffect(() => {
+		(async () => {
+			if(!loading){
+				let newWikis = [];
+				for(let folder of currentWorld.folders){
+					newWikis = newWikis.concat(folder.pages);
+				}
+				await setAllWikis(newWikis);
+			}
+		})();
+	},[currentWorld]);
+
 	return {
-		searchWikiPages: async (name, worldId, type) => {
-			return search({variables: {name, worldId, type}});
+		searchWikiPages: async (name, type) => {
+			await setFilter({name, type});
 		},
 		loading,
-		wikis: data ? data.wikis.docs : [],
-		errors: error ? error.graphQLErrors.map(error => error.message) : []
+		wikis: allWikis.filter(wiki => wiki.name.includes(filter.name) && wiki.type === filter.type),
 	}
 };
