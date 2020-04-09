@@ -11,9 +11,8 @@ import {
 	GRANT_USER_PERMISSION, REMOVE_USER_ROLE, REVOKE_ROLE_PERMISSION,
 	REVOKE_USER_PERMISSION
 } from "../../../../../common/src/gql-queries";
-import {WIKI_READ, WIKI_RW, WORLD_READ} from "../../../../../common/src/permission-constants";
+import {ANON_USERNAME, WIKI_READ, WIKI_RW, WORLD_READ} from "../../../../../common/src/permission-constants";
 import {PLACE, WORLD} from "../../../../../common/src/type-constants";
-import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {PermissionAssignment} from "../../../../src/models/permission-assignement";
 import {Role} from "../../../../src/models/role";
 

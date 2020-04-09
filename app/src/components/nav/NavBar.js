@@ -11,6 +11,7 @@ import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibi
 import {SearchBar} from "./SearchBar";
 import {SettingOutlined,UserOutlined, CloudServerOutlined} from "@ant-design/icons";
 import useServerConfig from "../../hooks/useServerConfig";
+import {ANON_USERNAME} from "../../../../common/src/permission-constants";
 
 export const NavBar = () => {
 
@@ -28,7 +29,7 @@ export const NavBar = () => {
 
 	let loginOptions = null;
 
-	if (currentUser) {
+	if (currentUser.username !== ANON_USERNAME) {
 		loginOptions = (
 			<span>
                 <span className='margin-md-right'>Hello {currentUser.username}</span>
@@ -66,7 +67,7 @@ export const NavBar = () => {
 			<Row>
 				<Col span={4}>
 					<div className='margin-md-left'>
-						<WorldMenu currentUser={currentUser}/>
+						<WorldMenu/>
 						{currentWorld && currentWorld.canWrite &&
 							<span className='margin-lg-left'>
 								<Link

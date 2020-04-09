@@ -10,6 +10,7 @@ services:
       - .env
     volumes:
     - ./server/src:/home/node/app/server/src
+    - ./common/src:/home/node/app/common/src
     - ./dist:/home/node/app/dist
     ports:
     - "${PORT:-3000}:${PORT:-3000}"
@@ -39,6 +40,7 @@ services:
      - .env
     volumes:
      - ./app/src:/home/node/app/app/src
+     - ./common/src:/home/node/app/common/src
      - ./dist:/home/node/app/app/dist
     command: "npm run start-dev"
     networks:

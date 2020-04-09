@@ -1,5 +1,4 @@
 import {User} from "../../../../src/models/user";
-import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
@@ -10,7 +9,7 @@ import {WikiFolder} from "../../../../src/models/wiki-folder";
 import {WikiPage} from "../../../../src/models/wiki-page";
 import {ARTICLE, WIKI_FOLDER} from "../../../../../common/src/type-constants";
 import {PermissionAssignment} from "../../../../src/models/permission-assignement";
-import {WIKI_RW} from "../../../../../common/src/permission-constants";
+import {ANON_USERNAME, WIKI_RW} from "../../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = 'folder-mutations-test';
 

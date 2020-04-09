@@ -1,5 +1,4 @@
 import {User} from "../../../../src/models/user";
-import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
@@ -11,6 +10,7 @@ import fs from "fs";
 import {ARTICLE, PERSON} from "../../../../../common/src/type-constants";
 import {WikiPage} from "../../../../src/models/wiki-page";
 import {Article} from "../../../../src/models/article";
+import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = 'wiki-mutations-test';
 

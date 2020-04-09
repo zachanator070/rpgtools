@@ -6,6 +6,7 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {LoadingView} from "../LoadingView";
 import {DownOutlined} from "@ant-design/icons";
+import {ANON_USERNAME} from "../../../../common/src/permission-constants";
 
 export const WorldMenu = () => {
 
@@ -21,16 +22,20 @@ export const WorldMenu = () => {
 
 	const menu = (
 		<Menu>
-			{currentUser &&
+			{currentUser.username !== ANON_USERNAME &&
 				<Menu.Item key="0">
-					<a href="#"
-					   onClick={async () => await setCreateWorldModalVisibility(true)}>New
-						World</a>
+					<a
+						href="#"
+					   onClick={async () => await setCreateWorldModalVisibility(true)}
+					>
+						New	World
+					</a>
 				</Menu.Item>
 			}
 			<Menu.Item key="1">
-				<a href="#" onClick={async () => await setSelectWorldModalVisibility(true)}>Select
-					World</a>
+				<a href="#" onClick={async () => await setSelectWorldModalVisibility(true)}>
+					Select World
+				</a>
 			</Menu.Item>
 		</Menu>
 	);

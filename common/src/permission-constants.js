@@ -67,3 +67,5 @@ export const getPermissionsBySubjectType = (subjectType) => {
 	}
 	return null;
 };
+
+export const ANON_USERNAME = 'Anonymous';
