@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import {v4 as uuidv4} from "uuid";
 import {User} from "./models/user";
-
-export const ANON_USERNAME = 'Anonymous';
+import {ANON_USERNAME} from "../../common/src/permission-constants";
 
 export const authenticated = next => (root, args, context, info) => {
 	if (!context.currentUser || context.currentUser.username === ANON_USERNAME) {
@@ -24,7 +23,8 @@ export const createTokens = async user => {
 const getCurrentUser = async (userId) => {
 	return User.findById(userId)
 		.populate({path: 'currentWorld', populate: {path: 'wikiPage'}})
-		.populate({path: 'permissions', populate: 'subject'});
+		.populate({path: 'permissions', populate: 'subject'})
+		.populate({path: 'roles', populate: 'permissions'});
 };
 
 export const createSessionContext = async ({req, res}) => {
@@ -67,7 +67,7 @@ export const createSessionContext = async ({req, res}) => {
 		currentUser = new User({username: ANON_USERNAME});
 	}
 
-	await currentUser.recalculateAllUsersPermissions();
+	await currentUser.recalculateAllPermissions();
 
 	return {
 		res,

@@ -2,10 +2,10 @@ import { createTestClient } from 'apollo-server-testing';
 import {ApolloServer} from "apollo-server-express";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {typeDefs} from '../../../../src/gql-server-schema';
-import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {User} from "../../../../src/models/user";
 import {LOGIN_QUERY, REGISTER_MUTATION} from "../../../../../common/src/gql-queries";
 import {ServerConfig} from "../../../../src/models/server-config";
+import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = 'authentication-mutations-test';
 

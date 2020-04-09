@@ -1,11 +1,11 @@
 import {ServerConfig} from "../../../../src/models/server-config";
 import {User} from "../../../../src/models/user";
-import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
 import {GENERATE_REGISTER_CODES, UNLOCK_SERVER} from "../../../../../common/src/gql-queries";
+import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = 'server-mutations-test';
 

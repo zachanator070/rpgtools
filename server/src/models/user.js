@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
 import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "../../../common/src/type-constants";
-import {ANON_USERNAME} from "../authentication-helpers";
 import {Role} from "./role";
 import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
+import {ANON_USERNAME} from "../../../common/src/permission-constants";
 
 const Schema = mongoose.Schema;
 

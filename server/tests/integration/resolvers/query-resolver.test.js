@@ -1,5 +1,4 @@
 import {User} from "../../../src/models/user";
-import {ANON_USERNAME} from "../../../src/authentication-helpers";
 import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../src/gql-server-schema";
 import {serverResolvers} from "../../../src/resolvers/server-resolvers";
@@ -12,6 +11,7 @@ import {
 	SEARCH_USERS
 } from "../../../../common/src/gql-queries";
 import {createWorld} from "../../../src/resolvers/mutations/world-mutations";
+import {ANON_USERNAME} from "../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = 'query-resolver-test';
 

@@ -6,7 +6,7 @@
   "repository": "https://github.com/zachanator070/rpgtools",
   "scripts": {
     "start": "nodejs -r esm src/index.js",
-    "start-dev": "npx nodemon --watch src/server --delay 80ms --exec 'kill-port --port 9229; node --inspect=0.0.0.0:9229 -r esm src/index.js'"
+    "start-dev": "npx nodemon --watch src --delay 80ms --exec 'kill-port --port 9229; node --inspect=0.0.0.0:9229 -r esm src/index.js'"
   },
   "dependencies": {
     "apollo-server": "^2.9.5",

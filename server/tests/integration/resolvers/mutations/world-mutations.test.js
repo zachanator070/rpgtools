@@ -2,13 +2,13 @@ import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {User} from "../../../../src/models/user";
-import {ANON_USERNAME} from "../../../../src/authentication-helpers";
 import {createTestClient} from "apollo-server-testing";
 import {Pin} from "../../../../src/models/pin";
 import {World} from '../../../../src/models/world'
 import {Article} from "../../../../src/models/article";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
 import {CREATE_PIN, CREATE_WORLD, DELETE_PIN, RENAME_WORLD, UPDATE_PIN} from "../../../../../common/src/gql-queries";
+import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = 'world-mutations-test';
 

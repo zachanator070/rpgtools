@@ -66,7 +66,7 @@ const createServer = async () => {
 		return res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
 	});
 
-	server.use(express.static('dist'));
+	server.use(express.static('../dist'));
 
 	server.use(bodyParser.json());
 	server.use(morgan('tiny'));
