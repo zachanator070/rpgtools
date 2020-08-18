@@ -56,7 +56,5 @@
     "webpack-cli": "^3.3.9",
     "webpack-visualizer-plugin": "^0.1.11"
   },
-  "devDependencies": {
-    "jest": "^24.9.0"
-  }
+  "devDependencies": {}
 }
