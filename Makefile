@@ -36,11 +36,11 @@ prod: build
 # runs development docker environment with auto transpiling and restarting services upon file change
 dev: init-env dev-up logs
 
-# intializes environment file
+# initializes environment file
 init-env:
 	touch .env
 
-# runs developement docker images
+# runs development docker images
 dev-up:
 	mkdir -p dist
 	docker-compose up --build -d dev-server
