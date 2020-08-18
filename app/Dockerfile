@@ -9,6 +9,7 @@ RUN cd common && npm install
 
 WORKDIR /home/node/app/app
 
+ADD app/src src
 ADD app/package.json package.json
 ADD app/package-lock.json package-lock.json
 RUN npm install

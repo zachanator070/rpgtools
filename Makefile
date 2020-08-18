@@ -5,7 +5,7 @@ export CURRENT_UID
 # Builds rpgtools docker image
 build: prod-builder clean-uncompressed
 	echo "Building version ${VERSION}"
-	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f src/server/Dockerfile .
+	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f server/Dockerfile .
 
 # cleans built transpiled js and node modules
 clean:
@@ -65,7 +65,7 @@ publish:
 	docker push ${DOCKER_USERNAME}/rpgtools:latest
 	docker push ${DOCKER_USERNAME}/rpgtools:${VERSION}
 
-# performs minimal isntall on a debian host
+# performs minimal install on a debian host
 install:
 	sudo apt update
 	sudo apt install mongodb
