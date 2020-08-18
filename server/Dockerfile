@@ -15,6 +15,8 @@ ADD server/package-lock.json package-lock.json
 RUN npm install
 RUN npm install -g kill-port
 
+ADD dist ../dist
+
 EXPOSE 3000
 
 CMD ["npm", "run", "start"]

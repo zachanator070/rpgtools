@@ -48,15 +48,13 @@ services:
 
   prod-builder:
     build:
-      context: app
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./app/Dockerfile
     user: ${CURRENT_UID}
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
-     - ./app/src:/home/node/app/src
-     - ./common/src:/home/node/app/common/src
-     - ./dist:/home/node/app/dist
+     - ./dist:/home/node/app/app/dist
     networks:
      - rpgtools
 
