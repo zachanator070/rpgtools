@@ -116,6 +116,35 @@ Object {
 }
 `;
 
+exports[`folder-mutations with existing world with third user no permission to child 2`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": Any<String>,
+      "path": Array [
+        "deleteFolder",
+      ],
+    },
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
 exports[`folder-mutations with existing world with unauthenticated user create folder permission denied 1`] = `
 Object {
   "data": null,

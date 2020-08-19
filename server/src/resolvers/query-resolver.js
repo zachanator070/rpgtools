@@ -23,11 +23,11 @@ export default {
 			return null;
 		}
 
-		await world.populate('wikiPage')
-			.populate({path: 'rootFolder', populate: {path: 'children pages'}})
-			.populate({path: 'roles', populate: {path: 'permissions world', populate: {path: 'subject'}}})
-			.populate({path: 'pins', populate: {path: 'page'}})
-			.execPopulate();
+		// await world.populate('wikiPage')
+		// 	.populate({path: 'rootFolder', populate: {path: 'children pages'}})
+		// 	.populate({path: 'roles', populate: {path: 'permissions world', populate: {path: 'subject'}}})
+		// 	.populate({path: 'pins', populate: {path: 'page'}})
+		// 	.execPopulate();
 
 		return world;
 	},

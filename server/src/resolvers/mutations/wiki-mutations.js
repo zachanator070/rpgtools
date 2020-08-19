@@ -33,6 +33,7 @@ export const wikiMutations = {
 			await currentUser.save();
 		}
 
+		await newPage.populate('world').execPopulate();
 		return newPage.world;
 	}),
 	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
