@@ -11,6 +11,15 @@ import {
 	WORLD_PERMISSIONS
 } from "../../../common/src/permission-constants";
 import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
+import {getLoader} from "../get-loader";
+import {WikiPage} from "../models/wiki-page";
+import mongoose from 'mongoose';
+import {Role} from "../models/role";
+import {Pin} from "../models/pin";
+import {World} from "../models/world";
+import {Chunk} from "../models/chunk";
+import {Place} from "../models/place";
+import {Image} from "../models/image";
 
 const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}) => {
 	let allUsers = [];
@@ -33,51 +42,72 @@ const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}
 	return allUsers;
 };
 
+const getDocument = async (model, id) => {
+	if(id){
+		return await getLoader(model).load(id);
+	}
+
+}
+
+const getDocuments = async (model, ids) => {
+	// filter out object ids
+	let documents = ids.filter(document => ! (document instanceof mongoose.Types.ObjectId));
+	// concat models from object ids
+	documents = documents.concat(await getLoader(model).loadMany(ids.filter(document => document instanceof mongoose.Types.ObjectId)));
+	return documents;
+}
+
+const getPermissionControlledDocuments = async (model, ids, currentUser) => {
+	let documents = await getDocuments(model, ids);
+	documents = documents.filter(async document => await document.userCanRead(currentUser));
+	return documents;
+};
+
+const getPermissionControlledDocument = async (model, id, currentUser) => {
+	if(id){
+		const document = id instanceof mongoose.Types.ObjectId ? await getDocument(model, id) : id;
+		if(await document.userCanRead(currentUser)){
+			return document;
+		}
+	}
+};
+
+const wikiPageResolvers = {
+	world: async (page) => {
+		return await getDocument(World, page.world);
+	},
+	coverImage: async (page) => {
+		return await getDocument(Image, page.coverImage);
+	},
+	canWrite: async (page, _, {currentUser}) => {
+		return await page.userCanWrite(currentUser);
+	},
+	usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
+};
+
 export const serverResolvers = {
 	Query: QueryResolver,
 	Mutation: MutationResolver,
 	World: {
 		roles: async (world, _, {currentUser}) => {
-			let roles = [];
-			for(let role of world.roles){
-				if(await role.userCanRead(currentUser)){
-					roles.push(role);
-				}
-			}
-			return roles;
+			return await getPermissionControlledDocuments(Role, world.roles, currentUser);
 		},
 		rootFolder: async (world, _, {currentUser}) => {
-			if(await world.rootFolder.userCanRead(currentUser)){
-				return world.rootFolder;
-			}
-			return null;
+			return await getPermissionControlledDocument(WikiFolder, world.rootFolder, currentUser);
 		},
 		wikiPage: async (world, _, {currentUser}) => {
-			if(await world.wikiPage.userCanRead(currentUser)){
-				return world.wikiPage;
-			}
-			return null;
+			return await getPermissionControlledDocument(Place, world.wikiPage, currentUser);
 		},
 		canWrite: async (world, _, {currentUser}) => {
 			return await world.userCanWrite(currentUser);
 		},
 		pins: async (world, _, {currentUser}) => {
-			const pins = [];
-			for(let pin of world.pins){
-				if(await pin.userCanRead(currentUser)){
-					pins.push(pin);
-				}
-			}
-			return pins;
+			return await getPermissionControlledDocuments(Pin, world.pins, currentUser);
 		},
 		folders: async (world, _, {currentUser}) => {
 			const folders = [];
-			const foundFolders = await WikiFolder.find({world: world._id}).populate("children pages");
-			for(let folder of foundFolders){
+			for(let folder of await WikiFolder.find({world: world._id})){
 				if(await folder.userCanRead(currentUser)){
-					folder.pages = folder.pages.filter(async (page) => {
-						return await page.userCanRead(currentUser)
-					});
 					folders.push(folder);
 				}
 			}
@@ -101,48 +131,26 @@ export const serverResolvers = {
 			return user.email;
 		},
 		roles: async (user, _, {currentUser}) => {
-			if(user._id.equals(currentUser._id)){
-				return user.roles;
-			}
-			const roles = [];
-			for(let role of user.roles){
-				if(await role.userCanRead(currentUser)){
-					roles.push(role)
-				}
-			}
-			return roles;
+			return await getPermissionControlledDocuments(Role, user.roles, currentUser);
 		},
 		permissions: async (user, _, {currentUser}) => {
-			if(user._id.equals(currentUser._id)){
-				return user.permissions;
-			}
-			const permissions = [];
-			for(let permission of user.permissions){
-				if(await permission.userCanRead(currentUser)){
-					permissions.push(permission);
-				}
-			}
-			return permissions;
+			return await getPermissionControlledDocuments(PermissionAssignment, user.permissions, currentUser);
 		},
 		currentWorld: async (user, _, {currentUser}) => {
 			if(!user._id.equals(currentUser._id)){
 				return null;
 			}
-			return user.currentWorld;
+			return getPermissionControlledDocument(World, user.currentWorld, currentUser);
 		}
 	},
 	Role: {
 		permissions: async (role, _, {currentUser}) => {
 			if(role.name === EVERYONE || role.name === ALL_USERS){
-				return role.permissions;
+				return await getDocuments(PermissionAssignment, role.permissions);
 			}
-			const permissions = [];
-			for(let permission of role.permissions){
-				if(await permission.userCanRead(currentUser)){
-					permissions.push(permission);
-				}
+			else {
+				return await getPermissionControlledDocuments(PermissionAssignment, role.permissions, currentUser);
 			}
-			return permissions;
 		},
 		canWrite: async (role, _, {currentUser}) => {
 			return role.userCanWrite(currentUser);
@@ -153,7 +161,6 @@ export const serverResolvers = {
 				return [];
 			}
 			return User.find({roles: role._id});
-
 		},
 		usersWithPermissions: usersWithPermissions(ROLE_PERMISSIONS)
 	},
@@ -163,42 +170,26 @@ export const serverResolvers = {
 		},
 	},
 	Article: {
-		canWrite: async (page, _, {currentUser}) => {
-			return await page.userCanWrite(currentUser);
-		},
-		usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
+		...wikiPageResolvers,
 	},
 	Person: {
-		canWrite: async (person, _, {currentUser}) => {
-			return await person.userCanWrite(currentUser);
-		},
-		usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
+		...wikiPageResolvers,
 	},
 	Place: {
-		canWrite: async (place, _, {currentUser}) => {
-			return await place.userCanWrite(currentUser);
-		},
-		usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
+		...wikiPageResolvers,
+		mapImage: async (page) => {
+			return await getDocument(Image, page.mapImage);
+		}
 	},
 	WikiFolder: {
+		world: async (page) => {
+			return await getDocument(World, page.world);
+		},
 		children: async (folder, _, {currentUser}) => {
-			const children = [];
-			await folder.populate('children').execPopulate();
-			for(let child of folder.children){
-				if(await child.userCanRead(currentUser)){
-					children.push(child);
-				}
-			}
-			return children;
+			return await getPermissionControlledDocuments(WikiFolder, folder.children, currentUser);
 		},
 		pages: async (folder, _, {currentUser}) => {
-			const pages = [];
-			for(let page of folder.pages){
-				if(await page.userCanRead(currentUser)){
-					pages.push(page);
-				}
-			}
-			return pages;
+			return await getPermissionControlledDocuments(WikiPage, folder.pages, currentUser);
 		},
 		canWrite: async (folder, _, {currentUser}) => {
 			return await folder.userCanWrite(currentUser);
@@ -206,11 +197,26 @@ export const serverResolvers = {
 		usersWithPermissions: usersWithPermissions(WIKI_FOLDER_PERMISSIONS)
 	},
 	Image: {
+		world: async (image) => {
+			return await getDocument(World, image.world);
+		},
+		chunks: async (image) => {
+			return await getDocuments(Chunk, image.chunks);
+		},
+		icon: async (image) => {
+			return await getDocument(Image, image.icon)
+		},
 		canWrite: async (image, _, {currentUser}) => {
 			return await image.userCanWrite(currentUser);
 		},
 	},
 	Pin: {
+		map: async (pin) => {
+			return await getDocument(Place, pin.map);
+		},
+		page: async (pin) => {
+			return await getDocument(WikiPage, pin.page);
+		},
 		canWrite: async (pin, _, {currentUser}) => {
 			return await pin.userCanWrite(currentUser);
 		}
@@ -237,6 +243,15 @@ export const serverResolvers = {
 		}
 	},
 	PermissionAssignment: {
+		subject: async (assigment, _, {currentUser}) => {
+			if(assigment.subject instanceof mongoose.Types.ObjectId){
+				await assigment.populate('subject').execPopulate();
+			}
+			if(!await assigment.subject.userCanRead(currentUser)){
+				assigment.subject = null;
+			}
+			return assigment.subject;
+		},
 		canWrite: async (assignment, _, {currentUser}) => {
 			return await assignment.userCanWrite(currentUser);
 		}

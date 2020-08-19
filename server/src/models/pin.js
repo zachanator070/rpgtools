@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {Place} from './place';
 import {WikiPage} from "./wiki-page";
-import {PIN, PLACE} from "../../../common/src/type-constants";
+import {PIN, PLACE, WIKI_PAGE} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -21,7 +21,7 @@ const pinSchema = new Schema({
 	},
 	page: {
 		type: mongoose.Schema.ObjectId,
-		ref: 'WikiPage',
+		ref: WIKI_PAGE,
 	}
 });
 

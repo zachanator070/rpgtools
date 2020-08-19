@@ -75,6 +75,13 @@ export const folderMutations = {
 		}
 
 		await WikiFolder.deleteOne({_id: folderId});
+
+		const parents = await WikiFolder.find({children: folder._id});
+		for(let parent of parents){
+			parent.children = parent.children.filter(child => ! child.equals(folder._id));
+			await parent.save();
+		}
+
 		return folder.world;
 
 	}
