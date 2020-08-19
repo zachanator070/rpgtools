@@ -7,6 +7,8 @@ import useSetEditPinModalVisibility from "../../hooks/useSetEditPinModalVisibili
 import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
 import {useUpdatePin} from "../../hooks/useUpdatePin";
 import {useDeletePin} from "../../hooks/useDeletePin";
+import {PLACE, WIKI_PAGE} from "../../../../common/src/type-constants";
+import SelectWiki from "../select/SelectWiki";
 
 export const EditPinModal = () => {
 
@@ -26,7 +28,7 @@ export const EditPinModal = () => {
 	useEffect(() => {
 		if(currentWorld){
 			(async () => {
-				await searchWikiPages(searchPhrase, currentWorld._id);
+				await searchWikiPages(searchPhrase);
 			})();
 		}
 	}, [currentWorld, searchPhrase]);
@@ -49,6 +51,7 @@ export const EditPinModal = () => {
 	};
 
 	const handleChange = async (value) => {
+		await setSearchPhrase(value.name);
 		await setPage(value);
 	};
 
@@ -78,17 +81,7 @@ export const EditPinModal = () => {
 			>
 				<Form layout='horizontal'>
 					<Form.Item label="Page" {...formItemLayout}>
-						<Select
-							showSearch
-							style={{width: 200}}
-							placeholder="Select a Wiki Page"
-							defaultValue={pinBeingEdited && pinBeingEdited.page ? pinBeingEdited.page._id : null}
-							optionFilterProp="children"
-							onChange={handleChange}
-							filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-						>
-							{options}
-						</Select>
+						<SelectWiki onChange={setPage}/>
 					</Form.Item>
 					<Form.Item
 						{...noLabelItem}>

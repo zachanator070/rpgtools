@@ -111,10 +111,8 @@ export const wikiMutations = {
 			}
 			wikiPage.world = wikiPageObject.world._id;
 			wikiPage.name = wikiPageObject.name;
-			wikiPage.content = wikiPageObject.content;
-			if(wikiPageObject.coverImage){
-				wikiPage.coverImage = wikiPageObject.coverImage._id;
-			}
+			wikiPage.contentId = wikiPageObject.contentId;
+			wikiPage.coverImage = wikiPageObject.coverImage;
 		}
 
 		await wikiPage.save();

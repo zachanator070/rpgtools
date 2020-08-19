@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {Popover} from "antd";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
@@ -16,9 +16,11 @@ export const Pin = ({pin, translate}) => {
 
 	const {setMapWikiVisibility} = useSetMapWikiVisibility();
 	const {setMapWiki} = useSetMapWiki();
+	const [visible, setVisible] = useState(false);
 
 	const editButton = pin.canWrite ?
 		<a href='#' className='margin-md-left' onClick={async () => {
+			await setVisible(false);
 			await setPinBeingEdited(pin._id);
 			await setEditPinModalVisibility(true);
 		}}>Edit Pin</a>
@@ -34,6 +36,7 @@ export const Pin = ({pin, translate}) => {
 			<h2>{pin.page.name}</h2>
 			<h3>{pin.page.type}</h3>
 			<a href='#' onClick={async () => {
+				await setVisible(false);
 				await setMapWikiVisibility(true);
 				await setMapWiki(pin.page._id);
 			}}>Details</a>
@@ -53,6 +56,8 @@ export const Pin = ({pin, translate}) => {
 			trigger="click"
 			key={pin._id}
 			overlayStyle={{zIndex: '10'}}
+			visible={visible}
+			onVisibleChange={async (newVisible) => await setVisible(newVisible)}
 		>
 			<div style={{
 				position: 'absolute',
