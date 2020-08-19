@@ -16,7 +16,7 @@ export const WikiEdit = () => {
 
 	const history = useHistory();
 	const {currentWiki} = useCurrentWiki();
-	const {currentWorld} = useCurrentWorld();
+	const {currentWorld, refetch: refetchWorld} = useCurrentWorld();
 
 	const [mapToUpload, setMapToUpload] = useState( false);
 	const [coverToUpload, setCoverToUpload] = useState( false);
@@ -123,7 +123,7 @@ export const WikiEdit = () => {
 			}
 			await updatePlace(currentWiki._id, mapImageId);
 		}
-
+		await refetchWorld();
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 	};
 

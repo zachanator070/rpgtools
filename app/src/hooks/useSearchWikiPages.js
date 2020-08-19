@@ -5,7 +5,7 @@ import {ARTICLE} from "../../../common/src/type-constants";
 export const useSearchWikiPages = () => {
 	const {currentWorld, loading} = useCurrentWorld();
 	const [allWikis, setAllWikis] = useState([]);
-	const [filter, setFilter] = useState({name: '', type: ARTICLE});
+	const [filter, setFilter] = useState({name: '', type: null});
 	useEffect(() => {
 		(async () => {
 			if(!loading){
@@ -23,6 +23,6 @@ export const useSearchWikiPages = () => {
 			await setFilter({name, type});
 		},
 		loading,
-		wikis: allWikis.filter(wiki => wiki.name.includes(filter.name) && wiki.type === filter.type),
+		wikis: allWikis.filter(wiki => wiki.name.includes(filter.name) && (filter.type === undefined || wiki.type === filter.type)),
 	}
 };

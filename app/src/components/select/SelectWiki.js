@@ -10,8 +10,8 @@ export default ({type, onChange}) => {
 
 	useEffect(() => {
 		let found = false;
-		for(let role of wikis){
-			if(role.name.includes(value)){
+		for(let wiki of wikis){
+			if(wiki._id === value){
 				found = true;
 			}
 		}
@@ -29,7 +29,7 @@ export default ({type, onChange}) => {
 		value={value}
 		filterOption={false}
 		notFoundContent={loading ? <Spin size="small" /> : null}
-		onSearch={async (term) => {await searchWikiPages(term, currentWorld._id, type)}}
+		onSearch={async (term) => {await searchWikiPages(term, type)}}
 		onChange={async (newValue) => {
 			await setValue(newValue);
 			if(onChange){
