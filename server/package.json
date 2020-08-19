@@ -21,7 +21,7 @@
     "graphql-tag": "^2.10.3",
     "gridfs-stream": "^1.1.1",
     "jest": "^26.4.0",
-    "jimp": "^0.9.8",
+    "jimp": "^0.16.0",
     "jsonwebtoken": "^8.5.1",
     "minimist": ">=1.2.2",
     "mongodb": "^3.5.2",
