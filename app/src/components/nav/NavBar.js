@@ -113,6 +113,11 @@ export const NavBar = () => {
 									Roles
 								</Link>
 								<Divider type='vertical'/>
+								<Link
+									to={`/ui/world/${currentWorld._id}/game`}
+								>
+									Game
+								</Link>
 							</div>
 						</Col>
 						<Col span={10}>

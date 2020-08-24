@@ -92,6 +92,19 @@ export const GET_CURRENT_WORLD = gql`
 			wikiPage {
 				_id
 				name
+				mapImage {
+					width
+					height
+					chunkWidth
+					chunkHeight
+					chunks {
+						fileId
+						x
+						y
+						width
+						height
+					}
+				}
 			}
 			rootFolder{
 				${CURRENT_WORLD_FOLDERS}

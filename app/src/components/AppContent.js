@@ -14,6 +14,8 @@ import {RolesView} from "./permissions/RolesView";
 import {TeamOutlined} from "@ant-design/icons";
 import {MyPermissionsView} from "./permissions/MyPermissionsView";
 import {PermissionModal} from "./modals/PermissionModal";
+import {GameView} from "./game/GameView";
+import {NavBar} from "./nav/NavBar";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
@@ -100,9 +102,10 @@ export const AppContent = () => {
 				<Modals/>
 				<WikiContent/>
 			</Route>
-			{/*<Route path="/ui/game">*/}
-			{/*    <GameContainer/>*/}
-			{/*</Route>*/}
+			<Route path={`${match.path}/game`}>
+				<NavBar/>
+				<GameView/>
+			</Route>
 			<Route>
 				<Redirect to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}/>
 			</Route>
