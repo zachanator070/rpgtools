@@ -5,7 +5,7 @@ import {EVERYONE} from "../../../../common/src/role-constants";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 
-export default () => {
+export const MyPermissionsView = () => {
 	const {currentWorld} = useCurrentWorld();
 	const {currentUser} = useCurrentUser();
 

@@ -3,7 +3,7 @@ import {Select, Spin} from "antd";
 import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 
-export default ({type, onChange}) => {
+export const SelectWiki = ({type, onChange}) => {
 	const {currentWorld} = useCurrentWorld();
 	const {searchWikiPages, wikis, loading} = useSearchWikiPages();
 	const [value, setValue] = useState('');

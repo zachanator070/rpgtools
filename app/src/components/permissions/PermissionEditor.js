@@ -9,15 +9,14 @@ import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import {WORLD} from "../../../../common/src/type-constants";
-import SelectUser from "../select/SelectUser";
-import SelectRole from "../select/SelectRole";
-import usePermissionEditorSubject from "../../hooks/usePermissionEditorSubject";
-import usePermissionEditorSubjectType from "../../hooks/usePermissionEditorSubjectType";
+import {SelectUser} from "../select/SelectUser";
+import {SelectRole} from "../select/SelectRole";
+import {LoadingView} from "../LoadingView";
 
-export default () => {
+export const PermissionEditor = ({subject, subjectType}) => {
 
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
-	const {refetch} = useCurrentUser();
+	const {refetch, currentUser, loading: currentUserLoading} = useCurrentUser();
 	const [permissionGroup, setPermissionGroup] = useState('users');
 	const {grantUserPermission} = useGrantUserPermission();
 	const {grantRolePermission} = useGrantRolePermission();
@@ -26,12 +25,14 @@ export default () => {
 	const [permissionAssigneeId, setPermissionAssigneeId] = useState(null);
 	const [selectedPermission, setSelectedPermission] = useState(null);
 
-	const {permissionEditorSubject: subject} = usePermissionEditorSubject();
-	const {permissionEditorSubjectType: subjectType} = usePermissionEditorSubjectType();
 	let permissions = subjectType === WORLD ? WORLD_PERMISSIONS : WIKI_PERMISSIONS;
 
 	if(subject === null || subjectType === null){
 		return <></>;
+	}
+
+	if(currentWorldLoading || currentUserLoading){
+		return <LoadingView/>;
 	}
 
 	let userPermissions = [];
@@ -50,6 +51,26 @@ export default () => {
 				rolePermissions.push({role: role, permission: permission});
 			}
 		}
+	}
+
+	const canAssignPermission = (permission) => {
+		// you can assign the permission if you have the permission directly assigned
+		for(let item of userPermissions){
+			if(item.user._id === currentUser._id && item.permission === permission){
+				return true;
+			}
+		}
+
+		// you can assign the permission if you have the permission through a role
+		for(let item of rolePermissions){
+			for(let role of currentUser.roles){
+				if(item.role._id === role._id && item.permission.permission === permission){
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	return <>
@@ -75,7 +96,7 @@ export default () => {
 								bordered
 								dataSource={permissionGroup === 'users' ?
 									userPermissions.filter(
-										rolePermission => rolePermission.permission.permission === permission
+										userPermission => userPermission.permission.permission === permission
 									).map(
 										userPermission => userPermission.user
 									).filter(
@@ -94,12 +115,15 @@ export default () => {
 										return (
 											<List.Item key={permission + '.' + item._id}>
 												{item.username}
-												<Button className='margin-md-left' type='primary' danger onClick={async () => {
-													await revokeUserPermission(item._id, item.permissions.filter(userPermission => userPermission.permission === permission)[0]._id);
-													await refetch();
-												}}>
-													<DeleteOutlined />
-												</Button>
+												{canAssignPermission(permission) &&
+													<Button className='margin-md-left' type='primary' danger
+													        onClick={async () => {
+														        await revokeUserPermission(item._id, item.permissions.filter(userPermission => userPermission.permission === permission)[0]._id);
+														        await refetch();
+													        }}>
+														<DeleteOutlined/>
+													</Button>
+												}
 											</List.Item>
 										);
 									}
@@ -107,12 +131,15 @@ export default () => {
 										return (
 											<List.Item key={permission + '.' + item._id}>
 												{item.name}
-												<Button className='margin-md-left' type='primary' danger onClick={async () => {
-													await revokeRolePermission(item._id, item.permissions.filter(userPermission => userPermission.permission === permission)[0]._id);
-													await refetch();
-												}}>
-													<DeleteOutlined />
-												</Button>
+												{canAssignPermission(permission) &&
+													<Button className='margin-md-left' type='primary' danger
+													        onClick={async () => {
+														        await revokeRolePermission(item._id, item.permissions.filter(userPermission => userPermission.permission === permission)[0]._id);
+														        await refetch();
+													        }}>
+														<DeleteOutlined/>
+													</Button>
+												}
 											</List.Item>
 										);
 
@@ -125,38 +152,42 @@ export default () => {
 			</Col>
 		</Row>
 
-		<Row className='margin-md-top'>
-			<Col span={20} style={{textAlign: 'right'}}>
-				{permissionGroup === 'users' ?
-					<SelectUser
-						onChange={async (value) => {
-							await setPermissionAssigneeId(value);
-						}}
-					/>
-					:
-					<SelectRole
-						onChange={async (value) => {
-							await setPermissionAssigneeId(value);
-						}}
-					/>
-				}
-			</Col>
-			<Col span={4}>
-				<Button disabled={permissionAssigneeId === null} className='margin-md-left' onClick={async () => {
-					let permission = selectedPermission;
-					if(!permission){
-						permission = permissions[0];
-					}
-					if(permissionGroup === 'users'){
-						await grantUserPermission(permissionAssigneeId, permission, subject._id, subjectType);
-						await refetch();
-					}
-					else{
-						await grantRolePermission(permissionAssigneeId, permission, subject._id, subjectType);
-						await refetch();
-					}
-				}}>Add {permissionGroup === 'users' ? 'user' : 'role'}</Button>
-			</Col>
-		</Row>
+		{canAssignPermission(selectedPermission) &&
+			<>
+				<Row className='margin-md-top'>
+					<Col span={20} style={{textAlign: 'right'}}>
+						{permissionGroup === 'users' ?
+							<SelectUser
+								onChange={async (value) => {
+									await setPermissionAssigneeId(value);
+								}}
+							/>
+							:
+							<SelectRole
+								onChange={async (value) => {
+									await setPermissionAssigneeId(value);
+								}}
+							/>
+						}
+					</Col>
+					<Col span={4}>
+						<Button disabled={permissionAssigneeId === null} className='margin-md-left' onClick={async () => {
+							let permission = selectedPermission;
+							if(!permission){
+								permission = permissions[0];
+							}
+							if(permissionGroup === 'users'){
+								await grantUserPermission(permissionAssigneeId, permission, subject._id, subjectType);
+								await refetch();
+							}
+							else{
+								await grantRolePermission(permissionAssigneeId, permission, subject._id, subjectType);
+								await refetch();
+							}
+						}}>Add {permissionGroup === 'users' ? 'user' : 'role'}</Button>
+					</Col>
+				</Row>
+			</>
+		}
 	</>;
 };

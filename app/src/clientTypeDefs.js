@@ -8,12 +8,8 @@ export const clientTypeDefs = gql`
 		createWorldModalVisibility: Boolean!
 		selectWorldModalVisibility: Boolean!
 		worldPermissionModalVisibility: Boolean!
-		permissionModalVisibility: Boolean!
 		editPinModalVisibility: Boolean!
 		mapWikiVisibility: Boolean!
-		
-		permissionEditorSubject: PermissionControlled!
-		permissionEditorSubjectType: String!
 		
 		pinBeingEdited: ID
 		mapWiki: ID
@@ -30,9 +26,6 @@ export const clientTypeDefs = gql`
         
         setPinBeingEdited(pinId: ID!): ID
         setMapWiki(mapWikiId: ID!): ID
-        
-        setPermissionEditorSubjectType(subjectType: String!): String!
-        setPermissionEditorSubject(subject: PermissionControlled!): PermissionControlled!
     }
     
 `;

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useSearchUsers} from "../../hooks/useSearchUsers";
 import {Select, Spin} from "antd";
 
-export default ({onChange}) => {
+export const SelectUser = ({onChange}) => {
 	const {searchUsers, users, loading} = useSearchUsers();
 	const [value, setValue] = useState('');
 

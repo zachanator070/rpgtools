@@ -11,14 +11,14 @@ import {
 } from "../../../../common/src/type-constants";
 import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/useRemoveUserRole";
-import SelectUser from "../select/SelectUser";
+import {SelectUser} from "../select/SelectUser";
 import useAddUserRole from "../../hooks/useAddUserRole";
 import {ROLE_ADMIN} from "../../../../common/src/permission-constants";
 import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
-import AddRolePermission from "./AddRolePermission";
+import {AddRolePermission} from "./AddRolePermission";
 
-export default () => {
+export const RolesView = () => {
 
 	const {currentUser, loading} = useCurrentUser();
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();

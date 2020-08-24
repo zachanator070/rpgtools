@@ -7,8 +7,7 @@ import useSetEditPinModalVisibility from "../../hooks/useSetEditPinModalVisibili
 import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
 import {useUpdatePin} from "../../hooks/useUpdatePin";
 import {useDeletePin} from "../../hooks/useDeletePin";
-import {PLACE, WIKI_PAGE} from "../../../../common/src/type-constants";
-import SelectWiki from "../select/SelectWiki";
+import {SelectWiki} from "../select/SelectWiki";
 
 export const EditPinModal = () => {
 

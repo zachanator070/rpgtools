@@ -11,7 +11,6 @@ import {DefaultView} from "./DefaultView";
 import {SelectWorldModal} from "./modals/SelectWorldModal";
 import {AppContent} from "./AppContent";
 import {EditPinModal} from "./modals/EditPinModal";
-import {PermissionModal} from "./modals/PermissionModal";
 import {ServerSetup} from "./server/ServerSetup";
 import ServerSettings from "./server/ServerSettings";
 
@@ -22,7 +21,6 @@ export const Modals = () => {
 			<RegisterModal/>
 			<CreateWorldModal/>
 			<SelectWorldModal/>
-			<PermissionModal/>
 			<EditPinModal/>
 			<NavBar/>
 		</>
