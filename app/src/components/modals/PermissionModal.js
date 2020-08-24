@@ -1,18 +1,8 @@
 import React from 'react';
 import {Modal} from "antd";
-import usePermissionModalVisibility from "../../hooks/usePermissionModalVisibility";
-import useSetPermissionModalVisibility from "../../hooks/useSetPermissionModalVisibility";
-import PermissionEditor from "../permissions/PermissionEditor";
-import usePermissionEditorSubject from "../../hooks/usePermissionEditorSubject";
-import usePermissionEditorSubjectType from "../../hooks/usePermissionEditorSubjectType";
+import {PermissionEditor} from "../permissions/PermissionEditor";
 
-export const PermissionModal = () => {
-
-	const {permissionModalVisibility} = usePermissionModalVisibility();
-	const {setPermissionModalVisibility} = useSetPermissionModalVisibility();
-
-	const {permissionEditorSubject: subject} = usePermissionEditorSubject();
-	const {permissionEditorSubjectType: subjectType} = usePermissionEditorSubjectType();
+export const PermissionModal = ({visibility, setVisibility, subject, subjectType}) => {
 
 	if(subject === null || subjectType === null){
 		return <></>;
@@ -22,10 +12,10 @@ export const PermissionModal = () => {
 
 	return (
 		<Modal
-			visible={permissionModalVisibility}
+			visible={visibility}
 			title={`Permissions for ${subjectName}`}
 			onCancel={async () => {
-				await setPermissionModalVisibility(false);
+				await setVisibility(false);
 			}}
 			footer={[]}
 			width={'750px'}

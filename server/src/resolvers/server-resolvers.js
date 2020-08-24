@@ -58,8 +58,12 @@ const getDocuments = async (model, ids) => {
 }
 
 const getPermissionControlledDocuments = async (model, ids, currentUser) => {
-	let documents = await getDocuments(model, ids);
-	documents = documents.filter(async document => await document.userCanRead(currentUser));
+	let documents = [];
+	for(let document of await getDocuments(model, ids)){
+		if(await document.userCanRead(currentUser)){
+			documents.push(document);
+		}
+	}
 	return documents;
 };
 

@@ -2,30 +2,34 @@ import {Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
 import useCurrentWorld from "../hooks/useCurrentWorld";
 import {LoadingView} from "./LoadingView";
 import {MapView} from "./map/MapView";
-import React from "react";
+import React, {useState} from "react";
 import useCurrentWiki from "../hooks/useCurrentWiki";
 import {Col, Row} from "antd";
 import {FolderView} from "./wiki/FolderView";
 import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
-import useSetPermissionModalVisibility from "../hooks/useSetPermissionModalVisibility";
 import {Modals} from "./App";
 import WorldSettings from "./WorldSettings";
-import RolesView from "./permissions/RolesView";
+import {RolesView} from "./permissions/RolesView";
 import {TeamOutlined} from "@ant-design/icons";
-import useSetPermissionEditorSubject from "../hooks/useSetPermissionEditorSubject";
-import useSetPermissionEditorSubjectType from "../hooks/useSetPermissionEditorSubjectType";
-import MyPermissionsView from "./permissions/MyPermissionsView";
+import {MyPermissionsView} from "./permissions/MyPermissionsView";
+import {PermissionModal} from "./modals/PermissionModal";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
 	const {currentWorld, loading: worldLoading} = useCurrentWorld();
-	const {setPermissionModalVisibility} = useSetPermissionModalVisibility();
 	const match = useRouteMatch();
-	const {setPermissionEditorSubject} = useSetPermissionEditorSubject();
-	const {setPermissionEditorSubjectType} = useSetPermissionEditorSubjectType();
+
+	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
 	return wikiLoading || worldLoading ? <LoadingView/> :
+		<>
+			<PermissionModal
+				visibility={permissionModalVisibility}
+				setVisibility={setPermissionModalVisibility}
+				subject={currentWiki}
+				subjectType={currentWiki.type}
+			/>
 			<Row>
 				<Col span={4} className='padding-md'>
 					<FolderView/>
@@ -46,8 +50,6 @@ const WikiContent = () => {
 					<Route path={`${match.path}/view`}>
 						{currentWiki.canWrite &&
 							<a title={'View permissions for this page'} onClick={async () => {
-								await setPermissionEditorSubject(currentWiki);
-								await setPermissionEditorSubjectType(currentWiki.type);
 								await setPermissionModalVisibility(true);
 							}}>
 								<TeamOutlined style={{fontSize: '20px'}}/>
@@ -56,6 +58,7 @@ const WikiContent = () => {
 					</Route>
 				</Col>
 			</Row>
+		</>
 };
 
 export const AppContent = () => {

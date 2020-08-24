@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Select, Spin} from "antd";
 import {useSearchRoles} from "../../hooks/useSearchRoles";
 
-export default ({onChange}) => {
+export const SelectRole = ({onChange}) => {
 	const {searchRoles, roles, loading} = useSearchRoles();
 	const [value, setValue] = useState('');
 

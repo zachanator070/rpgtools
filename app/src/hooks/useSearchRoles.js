@@ -9,7 +9,7 @@ export const useSearchRoles = () => {
 		searchRoles: async (name) => {
 			await setFilter({name});
 		},
-		roles: currentWorld.roles.filter(role => role.name.includes(filter.name)),
+		roles: currentWorld ? currentWorld.roles.filter(role => role.name.includes(filter.name)) : [],
 		loading,
 	}
 };

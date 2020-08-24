@@ -211,6 +211,7 @@ export const GET_CURRENT_USER = gql`
                 }
             }
             ${CURRENT_WORLD_PERMISSIONS}
+            ${CURRENT_WORLD_ROLES}
         }
     }
 `;

@@ -25,10 +25,6 @@ export const clientResolvers = {
 			cache.writeData({data: {mapWikiVisibility: visibility}});
 			return visibility;
 		},
-		setPermissionModalVisibility: (_root, {visibility}, {client, cache}) => {
-			cache.writeData({data: {permissionModalVisibility: visibility}});
-			return visibility;
-		},
 		setPinBeingEdited: (_, {pinId}, {client, cache}) => {
 			cache.writeData({data: {pinBeingEdited: pinId}});
 			return pinId;
@@ -41,9 +37,5 @@ export const clientResolvers = {
 			cache.writeData({data: {permissionEditorSubject: subject}});
 			return subject;
 		},
-		setPermissionEditorSubjectType: (_, {subjectType}, {client, cache}) => {
-			cache.writeData({data: {permissionEditorSubjectType: subjectType}});
-			return subjectType;
-		}
 	},
 };

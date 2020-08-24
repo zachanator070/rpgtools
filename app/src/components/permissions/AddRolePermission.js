@@ -2,13 +2,13 @@ import React, {useState} from 'react';
 import {Button, Select, Tabs} from "antd";
 import {ALL_WIKI_TYPES, PERMISSION_CONTROLLED_TYPES, ROLE, WORLD} from "../../../../common/src/type-constants";
 import {getPermissionsBySubjectType} from "../../../../common/src/permission-constants";
-import SelectRole from "../select/SelectRole";
+import {SelectRole} from "../select/SelectRole";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import SelectWiki from "../select/SelectWiki";
+import {SelectWiki} from "../select/SelectWiki";
 import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
 import Errors from "../Errors";
 
-export default ({role}) => {
+export const AddRolePermission = ({role}) => {
 
 	const {currentWorld} = useCurrentWorld();
 	const [permissionToAdd, setPermissionToAdd] = useState(null);
