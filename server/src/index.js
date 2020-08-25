@@ -9,6 +9,7 @@ import path from 'path';
 import {ImageRouter} from "./routers/image-router";
 import {checkConfig, serverNeedsSetup} from './server-needs-setup';
 import crypto from 'crypto';
+import {ModelRouter} from "./routers/model-router";
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -48,6 +49,7 @@ const createServer = async () => {
 	});
 
 	server.use('/images', ImageRouter);
+	server.use('/models', ModelRouter);
 
 	server.get('*', (req, res, next) => {
 		const needsSetup = serverNeedsSetup();

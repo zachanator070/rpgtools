@@ -1,17 +1,54 @@
 import React, {useEffect, useRef} from 'react';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 function setupScene(root, mapImage) {
 
 	const height = root.clientHeight;
 	const width = root.clientWidth;
 
+	const miniWidth = 100;
+
+	let scene = new THREE.Scene();
+
+	// setup lights, one at each corner and one at center
+
+	const lightHeight = Math.max(mapImage.width, mapImage.height) / 2;
+
+	const centerLight = new THREE.PointLight();
+	centerLight.position.set( 0, lightHeight, 0);
+	scene.add( centerLight );
+
+	const topRightLight = new THREE.PointLight();
+	topRightLight.position.set(mapImage.width, lightHeight, -mapImage.height);
+	scene.add( topRightLight );
+
+	const bottomRightLight = new THREE.PointLight();
+	bottomRightLight.position.set( mapImage.width, lightHeight, mapImage.height);
+	scene.add( bottomRightLight );
+
+	const topLeftLight = new THREE.PointLight();
+	topLeftLight.position.set( -mapImage.width, lightHeight, -mapImage.height);
+	scene.add( topLeftLight );
+
+	const bottomLeftLight = new THREE.PointLight();
+	bottomLeftLight.position.set( -mapImage.width, lightHeight, mapImage.height);
+	scene.add( bottomLeftLight );
+
+	// setup camera
+	let camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 10000 );
+	let cameraZ = Math.max(mapImage.width, mapImage.height);
+	let cameraY = Math.min(mapImage.width, mapImage.height);
+
+	camera.position.z = cameraZ;
+	camera.position.y = cameraY;
+
+	// setup map
 	const mapCanvas = document.createElement("canvas");
-	// const mapCanvas = document.getElementById('mapCanvas');
 	mapCanvas.height = mapImage.height;
 	mapCanvas.width = mapImage.width;
-	// document.body.appendChild(mapCanvas);
 
 	const mapContext = mapCanvas.getContext('2d');
 	const texture = new THREE.CanvasTexture(mapCanvas);
@@ -25,50 +62,43 @@ function setupScene(root, mapImage) {
 		}
 	}
 
-	let scene = new THREE.Scene();
-	let camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+	let mapGeometry = new THREE.PlaneGeometry(mapImage.width, mapImage.height);
+	mapGeometry.rotateX(-Math.PI/2);
 
-	let geometry = new THREE.BoxGeometry(1, .666, 1);
+	let mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshBasicMaterial({map: texture}), );
+	scene.add( mapMesh );
 
-	// let texture = new THREE.TextureLoader().load( `/images/${mapId}` );
+	// setup model
+	const loader = new GLTFLoader();
+	loader.load( '/models/gundam', function ( gltf ) {
 
-	const materials = [
-		new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-		new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-		new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-		new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-		new THREE.MeshBasicMaterial({map: texture}),
-		new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-	];
+		// get bounding box and scale to match board size
+		const bbox = new THREE.Box3().setFromObject(gltf.scene);
+		const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
+		gltf.scene.scale.set(newScale, newScale, newScale);
+		scene.add( gltf.scene );
+		// const bboxMesh = new THREE.Mesh(new THREE.BoxGeometry(bbox.getSize().x, bbox.getSize().y, bbox.getSize().z), new THREE.MeshBasicMaterial(0xff0000));
 
-	let cube = new THREE.Mesh( geometry, materials );
+	}, undefined, function ( error ) {
 
-	// const loader = THREE.
-	// loader.load( 'path/to/model.glb', function ( gltf ) {
-	//
-	// 	scene.add( gltf.scene );
-	//
-	// }, undefined, function ( error ) {
-	//
-	// 	console.error( error );
-	//
-	// } );
+		console.error( error );
 
-	scene.add( cube );
+	} );
 
-	let cameraZ = 5;
-
-	camera.position.z = cameraZ;
-
+	// setup renderer
 	let renderer = new THREE.WebGLRenderer();
 	renderer.setSize( width, height );
 
 	const renderElement = renderer.domElement;
 
+	// setup controls
+	const controls = new OrbitControls( camera, renderElement );
+
 	renderElement.onwheel = function(event) {
 		event.preventDefault();
 
-		const scale = .02 * cameraZ;
+		// const scale = .02 * cameraZ;
+		const scale = mapImage.width / 10;
 
 		if (event.deltaY < 0) {
 			// Zoom in
@@ -110,23 +140,26 @@ function setupScene(root, mapImage) {
 	function animate() {
 		requestAnimationFrame( animate );
 
-		raycaster.setFromCamera( mouse, camera );
-		const intersections = raycaster.intersectObjects( scene.children );
-		for(let intersection of intersections){
-			if(mouseDown){
-				intersection.object.position.x = intersection.point.x;
-				intersection.object.position.y = intersection.point.y;
-			}
+		// raycaster.setFromCamera( mouse, camera );
+		// const intersections = raycaster.intersectObjects( scene.children );
+		// for(let intersection of intersections){
+		// 	if(mouseDown){
+		// 		intersection.object.position.x = intersection.point.x;
+		// 		intersection.object.position.y = intersection.point.y;
+		// 	}
+		//
+		// }
 
-		}
-		const cameraSpeed = .05;
-		const marginOfError = .1;
-		if(camera.position.z + marginOfError < cameraZ){
-			camera.position.z += cameraSpeed;
-		}
-		else if (camera.position.z - marginOfError > cameraZ){
-			camera.position.z -= cameraSpeed;
-		}
+		controls.update();
+
+		// const cameraSpeed = mapImage.width / 100;
+		// const marginOfError = .1;
+		// if(camera.position.z + marginOfError < cameraZ){
+		// 	camera.position.z += cameraSpeed;
+		// }
+		// else if (camera.position.z - marginOfError > cameraZ){
+		// 	camera.position.z -= cameraSpeed;
+		// }
 		renderer.render( scene, camera );
 	}
 	animate();
@@ -142,14 +175,9 @@ export const GameView = () => {
 	}, []);
 
 	return <>
-			{/*<canvas*/}
-			{/*	id='mapCanvas'*/}
-			{/*	height={currentWorld.wikiPage.mapImage.height}*/}
-			{/*	width={currentWorld.wikiPage.mapImage.width}*/}
-			{/*/>*/}
 			<div
 			ref={webGLRoot}
-			style={{height: '100%', width: '100%'}}
+			style={{flexGrow:1}}
 		/>
 	</>;
 
