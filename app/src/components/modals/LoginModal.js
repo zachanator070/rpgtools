@@ -2,18 +2,14 @@ import React, {useState} from 'react';
 import {Button, Form, Input, Modal} from "antd";
 import { UserOutlined, KeyOutlined} from '@ant-design/icons';
 import useLogin from "../../hooks/useLogin";
-import useLoginModalVisibility from "../../hooks/useLoginModalVisibility";
-import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
 
-export const LoginModal = () => {
+export const LoginModal = ({visibility, setVisibility}) => {
 
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
-	const {loginModalVisibility} = useLoginModalVisibility();
-	const {setLoginModalVisibility} = useSetLoginModalVisibility();
 	const {login, loading, errors} = useLogin(async () => {
-		await setLoginModalVisibility(false)
+		await setVisibility(false)
 	});
 
 	const formItemLayout = {
@@ -27,9 +23,9 @@ export const LoginModal = () => {
 	return (
 		<Modal
 			title="Login"
-			visible={loginModalVisibility}
+			visible={visibility}
 			centered
-			onCancel={async () => await setLoginModalVisibility(false)}
+			onCancel={async () => await setVisibility(false)}
 			footer={null}
 		>
 			{errors.join('/n')}

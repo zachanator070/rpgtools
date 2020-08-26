@@ -1,14 +1,11 @@
-import React, {Component, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, Modal, List, Row, Col, Divider} from "antd";
 import {useHistory} from 'react-router-dom';
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useSelectWorldModalVisibility from "../../hooks/useSelectWorldModalVisibility";
-import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useWorlds from "../../hooks/useWorlds";
 import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 
-export const SelectWorldModal = () => {
+export const SelectWorldModal = ({visibility, setVisibility}) => {
 
 
 	const [selectedWorld, setSelectedWorld] = useState(null);
@@ -16,8 +13,6 @@ export const SelectWorldModal = () => {
 
 	const {worlds, loading} = useWorlds(currentPage);
 
-	const {selectWorldModalVisibility} = useSelectWorldModalVisibility();
-	const {setSelectWorldModalVisibility} = useSetSelectWorldModalVisibility();
 	const {setCurrentWorld} = useSetCurrentWorld();
 	const {currentUser} = useCurrentUser();
 
@@ -63,9 +58,9 @@ export const SelectWorldModal = () => {
 	return (
 		<Modal
 			title="Select a World"
-			visible={selectWorldModalVisibility}
+			visible={visibility}
 			onCancel={async () => {
-				await setSelectWorldModalVisibility(false);
+				await setVisibility(false);
 			}}
 			footer={[
 				<Button
@@ -76,7 +71,7 @@ export const SelectWorldModal = () => {
 							await setCurrentWorld(selectedWorld._id);
 						}
 						history.push(`/ui/world/${selectedWorld._id}/map/${selectedWorld.wikiPage._id}`);
-						await setSelectWorldModalVisibility(false);
+						await setVisibility(false);
 					}}
 					disabled={selectedWorld === null}
 				>

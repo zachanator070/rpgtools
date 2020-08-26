@@ -93,6 +93,7 @@ export const GET_CURRENT_WORLD = gql`
 				_id
 				name
 				mapImage {
+					_id
 					width
 					height
 					chunkWidth

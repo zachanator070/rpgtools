@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Col, Divider, Row} from 'antd';
 import {Link} from "react-router-dom";
 import {WorldMenu} from "./WorldMenu";
@@ -6,19 +6,19 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useLogout from "../../hooks/useLogout";
 import {LoadingView} from "../LoadingView";
-import useSetLoginModalVisibility from "../../hooks/useSetLoginModalVisibility";
-import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
 import {SearchBar} from "./SearchBar";
 import {SettingOutlined,UserOutlined, CloudServerOutlined} from "@ant-design/icons";
 import useServerConfig from "../../hooks/useServerConfig";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";
+import {LoginModal} from "../modals/LoginModal";
+import {RegisterModal} from "../modals/RegisterModal";
 
 export const NavBar = () => {
 
 	const {currentUser, loading: userLoading} = useCurrentUser();
 	const {currentWorld, loading: worldLoading} = useCurrentWorld();
-	const {setLoginModalVisibility} = useSetLoginModalVisibility();
-	const {setRegisterModalVisibility} = useSetRegisterModalVisibility();
+	const [loginModalVisibility, setLoginModalVisibility] = useState(false);
+	const [registerModalVisibility, setRegisterModalVisibility] = useState(false);
 	const {serverConfig, loading: serverConfigLoading} = useServerConfig();
 
 	const {logout} = useLogout();
@@ -64,6 +64,8 @@ export const NavBar = () => {
 
 	return (
 		<div className='shadow-sm padding-sm nav-bar'>
+			<LoginModal setVisibility={setLoginModalVisibility} visibility={loginModalVisibility}/>
+			<RegisterModal setVisibility={setRegisterModalVisibility} visibility={registerModalVisibility}/>
 			<Row>
 				<Col span={4}>
 					<div className='margin-md-left'>

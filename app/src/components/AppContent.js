@@ -83,27 +83,21 @@ export const AppContent = () => {
 	return (
 		<Switch>
 			<Route path={`${match.path}/settings`}>
-				<Modals/>
 				<WorldSettings/>
 			</Route>
 			<Route path={`${match.path}/myPermissions`}>
-				<Modals/>
 				<MyPermissionsView/>
 			</Route>
 			<Route path={`${match.path}/roles`}>
-				<Modals/>
 				<RolesView/>
 			</Route>
 			<Route path={`${match.path}/map/:map_id`}>
-				<Modals/>
 				<MapView/>
 			</Route>
 			<Route path={`${match.path}/wiki/:wiki_id`}>
-				<Modals/>
 				<WikiContent/>
 			</Route>
 			<Route path={`${match.path}/game`}>
-				<NavBar/>
 				<GameView/>
 			</Route>
 			<Route>

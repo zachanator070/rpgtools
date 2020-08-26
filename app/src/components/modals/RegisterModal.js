@@ -1,12 +1,10 @@
 import React, {useState} from 'react';
 import {Button, Form, Input, Modal} from "antd";
-import useRegisterModalVisibility from "../../hooks/useRegisterModalVisibility";
-import useSetRegisterModalVisibility from "../../hooks/useSetRegisterModalVisibility";
 import useRegister from "../../hooks/useRegister";
 import useLogin from "../../hooks/useLogin";
 import {KeyOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 
-export const RegisterModal = () => {
+export const RegisterModal = ({visibility, setVisibility}) => {
 
 	const [email, setEmail] = useState('');
 	const [username, setUsername] = useState('');
@@ -14,9 +12,7 @@ export const RegisterModal = () => {
 	const [repeatPassword, setRepeatPassword] = useState('');
 	const [registerCode, setRegisterCode] = useState('');
 
-	const {registerModalVisibility} = useRegisterModalVisibility();
-	const {setRegisterModalVisibility} = useSetRegisterModalVisibility();
-	const {register, loading, errors} = useRegister(async () => await setRegisterModalVisibility(false));
+	const {register, loading, errors} = useRegister(async () => await setVisibility(false));
 	const {login} = useLogin();
 
 	const formItemLayout = {
@@ -31,9 +27,9 @@ export const RegisterModal = () => {
 		<div>
 			<Modal
 				title="Register"
-				visible={registerModalVisibility}
+				visible={visibility}
 				centered
-				onCancel={async () => await setRegisterModalVisibility(false)}
+				onCancel={async () => await setVisibility(false)}
 				footer={null}
 				width={720}
 			>
