@@ -17,7 +17,7 @@ ADD app/webpack-dev.config.js webpack-dev.config.js
 RUN mkdir -p dist
 RUN chmod o+w dist
 
-ADD common/src common/src
+ADD common/src ../common/src
 ADD app/src src
 
 CMD ["npm", "run", "start"]
