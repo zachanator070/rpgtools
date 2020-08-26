@@ -1,17 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Dropdown, Menu} from "antd";
-import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModalVisibility";
-import useSetSelectWorldModalVisibility from "../../hooks/useSetSelectWorldModalVisibility";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {LoadingView} from "../LoadingView";
 import {DownOutlined} from "@ant-design/icons";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";
+import {CreateWorldModal} from "../modals/CreateWorldModal";
+import {SelectWorldModal} from "../modals/SelectWorldModal";
 
 export const WorldMenu = () => {
 
-	const {setCreateWorldModalVisibility} = useSetCreateWorldModalVisibility();
-	const {setSelectWorldModalVisibility} = useSetSelectWorldModalVisibility();
+
+	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);
+	const [selectWorldModalVisibility, setSelectWorldModalVisibility] = useState(false);
 
 	const {currentUser, loading} = useCurrentUser();
 	const {currentWorld, loading: worldLoading} = useCurrentWorld();
@@ -24,6 +25,7 @@ export const WorldMenu = () => {
 		<Menu>
 			{currentUser.username !== ANON_USERNAME &&
 				<Menu.Item key="0">
+					<CreateWorldModal visibility={createWorldModalVisibility} setVisibility={setCreateWorldModalVisibility}/>
 					<a
 						href="#"
 					   onClick={async () => await setCreateWorldModalVisibility(true)}
@@ -33,6 +35,7 @@ export const WorldMenu = () => {
 				</Menu.Item>
 			}
 			<Menu.Item key="1">
+				<SelectWorldModal visibility={selectWorldModalVisibility} setVisibility={setSelectWorldModalVisibility}/>
 				<a href="#" onClick={async () => await setSelectWorldModalVisibility(true)}>
 					Select World
 				</a>

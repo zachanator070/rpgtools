@@ -1,18 +1,16 @@
-import React, {Component, useState} from 'react';
+import React, {useState} from 'react';
 import {Popover} from "antd";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useSetEditPinModalVisibility from "../../hooks/useSetEditPinModalVisibility";
-import useSetPinBeingEdited from "../../hooks/useSetPinBeingEdited";
 import useSetMapWikiVisibility from "../../hooks/useSetMapWikiVisibility";
 import useSetMapWiki from "../../hooks/useSetMapWiki";
+import {EditPinModal} from "../modals/EditPinModal";
 
 export const Pin = ({pin, translate}) => {
 
 	const history = useHistory();
 	const {currentWorld} = useCurrentWorld();
-	const {setEditPinModalVisibility} = useSetEditPinModalVisibility();
-	const {setPinBeingEdited} = useSetPinBeingEdited();
+	const [editPinModalVisibility, setEditPinModalVisibility] = useState(false);
 
 	const {setMapWikiVisibility} = useSetMapWikiVisibility();
 	const {setMapWiki} = useSetMapWiki();
@@ -21,7 +19,6 @@ export const Pin = ({pin, translate}) => {
 	const editButton = pin.canWrite ?
 		<a href='#' className='margin-md-left' onClick={async () => {
 			await setVisible(false);
-			await setPinBeingEdited(pin._id);
 			await setEditPinModalVisibility(true);
 		}}>Edit Pin</a>
 		: null;
@@ -51,26 +48,29 @@ export const Pin = ({pin, translate}) => {
 	const coordinates = translate(pin.x, pin.y);
 
 	return (
-		<Popover
-			content={pinPopupContent}
-			trigger="click"
-			key={pin._id}
-			overlayStyle={{zIndex: '10'}}
-			visible={visible}
-			onVisibleChange={async (newVisible) => await setVisible(newVisible)}
-		>
-			<div style={{
-				position: 'absolute',
-				left: coordinates[0] - 5,
-				top: coordinates[1] - 5,
-				zIndex: 1,
-				borderRadius: "50%",
-				width: "15px",
-				height: "15px",
-				backgroundColor: "crimson",
-				border: "3px solid powderblue",
-				cursor: 'pointer'
-			}}/>
-		</Popover>
+		<>
+			<EditPinModal visibility={editPinModalVisibility} setVisibility={setEditPinModalVisibility} pinId={pin._id}/>
+			<Popover
+				content={pinPopupContent}
+				trigger="click"
+				key={pin._id}
+				overlayStyle={{zIndex: '10'}}
+				visible={visible}
+				onVisibleChange={async (newVisible) => await setVisible(newVisible)}
+			>
+				<div style={{
+					position: 'absolute',
+					left: coordinates[0] - 5,
+					top: coordinates[1] - 5,
+					zIndex: 1,
+					borderRadius: "50%",
+					width: "15px",
+					height: "15px",
+					backgroundColor: "crimson",
+					border: "3px solid powderblue",
+					cursor: 'pointer'
+				}}/>
+			</Popover>
+		</>
 	);
 };

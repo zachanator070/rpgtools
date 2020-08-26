@@ -3,6 +3,7 @@ import {Editor} from "./Editor";
 import {ExportOutlined, EditOutlined} from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
+import {LoadingView} from "../LoadingView";
 
 export const WikiView = ({currentWiki}) => {
 
@@ -11,7 +12,7 @@ export const WikiView = ({currentWiki}) => {
 	const [height, setHeight] = useState(0);
 	const [width, setWidth] = useState(0);
 
-	const {currentWorld} = useCurrentWorld();
+	const {currentWorld, loading} = useCurrentWorld();
 
 	const wikiView = useRef(null);
 
@@ -31,6 +32,10 @@ export const WikiView = ({currentWiki}) => {
 			}
 		}
 	};
+
+	if(loading){
+		return <LoadingView/>;
+	}
 
 	if (!currentWiki) {
 		return (<div>{`404 - Wiki ${wiki_id} not found`}</div>);

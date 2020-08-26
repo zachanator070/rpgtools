@@ -1,19 +1,14 @@
 import React, {useState} from 'react';
 import {Button, Checkbox, Form, Input, Modal} from "antd";
-import useSetCreateWorldModalVisibility from "../../hooks/useSetCreateWorldModalVisibility";
 import useCreateWorld from "../../hooks/useCreateWorld";
-import useCreateWorldModalVisibility from "../../hooks/useCreateWorldModalVisibility";
 import {useHistory} from 'react-router-dom';
 import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
 
-export const CreateWorldModal = () => {
+export const CreateWorldModal = ({visibility, setVisibility}) => {
 
 	const history = useHistory();
 	const [name, setName] = useState('');
 	const [isPublic, setPublic] = useState(true);
-
-	const {setCreateWorldModalVisibility} = useSetCreateWorldModalVisibility();
-	const {createWorldModalVisibility} = useCreateWorldModalVisibility();
 
 	const {setCurrentWorld} = useSetCurrentWorld();
 
@@ -32,9 +27,9 @@ export const CreateWorldModal = () => {
 	return (
 		<Modal
 			title="Create World"
-			visible={createWorldModalVisibility}
+			visible={visibility}
 			onCancel={async () => {
-				await setCreateWorldModalVisibility(false);
+				await setVisibility(false);
 			}}
 			footer={null}
 		>
@@ -58,7 +53,7 @@ export const CreateWorldModal = () => {
 							name,
 							isPublic
 						);
-						await setCreateWorldModalVisibility(false);
+						await setVisibility(false);
 					}}>Submit</Button>
 				</Form.Item>
 			</Form>

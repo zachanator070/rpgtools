@@ -3,11 +3,21 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {LoadingView} from "../LoadingView";
+import {Vector3} from "three";
 
 function setupScene(root, mapImage) {
 
-	const height = root.clientHeight;
-	const width = root.clientWidth;
+	let height = root.clientHeight;
+	let width = root.clientWidth;
+
+	root.addEventListener('resize', () => {
+		height = root.clientHeight;
+		width = root.clientWidth;
+		camera.aspectRatio = width/height;
+		camera.updateProjectionMatrix();
+		renderer.setSize( width, height );
+	});
 
 	const miniWidth = 100;
 
@@ -44,6 +54,8 @@ function setupScene(root, mapImage) {
 
 	camera.position.z = cameraZ;
 	camera.position.y = cameraY;
+
+	camera.lookAt(new Vector3(0,0,0));
 
 	// setup map
 	const mapCanvas = document.createElement("canvas");
@@ -87,7 +99,7 @@ function setupScene(root, mapImage) {
 
 	// setup renderer
 	let renderer = new THREE.WebGLRenderer();
-	renderer.setSize( width, height );
+	renderer.setSize(width, height, false);
 
 	const renderElement = renderer.domElement;
 
@@ -150,7 +162,7 @@ function setupScene(root, mapImage) {
 		//
 		// }
 
-		controls.update();
+		// controls.update();
 
 		// const cameraSpeed = mapImage.width / 100;
 		// const marginOfError = .1;
@@ -165,20 +177,56 @@ function setupScene(root, mapImage) {
 	animate();
 }
 
+function setupTestScene(root) {
+
+	console.log(`${root.clientWidth} x ${root.clientHeight}`);
+
+	root.addEventListener('resize', () => {
+		console.log(`${root.clientWidth} x ${root.clientHeight}`);
+	});
+
+	const dpi = window.devicePixelRatio;
+
+	let height = root.clientHeight * dpi;
+	let width = root.clientWidth * dpi;
+
+	let camera = new THREE.PerspectiveCamera(75, height/width, 0, 1000);
+
+	let scene = new THREE.Scene();
+
+	// setup renderer
+	let renderer = new THREE.WebGLRenderer({canvas: root});
+	renderer.setSize(width, height, false);
+
+	function animate() {
+		requestAnimationFrame( animate );
+		renderer.render( scene, camera );
+	}
+	animate();
+}
+
 export const GameView = () => {
 
 	const webGLRoot = useRef();
-	const {currentWorld} = useCurrentWorld();
+	const webGLCanvas = useRef();
+	const {currentWorld, loading} = useCurrentWorld();
 
 	useEffect(() => {
 		setupScene(webGLRoot.current, currentWorld.wikiPage.mapImage);
+		// setupTestScene(webGLCanvas.current);
 	}, []);
+
+	if(loading){
+		return <LoadingView/>;
+	}
 
 	return <>
 			<div
-			ref={webGLRoot}
-			style={{flexGrow:1}}
-		/>
+				ref={webGLRoot}
+				style={{flexGrow:1, display: 'flex', flexDirection: 'column'}}
+			>
+				{/*<canvas ref={webGLCanvas} style={{flexGrow: 1}}/>*/}
+			</div>
 	</>;
 
 };

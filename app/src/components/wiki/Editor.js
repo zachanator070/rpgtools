@@ -12,6 +12,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
+import {LoadingView} from "../LoadingView";
 
 Quill.debug('error');
 
@@ -26,7 +27,7 @@ Quill.register({
 
 export const Editor = ({content, readOnly, onInit}) => {
 
-	const {currentWorld} = useCurrentWorld();
+	const {currentWorld, loading} = useCurrentWorld();
 
 	let editor = null;
 
@@ -83,6 +84,10 @@ export const Editor = ({content, readOnly, onInit}) => {
 		}
 
 	}, []);
+
+	if(loading){
+		return <LoadingView/>;
+	}
 
 	return <div id="editor"/>;
 };

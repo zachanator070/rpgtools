@@ -4,11 +4,16 @@ import {PermissionEditor} from "./permissions/PermissionEditor";
 import {Button, Col, Input, Row} from "antd";
 import {useRenameWorld} from "../hooks/useRenameWorld";
 import {WORLD} from "../../../common/src/type-constants";
+import {LoadingView} from "./LoadingView";
 
 export default () => {
-	const {currentWorld} = useCurrentWorld();
+	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const [newName, setNewName] = useState();
 	const {renameWorld, loading} = useRenameWorld();
+
+	if(currentWorldLoading){
+		return <LoadingView/>;
+	}
 
 	if(!currentWorld){
 		return <div>404 - World not found</div>;
