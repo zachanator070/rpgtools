@@ -4,6 +4,7 @@ import {WikiFolder} from "../models/wiki-folder";
 import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
 import {
+	GAME_HOST, GAME_WRITE,
 	ROLE_ADD,
 	ROLE_PERMISSIONS,
 	WIKI_FOLDER_PERMISSIONS,
@@ -120,7 +121,10 @@ export const serverResolvers = {
 		usersWithPermissions: usersWithPermissions(WORLD_PERMISSIONS),
 		canAddRoles: async (world, _, {currentUser}) => {
 			return currentUser.hasPermission(ROLE_ADD, world._id);
-		}
+		},
+		canHostGame: async (world, _, {currentUser}) => {
+			return currentUser.hasPermission(GAME_HOST, world._id);
+		},
 	},
 	PermissionControlled: {
 		__resolveType: async (subject) => {
@@ -258,6 +262,20 @@ export const serverResolvers = {
 		},
 		canWrite: async (assignment, _, {currentUser}) => {
 			return await assignment.userCanWrite(currentUser);
+		}
+	},
+	Game: {
+		world: async (game, _, {currentUser}) => {
+			return await getPermissionControlledDocument(World, game.world, currentUser);
+		},
+		map: async (game, _, {currentUser}) => {
+			return await getPermissionControlledDocument(Place, game.map, currentUser);
+		},
+		players: async (game) => {
+			return await getDocuments(User, game.players);
+		},
+		canWrite: async (game, {currentUser}) => {
+			return await game.userCanWrite(currentUser);
 		}
 	}
 };

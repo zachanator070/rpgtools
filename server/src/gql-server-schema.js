@@ -22,6 +22,9 @@ export const typeDefs = gql`
         
         """Search for roles by name"""
         roles(worldId: ID!, name: String!): RolePaginatedResult!
+        
+        """Get a game by id"""
+        game(gameId: ID!): Game!
     }
   
     type Mutation{
@@ -69,6 +72,9 @@ export const typeDefs = gql`
         updatePin(pinId: ID!, pageId: ID): World!
         deletePin(pinId: ID!): World!
         
+        createGame(worldId: ID!, password: String): Game!
+        joinGame(gameId: ID!, password: String): Game!
+        gameChat(gameId: ID!, message: String!): Game!
     }
   
     type User {
@@ -96,6 +102,7 @@ export const typeDefs = gql`
 		folders: [WikiFolder!]!
 		canWrite: Boolean!
 		canAddRoles: Boolean!
+		canHostGame: Boolean!
 	}
 	
 	type WorldPaginatedResult {
@@ -261,4 +268,18 @@ export const typeDefs = gql`
 		adminUsers: [User!]!
 	}
 	
+	type GameMessage {
+		sender: String!
+		message: String!
+		timestamp: String!
+	}
+	
+	type Game {
+		_id: ID!
+		world: World!
+		map: Place!
+		players: [User!]!
+		messages: [GameMessage!]!
+		canWrite: Boolean!
+	}
 `;

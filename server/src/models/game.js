@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
-import {GAME, IMAGE, WORLD} from "../../../common/src/type-constants";
+import {GAME, IMAGE, PLACE, WORLD} from "../../../common/src/type-constants";
+import {GAME_WRITE, WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../../common/src/permission-constants";
 
 const Schema = mongoose.Schema;
 
 const gameSchema = new Schema({
-	password_hash: {
+	passwordHash: {
 		type: String
 	},
 	world: {
@@ -12,36 +13,16 @@ const gameSchema = new Schema({
 		ref: WORLD,
 		required: [true, 'worldId required']
 	},
-	mapImage: {
+	map: {
 		type: mongoose.Schema.ObjectId,
-		ref: IMAGE,
+		ref: PLACE,
 	},
-	players: [new Schema({
-		socketId: {
-			type: String,
-			required: [true, 'socketId required']
-		},
-		player: {
+	players: [{
 			type: mongoose.Schema.ObjectId,
 			ref: 'User',
 			required: [true, 'player id required']
 		}
-	})],
-	icons: [new Schema({
-		image: {
-			type: mongoose.Schema.ObjectId,
-			ref: IMAGE,
-			required: [true, 'icon image id required']
-		},
-		x: {
-			type: Number,
-			required: [true, 'x position required']
-		},
-		y: {
-			type: Number,
-			required: [true, 'y position required']
-		}
-	})],
+	],
 	strokes: [new Schema({
 		path: [new Schema({
 			x: Number,
@@ -67,13 +48,35 @@ const gameSchema = new Schema({
 		},
 		message: {
 			type: String,
-			required: [true, 'icon image id required']
+			required: [true, 'message required']
 		},
-		timeStamp: {
+		timestamp: {
 			type: String,
-			required: [true, 'icon image id required']
+			required: [true, 'timestamp required']
 		}
 	})]
 });
+
+gameSchema.methods.userInGame = async function(user) {
+	for(let player of this.players){
+		if(player instanceof mongoose.Types.ObjectId){
+			if(user._id.equals(player)){
+				return true;
+			}
+		}
+		else if(player._id.equals(user._id)){
+			return true;
+		}
+	}
+	return false;
+}
+
+gameSchema.methods.userCanWrite = async function(user){
+	return await user.hasPermission(GAME_WRITE, this._id);
+};
+
+gameSchema.methods.userCanRead = async function(user){
+	await this.userInGame(user);
+};
 
 export const Game = mongoose.model(GAME, gameSchema);

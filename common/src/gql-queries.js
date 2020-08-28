@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import {GAME} from "./type-constants";
 
 export const CURRENT_WORLD_PERMISSIONS = `
 	permissions{
@@ -89,6 +90,7 @@ export const GET_CURRENT_WORLD = gql`
 			name
 			canWrite
 			canAddRoles
+			canHostGame
 			wikiPage {
 				_id
 				name
@@ -503,4 +505,56 @@ export const GET_CURRENT_WIKI = gql`
             
         }
     }
+`;
+
+export const CREATE_GAME = gql`
+    mutation createGame($worldId: ID!, $password: String){
+        createGame(worldId: $worldId, password: $password){
+            _id
+        }
+    }
+`;
+
+export const GAME_ATTRIBUTES = `
+	_id
+    map {
+        _id
+        mapImage {
+            _id
+            fileId
+        }
+    }
+    players {
+        _id
+        username
+    }
+    messages {
+        sender
+        message
+        timestamp
+    }
+`;
+
+export const JOIN_GAME = gql`
+    mutation joinGame($gameId: ID!, $password: String){
+        joinGame(gameId: $gameId, password: $password){
+            ${GAME_ATTRIBUTES}
+        }
+    }
+`;
+
+export const GET_GAME = gql`
+	query getGame($gameId: ID!){
+		game(gameId: $gameId){
+			${GAME_ATTRIBUTES}
+		}
+	}
+`;
+
+export const GAME_CHAT = gql`
+	mutation gameChat($gameId: ID!, $message: String!){
+		gameChat(gameId: $gameId, message: $message){
+			${GAME_ATTRIBUTES}
+		}
+	}	
 `;
