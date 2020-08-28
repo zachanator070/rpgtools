@@ -8,14 +8,12 @@ import {Col, Row} from "antd";
 import {FolderView} from "./wiki/FolderView";
 import {WikiEdit} from "./wiki/WikiEdit";
 import {WikiView} from "./wiki/WikiView";
-import {Modals} from "./App";
 import WorldSettings from "./WorldSettings";
 import {RolesView} from "./permissions/RolesView";
 import {TeamOutlined} from "@ant-design/icons";
 import {MyPermissionsView} from "./permissions/MyPermissionsView";
 import {PermissionModal} from "./modals/PermissionModal";
 import {GameView} from "./game/GameView";
-import {NavBar} from "./nav/NavBar";
 import {GameLoginView} from "./game/GameLoginView";
 
 const WikiContent = () => {

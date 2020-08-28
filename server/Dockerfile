@@ -9,12 +9,12 @@ RUN cd common && npm install
 
 WORKDIR /home/node/app/server
 
-ADD server/src src
 ADD server/package.json package.json
 ADD server/package-lock.json package-lock.json
 RUN npm install
 RUN npm install -g kill-port
 
+ADD server/src src
 ADD dist ../dist
 
 EXPOSE 3000

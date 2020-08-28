@@ -76,7 +76,7 @@ gameSchema.methods.userCanWrite = async function(user){
 };
 
 gameSchema.methods.userCanRead = async function(user){
-	await this.userInGame(user);
+	return await this.userInGame(user);
 };
 
 export const Game = mongoose.model(GAME, gameSchema);

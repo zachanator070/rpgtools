@@ -515,24 +515,37 @@ export const CREATE_GAME = gql`
     }
 `;
 
+export const GAME_MESSAGES = `
+	messages {
+        sender
+        message
+        timestamp
+    }
+`;
+
+export const GAME_PLAYERS = `
+	players {
+        _id
+        username
+    }
+`;
+
 export const GAME_ATTRIBUTES = `
 	_id
     map {
         _id
         mapImage {
             _id
-            fileId
+            chunks{
+                _id
+                x
+                y
+                fileId
+            }
         }
     }
-    players {
-        _id
-        username
-    }
-    messages {
-        sender
-        message
-        timestamp
-    }
+    ${GAME_PLAYERS}
+    ${GAME_MESSAGES}
 `;
 
 export const JOIN_GAME = gql`
@@ -554,7 +567,26 @@ export const GET_GAME = gql`
 export const GAME_CHAT = gql`
 	mutation gameChat($gameId: ID!, $message: String!){
 		gameChat(gameId: $gameId, message: $message){
-			${GAME_ATTRIBUTES}
+			_id
+			${GAME_MESSAGES}
 		}
 	}	
+`;
+
+export const GAME_CHAT_SUBSCRIPTION = gql`
+	subscription gameChat($gameId: ID!){
+		gameChat(gameId: $gameId){
+			_id
+			${GAME_MESSAGES}
+		}
+	}
+`;
+
+export const PLAYER_JOINED_SUBSCRIPTION = gql`
+	subscription playerJoined($gameId: ID!,){
+		playerJoined(gameId: $gameId){
+			_id
+			${GAME_PLAYERS}
+		}
+	}
 `;

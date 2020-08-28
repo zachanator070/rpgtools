@@ -20,16 +20,19 @@ export const createTokens = async user => {
 	return {accessToken, refreshToken};
 };
 
-const getCurrentUser = async (userId) => {
+export const getCurrentUser = async (userId) => {
 	return User.findById(userId)
 		.populate({path: 'currentWorld', populate: {path: 'wikiPage'}})
 		.populate({path: 'permissions', populate: 'subject'})
 		.populate({path: 'roles', populate: 'permissions'});
 };
 
-export const createSessionContext = async ({req, res}) => {
+export const createSessionContext = async ({req, res, connection}) => {
 
 	let currentUser = null;
+	if(connection){
+		return connection.context;
+	}
 
 	const refreshToken = req.cookies["refreshToken"];
 	const accessToken = req.cookies["accessToken"];

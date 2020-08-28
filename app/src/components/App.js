@@ -9,13 +9,6 @@ import {AppContent} from "./AppContent";
 import {ServerSetup} from "./server/ServerSetup";
 import ServerSettings from "./server/ServerSettings";
 
-export const Modals = () => {
-	return (
-		<>
-
-		</>
-	);
-};
 
 export default () => {
 

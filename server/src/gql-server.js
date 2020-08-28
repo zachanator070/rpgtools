@@ -1,9 +1,13 @@
-import {ApolloServer} from 'apollo-server-express';
-
-import {createSessionContext} from "./authentication-helpers";
+import {ApolloServer, PubSub} from 'apollo-server-express';
+import {ACCESS_TOKEN_MAX_AGE, createSessionContext, getCurrentUser} from "./authentication-helpers";
 import {typeDefs} from './gql-server-schema';
 import {serverResolvers} from "./resolvers/server-resolvers";
+import jwt from "jsonwebtoken";
+import {User} from "./models/user";
+import {ANON_USERNAME} from "../../common/src/permission-constants";
 
+const ps = new PubSub();
+export const pubsub = ps;
 
 export default new ApolloServer({
 	typeDefs,
@@ -29,4 +33,18 @@ export default new ApolloServer({
         },
     },
 	context: createSessionContext,
+    subscriptions: {
+        onConnect: async (connectionParams, webSocket) => {
+            let currentUser = null;
+            if (connectionParams.accessToken) {
+                let data = jwt.verify(connectionParams.accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
+                currentUser = await getCurrentUser(data.userId);
+            }
+            else {
+                currentUser = new User({username: ANON_USERNAME});
+            }
+            await currentUser.recalculateAllPermissions();
+            return {currentUser};
+        },
+    },
 });

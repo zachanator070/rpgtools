@@ -27,6 +27,7 @@ export const SlidingDrawer = ({title, placement, children, startVisible}) => {
 			maskClosable={false}
 			getContainer={false}
 			style={{ position: 'absolute'}}
+			width={'512'}
 		>
 			{children}
 		</Drawer>
