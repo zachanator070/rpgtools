@@ -116,7 +116,7 @@ export const NavBar = () => {
 								</Link>
 								<Divider type='vertical'/>
 								<Link
-									to={`/ui/world/${currentWorld._id}/game`}
+									to={`/ui/world/${currentWorld._id}/gameLogin`}
 								>
 									Game
 								</Link>

@@ -7,6 +7,7 @@ import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
 import {PLACE} from "../../../common/src/type-constants";
 import {ServerConfig} from '../models/server-config';
+import {Game} from "../models/game";
 
 export default {
 	currentUser: (parent, args, context) => context.currentUser,
@@ -22,12 +23,6 @@ export default {
 		if (!await world.userCanRead(currentUser)) {
 			return null;
 		}
-
-		// await world.populate('wikiPage')
-		// 	.populate({path: 'rootFolder', populate: {path: 'children pages'}})
-		// 	.populate({path: 'roles', populate: {path: 'permissions world', populate: {path: 'subject'}}})
-		// 	.populate({path: 'pins', populate: {path: 'page'}})
-		// 	.execPopulate();
 
 		return world;
 	},
@@ -139,5 +134,12 @@ export default {
 	},
 	users: async (_, {username}) => {
 		return User.paginate({username: { $regex: `^${username}.*` , $options: 'i'}});
+	},
+	game: async (_, {gameId}, {currentUser}) => {
+		const foundGame = await Game.findById(gameId);
+		if(foundGame && !await foundGame.userCanRead(currentUser)){
+			throw new Error('You do not have permission to read this game');
+		}
+		return foundGame;
 	}
 };

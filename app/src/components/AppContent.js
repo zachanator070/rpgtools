@@ -16,6 +16,7 @@ import {MyPermissionsView} from "./permissions/MyPermissionsView";
 import {PermissionModal} from "./modals/PermissionModal";
 import {GameView} from "./game/GameView";
 import {NavBar} from "./nav/NavBar";
+import {GameLoginView} from "./game/GameLoginView";
 
 const WikiContent = () => {
 	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
@@ -97,7 +98,10 @@ export const AppContent = () => {
 			<Route path={`${match.path}/wiki/:wiki_id`}>
 				<WikiContent/>
 			</Route>
-			<Route path={`${match.path}/game`}>
+			<Route path={`${match.path}/gameLogin`}>
+				<GameLoginView/>
+			</Route>
+			<Route path={`${match.path}/game/:game_id`}>
 				<GameView/>
 			</Route>
 			<Route>

@@ -7,6 +7,7 @@ import {wikiMutations} from "./mutations/wiki-mutations";
 import {userResolvers} from "./mutations/user-mutations";
 import {imageMutations} from './mutations/image-mutations';
 import {serverMutations} from "./mutations/server-mutations";
+import {gameMutations} from "./mutations/game-mutations";
 
 export default {
 
@@ -17,5 +18,6 @@ export default {
 	...wikiMutations,
 	...userResolvers,
 	...imageMutations,
-	...serverMutations
+	...serverMutations,
+	...gameMutations
 }

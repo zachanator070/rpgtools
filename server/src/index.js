@@ -50,7 +50,7 @@ const createServer = async () => {
 	});
 
 	server.use('/images', ImageRouter);
-	server.use('/models', ModelRouter);
+	// server.use(ModelRouter);
 
 	server.get('*', (req, res, next) => {
 		const needsSetup = serverNeedsSetup();
@@ -69,7 +69,9 @@ const createServer = async () => {
 		return res.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
 	});
 
+
 	server.use(express.static('../dist'));
+	server.use(express.static('src/static-assets'));
 
 	server.use(bodyParser.json());
 	server.use(morgan('tiny'));
