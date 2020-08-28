@@ -74,6 +74,7 @@ export const typeDefs = gql`
         
         createGame(worldId: ID!, password: String): Game!
         joinGame(gameId: ID!, password: String): Game!
+        leaveGame(gameId: ID!): Boolean!
         gameChat(gameId: ID!, message: String!): Game!
     }
   

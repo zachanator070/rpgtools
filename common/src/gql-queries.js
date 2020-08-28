@@ -590,3 +590,9 @@ export const PLAYER_JOINED_SUBSCRIPTION = gql`
 		}
 	}
 `;
+
+export const LEAVE_GAME = gql`
+	mutation leaveGame($gameId: ID!){
+		leaveGame(gameId: $gameId)
+	}
+`;
