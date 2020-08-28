@@ -1,32 +1,37 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/useCurrentGame";
 import {LoadingView} from "../LoadingView";
 import {Collapse, Comment, Input, Form, Button, List} from "antd";
 import {useGameChat} from "../../hooks/useGameChat";
+import {useGameChatSubscription} from "../../hooks/useGameChatSubscription";
+import {usePlayerJoinedSubscription} from "../../hooks/usePlayerJoinedSubscription";
 
 
 export const GameDrawer = () => {
 	const {currentGame, loading} = useCurrentGame();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
+	const {game} = useGameChatSubscription();
+	const {game: playerJoinedGame} = usePlayerJoinedSubscription();
+
+	useEffect(() => {
+		const element = document.getElementById("chat");
+		if(element){
+			element.scrollTop = element.scrollHeight;
+		}
+	}, [game]);
 
 	if(loading){
 		return <LoadingView/>;
 	}
 
-	const Editor = ({ onChange, onSubmit, submitting, value }) => (
-		<>
-			<Form.Item>
-				<Input.TextArea rows={4} onChange={onChange} value={value} />
-			</Form.Item>
-			<Form.Item>
-				<Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">
-					Add Comment
-				</Button>
-			</Form.Item>
-		</>
-	);
+	const submitComment = async () => {
+		if(comment){
+			await gameChat(currentGame._id, comment);
+			await setComment(null);
+		}
+	};
 
 	return <>
 		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true}>
@@ -35,6 +40,7 @@ export const GameDrawer = () => {
 					<List
 						dataSource={currentGame.players}
 						itemLayout="horizontal"
+						locale={{emptyText: <div>No players</div>}}
 						renderItem={({username}) =>
 							<List.Item>
 								{username}
@@ -43,26 +49,41 @@ export const GameDrawer = () => {
 					/>
 				</Collapse.Panel>
 				<Collapse.Panel header="Game Chat" key="2">
-					<List
-						dataSource={currentGame.messages}
-						itemLayout="horizontal"
-						renderItem={({sender, timestamp, message}) => {
-							const date = new Date(timestamp);
-							const hours = date.getHours();
-							const minutes = "0" + date.getMinutes();
-							const seconds = "0" + date.getSeconds();
-
-							return <Comment author={sender} content={message} datetime={`${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`}/>;
+					<div
+						id={'chat'}
+						style={{
+							overflowY: 'scroll',
+							overflowX: 'hidden',
+							height: '512px'
 						}}
-					/>
+					>
+						<List
+							dataSource={currentGame.messages}
+							itemLayout="horizontal"
+							locale={{emptyText: <div>No messages</div>}}
+							renderItem={({sender, timestamp, message}) => {
+								const date = new Date(parseInt(timestamp));
+								const hours = date.getHours();
+								const minutes = "0" + date.getMinutes();
+								const seconds = "0" + date.getSeconds();
+
+								return <Comment author={sender} content={message} datetime={`${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`}/>;
+							}}
+						/>
+					</div>
+
 					<Comment
 						content={
-							<Editor
-								onChange={async value => await setComment(value)}
-								onSubmit={async () => {await gameChat(currentGame, comment)}}
-								submitting={chatLoading}
-								value={comment}
-							/>
+							<>
+								<Form.Item>
+									<Input.TextArea rows={4} onChange={async value => {await setComment(value.target.value)}} value={comment} onPressEnter={submitComment}/>
+								</Form.Item>
+								<Form.Item>
+								<Button htmlType="submit" loading={chatLoading} onClick={submitComment} type="primary">
+									Add Comment
+								</Button>
+								</Form.Item>
+							</>
 						}
 					/>
 				</Collapse.Panel>
@@ -74,7 +95,7 @@ export const GameDrawer = () => {
 						</Collapse.Panel>
 					</>
 				}
-			</Collapse>,
+			</Collapse>
 		</SlidingDrawer>
 	</>;
 };

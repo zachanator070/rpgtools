@@ -4,7 +4,7 @@ import {WikiFolder} from "../models/wiki-folder";
 import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
 import {
-	GAME_HOST, GAME_WRITE,
+	GAME_HOST, GAME_PERMISSIONS, GAME_WRITE,
 	ROLE_ADD,
 	ROLE_PERMISSIONS,
 	WIKI_FOLDER_PERMISSIONS,
@@ -21,6 +21,7 @@ import {World} from "../models/world";
 import {Chunk} from "../models/chunk";
 import {Place} from "../models/place";
 import {Image} from "../models/image";
+import {pubsub} from "../gql-server";
 
 const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}) => {
 	let allUsers = [];
@@ -90,9 +91,22 @@ const wikiPageResolvers = {
 	usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
 };
 
+export const GAME_CHAT_EVENT = 'GAME_CHAT_EVENT';
+export const PLAYER_JOINED_EVENT = 'PLAYER_JOINED_EVENT';
+
 export const serverResolvers = {
 	Query: QueryResolver,
 	Mutation: MutationResolver,
+	Subscription: {
+		gameChat: {
+			// Additional event labels can be passed to asyncIterator creation
+			subscribe: () => pubsub.asyncIterator([GAME_CHAT_EVENT]),
+		},
+		playerJoined: {
+			// Additional event labels can be passed to asyncIterator creation
+			subscribe: () => pubsub.asyncIterator([PLAYER_JOINED_EVENT]),
+		},
+	},
 	World: {
 		roles: async (world, _, {currentUser}) => {
 			return await getPermissionControlledDocuments(Role, world.roles, currentUser);
@@ -265,6 +279,7 @@ export const serverResolvers = {
 		}
 	},
 	Game: {
+		usersWithPermissions: usersWithPermissions(GAME_PERMISSIONS),
 		world: async (game, _, {currentUser}) => {
 			return await getPermissionControlledDocument(World, game.world, currentUser);
 		},

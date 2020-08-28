@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.0.2",
     "@ant-design/icons-react": "^2.0.1",
+    "@apollo/client": "^3.1.4",
     "@apollo/react-hooks": "^3.1.2",
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
@@ -49,6 +50,7 @@
     "regenerator-runtime": "^0.13.3",
     "stats-webpack-plugin": "^0.7.0",
     "style-loader": "^1.0.0",
+    "subscriptions-transport-ws": "^0.9.18",
     "three": "^0.120.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.4",

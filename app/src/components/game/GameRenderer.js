@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentGame from "../../hooks/useCurrentGame";
 import {LoadingView} from "../LoadingView";
@@ -103,22 +103,22 @@ function setupScene(root, mapImage) {
 
 	// setup model
 	// minis take up a square of 5ft x 5ft
-	const miniWidth = 5;
-	const loader = new GLTFLoader();
-	loader.load( '/gundam.glb', function ( gltf ) {
-
-		// get bounding box and scale to match board size
-		const bbox = new THREE.Box3().setFromObject(gltf.scene);
-		const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
-		gltf.scene.scale.set(newScale, newScale, newScale);
-		gltf.scene.traverse((object) => {object.castShadow = true});
-		scene.add( gltf.scene );
-
-	}, undefined, function ( error ) {
-
-		console.error( error );
-
-	} );
+	// const miniWidth = 5;
+	// const loader = new GLTFLoader();
+	// loader.load( '/gundam.glb', function ( gltf ) {
+	//
+	// 	// get bounding box and scale to match board size
+	// 	const bbox = new THREE.Box3().setFromObject(gltf.scene);
+	// 	const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
+	// 	gltf.scene.scale.set(newScale, newScale, newScale);
+	// 	gltf.scene.traverse((object) => {object.castShadow = true});
+	// 	scene.add( gltf.scene );
+	//
+	// }, undefined, function ( error ) {
+	//
+	// 	console.error( error );
+	//
+	// } );
 
 	// setup renderer
 	let renderer = new THREE.WebGLRenderer({antialias: true});

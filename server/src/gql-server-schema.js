@@ -77,6 +77,11 @@ export const typeDefs = gql`
         gameChat(gameId: ID!, message: String!): Game!
     }
   
+    type Subscription {
+	  gameChat(gameId: ID!): Game!
+	  playerJoined(gameId: ID!): Game!
+	}
+  
     type User {
         _id: ID!
         username: String!
@@ -274,10 +279,11 @@ export const typeDefs = gql`
 		timestamp: String!
 	}
 	
-	type Game {
+	type Game implements PermissionControlled{
 		_id: ID!
+		usersWithPermissions: [User!]!
 		world: World!
-		map: Place!
+		map: Place
 		players: [User!]!
 		messages: [GameMessage!]!
 		canWrite: Boolean!

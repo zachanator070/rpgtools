@@ -6,11 +6,11 @@ export default (callback) => {
 		onCompleted: callback
 	});
 	return {
-		createGame: async (gameId, password) => {
+		joinGame: async (gameId, password) => {
 			const response = await joinGame({variables: {gameId: gameId, password: password}});
 			return response.data.joinGame;
 		},
-		game: data ? data.createGame : null,
+		game: data ? data.joinGame : null,
 		errors: error ? error.graphQLErrors.map(error => error.message) : [],
 		loading
 	};
