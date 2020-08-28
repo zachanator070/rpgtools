@@ -96,7 +96,7 @@ function setupScene(root, mapImage) {
 
 	// skybox
 	const textureLoader = new THREE.TextureLoader();
-	textureLoader.load( '/building.jpg' , (texture) => {
+	textureLoader.load( '/tavern_orig.jpg' , (texture) => {
 		texture.mapping = THREE.EquirectangularReflectionMapping;
 		scene.background = texture;
 	});

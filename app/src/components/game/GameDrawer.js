@@ -6,14 +6,21 @@ import {Collapse, Comment, Input, Form, Button, List} from "antd";
 import {useGameChat} from "../../hooks/useGameChat";
 import {useGameChatSubscription} from "../../hooks/useGameChatSubscription";
 import {usePlayerJoinedSubscription} from "../../hooks/usePlayerJoinedSubscription";
-
+import useLeaveGame from "../../hooks/useLeaveGame";
+import useCurrentWorld from "../../hooks/useCurrentWorld";
+import {useHistory} from 'react-router-dom';
 
 export const GameDrawer = () => {
 	const {currentGame, loading} = useCurrentGame();
+	const{currentWorld} = useCurrentWorld();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
 	const {game} = useGameChatSubscription();
 	const {game: playerJoinedGame} = usePlayerJoinedSubscription();
+	const history = useHistory();
+	const {leaveGame} = useLeaveGame(() => {
+		history.push(`/ui/world/${currentWorld._id}/gameLogin`);
+	});
 
 	useEffect(() => {
 		const element = document.getElementById("chat");
@@ -35,6 +42,7 @@ export const GameDrawer = () => {
 
 	return <>
 		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true}>
+			<Button type={'primary'} onClick={async () => {await leaveGame(currentGame._id)}}>Leave Game</Button>
 			<Collapse defaultActiveKey={['1']}>
 				<Collapse.Panel header="Players" key="1">
 					<List
@@ -67,7 +75,7 @@ export const GameDrawer = () => {
 								const minutes = "0" + date.getMinutes();
 								const seconds = "0" + date.getSeconds();
 
-								return <Comment author={sender} content={message} datetime={`${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`}/>;
+								return <Comment author={sender} content={<p>{message}</p>} datetime={`${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`}/>;
 							}}
 						/>
 					</div>

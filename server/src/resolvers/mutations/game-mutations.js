@@ -7,12 +7,46 @@ import {GAME} from "../../../../common/src/type-constants";
 import {pubsub} from "../../gql-server";
 import {GAME_CHAT_EVENT, PLAYER_JOINED_EVENT} from "../server-resolvers";
 
+const gameCommands = (message, currentUser) => {
+	const parts = message.split(' ');
+	const command = parts[0];
+	const args = parts.slice(1);
+	let serverResponse = `${command} is not a recognized command`;
+	switch(command){
+		case '/roll':
+			const help = 'Usage: /roll <number of dice>d<number of sides on dice>'
+			if(args[0]){
+				const matches = args[0].match(/(?<numDice>\d+)d(?<dice>\d+)/);
+				if(matches){
+					const numDice = parseInt(matches.groups.numDice);
+					const dice = parseInt(matches.groups.dice);
+					serverResponse = `${currentUser.username} rolls ${args[0]} ...\n`;
+					let total = 0;
+					for(let i = 0; i<numDice;  i++){
+						const result = Math.ceil(Math.random() * dice);
+						total += result;
+						serverResponse += `${result}\n`;
+					}
+					serverResponse += `Total: ${total}`;
+				}
+				else{
+					serverResponse = help
+				}
+			}
+			else {
+				serverResponse = help
+			}
+			break;
+	}
+	return serverResponse;
+};
+
 export const gameMutations = {
 	createGame: async (_, {worldId, password}, {currentUser}) => {
 		if(!await currentUser.hasPermission(GAME_HOST, worldId)){
 			throw new Error('You do not have permission to host games on this world');
 		}
-		const game = await Game.create({world: worldId, passwordHash: bcrypt.hashSync(password, SALT_ROUNDS), players: [currentUser]});
+		const game = await Game.create({world: worldId, passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS), players: [currentUser]});
 		const permission = await PermissionAssignment.create({permission: GAME_WRITE, subject: game._id, subjectType: GAME});
 		currentUser.permissions.push(permission);
 		await currentUser.save();
@@ -31,6 +65,19 @@ export const gameMutations = {
 		await pubsub.publish(PLAYER_JOINED_EVENT, {playerJoined: game});
 		return game;
 	},
+	leaveGame: async (_, {gameId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userInGame(currentUser)){
+			throw new Error('You are not in this game');
+		}
+		game.players = game.players.filter((userId => ! userId.equals(currentUser._id)));
+		await game.save();
+		await pubsub.publish(PLAYER_JOINED_EVENT, {playerJoined: game});
+		return true;
+	},
 	gameChat: async (_, {gameId, message}, {currentUser}) => {
 		const game = await Game.findById(gameId);
 		if(!game){
@@ -39,24 +86,16 @@ export const gameMutations = {
 		if(!await game.userInGame(currentUser)){
 			throw new Error('You do not have permission to chat in this game');
 		}
+		let serverResponse = '';
 		if(message.substr(0,1) === '/'){
-			const parts = message.split(' ');
-			const command = parts[0];
-			const args = parts.slice(1);
-			let serverResponse = `${command} is not a recognized command`;
-			if(command === '/roll'){
-				const help = 'Usage: /roll <number of dice>d<number of sides on dice>'
-				if(args[0]){
-					if(RegExp('\d*d\d*')){
-
-					}
-				}
-				else {
-					serverResponse = ''
-				}
-			}
+			serverResponse = gameCommands(message, currentUser);
 		}
+
 		game.messages.push({sender: currentUser.username, message, timestamp: Date.now()});
+		if(serverResponse){
+			game.messages.push({sender: 'Server', message: serverResponse, timestamp: Date.now()});
+		}
+
 		await game.save();
 		await pubsub.publish(GAME_CHAT_EVENT, {gameChat: game});
 		return game;
