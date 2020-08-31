@@ -1,20 +1,31 @@
 import {ALL_WIKI_TYPES, GAME, ROLE, WIKI_FOLDER, WORLD} from "./type-constants";
 
+// role permissions
 export const ROLE_ADMIN = 'Able to add or remove members from a role or delete a role';
 export const ROLE_ADMIN_ALL = 'Able to edit any role in this world';
 export const ROLE_ADD = 'Able to create roles in this world';
+
+// world permissions
 export const WORLD_READ = 'See this world in search results';
+
+// wiki permissions
 export const WIKI_READ_ALL = 'Read all wiki pages';
 export const WIKI_RW_ALL = 'Write to any wiki page';
 export const WIKI_READ = 'Read access to a single wiki page';
 export const WIKI_RW = 'Write access to a single wiki page';
+
+// folder permissions
 export const FOLDER_READ_ALL = 'Read all wiki folders';
 export const FOLDER_RW_ALL = 'Write to any wiki folder';
 export const FOLDER_READ = 'Read access to a single wiki folder';
 export const FOLDER_RW = 'Write access to a single wiki folder';
+
+// game permissions
 export const GAME_HOST = 'Able to host games';
 export const GAME_READ = 'Read access to a single game';
 export const GAME_WRITE = 'Edit access to a single game';
+
+// server permissions
 export const WORLD_CREATE = 'Create world access';
 
 // probably a better way to do this

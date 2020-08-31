@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import {GAME} from "./type-constants";
 
 export const CURRENT_WORLD_PERMISSIONS = `
 	permissions{
@@ -24,6 +23,7 @@ export const CURRENT_WORLD_PERMISSIONS = `
 		}
 	}
 `;
+
 export const USERS_WITH_PERMISSIONS = `
 	... on PermissionControlled{
 		usersWithPermissions{
@@ -32,14 +32,15 @@ export const USERS_WITH_PERMISSIONS = `
             ${CURRENT_WORLD_PERMISSIONS}
         }
 	}
-    
 `;
+
 export const CURRENT_WORLD_WIKIS = `
 	_id
 	name
 	type
 	canWrite
 `;
+
 export const CURRENT_WORLD_FOLDERS = `
 	_id
 	name
@@ -51,12 +52,14 @@ export const CURRENT_WORLD_FOLDERS = `
 		${CURRENT_WORLD_WIKIS}
 	}
 `;
+
 export const CURRENT_WORLD_PINS = `
 	pins{
 		_id
 		canWrite
 		page{
 			name
+			type
 			_id
 		}
 		map{
@@ -67,6 +70,7 @@ export const CURRENT_WORLD_PINS = `
 		y
 	}
 `;
+
 export const CURRENT_WORLD_ROLES = `
 	roles{
 		_id
@@ -83,6 +87,7 @@ export const CURRENT_WORLD_ROLES = `
 		${USERS_WITH_PERMISSIONS}
 	}
 `;
+
 export const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID){
         world(worldId: $worldId){
@@ -276,6 +281,7 @@ export const CURRENT_WIKI_PLACE_ATTRIBUTES = `
             }
         }
     }
+    pixelsPerFoot
 `;
 export const DELETE_FOLDER = gql`
 	mutation deleteFolder($folderId: ID!){
@@ -465,8 +471,8 @@ export const UPDATE_PIN = gql`
 	}
 `;
 export const UPDATE_PLACE = gql`
-	mutation updatePlace($placeId: ID!, $mapImageId: ID){
-		updatePlace(placeId: $placeId, mapImageId: $mapImageId){
+	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
+		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
 			_id
             ${CURRENT_WIKI_PLACE_ATTRIBUTES}
 		}
@@ -530,20 +536,31 @@ export const GAME_PLAYERS = `
     }
 `;
 
+export const GAME_MAP = `
+	map {
+		_id
+		mapImage {
+			_id
+			width
+			height
+			chunks{
+				_id
+				x
+				y
+				fileId
+			}
+		}
+		pixelsPerFoot
+	}
+`;
+
 export const GAME_ATTRIBUTES = `
 	_id
-    map {
+    ${GAME_MAP}
+    host{
         _id
-        mapImage {
-            _id
-            chunks{
-                _id
-                x
-                y
-                fileId
-            }
-        }
     }
+    canWrite
     ${GAME_PLAYERS}
     ${GAME_MESSAGES}
 `;
@@ -582,9 +599,9 @@ export const GAME_CHAT_SUBSCRIPTION = gql`
 	}
 `;
 
-export const PLAYER_JOINED_SUBSCRIPTION = gql`
-	subscription playerJoined($gameId: ID!,){
-		playerJoined(gameId: $gameId){
+export const GAME_ROSTER_SUBSCRIPTION = gql`
+	subscription gameRosterChange($gameId: ID!,){
+		gameRosterChange(gameId: $gameId){
 			_id
 			${GAME_PLAYERS}
 		}
@@ -595,4 +612,35 @@ export const LEAVE_GAME = gql`
 	mutation leaveGame($gameId: ID!){
 		leaveGame(gameId: $gameId)
 	}
+`;
+
+export const MY_GAMES = gql`
+	query myGames{
+		myGames{
+			_id
+		}
+	}
+`;
+
+export const SET_GAME_MAP = gql`
+	mutation setGameMap($gameId: ID!, $placeId: ID!){
+		setGameMap(gameId: $gameId, placeId: $placeId){
+			_id
+			${GAME_MAP}
+		}
+	}
+`;
+
+export const GAME_MAP_SUBSCRIPTION = gql`
+	subscription gameMapChange($gameId: ID!,){
+		gameMapChange(gameId: $gameId){
+			_id
+			${GAME_MAP}
+		}
+	}
+`;
+export const MAP_WIKI_ID = gql`
+    query {
+        mapWiki @client
+    }
 `;

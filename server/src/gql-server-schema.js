@@ -25,6 +25,8 @@ export const typeDefs = gql`
         
         """Get a game by id"""
         game(gameId: ID!): Game!
+        
+        myGames: [Game!]!
     }
   
     type Mutation{
@@ -64,7 +66,7 @@ export const typeDefs = gql`
         """ Updates any wiki page of any type """
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         """ Update place specific attributes """
-        updatePlace(placeId: ID!, mapImageId: ID): Place!
+        updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
@@ -76,11 +78,13 @@ export const typeDefs = gql`
         joinGame(gameId: ID!, password: String): Game!
         leaveGame(gameId: ID!): Boolean!
         gameChat(gameId: ID!, message: String!): Game!
+        setGameMap(gameId: ID!, placeId: ID!): Game!
     }
   
     type Subscription {
 	  gameChat(gameId: ID!): Game!
-	  playerJoined(gameId: ID!): Game!
+	  gameRosterChange(gameId: ID!): Game!
+	  gameMapChange(gameId: ID!): Game!
 	}
   
     type User {
@@ -191,6 +195,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		mapImage: Image
+		pixelsPerFoot: Int
 		type: String!
 		canWrite: Boolean!
 		usersWithPermissions: [User!]!
@@ -288,5 +293,6 @@ export const typeDefs = gql`
 		players: [User!]!
 		messages: [GameMessage!]!
 		canWrite: Boolean!
+		host: User!
 	}
 `;

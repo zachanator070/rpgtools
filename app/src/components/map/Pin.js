@@ -5,6 +5,7 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useSetMapWikiVisibility from "../../hooks/useSetMapWikiVisibility";
 import useSetMapWiki from "../../hooks/useSetMapWiki";
 import {EditPinModal} from "../modals/EditPinModal";
+import {PLACE} from "../../../../common/src/type-constants";
 
 export const Pin = ({pin, translate}) => {
 
@@ -37,7 +38,7 @@ export const Pin = ({pin, translate}) => {
 				await setMapWikiVisibility(true);
 				await setMapWiki(pin.page._id);
 			}}>Details</a>
-			{pin.page.type === 'place' ?
+			{pin.page.type === PLACE ?
 				<a className='margin-md-left' href='#' onClick={() => {
 					history.push(`/ui/world/${currentWorld._id}/map/${pin.page._id}`)
 				}}>Open Map</a> : null}

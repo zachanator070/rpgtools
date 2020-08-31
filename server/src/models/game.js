@@ -23,6 +23,11 @@ const gameSchema = new Schema({
 			required: [true, 'player id required']
 		}
 	],
+	host: {
+		type: mongoose.Schema.ObjectId,
+		ref: 'User',
+		required: [true, 'host id required']
+	},
 	strokes: [new Schema({
 		path: [new Schema({
 			x: Number,

@@ -1,21 +1,26 @@
 
 import React from 'react';
-import {Row, Col, Form, Input, Button} from "antd";
+import {List, Row, Col, Form, Input, Button} from "antd";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
 import useCreateGame from "../../hooks/useCreateGame";
 import useJoinGame from "../../hooks/useJoinGame";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
+import useMyGames from "../../hooks/useMyGames";
 
 export const GameLoginView = () => {
 
 	const history = useHistory();
 
 	const {currentWorld, loading} = useCurrentWorld();
-	const {createGame, loading: createGameLoading} = useCreateGame((data) => {
+	const {myGames, loading: myGamesLoading, refetch} = useMyGames();
+
+	const {createGame, loading: createGameLoading} = useCreateGame(async (data) => {
+		await refetch();
 		history.push(`/ui/world/${currentWorld._id}/game/${data.createGame._id}`);
 	});
-	const {joinGame, loading: joinGameLoading} = useJoinGame((data) => {
+	const {joinGame, loading: joinGameLoading} = useJoinGame(async (data) => {
+		await refetch();
 		history.push(`/ui/world/${currentWorld._id}/game/${data.createGame._id}`);
 	});
 
@@ -38,11 +43,28 @@ export const GameLoginView = () => {
 		console.log('Failed:', errorInfo);
 	};
 
-	if(loading){
+	if(loading || myGamesLoading){
 		return <LoadingView/>;
 	}
 
 	return <>
+		<Row>
+			<Col span={8}/>
+			<Col span={8}>
+				<div className={'margin-lg-top margin-lg-bottom'}>
+				<h1>My Games</h1>
+				<List
+					bordered={true}
+					dataSource={myGames}
+					renderItem={(item) => {
+						return <List.Item><Link to={`/ui/world/${currentWorld._id}/game/${item._id}`}>${item._id}</Link></List.Item>;
+					}}
+				/>
+				</div>
+			</Col>
+			<Col span={8}/>
+		</Row>
+
 		{currentWorld.canHostGame &&
 			<Row>
 				<Col span={8}/>

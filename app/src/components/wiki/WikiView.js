@@ -82,6 +82,7 @@ export const WikiView = ({currentWiki}) => {
 			<h2>{currentWiki.type}</h2>
 			{coverImage}
 			{mapIcon}
+			Pixels per foot: {currentWiki.pixelsPerFoot}
 			<div className='padding-md'>
 				<Editor
 					content={currentWiki.content}
