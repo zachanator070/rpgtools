@@ -38,7 +38,7 @@ const gameSchema = new Schema({
 		filled: Boolean,
 		type: {
 			type: String,
-			enum: ['circle', 'square', 'erase']
+			enum: ['circle', 'square', 'erase', 'line']
 		}
 	})],
 	messages: [new Schema({
