@@ -144,7 +144,7 @@ export const wikiMutations = {
 		await WikiPage.deleteOne({_id: wikiId});
 		return wikiPage.world;
 	},
-	updatePlace: async (parent, {placeId, mapImageId}, {currentUser}) => {
+	updatePlace: async (parent, {placeId, mapImageId, pixelsPerFoot}, {currentUser}) => {
 		const place = await Place.findById(placeId);
 		if(!place){
 			throw new Error(`Place ${placeId} does not exist`);
@@ -162,6 +162,7 @@ export const wikiMutations = {
 		}
 
 		place.mapImage = mapImageId;
+		place.pixelsPerFoot = pixelsPerFoot;
 		await place.save();
 		await place.populate({path: 'mapImage', populate: {path: 'chunks icon', populate: {path: 'chunks'}}}).execPopulate();
 		return place;

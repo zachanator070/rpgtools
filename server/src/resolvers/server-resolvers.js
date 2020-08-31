@@ -92,19 +92,21 @@ const wikiPageResolvers = {
 };
 
 export const GAME_CHAT_EVENT = 'GAME_CHAT_EVENT';
-export const PLAYER_JOINED_EVENT = 'PLAYER_JOINED_EVENT';
+export const ROSTER_CHANGE_EVENT = 'PLAYER_JOINED_EVENT';
+export const GAME_MAP_CHANGE = 'GAME_MAP_CHANGE';
 
 export const serverResolvers = {
 	Query: QueryResolver,
 	Mutation: MutationResolver,
 	Subscription: {
 		gameChat: {
-			// Additional event labels can be passed to asyncIterator creation
 			subscribe: () => pubsub.asyncIterator([GAME_CHAT_EVENT]),
 		},
-		playerJoined: {
-			// Additional event labels can be passed to asyncIterator creation
-			subscribe: () => pubsub.asyncIterator([PLAYER_JOINED_EVENT]),
+		gameRosterChange: {
+			subscribe: () => pubsub.asyncIterator([ROSTER_CHANGE_EVENT]),
+		},
+		gameMapChange: {
+			subscribe: () => pubsub.asyncIterator([GAME_MAP_CHANGE]),
 		},
 	},
 	World: {
@@ -289,7 +291,7 @@ export const serverResolvers = {
 		players: async (game) => {
 			return await getDocuments(User, game.players);
 		},
-		canWrite: async (game, {currentUser}) => {
+		canWrite: async (game, _, {currentUser}) => {
 			return await game.userCanWrite(currentUser);
 		}
 	}

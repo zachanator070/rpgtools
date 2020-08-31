@@ -5,7 +5,9 @@ import {SALT_ROUNDS} from "./authentication-mutations";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {GAME} from "../../../../common/src/type-constants";
 import {pubsub} from "../../gql-server";
-import {GAME_CHAT_EVENT, PLAYER_JOINED_EVENT} from "../server-resolvers";
+import {GAME_CHAT_EVENT, GAME_MAP_CHANGE, ROSTER_CHANGE_EVENT} from "../server-resolvers";
+import {cleanUpPermissions} from "../../db-helpers";
+import {Place} from "../../models/place";
 
 const gameCommands = (message, currentUser) => {
 	const parts = message.split(' ');
@@ -46,7 +48,7 @@ export const gameMutations = {
 		if(!await currentUser.hasPermission(GAME_HOST, worldId)){
 			throw new Error('You do not have permission to host games on this world');
 		}
-		const game = await Game.create({world: worldId, passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS), players: [currentUser]});
+		const game = await Game.create({world: worldId, passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS), players: [currentUser], host: currentUser});
 		const permission = await PermissionAssignment.create({permission: GAME_WRITE, subject: game._id, subjectType: GAME});
 		currentUser.permissions.push(permission);
 		await currentUser.save();
@@ -62,7 +64,7 @@ export const gameMutations = {
 		}
 		game.players.push(currentUser);
 		await game.save();
-		await pubsub.publish(PLAYER_JOINED_EVENT, {playerJoined: game});
+		await pubsub.publish(ROSTER_CHANGE_EVENT, {gameRosterChange: game});
 		return game;
 	},
 	leaveGame: async (_, {gameId}, {currentUser}) => {
@@ -74,8 +76,15 @@ export const gameMutations = {
 			throw new Error('You are not in this game');
 		}
 		game.players = game.players.filter((userId => ! userId.equals(currentUser._id)));
-		await game.save();
-		await pubsub.publish(PLAYER_JOINED_EVENT, {playerJoined: game});
+		if(game.host.equals(currentUser._id)){
+			await Game.deleteOne({_id: gameId});
+			await cleanUpPermissions(game._id);
+		}
+		else{
+			await game.save();
+		}
+
+		await pubsub.publish(ROSTER_CHANGE_EVENT, {gameRosterChange: game});
 		return true;
 	},
 	gameChat: async (_, {gameId, message}, {currentUser}) => {
@@ -98,6 +107,23 @@ export const gameMutations = {
 
 		await game.save();
 		await pubsub.publish(GAME_CHAT_EVENT, {gameChat: game});
+		return game;
+	},
+	setGameMap: async (_, {gameId, placeId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		const place = await Place.findById(placeId);
+		if(!place){
+			throw new Error('Place does not exist');
+		}
+		game.map = place;
+		await game.save();
+		await pubsub.publish(GAME_MAP_CHANGE, {gameMapChange: game});
 		return game;
 	}
 };

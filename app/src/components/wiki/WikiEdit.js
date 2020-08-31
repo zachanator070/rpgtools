@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Input, Modal, Select, Upload} from "antd";
+import {Button, Input, Modal, Select, Upload, InputNumber} from "antd";
 import {UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined} from "@ant-design/icons";
 import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
@@ -24,6 +24,7 @@ export const WikiEdit = () => {
 	const [type, setType] = useState(null);
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
+	const [pixelsPerFoot, setPixelsPerFoot] = useState(0);
 	const [saving, setSaving] = useState(false);
 	const {deleteWiki} = useDeleteWiki();
 	const {createImage} = useCreateImage();
@@ -121,7 +122,7 @@ export const WikiEdit = () => {
 			if(mapToUpload === null) {
 				mapImageId = null;
 			}
-			await updatePlace(currentWiki._id, mapImageId);
+			await updatePlace(currentWiki._id, mapImageId, pixelsPerFoot);
 		}
 		await refetchWorld();
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
@@ -160,26 +161,32 @@ export const WikiEdit = () => {
 				{coverRevert}
 			</div>
 			{type === PLACE &&
-				<div className='margin-lg'>
-					<Upload
-						beforeUpload={setMapToUpload}
-						multiple={false}
-						listType={'picture'}
-						fileList={mapImageList}
-						className='upload-list-inline'
-						onChange={async (files) => {
-							await setMapImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
-							if (files.fileList.length === 0) {
-								await setMapToUpload(null);
-							}
-						}}
-					>
-						<Button>
-							<UploadOutlined /> Select Map Image
-						</Button>
-					</Upload>
-					{mapRevert}
-				</div>
+				<>
+					<div className='margin-lg'>
+						<Upload
+							beforeUpload={setMapToUpload}
+							multiple={false}
+							listType={'picture'}
+							fileList={mapImageList}
+							className='upload-list-inline'
+							onChange={async (files) => {
+								await setMapImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
+								if (files.fileList.length === 0) {
+									await setMapToUpload(null);
+								}
+							}}
+						>
+							<Button>
+								<UploadOutlined /> Select Map Image
+							</Button>
+						</Upload>
+						{mapRevert}
+					</div>
+					<div className='margin-lg'>
+						Pixels Per Foot: <InputNumber value={pixelsPerFoot}
+						                        onChange={async (value) => await setPixelsPerFoot(value)}/>
+					</div>
+				</>
 			}
 
 			<div className='margin-lg'>

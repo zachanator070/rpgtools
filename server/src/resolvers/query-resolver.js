@@ -1,7 +1,6 @@
 import {World} from '../models/world';
 import {User} from '../models/user';
-import {Role} from '../models/role';
-import {WIKI_READ_ALL, WORLD_READ} from "../../../common/src/permission-constants";
+import {ANON_USERNAME, WIKI_READ_ALL, WORLD_READ} from "../../../common/src/permission-constants";
 import {EVERYONE} from "../../../common/src/role-constants";
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
@@ -141,5 +140,11 @@ export default {
 			throw new Error('You do not have permission to read this game');
 		}
 		return foundGame;
+	},
+	myGames: async (_, __, {currentUser}) => {
+		if(currentUser.username === ANON_USERNAME){
+			return [];
+		}
+		return Game.find({players: currentUser._id});
 	}
 };

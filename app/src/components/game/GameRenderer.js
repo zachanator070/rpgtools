@@ -14,10 +14,11 @@ export const DEFAULT_BRUSH_TYPE = BRUSH_LINE;
 export const DEFAULT_BRUSH_FILL = false;
 export const DEFAULT_BRUSH_SIZE = 5;
 
+const DEFAULT_MAP_SIZE = 50;
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke) {
+	constructor(renderRoot, mapImage, addStroke, onProgress) {
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
 		this.addStroke = addStroke;
@@ -31,9 +32,13 @@ export class GameRenderer{
 
 		this.raycaster = null;
 		this.mouseCoords = new Vector2();
+
+		this.loader = new THREE.LoadingManager(onProgress);
+
 		this.mapCanvas = null;
 		this.mapMesh = null;
 		this.mapTexture = null;
+		this.pixelsPerFoot = mapImage ? mapImage.pixelsPerFoot : 1;
 
 		this.pathBeingPainted = [];
 		this.strokeId = null;
@@ -51,20 +56,18 @@ export class GameRenderer{
 		const animate = () => {
 			requestAnimationFrame( animate );
 			this.orbitControls.update();
-			this.raycaster.setFromCamera( this.mouseCoords, this.camera );
+			if(this.mouseCoords){
+				this.raycaster.setFromCamera( this.mouseCoords, this.camera );
+			}
 			this.renderer.render( this.scene, this.camera );
 		}
 		animate();
 	}
 
 	setupScene(){
-		const pixelsPerFoot = 60;
 
 		let renderHeight = this.renderRoot.clientHeight;
 		let renderWidth = this.renderRoot.clientWidth;
-
-		const mapHeight = this.mapImage.height / pixelsPerFoot;
-		const mapWidth = this.mapImage.width / pixelsPerFoot;
 
 		this.renderRoot.addEventListener('resize', () => {
 			renderHeight = this.renderRoot.clientHeight;
@@ -80,15 +83,46 @@ export class GameRenderer{
 
 		// setup camera
 		this.camera = new THREE.PerspectiveCamera( 75, renderWidth / renderHeight, 0.1, 10000 );
-		let cameraZ = Math.max(mapWidth, mapHeight);
-		let cameraY = Math.min(mapWidth, mapHeight);
+		let cameraZ = DEFAULT_MAP_SIZE;
+		let cameraY = DEFAULT_MAP_SIZE;
 
 		this.camera.position.z = cameraZ;
 		this.camera.position.y = cameraY;
 
 		this.camera.lookAt(new Vector3(0,0,0));
 
-		// setup map
+		this.setupMap();
+
+		// setup renderer
+		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
+		this.renderer.setSize(renderWidth, renderHeight);
+		this.renderer.setPixelRatio( window.devicePixelRatio );
+
+		// setup controls
+		this.orbitControls = new OrbitControls( this.camera, this.renderRoot );
+	}
+
+	setupSkyBox(){
+		const textureLoader = new THREE.TextureLoader();
+		textureLoader.load( '/tavern.jpg' , (texture) => {
+			texture.mapping = THREE.EquirectangularReflectionMapping;
+			this.scene.background = texture;
+		});
+	}
+
+	setupMap(){
+
+		if(!(this.mapImage && this.pixelsPerFoot)){
+			return;
+		}
+
+		if(this.mapMesh){
+			this.scene.remove(this.mapMesh);
+		}
+
+		const mapHeight = this.mapImage && this.pixelsPerFoot ? (this.mapImage.height / this.pixelsPerFoot) : DEFAULT_MAP_SIZE;
+		const mapWidth = this.mapImage && this.pixelsPerFoot ? (this.mapImage.width / this.pixelsPerFoot): DEFAULT_MAP_SIZE;
+
 		this.mapCanvas = document.createElement("canvas");
 		this.mapCanvas.height = this.mapImage.height;
 		this.mapCanvas.width = this.mapImage.width;
@@ -99,7 +133,7 @@ export class GameRenderer{
 		for(let chunk of this.mapImage.chunks){
 			const base_image = new Image();
 			base_image.src = `/images/${chunk.fileId}`;
-			base_image.onload = function(){
+			base_image.onload = () => {
 				mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
 				this.mapTexture.needsUpdate = true;
 			}
@@ -112,34 +146,20 @@ export class GameRenderer{
 		mapMesh.receiveShadow = true;
 		this.mapMesh = mapMesh;
 		this.scene.add( mapMesh );
-
-		// skybox
-		const textureLoader = new THREE.TextureLoader();
-		textureLoader.load( '/tavern.jpg' , (texture) => {
-			texture.mapping = THREE.EquirectangularReflectionMapping;
-			this.scene.background = texture;
-		});
-
-		// setup renderer
-		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
-		this.renderer.setSize(renderWidth, renderHeight);
-		this.renderer.setPixelRatio( window.devicePixelRatio );
-
-		// setup controls
-		this.orbitControls = new OrbitControls( this.camera, this.renderRoot );
 	}
 
 	setupRaycaster(){
-		this.renderRoot.addEventListener('mousemove', (event) => {
 
-			this.raycaster = new THREE.Raycaster();
+		this.raycaster = new THREE.Raycaster();
+
+		this.renderRoot.addEventListener('mousemove', (event) => {
 
 			// calculate mouse position in normalized device coordinates
 			// (-1 to +1) for both components
 
 			this.mouseCoords.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 			this.mouseCoords.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		}, false)
+		}, false);
 	}
 
 	stroke(stroke, useCache=true){
@@ -210,6 +230,9 @@ export class GameRenderer{
 	}
 
 	paintWithBrush(){
+		if(!this.mapMesh){
+			return;
+		}
 		const intersects = this.raycaster.intersectObjects( this.mapMesh );
 
 		for ( let intersect of intersects ) {
@@ -293,21 +316,23 @@ export class GameRenderer{
 		});
 	}
 
-	addModel(modelUrl){
+	addModel(modelUrl, isMini = true){
 		// setup model
 		// minis take up a square of 5ft x 5ft
 		const miniWidth = 5;
-		const loader = new GLTFLoader();
-		loader.load( modelUrl, function ( gltf ) {
+		const loader = new GLTFLoader(this.loader);
+		loader.load( modelUrl, ( gltf ) => {
 
 			// get bounding box and scale to match board size
 			const bbox = new THREE.Box3().setFromObject(gltf.scene);
-			const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
-			gltf.scene.scale.set(newScale, newScale, newScale);
+			if(isMini){
+				const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
+				gltf.scene.scale.set(newScale, newScale, newScale);
+			}
 			gltf.scene.traverse((object) => {object.castShadow = true});
 			this.scene.add( gltf.scene );
 
-		}, undefined, function ( error ) {
+		}, undefined, ( error ) => {
 
 			console.error( error );
 

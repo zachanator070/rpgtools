@@ -6,13 +6,21 @@ export const SlidingDrawer = ({title, placement, children, startVisible}) => {
 
 	const [visible, setVisible] = useState(startVisible || false);
 
+	const buttonStyle = {
+		position: 'absolute',
+		padding: '2em',
+		top: '0%',
+	};
+
+	if(placement === 'right'){
+		buttonStyle.right = '0';
+	}
+	else{
+		buttonStyle.left = '0';
+	}
+
 	return <>
-		<div style={{
-			position: 'absolute',
-			padding: '2em',
-			right: '0',
-			top: '0%',
-		}}>
+		<div style={buttonStyle}>
 			<Button onClick={async () => await setVisible(true)}>
 				<MenuOutlined />
 			</Button>

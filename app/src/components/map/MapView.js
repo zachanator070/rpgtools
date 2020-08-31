@@ -6,22 +6,17 @@ import useCurrentMap from "../../hooks/useCurrentMap";
 import {LoadingView} from "../LoadingView";
 import useCreatePin from "../../hooks/useCreatePin";
 import {Link} from "react-router-dom";
-import {WikiView} from "../wiki/WikiView";
-import useMapWikiVisibility from "../../hooks/useMapWikiVisibility";
-import useSetMapWikiVisibility from "../../hooks/useSetMapWikiVisibility";
-import {SlidingDrawer} from "../SlidingDrawer";
-import useMapWiki from "../../hooks/useMapWiki";
 import {MapBreadCrumbs} from "./MapBreadCrumbs";
+import {MapDrawer} from "./MapDrawer";
+import {useQuery} from "@apollo/react-hooks";
+import {MAP_WIKI_ID} from "../../../../common/src/gql-queries";
 
 export const MapView = () => {
 
 	const {currentWorld, loading} = useCurrentWorld();
 	const {currentMap, loading: mapLoading} = useCurrentMap();
 	const {createPin} = useCreatePin();
-
-	const {mapWikiVisibility} = useMapWikiVisibility();
-	const {setMapWikiVisibility} = useSetMapWikiVisibility();
-	const {mapWiki} = useMapWiki();
+	const {data: {mapWiki}} = useQuery(MAP_WIKI_ID);
 
 	const getPins = () => {
 		let pins = [];
@@ -67,22 +62,21 @@ export const MapView = () => {
 	}
 
 	return (
-		<div id='mapContainer' style={{position: 'relative', height: '100%'}}
-		     className='overflow-hidden flex-column flex-grow-1'>
+		<>
 			<MapBreadCrumbs/>
-			<div className='flex-grow-1 flex-column'>
+			<div id='mapContainer' style={{position: 'relative', height: '100%'}}
+			     className='overflow-hidden flex-column flex-grow-1'>
 				{mapWiki &&
-					<SlidingDrawer
-						side='left'
-						show={mapWikiVisibility}
-						setShow={setMapWikiVisibility}
-					>
-						<WikiView currentWiki={mapWiki}/>
-					</SlidingDrawer>
+				<div style={{zIndex: '1'}}>
+					<MapDrawer/>
+				</div>
 				}
-				{map}
+				<div className='flex-grow-1 flex-column'>
+					{map}
+				</div>
 			</div>
-		</div>
+		</>
+
 	);
 
 };

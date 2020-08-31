@@ -7,8 +7,29 @@ export const GameContent = ({currentGame, children}) => {
 	const renderer = useRef();
 
 	useEffect(() => {
-		renderer.current = new GameRenderer(renderCanvas.current, currentGame);
+		renderer.current = new GameRenderer(renderCanvas.current, currentGame.map && currentGame.map.mapImage);
 	}, []);
+
+	useEffect(() => {
+		if(renderer && currentGame && currentGame.map && currentGame.map.mapImage){
+			let needsSetup = false;
+			if(renderer.current.pixelsPerFoot !== currentGame.map.pixelsPerFoot){
+				renderer.current.pixelsPerFoot = currentGame.map.pixelsPerFoot;
+				needsSetup = true;
+			}
+			if(
+				(!renderer.current.mapImage && currentGame.map.mapImage) ||
+				(renderer.current.mapImage && !currentGame.map.mapImage) ||
+				(renderer.current.mapImage._id !== currentGame.map.mapImage._id)
+			){
+				renderer.current.mapImage = currentGame.map.mapImage;
+				needsSetup = true;
+			}
+			if(needsSetup){
+				renderer.current.setupMap();
+			}
+		}
+	}, [currentGame]);
 
 	return <>
 		<div

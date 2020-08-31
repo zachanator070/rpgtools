@@ -1,17 +1,10 @@
-import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
-import {MAP_WIKI} from "../../../common/src/gql-queries";
-
-const MAP_WIKI_ID = gql`
-    query {
-        mapWiki @client
-    }
-`;
+import {MAP_WIKI, MAP_WIKI_ID} from "../../../common/src/gql-queries";
 
 export default () => {
 
-	const {data: mapWikiIdData} = useQuery(MAP_WIKI_ID);
-	const {data, loading, error} = useQuery(MAP_WIKI, {variables: {wikiId: mapWikiIdData && mapWikiIdData.mapWiki}});
+	const {data: {mapWiki}} = useQuery(MAP_WIKI_ID);
+	const {data, loading, error} = useQuery(MAP_WIKI, {variables: {wikiId: mapWiki}});
 
 	return {
 		mapWiki: data ? data.wiki : null,

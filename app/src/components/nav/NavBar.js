@@ -6,7 +6,7 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useLogout from "../../hooks/useLogout";
 import {LoadingView} from "../LoadingView";
-import {SearchBar} from "./SearchBar";
+import {SearchBarV2} from "./SearchBar";
 import {SettingOutlined,UserOutlined, CloudServerOutlined} from "@ant-design/icons";
 import useServerConfig from "../../hooks/useServerConfig";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";
@@ -123,7 +123,7 @@ export const NavBar = () => {
 							</div>
 						</Col>
 						<Col span={10}>
-							<SearchBar/>
+							<SearchBarV2/>
 						</Col>
 					</>
 					:

@@ -2,23 +2,34 @@ import React, {useEffect, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/useCurrentGame";
 import {LoadingView} from "../LoadingView";
-import {Collapse, Comment, Input, Form, Button, List} from "antd";
+import {Collapse, Comment, Input, Form, Button, List, Modal} from "antd";
 import {useGameChat} from "../../hooks/useGameChat";
 import {useGameChatSubscription} from "../../hooks/useGameChatSubscription";
-import {usePlayerJoinedSubscription} from "../../hooks/usePlayerJoinedSubscription";
+import {useGameRosterSubscription} from "../../hooks/useGameRosterSubscription";
 import useLeaveGame from "../../hooks/useLeaveGame";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory} from 'react-router-dom';
+import useMyGames from "../../hooks/useMyGames";
+import {BrushOptions} from "./BrushOptions";
+import {SelectWiki} from "../select/SelectWiki";
+import {PLACE} from "../../../../common/src/type-constants";
+import {useSetGameMap} from "../../hooks/useSetGameMap";
 
-export const GameDrawer = () => {
+export const GameDrawer = ({renderer}) => {
 	const {currentGame, loading} = useCurrentGame();
 	const{currentWorld} = useCurrentWorld();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
 	const {game} = useGameChatSubscription();
-	const {game: playerJoinedGame} = usePlayerJoinedSubscription();
+	const {game: rosterChangeGame} = useGameRosterSubscription();
 	const history = useHistory();
-	const {leaveGame} = useLeaveGame(() => {
+	const {setGameMap} = useSetGameMap();
+	const {refetch} = useMyGames();
+
+	const [selectedLocation, setSelectedLocation] = useState();
+
+	const {leaveGame} = useLeaveGame(async () => {
+		await refetch();
 		history.push(`/ui/world/${currentWorld._id}/gameLogin`);
 	});
 
@@ -42,16 +53,18 @@ export const GameDrawer = () => {
 
 	return <>
 		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true}>
-			<Button type={'primary'} onClick={async () => {await leaveGame(currentGame._id)}}>Leave Game</Button>
+			<Button style={{margin: '20px'}} type={'primary'} onClick={async () => {
+				await leaveGame(currentGame._id)}
+			}>Leave Game</Button>
 			<Collapse defaultActiveKey={['1']}>
 				<Collapse.Panel header="Players" key="1">
 					<List
 						dataSource={currentGame.players}
 						itemLayout="horizontal"
 						locale={{emptyText: <div>No players</div>}}
-						renderItem={({username}) =>
+						renderItem={({username, _id}) =>
 							<List.Item>
-								{username}
+								{username}{currentGame.host._id === _id && <> (Host) </>}
 							</List.Item>
 						}
 					/>
@@ -96,12 +109,22 @@ export const GameDrawer = () => {
 					/>
 				</Collapse.Panel>
 				{currentGame.canWrite &&
-					<>
-						<Collapse.Panel header="Drawing" key="2">
-						</Collapse.Panel>
-						<Collapse.Panel header="Models" key="2">
-						</Collapse.Panel>
-					</>
+					<Collapse.Panel header="Brush Options" key="3">
+						<BrushOptions renderer={renderer}/>
+					</Collapse.Panel>
+				}
+				{currentGame.canWrite &&
+					<Collapse.Panel header="Models" key="4">
+					</Collapse.Panel>
+				}
+				{currentGame.canWrite &&
+					<Collapse.Panel header="Location Settings" key="5">
+						<h3>Change Location</h3>
+						<SelectWiki type={PLACE} onChange={async (wikiId) => {await setSelectedLocation(wikiId)}}/>
+						<div className={'margin-md'}>
+							<Button onClick={async() => {await setGameMap(currentGame._id, selectedLocation)}} disabled={!selectedLocation}>Change location</Button>
+						</div>
+					</Collapse.Panel>
 				}
 			</Collapse>
 		</SlidingDrawer>

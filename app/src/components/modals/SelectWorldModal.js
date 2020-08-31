@@ -93,7 +93,9 @@ export const SelectWorldModal = ({visibility, setVisibility}) => {
 				<Col span={1} style={{borderRight: 'thin solid lightgrey'}}>
 				</Col>
 				<Col span={13}>
-					{content}
+					<div className={'margin-md-left'}>
+						{content}
+					</div>
 				</Col>
 			</Row>
 		</Modal>
