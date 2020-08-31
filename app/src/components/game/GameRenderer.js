@@ -1,229 +1,316 @@
-import React, {useEffect, useRef} from 'react';
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useCurrentGame from "../../hooks/useCurrentGame";
-import {LoadingView} from "../LoadingView";
 import * as THREE from "three";
-import {Vector3} from "three";
+import {Vector2, Vector3} from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import { v4 as uuidv4 } from 'uuid';
 
-function setupScene(root, mapImage) {
+export const BRUSH_CIRCLE = 'circle';
+export const BRUSH_SQUARE = 'square';
+export const BRUSH_ERASE = 'erase';
+export const BRUSH_LINE = 'line'
 
-	const pixelsPerFoot = 60;
+export const DEFAULT_BRUSH_COLOR = '#FFFFFF';
+export const DEFAULT_BRUSH_TYPE = BRUSH_LINE;
+export const DEFAULT_BRUSH_FILL = false;
+export const DEFAULT_BRUSH_SIZE = 5;
 
-	let renderHeight = root.clientHeight;
-	let renderWidth = root.clientWidth;
 
-	const mapHeight = mapImage.height / pixelsPerFoot;
-	const mapWidth = mapImage.width / pixelsPerFoot;
+export class GameRenderer{
 
-	root.addEventListener('resize', () => {
-		renderHeight = root.clientHeight;
-		renderWidth = root.clientWidth;
-		camera.aspectRatio = renderWidth/renderHeight;
-		camera.updateProjectionMatrix();
-		renderer.setSize( renderWidth, renderHeight );
-	});
+	constructor(renderRoot, mapImage, addStroke) {
+		this.renderRoot = renderRoot;
+		this.mapImage = mapImage;
+		this.addStroke = addStroke;
 
-	let scene = new THREE.Scene();
+		this.orbitControls = null;
+		this.paintControlsListener = null;
 
-	// setup lights, one placed every lightDensity feet
-	// const lightDensity = 50;
-	// const lightY = 10;
-	// for(let i = 0; i < (mapWidth / lightDensity); i++){
-	// 	const lightX = (-mapWidth/2 + lightDensity / 2) + (i * lightDensity);
-	// 	for(let j = 0; j < (mapHeight / lightDensity); j++){
-	// 		const lightZ = (-mapHeight/2 + lightDensity / 2) + (j * lightDensity);
-	// 		const light = new THREE.DirectionalLight(0xffffff, 1)
-	// 		light.position.set(lightX,lightY,lightZ)
-	// 		const target = new THREE.Object3D()
-	// 		target.position.set(lightX,0,lightZ)
-	// 		light.target = target
-	// 		scene.add(light.target)
-	//
-	// 		light.shadow.camera.left = -lightDensity/2
-	// 		light.shadow.camera.right = lightDensity/2
-	// 		light.shadow.camera.top = lightDensity/2
-	// 		light.shadow.camera.bottom = -lightDensity/2
-	// 		light.shadow.camera.near = 0
-	// 		light.shadow.camera.far = lightY + 10
-	// 		light.shadow.mapSize.width = 1024
-	// 		light.shadow.mapSize.height = 1024
-	//
-	// 		light.castShadow = true
-	// 		scene.add(light);
-	//
-	// 		//Create a helper for the shadow camera (optional)
-	// 		scene.add(new THREE.CameraHelper( light.shadow.camera ));
-	// 	}
-	// }
+		this.renderer = null;
+		this.camera = null;
+		this.scene = null;
 
-	scene.add(new THREE.AmbientLight(0xffffff, 1))
+		this.raycaster = null;
+		this.mouseCoords = new Vector2();
+		this.mapCanvas = null;
+		this.mapMesh = null;
+		this.mapTexture = null;
 
-	// setup camera
-	let camera = new THREE.PerspectiveCamera( 75, renderWidth / renderHeight, 0.1, 10000 );
-	let cameraZ = Math.max(mapWidth, mapHeight);
-	let cameraY = Math.min(mapWidth, mapHeight);
+		this.pathBeingPainted = [];
+		this.strokeId = null;
+		this.brushType = DEFAULT_BRUSH_TYPE;
+		this.brushColor = DEFAULT_BRUSH_COLOR;
+		this.fillBrush = DEFAULT_BRUSH_FILL;
+		this.brushSize = DEFAULT_BRUSH_SIZE;
 
-	camera.position.z = cameraZ;
-	camera.position.y = cameraY;
+		this.strokesAlreadyDrawn = [];
 
-	camera.lookAt(new Vector3(0,0,0));
+		this.setupScene();
+		this.setupControls();
+		this.setupRaycaster();
 
-	// setup map
-	const mapCanvas = document.createElement("canvas");
-	mapCanvas.height = mapImage.height;
-	mapCanvas.width = mapImage.width;
+		const animate = () => {
+			requestAnimationFrame( animate );
+			this.orbitControls.update();
+			this.raycaster.setFromCamera( this.mouseCoords, this.camera );
+			this.renderer.render( this.scene, this.camera );
+		}
+		animate();
+	}
 
-	const mapContext = mapCanvas.getContext('2d');
-	const mapTexture = new THREE.CanvasTexture(mapCanvas);
+	setupScene(){
+		const pixelsPerFoot = 60;
 
-	for(let chunk of mapImage.chunks){
-		const base_image = new Image();
-		base_image.src = `/images/${chunk.fileId}`;
-		base_image.onload = function(){
-			mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
-			mapTexture.needsUpdate = true;
+		let renderHeight = this.renderRoot.clientHeight;
+		let renderWidth = this.renderRoot.clientWidth;
+
+		const mapHeight = this.mapImage.height / pixelsPerFoot;
+		const mapWidth = this.mapImage.width / pixelsPerFoot;
+
+		this.renderRoot.addEventListener('resize', () => {
+			renderHeight = this.renderRoot.clientHeight;
+			renderWidth = this.renderRoot.clientWidth;
+			this.camera.aspectRatio = renderWidth/renderHeight;
+			this.camera.updateProjectionMatrix();
+			this.renderer.setSize( renderWidth, renderHeight );
+		});
+
+		this.scene = new THREE.Scene();
+
+		this.scene.add(new THREE.AmbientLight(0xffffff, 1))
+
+		// setup camera
+		this.camera = new THREE.PerspectiveCamera( 75, renderWidth / renderHeight, 0.1, 10000 );
+		let cameraZ = Math.max(mapWidth, mapHeight);
+		let cameraY = Math.min(mapWidth, mapHeight);
+
+		this.camera.position.z = cameraZ;
+		this.camera.position.y = cameraY;
+
+		this.camera.lookAt(new Vector3(0,0,0));
+
+		// setup map
+		this.mapCanvas = document.createElement("canvas");
+		this.mapCanvas.height = this.mapImage.height;
+		this.mapCanvas.width = this.mapImage.width;
+
+		const mapContext = this.mapCanvas.getContext('2d');
+		this.mapTexture = new THREE.CanvasTexture(this.mapCanvas);
+
+		for(let chunk of this.mapImage.chunks){
+			const base_image = new Image();
+			base_image.src = `/images/${chunk.fileId}`;
+			base_image.onload = function(){
+				mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
+				this.mapTexture.needsUpdate = true;
+			}
+		}
+
+		const mapGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
+		mapGeometry.rotateX(-Math.PI/2);
+
+		const mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshStandardMaterial( { map: this.mapTexture } ));
+		mapMesh.receiveShadow = true;
+		this.mapMesh = mapMesh;
+		this.scene.add( mapMesh );
+
+		// skybox
+		const textureLoader = new THREE.TextureLoader();
+		textureLoader.load( '/tavern.jpg' , (texture) => {
+			texture.mapping = THREE.EquirectangularReflectionMapping;
+			this.scene.background = texture;
+		});
+
+		// setup renderer
+		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
+		this.renderer.setSize(renderWidth, renderHeight);
+		this.renderer.setPixelRatio( window.devicePixelRatio );
+
+		// setup controls
+		this.orbitControls = new OrbitControls( this.camera, this.renderRoot );
+	}
+
+	setupRaycaster(){
+		this.renderRoot.addEventListener('mousemove', (event) => {
+
+			this.raycaster = new THREE.Raycaster();
+
+			// calculate mouse position in normalized device coordinates
+			// (-1 to +1) for both components
+
+			this.mouseCoords.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+			this.mouseCoords.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+		}, false)
+	}
+
+	stroke(stroke, useCache=true){
+		const {path, type, color, fill, size, id} = stroke;
+		if(useCache){
+			for(let stroke of this.strokesAlreadyDrawn){
+				if(stroke.id === id){
+					return;
+				}
+			}
+		}
+		if(path.length === 0) {
+			console.warn('Trying to stroke a path with zero length path!');
+			return;
+		}
+		const ctx = this.renderRoot.getContext('2d');
+		switch(type){
+			case BRUSH_LINE:
+				ctx.strokeStyle = color;
+				ctx.lineWidth = size;
+				ctx.beginPath();
+				if(path.length > 0){
+					ctx.moveTo(path[0].x, path[0].y);
+				}
+				for(let part of path){
+					ctx.lineTo(part.x, part.y);
+				}
+				ctx.stroke();
+				break;
+			case BRUSH_SQUARE:
+				for(let part of path){
+					if(fill){
+						ctx.fillStyle = color;
+						ctx.fillRect(part.x ,part.y, size, size);
+					}
+					else {
+						ctx.lineWidth = DEFAULT_BRUSH_SIZE;
+						ctx.strokeStyle = color;
+						ctx.strokeRect(part.x ,part.y, size, size);
+					}
+				}
+
+				break;
+			case BRUSH_CIRCLE:
+				for(let part of path){
+					ctx.arc(part.x, part.y, size/2, 0, Math.PI * 2);
+					if(fill){
+						ctx.fillStyle = color;
+						ctx.fill();
+					}
+					else {
+						ctx.lineWidth = DEFAULT_BRUSH_SIZE;
+						ctx.strokeStyle = color;
+						ctx.stroke();
+					}
+				}
+				break;
+			case BRUSH_ERASE:
+				for(let part of path){
+					ctx.clearRect(part.x ,part.y, size, size);
+				}
+				break;
+		}
+		if(useCache){
+			this.strokesAlreadyDrawn.push(stroke);
+		}
+		this.mapTexture.needsUpdate = true;
+	}
+
+	paintWithBrush(){
+		const intersects = this.raycaster.intersectObjects( this.mapMesh );
+
+		for ( let intersect of intersects ) {
+			const currentPath = [];
+			if(this.pathBeingPainted.path.length > 0 && this.brushType === BRUSH_LINE){
+				currentPath.push(this.pathBeingPainted.path[this.pathBeingPainted.path.length - 1]);
+			}
+			const newPoint = {x: intersect.point.x, y: intersect.point.y};
+			currentPath.push(newPoint);
+			this.pathBeingPainted.path.push(newPoint);
+
+			this.stroke(
+				{
+					path: currentPath,
+					type: this.brushType,
+					color: this.brushColor,
+					fill: this.fillBrush,
+					size: this.brushSize
+				},
+				false
+			);
 		}
 	}
 
-	let mapGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
-	mapGeometry.rotateX(-Math.PI/2);
-
-	let mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshStandardMaterial( { map: mapTexture } ));
-	mapMesh.receiveShadow = true;
-	scene.add( mapMesh );
-
-	// skybox
-	const textureLoader = new THREE.TextureLoader();
-	textureLoader.load( '/tavern_orig.jpg' , (texture) => {
-		texture.mapping = THREE.EquirectangularReflectionMapping;
-		scene.background = texture;
-	});
-
-	// setup model
-	// minis take up a square of 5ft x 5ft
-	// const miniWidth = 5;
-	// const loader = new GLTFLoader();
-	// loader.load( '/gundam.glb', function ( gltf ) {
-	//
-	// 	// get bounding box and scale to match board size
-	// 	const bbox = new THREE.Box3().setFromObject(gltf.scene);
-	// 	const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
-	// 	gltf.scene.scale.set(newScale, newScale, newScale);
-	// 	gltf.scene.traverse((object) => {object.castShadow = true});
-	// 	scene.add( gltf.scene );
-	//
-	// }, undefined, function ( error ) {
-	//
-	// 	console.error( error );
-	//
-	// } );
-
-	// setup renderer
-	let renderer = new THREE.WebGLRenderer({antialias: true});
-	renderer.setSize(renderWidth, renderHeight);
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.PCFShadowMap;
-
-	const renderElement = renderer.domElement;
-
-	// setup controls
-	const controls = new OrbitControls( camera, renderElement );
-
-	root.appendChild( renderElement );
-
-	function animate() {
-		requestAnimationFrame( animate );
-		renderer.render( scene, camera );
-	}
-	animate();
-}
-
-function setupTestScene(root) {
-
-	let height = root.clientHeight;
-	let width = root.clientWidth;
-
-	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera( 75, width/height, 0.1, 1000 );
-
-	const renderer = new THREE.WebGLRenderer();
-	renderer.setSize( width, height );
-	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-	root.appendChild( renderer.domElement );
-
-	const geometry = new THREE.BoxGeometry();
-	const material = new THREE.MeshStandardMaterial( { color: 0x0000ff } );
-	const cube = new THREE.Mesh( geometry, material );
-	cube.position.y = 5;
-	cube.castShadow = true;
-	scene.add( cube );
-
-	const planeGeometry = new THREE.PlaneBufferGeometry( 20, 20 );
-	const planeMaterial = new THREE.MeshStandardMaterial( { color: 0x00ff00 } );
-	const plane = new THREE.Mesh( planeGeometry, planeMaterial );
-	plane.receiveShadow = true;
-	plane.rotateX(-Math.PI/2);
-	scene.add( plane );
-
-	const light = new THREE.PointLight(0xffffff, 10, 10000);
-	light.position.set(0,20,0);
-	light.castShadow = true;
-	scene.add( light );
-
-	camera.position.z = 5;
-	camera.position.y = 10;
-	camera.lookAt(new Vector3(0,0,0));
-
-	const controls = new OrbitControls( camera, renderer.domElement );
-
-	// 	// skybox
-	const textureLoader = new THREE.TextureLoader();
-	//https://threejs.org/examples/textures/2294472375_24a3b8ef46_o.jpg
-	textureLoader.load( '/skybox.jpg' , (texture) => {
-
-		texture.mapping = THREE.EquirectangularReflectionMapping;
-		texture.encoding = THREE.sRGBEncoding;
-
-		scene.background = texture;
-
-	});
-
-	var animate = function () {
-		requestAnimationFrame( animate );
-
-		cube.rotation.x += 0.01;
-		cube.rotation.y += 0.01;
-
-		renderer.render( scene, camera );
-	};
-
-	animate();
-}
-
-export const GameRenderer = ({children}) => {
-	const webGLRoot = useRef();
-	const {currentWorld, loading} = useCurrentWorld();
-	const {currentGame} = useCurrentGame();
-
-	useEffect(() => {
-		setupScene(webGLRoot.current, currentWorld.wikiPage.mapImage);
-		// setupTestScene(webGLRoot.current);
-	}, []);
-
-	if(loading){
-		return <LoadingView/>;
+	async stopPaintingWithBrush(){
+		await this.addStroke({
+			path: this.pathBeingPainted,
+			type: this.brushType,
+			size: this.brushSize,
+			color: this.brushColor,
+			fill: this.fillBrush,
+			id: this.strokeId
+		});
+		this.pathBeingPainted.path = [];
+		this.strokeId = null;
 	}
 
-	return <>
-		<div
-			ref={webGLRoot}
-			style={{flexGrow:1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden'}}
-		>
-			{children}
-		</div>
-	</>;
-};
+	setupPaintControls(){
+		this.paintControlsListener = this.renderRoot.addEventListener('mousedown', () => {
+			this.strokeId = uuidv4();
+			this.paintWithBrush();
+			const movePaintingListener = this.renderRoot.addEventListener('mousemove', () => {
+				this.paintWithBrush();
+			});
+			const stopPaintingListener = this.renderRoot.addEventListener('mouseup', async () => {
+				this.renderRoot.removeEventListener(stopPaintingListener);
+				this.renderRoot.removeEventListener(movePaintingListener);
+				await this.stopPaintingWithBrush();
+			});
+
+			const leavePaintingAreaListener = this.renderRoot.addEventListener('mouseleave', async () => {
+				this.renderRoot.removeEventListener(leavePaintingAreaListener);
+				this.renderRoot.removeEventListener(movePaintingListener);
+				await this.stopPaintingWithBrush();
+			});
+		});
+	}
+
+	tearDownPaintControls(){
+		if(this.paintControlsListener){
+			this.renderRoot.removeEventListener(this.paintControlsListener);
+		}
+	}
+
+	setupControls() {
+		this.renderRoot.addEventListener('keydown', ({code}) => {
+			if(code === 'KeyP'){
+				this.setupPaintControls();
+			}
+			else{
+				this.tearDownPaintControls();
+			}
+			if(code === 'KeyC'){
+				if(this.orbitControls){
+					this.orbitControls.enabled = true;
+				}
+			}
+			else {
+				this.orbitControls.enabled = false;
+			}
+		});
+	}
+
+	addModel(modelUrl){
+		// setup model
+		// minis take up a square of 5ft x 5ft
+		const miniWidth = 5;
+		const loader = new GLTFLoader();
+		loader.load( modelUrl, function ( gltf ) {
+
+			// get bounding box and scale to match board size
+			const bbox = new THREE.Box3().setFromObject(gltf.scene);
+			const newScale = miniWidth / Math.max(bbox.getSize().x, bbox.getSize().z);
+			gltf.scene.scale.set(newScale, newScale, newScale);
+			gltf.scene.traverse((object) => {object.castShadow = true});
+			this.scene.add( gltf.scene );
+
+		}, undefined, function ( error ) {
+
+			console.error( error );
+
+		} );
+	}
+}

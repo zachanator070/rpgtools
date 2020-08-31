@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {GameRenderer} from "./GameRenderer";
 import {GameDrawer} from "./GameDrawer";
 import useCurrentGame from "../../hooks/useCurrentGame";
 import {LoadingView} from "../LoadingView";
+import {GameContent} from "./GameContent";
 
 
 export const GameView = () => {
@@ -21,10 +22,8 @@ export const GameView = () => {
 		</>;
 	}
 
-	return <>
-		<GameRenderer>
-			<GameDrawer/>
-		</GameRenderer>
-	</>;
+	return <GameContent>
+		<GameDrawer/>
+	</GameContent>
 
 };
