@@ -14,31 +14,39 @@ const gameCommands = (message, currentUser) => {
 	const command = parts[0];
 	const args = parts.slice(1);
 	let serverResponse = `${command} is not a recognized command`;
-	switch(command){
-		case '/roll':
+	const commands = {
+		'/help': () => {
+			return 'Available server commands:\n' + Object.keys(commands).join('\n');
+		},
+		'/roll': () => {
 			const help = 'Usage: /roll <number of dice>d<number of sides on dice>'
+			let response = '';
 			if(args[0]){
 				const matches = args[0].match(/(?<numDice>\d+)d(?<dice>\d+)/);
 				if(matches){
 					const numDice = parseInt(matches.groups.numDice);
 					const dice = parseInt(matches.groups.dice);
-					serverResponse = `${currentUser.username} rolls ${args[0]} ...\n`;
+					response = `${currentUser.username} rolls ${args[0]} ...\n`;
 					let total = 0;
 					for(let i = 0; i<numDice;  i++){
 						const result = Math.ceil(Math.random() * dice);
 						total += result;
-						serverResponse += `${result}\n`;
+						response += `${result}\n`;
 					}
-					serverResponse += `Total: ${total}`;
+					response += `Total: ${total}`;
 				}
 				else{
-					serverResponse = help
+					response = help
 				}
 			}
 			else {
-				serverResponse = help
+				response = help
 			}
-			break;
+			return response;
+		}
+	};
+	if(Object.keys(commands).includes(command)){
+		serverResponse = commands[command]();
 	}
 	return serverResponse;
 };
@@ -102,14 +110,17 @@ export const gameMutations = {
 		if(message.substr(0,1) === '/'){
 			serverResponse = gameCommands(message, currentUser);
 		}
-
-		game.messages.push({sender: currentUser.username, message, timestamp: Date.now()});
+		const userMessage = {sender: currentUser.username, message, timestamp: Date.now()};
+		game.messages.push(userMessage);
+		await pubsub.publish(GAME_CHAT_EVENT, {gameChat: userMessage});
 		if(serverResponse){
-			game.messages.push({sender: 'Server', message: serverResponse, timestamp: Date.now()});
+			const serverMessage = {sender: 'Server', message: serverResponse, timestamp: Date.now()}
+			game.messages.push(serverMessage);
+			await pubsub.publish(GAME_CHAT_EVENT, {gameChat: serverMessage});
 		}
 
 		await game.save();
-		await pubsub.publish(GAME_CHAT_EVENT, {gameChat: game});
+
 		return game;
 	},
 	setGameMap: async (_, {gameId, placeId}, {currentUser}) => {

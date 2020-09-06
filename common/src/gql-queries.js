@@ -578,12 +578,10 @@ export const CREATE_GAME = gql`
     }
 `;
 
-export const GAME_MESSAGES = `
-	messages {
-        sender
-        message
-        timestamp
-    }
+export const GAME_MESSAGE = `
+    sender
+    message
+    timestamp
 `;
 
 export const GAME_PLAYERS = `
@@ -639,7 +637,9 @@ export const GAME_ATTRIBUTES = `
     canWrite
     canAdmin
     ${GAME_PLAYERS}
-    ${GAME_MESSAGES}
+    messages{
+        ${GAME_MESSAGE}
+    }
     ${GAME_STROKES}
 `;
 
@@ -663,7 +663,6 @@ export const GAME_CHAT = gql`
 	mutation gameChat($gameId: ID!, $message: String!){
 		gameChat(gameId: $gameId, message: $message){
 			_id
-			${GAME_MESSAGES}
 		}
 	}	
 `;
@@ -671,8 +670,7 @@ export const GAME_CHAT = gql`
 export const GAME_CHAT_SUBSCRIPTION = gql`
 	subscription gameChat($gameId: ID!){
 		gameChat(gameId: $gameId){
-			_id
-			${GAME_MESSAGES}
+			${GAME_MESSAGE}
 		}
 	}
 `;
