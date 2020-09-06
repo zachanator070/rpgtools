@@ -1,11 +1,11 @@
-import {GAME_HOST, GAME_WRITE} from "../../../../common/src/permission-constants";
+import {GAME_ADMIN, GAME_HOST, GAME_RW} from "../../../../common/src/permission-constants";
 import {Game} from "../../models/game";
 import bcrypt from "bcrypt";
 import {SALT_ROUNDS} from "./authentication-mutations";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {GAME} from "../../../../common/src/type-constants";
 import {pubsub} from "../../gql-server";
-import {GAME_CHAT_EVENT, GAME_MAP_CHANGE, ROSTER_CHANGE_EVENT} from "../server-resolvers";
+import {GAME_CHAT_EVENT, GAME_MAP_CHANGE, GAME_STROKE_EVENT, ROSTER_CHANGE_EVENT} from "../server-resolvers";
 import {cleanUpPermissions} from "../../db-helpers";
 import {Place} from "../../models/place";
 
@@ -49,8 +49,11 @@ export const gameMutations = {
 			throw new Error('You do not have permission to host games on this world');
 		}
 		const game = await Game.create({world: worldId, passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS), players: [currentUser], host: currentUser});
-		const permission = await PermissionAssignment.create({permission: GAME_WRITE, subject: game._id, subjectType: GAME});
-		currentUser.permissions.push(permission);
+		for(let permission of [GAME_RW, GAME_ADMIN]){
+			const permissionAssignment = await PermissionAssignment.create({permission: permission, subject: game._id, subjectType: GAME});
+			currentUser.permissions.push(permissionAssignment);
+		}
+		await game.save();
 		await currentUser.save();
 		return game;
 	},
@@ -124,6 +127,27 @@ export const gameMutations = {
 		game.map = place;
 		await game.save();
 		await pubsub.publish(GAME_MAP_CHANGE, {gameMapChange: game});
+		return game;
+	},
+	addStroke: async (_, {gameId, path, type, size, color, fill, strokeId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		const newStroke = {
+			path,
+			color,
+			size,
+			fill,
+			type,
+			strokeId
+		};
+		game.strokes.push(newStroke);
+		await game.save();
+		await pubsub.publish(GAME_STROKE_EVENT, {gameStrokeAdded: newStroke});
 		return game;
 	}
 };

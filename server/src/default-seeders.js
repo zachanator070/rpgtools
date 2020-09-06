@@ -15,8 +15,11 @@ export const seedDefaultRoles = async () => {
 			throw new Error('Server needs to exist!');
 		}
 		allUsersRole = await Role.create({name: ALL_USERS});
-		const createWorldPermissions = await PermissionAssignment.create({permission: WORLD_CREATE, subject: server._id, subjectType: SERVER_CONFIG});
-		allUsersRole.permissions.push(createWorldPermissions._id);
+		let createWorldPermission = await PermissionAssignment.findOne({permission: WORLD_CREATE, subject: server._id, subjectType: SERVER_CONFIG});
+		if(!createWorldPermission){
+			createWorldPermission = await PermissionAssignment.create({permission: WORLD_CREATE, subject: server._id, subjectType: SERVER_CONFIG});
+		}
+		allUsersRole.permissions.push(createWorldPermission._id);
 		await allUsersRole.save();
 		console.log(`Created default role "${ALL_USERS}"`);
 	}

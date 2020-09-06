@@ -111,6 +111,26 @@ userSchema.methods.hasPermission = async function (permission, subjectId) {
 	return false;
 };
 
+userSchema.methods.hasRole = async function (role){
+	if(role instanceof String){
+		role = new mongoose.Types.ObjectId(role);
+	}
+
+	if(role instanceof mongoose.Model){
+		role = role._id;
+	}
+
+	for(let userRole of this.roles){
+		if(userRole instanceof mongoose.Model){
+			userRole = userRole._id;
+		}
+		if(userRole.equals(role)){
+			return true;
+		}
+	}
+	return false;
+};
+
 userSchema.plugin(mongoosePaginate);
 
 export const User = mongoose.model(USER, userSchema);

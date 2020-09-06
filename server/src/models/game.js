@@ -1,6 +1,14 @@
 import mongoose from 'mongoose';
 import {GAME, IMAGE, PLACE, WORLD} from "../../../common/src/type-constants";
-import {GAME_WRITE, WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../../common/src/permission-constants";
+import {
+	GAME_ADMIN, GAME_ADMIN_ALL,
+	GAME_RW,
+	ROLE_ADMIN, ROLE_ADMIN_ALL,
+	WIKI_READ,
+	WIKI_READ_ALL,
+	WIKI_RW,
+	WIKI_RW_ALL
+} from "../../../common/src/permission-constants";
 
 const Schema = mongoose.Schema;
 
@@ -33,18 +41,16 @@ const gameSchema = new Schema({
 			x: Number,
 			y: Number,
 		})],
-		color: new Schema({
-			r: Number,
-			g: Number,
-			b: Number,
-			a: Number
-		}),
+		color: {
+			type: String
+		},
 		size: Number,
-		filled: Boolean,
+		fill: Boolean,
 		type: {
 			type: String,
 			enum: ['circle', 'square', 'erase', 'line']
-		}
+		},
+		strokeId: String
 	})],
 	messages: [new Schema({
 		sender: {
@@ -76,8 +82,12 @@ gameSchema.methods.userInGame = async function(user) {
 	return false;
 }
 
+gameSchema.methods.userCanAdmin = async function(user) {
+	return await user.hasPermission(GAME_ADMIN, this._id) || await user.hasPermission(GAME_ADMIN_ALL, this.world);
+};
+
 gameSchema.methods.userCanWrite = async function(user){
-	return await user.hasPermission(GAME_WRITE, this._id);
+	return await user.hasPermission(GAME_RW, this._id);
 };
 
 gameSchema.methods.userCanRead = async function(user){

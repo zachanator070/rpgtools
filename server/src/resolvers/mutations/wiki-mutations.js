@@ -1,6 +1,6 @@
 import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {WIKI_RW} from "../../../../common/src/permission-constants";
+import {WIKI_ADMIN, WIKI_RW} from "../../../../common/src/permission-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
@@ -28,8 +28,10 @@ export const wikiMutations = {
 		await folder.save();
 
 		if(!await newPage.userCanWrite(currentUser)){
-			const readPermission = await PermissionAssignment.create({permission: WIKI_RW, subjectId: newPage._id});
+			const readPermission = await PermissionAssignment.create({permission: WIKI_RW, subject: newPage._id, subjectType: ARTICLE});
 			currentUser.permissions.push(readPermission);
+			const adminPermission = await PermissionAssignment.create({permission: WIKI_ADMIN, subject: newPage._id, subjectType: ARTICLE});
+			currentUser.permissions.push(adminPermission);
 			await currentUser.save();
 		}
 

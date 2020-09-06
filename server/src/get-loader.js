@@ -7,4 +7,4 @@ export const getLoader = model => {
 			return model.find({_id: {$in: ids}}).exec();
 		}
 	);
-}
+};

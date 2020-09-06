@@ -1,5 +1,7 @@
-import {FOLDER_RW} from "../../../../common/src/permission-constants";
+import {FOLDER_ADMIN, FOLDER_RW} from "../../../../common/src/permission-constants";
 import {WikiFolder} from "../../models/wiki-folder";
+import {PermissionAssignment} from "../../models/permission-assignement";
+import {WIKI_FOLDER} from "../../../../common/src/type-constants";
 
 /**
  * Throws an error if the user does not have write access to any of the children folders or pages.
@@ -43,10 +45,16 @@ export const folderMutations = {
 		if(!await parentFolder.userCanWrite(currentUser)){
 			throw new Error(`You do not have permission for this folder`);
 		}
-
 		const newFolder = await WikiFolder.create({name, world: parentFolder.world});
 		parentFolder.children.push(newFolder._id);
 		await parentFolder.save();
+
+		for(let permission of [FOLDER_RW, FOLDER_ADMIN]){
+			const newPermission = await PermissionAssignment.create({permission, subject: newFolder._id, subjectType: WIKI_FOLDER});
+			currentUser.permissions.push(newPermission);
+		}
+		await currentUser.save();
+
 		return newFolder.world;
 	},
 	renameFolder: async (_, {folderId, name}, {currentUser}) => {

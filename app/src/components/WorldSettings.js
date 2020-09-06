@@ -22,31 +22,31 @@ export default () => {
 		<h1>Settings for {currentWorld.name}</h1>
 		<hr/>
 		<Row className={'margin-lg-top'}>
-			<Col span={4}></Col>
+			<Col span={4}/>
 			<Col span={16}>
 				<h2>Permissions</h2>
 			</Col>
-			<Col span={4}></Col>
+			<Col span={4}/>
 		</Row>
 		<Row>
-			<Col span={4}></Col>
+			<Col span={4}/>
 			<Col span={16}>
 				<PermissionEditor subject={currentWorld} subjectType={WORLD}/>
 			</Col>
-			<Col span={4}></Col>
+			<Col span={4}/>
 		</Row>
 
-		{currentWorld.canWrite ??
+		{currentWorld.canWrite &&
 		<>
 			<Row className={'margin-lg-top'}>
-				<Col span={4}></Col>
+				<Col span={4}/>
 				<Col span={16}>
 					<h2>Rename World</h2>
 				</Col>
-				<Col span={4}></Col>
+				<Col span={4}/>
 			</Row>
-			<Row className={'margin-lg-top'}>
-				<Col span={4}></Col>
+			<Row className={'margin-lg-top margin-lg-bottom'}>
+				<Col span={4}/>
 				<Col span={16}>
 					<div style={{display: 'flex'}}>
 						<div className='margin-md-right'>New Name:</div>
@@ -60,7 +60,7 @@ export default () => {
 						await renameWorld(currentWorld._id, newName)
 					}} disabled={loading}>Submit</Button>
 				</Col>
-				<Col span={4}></Col>
+				<Col span={4}/>
 			</Row>
 		</>
 		}

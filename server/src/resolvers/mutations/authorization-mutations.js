@@ -1,4 +1,4 @@
-import {ROLE_ADD, ROLE_ADMIN} from "../../../../common/src/permission-constants";
+import {ROLE_ADD, ROLE_ADMIN, ROLE_RW} from "../../../../common/src/permission-constants";
 import {Role} from "../../models/role";
 import {World} from "../../models/world";
 import {User} from "../../models/user";
@@ -109,8 +109,10 @@ export const authorizationMutations = {
 		const newRole = await Role.create({name, world});
 		world.roles.push(newRole);
 		await world.save();
-		const adminRole = await PermissionAssignment.create({permission: ROLE_ADMIN, subject: newRole._id, subjectType: ROLE});
-		currentUser.permissions.push(adminRole);
+		for(let permission of [ROLE_ADMIN, ROLE_RW]){
+			const permissionAssignment = await PermissionAssignment.create({permission, subject: newRole._id, subjectType: ROLE});
+			currentUser.permissions.push(permissionAssignment);
+		}
 		await currentUser.save();
 		await world.populate({
 			path: 'roles',

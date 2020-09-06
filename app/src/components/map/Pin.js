@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Popover} from "antd";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useSetMapWikiVisibility from "../../hooks/useSetMapWikiVisibility";
 import useSetMapWiki from "../../hooks/useSetMapWiki";
 import {EditPinModal} from "../modals/EditPinModal";
 import {PLACE} from "../../../../common/src/type-constants";
@@ -13,7 +12,6 @@ export const Pin = ({pin, translate}) => {
 	const {currentWorld} = useCurrentWorld();
 	const [editPinModalVisibility, setEditPinModalVisibility] = useState(false);
 
-	const {setMapWikiVisibility} = useSetMapWikiVisibility();
 	const {setMapWiki} = useSetMapWiki();
 	const [visible, setVisible] = useState(false);
 
@@ -35,7 +33,7 @@ export const Pin = ({pin, translate}) => {
 			<h3>{pin.page.type}</h3>
 			<a href='#' onClick={async () => {
 				await setVisible(false);
-				await setMapWikiVisibility(true);
+				await setMapWiki(null);
 				await setMapWiki(pin.page._id);
 			}}>Details</a>
 			{pin.page.type === PLACE ?

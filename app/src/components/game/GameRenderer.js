@@ -18,7 +18,14 @@ const DEFAULT_MAP_SIZE = 50;
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke, onProgress) {
+	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}) {
+		this.stroke = this.stroke.bind(this);
+		this.paintWithBrush = this.paintWithBrush.bind(this);
+		this.stopPaintingWithBrush = this.stopPaintingWithBrush.bind(this);
+		this.paintMouseDownEvent = this.paintMouseDownEvent.bind(this);
+		this.tearDownPaintControls = this.tearDownPaintControls.bind(this);
+		this.setupControls = this.setupControls.bind(this);
+
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
 		this.addStroke = addStroke;
@@ -124,7 +131,7 @@ export class GameRenderer{
 		const mapWidth = this.mapImage && this.pixelsPerFoot ? (this.mapImage.width / this.pixelsPerFoot): DEFAULT_MAP_SIZE;
 
 		this.mapCanvas = document.createElement("canvas");
-		this.mapCanvas.height = this.mapImage.height;
+		this.mapCanvas.height = this.mapHeight;
 		this.mapCanvas.width = this.mapImage.width;
 
 		const mapContext = this.mapCanvas.getContext('2d');
@@ -175,7 +182,8 @@ export class GameRenderer{
 			console.warn('Trying to stroke a path with zero length path!');
 			return;
 		}
-		const ctx = this.renderRoot.getContext('2d');
+		const ctx = this.mapCanvas.getContext('2d');
+		ctx.lineCap = 'round';
 		switch(type){
 			case BRUSH_LINE:
 				ctx.strokeStyle = color;
@@ -187,6 +195,7 @@ export class GameRenderer{
 				for(let part of path){
 					ctx.lineTo(part.x, part.y);
 				}
+				ctx.closePath();
 				ctx.stroke();
 				break;
 			case BRUSH_SQUARE:
@@ -233,16 +242,16 @@ export class GameRenderer{
 		if(!this.mapMesh){
 			return;
 		}
-		const intersects = this.raycaster.intersectObjects( this.mapMesh );
+		const intersects = this.raycaster.intersectObject( this.mapMesh );
 
 		for ( let intersect of intersects ) {
 			const currentPath = [];
-			if(this.pathBeingPainted.path.length > 0 && this.brushType === BRUSH_LINE){
-				currentPath.push(this.pathBeingPainted.path[this.pathBeingPainted.path.length - 1]);
+			if(this.pathBeingPainted.length > 0 && this.brushType === BRUSH_LINE){
+				currentPath.push(this.pathBeingPainted[this.pathBeingPainted.length - 1]);
 			}
-			const newPoint = {x: intersect.point.x, y: intersect.point.y};
+			const newPoint = {x: intersect.point.x * this.pixelsPerFoot + this.mapImage.width / 2, y: intersect.point.z * this.pixelsPerFoot + this.mapImage.height / 2};
 			currentPath.push(newPoint);
-			this.pathBeingPainted.path.push(newPoint);
+			this.pathBeingPainted.push(newPoint);
 
 			this.stroke(
 				{
@@ -250,51 +259,48 @@ export class GameRenderer{
 					type: this.brushType,
 					color: this.brushColor,
 					fill: this.fillBrush,
-					size: this.brushSize
+					size: this.brushSize * this.pixelsPerFoot
 				},
 				false
 			);
 		}
 	}
 
-	async stopPaintingWithBrush(){
-		await this.addStroke({
-			path: this.pathBeingPainted,
-			type: this.brushType,
-			size: this.brushSize,
-			color: this.brushColor,
-			fill: this.fillBrush,
-			id: this.strokeId
-		});
-		this.pathBeingPainted.path = [];
-		this.strokeId = null;
+	stopPaintingWithBrush(){
+		this.renderRoot.removeEventListener('mousemove', this.paintWithBrush);
+		this.renderRoot.removeEventListener('mouseup', this.stopPaintingWithBrush);
+		this.renderRoot.removeEventListener('mouseleave', this.stopPaintingWithBrush);
+		if(this.strokeId){
+			// using await with this method caused freezing
+			this.addStroke(
+				this.pathBeingPainted,
+				this.brushType,
+				this.brushSize,
+				this.brushColor,
+				this.fillBrush,
+				this.strokeId
+			);
+			this.pathBeingPainted = [];
+			this.strokeId = null;
+		}
+
+	}
+
+	paintMouseDownEvent(){
+		console.log('mouse down fired');
+		this.strokeId = uuidv4();
+		this.paintWithBrush();
+		this.renderRoot.addEventListener('mousemove', this.paintWithBrush);
+		this.renderRoot.addEventListener('mouseup', this.stopPaintingWithBrush);
+		this.renderRoot.addEventListener('mouseleave', this.stopPaintingWithBrush);
 	}
 
 	setupPaintControls(){
-		this.paintControlsListener = this.renderRoot.addEventListener('mousedown', () => {
-			this.strokeId = uuidv4();
-			this.paintWithBrush();
-			const movePaintingListener = this.renderRoot.addEventListener('mousemove', () => {
-				this.paintWithBrush();
-			});
-			const stopPaintingListener = this.renderRoot.addEventListener('mouseup', async () => {
-				this.renderRoot.removeEventListener(stopPaintingListener);
-				this.renderRoot.removeEventListener(movePaintingListener);
-				await this.stopPaintingWithBrush();
-			});
-
-			const leavePaintingAreaListener = this.renderRoot.addEventListener('mouseleave', async () => {
-				this.renderRoot.removeEventListener(leavePaintingAreaListener);
-				this.renderRoot.removeEventListener(movePaintingListener);
-				await this.stopPaintingWithBrush();
-			});
-		});
+		this.renderRoot.addEventListener('mousedown', this.paintMouseDownEvent);
 	}
 
 	tearDownPaintControls(){
-		if(this.paintControlsListener){
-			this.renderRoot.removeEventListener(this.paintControlsListener);
-		}
+		this.renderRoot.removeEventListener('mousedown', this.paintMouseDownEvent);
 	}
 
 	setupControls() {

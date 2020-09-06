@@ -2,65 +2,13 @@ import {Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
 import useCurrentWorld from "../hooks/useCurrentWorld";
 import {LoadingView} from "./LoadingView";
 import {MapView} from "./map/MapView";
-import React, {useState} from "react";
-import useCurrentWiki from "../hooks/useCurrentWiki";
-import {Col, Row} from "antd";
-import {FolderView} from "./wiki/FolderView";
-import {WikiEdit} from "./wiki/WikiEdit";
-import {WikiView} from "./wiki/WikiView";
+import React from "react";
 import WorldSettings from "./WorldSettings";
 import {RolesView} from "./permissions/RolesView";
-import {TeamOutlined} from "@ant-design/icons";
 import {MyPermissionsView} from "./permissions/MyPermissionsView";
-import {PermissionModal} from "./modals/PermissionModal";
 import {GameView} from "./game/GameView";
 import {GameLoginView} from "./game/GameLoginView";
-
-const WikiContent = () => {
-	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
-	const {currentWorld, loading: worldLoading} = useCurrentWorld();
-	const match = useRouteMatch();
-
-	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
-
-	return wikiLoading || worldLoading ? <LoadingView/> :
-		<>
-			<PermissionModal
-				visibility={permissionModalVisibility}
-				setVisibility={setPermissionModalVisibility}
-				subject={currentWiki}
-				subjectType={currentWiki.type}
-			/>
-			<Row>
-				<Col span={4} className='padding-md'>
-					<FolderView/>
-				</Col>
-				<Col span={16}>
-					<Switch>
-						<Route path={`${match.path}/edit`}>
-							<WikiEdit/>
-						</Route>
-						<Route path={`${match.path}/view`}>
-							<div>
-								<WikiView currentWiki={currentWiki}/>
-							</div>
-						</Route>
-					</Switch>
-				</Col>
-				<Col span={4} className='padding-md'>
-					<Route path={`${match.path}/view`}>
-						{currentWiki.canWrite &&
-							<a title={'View permissions for this page'} onClick={async () => {
-								await setPermissionModalVisibility(true);
-							}}>
-								<TeamOutlined style={{fontSize: '20px'}}/>
-							</a>
-						}
-					</Route>
-				</Col>
-			</Row>
-		</>
-};
+import {WikView} from "./wiki/WikiView";
 
 export const AppContent = () => {
 
@@ -94,7 +42,7 @@ export const AppContent = () => {
 				<MapView/>
 			</Route>
 			<Route path={`${match.path}/wiki/:wiki_id`}>
-				<WikiContent/>
+				<WikView/>
 			</Route>
 			<Route path={`${match.path}/gameLogin`}>
 				<GameLoginView/>

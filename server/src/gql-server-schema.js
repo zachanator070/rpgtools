@@ -79,12 +79,15 @@ export const typeDefs = gql`
         leaveGame(gameId: ID!): Boolean!
         gameChat(gameId: ID!, message: String!): Game!
         setGameMap(gameId: ID!, placeId: ID!): Game!
+        
+        addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
     }
   
     type Subscription {
-	  gameChat(gameId: ID!): Game!
-	  gameRosterChange(gameId: ID!): Game!
-	  gameMapChange(gameId: ID!): Game!
+		gameChat(gameId: ID!): GameMessage!
+		gameRosterChange(gameId: ID!): Game!
+		gameMapChange(gameId: ID!): Game!
+		gameStrokeAdded(gameId: ID!): Stroke!
 	}
   
     type User {
@@ -97,7 +100,9 @@ export const typeDefs = gql`
     }
   
     interface PermissionControlled {
-        usersWithPermissions: [User!]!
+        accessControlList: [PermissionAssignment!]!
+        canWrite: Boolean!
+        canAdmin: Boolean!
         _id: ID!
     }
   
@@ -107,12 +112,14 @@ export const typeDefs = gql`
 		wikiPage: Place
 		rootFolder: WikiFolder
 		roles: [Role!]!
-		usersWithPermissions: [User!]!
 		pins: [Pin!]!
 		folders: [WikiFolder!]!
+		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
+		canAdmin: Boolean!
 		canAddRoles: Boolean!
 		canHostGame: Boolean!
+		currentUserPermissions: [PermissionAssignment!]!
 	}
 	
 	type WorldPaginatedResult {
@@ -174,7 +181,6 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
-		canWrite: Boolean!
 	}
 	
 	type Article implements WikiPage & PermissionControlled {
@@ -184,8 +190,9 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
-		usersWithPermissions: [User!]!
+		canAdmin: Boolean!
 	}
 	
 	type Place implements WikiPage & PermissionControlled {
@@ -197,8 +204,9 @@ export const typeDefs = gql`
 		mapImage: Image
 		pixelsPerFoot: Int
 		type: String!
+		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
-		usersWithPermissions: [User!]!
+		canAdmin: Boolean!
 	}
 	
 	type Person implements WikiPage & PermissionControlled {
@@ -208,8 +216,9 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
-		usersWithPermissions: [User!]!
+		canAdmin: Boolean!
 	}
 	
 	type WikiFolder implements PermissionControlled{
@@ -218,8 +227,9 @@ export const typeDefs = gql`
 		world: World!
 		pages: [WikiPage!]!
 		children: [WikiFolder!]!
+		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
-		usersWithPermissions: [User!]!
+		canAdmin: Boolean!
 	}
 	
 	type Image {
@@ -231,7 +241,6 @@ export const typeDefs = gql`
 		chunkWidth: Int!
 		chunks: [Chunk!]!
 		icon: Image!
-		canWrite: Boolean!
 		name: String!
 	}
 	
@@ -248,11 +257,12 @@ export const typeDefs = gql`
 	type Role implements PermissionControlled{
 		_id: ID!
 		name: String!
-		permissions: [PermissionAssignment!]!
+		accessControlList: [PermissionAssignment!]!
 		members: [User!]!
-		world: World!
+		world: World
+		permissions: [PermissionAssignment!]!
 		canWrite: Boolean!
-		usersWithPermissions: [User!]!
+		canAdmin: Boolean!
 	}
 	
 	type PermissionAssignment {
@@ -261,6 +271,8 @@ export const typeDefs = gql`
 		subject: PermissionControlled!
 		subjectType: String!
 		canWrite: Boolean!
+		users: [User!]!
+		roles: [Role!]!
 	}
 	
 	type Pin {
@@ -272,11 +284,14 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 	}
 	
-	type ServerConfig {
+	type ServerConfig implements PermissionControlled{
 		_id: ID!
 		version: String!
 		registerCodes: [String!]!
-		adminUsers: [User!]!
+		accessControlList: [PermissionAssignment!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+		roles: [Role!]!
 	}
 	
 	type GameMessage {
@@ -287,12 +302,34 @@ export const typeDefs = gql`
 	
 	type Game implements PermissionControlled{
 		_id: ID!
-		usersWithPermissions: [User!]!
 		world: World!
 		map: Place
 		players: [User!]!
 		messages: [GameMessage!]!
-		canWrite: Boolean!
 		host: User!
+		accessControlList: [PermissionAssignment!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+		strokes: [Stroke!]!
 	}
+	
+	type Stroke{
+		path: [PathNode!]!
+		type: String!
+		size: Int!
+		color: String!
+		fill: Boolean!
+		strokeId: ID!
+	}
+	
+	type PathNode{
+		x: Float!
+		y: Float!
+	}
+	
+	input PathNodeInput{
+		x: Float!
+		y: Float!
+	}
+	
 `;

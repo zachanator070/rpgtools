@@ -1,82 +1,49 @@
 import {Col, Row, Table} from "antd";
 import React from "react";
-import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../../common/src/type-constants";
-import {EVERYONE} from "../../../../common/src/role-constants";
+import {
+	ALL_WIKI_TYPES,
+	ROLE,
+	WIKI_FOLDER,
+	WORLD
+} from "../../../../common/src/type-constants";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useServerConfig from "../../hooks/useServerConfig";
+import {LoadingView} from "../LoadingView";
 
 export const MyPermissionsView = () => {
-	const {currentWorld} = useCurrentWorld();
-	const {currentUser} = useCurrentUser();
+
+	const {currentWorld, loading} = useCurrentWorld();
+	const {serverConfig, serverConfigLoading} = useServerConfig();
 
 	const getPermissionSubjectName = (assignment) => {
 
-		if (assignment.subjectType === WORLD) {
-			return `World: ${assignment.subject.name}`;
-		} else if (ALL_WIKI_TYPES.includes(assignment.subjectType) || assignment.subjectType === WIKI_PAGE) {
-			return `Wiki Page: ${assignment.subject.name}`;
-		} else if (assignment.subjectType === WIKI_FOLDER) {
-			return `Wiki Folder: ${assignment.subject.name}`;
-		} else if (assignment.subjectType === ROLE) {
-			return `Role: ${assignment.subject.name}`;
+		let name = assignment.subject._id;
+
+		if([WORLD, WIKI_FOLDER, ROLE].concat(ALL_WIKI_TYPES).includes(assignment.subjectType)){
+			name = assignment.subject.name;
 		}
-		return null;
+
+		return `${assignment.subjectType}: ${name}`;
 	};
 
 	const permissionAssignments = [];
-	if (currentUser) {
-		for (let assignment of currentUser.permissions) {
-			const subjectName = getPermissionSubjectName(assignment);
-			if (!subjectName) {
-				continue;
-			}
-			permissionAssignments.push({
-				permission: assignment.permission,
-				subject: subjectName,
-				key: `${assignment._id}${subjectName}Direct Assignment`,
-				source: 'Direct Assignment'
-			});
-		}
 
-		for(let role of currentWorld.roles){
-			if(role.members.findIndex(user => user._id === currentUser._id) >= 0){
-				for (let assignment of role.permissions) {
-					const subjectName = getPermissionSubjectName(assignment);
-					if (!subjectName) {
-						continue;
-					}
-					const sourceName = `Role: ${role.name}`;
-					permissionAssignments.push({
-						permission: assignment.permission,
-						subject: subjectName,
-						key: `${assignment._id}${subjectName}${sourceName}`,
-						source: sourceName
-					});
+	for (let assignment of currentWorld.currentUserPermissions) {
+		let source = 'Direct Assignment';
+		for(let role of currentWorld.roles.concat(serverConfig.roles)){
+			for(let permission of role.permissions){
+				if(permission._id === assignment._id){
+					source = `Role: ${role.name}`;
 				}
 			}
 		}
-
-	}
-
-	let everyoneRole = null;
-	for (let role of currentWorld.roles) {
-		if (role.name === EVERYONE) {
-			everyoneRole = role;
-			break;
-		}
-	}
-
-	if (everyoneRole) {
-		for (let assignment of everyoneRole.permissions) {
-			const subjectName = getPermissionSubjectName(assignment);
-			const sourceName = `Role: ${everyoneRole.name}`;
-			permissionAssignments.push({
-				permission: assignment.permission,
-				subject: subjectName,
-				key: `${assignment._id}${subjectName}${sourceName}`,
-				source: sourceName
-			});
-		}
+		const subjectName = getPermissionSubjectName(assignment);
+		permissionAssignments.push({
+			permission: assignment.permission,
+			subject: subjectName,
+			key: `${assignment._id}${subjectName}${source}`,
+			source
+		});
 	}
 
 	let allPermissionNames = permissionAssignments.map(assignment => assignment.permission);
@@ -122,11 +89,15 @@ export const MyPermissionsView = () => {
 		},
 	];
 
+	if(loading || serverConfigLoading){
+		return <LoadingView/>;
+	}
+
 	return <div className={'margin-md'}>
 		<h1>My Permissions on {currentWorld.name}</h1>
 		<hr/>
 		<Row className={'margin-xlg-top'}>
-			<Col span={4}></Col>
+			<Col span={4}/>
 			<Col span={16}>
 				<h2 className={'margin-lg-bottom'}>My Permissions</h2>
 				<Table
@@ -136,7 +107,7 @@ export const MyPermissionsView = () => {
 					scroll={{y: 500}}
 				/>
 			</Col>
-			<Col span={4}></Col>
+			<Col span={4}/>
 		</Row>
 	</div>;
 };

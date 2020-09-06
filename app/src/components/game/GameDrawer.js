@@ -14,10 +14,11 @@ import {BrushOptions} from "./BrushOptions";
 import {SelectWiki} from "../select/SelectWiki";
 import {PLACE} from "../../../../common/src/type-constants";
 import {useSetGameMap} from "../../hooks/useSetGameMap";
+import {Link} from "react-router-dom";
 
 export const GameDrawer = ({renderer}) => {
 	const {currentGame, loading} = useCurrentGame();
-	const{currentWorld} = useCurrentWorld();
+	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
 	const {game} = useGameChatSubscription();
@@ -40,7 +41,7 @@ export const GameDrawer = ({renderer}) => {
 		}
 	}, [game]);
 
-	if(loading){
+	if(loading || currentWorldLoading){
 		return <LoadingView/>;
 	}
 
@@ -52,7 +53,7 @@ export const GameDrawer = ({renderer}) => {
 	};
 
 	return <>
-		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true}>
+		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true} placement={'right'}>
 			<Button style={{margin: '20px'}} type={'primary'} onClick={async () => {
 				await leaveGame(currentGame._id)}
 			}>Leave Game</Button>
@@ -117,15 +118,29 @@ export const GameDrawer = ({renderer}) => {
 					<Collapse.Panel header="Models" key="4">
 					</Collapse.Panel>
 				}
-				{currentGame.canWrite &&
-					<Collapse.Panel header="Location Settings" key="5">
-						<h3>Change Location</h3>
-						<SelectWiki type={PLACE} onChange={async (wikiId) => {await setSelectedLocation(wikiId)}}/>
-						<div className={'margin-md'}>
-							<Button onClick={async() => {await setGameMap(currentGame._id, selectedLocation)}} disabled={!selectedLocation}>Change location</Button>
+
+				<Collapse.Panel header="Current Location" key="5">
+
+						<div className={'margin-lg-top margin-lg-bottom'}>
+							<h3>Current Location</h3>
+							{currentGame.map ?
+								<Link
+									to={`/ui/world/${currentWorld._id}/wiki/${currentGame.map._id}/view`}>{currentGame.map.name}</Link>
+								:
+								<p>No current location</p>
+							}
 						</div>
-					</Collapse.Panel>
-				}
+					{currentGame.canWrite &&
+						<div className={'margin-lg-bottom'}>
+							<h3>Change Location</h3>
+							<SelectWiki type={PLACE} onChange={async (wikiId) => {await setSelectedLocation(wikiId)}}/>
+							<div className={'margin-md'}>
+								<Button onClick={async() => {await setGameMap(currentGame._id, selectedLocation)}} disabled={!selectedLocation}>Change location</Button>
+							</div>
+						</div>
+					}
+				</Collapse.Panel>
+
 			</Collapse>
 		</SlidingDrawer>
 	</>;

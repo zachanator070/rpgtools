@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchRoles} from "../../hooks/useSearchRoles";
+import {useSearchFolders} from "../../hooks/useSearchFolders";
 
-export const SelectRole = ({onChange, style}) => {
-	const {searchRoles, roles, loading} = useSearchRoles();
+export const SelectFolder = ({onChange, style}) => {
+	const {searchFolders, folders, loading} = useSearchFolders();
 	const [value, setValue] = useState();
 
-	const options = roles.map((role) => {return <Select.Option key={role._id} value={role._id}>{role.name}</Select.Option>});
+	const options = folders.map((folder) => {return <Select.Option key={folder._id} value={folder._id}>{folder.name}</Select.Option>});
 
 	return <Select
 		showSearch
@@ -15,7 +15,7 @@ export const SelectRole = ({onChange, style}) => {
 		showArrow={false}
 		filterOption={false}
 		notFoundContent={loading ? <Spin size="small" /> : null}
-		onSearch={async (term) => {await searchRoles(term)}}
+		onSearch={async (term) => {await searchFolders(term)}}
 		onSelect={async (newValue) => {
 			await setValue(newValue);
 			if(onChange){

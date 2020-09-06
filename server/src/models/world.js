@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
-import {WORLD_READ} from "../../../common/src/permission-constants";
+import {ROLE_ADMIN_ALL, WORLD_ADMIN, WORLD_READ, WORLD_READ_ALL} from "../../../common/src/permission-constants";
 import {WORLD_OWNER} from "../../../common/src/role-constants";
 import {PIN, PLACE, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
+import {ServerConfig} from "./server-config";
 
 const Schema = mongoose.Schema;
 
@@ -29,8 +30,13 @@ const worldSchema = new Schema({
 	}]
 });
 
+worldSchema.methods.userCanAdmin = async function(user) {
+	return await user.hasPermission(WORLD_ADMIN, this._id) || await user.hasPermission(ROLE_ADMIN_ALL, this.world);
+};
+
 worldSchema.methods.userCanRead = async function(user){
-	return await user.hasPermission(WORLD_READ, this._id);
+	const serverConfig = await ServerConfig.findOne();
+	return await user.hasPermission(WORLD_READ, this._id) || (serverConfig && await user.hasPermission(WORLD_READ_ALL, serverConfig._id));
 };
 
 // basically if the user can give out permissions defined in WORLD_PERMISSIONS and change the world name

@@ -132,7 +132,7 @@ export const NavBar = () => {
 					</Col>
 				}
 				<Col span={6} className={'padding-md-right'} style={{textAlign: 'right'}}>
-					{currentUser && serverConfig.adminUsers.findIndex(user => user._id === currentUser._id) >= 0 &&
+					{(serverConfig.canAdmin || serverConfig.canWrite) &&
 						<Link to={`/ui/serverSettings`} className={'margin-lg-right'}>
 							<CloudServerOutlined/>
 							Server Settings
