@@ -3,6 +3,8 @@ import {GameRenderer} from "./GameRenderer";
 import {notification} from "antd";
 import useAddStroke from "../../hooks/useAddStroke";
 import {useGameStrokeSubscription} from "../../hooks/useGameStrokeSubscription";
+import {GameDrawer} from "./GameDrawer";
+import {GameControlsHelp} from "./GameControlsHelp";
 
 export const GameContent = ({currentGame, children}) => {
 
@@ -10,28 +12,33 @@ export const GameContent = ({currentGame, children}) => {
 	const [renderer, setRenderer] = useState();
 	const {addStroke} = useAddStroke();
 
+	const [cameraMode, setCameraMode] = useState('camera');
 	// const {game} = useGameStrokeSubscription();
 
 	useEffect(() => {
 		(async () => {
-			let newRenderer = renderer;
-			if(!newRenderer){
-				newRenderer = new GameRenderer(renderCanvas.current, currentGame.map && currentGame.map.mapImage, addStroke);
-				await setRenderer(newRenderer);
+			await setRenderer(new GameRenderer(renderCanvas.current, currentGame.map && currentGame.map.mapImage, addStroke, () => {}, setCameraMode));
+		})();
+	}, []);
+
+	useEffect(() => {
+		(async () => {
+			if(!renderer){
+				return;
 			}
 
 			if(currentGame && currentGame.map && currentGame.map.mapImage){
 				let needsSetup = false;
-				if(newRenderer.pixelsPerFoot !== currentGame.map.pixelsPerFoot){
-					newRenderer.pixelsPerFoot = currentGame.map.pixelsPerFoot;
+				if(renderer.pixelsPerFoot !== currentGame.map.pixelsPerFoot){
+					renderer.pixelsPerFoot = currentGame.map.pixelsPerFoot;
 					needsSetup = true;
 				}
 				if(
-					(!newRenderer.mapImage && currentGame.map.mapImage) ||
-					(newRenderer.mapImage && !currentGame.map.mapImage) ||
-					(newRenderer.mapImage._id !== currentGame.map.mapImage._id)
+					(!renderer.mapImage && currentGame.map.mapImage) ||
+					(renderer.mapImage && !currentGame.map.mapImage) ||
+					(renderer.mapImage._id !== currentGame.map.mapImage._id)
 				){
-					newRenderer.mapImage = currentGame.map.mapImage;
+					renderer.mapImage = currentGame.map.mapImage;
 					needsSetup = true;
 				}
 				if(needsSetup){
@@ -49,19 +56,20 @@ export const GameContent = ({currentGame, children}) => {
 								`Location: ${currentGame.map.name} has no "pixel per foot" value set!`,
 						});
 					}
-					newRenderer.setupMap();
+					renderer.setupMap();
 				}
 			}
 
 		})();
-	}, [currentGame]);
+	}, [currentGame, renderer]);
 
 	return <>
 		<div
 			style={{flexGrow:1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden'}}
 		>
 			<canvas ref={renderCanvas} style={{width: '100%', height: '100%'}}/>
-			{React.cloneElement(children, {renderer})}
+			<GameDrawer renderer={renderer}/>
+			<GameControlsHelp cameraMode={cameraMode}/>
 		</div>
 	</>;
 

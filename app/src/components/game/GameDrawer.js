@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/useCurrentGame";
-import {LoadingView} from "../LoadingView";
 import {Collapse, Comment, Input, Form, Button, List, Modal} from "antd";
 import {useGameChat} from "../../hooks/useGameChat";
 import {useGameChatSubscription} from "../../hooks/useGameChatSubscription";
@@ -42,7 +41,7 @@ export const GameDrawer = ({renderer}) => {
 	}, [game]);
 
 	if(loading || currentWorldLoading){
-		return <LoadingView/>;
+		return <></>;
 	}
 
 	const submitComment = async () => {
