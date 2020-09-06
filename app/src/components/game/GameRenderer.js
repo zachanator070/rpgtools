@@ -11,14 +11,17 @@ export const BRUSH_LINE = 'line'
 
 export const DEFAULT_BRUSH_COLOR = '#FFFFFF';
 export const DEFAULT_BRUSH_TYPE = BRUSH_LINE;
-export const DEFAULT_BRUSH_FILL = false;
+export const DEFAULT_BRUSH_FILL = true;
 export const DEFAULT_BRUSH_SIZE = 5;
 
 const DEFAULT_MAP_SIZE = 50;
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}) {
+	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setCameraMode) {
+
+		this.setCameraMode = setCameraMode;
+
 		this.stroke = this.stroke.bind(this);
 		this.paintWithBrush = this.paintWithBrush.bind(this);
 		this.stopPaintingWithBrush = this.stopPaintingWithBrush.bind(this);
@@ -45,6 +48,11 @@ export class GameRenderer{
 		this.mapCanvas = null;
 		this.mapMesh = null;
 		this.mapTexture = null;
+
+		this.drawCanvas = null;
+		this.drawMesh = null;
+		this.drawTexture = null;
+
 		this.pixelsPerFoot = mapImage ? mapImage.pixelsPerFoot : 1;
 
 		this.pathBeingPainted = [];
@@ -62,7 +70,7 @@ export class GameRenderer{
 
 		const animate = () => {
 			requestAnimationFrame( animate );
-			this.orbitControls.update();
+			// this.orbitControls.update();
 			if(this.mouseCoords){
 				this.raycaster.setFromCamera( this.mouseCoords, this.camera );
 			}
@@ -102,6 +110,7 @@ export class GameRenderer{
 
 		// setup renderer
 		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
+		console.log(`rendering size ${renderWidth} x ${renderHeight}`);
 		this.renderer.setSize(renderWidth, renderHeight);
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 
@@ -127,15 +136,32 @@ export class GameRenderer{
 			this.scene.remove(this.mapMesh);
 		}
 
+		if(this.drawMesh){
+			this.scene.remove(this.drawMesh);
+		}
+
 		const mapHeight = this.mapImage && this.pixelsPerFoot ? (this.mapImage.height / this.pixelsPerFoot) : DEFAULT_MAP_SIZE;
 		const mapWidth = this.mapImage && this.pixelsPerFoot ? (this.mapImage.width / this.pixelsPerFoot): DEFAULT_MAP_SIZE;
 
 		this.mapCanvas = document.createElement("canvas");
-		this.mapCanvas.height = this.mapHeight;
+		this.mapCanvas.height = this.mapImage.height;
 		this.mapCanvas.width = this.mapImage.width;
 
-		const mapContext = this.mapCanvas.getContext('2d');
+		this.drawCanvas = document.createElement("canvas");
+		this.drawCanvas.height = this.mapImage.height;
+		this.drawCanvas.width = this.mapImage.width;
+
 		this.mapTexture = new THREE.CanvasTexture(this.mapCanvas);
+		this.mapTexture.generateMipmaps = false;
+		this.mapTexture.wrapS = this.mapTexture.wrapT = THREE.ClampToEdgeWrapping;
+		this.mapTexture.minFilter = THREE.LinearFilter;
+
+		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
+		this.drawTexture.generateMipmaps = false;
+		this.drawTexture.wrapS = this.mapTexture.wrapT = THREE.ClampToEdgeWrapping;
+		this.drawTexture.minFilter = THREE.LinearFilter;
+
+		const mapContext = this.mapCanvas.getContext('2d');
 
 		for(let chunk of this.mapImage.chunks){
 			const base_image = new Image();
@@ -149,10 +175,16 @@ export class GameRenderer{
 		const mapGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
 		mapGeometry.rotateX(-Math.PI/2);
 
-		const mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshStandardMaterial( { map: this.mapTexture } ));
-		mapMesh.receiveShadow = true;
-		this.mapMesh = mapMesh;
-		this.scene.add( mapMesh );
+		const drawGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
+		drawGeometry.rotateX(-Math.PI/2);
+		this.mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshStandardMaterial( { map: this.mapTexture } ));
+
+		this.drawMesh = new THREE.Mesh( drawGeometry, new THREE.MeshStandardMaterial( { map: this.drawTexture, transparent: true } ));
+		this.mapMesh.receiveShadow = true;
+		this.drawMesh.receiveShadow = true;
+		this.drawMesh.position.set(0, .01, 0);
+		this.scene.add(this.mapMesh);
+		this.scene.add(this.drawMesh);
 	}
 
 	setupRaycaster(){
@@ -164,8 +196,8 @@ export class GameRenderer{
 			// calculate mouse position in normalized device coordinates
 			// (-1 to +1) for both components
 
-			this.mouseCoords.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			this.mouseCoords.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+			this.mouseCoords.x = ( (event.offsetX) / this.renderer.domElement.width ) * 2 - 1;
+			this.mouseCoords.y = -( (event.offsetY) / this.renderer.domElement.height ) * 2 + 1;
 		}, false);
 	}
 
@@ -182,8 +214,9 @@ export class GameRenderer{
 			console.warn('Trying to stroke a path with zero length path!');
 			return;
 		}
-		const ctx = this.mapCanvas.getContext('2d');
+		const ctx = this.drawCanvas.getContext('2d');
 		ctx.lineCap = 'round';
+		ctx.lineJoin = 'round';
 		switch(type){
 			case BRUSH_LINE:
 				ctx.strokeStyle = color;
@@ -202,18 +235,20 @@ export class GameRenderer{
 				for(let part of path){
 					if(fill){
 						ctx.fillStyle = color;
-						ctx.fillRect(part.x ,part.y, size, size);
+						ctx.fillRect(part.x - size / 2 ,part.y - size / 2, size, size);
 					}
 					else {
 						ctx.lineWidth = DEFAULT_BRUSH_SIZE;
 						ctx.strokeStyle = color;
-						ctx.strokeRect(part.x ,part.y, size, size);
+						ctx.strokeRect(part.x - size / 2, part.y - size / 2, size, size);
 					}
 				}
 
 				break;
 			case BRUSH_CIRCLE:
+
 				for(let part of path){
+					ctx.beginPath();
 					ctx.arc(part.x, part.y, size/2, 0, Math.PI * 2);
 					if(fill){
 						ctx.fillStyle = color;
@@ -224,18 +259,19 @@ export class GameRenderer{
 						ctx.strokeStyle = color;
 						ctx.stroke();
 					}
+					ctx.closePath();
 				}
 				break;
 			case BRUSH_ERASE:
 				for(let part of path){
-					ctx.clearRect(part.x ,part.y, size, size);
+					ctx.clearRect(part.x - size / 2, part.y - size / 2, size, size);
 				}
 				break;
 		}
 		if(useCache){
 			this.strokesAlreadyDrawn.push(stroke);
 		}
-		this.mapTexture.needsUpdate = true;
+		this.drawTexture.needsUpdate = true;
 	}
 
 	paintWithBrush(){
@@ -287,7 +323,6 @@ export class GameRenderer{
 	}
 
 	paintMouseDownEvent(){
-		console.log('mouse down fired');
 		this.strokeId = uuidv4();
 		this.paintWithBrush();
 		this.renderRoot.addEventListener('mousemove', this.paintWithBrush);
@@ -303,21 +338,29 @@ export class GameRenderer{
 		this.renderRoot.removeEventListener('mousedown', this.paintMouseDownEvent);
 	}
 
+	tearDownOrbitControls(){
+		if(this.orbitControls){
+			this.orbitControls.enabled = false;
+		}
+	}
+
 	setupControls() {
 		this.renderRoot.addEventListener('keydown', ({code}) => {
-			if(code === 'KeyP'){
-				this.setupPaintControls();
+			if(!["KeyP", "KeyC"].includes(code)){
+				return;
 			}
-			else{
-				this.tearDownPaintControls();
-			}
-			if(code === 'KeyC'){
-				if(this.orbitControls){
+
+			switch(code){
+				case "KeyP":
+					this.tearDownOrbitControls();
+					this.setupPaintControls();
+					this.setCameraMode('painting');
+					break;
+				case "KeyC":
+					this.tearDownPaintControls();
 					this.orbitControls.enabled = true;
-				}
-			}
-			else {
-				this.orbitControls.enabled = false;
+					this.setCameraMode('camera');
+					break;
 			}
 		});
 	}

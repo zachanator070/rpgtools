@@ -8,6 +8,7 @@ import {Modal} from "antd";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useGameMapChangeSubscription} from "../../hooks/useGameMapChangeSubscription";
+import {GameControlsHelp} from "./GameControlsHelp";
 
 export const GameView = () => {
 
@@ -48,8 +49,6 @@ export const GameView = () => {
 		</>;
 	}
 
-	return <GameContent currentGame={currentGame}>
-		<GameDrawer/>
-	</GameContent>
+	return <GameContent currentGame={currentGame}/>;
 
 };

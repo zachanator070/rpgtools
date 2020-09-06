@@ -46,7 +46,7 @@ export const BrushOptions = ({renderer}) => {
 				value={brushSize}
 				onChange={async (value) => {
 					await setBrushSize(value);
-					renderer.bushSize = value;
+					renderer.brushSize = value;
 				}}
 			/>
 		</div>

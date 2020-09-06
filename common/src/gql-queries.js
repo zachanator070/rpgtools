@@ -726,7 +726,7 @@ export const MAP_WIKI_ID = gql`
 export const ADD_STROKE = gql`
 	mutation addStroke($gameId: ID!, $path: [PathNodeInput!]!, $type: String!, $size: Int!, $color: String!, $fill: Boolean!, $strokeId: ID!){
 		addStroke(gameId: $gameId, path: $path, type: $type, size:$size, color:$color, fill:$fill, strokeId: $strokeId){
-			${GAME_STROKES}
+			_id
 		}
 	}
 `;
