@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export const CURRENT_WORLD_PERMISSIONS = `
+export const PERMISSIONS_GRANTED = `
 	permissions{
 		_id
 		permission
@@ -24,13 +24,40 @@ export const CURRENT_WORLD_PERMISSIONS = `
 	}
 `;
 
-export const USERS_WITH_PERMISSIONS = `
-	... on PermissionControlled{
-		usersWithPermissions{
-            _id
-            username
-            ${CURRENT_WORLD_PERMISSIONS}
-        }
+
+export const ACCESS_CONTROL_LIST = `
+	... on PermissionControlled {
+		canWrite
+		canAdmin
+		accessControlList {
+			_id
+			permission
+			canWrite
+			subjectType
+			subject {
+				_id
+				... on World{
+					name
+				}
+				... on WikiPage{
+					name
+				}
+				... on WikiFolder{
+					name
+				}
+				... on Role{
+					name
+				}
+			}
+			users{
+				_id
+				username
+			}
+			roles{
+				_id
+				name
+			}
+		}
 	}
 `;
 
@@ -38,13 +65,17 @@ export const CURRENT_WORLD_WIKIS = `
 	_id
 	name
 	type
-	canWrite
+	... on PermissionControlled{
+		canWrite
+		canAdmin
+	}
 `;
 
 export const CURRENT_WORLD_FOLDERS = `
 	_id
 	name
 	canWrite
+	canAdmin
 	children{
 		_id
 	}
@@ -76,15 +107,16 @@ export const CURRENT_WORLD_ROLES = `
 		_id
 		name
 		canWrite
+		canAdmin
 		world{
 			_id
 		}
-		${CURRENT_WORLD_PERMISSIONS}
+		${PERMISSIONS_GRANTED}
 		members{
 			_id
 			username
 		}
-		${USERS_WITH_PERMISSIONS}
+		${ACCESS_CONTROL_LIST}
 	}
 `;
 
@@ -94,6 +126,7 @@ export const GET_CURRENT_WORLD = gql`
 			_id
 			name
 			canWrite
+			canAdmin
 			canAddRoles
 			canHostGame
 			wikiPage {
@@ -117,12 +150,33 @@ export const GET_CURRENT_WORLD = gql`
 			rootFolder{
 				${CURRENT_WORLD_FOLDERS}
 			}
-			${USERS_WITH_PERMISSIONS}
+			${ACCESS_CONTROL_LIST}
 			${CURRENT_WORLD_ROLES}
 			${CURRENT_WORLD_PINS}
 			folders{
 			    ${CURRENT_WORLD_FOLDERS}
 		    }
+		    currentUserPermissions{
+		        _id
+		        permission
+		        subject {
+		            _id
+		            ... on World{
+						name
+					}
+					... on WikiPage{
+						name
+					}
+					... on WikiFolder{
+						name
+					}
+					... on Role {
+						name
+					}
+		        }
+		        subjectType
+	        }
+		        
 	    }
     }
     
@@ -131,7 +185,7 @@ export const ADD_USER_ROLE = gql`
 	mutation addUserRole($userId: ID!, $roleId: ID!){
 		addUserRole(userId: $userId, roleId: $roleId){
 			_id
-			${USERS_WITH_PERMISSIONS}
+			${ACCESS_CONTROL_LIST}
 			${CURRENT_WORLD_ROLES}
 		}
 	}
@@ -165,7 +219,7 @@ export const CREATE_ROLE = gql`
 	mutation createRole($worldId: ID!, $name: String!){
 		createRole(worldId: $worldId, name: $name){
 			_id
-			${USERS_WITH_PERMISSIONS}
+			${ACCESS_CONTROL_LIST}
 			${CURRENT_WORLD_ROLES}
 		}
 	}
@@ -197,7 +251,10 @@ export const GET_CURRENT_MAP = gql`
             type
             name
             content
-            canWrite
+            ... on PermissionControlled{
+                canWrite
+	            canAdmin
+            }
             ... on Place {
                 mapImage {
 	                _id
@@ -231,8 +288,10 @@ export const GET_CURRENT_USER = gql`
                     _id
                 }
             }
-            ${CURRENT_WORLD_PERMISSIONS}
-            ${CURRENT_WORLD_ROLES}
+            roles{
+                _id
+                name
+            }
         }
     }
 `;
@@ -241,7 +300,10 @@ export const CURRENT_WIKI_ATTRIBUTES = `
     type
     name
     content
-    canWrite
+    ... on PermissionControlled {
+	    canWrite
+	    canAdmin
+    }
     world {
         _id
     }
@@ -306,8 +368,6 @@ export const DELETE_ROLE = gql`
 	mutation deleteRole($roleId: ID!){
 		deleteRole(roleId: $roleId){
 			_id
-			${USERS_WITH_PERMISSIONS}
-			${CURRENT_WORLD_ROLES}
 		}
 	}
 `;
@@ -333,7 +393,7 @@ export const GRANT_ROLE_PERMISSION = gql`
 	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
 		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
-			${CURRENT_WORLD_PERMISSIONS}
+			${PERMISSIONS_GRANTED}
 		}
 	}
 `;
@@ -341,7 +401,7 @@ export const GRANT_USER_PERMISSION = gql`
 	mutation grantUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
 		grantUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
-			${USERS_WITH_PERMISSIONS}
+			${ACCESS_CONTROL_LIST}
 		}
 	}
 `;
@@ -378,7 +438,6 @@ export const REMOVE_USER_ROLE = gql`
 	mutation removeUserRole($userId: ID!, $roleId: ID!){
 		removeUserRole(userId: $userId, roleId: $roleId){
 			_id
-			${USERS_WITH_PERMISSIONS}
 			${CURRENT_WORLD_ROLES}
 		}
 	}
@@ -403,7 +462,7 @@ export const REVOKE_ROLE_PERMISSION = gql`
 	mutation revokeRolePermission($roleId: ID!, $permissionAssignmentId: ID!){
 		revokeRolePermission(roleId: $roleId, permissionAssignmentId: $permissionAssignmentId){
 			_id
-			${CURRENT_WORLD_PERMISSIONS}
+			${PERMISSIONS_GRANTED}
 		}
 	}
 `;
@@ -411,7 +470,7 @@ export const REVOKE_USER_PERMISSION = gql`
 	mutation revokeUserPermission($userId: ID!, $permissionAssignmentId: ID!){
 		revokeUserPermission(userId: $userId, permissionAssignmentId: $permissionAssignmentId){
 			_id
-			${USERS_WITH_PERMISSIONS}
+			${ACCESS_CONTROL_LIST}
 		}
 	}
 `;
@@ -435,11 +494,8 @@ export const GET_SERVER_CONFIG = gql`
             _id
             version
             registerCodes
-            adminUsers{
-                _id
-                username
-                ${CURRENT_WORLD_PERMISSIONS}
-            }
+            ${ACCESS_CONTROL_LIST}
+            ${CURRENT_WORLD_ROLES}
         }
     }
 `;
@@ -504,7 +560,7 @@ export const GET_CURRENT_WIKI = gql`
     query currentWiki($wikiId: ID!){
         wiki(wikiId: $wikiId) {
             ${CURRENT_WIKI_ATTRIBUTES}
-            ${USERS_WITH_PERMISSIONS}
+            ${ACCESS_CONTROL_LIST}
             ... on Place {
                 ${CURRENT_WIKI_PLACE_ATTRIBUTES}
             }
@@ -517,6 +573,7 @@ export const CREATE_GAME = gql`
     mutation createGame($worldId: ID!, $password: String){
         createGame(worldId: $worldId, password: $password){
             _id
+            ${ACCESS_CONTROL_LIST}
         }
     }
 `;
@@ -539,6 +596,7 @@ export const GAME_PLAYERS = `
 export const GAME_MAP = `
 	map {
 		_id
+		name
 		mapImage {
 			_id
 			width
@@ -554,6 +612,24 @@ export const GAME_MAP = `
 	}
 `;
 
+export const GAME_STROKE = `
+	path{
+		x
+		y
+	}
+	type
+	size
+	color
+	fill
+	strokeId
+`;
+
+export const GAME_STROKES = `
+	strokes{
+		${GAME_STROKE}
+	}
+`;
+
 export const GAME_ATTRIBUTES = `
 	_id
     ${GAME_MAP}
@@ -561,8 +637,10 @@ export const GAME_ATTRIBUTES = `
         _id
     }
     canWrite
+    canAdmin
     ${GAME_PLAYERS}
     ${GAME_MESSAGES}
+    ${GAME_STROKES}
 `;
 
 export const JOIN_GAME = gql`
@@ -643,4 +721,20 @@ export const MAP_WIKI_ID = gql`
     query {
         mapWiki @client
     }
+`;
+
+export const ADD_STROKE = gql`
+	mutation addStroke($gameId: ID!, $path: [PathNodeInput!]!, $type: String!, $size: Int!, $color: String!, $fill: Boolean!, $strokeId: ID!){
+		addStroke(gameId: $gameId, path: $path, type: $type, size:$size, color:$color, fill:$fill, strokeId: $strokeId){
+			${GAME_STROKES}
+		}
+	}
+`;
+
+export const GAME_STROKE_SUBSCRIPTION = gql`
+	subscription gameStrokeAdded($gameId: ID!){
+		gameStrokeAdded(gameId: $gameId){
+			${GAME_STROKE}
+		}
+	}
 `;

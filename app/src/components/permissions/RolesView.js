@@ -20,7 +20,6 @@ import {AddRolePermission} from "./AddRolePermission";
 
 export const RolesView = () => {
 
-	const {currentUser, loading} = useCurrentUser();
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {createRole, loading: createRoleLoading} = useCreateRole();
 	const {revokeRolePermission} = useRevokeRolePermission();
@@ -29,12 +28,9 @@ export const RolesView = () => {
 	const [newRoleName, setNewRoleName] = useState();
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
 	const [userIdToAdd, setUserIdToAdd] = useState(null);
-	const [adminUserIdToAdd, setAdminUserIdToAdd] = useState(null);
 	const {addUserRole} = useAddUserRole();
-	const {revokeUserPermission} = useRevokeUserPermission();
-	const {grantUserPermission} = useGrantUserPermission();
 
-	if (loading || currentWorldLoading) {
+	if (currentWorldLoading) {
 		return <LoadingView/>;
 	}
 
@@ -52,7 +48,7 @@ export const RolesView = () => {
 		<hr/>
 		{currentWorld.canAddRoles &&
 			<Row className={'margin-xlg-top'}>
-				<Col span={4}></Col>
+				<Col span={4}/>
 				<Col span={16}>
 					<h2>
 						Add New Role
@@ -67,11 +63,11 @@ export const RolesView = () => {
 						}} type={'primary'}>Create</Button>
 					</div>
 				</Col>
-				<Col span={4}></Col>
+				<Col span={4}/>
 			</Row>
 		}
 		<Row className={'margin-xlg-top'}>
-			<Col span={4}></Col>
+			<Col span={4}/>
 
 			<Col span={16}>
 				<h2 className={'margin-lg-bottom'}>
@@ -180,45 +176,6 @@ export const RolesView = () => {
 							</>}
 						</Tabs.TabPane>
 						{selectedRole.canWrite &&
-							<Tabs.TabPane tab="Role admins" key="4">
-								<List
-									dataSource={selectedRole.usersWithPermissions.filter(
-										user => user.permissions.filter(
-											permission => permission.permission === ROLE_ADMIN && permission.subject._id === selectedRole._id
-										).length > 0
-									)}
-									renderItem={(item) =>
-										<List.Item>
-											{item.username}
-											<Button
-												className={'margin-md-left'}
-												type={'primary'}
-												onClick={async () => {
-													await revokeUserPermission(item._id, item.permissions.filter(
-														permission => permission.permission === ROLE_ADMIN && permission.subject._id === selectedRole._id
-													)[0]._id);
-												}}
-												danger
-											>
-												<DeleteOutlined/>
-											</Button>
-										</List.Item>
-									}
-								/>
-								<SelectUser onChange={setAdminUserIdToAdd}/>
-								<Button
-									className={'margin-md-left'}
-									type={'primary'}
-									onClick={async () => {
-										await grantUserPermission(adminUserIdToAdd, ROLE_ADMIN, selectedRole._id, ROLE);
-									}}
-									disabled={adminUserIdToAdd === null}
-								>
-									Add Admin
-								</Button>
-							</Tabs.TabPane>
-						}
-						{selectedRole.canWrite &&
 						<Tabs.TabPane tab="Delete this role" key="3">
 							<Button
 								disabled={!selectedRole.canWrite}
@@ -241,7 +198,7 @@ export const RolesView = () => {
 				}
 
 			</Col>
-			<Col span={4}></Col>
+			<Col span={4}/>
 		</Row>
 
 	</div>;

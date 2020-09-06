@@ -27,18 +27,17 @@ const permissionAssignmentSchema = new Schema({
 	}
 });
 
+// you can only grant permissions for subjects that you are an admin of
 permissionAssignmentSchema.methods.userCanWrite = async function(user){
 	if(this.subject instanceof mongoose.Types.ObjectId){
 		await this.populate('subject').execPopulate();
 	}
-	return await this.subject.userCanWrite(user);
+	return await this.subject.userCanAdmin(user);
 };
 
+// you can only read permissions assigned if you can grant them or if you have access to the permission
 permissionAssignmentSchema.methods.userCanRead = async function(user){
-	if(this.subject instanceof mongoose.Types.ObjectId){
-		await this.populate('subject').execPopulate();
-	}
-	return await this.subject.userCanRead(user);
+	return await user.hasPermission(this.permission, this.subject) || await this.userCanWrite(user);
 };
 
 export const PermissionAssignment = mongoose.model(PERMISSION_ASSIGNMENT, permissionAssignmentSchema);

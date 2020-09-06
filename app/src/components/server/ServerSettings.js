@@ -5,6 +5,8 @@ import {LoadingView} from "../LoadingView";
 import {Link} from "react-router-dom";
 import {LeftOutlined} from "@ant-design/icons";
 import {useGenerateRegisterCodes} from "../../hooks/useGenerateRegisterCodes";
+import {PermissionEditor} from "../permissions/PermissionEditor";
+import {SERVER_CONFIG} from "../../../../common/src/type-constants";
 
 export default () => {
 
@@ -26,12 +28,12 @@ export default () => {
 					Home
 				</Link>
 			</Col>
-			<Col span={20}></Col>
+			<Col span={20}/>
 		</Row>
 		<h1>Server Settings</h1>
 		<hr/>
 		<Row>
-			<Col span={4}></Col>
+			<Col span={4}/>
 			<Col span={16}>
 				<h2>Registration Codes</h2>
 				<List
@@ -40,29 +42,41 @@ export default () => {
 					renderItem={item => <List.Item>{item}</List.Item>}
 					/>
 			</Col>
-			<Col span={4}></Col>
+			<Col span={4}/>
 		</Row>
+		{serverConfig.canWrite &&
+			<Row className={'margin-md-top'}>
+				<Col span={4}/>
+				<Col span={16}>
+						<span className={'margin-lg-right'}>
+							Number of codes to generate:
+						</span>
+					<span className={'margin-lg-right'}>
+							<InputNumber
+								value={amount}
+								onChange={async value => await setAmount(value)}
+							/>
+						</span>
+					<Button
+						type={'primary'}
+						disabled={generateLoading}
+						onClick={async () => {
+							await generateRegisterCodes(amount)
+						}}
+					>
+						Generate
+					</Button>
+				</Col>
+				<Col span={4}/>
+			</Row>
+		}
 		<Row className={'margin-md-top'}>
-			<Col span={4}></Col>
+			<Col span={4}/>
 			<Col span={16}>
-				<span className={'margin-lg-right'}>
-					Number of codes to generate:
-				</span>
-				<span className={'margin-lg-right'}>
-					<InputNumber
-						value={amount}
-						onChange={async value => await setAmount(value)}
-					/>
-				</span>
-				<Button
-					type={'primary'}
-					disabled={generateLoading}
-					onClick={async () => {await generateRegisterCodes(amount)}}
-				>
-					Generate
-				</Button>
+				<h2>Server Permissions</h2>
+				<PermissionEditor subject={serverConfig} subjectType={SERVER_CONFIG}/>
 			</Col>
-			<Col span={4}></Col>
+			<Col span={4}/>
 		</Row>
 	</div>;
 }

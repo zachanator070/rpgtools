@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
-import {WIKI_READ, WIKI_READ_ALL, WIKI_RW, WIKI_RW_ALL} from "../../../common/src/permission-constants";
+import {
+	ROLE_ADMIN,
+	ROLE_ADMIN_ALL, WIKI_ADMIN, WIKI_ADMIN_ALL,
+	WIKI_READ,
+	WIKI_READ_ALL,
+	WIKI_RW,
+	WIKI_RW_ALL
+} from "../../../common/src/permission-constants";
 import {GridFSBucket} from "mongodb";
 import { IMAGE, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
 
@@ -51,6 +58,11 @@ const wikiPageSchema = new Schema({
 {
 	discriminatorKey: 'type'
 });
+
+
+wikiPageSchema.methods.userCanAdmin = async function(user) {
+	return await user.hasPermission(WIKI_ADMIN, this._id) || await user.hasPermission(WIKI_ADMIN_ALL, this.world);
+};
 
 wikiPageSchema.methods.userCanWrite = async function(user){
 	return await user.hasPermission(WIKI_RW, this._id) ||

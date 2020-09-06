@@ -23,18 +23,7 @@ getIntrospectionData().then((introspectionData) => {
 	cache.writeData(
 		{
 			data: {
-				loginModalVisibility: false,
-				registerModalVisibility: false,
-				createWorldModalVisibility: false,
-				selectWorldModalVisibility: false,
-				worldPermissionModalVisibility: false,
-				editPinModalVisibility: false,
-				permissionModalVisibility: false,
-				mapWikiVisibility: false,
-				pinBeingEdited: null,
 				mapWiki: null,
-				permissionEditorSubject: null,
-				permissionEditorSubjectType: null,
 			}
 		}
 	);

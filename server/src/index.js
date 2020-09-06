@@ -10,6 +10,7 @@ import {ImageRouter} from "./routers/image-router";
 import {checkConfig, serverNeedsSetup} from './server-needs-setup';
 import crypto from 'crypto';
 import * as http from "http";
+import {ServerConfig} from "./models/server-config";
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -31,6 +32,10 @@ const createServer = async () => {
 	const server = express();
 
 	await checkConfig();
+	const serverConfig = await ServerConfig.findOne();
+	if(serverNeedsSetup()){
+		console.warn(`Server needs configuration! Use unlock code ${serverConfig.unlockCode} to unlock`);
+	}
 
 	server.get('*.js', function (req, res, next) {
 		req.url = req.url + '.gz';
@@ -55,7 +60,7 @@ const createServer = async () => {
 	server.get('*', (req, res, next) => {
 		const needsSetup = serverNeedsSetup();
 		if(needsSetup){
-			if (['/api', '/ui/setup', '/app.bundle.js'].includes(req.url)){
+			if (['/api', '/ui/setup', '/app.bundle.js', '/app.css', '/app.bundle.js.gz', '/app.css.gz', 'favicon.ico'].includes(req.url)){
 				return next();
 			}
 			return res.redirect(302, '/ui/setup');

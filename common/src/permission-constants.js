@@ -1,62 +1,95 @@
-import {ALL_WIKI_TYPES, GAME, ROLE, WIKI_FOLDER, WORLD} from "./type-constants";
+import {ALL_WIKI_TYPES, GAME, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "./type-constants";
 
-// role permissions
-export const ROLE_ADMIN = 'Able to add or remove members from a role or delete a role';
-export const ROLE_ADMIN_ALL = 'Able to edit any role in this world';
-export const ROLE_ADD = 'Able to create roles in this world';
-
-// world permissions
-export const WORLD_READ = 'See this world in search results';
-
-// wiki permissions
-export const WIKI_READ_ALL = 'Read all wiki pages';
-export const WIKI_RW_ALL = 'Write to any wiki page';
-export const WIKI_READ = 'Read access to a single wiki page';
-export const WIKI_RW = 'Write access to a single wiki page';
-
-// folder permissions
-export const FOLDER_READ_ALL = 'Read all wiki folders';
-export const FOLDER_RW_ALL = 'Write to any wiki folder';
-export const FOLDER_READ = 'Read access to a single wiki folder';
-export const FOLDER_RW = 'Write access to a single wiki folder';
-
-// game permissions
-export const GAME_HOST = 'Able to host games';
-export const GAME_READ = 'Read access to a single game';
-export const GAME_WRITE = 'Edit access to a single game';
 
 // server permissions
 export const WORLD_CREATE = 'Create world access';
+export const WORLD_ADMIN_ALL = 'Able to change permissions for all worlds';
+export const WORLD_READ_ALL = 'Able to read all worlds';
+export const WORLD_RW_ALL = 'Able to write to any world';
+export const SERVER_ADMIN = 'Able to change permissions for this server';
+export const SERVER_RW = 'Able to edit this server';
 
-// probably a better way to do this
-export const ALL_PERMISSIONS = [
-	ROLE_ADMIN,
-	ROLE_ADMIN_ALL,
-	ROLE_ADD,
-	WORLD_READ,
-	WIKI_READ_ALL,
-	WIKI_RW_ALL,
-	WIKI_READ,
-	WIKI_RW,
-	FOLDER_READ_ALL,
-	FOLDER_RW_ALL,
-	FOLDER_READ,
-	FOLDER_RW,
-	GAME_HOST,
-	GAME_READ,
-	GAME_WRITE,
-	WORLD_CREATE
+export const SERVER_PERMISSIONS = [
+	WORLD_CREATE,
+	WORLD_ADMIN_ALL,
+	WORLD_READ_ALL,
+	WORLD_RW_ALL,
+	SERVER_ADMIN,
+	SERVER_RW
 ];
 
-export const ROLE_PERMISSIONS = [ROLE_ADMIN];
+// world permissions
+export const WORLD_READ = 'See this world in search results';
+export const WORLD_ADMIN = 'Able to change permissions for this world';
+export const WIKI_READ_ALL = 'Read all wiki pages';
+export const WIKI_RW_ALL = 'Write to any wiki page';
+export const WIKI_ADMIN_ALL = 'Able to change permissions for any wiki pages';
+export const FOLDER_READ_ALL = 'Read all wiki folders';
+export const FOLDER_RW_ALL = 'Write to any wiki folder';
+export const FOLDER_ADMIN_ALL = 'Able to change permissions for any folder';
+export const GAME_HOST = 'Able to host games';
+export const GAME_ADMIN_ALL = 'Able to change permissions for any game';
+export const ROLE_ADD = 'Able to create roles in this world';
+export const ROLE_READ_ALL = 'Read all roles';
+export const ROLE_RW_ALL = 'Write to any role';
+export const ROLE_ADMIN_ALL = 'Able to edit members of any role in this world';
 
-export const WIKI_PERMISSIONS = [WIKI_READ, WIKI_RW];
+export const WORLD_PERMISSIONS = [
+	WORLD_READ,
+	WORLD_ADMIN,
+	WIKI_READ_ALL,
+	WIKI_RW_ALL,
+	WIKI_ADMIN_ALL,
+	FOLDER_READ_ALL,
+	FOLDER_RW_ALL,
+	FOLDER_ADMIN_ALL,
+	GAME_HOST,
+	GAME_ADMIN_ALL,
+	ROLE_ADD,
+	ROLE_READ_ALL,
+	ROLE_RW_ALL,
+	ROLE_ADMIN_ALL,
+];
 
-export const WORLD_PERMISSIONS = [ROLE_ADD, ROLE_ADMIN_ALL, WORLD_READ, WIKI_READ_ALL, WIKI_RW_ALL, FOLDER_READ_ALL, FOLDER_RW_ALL, GAME_HOST];
+// role permissions
+export const ROLE_READ = 'Able to see members of this role';
+export const ROLE_RW = 'Able to change members of this role';
+export const ROLE_ADMIN = 'Able to change permissions for this role';
 
-export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW];
 
-export const GAME_PERMISSIONS = [GAME_READ, GAME_WRITE];
+export const ROLE_PERMISSIONS = [ROLE_READ, ROLE_RW, ROLE_ADMIN];
+
+// wiki permissions
+export const WIKI_READ = 'Read access to a single wiki page';
+export const WIKI_RW = 'Write access to a single wiki page';
+export const WIKI_ADMIN = 'Able to change permissions for a single wiki page';
+
+export const WIKI_PERMISSIONS = [WIKI_READ, WIKI_RW, WIKI_ADMIN];
+
+
+// folder permissions
+export const FOLDER_READ = 'Read access to a single wiki folder';
+export const FOLDER_RW = 'Write access to a single wiki folder';
+export const FOLDER_ADMIN = 'Able to change permissions for a single wiki folder';
+
+export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW, FOLDER_ADMIN];
+
+
+// game permissions
+export const GAME_READ = 'Read access to a single game';
+export const GAME_RW = 'Edit access to a single game';
+export const GAME_ADMIN = 'Able to change permissions for a single game';
+
+export const GAME_PERMISSIONS = [GAME_READ, GAME_RW, GAME_ADMIN];
+
+export const ALL_PERMISSIONS = [].concat(
+	SERVER_PERMISSIONS,
+	WORLD_PERMISSIONS,
+	ROLE_PERMISSIONS,
+	WIKI_PERMISSIONS,
+	WIKI_FOLDER_PERMISSIONS,
+	GAME_PERMISSIONS
+);
 
 export const PUBLIC_WORLD_PERMISSIONS = [WIKI_READ_ALL, FOLDER_READ_ALL, WORLD_READ];
 
@@ -76,7 +109,11 @@ export const getPermissionsBySubjectType = (subjectType) => {
 	else if(subjectType === GAME){
 		return GAME_PERMISSIONS;
 	}
+	else if(subjectType === SERVER_CONFIG){
+		return SERVER_PERMISSIONS;
+	}
 	return null;
 };
 
 export const ANON_USERNAME = 'Anonymous';
+export const SERVER_ADMIN_ROLE = 'Server Admin';

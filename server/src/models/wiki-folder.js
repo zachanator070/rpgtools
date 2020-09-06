@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import {WikiPage} from './wiki-page';
-import {FOLDER_READ, FOLDER_READ_ALL, FOLDER_RW, FOLDER_RW_ALL} from "../../../common/src/permission-constants";
+import {
+	FOLDER_ADMIN, FOLDER_ADMIN_ALL,
+	FOLDER_READ,
+	FOLDER_READ_ALL,
+	FOLDER_RW,
+	FOLDER_RW_ALL,
+	ROLE_ADMIN, ROLE_ADMIN_ALL
+} from "../../../common/src/permission-constants";
 import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
@@ -24,6 +31,10 @@ const wikiFolderSchema = new Schema({
 		ref: WIKI_FOLDER
 	}]
 });
+
+wikiFolderSchema.methods.userCanAdmin = async function(user) {
+	return await user.hasPermission(FOLDER_ADMIN, this._id) || await user.hasPermission(FOLDER_ADMIN_ALL, this.world);
+};
 
 wikiFolderSchema.methods.userCanWrite = async function(user){
 	return await user.hasPermission(FOLDER_RW, this._id) ||

@@ -4,12 +4,8 @@ import {WikiFolder} from "../models/wiki-folder";
 import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
 import {
-	GAME_HOST, GAME_PERMISSIONS, GAME_WRITE,
+	GAME_HOST,
 	ROLE_ADD,
-	ROLE_PERMISSIONS,
-	WIKI_FOLDER_PERMISSIONS,
-	WIKI_PERMISSIONS,
-	WORLD_PERMISSIONS
 } from "../../../common/src/permission-constants";
 import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
 import {getLoader} from "../get-loader";
@@ -22,26 +18,17 @@ import {Chunk} from "../models/chunk";
 import {Place} from "../models/place";
 import {Image} from "../models/image";
 import {pubsub} from "../gql-server";
+import {ALL_WIKI_TYPES, GAME, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../../common/src/type-constants";
 
-const usersWithPermissions = (permissionSet) => async (subject, _, {currentUser}) => {
-	let allUsers = [];
-	for(let permission of permissionSet){
-		let assignment = await PermissionAssignment.findOne({permission: permission, subject: subject._id});
-		if(!assignment){
-			continue;
+const getPermissions = async (document, documentType, currentUser) => {
+	const permissions = await PermissionAssignment.find({subject: document, subjectType: documentType});
+	const returnPermissions = [];
+	for(let permission of permissions){
+		if(await permission.userCanWrite(currentUser)){
+			returnPermissions.push(permission);
 		}
-		if(!await assignment.userCanRead(currentUser)){
-			continue;
-		}
-		const users = await User.find({permissions: assignment._id}).populate({
-			path: 'permissions',
-			populate: {
-				path: 'subject'
-			}
-		});
-		allUsers = allUsers.concat(users);
 	}
-	return allUsers;
+	return returnPermissions;
 };
 
 const getDocument = async (model, id) => {
@@ -78,7 +65,7 @@ const getPermissionControlledDocument = async (model, id, currentUser) => {
 	}
 };
 
-const wikiPageResolvers = {
+const wikiPageInterfaceAttributes = {
 	world: async (page) => {
 		return await getDocument(World, page.world);
 	},
@@ -88,12 +75,27 @@ const wikiPageResolvers = {
 	canWrite: async (page, _, {currentUser}) => {
 		return await page.userCanWrite(currentUser);
 	},
-	usersWithPermissions: usersWithPermissions(WIKI_PERMISSIONS)
+	canAdmin: async (page, _, {currentUser}) => {
+		return await page.userCanAdmin(currentUser);
+	},
+};
+
+const permissionControlledInterfaceAttributes = {
+	accessControlList: async (document, _, {currentUser}) => {
+		return await getPermissions(document, document.constructor.modelName, currentUser);
+	},
+	canWrite: async (document, _, {currentUser}) => {
+		return await document.userCanWrite(currentUser);
+	},
+	canAdmin: async (document, _, {currentUser}) => {
+		return await document.userCanAdmin(currentUser);
+	},
 };
 
 export const GAME_CHAT_EVENT = 'GAME_CHAT_EVENT';
 export const ROSTER_CHANGE_EVENT = 'PLAYER_JOINED_EVENT';
 export const GAME_MAP_CHANGE = 'GAME_MAP_CHANGE';
+export const GAME_STROKE_EVENT = 'GAME_STROKE_EVENT';
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -108,6 +110,9 @@ export const serverResolvers = {
 		gameMapChange: {
 			subscribe: () => pubsub.asyncIterator([GAME_MAP_CHANGE]),
 		},
+		gameStrokeAdded: {
+			subscribe: () => pubsub.asyncIterator([GAME_STROKE_EVENT]),
+		},
 	},
 	World: {
 		roles: async (world, _, {currentUser}) => {
@@ -119,8 +124,11 @@ export const serverResolvers = {
 		wikiPage: async (world, _, {currentUser}) => {
 			return await getPermissionControlledDocument(Place, world.wikiPage, currentUser);
 		},
-		canWrite: async (world, _, {currentUser}) => {
-			return await world.userCanWrite(currentUser);
+		canAddRoles: async (world, _, {currentUser}) => {
+			return currentUser.hasPermission(ROLE_ADD, world._id);
+		},
+		canHostGame: async (world, _, {currentUser}) => {
+			return currentUser.hasPermission(GAME_HOST, world._id);
 		},
 		pins: async (world, _, {currentUser}) => {
 			return await getPermissionControlledDocuments(Pin, world.pins, currentUser);
@@ -134,13 +142,58 @@ export const serverResolvers = {
 			}
 			return folders;
 		},
-		usersWithPermissions: usersWithPermissions(WORLD_PERMISSIONS),
-		canAddRoles: async (world, _, {currentUser}) => {
-			return currentUser.hasPermission(ROLE_ADD, world._id);
+		currentUserPermissions: async (world, _, {currentUser}) => {
+			const permissions = [];
+			await world.populate('folders').execPopulate();
+			const folders = await WikiFolder.find({world});
+			const roles = await Role.find({world});
+			for(let permission of currentUser.allPermissions){
+				const subjectId = permission.subject._id;
+				const subjectType = permission.subjectType;
+				let keepPermission = false;
+				if(subjectType === WORLD && subjectId.equals(world._id)){
+					keepPermission = true;
+				}
+				else if(subjectType === WIKI_FOLDER){
+					for(let folder of world.folders){
+						if(folder._id.equals(subjectId)){
+							keepPermission = true;
+							break;
+						}
+					}
+				}
+				else if(ALL_WIKI_TYPES.includes(subjectType)){
+					for(let folder of folders){
+						for(let page of folder.pages){
+							if(page.equals(subjectId)){
+								keepPermission = true;
+								break;
+							}
+						}
+
+					}
+				}
+				else if(subjectType === ROLE){
+					for(let role of roles){
+						if(role._id.equals(subjectId)){
+							keepPermission = true;
+							break;
+						}
+					}
+				}
+				else if(subjectType === SERVER_CONFIG){
+					keepPermission = true;
+				}
+				else if(subjectType === GAME){
+					keepPermission = true;
+				}
+				if(keepPermission){
+					permissions.push(permission);
+				}
+			}
+			return permissions;
 		},
-		canHostGame: async (world, _, {currentUser}) => {
-			return currentUser.hasPermission(GAME_HOST, world._id);
-		},
+		...permissionControlledInterfaceAttributes
 	},
 	PermissionControlled: {
 		__resolveType: async (subject) => {
@@ -169,24 +222,21 @@ export const serverResolvers = {
 	},
 	Role: {
 		permissions: async (role, _, {currentUser}) => {
-			if(role.name === EVERYONE || role.name === ALL_USERS){
+			if(role.name === EVERYONE || role.name === ALL_USERS || await role.userCanWrite(currentUser) || await currentUser.hasRole(role)){
 				return await getDocuments(PermissionAssignment, role.permissions);
 			}
 			else {
 				return await getPermissionControlledDocuments(PermissionAssignment, role.permissions, currentUser);
 			}
 		},
-		canWrite: async (role, _, {currentUser}) => {
-			return role.userCanWrite(currentUser);
-		},
 		members: async (role, _, {currentUser}) => {
 
-			if(! await role.userCanWrite(currentUser)){
+			if(! await role.userCanWrite(currentUser) && !await currentUser.hasRole(role)){
 				return [];
 			}
 			return User.find({roles: role._id});
 		},
-		usersWithPermissions: usersWithPermissions(ROLE_PERMISSIONS)
+		...permissionControlledInterfaceAttributes
 	},
 	WikiPage: {
 		__resolveType: async (page) => {
@@ -194,13 +244,16 @@ export const serverResolvers = {
 		},
 	},
 	Article: {
-		...wikiPageResolvers,
+		...wikiPageInterfaceAttributes,
+		...permissionControlledInterfaceAttributes
 	},
 	Person: {
-		...wikiPageResolvers,
+		...wikiPageInterfaceAttributes,
+		...permissionControlledInterfaceAttributes
 	},
 	Place: {
-		...wikiPageResolvers,
+		...wikiPageInterfaceAttributes,
+		...permissionControlledInterfaceAttributes,
 		mapImage: async (page) => {
 			return await getDocument(Image, page.mapImage);
 		}
@@ -215,10 +268,7 @@ export const serverResolvers = {
 		pages: async (folder, _, {currentUser}) => {
 			return await getPermissionControlledDocuments(WikiPage, folder.pages, currentUser);
 		},
-		canWrite: async (folder, _, {currentUser}) => {
-			return await folder.userCanWrite(currentUser);
-		},
-		usersWithPermissions: usersWithPermissions(WIKI_FOLDER_PERMISSIONS)
+		...permissionControlledInterfaceAttributes
 	},
 	Image: {
 		world: async (image) => {
@@ -229,9 +279,6 @@ export const serverResolvers = {
 		},
 		icon: async (image) => {
 			return await getDocument(Image, image.icon)
-		},
-		canWrite: async (image, _, {currentUser}) => {
-			return await image.userCanWrite(currentUser);
 		},
 	},
 	Pin: {
@@ -250,38 +297,48 @@ export const serverResolvers = {
 			if(!currentUser){
 				return [];
 			}
-			if(!server.adminUsers.includes(currentUser._id)){
+			if(!await server.userCanWrite(currentUser)){
 				return [];
 			}
 			return server.registerCodes;
 		},
-		adminUsers: async (server, _, {currentUser}) => {
-			if(!currentUser){
-				return [];
+		roles: async (server, _, {currentUser}) => {
+			const roles = await Role.find({world: null});
+			const returnRoles = [];
+			for(let role of roles){
+				if(await role.userCanRead(currentUser)){
+					returnRoles.push(role);
+				}
 			}
-			if(!server.adminUsers.includes(currentUser._id)){
-				return [];
-			}
-			await server.populate('adminUsers').execPopulate();
-			return server.adminUsers;
-		}
+			return 	returnRoles;
+		},
+		...permissionControlledInterfaceAttributes
 	},
 	PermissionAssignment: {
-		subject: async (assigment, _, {currentUser}) => {
-			if(assigment.subject instanceof mongoose.Types.ObjectId){
-				await assigment.populate('subject').execPopulate();
+		subject: async (assignment, _, {currentUser}) => {
+			if(assignment.subject instanceof mongoose.Types.ObjectId){
+				await assignment.populate('subject').execPopulate();
 			}
-			if(!await assigment.subject.userCanRead(currentUser)){
-				assigment.subject = null;
-			}
-			return assigment.subject;
+
+			return assignment.subject;
 		},
 		canWrite: async (assignment, _, {currentUser}) => {
 			return await assignment.userCanWrite(currentUser);
-		}
+		},
+		users: async  (assignment, _, {currentUser}) => {
+			if(!await assignment.userCanRead(currentUser)){
+				return [];
+			}
+			return User.find({permissions: assignment._id});
+		},
+		roles: async  (assignment, _, {currentUser}) => {
+			if(!await assignment.userCanRead(currentUser)){
+				return [];
+			}
+			return Role.find({permissions: assignment._id});
+		},
 	},
 	Game: {
-		usersWithPermissions: usersWithPermissions(GAME_PERMISSIONS),
 		world: async (game, _, {currentUser}) => {
 			return await getPermissionControlledDocument(World, game.world, currentUser);
 		},
@@ -291,8 +348,6 @@ export const serverResolvers = {
 		players: async (game) => {
 			return await getDocuments(User, game.players);
 		},
-		canWrite: async (game, _, {currentUser}) => {
-			return await game.userCanWrite(currentUser);
-		}
+		...permissionControlledInterfaceAttributes
 	}
 };

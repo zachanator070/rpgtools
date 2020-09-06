@@ -1,12 +1,19 @@
 import React, {useState} from 'react';
-import {Button, Select, Tabs} from "antd";
-import {ALL_WIKI_TYPES, PERMISSION_CONTROLLED_TYPES, ROLE, WORLD} from "../../../../common/src/type-constants";
+import {Button, Select} from "antd";
+import {
+	ALL_WIKI_TYPES, ARTICLE,
+	PERMISSION_CONTROLLED_TYPES,
+	ROLE,
+	WIKI_FOLDER,
+	WORLD
+} from "../../../../common/src/type-constants";
 import {getPermissionsBySubjectType} from "../../../../common/src/permission-constants";
 import {SelectRole} from "../select/SelectRole";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {SelectWiki} from "../select/SelectWiki";
 import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
 import Errors from "../Errors";
+import {SelectFolder} from "../select/SelectFolder";
 
 export const AddRolePermission = ({role}) => {
 
@@ -28,6 +35,9 @@ export const AddRolePermission = ({role}) => {
 	else if(permissionToAddSubjectType === ROLE){
 		selectSubject = <SelectRole onChange={setPermissionToAddSubject}/>;
 	}
+	else if(permissionToAddSubjectType === WIKI_FOLDER){
+		selectSubject = <SelectFolder onChange={setPermissionToAddSubject}/>;
+	}
 
 	let availablePermissions = getPermissionsBySubjectType(permissionToAddSubjectType);
 
@@ -44,7 +54,7 @@ export const AddRolePermission = ({role}) => {
 				}}
 				value={permissionToAddSubjectType}
 			>
-				{PERMISSION_CONTROLLED_TYPES.map(permission =>
+				{[WORLD, ARTICLE, ROLE, WIKI_FOLDER].map(permission =>
 					<Select.Option key={permission}>{permission}</Select.Option>)}
 			</Select>
 		</div>

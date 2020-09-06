@@ -3,6 +3,10 @@ import {ServerConfig} from '../../models/server-config';
 import {registerUser} from "./authentication-mutations";
 import {checkConfig} from "../../server-needs-setup";
 import { v4 as uuidv4 } from 'uuid';
+import {Role} from "../../models/role";
+import {SERVER_ADMIN_ROLE, SERVER_PERMISSIONS} from "../../../../common/src/permission-constants";
+import {PermissionAssignment} from "../../models/permission-assignement";
+import {SERVER_CONFIG} from "../../../../common/src/type-constants";
 
 export const serverMutations = {
 	unlockServer: async (_, {unlockCode, email, username, password}) => {
@@ -17,7 +21,14 @@ export const serverMutations = {
 			throw new Error('Server is already unlocked');
 		}
 		const admin = await registerUser(email, username, password);
-		server.adminUsers.push(admin);
+		const adminRole = await Role.create({name: SERVER_ADMIN_ROLE});
+		for(let permission of SERVER_PERMISSIONS){
+			const permissionAssignment = await PermissionAssignment.create({permission, subject: server, subjectType: SERVER_CONFIG});
+			adminRole.permissions.push(permissionAssignment);
+		}
+		await adminRole.save();
+		admin.roles.push(adminRole);
+		await admin.save();
 		await server.save();
 		await checkConfig();
 		return true;
@@ -27,7 +38,7 @@ export const serverMutations = {
 		if(!server){
 			throw new Error('Server config doesnt exist!');
 		}
-		if(server.adminUsers.findIndex(admin => admin.equals(currentUser._id)) < 0){
+		if(await server.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to call this method');
 		}
 		const newCodes = Array(amount).fill('').map(() => uuidv4());

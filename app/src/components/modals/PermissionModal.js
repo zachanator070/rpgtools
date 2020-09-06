@@ -20,7 +20,7 @@ export const PermissionModal = ({visibility, setVisibility, subject, subjectType
 			footer={[]}
 			width={'750px'}
 		>
-			<PermissionEditor/>
+			<PermissionEditor subject={subject} subjectType={subjectType}/>
 		</Modal>
 	);
 };

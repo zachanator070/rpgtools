@@ -2,7 +2,6 @@ FROM node:12.16.1-slim
 
 WORKDIR /home/node/app
 
-ADD common/src common/src
 ADD common/package.json common/package.json
 ADD common/package-lock.json common/package-lock.json
 RUN cd common && npm install
@@ -14,6 +13,7 @@ ADD server/package-lock.json package-lock.json
 RUN npm install
 RUN npm install -g kill-port
 
+ADD common/src ../common/src
 ADD server/src src
 ADD dist ../dist
 

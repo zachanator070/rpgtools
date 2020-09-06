@@ -11,7 +11,7 @@ import {Game} from "../models/game";
 export default {
 	currentUser: (parent, args, context) => context.currentUser,
 	serverConfig: async () => {
-		return ServerConfig.findOne().populate('admins');
+		return ServerConfig.findOne();
 	},
     world: async (parent, {worldId}, {currentUser}) => {
        const world = await World.findOne({_id: worldId});
