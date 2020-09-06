@@ -20,11 +20,12 @@ export const GameDrawer = ({renderer}) => {
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
-	const {game} = useGameChatSubscription();
+	const {gameChat: gameChatMessage} = useGameChatSubscription();
 	const {game: rosterChangeGame} = useGameRosterSubscription();
 	const history = useHistory();
 	const {setGameMap} = useSetGameMap();
 	const {refetch} = useMyGames();
+	const [messages, setMessages] = useState([]);
 
 	const [selectedLocation, setSelectedLocation] = useState();
 
@@ -34,11 +35,27 @@ export const GameDrawer = ({renderer}) => {
 	});
 
 	useEffect(() => {
+		(async () => {
+			if(currentGame){
+				await setMessages(currentGame.messages);
+			}
+		})();
+	}, [currentGame]);
+
+	useEffect(() => {
+		(async () => {
+			if(gameChatMessage){
+				await setMessages(messages.concat([gameChatMessage]));
+			}
+		})();
+	}, [gameChatMessage]);
+
+	useEffect(() => {
 		const element = document.getElementById("chat");
 		if(element){
 			element.scrollTop = element.scrollHeight;
 		}
-	}, [game]);
+	}, [messages])
 
 	if(loading || currentWorldLoading){
 		return <></>;
@@ -79,7 +96,7 @@ export const GameDrawer = ({renderer}) => {
 						}}
 					>
 						<List
-							dataSource={currentGame.messages}
+							dataSource={messages}
 							itemLayout="horizontal"
 							locale={{emptyText: <div>No messages</div>}}
 							renderItem={({sender, timestamp, message}) => {
@@ -97,7 +114,7 @@ export const GameDrawer = ({renderer}) => {
 						content={
 							<>
 								<Form.Item>
-									<Input.TextArea rows={4} onChange={async value => {await setComment(value.target.value)}} value={comment} onPressEnter={submitComment}/>
+									<Input.TextArea disabled={chatLoading} rows={4} onChange={async value => {await setComment(value.target.value)}} value={comment} onPressEnter={submitComment}/>
 								</Form.Item>
 								<Form.Item>
 								<Button htmlType="submit" loading={chatLoading} onClick={submitComment} type="primary">

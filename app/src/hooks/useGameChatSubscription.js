@@ -6,7 +6,7 @@ export const useGameChatSubscription = () => {
 	const {game_id} = useParams();
 	const {data, loading, error} = useSubscription(GAME_CHAT_SUBSCRIPTION, {variables: {gameId: game_id}});
 	return {
-		game: data ? data.gameChat : null,
+		gameChat: data ? data.gameChat : null,
 		loading: loading,
 		errors: error ? error.graphQLErrors.map(error => error.message) : []
 	}
