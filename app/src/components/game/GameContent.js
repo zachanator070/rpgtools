@@ -13,13 +13,28 @@ export const GameContent = ({currentGame, children}) => {
 	const {addStroke} = useAddStroke();
 
 	const [cameraMode, setCameraMode] = useState('camera');
-	// const {game} = useGameStrokeSubscription();
+	const {gameStrokeAdded} = useGameStrokeSubscription();
 
 	useEffect(() => {
 		(async () => {
 			await setRenderer(new GameRenderer(renderCanvas.current, currentGame.map && currentGame.map.mapImage, addStroke, () => {}, setCameraMode));
 		})();
+		renderCanvas.current.addEventListener('mouseover', (event) =>{
+			if((event.toElement || event.relatedTarget) !== renderCanvas.current){
+				return;
+			}
+			renderCanvas.current.focus();
+		});
 	}, []);
+
+	useEffect(() => {
+		if(gameStrokeAdded && renderer){
+			if(currentGame.map && currentGame.map.pixelsPerFoot){
+				gameStrokeAdded.size *= currentGame.map.pixelsPerFoot;
+			}
+			renderer.stroke(gameStrokeAdded);
+		}
+	}, [gameStrokeAdded])
 
 	useEffect(() => {
 		(async () => {
@@ -57,6 +72,12 @@ export const GameContent = ({currentGame, children}) => {
 						});
 					}
 					renderer.setupMap();
+				}
+				for(let stroke of currentGame.strokes){
+					if(currentGame.map && currentGame.map.pixelsPerFoot){
+						stroke.size = stroke.size * currentGame.map.pixelsPerFoot;
+					}
+					renderer.stroke(stroke);
 				}
 			}
 

@@ -23,14 +23,14 @@ export const BrushOptions = ({renderer}) => {
 			<Input type={'color'} value={brushColor} onChange={async (e) => {
 				const value = e.target.value;
 				await setBrushColor(value);
-				renderer.brushColor = value;
+				renderer.setBrushColor(value);
 			}}/>
 		</div>
 		<div className={'margin-md'}>
 			<h3>Brush Type</h3>
 			<Select value={brushType} style={{ width: 120 }} onChange={async (value) => {
 				await setBrushType(value);
-				renderer.brushType = value;
+				renderer.setBrushType(value);
 			}}>
 				<Select.Option value={BRUSH_LINE} default>Line</Select.Option>
 				<Select.Option value={BRUSH_SQUARE}>Square</Select.Option>
@@ -46,7 +46,7 @@ export const BrushOptions = ({renderer}) => {
 				value={brushSize}
 				onChange={async (value) => {
 					await setBrushSize(value);
-					renderer.brushSize = value;
+					renderer.setBrushSize(value);
 				}}
 			/>
 		</div>
@@ -54,7 +54,7 @@ export const BrushOptions = ({renderer}) => {
 			<h3>Fill Brush</h3>
 			<Checkbox checked={fillBrush} onChange={async (e) => {
 				await setFillBrush(e.target.checked);
-				renderer.fillBrush = e.target.checked
+				renderer.setBrushFill(e.target.checked);
 			}}/>
 		</div>
 	</>;

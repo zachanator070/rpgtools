@@ -4,6 +4,7 @@ import {ExportOutlined, EditOutlined} from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 import {LoadingView} from "../LoadingView";
+import {PLACE} from "../../../../common/src/type-constants";
 
 export const WikiContent = ({currentWiki}) => {
 
@@ -72,7 +73,11 @@ export const WikiContent = ({currentWiki}) => {
 			<h2>{currentWiki.type}</h2>
 			{coverImage}
 			{mapIcon}
-			Pixels per foot: {currentWiki.pixelsPerFoot}
+			{currentWiki.type === PLACE && <>
+				Pixels per foot: {currentWiki.pixelsPerFoot}
+			</>
+			}
+
 			<div className='padding-md'>
 				<Editor
 					content={currentWiki.content}
