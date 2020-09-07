@@ -92,7 +92,7 @@ export class GameRenderer{
 	}
 	setBrushColor(color){
 		this.brushColor = color;
-		this.paintBrushMaterial.color = parseInt('0x' + color.substr(1));
+		this.paintBrushMaterial.color.setHex(parseInt('0x' + color.substr(1)));
 		this.paintBrushMaterial.needsUpdate = true;
 	}
 	setBrushFill(fill){
