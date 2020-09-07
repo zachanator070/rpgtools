@@ -59,10 +59,13 @@ export class GameRenderer{
 		this.strokeId = null;
 		this.brushType = DEFAULT_BRUSH_TYPE;
 		this.brushColor = DEFAULT_BRUSH_COLOR;
-		this.fillBrush = DEFAULT_BRUSH_FILL;
+		this.brushFill = DEFAULT_BRUSH_FILL;
 		this.brushSize = DEFAULT_BRUSH_SIZE;
 
 		this.strokesAlreadyDrawn = [];
+
+		this.paintBrushMesh = null;
+		this.paintBrushMaterial = null;
 
 		this.setupScene();
 		this.setupControls();
@@ -77,6 +80,48 @@ export class GameRenderer{
 			this.renderer.render( this.scene, this.camera );
 		}
 		animate();
+	}
+
+	setBrushType(type){
+		this.brushType = type;
+		this.scene.remove(this.paintBrushMesh);
+		this.createPaintBrushMesh(type);
+		this.paintBrushMaterial.needsUpdate = true;
+		this.scene.add(this.paintBrushMesh);
+		this.updateBrushPosition();
+	}
+	setBrushColor(color){
+		this.brushColor = color;
+		this.paintBrushMaterial.color = parseInt('0x' + color.substr(1));
+		this.paintBrushMaterial.needsUpdate = true;
+	}
+	setBrushFill(fill){
+		this.brushFill = fill;
+
+		this.paintBrushMaterial.wireframe = !fill;
+		this.paintBrushMaterial.needsUpdate = true;
+	}
+	setBrushSize(size){
+		this.brushSize = size;
+		this.createPaintBrushMesh();
+	}
+
+	createPaintBrushMesh(){
+		if(this.paintBrushMesh){
+			this.scene.remove(this.paintBrushMesh);
+		}
+		if(!this.paintBrushMaterial){
+			this.paintBrushMaterial = new THREE.MeshBasicMaterial({color: this.brushColor});
+		}
+		let geometry = null;
+		if(this.brushType === BRUSH_CIRCLE || this.brushType === BRUSH_LINE){
+			geometry = new THREE.CylinderGeometry(this.brushSize/2, this.brushSize/2, 1, 32);
+		}
+		else{
+			geometry = new THREE.BoxGeometry(this.brushSize, 1, this.brushSize);
+		}
+		this.paintBrushMesh = new THREE.Mesh(geometry, this.paintBrushMaterial);
+		this.scene.add(this.paintBrushMesh);
 	}
 
 	setupScene(){
@@ -185,6 +230,30 @@ export class GameRenderer{
 		this.drawMesh.position.set(0, .01, 0);
 		this.scene.add(this.mapMesh);
 		this.scene.add(this.drawMesh);
+
+		this.setupBrush();
+	}
+
+	setupBrush(){
+
+		this.createPaintBrushMesh();
+		this.paintBrushMesh.visible = false;
+
+		this.renderRoot.addEventListener('mousemove', (event) => {
+			this.updateBrushPosition();
+		});
+	}
+
+	updateBrushPosition(){
+		if(!this.mapMesh || !this.paintBrushMesh){
+			return;
+		}
+		const intersects = this.raycaster.intersectObject( this.mapMesh );
+		if(intersects.length === 0){
+			return;
+		}
+		const intersect = intersects[0];
+		this.paintBrushMesh.position.set(intersect.point.x, 0, intersect.point.z );
 	}
 
 	setupRaycaster(){
@@ -198,14 +267,16 @@ export class GameRenderer{
 
 			this.mouseCoords.x = ( (event.offsetX) / this.renderer.domElement.width ) * 2 - 1;
 			this.mouseCoords.y = -( (event.offsetY) / this.renderer.domElement.height ) * 2 + 1;
+
+
 		}, false);
 	}
 
 	stroke(stroke, useCache=true){
-		const {path, type, color, fill, size, id} = stroke;
+		const {path, type, color, fill, size, strokeId} = stroke;
 		if(useCache){
 			for(let stroke of this.strokesAlreadyDrawn){
-				if(stroke.id === id){
+				if(stroke.strokeId === strokeId){
 					return;
 				}
 			}
@@ -228,7 +299,6 @@ export class GameRenderer{
 				for(let part of path){
 					ctx.lineTo(part.x, part.y);
 				}
-				ctx.closePath();
 				ctx.stroke();
 				break;
 			case BRUSH_SQUARE:
@@ -248,7 +318,7 @@ export class GameRenderer{
 			case BRUSH_CIRCLE:
 
 				for(let part of path){
-					ctx.beginPath();
+					ctx.moveTo(part.x, part.y);
 					ctx.arc(part.x, part.y, size/2, 0, Math.PI * 2);
 					if(fill){
 						ctx.fillStyle = color;
@@ -259,7 +329,6 @@ export class GameRenderer{
 						ctx.strokeStyle = color;
 						ctx.stroke();
 					}
-					ctx.closePath();
 				}
 				break;
 			case BRUSH_ERASE:
@@ -294,8 +363,9 @@ export class GameRenderer{
 					path: currentPath,
 					type: this.brushType,
 					color: this.brushColor,
-					fill: this.fillBrush,
-					size: this.brushSize * this.pixelsPerFoot
+					fill: this.brushFill,
+					size: this.brushSize * this.pixelsPerFoot,
+					strokeId: this.strokeId
 				},
 				false
 			);
@@ -307,13 +377,21 @@ export class GameRenderer{
 		this.renderRoot.removeEventListener('mouseup', this.stopPaintingWithBrush);
 		this.renderRoot.removeEventListener('mouseleave', this.stopPaintingWithBrush);
 		if(this.strokeId){
+			this.strokesAlreadyDrawn.push({
+				path: this.pathBeingPainted,
+				type: this.brushType,
+				color: this.brushColor,
+				size: this.brushSize,
+				fill: this.brushFill,
+				strokeId: this.strokeId
+			});
 			// using await with this method caused freezing
 			this.addStroke(
 				this.pathBeingPainted,
 				this.brushType,
 				this.brushSize,
 				this.brushColor,
-				this.fillBrush,
+				this.brushFill,
 				this.strokeId
 			);
 			this.pathBeingPainted = [];
@@ -332,10 +410,13 @@ export class GameRenderer{
 
 	setupPaintControls(){
 		this.renderRoot.addEventListener('mousedown', this.paintMouseDownEvent);
+		this.updateBrushPosition();
+		this.paintBrushMesh.visible = true;
 	}
 
 	tearDownPaintControls(){
 		this.renderRoot.removeEventListener('mousedown', this.paintMouseDownEvent);
+		this.paintBrushMesh.visible = false;
 	}
 
 	tearDownOrbitControls(){

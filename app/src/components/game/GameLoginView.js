@@ -21,7 +21,7 @@ export const GameLoginView = () => {
 	});
 	const {joinGame, loading: joinGameLoading} = useJoinGame(async (data) => {
 		await refetch();
-		history.push(`/ui/world/${currentWorld._id}/game/${data.createGame._id}`);
+		history.push(`/ui/world/${currentWorld._id}/game/${data.joinGame._id}`);
 	});
 
 	const layout = {
