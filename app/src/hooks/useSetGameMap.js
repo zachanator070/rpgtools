@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import {SET_GAME_MAP} from "../../../common/src/gql-queries";
 
 export const useSetGameMap = () => {

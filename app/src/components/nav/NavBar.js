@@ -110,6 +110,12 @@ export const NavBar = () => {
 								</Link>
 								<Divider type='vertical'/>
 								<Link
+									to={`/ui/world/${currentWorld._id}/model`}
+								>
+									Models
+								</Link>
+								<Divider type='vertical'/>
+								<Link
 									to={`/ui/world/${currentWorld._id}/roles`}
 								>
 									Roles

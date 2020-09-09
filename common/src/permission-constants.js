@@ -32,7 +32,11 @@ export const GAME_ADMIN_ALL = 'Able to change permissions for any game';
 export const ROLE_ADD = 'Able to create roles in this world';
 export const ROLE_READ_ALL = 'Read all roles';
 export const ROLE_RW_ALL = 'Write to any role';
-export const ROLE_ADMIN_ALL = 'Able to edit members of any role in this world';
+export const ROLE_ADMIN_ALL = 'Able to change permissions for any role';
+export const MODEL_ADD = 'Able to create models in this world';
+export const MODEL_READ_ALL = 'Read all models';
+export const MODEL_RW_ALL = 'Write to any models';
+export const MODEL_ADMIN_ALL = 'Able to change permissions for any model';
 
 export const WORLD_PERMISSIONS = [
 	WORLD_READ,
@@ -49,6 +53,10 @@ export const WORLD_PERMISSIONS = [
 	ROLE_READ_ALL,
 	ROLE_RW_ALL,
 	ROLE_ADMIN_ALL,
+	MODEL_ADD,
+	MODEL_READ_ALL,
+	MODEL_RW_ALL,
+	MODEL_ADMIN_ALL
 ];
 
 // role permissions
@@ -75,6 +83,14 @@ export const FOLDER_ADMIN = 'Able to change permissions for a single wiki folder
 export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW, FOLDER_ADMIN];
 
 
+// model permissions
+export const MODEL_READ = 'Read access to a single model';
+export const MODEL_RW = 'Edit access to a single model';
+export const MODEL_ADMIN = 'Able to change permissions for a single model';
+
+export const MODEL_PERMISSIONS = [MODEL_READ, MODEL_RW, MODEL_ADMIN];
+
+
 // game permissions
 export const GAME_READ = 'Read access to a single game';
 export const GAME_RW = 'Edit access to a single game';
@@ -88,10 +104,11 @@ export const ALL_PERMISSIONS = [].concat(
 	ROLE_PERMISSIONS,
 	WIKI_PERMISSIONS,
 	WIKI_FOLDER_PERMISSIONS,
+	MODEL_PERMISSIONS,
 	GAME_PERMISSIONS
 );
 
-export const PUBLIC_WORLD_PERMISSIONS = [WIKI_READ_ALL, FOLDER_READ_ALL, WORLD_READ];
+export const PUBLIC_WORLD_PERMISSIONS = [WIKI_READ_ALL, FOLDER_READ_ALL, WORLD_READ, MODEL_READ_ALL];
 
 export const getPermissionsBySubjectType = (subjectType) => {
 	if(subjectType === ROLE){

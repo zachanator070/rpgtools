@@ -1,4 +1,4 @@
-import {useApolloClient, useMutation} from "@apollo/react-hooks";
+import {useApolloClient, useMutation} from "@apollo/client";
 import {LOGOUT_QUERY} from "../../../common/src/gql-queries";
 
 export default () => {

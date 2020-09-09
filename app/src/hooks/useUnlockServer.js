@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import {UNLOCK_SERVER} from "../../../common/src/gql-queries";
 
 export default (callback) => {

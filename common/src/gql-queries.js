@@ -129,6 +129,7 @@ export const GET_CURRENT_WORLD = gql`
 			canAdmin
 			canAddRoles
 			canHostGame
+			canAddModels
 			wikiPage {
 				_id
 				name
@@ -611,7 +612,9 @@ export const GAME_MAP = `
 `;
 
 export const GAME_STROKE = `
+	_id
 	path{
+		_id
 		x
 		y
 	}
@@ -619,7 +622,6 @@ export const GAME_STROKE = `
 	size
 	color
 	fill
-	strokeId
 `;
 
 export const GAME_STROKES = `
@@ -733,6 +735,29 @@ export const GAME_STROKE_SUBSCRIPTION = gql`
 	subscription gameStrokeAdded($gameId: ID!){
 		gameStrokeAdded(gameId: $gameId){
 			${GAME_STROKE}
+		}
+	}
+`;
+
+export const GET_MODELS = gql`
+	query getModels($worldId: ID!){
+		models(worldId: $worldId){
+			_id
+			name
+			depth
+			width
+			height
+			fileName
+			fileId
+			${ACCESS_CONTROL_LIST}
+		}
+	}
+`;
+
+export const CREATE_MODEL = gql`
+	mutation createModel($name: String!, $file: Upload!, $worldId: ID!, $depth: Float!, $width: Float!, $height: Float!){
+		createModel(name: $name, file: $file, worldId: $worldId, depth: $depth, width: $width, height: $height){
+			_id
 		}
 	}
 `;

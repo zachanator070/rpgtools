@@ -1,4 +1,4 @@
-import { useSubscription} from "@apollo/react-hooks";
+import { useSubscription} from "@apollo/client";
 import {GAME_ROSTER_SUBSCRIPTION} from "../../../common/src/gql-queries";
 import {useParams} from "react-router-dom";
 

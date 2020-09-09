@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-aggregate-paginate-v2'
 import {ROLE_ADMIN_ALL, WORLD_ADMIN, WORLD_READ, WORLD_READ_ALL} from "../../../common/src/permission-constants";
 import {WORLD_OWNER} from "../../../common/src/role-constants";
-import {PIN, PLACE, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
+import {MODEL, PIN, PLACE, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
 import {ServerConfig} from "./server-config";
 
 const Schema = mongoose.Schema;
@@ -27,7 +27,7 @@ const worldSchema = new Schema({
 	pins: [{
 		type: mongoose.Schema.ObjectId,
 		ref: PIN,
-	}]
+	}],
 });
 
 worldSchema.methods.userCanAdmin = async function(user) {

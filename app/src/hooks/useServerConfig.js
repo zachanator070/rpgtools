@@ -1,4 +1,4 @@
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery} from "@apollo/client";
 import {useParams} from 'react-router-dom';
 import {GET_SERVER_CONFIG} from "../../../common/src/gql-queries";
 

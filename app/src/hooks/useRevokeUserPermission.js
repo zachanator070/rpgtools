@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import {REVOKE_USER_PERMISSION} from "../../../common/src/gql-queries";
 
 export const useRevokeUserPermission = () => {

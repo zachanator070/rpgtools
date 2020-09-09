@@ -8,7 +8,7 @@ import useCreatePin from "../../hooks/useCreatePin";
 import {Link} from "react-router-dom";
 import {MapBreadCrumbs} from "./MapBreadCrumbs";
 import {MapDrawer} from "./MapDrawer";
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery} from "@apollo/client";
 import {MAP_WIKI_ID} from "../../../../common/src/gql-queries";
 
 export const MapView = () => {
@@ -16,7 +16,7 @@ export const MapView = () => {
 	const {currentWorld, loading} = useCurrentWorld();
 	const {currentMap, loading: mapLoading} = useCurrentMap();
 	const {createPin} = useCreatePin();
-	const {data: {mapWiki}} = useQuery(MAP_WIKI_ID);
+	const {data: mapWikiData} = useQuery(MAP_WIKI_ID);
 
 	const getPins = () => {
 		let pins = [];
@@ -66,7 +66,7 @@ export const MapView = () => {
 			<MapBreadCrumbs/>
 			<div id='mapContainer' style={{position: 'relative', height: '100%'}}
 			     className='overflow-hidden flex-column flex-grow-1'>
-				{mapWiki &&
+				{mapWikiData && mapWikiData.mapWiki &&
 				<div style={{zIndex: '1'}}>
 					<MapDrawer/>
 				</div>

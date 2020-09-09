@@ -9,6 +9,7 @@ import {MyPermissionsView} from "./permissions/MyPermissionsView";
 import {GameView} from "./game/GameView";
 import {GameLoginView} from "./game/GameLoginView";
 import {WikView} from "./wiki/WikiView";
+import {ModelView} from "./models/ModelView";
 
 export const AppContent = () => {
 
@@ -43,6 +44,9 @@ export const AppContent = () => {
 			</Route>
 			<Route path={`${match.path}/wiki/:wiki_id`}>
 				<WikView/>
+			</Route>
+			<Route path={`${match.path}/model/:model_id?`}>
+				<ModelView/>
 			</Route>
 			<Route path={`${match.path}/gameLogin`}>
 				<GameLoginView/>

@@ -1,4 +1,4 @@
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery} from "@apollo/client";
 import {MAP_WIKI, MAP_WIKI_ID} from "../../../common/src/gql-queries";
 
 export default () => {

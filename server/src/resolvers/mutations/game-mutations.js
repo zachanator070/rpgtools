@@ -154,7 +154,7 @@ export const gameMutations = {
 			size,
 			fill,
 			type,
-			strokeId
+			_id: strokeId
 		};
 		game.strokes.push(newStroke);
 		await game.save();
