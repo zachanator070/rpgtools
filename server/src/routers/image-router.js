@@ -18,6 +18,7 @@ ImageRouter.get('/:id', (req, res) => {
 		}
 		const readStream = gfs.openDownloadStream(file._id);
 		res.set('Content-Type', file.contentType);
+		res.setHeader('Content-disposition', `attachment; filename=${file.filename}`);
 		return readStream.pipe(res);
 	});
 });

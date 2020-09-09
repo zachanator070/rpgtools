@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.0.2",
-    "@ant-design/icons-react": "^2.0.1",
     "@apollo/client": "^3.1.4",
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",

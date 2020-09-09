@@ -4,7 +4,6 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {
 	getPermissionsBySubjectType,
 } from "../../../../common/src/permission-constants";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
 import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
@@ -31,12 +30,14 @@ export const PermissionEditor = ({subject, subjectType}) => {
 		for(let assignment of subject.accessControlList){
 			if(assignment.permission === permission){
 				await setSelectedPermissionAssignment(assignment);
+				return;
 			}
 		}
+		await setSelectedPermissionAssignment(null);
 	};
 
 	useEffect(() => {
-		(async () => await updateSelectedPermission(selectedPermission))();
+		(async () => await updateSelectedPermission(possiblePermissions[0]))();
 	}, []);
 
 	if(subject === null || subjectType === null){

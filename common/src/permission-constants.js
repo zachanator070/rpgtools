@@ -1,4 +1,4 @@
-import {ALL_WIKI_TYPES, GAME, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "./type-constants";
+import {ALL_WIKI_TYPES, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "./type-constants";
 
 
 // server permissions
@@ -128,6 +128,9 @@ export const getPermissionsBySubjectType = (subjectType) => {
 	}
 	else if(subjectType === SERVER_CONFIG){
 		return SERVER_PERMISSIONS;
+	}
+	else if(subjectType === MODEL){
+		return MODEL_PERMISSIONS;
 	}
 	return null;
 };
