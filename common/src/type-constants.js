@@ -12,6 +12,7 @@ export const USER = 'User';
 export const WIKI_FOLDER = 'WikiFolder';
 export const WIKI_PAGE = 'WikiPage';
 export const WORLD = 'World';
+export const MODEL = 'Model';
 
 export const ALL_WIKI_TYPES = [ARTICLE, PERSON, PLACE];
-export const PERMISSION_CONTROLLED_TYPES = [...ALL_WIKI_TYPES, WORLD, ROLE, WIKI_FOLDER, GAME, PIN, SERVER_CONFIG];
+export const PERMISSION_CONTROLLED_TYPES = [...ALL_WIKI_TYPES, WORLD, ROLE, WIKI_FOLDER, GAME, PIN, SERVER_CONFIG, MODEL];

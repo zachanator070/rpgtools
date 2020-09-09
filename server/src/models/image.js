@@ -15,7 +15,7 @@ const imageSchema = new Schema({
 	},
 	height: {
 		type: Number,
-		required: [true, 'width required']
+		required: [true, 'height required']
 	},
 	chunkWidth: {
 		type: Number,

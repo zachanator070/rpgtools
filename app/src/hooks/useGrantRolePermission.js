@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import {GRANT_ROLE_PERMISSION} from "../../../common/src/gql-queries";
 
 export const useGrantRolePermission = () => {

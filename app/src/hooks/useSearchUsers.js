@@ -1,4 +1,4 @@
-import {useLazyQuery} from "@apollo/react-hooks";
+import {useLazyQuery} from "@apollo/client";
 import {SEARCH_USERS} from "../../../common/src/gql-queries";
 
 export const useSearchUsers = () => {

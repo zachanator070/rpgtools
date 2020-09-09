@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import useCurrentUser from "./useCurrentUser";
 import {DELETE_ROLE} from "../../../common/src/gql-queries";
 

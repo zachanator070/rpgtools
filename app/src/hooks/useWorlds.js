@@ -1,4 +1,4 @@
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery} from "@apollo/client";
 import {GET_WORLDS} from "../../../common/src/gql-queries";
 
 export default (page) => {

@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import {CREATE_GAME} from "../../../common/src/gql-queries";
 import useCurrentWorld from "./useCurrentWorld";
 

@@ -3,6 +3,9 @@ import {Button, Checkbox, Form, Input, Modal} from "antd";
 import useCreateWorld from "../../hooks/useCreateWorld";
 import {useHistory} from 'react-router-dom';
 import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
+import {PUBLIC_WORLD_PERMISSIONS} from "../../../../common/src/permission-constants";
+import {ToolTip} from "../ToolTip";
+
 
 export const CreateWorldModal = ({visibility, setVisibility}) => {
 
@@ -46,6 +49,15 @@ export const CreateWorldModal = ({visibility, setVisibility}) => {
 					<Checkbox onChange={() => setPublic(!isPublic)} checked={isPublic}>
 						Public World
 					</Checkbox>
+					<ToolTip>
+						<>
+							Public worlds will have the following permissions given to any visitor:
+							<br/>
+							<ul>
+								{PUBLIC_WORLD_PERMISSIONS.map((permission) => <li key={permission}>{permission}<br/></li>)}
+							</ul>
+						</>
+					</ToolTip>
 				</Form.Item>
 				<Form.Item {...noLabelItem}>
 					<Button type="primary" disabled={loading} onClick={async () => {

@@ -239,7 +239,7 @@ export class GameRenderer{
 		this.createPaintBrushMesh();
 		this.paintBrushMesh.visible = false;
 
-		this.renderRoot.addEventListener('mousemove', (event) => {
+		this.renderRoot.addEventListener('mousemove', () => {
 			this.updateBrushPosition();
 		});
 	}
@@ -273,10 +273,10 @@ export class GameRenderer{
 	}
 
 	stroke(stroke, useCache=true){
-		const {path, type, color, fill, size, strokeId} = stroke;
+		const {path, type, color, fill, size, _id} = stroke;
 		if(useCache){
 			for(let stroke of this.strokesAlreadyDrawn){
-				if(stroke.strokeId === strokeId){
+				if(stroke._id === _id){
 					return;
 				}
 			}
@@ -316,9 +316,8 @@ export class GameRenderer{
 
 				break;
 			case BRUSH_CIRCLE:
-
 				for(let part of path){
-					ctx.moveTo(part.x, part.y);
+					ctx.beginPath();
 					ctx.arc(part.x, part.y, size/2, 0, Math.PI * 2);
 					if(fill){
 						ctx.fillStyle = color;
@@ -354,7 +353,11 @@ export class GameRenderer{
 			if(this.pathBeingPainted.length > 0 && this.brushType === BRUSH_LINE){
 				currentPath.push(this.pathBeingPainted[this.pathBeingPainted.length - 1]);
 			}
-			const newPoint = {x: intersect.point.x * this.pixelsPerFoot + this.mapImage.width / 2, y: intersect.point.z * this.pixelsPerFoot + this.mapImage.height / 2};
+			const newPoint = {
+				x: intersect.point.x * this.pixelsPerFoot + this.mapImage.width / 2,
+				y: intersect.point.z * this.pixelsPerFoot + this.mapImage.height / 2,
+				_id: uuidv4()
+			};
 			currentPath.push(newPoint);
 			this.pathBeingPainted.push(newPoint);
 
@@ -365,7 +368,7 @@ export class GameRenderer{
 					color: this.brushColor,
 					fill: this.brushFill,
 					size: this.brushSize * this.pixelsPerFoot,
-					strokeId: this.strokeId
+					_id: this.strokeId
 				},
 				false
 			);
@@ -383,7 +386,7 @@ export class GameRenderer{
 				color: this.brushColor,
 				size: this.brushSize,
 				fill: this.brushFill,
-				strokeId: this.strokeId
+				_id: this.strokeId
 			});
 			// using await with this method caused freezing
 			this.addStroke(

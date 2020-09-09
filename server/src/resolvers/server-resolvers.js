@@ -4,7 +4,7 @@ import {WikiFolder} from "../models/wiki-folder";
 import {PermissionAssignment} from "../models/permission-assignement";
 import {User} from "../models/user";
 import {
-	GAME_HOST,
+	GAME_HOST, MODEL_ADD,
 	ROLE_ADD,
 } from "../../../common/src/permission-constants";
 import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
@@ -18,7 +18,7 @@ import {Chunk} from "../models/chunk";
 import {Place} from "../models/place";
 import {Image} from "../models/image";
 import {pubsub} from "../gql-server";
-import {ALL_WIKI_TYPES, GAME, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../../common/src/type-constants";
+import {ALL_WIKI_TYPES, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../../common/src/type-constants";
 
 const getPermissions = async (document, documentType, currentUser) => {
 	const permissions = await PermissionAssignment.find({subject: document, subjectType: documentType});
@@ -129,6 +129,9 @@ export const serverResolvers = {
 		},
 		canHostGame: async (world, _, {currentUser}) => {
 			return currentUser.hasPermission(GAME_HOST, world._id);
+		},
+		canAddModels: async (world, _, {currentUser}) => {
+			return currentUser.hasPermission(MODEL_ADD, world._id);
 		},
 		pins: async (world, _, {currentUser}) => {
 			return await getPermissionControlledDocuments(Pin, world.pins, currentUser);
@@ -349,5 +352,8 @@ export const serverResolvers = {
 			return await getDocuments(User, game.players);
 		},
 		...permissionControlledInterfaceAttributes
+	},
+	Model: {
+		...permissionControlledInterfaceAttributes,
 	}
 };

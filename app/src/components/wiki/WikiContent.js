@@ -5,6 +5,9 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 import {LoadingView} from "../LoadingView";
 import {PLACE} from "../../../../common/src/type-constants";
+import {Tooltip} from "antd";
+import {QuestionCircleOutlined} from '@ant-design/icons';
+
 
 export const WikiContent = ({currentWiki}) => {
 
@@ -75,6 +78,9 @@ export const WikiContent = ({currentWiki}) => {
 			{mapIcon}
 			{currentWiki.type === PLACE && <>
 				Pixels per foot: {currentWiki.pixelsPerFoot}
+				<Tooltip title={'Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game.'}>
+					<QuestionCircleOutlined className={'margin-lg-left'}/>
+				</Tooltip>
 			</>
 			}
 

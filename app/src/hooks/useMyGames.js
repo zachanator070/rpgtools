@@ -1,5 +1,5 @@
 import {MY_GAMES} from "../../../common/src/gql-queries";
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery} from "@apollo/client";
 
 export default () => {
 	const {data, loading, error, refetch} = useQuery(MY_GAMES);

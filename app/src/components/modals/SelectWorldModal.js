@@ -38,7 +38,7 @@ export const SelectWorldModal = ({visibility, setVisibility}) => {
 		}
 		else {
 			return (
-				<List.Item className='text-align-right' key={item}>
+				<List.Item className='text-align-right' key={item.name}>
 					{item}
 				</List.Item>
 			);

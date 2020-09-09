@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import useCurrentUser from "./useCurrentUser";
 import {SET_CURRENT_WORLD} from "../../../common/src/gql-queries";
 

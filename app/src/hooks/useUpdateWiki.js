@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import useCurrentWiki from "./useCurrentWiki";
 import {UPDATE_WIKI} from "../../../common/src/gql-queries";
 

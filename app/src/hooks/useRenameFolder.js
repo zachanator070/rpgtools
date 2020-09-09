@@ -1,4 +1,4 @@
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation} from "@apollo/client";
 import {RENAME_FOLDER} from "../../../common/src/gql-queries";
 
 export const useRenameFolder = () => {

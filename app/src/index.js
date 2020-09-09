@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
-import {ApolloProvider} from "@apollo/react-common";
 import {BrowserRouter} from "react-router-dom";
 import {getIntrospectionData} from "./components/get-introspection-data";
 import {InMemoryCache, IntrospectionFragmentMatcher} from "apollo-cache-inmemory";
@@ -10,7 +9,7 @@ import {createUploadLink} from "apollo-upload-client";
 import {clientTypeDefs} from "./clientTypeDefs";
 import {clientResolvers} from "./clientResolvers";
 import { WebSocketLink } from '@apollo/client/link/ws';
-import { split, HttpLink } from '@apollo/client';
+import { ApolloProvider, split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import './favicon.ico';
 

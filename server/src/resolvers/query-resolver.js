@@ -7,6 +7,8 @@ import {Place} from '../models/place';
 import {PLACE} from "../../../common/src/type-constants";
 import {ServerConfig} from '../models/server-config';
 import {Game} from "../models/game";
+import {Model} from '../models/model';
+
 
 export default {
 	currentUser: (parent, args, context) => context.currentUser,
@@ -146,5 +148,15 @@ export default {
 			return [];
 		}
 		return Game.find({players: currentUser._id});
+	},
+	models: async (_, {worldId}, {currentUser}) => {
+		const models = await Model.find({world: worldId});
+		const returnModels = [];
+		for(let model of models){
+			if(await model.userCanRead(currentUser)){
+				returnModels.push(model);
+			}
+		}
+		return returnModels;
 	}
 };

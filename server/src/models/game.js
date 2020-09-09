@@ -40,6 +40,7 @@ const gameSchema = new Schema({
 		path: [new Schema({
 			x: Number,
 			y: Number,
+			_id: String
 		})],
 		color: {
 			type: String
@@ -50,7 +51,7 @@ const gameSchema = new Schema({
 			type: String,
 			enum: ['circle', 'square', 'erase', 'line']
 		},
-		strokeId: String
+		_id: String
 	})],
 	messages: [new Schema({
 		sender: {

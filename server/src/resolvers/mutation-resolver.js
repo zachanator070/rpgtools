@@ -8,6 +8,7 @@ import {userResolvers} from "./mutations/user-mutations";
 import {imageMutations} from './mutations/image-mutations';
 import {serverMutations} from "./mutations/server-mutations";
 import {gameMutations} from "./mutations/game-mutations";
+import {modelMutations} from "./mutations/model-mutations";
 
 export default {
 
@@ -19,5 +20,6 @@ export default {
 	...userResolvers,
 	...imageMutations,
 	...serverMutations,
-	...gameMutations
+	...gameMutations,
+	...modelMutations
 }

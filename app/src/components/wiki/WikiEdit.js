@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Input, Modal, Select, Upload, InputNumber} from "antd";
+import {Button, Input, Modal, Select, Upload, InputNumber, Tooltip} from "antd";
 import {UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined} from "@ant-design/icons";
 import {Editor} from "./Editor";
 import useCurrentWiki from "../../hooks/useCurrentWiki";
@@ -11,6 +11,8 @@ import useUpdateWiki from "../../hooks/useUpdateWiki";
 import useUpdatePerson from "../../hooks/useUpdatePerson";
 import useUpdatePlace from "../../hooks/useUpdatePlace";
 import {ALL_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
+import {QuestionCircleOutlined} from "@ant-design/icons";
+import {ToolTip} from "../ToolTip";
 
 export const WikiEdit = () => {
 
@@ -183,8 +185,15 @@ export const WikiEdit = () => {
 						{mapRevert}
 					</div>
 					<div className='margin-lg'>
-						Pixels Per Foot: <InputNumber value={pixelsPerFoot}
-						                        onChange={async (value) => await setPixelsPerFoot(value)}/>
+						Pixels Per Foot:
+						<InputNumber
+							value={pixelsPerFoot}
+							onChange={async (value) => await setPixelsPerFoot(value)}
+						/>
+                        <ToolTip>
+	                        {'Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game.'}
+                        </ToolTip>
+
 					</div>
 				</>
 			}

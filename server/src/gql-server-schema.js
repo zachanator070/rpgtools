@@ -26,7 +26,11 @@ export const typeDefs = gql`
         """Get a game by id"""
         game(gameId: ID!): Game!
         
+        """Get all games that the current user is a part of"""
         myGames: [Game!]!
+        
+        """Get all models for a world"""
+        models(worldId: ID!): [Model!]!
     }
   
     type Mutation{
@@ -79,8 +83,9 @@ export const typeDefs = gql`
         leaveGame(gameId: ID!): Boolean!
         gameChat(gameId: ID!, message: String!): Game!
         setGameMap(gameId: ID!, placeId: ID!): Game!
-        
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
+        
+        createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!): Model!
     }
   
     type Subscription {
@@ -119,6 +124,7 @@ export const typeDefs = gql`
 		canAdmin: Boolean!
 		canAddRoles: Boolean!
 		canHostGame: Boolean!
+		canAddModels: Boolean!
 		currentUserPermissions: [PermissionAssignment!]!
 	}
 	
@@ -314,22 +320,37 @@ export const typeDefs = gql`
 	}
 	
 	type Stroke{
+		_id: String
 		path: [PathNode!]!
 		type: String!
 		size: Int!
 		color: String!
 		fill: Boolean!
-		strokeId: ID!
 	}
 	
 	type PathNode{
 		x: Float!
 		y: Float!
+		_id: String
 	}
 	
 	input PathNodeInput{
 		x: Float!
 		y: Float!
+		_id: String
+	}
+	
+	type Model implements PermissionControlled{
+		_id: ID!
+		name: String!
+		depth: Float!
+		width: Float!
+		height: Float!
+		fileName: String!
+		fileId: ID!
+		accessControlList: [PermissionAssignment!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
 	}
 	
 `;
