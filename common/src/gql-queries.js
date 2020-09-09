@@ -739,17 +739,21 @@ export const GAME_STROKE_SUBSCRIPTION = gql`
 	}
 `;
 
+export const MODEL_ATTRIBUTES = `
+	_id
+	name
+	depth
+	width
+	height
+	fileName
+	fileId
+	${ACCESS_CONTROL_LIST}
+`;
+
 export const GET_MODELS = gql`
 	query getModels($worldId: ID!){
 		models(worldId: $worldId){
-			_id
-			name
-			depth
-			width
-			height
-			fileName
-			fileId
-			${ACCESS_CONTROL_LIST}
+			${MODEL_ATTRIBUTES}
 		}
 	}
 `;
@@ -758,6 +762,14 @@ export const CREATE_MODEL = gql`
 	mutation createModel($name: String!, $file: Upload!, $worldId: ID!, $depth: Float!, $width: Float!, $height: Float!){
 		createModel(name: $name, file: $file, worldId: $worldId, depth: $depth, width: $width, height: $height){
 			_id
+		}
+	}
+`;
+
+export const UPDATE_MODEL = gql`
+	mutation updateModel($modelId: ID!, $name: String!, $file: Upload, $depth: Float!, $width: Float!, $height: Float!){
+		updateModel(modelId: $modelId, name: $name, file: $file, depth: $depth, width: $width, height: $height){
+			${MODEL_ATTRIBUTES}
 		}
 	}
 `;

@@ -86,6 +86,7 @@ export const typeDefs = gql`
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!): Model!
+        updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!): Model!
     }
   
     type Subscription {

@@ -1,44 +1,24 @@
 import express from 'express';
-import fs from 'fs';
+import mongodb, {GridFSBucket} from "mongodb";
+import mongoose from "mongoose";
 
 let ModelRouter = express.Router();
 
-ModelRouter.get('/gundam.glb', (req, res) => {
+ModelRouter.get('/:id', (req, res) => {
 
-	fs.readFile('src/static-assets/gundam.glb', (err, data) => {
-		if (err) throw err;
-		res.writeHead(200, {
-			'Content-Type': 'binary',
-			'Content-disposition': 'attachment;filename=gundam.glb',
-			'Content-Length': data.length
-		});
-		res.end(Buffer.from(data), 'binary');
-	});
-});
-
-ModelRouter.get('/skybox.jpg', (req, res) => {
-
-	fs.readFile('src/static-assets/skybox.jpg', (err, data) => {
-		if (err) throw err;
-		res.writeHead(200, {
-			'Content-Type': 'image/jpeg',
-			'Content-disposition': 'attachment;filename=skybox.jpg',
-			'Content-Length': data.length
-		});
-		res.end(Buffer.from(data), 'binary');
-	});
-});
-
-ModelRouter.get('/building.jpg', (req, res) => {
-
-	fs.readFile('src/static-assets/building.jpg', (err, data) => {
-		if (err) throw err;
-		res.writeHead(200, {
-			'Content-Type': 'image/jpeg',
-			// 'Content-disposition': 'attachment;filename=building.jpg',
-			// 'Content-Length': data.length
-		});
-		res.end(Buffer.from(data), 'binary');
+	const gfs = new GridFSBucket(mongoose.connection.db);
+	const id = new mongodb.ObjectID(req.params.id);
+	gfs.find({_id: id}).next( (err, file) => {
+		if(err){
+			return res.status(500).send();
+		}
+		if(file === null ){
+			return res.status(404).send();
+		}
+		const readStream = gfs.openDownloadStream(file._id);
+		res.set('Content-Type', file.contentType);
+		res.setHeader('Content-disposition', `attachment; filename=${file.filename}`);
+		return readStream.pipe(res);
 	});
 });
 

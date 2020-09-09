@@ -7,7 +7,7 @@ import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useLogout from "../../hooks/useLogout";
 import {LoadingView} from "../LoadingView";
 import {SearchBarV2} from "./SearchBar";
-import {SettingOutlined,UserOutlined, CloudServerOutlined} from "@ant-design/icons";
+import {GlobalOutlined, UserOutlined, CloudServerOutlined} from "@ant-design/icons";
 import useServerConfig from "../../hooks/useServerConfig";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";
 import {LoginModal} from "../modals/LoginModal";
@@ -76,7 +76,7 @@ export const NavBar = () => {
 									to={`/ui/world/${currentWorld._id}/settings`}
 									title={'World Settings'}
 								>
-									<SettingOutlined/>
+									<GlobalOutlined />
 								</Link>
 							</span>
 						}

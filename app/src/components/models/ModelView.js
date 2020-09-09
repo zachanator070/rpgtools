@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useGetModels} from "../../hooks/useGetModels";
 import {Row, Col, List, Button} from "antd";
 import {Route, Switch, useRouteMatch} from "react-router-dom";
@@ -8,16 +8,33 @@ import {TeamOutlined} from '@ant-design/icons';
 import {LoadingView} from "../LoadingView";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {CreateModelModal} from './CreateModelModal';
+import {ModelEdit} from "./ModelEdit";
+import {ModelContent} from "./ModelContent";
+import {useParams, useHistory} from 'react-router-dom';
 
 
 export const ModelView = () => {
-	const {models, loading} = useGetModels();
+	const {models, loading, refetch} = useGetModels();
 	const {currentWorld, loading: worldLoading} = useCurrentWorld();
 
 	const [selectedModel, setSelectedModel] = useState();
 	const match = useRouteMatch();
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 	const [createModelModalVisibility, setCreateModelModalVisibility] = useState(false);
+	const params = useParams();
+	const history = useHistory();
+
+	useEffect(() => {
+		(async() => {
+			if(models){
+				for(let model of models){
+					if(model._id === params.model_id){
+						await setSelectedModel(model);
+					}
+				}
+			}
+		})();
+	}, [models, params]);
 
 	if(loading || worldLoading){
 		return <LoadingView/>;
@@ -28,31 +45,38 @@ export const ModelView = () => {
 			<Col span={4}>
 				{currentWorld.canAddModels &&
 					<>
-					<Button className={'margin-lg'} onClick={async () => {await setCreateModelModalVisibility(true)}}>Create Model</Button>
-					<CreateModelModal visibility={createModelModalVisibility} setVisibility={setCreateModelModalVisibility}/>
+						<Button
+							className={'margin-lg'}
+							type={'primary'}
+							onClick={async () => {await setCreateModelModalVisibility(true)}}
+						>
+							Create Model
+						</Button>
+						<CreateModelModal visibility={createModelModalVisibility} setVisibility={setCreateModelModalVisibility}/>
 					</>
 				}
 				<h1 className={'margin-lg-left'}>Models</h1>
-				<List
-					className={'margin-lg'}
-					dataSource={models || []}
-					locale={{emptyText: <>No Models</>}}
-					renderItem={(model) => {
-						return <List.Item key={model._id}>
-							<a onClick={async () => await setSelectedModel(model)}>{model.name}</a>
-						</List.Item>;
-					}}
+				<div className={'margin-lg'}>
+					<List
+						dataSource={models || []}
+						locale={{emptyText: <>No Models</>}}
+						renderItem={(model) => {
+							return <List.Item key={model._id}>
+								<a onClick={async () => history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`)}>{model.name}</a>
+							</List.Item>;
+						}}
 					/>
+				</div>
 			</Col>
 			<Col span={16}>
 				{selectedModel && <>
 					<Switch>
 						<Route path={`${match.path}/edit`}>
-							<ModelEdit/>
+							<ModelEdit model={selectedModel}/>
 						</Route>
 						<Route path={`${match.path}/view`}>
 							<div>
-								<ModelContent selectedModel={selectedModel}/>
+								<ModelContent model={selectedModel}/>
 							</div>
 						</Route>
 					</Switch>
@@ -61,17 +85,19 @@ export const ModelView = () => {
 			<Col span={4}>
 				{selectedModel &&
 				<Route path={`${match.path}/view`}>
-					<a title={'View permissions for this page'} onClick={async () => {
-						await setPermissionModalVisibility(true);
-					}}>
-						<TeamOutlined style={{fontSize: '20px'}}/>
-					</a>
-					<PermissionModal
-						visibility={permissionModalVisibility}
-						setVisibility={setPermissionModalVisibility}
-						subject={selectedModel}
-						subjectType={MODEL}
-					/>
+					<div className={'margin-lg'}>
+						<a title={'View permissions for this page'} onClick={async () => {
+							await setPermissionModalVisibility(true);
+						}}>
+							<TeamOutlined style={{fontSize: '20px'}}/>
+						</a>
+						<PermissionModal
+							visibility={permissionModalVisibility}
+							setVisibility={setPermissionModalVisibility}
+							subject={selectedModel}
+							subjectType={MODEL}
+						/>
+					</div>
 				</Route>
 				}
 			</Col>
