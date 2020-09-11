@@ -27,7 +27,13 @@ export const CreateModelModal = ({visibility, setVisibility}) => {
 	>
 		<ModelForm
 			callback={async (values) => {
-				await createModel(values.name, values.file[0].originFileObj, parseFloat(values.depth), parseFloat(values.width), parseFloat(values.height));
+				await createModel({
+						name: values.name,
+						file: values.file[0].originFileObj,
+						depth: parseFloat(values.depth),
+						width: parseFloat(values.width),
+						height: parseFloat(values.height)
+					});
 			}}
 			loading={loading}
 		/>
