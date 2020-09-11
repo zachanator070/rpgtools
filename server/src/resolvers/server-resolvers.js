@@ -145,57 +145,6 @@ export const serverResolvers = {
 			}
 			return folders;
 		},
-		currentUserPermissions: async (world, _, {currentUser}) => {
-			const permissions = [];
-			await world.populate('folders').execPopulate();
-			const folders = await WikiFolder.find({world});
-			const roles = await Role.find({world});
-			for(let permission of currentUser.allPermissions){
-				const subjectId = permission.subject._id;
-				const subjectType = permission.subjectType;
-				let keepPermission = false;
-				if(subjectType === WORLD && subjectId.equals(world._id)){
-					keepPermission = true;
-				}
-				else if(subjectType === WIKI_FOLDER){
-					for(let folder of world.folders){
-						if(folder._id.equals(subjectId)){
-							keepPermission = true;
-							break;
-						}
-					}
-				}
-				else if(ALL_WIKI_TYPES.includes(subjectType)){
-					for(let folder of folders){
-						for(let page of folder.pages){
-							if(page.equals(subjectId)){
-								keepPermission = true;
-								break;
-							}
-						}
-
-					}
-				}
-				else if(subjectType === ROLE){
-					for(let role of roles){
-						if(role._id.equals(subjectId)){
-							keepPermission = true;
-							break;
-						}
-					}
-				}
-				else if(subjectType === SERVER_CONFIG){
-					keepPermission = true;
-				}
-				else if(subjectType === GAME){
-					keepPermission = true;
-				}
-				if(keepPermission){
-					permissions.push(permission);
-				}
-			}
-			return permissions;
-		},
 		...permissionControlledInterfaceAttributes
 	},
 	PermissionControlled: {

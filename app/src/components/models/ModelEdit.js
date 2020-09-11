@@ -1,19 +1,21 @@
 import React from 'react';
 import {ModelForm} from "./ModelForm";
 import Errors from "../Errors";
-import {Row, Col} from "antd";
+import {Row, Col, Button, Modal} from "antd";
 import useUpdateModel from "../../hooks/useUpdateModel";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
-
+import {useDeleteModel} from "../../hooks/useDeleteModel";
 
 export const ModelEdit = ({model}) => {
 
 	const {updateModel, loading} = useUpdateModel();
 	const {currentWorld, loading: worldLoading} = useCurrentWorld();
-
 	const history = useHistory();
+	const {deleteModel} = useDeleteModel(() => {
+		history.push(`/ui/world/${currentWorld._id}/model`);
+	})
 
 	if(!model){
 		return <Errors errors={['You do not have permission to view this model or this model does not exist']}/>;
@@ -34,13 +36,24 @@ export const ModelEdit = ({model}) => {
 				<div className={'margin-lg'}>
 					<ModelForm
 						callback={async (values) => {
-							await updateModel(model._id, values.name, values.file, values.depth, values.width, values.height);
+							await updateModel(model._id, values.name, values.file[0].originFileObj, values.depth, values.width, values.height);
 							history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`);
 						}}
 						initialValues={model}
 						fileRequired={false}
 						loading={loading}
 					/>
+					<Button type={'danger'} onClick={() => {
+						Modal.confirm({
+							title: 'Confirm',
+							content: `Are you sure you want to delete the model ${model.name} ?`,
+							cancelText: 'Cancel',
+							okText: 'Delete Model',
+							onOk: async () => {
+								await deleteModel({modelId: model._id});
+							}
+						});
+					}}>Delete Model</Button>
 				</div>
 			</Col>
 			<Col span={14}/>

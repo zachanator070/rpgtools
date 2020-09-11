@@ -9,11 +9,17 @@ import {
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import useServerConfig from "../../hooks/useServerConfig";
 import {LoadingView} from "../LoadingView";
+import {useMyPermissions} from "../../hooks/useMyPermissions";
 
 export const MyPermissionsView = () => {
 
 	const {currentWorld, loading} = useCurrentWorld();
 	const {serverConfig, serverConfigLoading} = useServerConfig();
+	const {myPermissions, loading: permissionsLoading} = useMyPermissions();
+
+	if(loading || serverConfigLoading || permissionsLoading){
+		return <LoadingView/>;
+	}
 
 	const getPermissionSubjectName = (assignment) => {
 
@@ -28,7 +34,7 @@ export const MyPermissionsView = () => {
 
 	const permissionAssignments = [];
 
-	for (let assignment of currentWorld.currentUserPermissions) {
+	for (let assignment of myPermissions) {
 		let source = 'Direct Assignment';
 		for(let role of currentWorld.roles.concat(serverConfig.roles)){
 			for(let permission of role.permissions){
@@ -88,10 +94,6 @@ export const MyPermissionsView = () => {
 			sortDirections: ['descend', 'ascend'],
 		},
 	];
-
-	if(loading || serverConfigLoading){
-		return <LoadingView/>;
-	}
 
 	return <div className={'margin-md'}>
 		<h1>My Permissions on {currentWorld.name}</h1>

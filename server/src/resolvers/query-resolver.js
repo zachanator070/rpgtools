@@ -4,10 +4,12 @@ import {ANON_USERNAME, WIKI_READ_ALL, WORLD_READ} from "../../../common/src/perm
 import {EVERYONE} from "../../../common/src/role-constants";
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
-import {PLACE} from "../../../common/src/type-constants";
+import {ALL_WIKI_TYPES, GAME, PLACE, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../../common/src/type-constants";
 import {ServerConfig} from '../models/server-config';
 import {Game} from "../models/game";
 import {Model} from '../models/model';
+import {WikiFolder} from "../models/wiki-folder";
+import {Role} from "../models/role";
 
 
 export default {
@@ -158,5 +160,66 @@ export default {
 			}
 		}
 		return returnModels;
+	},
+	myPermissions: async (_, {worldId}, {currentUser}) => {
+		const world = await World.findById(worldId);
+		if(!world){
+			throw new Error(`World with id ${worldId} does not exist`);
+		}
+
+		if(!await world.userCanRead(currentUser)){
+			throw new Error('You do not have permission to read this world');
+		}
+
+		const permissions = [];
+		await world.populate('folders').execPopulate();
+		const folders = await WikiFolder.find({world});
+		const roles = await Role.find({world});
+		for(let permission of currentUser.allPermissions){
+			const subjectId = permission.subject._id;
+			const subjectType = permission.subjectType;
+			let keepPermission = false;
+			if(subjectType === WORLD && subjectId.equals(world._id)){
+				keepPermission = true;
+			}
+			else if(subjectType === WIKI_FOLDER){
+				for(let folder of world.folders){
+					if(folder._id.equals(subjectId)){
+						keepPermission = true;
+						break;
+					}
+				}
+			}
+			else if(ALL_WIKI_TYPES.includes(subjectType)){
+				for(let folder of folders){
+					for(let page of folder.pages){
+						if(page.equals(subjectId)){
+							keepPermission = true;
+							break;
+						}
+					}
+
+				}
+			}
+			else if(subjectType === ROLE){
+				for(let role of roles){
+					if(role._id.equals(subjectId)){
+						keepPermission = true;
+						break;
+					}
+				}
+			}
+			else if(subjectType === SERVER_CONFIG){
+				keepPermission = true;
+			}
+			else if(subjectType === GAME){
+				keepPermission = true;
+			}
+			if(keepPermission){
+				permissions.push(permission);
+			}
+		}
+		return permissions;
+
 	}
 };

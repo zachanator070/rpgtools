@@ -9,6 +9,7 @@ export default ({errors}) => {
 	return <div>
 		{errors.map(error =>
 			<Alert
+				key={error}
 				message={error}
 				type={'error'}
 				showIcon
