@@ -14,6 +14,7 @@ import {SelectWiki} from "../select/SelectWiki";
 import {PLACE} from "../../../../common/src/type-constants";
 import {useSetGameMap} from "../../hooks/useSetGameMap";
 import {Link} from "react-router-dom";
+import {AddModelSection} from "./AddModelSection";
 
 export const GameDrawer = ({renderer}) => {
 	const {currentGame, loading} = useCurrentGame();
@@ -131,7 +132,8 @@ export const GameDrawer = ({renderer}) => {
 					</Collapse.Panel>
 				}
 				{currentGame.canWrite &&
-					<Collapse.Panel header="Models" key="4">
+					<Collapse.Panel header="Add Models" key="4">
+						<AddModelSection renderer={renderer}/>
 					</Collapse.Panel>
 				}
 
