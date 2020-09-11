@@ -31,6 +31,9 @@ export const typeDefs = gql`
         
         """Get all models for a world"""
         models(worldId: ID!): [Model!]!
+        
+        """Get permissions for the current authenticated user for a particular world"""
+        myPermissions(worldId: ID!): [PermissionAssignment!]!
     }
   
     type Mutation{
@@ -62,6 +65,7 @@ export const typeDefs = gql`
         createFolder(name: String!, parentFolderId: ID!): World!
         renameFolder(folderId: ID!, name: String!): WikiFolder!
         deleteFolder(folderId: ID!): World!
+        moveFolder(folderId: ID!, parentFolderId: ID!): World!
         
         """ Creates a generic wiki page """
         createWiki(name: String!, folderId: ID!): World!
@@ -87,6 +91,7 @@ export const typeDefs = gql`
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!): Model!
         updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!): Model!
+        deleteModel(modelId: ID!): Model!
     }
   
     type Subscription {

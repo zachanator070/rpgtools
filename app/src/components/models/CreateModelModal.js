@@ -4,15 +4,13 @@ import {Modal} from "antd";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
 import {useCreateModel} from "../../hooks/useCreateModel";
 import {ModelForm} from "./ModelForm";
-import {useGetModels} from "../../hooks/useGetModels";
 
 
 export const CreateModelModal = ({visibility, setVisibility}) => {
 
 	const {currentWorld} = useCurrentWorld();
-	const {refetch} = useGetModels();
-	const {createModel, loading, error} = useCreateModel(async (data) => {
-		await refetch({worldId: currentWorld._id});
+
+	const {createModel, loading} = useCreateModel(async (data) => {
 		await setVisibility(false);
 		history.push(`/ui/world/${currentWorld._id}/model/${data.createModel._id}/view`);
 	});

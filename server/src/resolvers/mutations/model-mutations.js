@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import {Model} from "../../models/model";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {MODEL} from "../../../../common/src/type-constants";
+import {cleanUpPermissions} from "../../db-helpers";
 
 const createGFSFile = async (file) => {
 	const readStream = file.createReadStream();
@@ -33,11 +34,11 @@ const deleteFile = async (fileId) => {
 	return new Promise((resolve, reject) => {
 		const gfs = new GridFSBucket(mongoose.connection.db);
 
-		gfs.delete(fileId, (error) => {
-			if(error){
-				reject(error);
-				return;
-			}
+		gfs.delete(new mongoose.Types.ObjectId(fileId), (error) => {
+			// if(error){
+			// 	reject(error);
+			// 	return;
+			// }
 			resolve();
 
 		})
@@ -58,7 +59,7 @@ export const modelMutations = {
 
 		file = await file;
 
-		const fileId = createGFSFile(file);
+		const fileId = await createGFSFile(file);
 
 		const model = await Model.create({name, fileId, fileName: file.filename, world, depth, width, height});
 		for(let permission of [MODEL_RW, MODEL_ADMIN]){
@@ -81,6 +82,7 @@ export const modelMutations = {
 			if(model.fileId){
 				await deleteFile(model.fileId);
 			}
+			file = await file;
 			model.fileId = await createGFSFile(file);
 			model.fileName = file.filename;
 		}
@@ -89,6 +91,18 @@ export const modelMutations = {
 		model.width = width;
 		model.height = height;
 		await model.save();
+		return model;
+	},
+	deleteModel: async (_, {modelId}, {currentUser}) => {
+		const model = await Model.findById(modelId);
+		if(!model){
+			throw new Error(`Model with id ${modelId} does not exist`);
+		}
+		if(!await model.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to delete this model');
+		}
+		await Model.deleteOne({_id: modelId});
+		await cleanUpPermissions(modelId);
 		return model;
 	}
 };

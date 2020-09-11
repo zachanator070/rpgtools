@@ -59,29 +59,32 @@ export class ModelRenderer{
 		const aspect = renderWidth / renderHeight
 		this.camera = new THREE.PerspectiveCamera( CAMERA_FOV, aspect, 0.1, 10000 );
 		// calculate distance to get everything in view
-		const horizontalFOV = 2 * Math.atan( Math.tan( CAMERA_FOV / 2 ) * aspect );
+		const verticalFOV = CAMERA_FOV * Math.PI / 180;
+		const horizontalFOV = (2 * Math.atan( Math.tan( verticalFOV / 2 ) * aspect ));
 		let cameraZ = Math.max(
-			(this.modelHeight/2)/Math.tan(CAMERA_FOV/2),
-			(this.modelWidth/2)/Math.tan(horizontalFOV/2),
+			((this.modelHeight*1.1)/2)/Math.tan(verticalFOV/2),
+			((this.modelWidth*1.1)/2)/Math.tan(horizontalFOV/2),
 		);
-		let cameraY = this.modelHeight * 1.5;
+		let cameraY = this.modelHeight * .7;
 
-		this.camera.position.z = cameraZ;
-		this.camera.position.y = cameraY;
-
-		this.camera.lookAt(new Vector3(0,0,0));
+		this.camera.position.set(0, cameraY, cameraZ);
 
 		// setup renderer
 		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
-		console.log(`rendering size ${renderWidth} x ${renderHeight}`);
 		this.renderer.setSize(renderWidth, renderHeight);
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 
 		// setup controls
 		this.orbitControls = new OrbitControls( this.camera, this.renderRoot );
+		this.orbitControls.target = new Vector3(0, this.modelHeight / 2, 0);
+		this.orbitControls.update();
 
 		// setup ground
-
+		const groundGeometry = new THREE.PlaneGeometry(5, 5);
+		const groundMaterial = new THREE.MeshStandardMaterial({color: 0x386636});
+		const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+		groundMesh.rotateX(-Math.PI/2);
+		this.scene.add(groundMesh);
 
 	}
 

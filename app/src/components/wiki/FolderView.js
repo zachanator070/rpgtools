@@ -7,7 +7,8 @@ import {
 	FileAddOutlined,
 	FolderAddOutlined,
 	EditOutlined,
-	DeleteOutlined
+	DeleteOutlined,
+	ImportOutlined
 } from '@ant-design/icons';
 import useCurrentWiki from "../../hooks/useCurrentWiki";
 import useCurrentWorld from "../../hooks/useCurrentWorld";
@@ -17,6 +18,7 @@ import {useCreateWiki} from "../../hooks/useCreateWiki";
 import {useHistory} from "react-router-dom";
 import useCreateFolder from "../../hooks/useCreateFolder";
 import {LoadingView} from "../LoadingView";
+import {MoveFolderModal} from "../modals/MoveFolderModal";
 
 export const FolderView = () => {
 
@@ -25,6 +27,9 @@ export const FolderView = () => {
 	const [folderBeingEdited, setFolderBeingEdited] = useState(null);
 	const [newFolderName, setNewFolderName] = useState('');
 	const [folderBeingHovered, setFolderBeingHovered] = useState(null);
+	const [folderBeingMoved, setFolderBeingMoved] = useState();
+
+	const [moveFolderModalVisibility, setMoveFolderModalVisibility] = useState(false);
 
 	const {currentWiki, loading: currentWikiLoading} = useCurrentWiki();
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
@@ -33,6 +38,7 @@ export const FolderView = () => {
 	const {deleteFolder} = useDeleteFolder();
 	const {createWiki} = useCreateWiki();
 	const {createFolder} = useCreateFolder();
+
 
 	const editingInput = useRef(null);
 	
@@ -185,6 +191,17 @@ export const FolderView = () => {
 				<EditOutlined />
 			</a>,
 			<a
+				title={'Move this folder'}
+				href={'#'}
+				key={'move'}
+				onClick={async () => {
+					await setFolderBeingMoved(folder);
+					await setMoveFolderModalVisibility(true);
+				}}
+			>
+				<ImportOutlined/>
+			</a>,
+			<a
 				title={'Delete this folder'}
 				href='#'
 				key='delete'
@@ -232,9 +249,17 @@ export const FolderView = () => {
 		if (folder._id === folderBeingEdited) {
 			folderItem = (
 				<span style={{'marginLeft': 5 * indent + 'px'}}>
-				{icon} <input type='text' ref={editingInput} onBlur={() => {
-					setEditing(null)
-				}} onChange={event => setNewFolderName(event.target.value)} onKeyDown={stopEditing} value={newFolderName}/>
+				{icon}
+				<input
+					type='text'
+					ref={editingInput}
+					onBlur={() => {
+						setEditing(null)
+					}}
+					onChange={event => setNewFolderName(event.target.value)}
+					onKeyDown={stopEditing}
+					value={newFolderName}
+				/>
 			</span>
 			);
 		}
@@ -250,6 +275,13 @@ export const FolderView = () => {
 
 	return (
 		<div className='margin-md' style={{fontSize: '17px'}}>
+			{folderBeingMoved &&
+				<MoveFolderModal
+					visibility={moveFolderModalVisibility}
+					setVisibility={setMoveFolderModalVisibility}
+					folder={folderBeingMoved}
+				/>
+			}
 			{currentWorld.rootFolder && renderFolder(currentWorld.rootFolder, 0)}
 		</div>
 	);

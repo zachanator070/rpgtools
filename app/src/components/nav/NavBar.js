@@ -74,7 +74,7 @@ export const NavBar = () => {
 							<span className='margin-lg-left'>
 								<Link
 									to={`/ui/world/${currentWorld._id}/settings`}
-									title={'World Settings'}
+									others={{title: 'World Settings'}}
 								>
 									<GlobalOutlined />
 								</Link>
@@ -84,7 +84,7 @@ export const NavBar = () => {
 							<span className={'margin-lg-left'}>
 								<Link
 									to={`/ui/world/${currentWorld._id}/myPermissions`}
-									title={'My permissions on this world'}
+									others={{title: 'My permissions on this world'}}
 								>
 									<UserOutlined/>
 								</Link>

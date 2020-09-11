@@ -157,26 +157,6 @@ export const GET_CURRENT_WORLD = gql`
 			folders{
 			    ${CURRENT_WORLD_FOLDERS}
 		    }
-		    currentUserPermissions{
-		        _id
-		        permission
-		        subject {
-		            _id
-		            ... on World{
-						name
-					}
-					... on WikiPage{
-						name
-					}
-					... on WikiFolder{
-						name
-					}
-					... on Role {
-						name
-					}
-		        }
-		        subjectType
-	        }
 		        
 	    }
     }
@@ -194,6 +174,16 @@ export const ADD_USER_ROLE = gql`
 export const CREATE_FOLDER = gql`
 	mutation createFolder($parentFolderId: ID!, $name: String!){
 		createFolder(parentFolderId: $parentFolderId, name: $name){
+			_id
+			folders{
+				${CURRENT_WORLD_FOLDERS}
+			}
+		}
+	}
+`;
+export const MOVE_FOLDER = gql`
+	mutation moveFolder($folderId: ID!, $parentFolderId: ID!){
+		moveFolder(folderId: $folderId, parentFolderId: $parentFolderId){
 			_id
 			folders{
 				${CURRENT_WORLD_FOLDERS}
@@ -772,4 +762,37 @@ export const UPDATE_MODEL = gql`
 			${MODEL_ATTRIBUTES}
 		}
 	}
+`;
+
+export const DELETE_MODEL = gql`
+	mutation deleteModel($modelId: ID!){
+		deleteModel(modelId: $modelId){
+			_id
+		}
+	}
+`;
+
+export const MY_PERMISSIONS = gql`
+	query myPermissions($worldId: ID!){
+		myPermissions(worldId: $worldId){
+			_id
+	        permission
+	        subject {
+	            _id
+	            ... on World{
+					name
+				}
+				... on WikiPage{
+					name
+				}
+				... on WikiFolder{
+					name
+				}
+				... on Role {
+					name
+				}
+	        }
+	        subjectType
+        }
+    }
 `;

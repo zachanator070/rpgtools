@@ -2,6 +2,7 @@ import {FOLDER_ADMIN, FOLDER_RW} from "../../../../common/src/permission-constan
 import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {WIKI_FOLDER} from "../../../../common/src/type-constants";
+import {cleanUpPermissions} from "../../db-helpers";
 
 /**
  * Throws an error if the user does not have write access to any of the children folders or pages.
@@ -82,6 +83,7 @@ export const folderMutations = {
 			throw new Error('You cannot delete the root folder of a world');
 		}
 
+		await cleanUpPermissions(folderId);
 		await WikiFolder.deleteOne({_id: folderId});
 
 		const parents = await WikiFolder.find({children: folder._id});
@@ -90,6 +92,34 @@ export const folderMutations = {
 			await parent.save();
 		}
 
+		return folder.world;
+
+	},
+	moveFolder: async (_, {folderId, parentFolderId}, {currentUser}) => {
+		const folder = await WikiFolder.findById(folderId).populate('world');
+		if(!folder){
+			throw new Error(`Folder with id ${folderId} does not exist`);
+		}
+		const parentFolder = await WikiFolder.findById(parentFolderId);
+		if(!parentFolder){
+			throw new Error(`Folder with id ${parentFolderId} does not exist`);
+		}
+		if(folderId === parentFolderId){
+			throw new Error('Folder cannot be a parent of itself');
+		}
+
+		const currentParent = await WikiFolder.findOne({children: folder._id});
+
+		for(let folderToCheck of [folder, parentFolder, currentParent]){
+			if(!await folderToCheck.userCanWrite(currentUser)){
+				throw new Error(`You do not have permission to edit folder ${folder.name}`);
+			}
+		}
+
+		currentParent.children = currentParent.children.filter((childId) => !childId.equals(folder._id));
+		await currentParent.save();
+		parentFolder.children.push(folder);
+		await parentFolder.save();
 		return folder.world;
 
 	}
