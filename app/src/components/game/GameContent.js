@@ -1,23 +1,38 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {GameRenderer} from "./GameRenderer";
+import {GameRenderer} from "../../rendering/GameRenderer";
 import {notification} from "antd";
-import useAddStroke from "../../hooks/useAddStroke";
-import {useGameStrokeSubscription} from "../../hooks/useGameStrokeSubscription";
+import useAddStroke from "../../hooks/game/useAddStroke";
+import {useGameStrokeSubscription} from "../../hooks/game/useGameStrokeSubscription";
 import {GameDrawer} from "./GameDrawer";
 import {GameControlsHelp} from "./GameControlsHelp";
+import {useGameModelAddedSubscription} from "../../hooks/game/useGameModelAddedSubscription";
+import {useSetModelPosition} from "../../hooks/game/useSetModelPosition";
+import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelPosistionedSubscription";
 
 export const GameContent = ({currentGame, children}) => {
 
 	const renderCanvas = useRef();
 	const [renderer, setRenderer] = useState();
 	const {addStroke} = useAddStroke();
+	const {setModelPosition} = useSetModelPosition();
 
 	const [cameraMode, setCameraMode] = useState('camera');
-	const {gameStrokeAdded} = useGameStrokeSubscription();
+	const {data: gameStrokeAdded} = useGameStrokeSubscription();
+	const {data: gameModelAdded} = useGameModelAddedSubscription();
+	const {data: modelPositioned} = useGameModelPositionedSubscription();
 
 	useEffect(() => {
 		(async () => {
-			await setRenderer(new GameRenderer(renderCanvas.current, currentGame.map && currentGame.map.mapImage, addStroke, () => {}, setCameraMode));
+			await setRenderer(
+				new GameRenderer(
+					renderCanvas.current,
+					currentGame.map && currentGame.map.mapImage,
+					addStroke,
+					() => {},
+					setCameraMode,
+					setModelPosition
+				)
+			);
 		})();
 		renderCanvas.current.addEventListener('mouseover', (event) =>{
 			if((event.toElement || event.relatedTarget) !== renderCanvas.current){
@@ -26,6 +41,18 @@ export const GameContent = ({currentGame, children}) => {
 			renderCanvas.current.focus();
 		});
 	}, []);
+
+	useEffect(() => {
+		if(renderer){
+			renderer.updateModel(modelPositioned);
+		}
+	}, [modelPositioned])
+
+	useEffect(() => {
+		if(gameModelAdded && renderer){
+			renderer.addModel(gameModelAdded);
+		}
+	}, [gameModelAdded]);
 
 	useEffect(() => {
 		if(gameStrokeAdded && renderer){
@@ -78,6 +105,9 @@ export const GameContent = ({currentGame, children}) => {
 						stroke.size = stroke.size * currentGame.map.pixelsPerFoot;
 					}
 					renderer.stroke(stroke);
+				}
+				for(let model of currentGame.models){
+					renderer.addModel(model);
 				}
 			}
 

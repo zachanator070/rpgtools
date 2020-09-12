@@ -2,11 +2,16 @@ import React, {useState} from 'react';
 import {SelectModel} from "../select/SelectModel";
 import {Button} from "antd";
 import {ModelViewer} from "../models/ModelViewer";
+import {useAddModel} from "../../hooks/game/useAddModel";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
 
 
 export const AddModelSection = ({renderer}) => {
 
 	const [selectedModel, setSelectedModel] = useState();
+	const {currentGame} = useCurrentGame();
+	const {addModel} = useAddModel();
+
 	return <>
 		<SelectModel
 			onChange={async (model) => await setSelectedModel(model)}
@@ -15,7 +20,7 @@ export const AddModelSection = ({renderer}) => {
 		<Button
 			type={'primary'}
 			onClick={async () => {
-				renderer.addModel(`/models/${selectedModel.fileId}`);
+				await addModel({gameId: currentGame._id, modelId: selectedModel._id});
 			}}
 		>
 			Add Model

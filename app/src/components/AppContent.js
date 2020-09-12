@@ -1,5 +1,5 @@
 import {Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
-import useCurrentWorld from "../hooks/useCurrentWorld";
+import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import {LoadingView} from "./LoadingView";
 import {MapView} from "./map/MapView";
 import React from "react";

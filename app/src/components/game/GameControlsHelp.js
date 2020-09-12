@@ -1,5 +1,5 @@
 import React from 'react';
-import useCurrentGame from "../../hooks/useCurrentGame";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
 
 
 export const GameControlsHelp = ({cameraMode}) => {
@@ -22,6 +22,11 @@ export const GameControlsHelp = ({cameraMode}) => {
 			See "Brush Options" in side panel for painting config
 		</>;
 	}
+	if(cameraMode === 'move model'){
+		helpText = <>
+			Left click on a model and drag to move it
+		</>;
+	}
 	return <>
 		<div style={{position: 'absolute', left: '0px', top: '0px'}}>
 			<p style={{color: 'white'}}>
@@ -31,6 +36,8 @@ export const GameControlsHelp = ({cameraMode}) => {
 				<br/>
 				{currentGame.canWrite && <>
 					Press 'p' to switch to painting mode
+					<br/>
+					Press 'm' to switch to move model mode
 					<br/>
 				</>}
 				{helpText}

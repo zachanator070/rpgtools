@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Popover} from "antd";
 import {useHistory} from 'react-router-dom';
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useSetMapWiki from "../../hooks/useSetMapWiki";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useSetMapWiki from "../../hooks/map/useSetMapWiki";
 import {EditPinModal} from "../modals/EditPinModal";
 import {PLACE} from "../../../../common/src/type-constants";
 

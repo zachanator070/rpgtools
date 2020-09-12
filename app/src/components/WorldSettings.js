@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import useCurrentWorld from "../hooks/useCurrentWorld";
+import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import {PermissionEditor} from "./permissions/PermissionEditor";
 import {Button, Col, Input, Row} from "antd";
-import {useRenameWorld} from "../hooks/useRenameWorld";
+import {useRenameWorld} from "../hooks/world/useRenameWorld";
 import {WORLD} from "../../../common/src/type-constants";
 import {LoadingView} from "./LoadingView";
 

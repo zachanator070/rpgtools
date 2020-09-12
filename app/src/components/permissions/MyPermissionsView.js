@@ -6,10 +6,10 @@ import {
 	WIKI_FOLDER,
 	WORLD
 } from "../../../../common/src/type-constants";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useServerConfig from "../../hooks/useServerConfig";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useServerConfig from "../../hooks/server/useServerConfig";
 import {LoadingView} from "../LoadingView";
-import {useMyPermissions} from "../../hooks/useMyPermissions";
+import {useMyPermissions} from "../../hooks/authorization/useMyPermissions";
 
 export const MyPermissionsView = () => {
 

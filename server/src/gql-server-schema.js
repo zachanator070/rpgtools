@@ -88,6 +88,8 @@ export const typeDefs = gql`
         gameChat(gameId: ID!, message: String!): Game!
         setGameMap(gameId: ID!, placeId: ID!): Game!
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
+        addModel(gameId: ID!, modelId: ID!): Game!
+        setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, rotation: Float!): PositionedModel!
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!): Model!
         updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!): Model!
@@ -99,6 +101,8 @@ export const typeDefs = gql`
 		gameRosterChange(gameId: ID!): Game!
 		gameMapChange(gameId: ID!): Game!
 		gameStrokeAdded(gameId: ID!): Stroke!
+		gameModelAdded(gameId: ID!): PositionedModel!
+		gameModelPositioned(gameId: ID!): PositionedModel!
 	}
   
     type User {
@@ -323,6 +327,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		strokes: [Stroke!]!
+		models: [PositionedModel!]!
 	}
 	
 	type Stroke{
@@ -357,6 +362,14 @@ export const typeDefs = gql`
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
+	}
+	
+	type PositionedModel {
+		_id: ID!
+		model: Model!
+		x: Float!
+		z: Float!
+		rotation: Float!
 	}
 	
 `;

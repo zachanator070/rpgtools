@@ -1,5 +1,5 @@
-import useCurrentWiki from "../../hooks/useCurrentWiki";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {Route, Switch, useRouteMatch} from "react-router-dom";
 import React, {useState} from "react";
 import {LoadingView} from "../LoadingView";

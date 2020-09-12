@@ -1,6 +1,6 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
 import {SelectWiki} from "../select/SelectWiki";
 

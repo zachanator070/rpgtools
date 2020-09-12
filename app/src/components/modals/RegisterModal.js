@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Form, Input, Modal} from "antd";
-import useRegister from "../../hooks/useRegister";
-import useLogin from "../../hooks/useLogin";
+import useRegister from "../../hooks/authentication/useRegister";
+import useLogin from "../../hooks/authentication/useLogin";
 import {KeyOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 
 export const RegisterModal = ({visibility, setVisibility}) => {

@@ -1,21 +1,19 @@
 import React, {useEffect, useRef} from 'react';
-import {GameDrawer} from "./GameDrawer";
-import useCurrentGame from "../../hooks/useCurrentGame";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {LoadingView} from "../LoadingView";
 import {GameContent} from "./GameContent";
-import {useGameRosterSubscription} from "../../hooks/useGameRosterSubscription";
+import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
 import {Modal} from "antd";
 import {useHistory} from 'react-router-dom';
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import {useGameMapChangeSubscription} from "../../hooks/useGameMapChangeSubscription";
-import {GameControlsHelp} from "./GameControlsHelp";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import {useGameMapChangeSubscription} from "../../hooks/game/useGameMapChangeSubscription";
+
 
 export const GameView = () => {
 
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {currentGame, loading} = useCurrentGame();
-	const {game: rosterChangeGame} = useGameRosterSubscription();
-	const {game: mapChangeGame} = useGameMapChangeSubscription();
+	const {data: mapChangeGame} = useGameMapChangeSubscription();
 	const [modal, contextHolder] = Modal.useModal();
 
 	const history = useHistory();

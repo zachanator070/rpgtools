@@ -66,6 +66,29 @@ const gameSchema = new Schema({
 			type: String,
 			required: [true, 'timestamp required']
 		}
+	})],
+	models: [new Schema({
+		_id: {
+			type: String,
+			required: [true, '_id required']
+		},
+		model: {
+			type: mongoose.Schema.ObjectId,
+			ref: 'model',
+			required: [true,  'model required']
+		},
+		x: {
+			type: Number,
+			required: [true, 'x position required']
+		},
+		z: {
+			type: Number,
+			required: [true, 'z position required']
+		},
+		rotation: {
+			type: Number,
+			required: [true, 'rotation required']
+		}
 	})]
 });
 

@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
-import useCurrentGame from "../../hooks/useCurrentGame";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {Collapse, Comment, Input, Form, Button, List, Modal} from "antd";
-import {useGameChat} from "../../hooks/useGameChat";
-import {useGameChatSubscription} from "../../hooks/useGameChatSubscription";
-import {useGameRosterSubscription} from "../../hooks/useGameRosterSubscription";
-import useLeaveGame from "../../hooks/useLeaveGame";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import {useGameChat} from "../../hooks/game/useGameChat";
+import {useGameChatSubscription} from "../../hooks/game/useGameChatSubscription";
+import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
+import useLeaveGame from "../../hooks/game/useLeaveGame";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useHistory} from 'react-router-dom';
-import useMyGames from "../../hooks/useMyGames";
+import useMyGames from "../../hooks/game/useMyGames";
 import {BrushOptions} from "./BrushOptions";
 import {SelectWiki} from "../select/SelectWiki";
 import {PLACE} from "../../../../common/src/type-constants";
-import {useSetGameMap} from "../../hooks/useSetGameMap";
+import {useSetGameMap} from "../../hooks/game/useSetGameMap";
 import {Link} from "react-router-dom";
 import {AddModelSection} from "./AddModelSection";
 
@@ -21,8 +21,8 @@ export const GameDrawer = ({renderer}) => {
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
-	const {gameChat: gameChatMessage} = useGameChatSubscription();
-	const {game: rosterChangeGame} = useGameRosterSubscription();
+	const {data: gameChatMessage} = useGameChatSubscription();
+	const {data: rosterChangeGame} = useGameRosterSubscription();
 	const history = useHistory();
 	const {setGameMap} = useSetGameMap();
 	const {refetch} = useMyGames();

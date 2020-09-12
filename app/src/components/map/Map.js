@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Dropdown, Icon, Menu} from "antd";
-import useCurrentMap from "../../hooks/useCurrentMap";
+import useCurrentMap from "../../hooks/map/useCurrentMap";
 import {LoadingView} from "../LoadingView";
 
 export const Map = ({menuItems, extras}) => {

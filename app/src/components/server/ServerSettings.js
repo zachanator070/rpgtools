@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {Button, Col, Input, InputNumber, List, Row} from "antd";
-import useServerConfig from "../../hooks/useServerConfig";
+import useServerConfig from "../../hooks/server/useServerConfig";
 import {LoadingView} from "../LoadingView";
 import {Link} from "react-router-dom";
 import {LeftOutlined} from "@ant-design/icons";
-import {useGenerateRegisterCodes} from "../../hooks/useGenerateRegisterCodes";
+import {useGenerateRegisterCodes} from "../../hooks/server/useGenerateRegisterCodes";
 import {PermissionEditor} from "../permissions/PermissionEditor";
 import {SERVER_CONFIG} from "../../../../common/src/type-constants";
 

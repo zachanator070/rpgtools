@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Button, Checkbox, Form, Input, Modal} from "antd";
-import useCreateWorld from "../../hooks/useCreateWorld";
+import useCreateWorld from "../../hooks/world/useCreateWorld";
 import {useHistory} from 'react-router-dom';
-import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
+import {useSetCurrentWorld} from "../../hooks/world/useSetCurrentWorld";
 import {PUBLIC_WORLD_PERMISSIONS} from "../../../../common/src/permission-constants";
 import {ToolTip} from "../ToolTip";
 

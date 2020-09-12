@@ -18,7 +18,8 @@ import {Chunk} from "../models/chunk";
 import {Place} from "../models/place";
 import {Image} from "../models/image";
 import {pubsub} from "../gql-server";
-import {ALL_WIKI_TYPES, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../../common/src/type-constants";
+import {Model} from '../models/model';
+import {withFilter} from 'apollo-server';
 
 const getPermissions = async (document, documentType, currentUser) => {
 	const permissions = await PermissionAssignment.find({subject: document, subjectType: documentType});
@@ -96,23 +97,61 @@ export const GAME_CHAT_EVENT = 'GAME_CHAT_EVENT';
 export const ROSTER_CHANGE_EVENT = 'PLAYER_JOINED_EVENT';
 export const GAME_MAP_CHANGE = 'GAME_MAP_CHANGE';
 export const GAME_STROKE_EVENT = 'GAME_STROKE_EVENT';
+export const GAME_MODEL_ADDED = 'GAME_MODEL_ADDED';
+export const GAME_MODEL_POSITIONED = 'GAME_MODEL_POSITIONED';
 
 export const serverResolvers = {
 	Query: QueryResolver,
 	Mutation: MutationResolver,
 	Subscription: {
 		gameChat: {
-			subscribe: () => pubsub.asyncIterator([GAME_CHAT_EVENT]),
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_CHAT_EVENT]),
+				(payload, {gameId}) => {
+					return payload.gameId === gameId;
+				}
+			),
 		},
 		gameRosterChange: {
-			subscribe: () => pubsub.asyncIterator([ROSTER_CHANGE_EVENT]),
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([ROSTER_CHANGE_EVENT]),
+				(payload, {gameId}) => {
+					return payload.gameRosterChange._id === gameId;
+				}
+			),
 		},
 		gameMapChange: {
-			subscribe: () => pubsub.asyncIterator([GAME_MAP_CHANGE]),
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_MAP_CHANGE]),
+				(payload, {gameId}) => {
+					return payload.gameMapChange._id === gameId;
+				}
+			)
 		},
 		gameStrokeAdded: {
-			subscribe: () => pubsub.asyncIterator([GAME_STROKE_EVENT]),
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_STROKE_EVENT]),
+				(payload, {gameId}) => {
+					return payload.gameId === gameId;
+				}
+			)
 		},
+		gameModelAdded: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_MODEL_ADDED]),
+				(payload, {gameId}) => {
+					return payload.gameId === gameId;
+				}
+			)
+		},
+		gameModelPositioned: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_MODEL_POSITIONED]),
+				(payload, {gameId}) => {
+					return payload.gameId === gameId;
+				}
+			)
+		}
 	},
 	World: {
 		roles: async (world, _, {currentUser}) => {
@@ -300,8 +339,18 @@ export const serverResolvers = {
 		players: async (game) => {
 			return await getDocuments(User, game.players);
 		},
+		models: async (game) => {
+			const models = [];
+			for(let model of game.models){
+				model = model.toObject();
+				model.model = await Model.findById(model.model);
+				models.push(model);
+			}
+			return models;
+		},
 		...permissionControlledInterfaceAttributes
 	},
+
 	Model: {
 		...permissionControlledInterfaceAttributes,
 	}
