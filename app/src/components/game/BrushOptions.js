@@ -3,11 +3,12 @@ import {Checkbox, Input, Select, Slider} from "antd";
 import {
 	BRUSH_CIRCLE,
 	BRUSH_ERASE,
-	BRUSH_LINE,
-	BRUSH_SQUARE,
-	DEFAULT_BRUSH_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE,
+	BRUSH_LINE, BRUSH_SQUARE,
+	DEFAULT_BRUSH_COLOR,
+	DEFAULT_BRUSH_FILL,
+	DEFAULT_BRUSH_SIZE,
 	DEFAULT_BRUSH_TYPE
-} from "../../rendering/GameRenderer";
+} from "../../controls/PaintControls";
 
 
 export const BrushOptions = ({renderer}) => {
@@ -23,14 +24,14 @@ export const BrushOptions = ({renderer}) => {
 			<Input type={'color'} value={brushColor} onChange={async (e) => {
 				const value = e.target.value;
 				await setBrushColor(value);
-				renderer.setBrushColor(value);
+				renderer.paintControls.setBrushColor(value);
 			}}/>
 		</div>
 		<div className={'margin-md'}>
 			<h3>Brush Type</h3>
 			<Select value={brushType} style={{ width: 120 }} onChange={async (value) => {
 				await setBrushType(value);
-				renderer.setBrushType(value);
+				renderer.paintControls.setBrushType(value);
 			}}>
 				<Select.Option value={BRUSH_LINE} default>Line</Select.Option>
 				<Select.Option value={BRUSH_SQUARE}>Square</Select.Option>
@@ -46,7 +47,7 @@ export const BrushOptions = ({renderer}) => {
 				value={brushSize}
 				onChange={async (value) => {
 					await setBrushSize(value);
-					renderer.setBrushSize(value);
+					renderer.paintControls.setBrushSize(value);
 				}}
 			/>
 		</div>
@@ -54,7 +55,7 @@ export const BrushOptions = ({renderer}) => {
 			<h3>Fill Brush</h3>
 			<Checkbox checked={fillBrush} onChange={async (e) => {
 				await setFillBrush(e.target.checked);
-				renderer.setBrushFill(e.target.checked);
+				renderer.paintControls.setBrushFill(e.target.checked);
 			}}/>
 		</div>
 	</>;

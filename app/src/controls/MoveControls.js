@@ -1,13 +1,13 @@
 
 
-class MoveControls {
+export class MoveControls {
 
-	constructor(renderRoot, mouseCoords, raycaster, mapMesh, objects, moveCallback) {
+	constructor(renderRoot, mouseCoords, raycaster, mapMesh, models, moveCallback) {
 		this.renderRoot = renderRoot;
 		this.mouseCoords = mouseCoords;
 		this.raycaster = raycaster;
 		this.mapMesh = mapMesh;
-		this.objects = objects;
+		this.models = models;
 		this.moveCallback = moveCallback;
 	}
 

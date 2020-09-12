@@ -1,16 +1,13 @@
-import {useMutation} from "@apollo/client";
-import {ADD_STROKE, ADD_USER_ROLE} from "../../../../common/src/gql-queries";
+import {ADD_STROKE} from "../../../../common/src/gql-queries";
 import useCurrentGame from "./useCurrentGame";
+import {useGQLMutation} from "../useGQLMutation";
 
 export default () => {
-	const [addStroke, {loading, error, data}] = useMutation(ADD_STROKE);
 	const {currentGame} = useCurrentGame();
-	return {
-		addStroke: async (path, type, size, color, fill, strokeId) => {
-			await addStroke({variables: {gameId: currentGame._id, path, type, size, color, fill, strokeId}});
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map(error => error.message) : [],
-		game: data ? data.addStroke : null
+	const returnValues = useGQLMutation(ADD_STROKE);
+	const addStroke = returnValues.addStroke;
+	returnValues.addStroke = async (variables) => {
+		await addStroke({gameId: currentGame._id, ...variables});
 	}
+	return returnValues;
 }

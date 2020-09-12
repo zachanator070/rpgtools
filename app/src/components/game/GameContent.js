@@ -56,10 +56,7 @@ export const GameContent = ({currentGame, children}) => {
 
 	useEffect(() => {
 		if(gameStrokeAdded && renderer){
-			if(currentGame.map && currentGame.map.pixelsPerFoot){
-				gameStrokeAdded.size *= currentGame.map.pixelsPerFoot;
-			}
-			renderer.stroke(gameStrokeAdded);
+			renderer.paintControls.stroke(gameStrokeAdded);
 		}
 	}, [gameStrokeAdded])
 
@@ -101,10 +98,7 @@ export const GameContent = ({currentGame, children}) => {
 					renderer.setupMap();
 				}
 				for(let stroke of currentGame.strokes){
-					if(currentGame.map && currentGame.map.pixelsPerFoot){
-						stroke.size = stroke.size * currentGame.map.pixelsPerFoot;
-					}
-					renderer.stroke(stroke);
+					renderer.paintControls.stroke(stroke);
 				}
 				for(let model of currentGame.models){
 					renderer.addModel(model);
