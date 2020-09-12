@@ -5,7 +5,9 @@
   "license": "MIT",
   "repository": "https://github.com/zachanator070/rpgtools",
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.8.7",
     "babel-plugin-dynamic-import-node": "^2.3.0",

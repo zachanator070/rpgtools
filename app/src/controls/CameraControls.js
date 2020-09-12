@@ -1,7 +1,7 @@
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 
-class CameraControls {
+export class CameraControls {
 
 	constructor(renderRoot, camera) {
 		this.renderRoot = renderRoot;

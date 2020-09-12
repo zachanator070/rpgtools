@@ -1,24 +1,109 @@
 import {v4 as uuidv4} from "uuid";
-import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_LINE, BRUSH_SQUARE, DEFAULT_BRUSH_SIZE} from "../rendering/GameRenderer";
+import * as THREE from "three";
+
+export const BRUSH_CIRCLE = 'circle';
+export const BRUSH_SQUARE = 'square';
+export const BRUSH_ERASE = 'erase';
+export const BRUSH_LINE = 'line'
+export const DEFAULT_BRUSH_COLOR = '#FFFFFF';
+export const DEFAULT_BRUSH_TYPE = BRUSH_LINE;
+export const DEFAULT_BRUSH_FILL = true;
+export const DEFAULT_BRUSH_SIZE = 5;
+export const DEFAULT_MAP_SIZE = 50;
 
 export class PaintControls {
 
-	constructor(renderRoot, raycaster, scene, mapMesh, location) {
+	constructor(renderRoot, raycaster, scene, mapMesh, location, strokeCallback) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
 		this.scene = scene;
 		this.mapMesh = mapMesh;
-		this.drawCanvas = drawCanvas;
-		this.drawTexture = drawTexture;
 		this.location = location;
+		this.strokeCallback = strokeCallback;
 
+		this.drawCanvas = document.createElement("canvas");
+		this.drawCanvas.height = this.location.mapImage.height;
+		this.drawCanvas.width = this.location.mapImage.width;
+		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
+		this.drawTexture.generateMipmaps = false;
+		this.drawTexture.wrapS = this.drawTexture.wrapT = THREE.ClampToEdgeWrapping;
+		this.drawTexture.minFilter = THREE.LinearFilter;
+		const drawGeometry = new THREE.PlaneGeometry(
+			this.location.mapImage.width / this.location.pixelsPerFoot,
+			this.location.mapImage.height / this.location.pixelsPerFoot
+		);
+		drawGeometry.rotateX(-Math.PI/2);
+		this.drawMesh = new THREE.Mesh( drawGeometry, new THREE.MeshStandardMaterial( { map: this.drawTexture, transparent: true } ));
+		this.mapMesh.receiveShadow = true;
+		this.drawMesh.receiveShadow = true;
+		this.drawMesh.position.set(0, .01, 0);
+		this.scene.add(this.drawMesh);
 
+		this.pathBeingPainted = [];
+		this.strokeId = null;
+		this.brushType = DEFAULT_BRUSH_TYPE;
+		this.brushColor = DEFAULT_BRUSH_COLOR;
+		this.brushFill = DEFAULT_BRUSH_FILL;
+		this.brushSize = DEFAULT_BRUSH_SIZE;
 
 		this.strokesAlreadyDrawn = [];
+
+		this.paintBrushMesh = null;
+		this.paintBrushMaterial = null;
+
+		this.setupBrush();
+	}
+
+	setBrushType = (type) => {
+		this.brushType = type;
+		this.scene.remove(this.paintBrushMesh);
+		this.createPaintBrushMesh(type);
+		this.paintBrushMaterial.needsUpdate = true;
+		this.scene.add(this.paintBrushMesh);
+		this.updateBrushPosition();
+	}
+	setBrushColor = (color) => {
+		this.brushColor = color;
+		this.paintBrushMaterial.color.setHex(parseInt('0x' + color.substr(1)));
+		this.paintBrushMaterial.needsUpdate = true;
+	}
+	setBrushFill = (fill) => {
+		this.brushFill = fill;
+
+		this.paintBrushMaterial.wireframe = !fill;
+		this.paintBrushMaterial.needsUpdate = true;
+	}
+	setBrushSize = (size) => {
+		this.brushSize = size;
+		this.createPaintBrushMesh();
+	}
+
+	setupBrush = () =>{
+		this.createPaintBrushMesh();
+		this.paintBrushMesh.visible = false;
+	}
+
+	createPaintBrushMesh = () => {
+		if(this.paintBrushMesh){
+			this.scene.remove(this.paintBrushMesh);
+		}
+		if(!this.paintBrushMaterial){
+			this.paintBrushMaterial = new THREE.MeshBasicMaterial({color: this.brushColor});
+		}
+		let geometry = null;
+		if(this.brushType === BRUSH_CIRCLE || this.brushType === BRUSH_LINE){
+			geometry = new THREE.CylinderGeometry(this.brushSize/2, this.brushSize/2, 1, 32);
+		}
+		else{
+			geometry = new THREE.BoxGeometry(this.brushSize, 1, this.brushSize);
+		}
+		this.paintBrushMesh = new THREE.Mesh(geometry, this.paintBrushMaterial);
+		this.scene.add(this.paintBrushMesh);
 	}
 
 	stroke = (stroke, useCache=true) => {
-		const {path, type, color, fill, size, _id} = stroke;
+		let {path, type, color, fill, size, _id} = stroke;
+		size *= this.location.pixelsPerFoot;
 		if(useCache){
 			for(let stroke of this.strokesAlreadyDrawn){
 				if(stroke._id === _id){
@@ -112,7 +197,7 @@ export class PaintControls {
 					type: this.brushType,
 					color: this.brushColor,
 					fill: this.brushFill,
-					size: this.brushSize * this.location.pixelsPerFoot,
+					size: this.brushSize,
 					_id: this.strokeId
 				},
 				false
@@ -125,23 +210,18 @@ export class PaintControls {
 		this.renderRoot.removeEventListener('mouseup', this.stopPaintingWithBrush);
 		this.renderRoot.removeEventListener('mouseleave', this.stopPaintingWithBrush);
 		if(this.strokeId){
-			this.strokesAlreadyDrawn.push({
+			const stroke = {
 				path: this.pathBeingPainted,
 				type: this.brushType,
 				color: this.brushColor,
 				size: this.brushSize,
 				fill: this.brushFill,
-				_id: this.strokeId
-			});
+				_id: this.strokeId,
+				strokeId: this.strokeId
+			}
+			this.strokesAlreadyDrawn.push(stroke);
 			// using await with this method caused freezing
-			this.addStroke(
-				this.pathBeingPainted,
-				this.brushType,
-				this.brushSize,
-				this.brushColor,
-				this.brushFill,
-				this.strokeId
-			);
+			this.strokeCallback(stroke);
 			this.pathBeingPainted = [];
 			this.strokeId = null;
 		}
@@ -168,14 +248,22 @@ export class PaintControls {
 		this.renderRoot.addEventListener('mouseleave', this.stopPaintingWithBrush);
 	}
 
-	setupPaintControls = () => {
+	enable = () => {
 		this.renderRoot.addEventListener('mousedown', this.paintMouseDownEvent);
 		this.updateBrushPosition();
 		this.paintBrushMesh.visible = true;
+		this.renderRoot.addEventListener('mousemove', this.updateBrushPosition);
 	}
 
-	tearDownPaintControls = () => {
+	disable = () => {
 		this.renderRoot.removeEventListener('mousedown', this.paintMouseDownEvent);
 		this.paintBrushMesh.visible = false;
+	}
+
+	teardown = () => {
+		this.disable();
+		this.renderRoot.removeEventListener('mousemove', this.updateBrushPosition);
+		this.scene.remove(this.drawMesh);
+		this.scene.remove(this.paintBrushMesh);
 	}
 }
