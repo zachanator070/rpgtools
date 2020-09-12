@@ -10,13 +10,13 @@ import {
 	DeleteOutlined,
 	ImportOutlined
 } from '@ant-design/icons';
-import useCurrentWiki from "../../hooks/useCurrentWiki";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import {useRenameFolder} from "../../hooks/useRenameFolder";
-import {useDeleteFolder} from "../../hooks/useDeleteFolder";
-import {useCreateWiki} from "../../hooks/useCreateWiki";
+import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import {useRenameFolder} from "../../hooks/wiki/useRenameFolder";
+import {useDeleteFolder} from "../../hooks/wiki/useDeleteFolder";
+import {useCreateWiki} from "../../hooks/wiki/useCreateWiki";
 import {useHistory} from "react-router-dom";
-import useCreateFolder from "../../hooks/useCreateFolder";
+import useCreateFolder from "../../hooks/wiki/useCreateFolder";
 import {LoadingView} from "../LoadingView";
 import {MoveFolderModal} from "../modals/MoveFolderModal";
 

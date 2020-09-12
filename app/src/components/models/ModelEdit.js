@@ -2,11 +2,11 @@ import React from 'react';
 import {ModelForm} from "./ModelForm";
 import Errors from "../Errors";
 import {Row, Col, Button, Modal} from "antd";
-import useUpdateModel from "../../hooks/useUpdateModel";
+import useUpdateModel from "../../hooks/model/useUpdateModel";
 import {useHistory} from 'react-router-dom';
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
-import {useDeleteModel} from "../../hooks/useDeleteModel";
+import {useDeleteModel} from "../../hooks/model/useDeleteModel";
 
 export const ModelEdit = ({model}) => {
 
@@ -36,7 +36,7 @@ export const ModelEdit = ({model}) => {
 				<div className={'margin-lg'}>
 					<ModelForm
 						callback={async (values) => {
-							await updateModel(model._id, values.name, values.file[0].originFileObj, values.depth, values.width, values.height);
+							await updateModel(model._id, values.name, values.file ? values.file[0].originFileObj : null, values.depth, values.width, values.height);
 							history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`);
 						}}
 						initialValues={model}

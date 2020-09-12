@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchRoles} from "../../hooks/useSearchRoles";
+import {useSearchRoles} from "../../hooks/authorization/useSearchRoles";
 
 export const SelectRole = ({onChange, style}) => {
 	const {searchRoles, roles, loading} = useSearchRoles();

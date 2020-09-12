@@ -1,5 +1,5 @@
 import {useHistory} from "react-router-dom";
-import useCurrentUser from "../hooks/useCurrentUser";
+import useCurrentUser from "../hooks/authentication/useCurrentUser";
 import {LoadingView} from "./LoadingView";
 import React, {useEffect} from "react";
 import {WorldSelectPrompt} from "./prompts/WorldSelectPrompt";

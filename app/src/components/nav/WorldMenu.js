@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Dropdown, Menu} from "antd";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import {LoadingView} from "../LoadingView";
 import {DownOutlined} from "@ant-design/icons";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";

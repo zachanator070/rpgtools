@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
-import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
+import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {SearchOutlined} from "@ant-design/icons";
 
 export const SelectWiki = ({type, onChange, style}) => {

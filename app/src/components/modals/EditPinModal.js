@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal, Select} from "antd";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import {useUpdatePin} from "../../hooks/useUpdatePin";
-import {useDeletePin} from "../../hooks/useDeletePin";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import {useUpdatePin} from "../../hooks/map/useUpdatePin";
+import {useDeletePin} from "../../hooks/map/useDeletePin";
 import {SelectWiki} from "../select/SelectWiki";
 
 export const EditPinModal = ({visibility, setVisibility, pinId}) => {

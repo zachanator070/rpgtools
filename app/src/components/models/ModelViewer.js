@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ModelRenderer} from "./ModelRenderer";
+import {ModelRenderer} from "../../rendering/ModelRenderer";
 
 
 export const ModelViewer = ({model}) => {

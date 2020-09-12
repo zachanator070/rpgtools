@@ -10,8 +10,8 @@ import mention from "quill-mention";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
-import {useSearchWikiPages} from "../../hooks/useSearchWikiPages";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {LoadingView} from "../LoadingView";
 
 Quill.debug('error');

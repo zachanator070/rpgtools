@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Button, Col, Form, Input, Modal, Row} from "antd";
-import useUnlockServer from "../../hooks/useUnlockServer";
+import useUnlockServer from "../../hooks/server/useUnlockServer";
 import {useHistory} from 'react-router-dom';
 import {KeyOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-import useLogin from "../../hooks/useLogin";
+import useLogin from "../../hooks/authentication/useLogin";
 
 export const ServerSetup = () => {
 	const [email, setEmail] = useState('');

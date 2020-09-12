@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchUsers} from "../../hooks/useSearchUsers";
+import {useSearchUsers} from "../../hooks/authentication/useSearchUsers";
 
 export const SelectUser = ({onChange, style}) => {
 	const {searchUsers, users, loading} = useSearchUsers();

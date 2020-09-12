@@ -4,11 +4,11 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {
 	getPermissionsBySubjectType,
 } from "../../../../common/src/permission-constants";
-import useCurrentUser from "../../hooks/useCurrentUser";
-import {useGrantUserPermission} from "../../hooks/useGrantUserPermisison";
-import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
-import {useRevokeUserPermission} from "../../hooks/useRevokeUserPermission";
-import {useRevokeRolePermission} from "../../hooks/useRevokeRolePermission";
+import useCurrentUser from "../../hooks/authentication/useCurrentUser";
+import {useGrantUserPermission} from "../../hooks/authorization/useGrantUserPermisison";
+import {useGrantRolePermission} from "../../hooks/authorization/useGrantRolePermission";
+import {useRevokeUserPermission} from "../../hooks/authorization/useRevokeUserPermission";
+import {useRevokeRolePermission} from "../../hooks/authorization/useRevokeRolePermission";
 import {SelectUser} from "../select/SelectUser";
 import {SelectRole} from "../select/SelectRole";
 

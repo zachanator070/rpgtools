@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Form, Input, Modal} from "antd";
 import { UserOutlined, KeyOutlined} from '@ant-design/icons';
-import useLogin from "../../hooks/useLogin";
+import useLogin from "../../hooks/authentication/useLogin";
 
 export const LoginModal = ({visibility, setVisibility}) => {
 

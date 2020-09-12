@@ -9,9 +9,9 @@ import {
 } from "../../../../common/src/type-constants";
 import {getPermissionsBySubjectType} from "../../../../common/src/permission-constants";
 import {SelectRole} from "../select/SelectRole";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {SelectWiki} from "../select/SelectWiki";
-import {useGrantRolePermission} from "../../hooks/useGrantRolePermission";
+import {useGrantRolePermission} from "../../hooks/authorization/useGrantRolePermission";
 import Errors from "../Errors";
 import {SelectFolder} from "../select/SelectFolder";
 

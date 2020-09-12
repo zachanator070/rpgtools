@@ -619,6 +619,24 @@ export const GAME_STROKES = `
 		${GAME_STROKE}
 	}
 `;
+export const GAME_MODEL = `
+	_id
+	model{
+		_id
+		fileId
+		depth
+		width
+		height
+	}
+	x
+	z
+	rotation
+`;
+export const GAME_MODELS = `
+	models{
+		${GAME_MODEL}
+	}
+`;
 
 export const GAME_ATTRIBUTES = `
 	_id
@@ -633,6 +651,7 @@ export const GAME_ATTRIBUTES = `
         ${GAME_MESSAGE}
     }
     ${GAME_STROKES}
+    ${GAME_MODELS}
 `;
 
 export const JOIN_GAME = gql`
@@ -707,6 +726,13 @@ export const GAME_MAP_SUBSCRIPTION = gql`
 		}
 	}
 `;
+export const GAME_MODEL_ADDED_SUBSCRIPTION = gql`
+	subscription gameModelAdded($gameId: ID!){
+		gameModelAdded(gameId: $gameId){
+			${GAME_MODEL}
+		}
+	}
+`;
 export const MAP_WIKI_ID = gql`
     query {
         mapWiki @client
@@ -719,6 +745,16 @@ export const ADD_STROKE = gql`
 			_id
 		}
 	}
+`;
+
+
+export const ADD_MODEL = gql`
+	mutation addModel($gameId: ID!, $modelId: ID!){
+		addModel(gameId: $gameId, modelId: $modelId){
+			_id
+			${GAME_MODELS}
+		}
+	}	
 `;
 
 export const GAME_STROKE_SUBSCRIPTION = gql`
@@ -795,4 +831,20 @@ export const MY_PERMISSIONS = gql`
 	        subjectType
         }
     }
+`;
+
+export const SET_MODEL_POSITION = gql`
+	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float, $rotation: Float!){
+		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, x: $x, z: $z, rotation: $rotation){
+			${GAME_MODEL}
+		}
+	}
+`;
+
+export const GAME_MODEL_POSITIONED_SUBSCRIPTION = gql`
+	subscription gameModelPositioned($gameId: ID!){
+		gameModelPositioned(gameId: $gameId){
+			${GAME_MODEL}
+		}
+	} 
 `;

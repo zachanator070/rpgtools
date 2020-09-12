@@ -1,9 +1,9 @@
 import React from 'react';
 import {Breadcrumb} from "antd";
-import useCurrentMap from "../../hooks/useCurrentMap";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useCurrentMap from "../../hooks/map/useCurrentMap";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useHistory} from 'react-router-dom';
-import {useAllWikis} from "../../hooks/useAllWikis";
+import {useAllWikis} from "../../hooks/wiki/useAllWikis";
 
 export const MapBreadCrumbs = () => {
 

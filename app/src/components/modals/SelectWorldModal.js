@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Button, Modal, List, Row, Col, Divider} from "antd";
 import {useHistory} from 'react-router-dom';
-import useWorlds from "../../hooks/useWorlds";
-import {useSetCurrentWorld} from "../../hooks/useSetCurrentWorld";
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useWorlds from "../../hooks/world/useWorlds";
+import {useSetCurrentWorld} from "../../hooks/world/useSetCurrentWorld";
+import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 
 export const SelectWorldModal = ({visibility, setVisibility}) => {
 

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useMoveFolder} from "../../hooks/useMoveFolder";
+import {useMoveFolder} from "../../hooks/wiki/useMoveFolder";
 import {Button, Form, Modal} from "antd";
 import {SelectFolder} from "../select/SelectFolder";
 import Errors from "../Errors";

@@ -7,7 +7,7 @@ import {
 	BRUSH_SQUARE,
 	DEFAULT_BRUSH_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE,
 	DEFAULT_BRUSH_TYPE
-} from "./GameRenderer";
+} from "../../rendering/GameRenderer";
 
 
 export const BrushOptions = ({renderer}) => {

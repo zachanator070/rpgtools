@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchFolders} from "../../hooks/useSearchFolders";
+import {useSearchFolders} from "../../hooks/wiki/useSearchFolders";
 
 export const SelectFolder = ({onChange, style}) => {
 	const {searchFolders, folders, loading} = useSearchFolders();

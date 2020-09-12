@@ -2,8 +2,8 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchFolders} from "../../hooks/useSearchFolders";
-import {useSearchModels} from "../../hooks/useSearchModels";
+import {useSearchFolders} from "../../hooks/wiki/useSearchFolders";
+import {useSearchModels} from "../../hooks/model/useSearchModels";
 
 export const SelectModel = ({onChange, style}) => {
 	const {searchModels, models, loading} = useSearchModels();

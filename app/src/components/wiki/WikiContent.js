@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import {Editor} from "./Editor";
 import {ExportOutlined, EditOutlined} from "@ant-design/icons";
-import useCurrentWorld from "../../hooks/useCurrentWorld";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 import {LoadingView} from "../LoadingView";
 import {PLACE} from "../../../../common/src/type-constants";

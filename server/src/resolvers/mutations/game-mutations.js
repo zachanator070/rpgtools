@@ -1,13 +1,21 @@
 import {GAME_ADMIN, GAME_HOST, GAME_RW} from "../../../../common/src/permission-constants";
 import {Game} from "../../models/game";
+import {Model} from '../../models/model';
 import bcrypt from "bcrypt";
 import {SALT_ROUNDS} from "./authentication-mutations";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {GAME} from "../../../../common/src/type-constants";
 import {pubsub} from "../../gql-server";
-import {GAME_CHAT_EVENT, GAME_MAP_CHANGE, GAME_STROKE_EVENT, ROSTER_CHANGE_EVENT} from "../server-resolvers";
+import {
+	GAME_CHAT_EVENT,
+	GAME_MAP_CHANGE,
+	GAME_MODEL_ADDED, GAME_MODEL_POSITIONED,
+	GAME_STROKE_EVENT,
+	ROSTER_CHANGE_EVENT
+} from "../server-resolvers";
 import {cleanUpPermissions} from "../../db-helpers";
 import {Place} from "../../models/place";
+import {v4 as uuidv4} from 'uuid';
 
 const gameCommands = (message, currentUser) => {
 	const parts = message.split(' ');
@@ -112,11 +120,11 @@ export const gameMutations = {
 		}
 		const userMessage = {sender: currentUser.username, message, timestamp: Date.now()};
 		game.messages.push(userMessage);
-		await pubsub.publish(GAME_CHAT_EVENT, {gameChat: userMessage});
+		await pubsub.publish(GAME_CHAT_EVENT, {gameId, gameChat: userMessage});
 		if(serverResponse){
 			const serverMessage = {sender: 'Server', message: serverResponse, timestamp: Date.now()}
 			game.messages.push(serverMessage);
-			await pubsub.publish(GAME_CHAT_EVENT, {gameChat: serverMessage});
+			await pubsub.publish(GAME_CHAT_EVENT, {gameId, gameChat: serverMessage});
 		}
 
 		await game.save();
@@ -158,7 +166,60 @@ export const gameMutations = {
 		};
 		game.strokes.push(newStroke);
 		await game.save();
-		await pubsub.publish(GAME_STROKE_EVENT, {gameStrokeAdded: newStroke});
+		await pubsub.publish(GAME_STROKE_EVENT, {gameId, gameStrokeAdded: newStroke});
 		return game;
+	},
+	addModel: async (_, {gameId, modelId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		const model = await Model.findById(modelId);
+		if(!model){
+			throw new Error('Model does not exist');
+		}
+		const positionedModel = {
+			_id: uuidv4(),
+			model: model,
+			x: 0,
+			z: 0,
+			rotation: 0
+		}
+		game.models.push(positionedModel);
+		await game.save();
+		await pubsub.publish(GAME_MODEL_ADDED, {gameId, gameModelAdded: positionedModel});
+		return game;
+	},
+	setModelPosition: async (_, {gameId, positionedModelId, x, z, rotation}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		let positionedModel = null;
+		for(let model of game.models){
+			if(model._id === positionedModelId){
+				positionedModel = model;
+			}
+		}
+		if(!positionedModel){
+			throw new Error(`Model with id ${positionedModelId} does not exist`);
+		}
+		positionedModel.x = x;
+		positionedModel.z = z;
+		positionedModel.rotation = rotation;
+		await game.save();
+
+		const model = positionedModel.toObject();
+		model.model = await Model.findById(model.model);
+
+		await pubsub.publish(GAME_MODEL_POSITIONED, {gameId, gameModelPositioned: model});
+
+		return model;
 	}
 };
