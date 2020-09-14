@@ -1,6 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {GameRenderer} from "../../rendering/GameRenderer";
-import {notification} from "antd";
+import {
+	CAMERA_CONTROLS, DELETE_CONTROLS,
+	GameRenderer,
+	MOVE_MODEL_CONTROLS,
+	PAINT_CONTROLS,
+	ROTATE_MODEL_CONTROLS
+} from "../../rendering/GameRenderer";
+import {Progress, Modal, notification} from "antd";
 import useAddStroke from "../../hooks/game/useAddStroke";
 import {useGameStrokeSubscription} from "../../hooks/game/useGameStrokeSubscription";
 import {GameDrawer} from "./GameDrawer";
@@ -8,18 +14,25 @@ import {GameControlsHelp} from "./GameControlsHelp";
 import {useGameModelAddedSubscription} from "../../hooks/game/useGameModelAddedSubscription";
 import {useSetModelPosition} from "../../hooks/game/useSetModelPosition";
 import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelPosistionedSubscription";
+import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedModel";
+import {useGameModelDeletedSubscription} from "../../hooks/game/useGameModelDeletedSubscription";
 
-export const GameContent = ({currentGame, children}) => {
+export const GameContent = ({currentGame}) => {
 
 	const renderCanvas = useRef();
 	const [renderer, setRenderer] = useState();
+	const [showLoading, setShowLoading] = useState(false);
+	const [urlLoading, setUrlLoading] = useState();
+	const [loadingProgress, setLoadingProgress] = useState();
 	const {addStroke} = useAddStroke();
 	const {setModelPosition} = useSetModelPosition();
+	const {deletePositionedModel} = useDeletePositionedModel();
 
-	const [cameraMode, setCameraMode] = useState('camera');
+	const [controlsMode, setControlsMode] = useState(CAMERA_CONTROLS);
 	const {data: gameStrokeAdded} = useGameStrokeSubscription();
 	const {data: gameModelAdded} = useGameModelAddedSubscription();
 	const {data: modelPositioned} = useGameModelPositionedSubscription();
+	const {gameModelDeleted} = useGameModelDeletedSubscription();
 
 	useEffect(() => {
 		(async () => {
@@ -28,9 +41,31 @@ export const GameContent = ({currentGame, children}) => {
 					renderCanvas.current,
 					currentGame.map && currentGame.map.mapImage,
 					addStroke,
-					() => {},
-					setCameraMode,
-					setModelPosition
+					async (url, itemsLoaded, totalItems) => {
+						if(itemsLoaded/totalItems !== 1){
+							await setShowLoading(true);
+						}
+						else{
+							await setShowLoading(false);
+						}
+						await setUrlLoading(url);
+						await setLoadingProgress(itemsLoaded/totalItems);
+					},
+					setModelPosition,
+					async (positionedModel) => {
+						Modal.confirm({
+							title: 'Confirm Delete',
+							content: <>
+								Are you sure you want to delete the model {positionedModel.model.name} ?
+							</>,
+							okText: 'Yes',
+							cancelText: 'No',
+							onOk: async () => {
+								await deletePositionedModel({gameId: currentGame._id, positionedModelId: positionedModel._id});
+							},
+							closable: false
+						});
+					}
 				)
 			);
 		})();
@@ -40,7 +75,36 @@ export const GameContent = ({currentGame, children}) => {
 			}
 			renderCanvas.current.focus();
 		});
+
+		renderCanvas.current.addEventListener('keydown', async ({code}) => {
+			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX'].includes(code)){
+				return;
+			}
+			switch(code){
+				case 'KeyC':
+					await setControlsMode(CAMERA_CONTROLS);
+					break;
+				case 'KeyP':
+					await setControlsMode(PAINT_CONTROLS);
+					break;
+				case 'KeyM':
+					await setControlsMode(MOVE_MODEL_CONTROLS);
+					break;
+				case 'KeyR':
+					await setControlsMode(ROTATE_MODEL_CONTROLS);
+					break;
+				case 'KeyX':
+					await setControlsMode(DELETE_CONTROLS);
+					break;
+			}
+		});
 	}, []);
+
+	useEffect(() => {
+		if(renderer){
+			renderer.changeControls(controlsMode);
+		}
+	}, [controlsMode])
 
 	useEffect(() => {
 		if(renderer){
@@ -53,6 +117,12 @@ export const GameContent = ({currentGame, children}) => {
 			renderer.addModel(gameModelAdded);
 		}
 	}, [gameModelAdded]);
+
+	useEffect(() => {
+		if(gameModelDeleted && renderer){
+			renderer.removeModel(gameModelDeleted);
+		}
+	}, [gameModelDeleted]);
 
 	useEffect(() => {
 		if(gameStrokeAdded && renderer){
@@ -109,12 +179,31 @@ export const GameContent = ({currentGame, children}) => {
 	}, [currentGame, renderer]);
 
 	return <>
+		<Modal
+			visible={showLoading}
+			footer={null}
+			closable={false}
+		>
+			<div className={'margin-lg'}>
+				Loading {urlLoading}
+				<br/>
+				<Progress
+					strokeColor={{
+						from: '#108ee9',
+						to: '#87d068',
+					}}
+					percent={loadingProgress * 100}
+					status="active"
+					showInfo={false}
+				/>
+			</div>
+		</Modal>
 		<div
 			style={{flexGrow:1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden'}}
 		>
 			<canvas ref={renderCanvas} style={{width: '100%', height: '100%'}}/>
 			<GameDrawer renderer={renderer}/>
-			<GameControlsHelp cameraMode={cameraMode}/>
+			<GameControlsHelp controlsMode={controlsMode} setControlsMode={setControlsMode}/>
 		</div>
 	</>;
 

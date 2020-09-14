@@ -90,6 +90,7 @@ export const typeDefs = gql`
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
         addModel(gameId: ID!, modelId: ID!): Game!
         setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, rotation: Float!): PositionedModel!
+        deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!): Model!
         updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!): Model!
@@ -102,6 +103,7 @@ export const typeDefs = gql`
 		gameMapChange(gameId: ID!): Game!
 		gameStrokeAdded(gameId: ID!): Stroke!
 		gameModelAdded(gameId: ID!): PositionedModel!
+		gameModelDeleted(gameId: ID!): PositionedModel!
 		gameModelPositioned(gameId: ID!): PositionedModel!
 	}
   

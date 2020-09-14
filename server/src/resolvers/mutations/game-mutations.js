@@ -9,7 +9,7 @@ import {pubsub} from "../../gql-server";
 import {
 	GAME_CHAT_EVENT,
 	GAME_MAP_CHANGE,
-	GAME_MODEL_ADDED, GAME_MODEL_POSITIONED,
+	GAME_MODEL_ADDED, GAME_MODEL_DELETED, GAME_MODEL_POSITIONED,
 	GAME_STROKE_EVENT,
 	ROSTER_CHANGE_EVENT
 } from "../server-resolvers";
@@ -221,5 +221,27 @@ export const gameMutations = {
 		await pubsub.publish(GAME_MODEL_POSITIONED, {gameId, gameModelPositioned: model});
 
 		return model;
+	},
+	deletePositionedModel: async (_, {gameId, positionedModelId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		let positionedModel = null;
+		for(let model of game.models){
+			if(model._id === positionedModelId){
+				positionedModel = model;
+			}
+		}
+		if(!positionedModel){
+			throw new Error(`Model with id ${positionedModelId} does not exist`);
+		}
+		game.models = game.models.filter((model) => model._id !== positionedModelId);
+		await game.save();
+		await pubsub.publish(GAME_MODEL_DELETED, {gameId, gameModelDeleted: positionedModel});
+		return game;
 	}
 };

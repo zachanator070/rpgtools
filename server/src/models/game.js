@@ -12,6 +12,43 @@ import {
 
 const Schema = mongoose.Schema;
 
+
+const pathNode = new Schema({
+	x: Number,
+	y: Number,
+	type: {
+		type: String,
+		enum: ['circle', 'square', 'erase', 'line']
+	},
+	_id: String
+});
+
+const strokeSchema = new Schema(
+	{
+		path: [pathNode],
+		color: {
+			type: String
+		},
+		size: Number,
+		fill: Boolean,
+		type: {
+			type: String,
+			enum: ['circle', 'square', 'erase', 'line']
+		},
+		_id: String
+	}
+);
+
+const fogStrokeSchema = new  Schema({
+	path: [pathNode],
+	size: Number,
+	type: {
+		type: String,
+		enum: ['fog', 'erase']
+	},
+	_id: String
+});
+
 const gameSchema = new Schema({
 	passwordHash: {
 		type: String
@@ -36,23 +73,7 @@ const gameSchema = new Schema({
 		ref: 'User',
 		required: [true, 'host id required']
 	},
-	strokes: [new Schema({
-		path: [new Schema({
-			x: Number,
-			y: Number,
-			_id: String
-		})],
-		color: {
-			type: String
-		},
-		size: Number,
-		fill: Boolean,
-		type: {
-			type: String,
-			enum: ['circle', 'square', 'erase', 'line']
-		},
-		_id: String
-	})],
+	strokes: [strokeSchema],
 	messages: [new Schema({
 		sender: {
 			type: String,

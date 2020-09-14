@@ -627,6 +627,7 @@ export const GAME_MODEL = `
 		depth
 		width
 		height
+		name
 	}
 	x
 	z
@@ -733,6 +734,13 @@ export const GAME_MODEL_ADDED_SUBSCRIPTION = gql`
 		}
 	}
 `;
+export const GAME_MODEL_DELETED_SUBSCRIPTION = gql`
+	subscription gameModelDeleted($gameId: ID!){
+		gameModelDeleted(gameId: $gameId){
+			_id
+		}
+	}
+`;
 export const MAP_WIKI_ID = gql`
     query {
         mapWiki @client
@@ -751,6 +759,15 @@ export const ADD_STROKE = gql`
 export const ADD_MODEL = gql`
 	mutation addModel($gameId: ID!, $modelId: ID!){
 		addModel(gameId: $gameId, modelId: $modelId){
+			_id
+			${GAME_MODELS}
+		}
+	}	
+`;
+
+export const DELETE_POSITIONED_MODEL = gql`
+	mutation deletePositionedModel($gameId: ID!, $positionedModelId: ID!){
+		deletePositionedModel(gameId: $gameId, positionedModelId: $positionedModelId){
 			_id
 			${GAME_MODELS}
 		}
