@@ -98,6 +98,7 @@ export const ROSTER_CHANGE_EVENT = 'PLAYER_JOINED_EVENT';
 export const GAME_MAP_CHANGE = 'GAME_MAP_CHANGE';
 export const GAME_STROKE_EVENT = 'GAME_STROKE_EVENT';
 export const GAME_MODEL_ADDED = 'GAME_MODEL_ADDED';
+export const GAME_MODEL_DELETED = 'GAME_MODEL_DELETED';
 export const GAME_MODEL_POSITIONED = 'GAME_MODEL_POSITIONED';
 
 export const serverResolvers = {
@@ -139,6 +140,14 @@ export const serverResolvers = {
 		gameModelAdded: {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator([GAME_MODEL_ADDED]),
+				(payload, {gameId}) => {
+					return payload.gameId === gameId;
+				}
+			)
+		},
+		gameModelDeleted: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_MODEL_DELETED]),
 				(payload, {gameId}) => {
 					return payload.gameId === gameId;
 				}

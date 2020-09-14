@@ -83,8 +83,19 @@ export class ModelRenderer{
 		const groundGeometry = new THREE.PlaneGeometry(5, 5);
 		const groundMaterial = new THREE.MeshStandardMaterial({color: 0x386636});
 		const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+		groundMesh.receiveShadow = true;
 		groundMesh.rotateX(-Math.PI/2);
+		groundMesh.position.set(0, -.01, 0);
 		this.scene.add(groundMesh);
+
+		// setup light
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		directionalLight.castShadow = true;
+		directionalLight.position.set( 0, 0, 1 );
+		this.scene.add( directionalLight );
+
+		const helper = new THREE.CameraHelper( directionalLight.shadow.camera );
+		this.scene.add( helper );
 
 	}
 
@@ -102,7 +113,7 @@ export class ModelRenderer{
 			const widthScale = this.modelWidth / bbox.getSize().x;
 			const heightScale = this.modelHeight / bbox.getSize().y;
 			gltf.scene.scale.set(widthScale, heightScale, depthScale);
-			gltf.scene.traverse((object) => {object.castShadow = true});
+			gltf.scene.traverse((object) => {object.castShadow = true; object.receiveShadow = true;});
 			this.modelMesh = gltf.scene;
 			this.scene.add(this.modelMesh);
 

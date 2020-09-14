@@ -3,17 +3,26 @@ import {Vector2, Vector3} from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {CameraControls} from "../controls/CameraControls";
 import {DEFAULT_MAP_SIZE, PaintControls} from "../controls/PaintControls";
+import {MoveControls} from "../controls/MoveControls";
+import {SelectControls} from "../controls/SelectControls";
+import {RotateControls} from "../controls/RotateControls";
+import {DeleteControls} from "../controls/DeleteControls";
+
+export const CAMERA_CONTROLS = 'CAMERA_CONTROLS';
+export const PAINT_CONTROLS = 'PAINT_CONTROLS';
+export const MOVE_MODEL_CONTROLS = 'MOVE_MODEL_CONTROLS';
+export const ROTATE_MODEL_CONTROLS = 'ROTATE_MODEL_CONTROLS';
+export const DELETE_CONTROLS = 'DELETE_CONTROLS';
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setCameraMode, setModelPosition) {
-
-		this.setCameraMode = setCameraMode;
+	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel) {
 
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
 		this.addStroke = addStroke;
 		this.setModelPosition = setModelPosition;
+		this.deleteModel = deleteModel;
 
 		this.renderer = null;
 		this.camera = null;
@@ -22,18 +31,25 @@ export class GameRenderer{
 		this.raycaster = null;
 		this.mouseCoords = new Vector2();
 
-		this.loader = new THREE.LoadingManager(onProgress);
+		this.selectControls = null;
+		this.moveControls = null;
+		this.rotateControls = null;
+		this.paintControls = null;
+		this.deleteControls = null;
+
+		this.loader = new THREE.LoadingManager();
+		this.loader.onProgress = onProgress;
+		this.loader.onStart = async () => { await onProgress('', 0, 1)};
 
 		this.pixelsPerFoot = mapImage ? mapImage.pixelsPerFoot : 1;
 
-		this.models = [];
+		this.meshedModels = [];
 
 		this.setupScene();
 		this.setupRaycaster();
 
 		const animate = () => {
 			requestAnimationFrame( animate );
-			// this.orbitControls.update();
 			if(this.mouseCoords){
 				this.raycaster.setFromCamera( this.mouseCoords, this.camera );
 			}
@@ -147,25 +163,30 @@ export class GameRenderer{
 		}, false);
 	}
 
-	changeControls = ({code}) => {
-		if(!["KeyP", "KeyC", 'KeyM'].includes(code)){
-			return;
-		}
+	changeControls = (mode) => {
 
 		this.cameraControls.disable();
 		this.paintControls.disable();
+		this.moveControls.disable();
+		this.selectControls.disable();
+		this.rotateControls.disable();
+		this.deleteControls.disable();
 
-		switch(code){
-			case "KeyP":
+		switch(mode){
+			case PAINT_CONTROLS:
 				this.paintControls.enable();
-				this.setCameraMode('painting');
 				break;
-			case "KeyC":
+			case CAMERA_CONTROLS:
 				this.cameraControls.enable();
-				this.setCameraMode('camera');
 				break;
-			case 'KeyM':
-				this.setCameraMode('move model');
+			case MOVE_MODEL_CONTROLS:
+				this.moveControls.enable();
+				break;
+			case ROTATE_MODEL_CONTROLS:
+				this.rotateControls.enable();
+				break;
+			case DELETE_CONTROLS:
+				this.deleteControls.enable();
 				break;
 		}
 	}
@@ -188,18 +209,44 @@ export class GameRenderer{
 			this.addStroke
 		);
 
-		this.renderRoot.removeEventListener('keydown', this.changeControls);
-		this.renderRoot.addEventListener('keydown', this.changeControls);
+		if(this.selectControls){
+			this.selectControls.tearDown();
+		}
+		this.selectControls = new SelectControls(this.renderRoot, this.raycaster, this.meshedModels);
+
+		if(this.moveControls){
+			this.moveControls.tearDown();
+		}
+		this.moveControls = new MoveControls(this.renderRoot, this.raycaster, this.mapMesh, this.selectControls, async (meshedModel) => {
+			await this.setModelPosition(meshedModel.positionedModel);
+		});
+
+		if(this.rotateControls){
+			this.rotateControls.tearDown();
+		}
+		this.rotateControls = new RotateControls(this.renderRoot, this.raycaster, this.mapMesh, this.selectControls, async (meshedModel) => {
+			await this.setModelPosition(meshedModel.positionedModel);
+		});
+
+		if(this.deleteControls){
+			this.deleteControls.tearDown();
+		}
+		this.deleteControls = new DeleteControls(this.renderRoot, this.selectControls, this.deleteModel);
 	}
 
 	addModel(positionedModel){
-		for(let model of this.models){
+		for(let model of this.meshedModels){
 			if(model.positionedModel._id === positionedModel._id){
 				return;
 			}
 		}
 		const model = positionedModel.model;
 		const loader = new GLTFLoader(this.loader);
+		// push onto cache before loading to prevent race condition from model subscription
+		this.meshedModels.push({
+			positionedModel,
+			mesh: null
+		});
 		loader.load( `/models/${model.fileId}`, ( gltf ) => {
 
 			// get bounding box and scale to match board size
@@ -212,10 +259,12 @@ export class GameRenderer{
 			mesh.position.set(positionedModel.x, 0, positionedModel.z);
 			mesh.rotation.set(0, positionedModel.rotation, 0);
 			mesh.traverse((object) => {object.castShadow = true});
-			this.models.push({
-				positionedModel,
-				mesh
-			});
+			for(let meshedModel of this.meshedModels){
+				if(meshedModel.positionedModel._id === positionedModel._id){
+					meshedModel.mesh = mesh;
+					break;
+				}
+			}
 			this.scene.add(mesh);
 
 		}, undefined, ( error ) => {
@@ -225,9 +274,17 @@ export class GameRenderer{
 		} );
 	}
 
+	removeModel = (positionedModel) => {
+		for(let meshedModel of this.meshedModels){
+			if(meshedModel.positionedModel._id === positionedModel._id){
+				this.scene.remove(meshedModel.mesh);
+			}
+		}
+	}
+
 	updateModel(positionedModel){
 		let targetModel = null;
-		for(let model of this.models){
+		for(let model of this.meshedModels){
 			if(model.positionedModel._id === positionedModel._id){
 				targetModel = model;
 				break;
