@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {Vector2, Vector3} from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {CameraControls} from "../controls/CameraControls";
-import {DEFAULT_MAP_SIZE, PaintControls} from "../controls/PaintControls";
+import {BRUSH_FOG, DEFAULT_MAP_SIZE, PaintControls} from "../controls/PaintControls";
 import {MoveControls} from "../controls/MoveControls";
 import {SelectControls} from "../controls/SelectControls";
 import {RotateControls} from "../controls/RotateControls";
@@ -13,16 +13,18 @@ export const PAINT_CONTROLS = 'PAINT_CONTROLS';
 export const MOVE_MODEL_CONTROLS = 'MOVE_MODEL_CONTROLS';
 export const ROTATE_MODEL_CONTROLS = 'ROTATE_MODEL_CONTROLS';
 export const DELETE_CONTROLS = 'DELETE_CONTROLS';
+export const FOG_CONTROLS = 'FOG_CONTROLS';
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel) {
+	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel, addFogStroke) {
 
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
 		this.addStroke = addStroke;
 		this.setModelPosition = setModelPosition;
 		this.deleteModel = deleteModel;
+		this.addFogStroke = addFogStroke;
 
 		this.renderer = null;
 		this.camera = null;
@@ -36,6 +38,9 @@ export class GameRenderer{
 		this.rotateControls = null;
 		this.paintControls = null;
 		this.deleteControls = null;
+		this.fogControls = null;
+
+		this.currentControls = CAMERA_CONTROLS;
 
 		this.loader = new THREE.LoadingManager();
 		this.loader.onProgress = onProgress;
@@ -165,12 +170,19 @@ export class GameRenderer{
 
 	changeControls = (mode) => {
 
+		if(!this.mapMesh){
+			return;
+		}
+
+		this.currentControls = mode;
+
 		this.cameraControls.disable();
 		this.paintControls.disable();
 		this.moveControls.disable();
 		this.selectControls.disable();
 		this.rotateControls.disable();
 		this.deleteControls.disable();
+		this.fogControls.disable();
 
 		switch(mode){
 			case PAINT_CONTROLS:
@@ -187,6 +199,9 @@ export class GameRenderer{
 				break;
 			case DELETE_CONTROLS:
 				this.deleteControls.enable();
+				break;
+			case FOG_CONTROLS:
+				this.fogControls.enable();
 				break;
 		}
 	}
@@ -208,6 +223,22 @@ export class GameRenderer{
 			{pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage},
 			this.addStroke
 		);
+
+		if(this.fogControls){
+			this.fogControls.teardown();
+		}
+		this.fogControls = new PaintControls(
+			this.renderRoot,
+			this.raycaster,
+			this.scene,
+			this.mapMesh,
+			{pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage},
+			this.addFogStroke,
+			.02
+		);
+		this.fogControls.brushType = BRUSH_FOG;
+		this.fogControls.brushColor = '#000000';
+		this.fogControls.setupBrush();
 
 		if(this.selectControls){
 			this.selectControls.tearDown();
@@ -232,6 +263,8 @@ export class GameRenderer{
 			this.deleteControls.tearDown();
 		}
 		this.deleteControls = new DeleteControls(this.renderRoot, this.selectControls, this.deleteModel);
+
+		this.changeControls(this.currentControls);
 	}
 
 	addModel(positionedModel){

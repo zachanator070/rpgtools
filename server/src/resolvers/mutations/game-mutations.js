@@ -7,7 +7,7 @@ import {PermissionAssignment} from "../../models/permission-assignement";
 import {GAME} from "../../../../common/src/type-constants";
 import {pubsub} from "../../gql-server";
 import {
-	GAME_CHAT_EVENT,
+	GAME_CHAT_EVENT, GAME_FOG_STROKE_ADDED,
 	GAME_MAP_CHANGE,
 	GAME_MODEL_ADDED, GAME_MODEL_DELETED, GAME_MODEL_POSITIONED,
 	GAME_STROKE_EVENT,
@@ -131,19 +131,62 @@ export const gameMutations = {
 
 		return game;
 	},
-	setGameMap: async (_, {gameId, placeId}, {currentUser}) => {
-		const game = await Game.findById(gameId);
+	setGameMap: async (_, {gameId, placeId, clearPaint, setFog}, {currentUser}) => {
+		const game = await Game.findById(gameId).populate({
+			path: 'map',
+			populate: {
+				path: 'mapImage'
+			}
+		});
 		if(!game){
 			throw new Error('Game does not exist');
 		}
 		if(!await game.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to change the location for this game');
 		}
-		const place = await Place.findById(placeId);
+		const place = await Place.findById(placeId).populate('mapImage');
 		if(!place){
 			throw new Error('Place does not exist');
 		}
+		if(!place.mapImage){
+			throw new Error('Cannot use a location in game that does not have a map image');
+		}
+		if(!place.pixelsPerFoot){
+			throw new Error('Place needs to have pixels per foot defined');
+		}
+
+		if(clearPaint && game.map  && game.strokes > 0){
+
+			game.strokes = [{
+				path: [{
+					x: 0,
+					y: 0
+				}],
+				color: '#FFFFFF',
+				size: Math.max(game.map.mapImage.height, game.map.mapImage.width) / game.map.pixelsPerFoot,
+				fill: true,
+				type: 'erase',
+				_id: uuidv4()
+			}];
+		}
+
+		if(setFog){
+
+			const newMaxSize = Math.max(place.mapImage.height, place.mapImage.width);
+
+			game.fog = [{
+				path: [{
+					x: Math.ceil((newMaxSize/ place.pixelsPerFoot) / 2),
+					y: Math.ceil((newMaxSize/ place.pixelsPerFoot) / 2)
+				}],
+				size: newMaxSize,
+				type: 'fog',
+				_id: uuidv4()
+			}];
+		}
+
 		game.map = place;
+
 		await game.save();
 		await pubsub.publish(GAME_MAP_CHANGE, {gameMapChange: game});
 		return game;
@@ -154,7 +197,7 @@ export const gameMutations = {
 			throw new Error('Game does not exist');
 		}
 		if(!await game.userCanWrite(currentUser)){
-			throw new Error('You do not have permission to change the location for this game');
+			throw new Error('You do not have permission to paint for this game');
 		}
 		const newStroke = {
 			path,
@@ -167,6 +210,25 @@ export const gameMutations = {
 		game.strokes.push(newStroke);
 		await game.save();
 		await pubsub.publish(GAME_STROKE_EVENT, {gameId, gameStrokeAdded: newStroke});
+		return game;
+	},
+	addFogStroke: async (_, {gameId, path, type, size, strokeId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if(!game){
+			throw new Error('Game does not exist');
+		}
+		if(!await game.userCanWriteFog(currentUser)){
+			throw new Error('You do not have permission to edit fog for this game');
+		}
+		const newStroke = {
+			path,
+			size,
+			type,
+			_id: strokeId
+		};
+		game.fog.push(newStroke);
+		await game.save();
+		await pubsub.publish(GAME_FOG_STROKE_ADDED, {gameId, gameFogStrokeAdded: newStroke});
 		return game;
 	},
 	addModel: async (_, {gameId, modelId}, {currentUser}) => {

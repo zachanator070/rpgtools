@@ -16,10 +16,6 @@ const Schema = mongoose.Schema;
 const pathNode = new Schema({
 	x: Number,
 	y: Number,
-	type: {
-		type: String,
-		enum: ['circle', 'square', 'erase', 'line']
-	},
 	_id: String
 });
 
@@ -74,6 +70,7 @@ const gameSchema = new Schema({
 		required: [true, 'host id required']
 	},
 	strokes: [strokeSchema],
+	fog: [fogStrokeSchema],
 	messages: [new Schema({
 		sender: {
 			type: String,
@@ -137,6 +134,10 @@ gameSchema.methods.userCanWrite = async function(user){
 
 gameSchema.methods.userCanRead = async function(user){
 	return await this.userInGame(user);
+};
+
+gameSchema.methods.userCanWriteFog = async function(user){
+	return await user.hasPermission(GAME_RW, this._id);
 };
 
 export const Game = mongoose.model(GAME, gameSchema);

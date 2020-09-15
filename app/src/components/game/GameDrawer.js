@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import {Collapse, Comment, Input, Form, Button, List, Modal} from "antd";
+import {Checkbox, Collapse, Comment, Input, Form, Button, List, Modal} from "antd";
 import {useGameChat} from "../../hooks/game/useGameChat";
 import {useGameChatSubscription} from "../../hooks/game/useGameChatSubscription";
 import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
@@ -15,12 +15,15 @@ import {PLACE} from "../../../../common/src/type-constants";
 import {useSetGameMap} from "../../hooks/game/useSetGameMap";
 import {Link} from "react-router-dom";
 import {AddModelSection} from "./AddModelSection";
+import {FogOptions} from "./FogOptions";
 
 export const GameDrawer = ({renderer}) => {
 	const {currentGame, loading} = useCurrentGame();
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
+	const [clearPaint, setClearPaint] = useState(false);
+	const [setFog, setSetFog] = useState(false);
 	const {data: gameChatMessage} = useGameChatSubscription();
 	const {data: rosterChangeGame} = useGameRosterSubscription();
 	const history = useHistory();
@@ -131,29 +134,52 @@ export const GameDrawer = ({renderer}) => {
 						<BrushOptions renderer={renderer}/>
 					</Collapse.Panel>
 				}
+				{currentGame.canWriteFog &&
+					<Collapse.Panel key='4' header='Fog Options'>
+						<FogOptions renderer={renderer}/>
+					</Collapse.Panel>
+				}
 				{currentGame.canWrite &&
-					<Collapse.Panel header="Add Models" key="4">
+					<Collapse.Panel header="Add Models" key="5">
 						<AddModelSection renderer={renderer}/>
 					</Collapse.Panel>
 				}
 
-				<Collapse.Panel header="Current Location" key="5">
+				<Collapse.Panel header="Current Location" key="6">
 
-						<div className={'margin-lg-top margin-lg-bottom'}>
-							<h3>Current Location</h3>
-							{currentGame.map ?
-								<Link
-									to={`/ui/world/${currentWorld._id}/wiki/${currentGame.map._id}/view`}>{currentGame.map.name}</Link>
-								:
-								<p>No current location</p>
-							}
-						</div>
+					<div className={'margin-lg-top margin-lg-bottom'}>
+						<h3>Current Location</h3>
+						{currentGame.map ?
+							<Link
+								to={`/ui/world/${currentWorld._id}/wiki/${currentGame.map._id}/view`}>{currentGame.map.name}</Link>
+							:
+							<p>No current location</p>
+						}
+					</div>
 					{currentGame.canWrite &&
 						<div className={'margin-lg-bottom'}>
 							<h3>Change Location</h3>
 							<SelectWiki type={PLACE} onChange={async (wikiId) => {await setSelectedLocation(wikiId)}}/>
 							<div className={'margin-md'}>
-								<Button onClick={async() => {await setGameMap(currentGame._id, selectedLocation)}} disabled={!selectedLocation}>Change location</Button>
+								Clear Paint: <Checkbox checked={clearPaint} onChange={async (e) => {
+									await setClearPaint(e.target.checked);
+								}}/>
+							</div>
+							<div className={'margin-md'}>
+								Set Fog: <Checkbox checked={setFog} onChange={async (e) => {
+									await setSetFog(e.target.checked);
+								}}/>
+							</div>
+
+							<div className={'margin-md'}>
+								<Button
+									onClick={
+										async() => {
+											await setGameMap({gameId: currentGame._id, placeId: selectedLocation, clearPaint, setFog});
+										}
+									}
+							        disabled={!selectedLocation}
+								>Change location</Button>
 							</div>
 						</div>
 					}

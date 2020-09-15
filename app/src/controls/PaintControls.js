@@ -4,7 +4,8 @@ import * as THREE from "three";
 export const BRUSH_CIRCLE = 'circle';
 export const BRUSH_SQUARE = 'square';
 export const BRUSH_ERASE = 'erase';
-export const BRUSH_LINE = 'line'
+export const BRUSH_LINE = 'line';
+export const BRUSH_FOG = 'fog';
 export const DEFAULT_BRUSH_COLOR = '#FFFFFF';
 export const DEFAULT_BRUSH_TYPE = BRUSH_LINE;
 export const DEFAULT_BRUSH_FILL = true;
@@ -13,7 +14,7 @@ export const DEFAULT_MAP_SIZE = 50;
 
 export class PaintControls {
 
-	constructor(renderRoot, raycaster, scene, mapMesh, location, strokeCallback) {
+	constructor(renderRoot, raycaster, scene, mapMesh, location, strokeCallback, meshY=.01) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
 		this.scene = scene;
@@ -34,9 +35,8 @@ export class PaintControls {
 		);
 		drawGeometry.rotateX(-Math.PI/2);
 		this.drawMesh = new THREE.Mesh( drawGeometry, new THREE.MeshStandardMaterial( { map: this.drawTexture, transparent: true } ));
-		this.mapMesh.receiveShadow = true;
 		this.drawMesh.receiveShadow = true;
-		this.drawMesh.position.set(0, .01, 0);
+		this.drawMesh.position.set(0, meshY, 0);
 		this.scene.add(this.drawMesh);
 
 		this.pathBeingPainted = [];
@@ -57,7 +57,7 @@ export class PaintControls {
 	setBrushType = (type) => {
 		this.brushType = type;
 		this.scene.remove(this.paintBrushMesh);
-		this.createPaintBrushMesh(type);
+		this.createPaintBrushMesh();
 		this.paintBrushMaterial.needsUpdate = true;
 		this.scene.add(this.paintBrushMesh);
 		this.updateBrushPosition();
@@ -83,6 +83,13 @@ export class PaintControls {
 		this.paintBrushMesh.visible = false;
 	}
 
+	setDrawMeshOpacity = (value) => {
+		if(this.drawMesh){
+			this.drawMesh.material.opacity = value;
+			this.drawMesh.material.needsUpdate = true;
+		}
+	}
+
 	createPaintBrushMesh = () => {
 		if(this.paintBrushMesh){
 			this.scene.remove(this.paintBrushMesh);
@@ -90,6 +97,7 @@ export class PaintControls {
 		if(!this.paintBrushMaterial){
 			this.paintBrushMaterial = new THREE.MeshBasicMaterial({color: this.brushColor});
 		}
+		this.setBrushColor(this.brushColor);
 		let geometry = null;
 		if(this.brushType === BRUSH_CIRCLE || this.brushType === BRUSH_LINE){
 			geometry = new THREE.CylinderGeometry(this.brushSize/2, this.brushSize/2, 1, 32);
@@ -143,7 +151,13 @@ export class PaintControls {
 						ctx.strokeRect(part.x - size / 2, part.y - size / 2, size, size);
 					}
 				}
+				break;
+			case BRUSH_FOG:
+				for(let part of path){
+					ctx.fillStyle = color;
+					ctx.fillRect(part.x - size / 2 ,part.y - size / 2, size, size);
 
+				}
 				break;
 			case BRUSH_CIRCLE:
 				for(let part of path){

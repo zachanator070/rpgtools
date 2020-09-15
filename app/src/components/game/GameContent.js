@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
-	CAMERA_CONTROLS, DELETE_CONTROLS,
+	CAMERA_CONTROLS, DELETE_CONTROLS, FOG_CONTROLS,
 	GameRenderer,
 	MOVE_MODEL_CONTROLS,
 	PAINT_CONTROLS,
@@ -16,6 +16,8 @@ import {useSetModelPosition} from "../../hooks/game/useSetModelPosition";
 import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelPosistionedSubscription";
 import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedModel";
 import {useGameModelDeletedSubscription} from "../../hooks/game/useGameModelDeletedSubscription";
+import {useAddFogStroke} from "../../hooks/game/useAddFogStroke";
+import {useGameFogSubscription} from "../../hooks/game/useGameFogSubscription";
 
 export const GameContent = ({currentGame}) => {
 
@@ -27,12 +29,14 @@ export const GameContent = ({currentGame}) => {
 	const {addStroke} = useAddStroke();
 	const {setModelPosition} = useSetModelPosition();
 	const {deletePositionedModel} = useDeletePositionedModel();
+	const {addFogStroke} = useAddFogStroke();
 
 	const [controlsMode, setControlsMode] = useState(CAMERA_CONTROLS);
 	const {data: gameStrokeAdded} = useGameStrokeSubscription();
 	const {data: gameModelAdded} = useGameModelAddedSubscription();
 	const {data: modelPositioned} = useGameModelPositionedSubscription();
 	const {gameModelDeleted} = useGameModelDeletedSubscription();
+	const {gameFogStrokeAdded} = useGameFogSubscription();
 
 	useEffect(() => {
 		(async () => {
@@ -65,7 +69,8 @@ export const GameContent = ({currentGame}) => {
 							},
 							closable: false
 						});
-					}
+					},
+					addFogStroke
 				)
 			);
 		})();
@@ -77,7 +82,7 @@ export const GameContent = ({currentGame}) => {
 		});
 
 		renderCanvas.current.addEventListener('keydown', async ({code}) => {
-			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX'].includes(code)){
+			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX', 'KeyF'].includes(code)){
 				return;
 			}
 			switch(code){
@@ -95,6 +100,9 @@ export const GameContent = ({currentGame}) => {
 					break;
 				case 'KeyX':
 					await setControlsMode(DELETE_CONTROLS);
+					break;
+				case 'KeyF':
+					await setControlsMode(FOG_CONTROLS);
 					break;
 			}
 		});
@@ -128,7 +136,13 @@ export const GameContent = ({currentGame}) => {
 		if(gameStrokeAdded && renderer){
 			renderer.paintControls.stroke(gameStrokeAdded);
 		}
-	}, [gameStrokeAdded])
+	}, [gameStrokeAdded]);
+
+	useEffect(() => {
+		if(gameFogStrokeAdded && renderer){
+			renderer.fogControls.stroke(gameFogStrokeAdded);
+		}
+	}, [gameFogStrokeAdded])
 
 	useEffect(() => {
 		(async () => {
@@ -169,6 +183,9 @@ export const GameContent = ({currentGame}) => {
 				}
 				for(let stroke of currentGame.strokes){
 					renderer.paintControls.stroke(stroke);
+				}
+				for(let fogStroke of currentGame.fog){
+					renderer.fogControls.stroke(fogStroke);
 				}
 				for(let model of currentGame.models){
 					renderer.addModel(model);
