@@ -105,7 +105,9 @@ export class PaintControls {
 		else{
 			geometry = new THREE.BoxGeometry(this.brushSize, 1, this.brushSize);
 		}
+		const oldVisibility = this.paintBrushMesh ? this.paintBrushMesh.visible : false;
 		this.paintBrushMesh = new THREE.Mesh(geometry, this.paintBrushMaterial);
+		this.paintBrushMesh.visible = oldVisibility;
 		this.scene.add(this.paintBrushMesh);
 	}
 
