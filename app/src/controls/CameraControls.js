@@ -18,5 +18,6 @@ export class CameraControls {
 	}
 
 	tearDown = () => {
+		this.controls.dispose();
 	}
 }

@@ -100,6 +100,7 @@ export const GAME_STROKE_EVENT = 'GAME_STROKE_EVENT';
 export const GAME_MODEL_ADDED = 'GAME_MODEL_ADDED';
 export const GAME_MODEL_DELETED = 'GAME_MODEL_DELETED';
 export const GAME_MODEL_POSITIONED = 'GAME_MODEL_POSITIONED';
+export const GAME_FOG_STROKE_ADDED = 'GAME_FOG_STROKE_ADDED';
 
 export const serverResolvers = {
 	Query: QueryResolver,
@@ -117,7 +118,7 @@ export const serverResolvers = {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator([ROSTER_CHANGE_EVENT]),
 				(payload, {gameId}) => {
-					return payload.gameRosterChange._id === gameId;
+					return payload.gameRosterChange._id.equals(gameId);
 				}
 			),
 		},
@@ -125,13 +126,21 @@ export const serverResolvers = {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator([GAME_MAP_CHANGE]),
 				(payload, {gameId}) => {
-					return payload.gameMapChange._id === gameId;
+					return payload.gameMapChange._id.equals(gameId);
 				}
 			)
 		},
 		gameStrokeAdded: {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator([GAME_STROKE_EVENT]),
+				(payload, {gameId}) => {
+					return payload.gameId === gameId;
+				}
+			)
+		},
+		gameFogStrokeAdded: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator([GAME_FOG_STROKE_ADDED]),
 				(payload, {gameId}) => {
 					return payload.gameId === gameId;
 				}
@@ -356,6 +365,9 @@ export const serverResolvers = {
 				models.push(model);
 			}
 			return models;
+		},
+		canWriteFog: async (game, _, {currentUser}) => {
+			return await game.userCanWriteFog(currentUser);
 		},
 		...permissionControlledInterfaceAttributes
 	},

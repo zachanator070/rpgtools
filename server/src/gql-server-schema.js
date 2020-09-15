@@ -86,8 +86,9 @@ export const typeDefs = gql`
         joinGame(gameId: ID!, password: String): Game!
         leaveGame(gameId: ID!): Boolean!
         gameChat(gameId: ID!, message: String!): Game!
-        setGameMap(gameId: ID!, placeId: ID!): Game!
+        setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
+        addFogStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, strokeId: ID!): Game!
         addModel(gameId: ID!, modelId: ID!): Game!
         setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, rotation: Float!): PositionedModel!
         deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
@@ -102,6 +103,7 @@ export const typeDefs = gql`
 		gameRosterChange(gameId: ID!): Game!
 		gameMapChange(gameId: ID!): Game!
 		gameStrokeAdded(gameId: ID!): Stroke!
+		gameFogStrokeAdded(gameId: ID!): FogStroke!
 		gameModelAdded(gameId: ID!): PositionedModel!
 		gameModelDeleted(gameId: ID!): PositionedModel!
 		gameModelPositioned(gameId: ID!): PositionedModel!
@@ -327,8 +329,10 @@ export const typeDefs = gql`
 		host: User!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
+		canWriteFog: Boolean!
 		canAdmin: Boolean!
 		strokes: [Stroke!]!
+		fog: [FogStroke!]!
 		models: [PositionedModel!]!
 	}
 	
@@ -339,6 +343,13 @@ export const typeDefs = gql`
 		size: Int!
 		color: String!
 		fill: Boolean!
+	}
+	
+	type FogStroke{
+		_id: String
+		path: [PathNode!]!
+		type: String!
+		size: Int!
 	}
 	
 	type PathNode{

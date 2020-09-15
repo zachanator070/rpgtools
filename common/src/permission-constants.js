@@ -94,9 +94,10 @@ export const MODEL_PERMISSIONS = [MODEL_READ, MODEL_RW, MODEL_ADMIN];
 // game permissions
 export const GAME_READ = 'Read access to a single game';
 export const GAME_RW = 'Edit access to a single game';
+export const GAME_FOG_WRITE = 'Access to edit fog of a single game';
 export const GAME_ADMIN = 'Able to change permissions for a single game';
 
-export const GAME_PERMISSIONS = [GAME_READ, GAME_RW, GAME_ADMIN];
+export const GAME_PERMISSIONS = [GAME_READ, GAME_RW, GAME_FOG_WRITE, GAME_ADMIN];
 
 export const ALL_PERMISSIONS = [].concat(
 	SERVER_PERMISSIONS,

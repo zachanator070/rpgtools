@@ -638,7 +638,21 @@ export const GAME_MODELS = `
 		${GAME_MODEL}
 	}
 `;
-
+export const GAME_FOG = `
+	_id
+	path{
+		_id
+		x
+		y
+	}
+	type
+	size
+`;
+export const GAME_FOG_STROKES = `
+	fog{
+		${GAME_FOG}
+	}
+`
 export const GAME_ATTRIBUTES = `
 	_id
     ${GAME_MAP}
@@ -646,12 +660,16 @@ export const GAME_ATTRIBUTES = `
         _id
     }
     canWrite
+    canWriteFog
     canAdmin
     ${GAME_PLAYERS}
     messages{
         ${GAME_MESSAGE}
     }
     ${GAME_STROKES}
+    fog{
+        ${GAME_FOG}
+    }
     ${GAME_MODELS}
 `;
 
@@ -711,10 +729,12 @@ export const MY_GAMES = gql`
 `;
 
 export const SET_GAME_MAP = gql`
-	mutation setGameMap($gameId: ID!, $placeId: ID!){
-		setGameMap(gameId: $gameId, placeId: $placeId){
+	mutation setGameMap($gameId: ID!, $placeId: ID!, $clearPaint: Boolean, $setFog: Boolean){
+		setGameMap(gameId: $gameId, placeId: $placeId, clearPaint: $clearPaint, setFog: $setFog){
 			_id
 			${GAME_MAP}
+			${GAME_STROKES}
+			${GAME_FOG_STROKES}
 		}
 	}
 `;
@@ -755,6 +775,14 @@ export const ADD_STROKE = gql`
 	}
 `;
 
+export const ADD_FOG_STROKE = gql`
+	mutation addFogStroke($gameId: ID!, $path: [PathNodeInput!]!, $type: String!, $size: Int!, $strokeId: ID!){
+		addFogStroke(gameId: $gameId, path: $path, type: $type, size:$size, strokeId: $strokeId){
+			_id
+		}
+	}
+`;
+
 
 export const ADD_MODEL = gql`
 	mutation addModel($gameId: ID!, $modelId: ID!){
@@ -778,6 +806,14 @@ export const GAME_STROKE_SUBSCRIPTION = gql`
 	subscription gameStrokeAdded($gameId: ID!){
 		gameStrokeAdded(gameId: $gameId){
 			${GAME_STROKE}
+		}
+	}
+`;
+
+export const GAME_FOG_SUBSCRIPTION = gql`
+	subscription gameFogStrokeAdded($gameId: ID!){
+		gameFogStrokeAdded(gameId: $gameId){
+			${GAME_FOG}
 		}
 	}
 `;

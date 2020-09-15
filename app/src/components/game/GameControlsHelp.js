@@ -1,12 +1,7 @@
 import React from 'react';
-import {
-	CAMERA_CONTROLS, DELETE_CONTROLS,
-	MOVE_MODEL_CONTROLS,
-	PAINT_CONTROLS,
-	ROTATE_MODEL_CONTROLS
-} from "../../rendering/GameRenderer";
 import {Tooltip} from "antd";
 import {
+	CloudOutlined,
 	DeleteOutlined,
 	DragOutlined,
 	HighlightOutlined,
@@ -14,8 +9,15 @@ import {
 	RedoOutlined,
 	VideoCameraOutlined
 } from '@ant-design/icons';
+import useCurrentGame from "../../hooks/game/useCurrentGame";
 
 export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
+
+	const {currentGame, loading} = useCurrentGame();
+
+	if(loading){
+		return <></>;
+	}
 
 	const toolTipText = {
 		CAMERA_CONTROLS: <>
@@ -38,6 +40,11 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 		</>,
 		DELETE_CONTROLS: <>
 			Left click on a mode to delete it
+		</>,
+		FOG_CONTROLS: <>
+			Left click and drag to add fog of war to scene
+			<br/>
+			See "Fog Options" in side panel for more options
 		</>
 	}
 
@@ -46,7 +53,7 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 			Move Camera, hotkey: c
 		</>,
 		PAINT_CONTROLS: <>
-			Paint, hotkey: p
+			Paint Brush, hotkey: p
 		</>,
 		MOVE_MODEL_CONTROLS: <>
 			Move Model, hotkey: m
@@ -56,6 +63,9 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 		</>,
 		DELETE_CONTROLS: <>
 			Delete Model, hotkey: x
+		</>,
+		FOG_CONTROLS: <>
+			Fog of War Brush, hotkey: f
 		</>
 	}
 
@@ -64,11 +74,24 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 		PAINT_CONTROLS: <HighlightOutlined/>,
 		MOVE_MODEL_CONTROLS: <DragOutlined/>,
 		ROTATE_MODEL_CONTROLS: <RedoOutlined/>,
-		DELETE_CONTROLS: <DeleteOutlined />
+		DELETE_CONTROLS: <DeleteOutlined />,
+		FOG_CONTROLS: <CloudOutlined />
 	};
 
+	const permission = {
+		CAMERA_CONTROLS: true,
+		PAINT_CONTROLS: currentGame.canWrite,
+		MOVE_MODEL_CONTROLS: currentGame.canWrite,
+		ROTATE_MODEL_CONTROLS: currentGame.canWrite,
+		DELETE_CONTROLS: currentGame.canWrite,
+		FOG_CONTROLS: currentGame.canWriteFog
+	}
+
 	const menu = Object.keys(icons).map((mode) => {
-		return <Tooltip placement='right' title={mouseOverText[mode]}>
+		if(!permission[mode]){
+			return null;
+		}
+		return <Tooltip placement='right' title={mouseOverText[mode]} key={mode}>
 			<div
 				key={mode}
 				style={{
@@ -85,7 +108,6 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 			</div>
 		</Tooltip>;
 	})
-
 
 	return <div style={{position: 'absolute', left: 0, top: 0, width: 40, backgroundColor: 'white'}}>
 		<Tooltip placement='right' title={toolTipText[controlsMode]}>
