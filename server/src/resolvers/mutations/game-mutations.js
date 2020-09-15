@@ -184,6 +184,9 @@ export const gameMutations = {
 				_id: uuidv4()
 			}];
 		}
+		else {
+			game.fog = [];
+		}
 
 		game.map = place;
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import {Checkbox, Collapse, Comment, Input, Form, Button, List, Modal} from "antd";
+import {Checkbox, Collapse, Comment, Input, Form, Button, List, Col, Row} from "antd";
 import {useGameChat} from "../../hooks/game/useGameChat";
 import {useGameChatSubscription} from "../../hooks/game/useGameChatSubscription";
 import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
@@ -11,11 +11,13 @@ import {useHistory} from 'react-router-dom';
 import useMyGames from "../../hooks/game/useMyGames";
 import {BrushOptions} from "./BrushOptions";
 import {SelectWiki} from "../select/SelectWiki";
-import {PLACE} from "../../../../common/src/type-constants";
+import {GAME, PLACE} from "../../../../common/src/type-constants";
 import {useSetGameMap} from "../../hooks/game/useSetGameMap";
 import {Link} from "react-router-dom";
 import {AddModelSection} from "./AddModelSection";
 import {FogOptions} from "./FogOptions";
+import {TeamOutlined} from "@ant-design/icons";
+import {PermissionModal} from "../modals/PermissionModal";
 
 export const GameDrawer = ({renderer}) => {
 	const {currentGame, loading} = useCurrentGame();
@@ -23,6 +25,7 @@ export const GameDrawer = ({renderer}) => {
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
 	const [clearPaint, setClearPaint] = useState(false);
+	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 	const [setFog, setSetFog] = useState(false);
 	const {data: gameChatMessage} = useGameChatSubscription();
 	const {data: rosterChangeGame} = useGameRosterSubscription();
@@ -74,9 +77,28 @@ export const GameDrawer = ({renderer}) => {
 
 	return <>
 		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true} placement={'right'}>
-			<Button style={{margin: '20px'}} type={'primary'} onClick={async () => {
-				await leaveGame(currentGame._id)}
-			}>Leave Game</Button>
+			<Row>
+				<Col span={12}>
+					<Button className={'margin-lg'} type={'primary'} onClick={async () => {
+						await leaveGame(currentGame._id)}
+					}>Leave Game</Button>
+				</Col>
+				<Col span={12}>
+					<div className={'margin-lg'} style={{textAlign: 'right'}}>
+						<PermissionModal
+							visibility={permissionModalVisibility}
+							setVisibility={setPermissionModalVisibility}
+							subject={currentGame}
+							subjectType={GAME}
+						/>
+						<a title={'View permissions for this page'} onClick={async () => {
+							await setPermissionModalVisibility(true);
+						}}>
+							<TeamOutlined style={{fontSize: '20px'}}/>
+						</a>
+					</div>
+				</Col>
+			</Row>
 			<Collapse defaultActiveKey={['1']}>
 				<Collapse.Panel header="Players" key="1">
 					<List
