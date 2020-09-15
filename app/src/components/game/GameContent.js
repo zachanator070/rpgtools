@@ -181,11 +181,15 @@ export const GameContent = ({currentGame}) => {
 					}
 					renderer.setupMap();
 				}
-				for(let stroke of currentGame.strokes){
-					renderer.paintControls.stroke(stroke);
+				if(renderer.paintControls){
+					for(let stroke of currentGame.strokes){
+						renderer.paintControls.stroke(stroke);
+					}
 				}
-				for(let fogStroke of currentGame.fog){
-					renderer.fogControls.stroke(fogStroke);
+				if(renderer.fogControls){
+					for(let fogStroke of currentGame.fog){
+						renderer.fogControls.stroke(fogStroke);
+					}
 				}
 				for(let model of currentGame.models){
 					renderer.addModel(model);

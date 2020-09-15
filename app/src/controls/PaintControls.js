@@ -25,16 +25,19 @@ export class PaintControls {
 		this.drawCanvas = document.createElement("canvas");
 		this.drawCanvas.height = this.location.mapImage.height;
 		this.drawCanvas.width = this.location.mapImage.width;
+
 		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
 		this.drawTexture.generateMipmaps = false;
 		this.drawTexture.wrapS = this.drawTexture.wrapT = THREE.ClampToEdgeWrapping;
 		this.drawTexture.minFilter = THREE.LinearFilter;
+
 		const drawGeometry = new THREE.PlaneGeometry(
 			this.location.mapImage.width / this.location.pixelsPerFoot,
 			this.location.mapImage.height / this.location.pixelsPerFoot
 		);
 		drawGeometry.rotateX(-Math.PI/2);
-		this.drawMesh = new THREE.Mesh( drawGeometry, new THREE.MeshStandardMaterial( { map: this.drawTexture, transparent: true } ));
+		this.drawMaterial = new THREE.MeshPhongMaterial( { map: this.drawTexture, transparent: true});
+		this.drawMesh = new THREE.Mesh( drawGeometry, this.drawMaterial);
 		this.drawMesh.receiveShadow = true;
 		this.drawMesh.position.set(0, meshY, 0);
 		this.scene.add(this.drawMesh);

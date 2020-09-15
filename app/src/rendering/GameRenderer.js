@@ -30,6 +30,8 @@ export class GameRenderer{
 		this.camera = null;
 		this.scene = null;
 
+		this.light = null;
+
 		this.raycaster = null;
 		this.mouseCoords = new Vector2();
 
@@ -94,9 +96,33 @@ export class GameRenderer{
 
 		// setup renderer
 		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
-		console.log(`rendering size ${renderWidth} x ${renderHeight}`);
+		this.renderer.shadowMap.enabled = true;
 		this.renderer.setSize(renderWidth, renderHeight);
 		this.renderer.setPixelRatio( window.devicePixelRatio );
+
+	}
+
+	setupLight = () => {
+		if(this.light){
+			this.scene.remove(this.light);
+			this.scene.remove(this.light.target);
+		}
+		this.light = new THREE.DirectionalLight( 0xffffff, .25 );
+		this.light.position.set( 100, 100, 100);
+		this.light.castShadow = true;
+		this.light.shadow.camera.near = .01;
+		this.light.shadow.camera.far = 1000;
+		const frustrum = 5;
+		this.light.shadow.camera.left = -frustrum;
+		this.light.shadow.camera.bottom = -frustrum;
+		this.light.shadow.camera.right = frustrum;
+		this.light.shadow.camera.top = frustrum;
+
+		const helper = new THREE.DirectionalLightHelper( this.light, 5 );
+		this.scene.add( helper );
+
+		this.scene.add(this.light);
+		this.scene.add(this.light.target);
 
 	}
 
@@ -144,12 +170,12 @@ export class GameRenderer{
 		const mapGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
 		mapGeometry.rotateX(-Math.PI/2);
 
-		this.mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshStandardMaterial( { map: this.mapTexture } ));
-
+		this.mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshPhongMaterial( { map: this.mapTexture } ));
+		this.mapMesh.receiveShadow = true;
 		this.scene.add(this.mapMesh);
 
 		this.setupControls();
-
+		this.setupLight();
 	}
 
 	setupRaycaster(){
@@ -178,11 +204,11 @@ export class GameRenderer{
 
 		this.cameraControls.disable();
 		this.paintControls.disable();
+		this.fogControls.disable();
 		this.moveControls.disable();
 		this.selectControls.disable();
 		this.rotateControls.disable();
 		this.deleteControls.disable();
-		this.fogControls.disable();
 
 		switch(mode){
 			case PAINT_CONTROLS:
@@ -291,7 +317,11 @@ export class GameRenderer{
 			mesh.scale.set(widthScale, heightScale, depthScale);
 			mesh.position.set(positionedModel.x, 0, positionedModel.z);
 			mesh.rotation.set(0, positionedModel.rotation, 0);
-			mesh.traverse((object) => {object.castShadow = true});
+			gltf.scene.traverse( function( child ) {
+				if ( child.isMesh ) {
+					child.castShadow = true;
+				}
+			});
 			for(let meshedModel of this.meshedModels){
 				if(meshedModel.positionedModel._id === positionedModel._id){
 					meshedModel.mesh = mesh;

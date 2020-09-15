@@ -122,7 +122,6 @@ export class ModelRenderer{
 			gltf.scene.traverse( function( child ) {
 				if ( child.isMesh ) {
 					child.castShadow = true;
-					// child.receiveShadow = true;
 				}
 			});
 			this.modelMesh = gltf.scene;
