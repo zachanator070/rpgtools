@@ -26,7 +26,7 @@ export const authorizationMutations = {
 		// check if user already has that permission
 		for(let userPermission of user.permissions){
 			if(userPermission._id.equals(newPermission._id)){
-				return newPermission.subject.world;
+				return newPermission.subject;
 			}
 		}
 

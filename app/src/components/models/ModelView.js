@@ -96,6 +96,7 @@ export const ModelView = () => {
 							setVisibility={setPermissionModalVisibility}
 							subject={selectedModel}
 							subjectType={MODEL}
+							refetch={refetch}
 						/>
 					</div>
 				</Route>

@@ -112,14 +112,14 @@ export class GameRenderer{
 		this.light.castShadow = true;
 		this.light.shadow.camera.near = .01;
 		this.light.shadow.camera.far = 1000;
-		const frustrum = 5;
+		const frustrum = 50;
 		this.light.shadow.camera.left = -frustrum;
 		this.light.shadow.camera.bottom = -frustrum;
 		this.light.shadow.camera.right = frustrum;
 		this.light.shadow.camera.top = frustrum;
 
-		const helper = new THREE.DirectionalLightHelper( this.light, 5 );
-		this.scene.add( helper );
+		// const helper = new THREE.DirectionalLightHelper( this.light, 5 );
+		// this.scene.add( helper );
 
 		this.scene.add(this.light);
 		this.scene.add(this.light.target);
@@ -142,6 +142,10 @@ export class GameRenderer{
 
 		if(this.mapMesh){
 			this.scene.remove(this.mapMesh);
+		}
+
+		if(this.groundMesh){
+			this.scene.remove(this.groundMesh);
 		}
 
 		const mapHeight = this.mapImage && this.pixelsPerFoot ? (this.mapImage.height / this.pixelsPerFoot) : DEFAULT_MAP_SIZE;
@@ -173,6 +177,12 @@ export class GameRenderer{
 		this.mapMesh = new THREE.Mesh( mapGeometry, new THREE.MeshPhongMaterial( { map: this.mapTexture } ));
 		this.mapMesh.receiveShadow = true;
 		this.scene.add(this.mapMesh);
+
+		const groundGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
+		groundGeometry.rotateX(Math.PI/2);
+		this.groundMesh = new THREE.Mesh(groundGeometry, new THREE.MeshBasicMaterial({color: 0x386636}));
+		this.groundMesh.position.set(0, -.01, 0);
+		this.scene.add(this.groundMesh);
 
 		this.setupControls();
 		this.setupLight();
@@ -238,7 +248,9 @@ export class GameRenderer{
 		}
 		this.cameraControls = new CameraControls(this.renderRoot, this.camera);
 
+		let paintControlsSaveState = null;
 		if(this.paintControls){
+			paintControlsSaveState = this.paintControls.getSaveState();
 			this.paintControls.teardown();
 		}
 		this.paintControls = new PaintControls(
@@ -249,8 +261,13 @@ export class GameRenderer{
 			{pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage},
 			this.addStroke
 		);
+		if(paintControlsSaveState){
+			this.paintControls.loadSaveState(paintControlsSaveState);
+		}
 
+		let fogControlsSaveState = null;
 		if(this.fogControls){
+			fogControlsSaveState = this.fogControls.getSaveState();
 			this.fogControls.teardown();
 		}
 		this.fogControls = new PaintControls(
@@ -262,8 +279,9 @@ export class GameRenderer{
 			this.addFogStroke,
 			.02
 		);
-		this.fogControls.brushType = BRUSH_FOG;
-		this.fogControls.brushColor = '#000000';
+		if(fogControlsSaveState){
+			this.fogControls.loadSaveState(fogControlsSaveState);
+		}
 		this.fogControls.setupBrush();
 
 		if(this.selectControls){

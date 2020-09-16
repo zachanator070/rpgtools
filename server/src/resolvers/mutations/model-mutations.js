@@ -47,7 +47,7 @@ const deleteFile = async (fileId) => {
 }
 
 export const modelMutations = {
-	createModel: async (_, {name, file, worldId, depth, width, height}, {currentUser}) => {
+	createModel: async (_, {name, file, worldId, depth, width, height, notes}, {currentUser}) => {
 		if(!await currentUser.hasPermission(MODEL_ADD, worldId)){
 			throw new Error('You do not have permission to add models to this world');
 		}
@@ -61,7 +61,7 @@ export const modelMutations = {
 
 		const fileId = await createGFSFile(file);
 
-		const model = await Model.create({name, fileId, fileName: file.filename, world, depth, width, height});
+		const model = await Model.create({name, fileId, fileName: file.filename, world, depth, width, height, notes});
 		for(let permission of [MODEL_RW, MODEL_ADMIN]){
 			const permissionAssignment = await PermissionAssignment.create({permission, subject: model, subjectType: MODEL});
 			currentUser.permissions.push(permissionAssignment);
@@ -70,7 +70,7 @@ export const modelMutations = {
 		return model;
 
 	},
-	updateModel: async (_, {modelId, name, file, depth, width, height}, {currentUser}) => {
+	updateModel: async (_, {modelId, name, file, depth, width, height, notes}, {currentUser}) => {
 		const model = await Model.findById(modelId);
 		if(!model){
 			throw new Error(`Model with id ${modelId} does not exist`);
@@ -90,6 +90,7 @@ export const modelMutations = {
 		model.depth = depth;
 		model.width = width;
 		model.height = height;
+		model.notes = notes;
 		await model.save();
 		return model;
 	},

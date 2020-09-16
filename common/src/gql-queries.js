@@ -571,6 +571,7 @@ export const CREATE_GAME = gql`
 
 export const GAME_MESSAGE = `
     sender
+    receiver
     message
     timestamp
 `;
@@ -659,8 +660,10 @@ export const GAME_ATTRIBUTES = `
     host{
         _id
     }
-    canWrite
+	canPaint
+	canModel
     canWriteFog
+    canWrite
     canAdmin
     ${GAME_PLAYERS}
     messages{
@@ -671,6 +674,7 @@ export const GAME_ATTRIBUTES = `
         ${GAME_FOG}
     }
     ${GAME_MODELS}
+    ${ACCESS_CONTROL_LIST}
 `;
 
 export const JOIN_GAME = gql`
@@ -744,6 +748,8 @@ export const GAME_MAP_SUBSCRIPTION = gql`
 		gameMapChange(gameId: $gameId){
 			_id
 			${GAME_MAP}
+			${GAME_STROKES}
+			${GAME_FOG_STROKES}
 		}
 	}
 `;
@@ -826,6 +832,7 @@ export const MODEL_ATTRIBUTES = `
 	height
 	fileName
 	fileId
+	notes
 	${ACCESS_CONTROL_LIST}
 `;
 
@@ -838,16 +845,16 @@ export const GET_MODELS = gql`
 `;
 
 export const CREATE_MODEL = gql`
-	mutation createModel($name: String!, $file: Upload!, $worldId: ID!, $depth: Float!, $width: Float!, $height: Float!){
-		createModel(name: $name, file: $file, worldId: $worldId, depth: $depth, width: $width, height: $height){
+	mutation createModel($name: String!, $file: Upload!, $worldId: ID!, $depth: Float!, $width: Float!, $height: Float!, $notes: String){
+		createModel(name: $name, file: $file, worldId: $worldId, depth: $depth, width: $width, height: $height, notes: $notes){
 			_id
 		}
 	}
 `;
 
 export const UPDATE_MODEL = gql`
-	mutation updateModel($modelId: ID!, $name: String!, $file: Upload, $depth: Float!, $width: Float!, $height: Float!){
-		updateModel(modelId: $modelId, name: $name, file: $file, depth: $depth, width: $width, height: $height){
+	mutation updateModel($modelId: ID!, $name: String!, $file: Upload, $depth: Float!, $width: Float!, $height: Float!, $notes: String){
+		updateModel(modelId: $modelId, name: $name, file: $file, depth: $depth, width: $width, height: $height, notes: $notes){
 			${MODEL_ATTRIBUTES}
 		}
 	}

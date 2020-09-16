@@ -40,6 +40,7 @@ export class PaintControls {
 		this.drawMesh = new THREE.Mesh( drawGeometry, this.drawMaterial);
 		this.drawMesh.receiveShadow = true;
 		this.drawMesh.position.set(0, meshY, 0);
+		this.drawMeshOpacity = 1;
 		this.scene.add(this.drawMesh);
 
 		this.pathBeingPainted = [];
@@ -88,6 +89,7 @@ export class PaintControls {
 
 	setDrawMeshOpacity = (value) => {
 		if(this.drawMesh){
+			this.drawMeshOpacity = value;
 			this.drawMesh.material.opacity = value;
 			this.drawMesh.material.needsUpdate = true;
 		}
@@ -265,6 +267,24 @@ export class PaintControls {
 		this.renderRoot.addEventListener('mousemove', this.paintWithBrush);
 		this.renderRoot.addEventListener('mouseup', this.stopPaintingWithBrush);
 		this.renderRoot.addEventListener('mouseleave', this.stopPaintingWithBrush);
+	}
+
+	getSaveState = () => {
+		return {
+			brushType: this.brushType,
+			brushColor: this.brushColor,
+			brushSize: this.brushSize,
+			brushFill: this.brushFill,
+			drawMeshOpacity: this.drawMeshOpacity
+		};
+	}
+
+	loadSaveState = ({brushType, brushColor, brushSize, brushFill, drawMeshOpacity}) => {
+		this.setBrushType(brushType)
+		this.setBrushColor(brushColor);
+		this.setBrushSize(brushSize);
+		this.setBrushFill(brushFill);
+		this.setDrawMeshOpacity(drawMeshOpacity);
 	}
 
 	enable = () => {

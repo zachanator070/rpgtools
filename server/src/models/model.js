@@ -39,6 +39,9 @@ const modelSchema = new Schema({
 	},
 	fileId: {
 		type: String
+	},
+	notes: {
+		type: String
 	}
 });
 

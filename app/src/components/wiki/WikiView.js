@@ -11,7 +11,7 @@ import {WikiEdit} from "./WikiEdit";
 import {WikiContent} from "./WikiContent";
 
 export const WikView = () => {
-	const {currentWiki, loading: wikiLoading} = useCurrentWiki();
+	const {currentWiki, loading: wikiLoading, refetch} = useCurrentWiki();
 	const {currentWorld, loading: worldLoading} = useCurrentWorld();
 	const match = useRouteMatch();
 
@@ -24,6 +24,7 @@ export const WikView = () => {
 				setVisibility={setPermissionModalVisibility}
 				subject={currentWiki}
 				subjectType={currentWiki.type}
+				refetch={refetch}
 			/>
 			<Row>
 				<Col span={4} className='padding-md'>

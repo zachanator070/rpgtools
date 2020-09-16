@@ -43,7 +43,10 @@ init-env:
 # runs development docker images
 dev-up:
 	mkdir -p dist
-	docker-compose up --build -d dev-server
+	docker-compose up -d dev-server
+
+build-dev:
+	docker-compose build --parallel dev-server
 
 # stops and destroys any running containers
 down:

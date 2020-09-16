@@ -13,9 +13,8 @@ import {SelectUser} from "../select/SelectUser";
 import {SelectRole} from "../select/SelectRole";
 
 
-export const PermissionEditor = ({subject, subjectType}) => {
+export const PermissionEditor = ({subject, subjectType, refetch}) => {
 
-	const {refetch} = useCurrentUser();
 	const [permissionGroup, setPermissionGroup] = useState('users');
 	const {grantUserPermission} = useGrantUserPermission();
 	const {grantRolePermission} = useGrantRolePermission();
@@ -38,7 +37,7 @@ export const PermissionEditor = ({subject, subjectType}) => {
 
 	useEffect(() => {
 		(async () => await updateSelectedPermission(possiblePermissions[0]))();
-	}, []);
+	}, [subject]);
 
 	if(subject === null || subjectType === null){
 		return <></>;
@@ -131,12 +130,11 @@ export const PermissionEditor = ({subject, subjectType}) => {
 							}
 							if(permissionGroup === 'users'){
 								await grantUserPermission(permissionAssigneeId, permission, subject._id, subjectType);
-								await refetch();
 							}
 							else{
 								await grantRolePermission(permissionAssigneeId, permission, subject._id, subjectType);
-								await refetch();
 							}
+							await refetch();
 						}}>Add {permissionGroup === 'users' ? 'user' : 'role'}</Button>
 					</Col>
 				</Row>

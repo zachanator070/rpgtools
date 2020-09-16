@@ -67,7 +67,7 @@ export const MapView = () => {
 			<div id='mapContainer' style={{position: 'relative', height: '100%'}}
 			     className='overflow-hidden flex-column flex-grow-1'>
 				{mapWikiData && mapWikiData.mapWiki &&
-				<div style={{zIndex: '1'}}>
+				<div style={{zIndex: '2'}}>
 					<MapDrawer/>
 				</div>
 				}

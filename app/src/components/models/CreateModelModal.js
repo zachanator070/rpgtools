@@ -33,6 +33,7 @@ export const CreateModelModal = ({visibility, setVisibility}) => {
 					depth: parseFloat(values.depth),
 					width: parseFloat(values.width),
 					height: parseFloat(values.height),
+					notes: values.notes,
 					worldId: currentWorld._id
 				});
 			}}
