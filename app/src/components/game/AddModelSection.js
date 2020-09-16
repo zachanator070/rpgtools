@@ -15,10 +15,11 @@ export const AddModelSection = ({renderer}) => {
 	return <>
 		<SelectModel
 			onChange={async (model) => await setSelectedModel(model)}
-			style={{marginBottom: '15px'}}
+			style={{marginBottom: '15px', width: 300}}
 		/>
 		<Button
 			type={'primary'}
+			className={'margin-lg'}
 			onClick={async () => {
 				await addModel({gameId: currentGame._id, modelId: selectedModel._id});
 			}}

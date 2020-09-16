@@ -80,10 +80,10 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 
 	const permission = {
 		CAMERA_CONTROLS: true,
-		PAINT_CONTROLS: currentGame.canWrite,
-		MOVE_MODEL_CONTROLS: currentGame.canWrite,
-		ROTATE_MODEL_CONTROLS: currentGame.canWrite,
-		DELETE_CONTROLS: currentGame.canWrite,
+		PAINT_CONTROLS: currentGame.canPaint,
+		MOVE_MODEL_CONTROLS: currentGame.canModel,
+		ROTATE_MODEL_CONTROLS: currentGame.canModel,
+		DELETE_CONTROLS: currentGame.canModel,
 		FOG_CONTROLS: currentGame.canWriteFog
 	}
 

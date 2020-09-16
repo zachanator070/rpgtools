@@ -84,6 +84,13 @@ export const ModelForm = ({callback, initialValues, loading, fileRequired=true})
 		>
 			<Input type={'number'}/>
 		</Form.Item>
+		<Form.Item
+			{...formItemLayout}
+			label={<div>Notes</div>}
+			name="notes"
+		>
+			<Input.TextArea rows={4}/>
+		</Form.Item>
 		<Form.Item {...tailLayout}>
 			<Button type="primary" htmlType="submit" loading={loading}>
 				Submit

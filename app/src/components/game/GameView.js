@@ -2,19 +2,19 @@ import React, {useEffect, useRef} from 'react';
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {LoadingView} from "../LoadingView";
 import {GameContent} from "./GameContent";
-import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
-import {Modal} from "antd";
+import {Modal, Button} from "antd";
 import {useHistory} from 'react-router-dom';
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useGameMapChangeSubscription} from "../../hooks/game/useGameMapChangeSubscription";
+import useMyGames from "../../hooks/game/useMyGames";
 
 
 export const GameView = () => {
 
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
 	const {currentGame, loading} = useCurrentGame();
+	const {refetch} = useMyGames();
 	const {data: mapChangeGame} = useGameMapChangeSubscription();
-	const [modal, contextHolder] = Modal.useModal();
 
 	const history = useHistory();
 
@@ -27,9 +27,18 @@ export const GameView = () => {
 				}
 			}
 			if(hostGone){
-				modal.warning({title: 'Host Gone', content: <p>The host has left the game. This game has ended.</p>, onOk: () => {
+				Modal.warning({
+					title: 'Host Gone',
+					closable: false,
+					footer: null,
+					content: <>
+						<p>The host has left the game. This game has ended.</p>
+						</>,
+					onOk: async () => {
+						await refetch();
 						history.push(`/ui/world/${currentWorld._id}/gameLogin`);
-					}});
+					}
+				});
 			}
 		}
 

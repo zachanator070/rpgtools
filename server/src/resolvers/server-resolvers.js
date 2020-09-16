@@ -109,8 +109,12 @@ export const serverResolvers = {
 		gameChat: {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator([GAME_CHAT_EVENT]),
-				(payload, {gameId}) => {
-					return payload.gameId === gameId;
+				(payload, {gameId}, {currentUser}) => {
+					return payload.gameId === gameId && (
+						payload.gameChat.sender === currentUser.username ||
+						payload.gameChat.receiver === currentUser.username ||
+						payload.gameChat.receiver === 'all'
+					);
 				}
 			),
 		},
@@ -366,10 +370,19 @@ export const serverResolvers = {
 			}
 			return models;
 		},
+		messages: async(game, _, {currentUser}) => {
+			return game.messages.filter(message => message.receiver === currentUser.username || message.receiver === 'all');
+		},
 		canWriteFog: async (game, _, {currentUser}) => {
 			return await game.userCanWriteFog(currentUser);
 		},
-		...permissionControlledInterfaceAttributes
+		canPaint: async (game, _, {currentUser}) => {
+			return await game.userCanPaint(currentUser);
+		},
+		canModel: async (game, _, {currentUser}) => {
+			return await game.userCanModel(currentUser);
+		},
+		...permissionControlledInterfaceAttributes,
 	},
 
 	Model: {

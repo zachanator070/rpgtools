@@ -100,6 +100,7 @@ export class ModelRenderer{
 		groundMesh.rotateX(-Math.PI/2);
 		groundMesh.position.set(0, -.01, 0);
 		groundMesh.receiveShadow = true;
+		groundMesh.material.side = THREE.DoubleSide;
 		this.scene.add(groundMesh);
 
 

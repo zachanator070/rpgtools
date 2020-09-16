@@ -4,6 +4,7 @@ import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "../../../common/src/type
 import {Role} from "./role";
 import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
 import {ANON_USERNAME} from "../../../common/src/permission-constants";
+import {PermissionAssignment} from "./permission-assignement";
 
 const Schema = mongoose.Schema;
 
@@ -129,6 +130,49 @@ userSchema.methods.hasRole = async function (role){
 		}
 	}
 	return false;
+};
+
+userSchema.methods.grantPermission = async function (permission, subjectId, subjectType){
+	if(await this.hasPermission(permission, subjectId)){
+		return;
+	}
+	let assignemnt = await PermissionAssignment.findOne({permission, subject: subjectId});
+	if(!assignemnt){
+		assignemnt = await PermissionAssignment.create({permission, subject: subjectId, subjectType});
+	}
+	this.permissions.push(assignemnt);
+	await this.save();
+
+};
+
+userSchema.methods.revokePermission = async function (permission, subjectId){
+	if(!await this.hasPermission(permission, subjectId)){
+		return;
+	}
+
+	if(subjectId instanceof String){
+		subjectId = new mongoose.Types.ObjectId(subjectId);
+	}
+
+	if(subjectId instanceof mongoose.Model){
+		subjectId = subjectId._id;
+	}
+
+	let foundAssignment = null;
+	for(let assignment of this.permissions){
+		if(assignment.subject instanceof mongoose.Types.ObjectId && assignment.subject.equals(subjectId)){
+			foundAssignment = assignment;
+			break;
+		}
+		else if(assignment.subject._id.equals(subjectId)){
+			foundAssignment = assignment;
+			break;
+		}
+	}
+	if(foundAssignment){
+		this.permissions = this.permissions.filter(assignemnt => !assignemnt._id.equals(foundAssignment._id));
+		await this.save();
+	}
 };
 
 userSchema.plugin(mongoosePaginate);

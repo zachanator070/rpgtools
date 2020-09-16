@@ -36,7 +36,7 @@ export const ModelEdit = ({model}) => {
 				<div className={'margin-lg'}>
 					<ModelForm
 						callback={async (values) => {
-							await updateModel(model._id, values.name, values.file ? values.file[0].originFileObj : null, values.depth, values.width, values.height);
+							await updateModel(model._id, values.name, values.file ? values.file[0].originFileObj : null, values.depth, values.width, values.height, values.notes);
 							history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`);
 						}}
 						initialValues={model}

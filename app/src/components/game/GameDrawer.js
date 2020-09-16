@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {Checkbox, Collapse, Comment, Input, Form, Button, List, Col, Row} from "antd";
@@ -18,21 +18,21 @@ import {AddModelSection} from "./AddModelSection";
 import {FogOptions} from "./FogOptions";
 import {TeamOutlined} from "@ant-design/icons";
 import {PermissionModal} from "../modals/PermissionModal";
+import useCurrentUser from "../../hooks/authentication/useCurrentUser";
+import {GameChat} from "./GameChat";
 
 export const GameDrawer = ({renderer}) => {
-	const {currentGame, loading} = useCurrentGame();
+	const {currentGame, loading, refetch: refetchCurrentGame} = useCurrentGame();
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
-	const {gameChat, loading: chatLoading} = useGameChat();
-	const [comment, setComment] = useState();
+	const {currentUser, loading: currentUserLoading} = useCurrentUser();
 	const [clearPaint, setClearPaint] = useState(false);
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 	const [setFog, setSetFog] = useState(false);
-	const {data: gameChatMessage} = useGameChatSubscription();
+
 	const {data: rosterChangeGame} = useGameRosterSubscription();
 	const history = useHistory();
 	const {setGameMap} = useSetGameMap();
 	const {refetch} = useMyGames();
-	const [messages, setMessages] = useState([]);
 
 	const [selectedLocation, setSelectedLocation] = useState();
 
@@ -41,42 +41,15 @@ export const GameDrawer = ({renderer}) => {
 		history.push(`/ui/world/${currentWorld._id}/gameLogin`);
 	});
 
-	useEffect(() => {
-		(async () => {
-			if(currentGame){
-				await setMessages(currentGame.messages);
-			}
-		})();
-	}, [currentGame]);
-
-	useEffect(() => {
-		(async () => {
-			if(gameChatMessage){
-				await setMessages(messages.concat([gameChatMessage]));
-			}
-		})();
-	}, [gameChatMessage]);
-
-	useEffect(() => {
-		const element = document.getElementById("chat");
-		if(element){
-			element.scrollTop = element.scrollHeight;
-		}
-	}, [messages])
-
-	if(loading || currentWorldLoading){
+	if(loading || currentWorldLoading || currentUserLoading){
 		return <></>;
 	}
 
-	const submitComment = async () => {
-		if(comment){
-			await gameChat(currentGame._id, comment);
-			await setComment(null);
-		}
-	};
-
 	return <>
-		<SlidingDrawer title={`Game ID: ${currentGame._id}`} startVisible={true} placement={'right'}>
+		<SlidingDrawer
+			title={`Game ID: ${currentGame._id}`}
+			startVisible={true}
+			placement={'right'}>
 			<Row>
 				<Col span={12}>
 					<Button className={'margin-lg'} type={'primary'} onClick={async () => {
@@ -90,6 +63,7 @@ export const GameDrawer = ({renderer}) => {
 							setVisibility={setPermissionModalVisibility}
 							subject={currentGame}
 							subjectType={GAME}
+							refetch={refetchCurrentGame}
 						/>
 						<a title={'View permissions for this page'} onClick={async () => {
 							await setPermissionModalVisibility(true);
@@ -99,7 +73,9 @@ export const GameDrawer = ({renderer}) => {
 					</div>
 				</Col>
 			</Row>
-			<Collapse defaultActiveKey={['1']}>
+			<Collapse
+				defaultActiveKey={['1']}
+			>
 				<Collapse.Panel header="Players" key="1">
 					<List
 						dataSource={currentGame.players}
@@ -112,46 +88,10 @@ export const GameDrawer = ({renderer}) => {
 						}
 					/>
 				</Collapse.Panel>
-				<Collapse.Panel header="Game Chat" key="2">
-					<div
-						id={'chat'}
-						style={{
-							overflowY: 'scroll',
-							overflowX: 'hidden',
-							height: '512px'
-						}}
-					>
-						<List
-							dataSource={messages}
-							itemLayout="horizontal"
-							locale={{emptyText: <div>No messages</div>}}
-							renderItem={({sender, timestamp, message}) => {
-								const date = new Date(parseInt(timestamp));
-								const hours = date.getHours();
-								const minutes = "0" + date.getMinutes();
-								const seconds = "0" + date.getSeconds();
-
-								return <Comment author={sender} content={<p>{message}</p>} datetime={`${hours}:${minutes.substr(-2)}:${seconds.substr(-2)}`}/>;
-							}}
-						/>
-					</div>
-
-					<Comment
-						content={
-							<>
-								<Form.Item>
-									<Input.TextArea disabled={chatLoading} rows={4} onChange={async value => {await setComment(value.target.value)}} value={comment} onPressEnter={submitComment}/>
-								</Form.Item>
-								<Form.Item>
-								<Button htmlType="submit" loading={chatLoading} onClick={submitComment} type="primary">
-									Add Comment
-								</Button>
-								</Form.Item>
-							</>
-						}
-					/>
+				<Collapse.Panel header="Game Chat" key="2" >
+					<GameChat/>
 				</Collapse.Panel>
-				{currentGame.canWrite &&
+				{currentGame.canPaint &&
 					<Collapse.Panel header="Brush Options" key="3">
 						<BrushOptions renderer={renderer}/>
 					</Collapse.Panel>
@@ -161,7 +101,7 @@ export const GameDrawer = ({renderer}) => {
 						<FogOptions renderer={renderer}/>
 					</Collapse.Panel>
 				}
-				{currentGame.canWrite &&
+				{currentGame.canModel &&
 					<Collapse.Panel header="Add Models" key="5">
 						<AddModelSection renderer={renderer}/>
 					</Collapse.Panel>

@@ -1,13 +1,7 @@
 import mongoose from 'mongoose';
 import {GAME, IMAGE, PLACE, WORLD} from "../../../common/src/type-constants";
 import {
-	GAME_ADMIN, GAME_ADMIN_ALL,
-	GAME_RW,
-	ROLE_ADMIN, ROLE_ADMIN_ALL,
-	WIKI_READ,
-	WIKI_READ_ALL,
-	WIKI_RW,
-	WIKI_RW_ALL
+	GAME_ADMIN, GAME_ADMIN_ALL, GAME_FOG_WRITE, GAME_MODEL, GAME_PAINT, GAME_READ, GAME_RW,
 } from "../../../common/src/permission-constants";
 
 const Schema = mongoose.Schema;
@@ -76,6 +70,10 @@ const gameSchema = new Schema({
 			type: String,
 			required: [true, 'sender required']
 		},
+		receiver: {
+			type: String,
+			required: [true, 'receiver required']
+		},
 		message: {
 			type: String,
 			required: [true, 'message required']
@@ -133,11 +131,19 @@ gameSchema.methods.userCanWrite = async function(user){
 };
 
 gameSchema.methods.userCanRead = async function(user){
-	return await this.userInGame(user);
+	return await user.hasPermission(GAME_READ, this._id) || await user.hasPermission(GAME_RW, this._id);
+};
+
+gameSchema.methods.userCanPaint = async function(user){
+	return await user.hasPermission(GAME_PAINT, this._id);
+};
+
+gameSchema.methods.userCanModel = async function(user){
+	return await user.hasPermission(GAME_MODEL, this._id);
 };
 
 gameSchema.methods.userCanWriteFog = async function(user){
-	return await user.hasPermission(GAME_RW, this._id);
+	return await user.hasPermission(GAME_FOG_WRITE, this._id);
 };
 
 export const Game = mongoose.model(GAME, gameSchema);

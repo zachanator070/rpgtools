@@ -93,8 +93,8 @@ export const typeDefs = gql`
         setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, rotation: Float!): PositionedModel!
         deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
         
-        createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!): Model!
-        updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!): Model!
+        createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!, notes: String): Model!
+        updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!, notes: String): Model!
         deleteModel(modelId: ID!): Model!
     }
   
@@ -316,6 +316,7 @@ export const typeDefs = gql`
 	
 	type GameMessage {
 		sender: String!
+		receiver: String!
 		message: String!
 		timestamp: String!
 	}
@@ -328,8 +329,10 @@ export const typeDefs = gql`
 		messages: [GameMessage!]!
 		host: User!
 		accessControlList: [PermissionAssignment!]!
-		canWrite: Boolean!
+		canPaint: Boolean!
+		canModel: Boolean!
 		canWriteFog: Boolean!
+		canWrite: Boolean!
 		canAdmin: Boolean!
 		strokes: [Stroke!]!
 		fog: [FogStroke!]!
@@ -372,6 +375,7 @@ export const typeDefs = gql`
 		height: Float!
 		fileName: String!
 		fileId: ID!
+		notes: String
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
