@@ -90,19 +90,29 @@ export const GameContent = ({currentGame}) => {
 					await setControlsMode(CAMERA_CONTROLS);
 					break;
 				case 'KeyP':
-					await setControlsMode(PAINT_CONTROLS);
+					if(currentGame.canPaint){
+						await setControlsMode(PAINT_CONTROLS);
+					}
 					break;
 				case 'KeyM':
-					await setControlsMode(MOVE_MODEL_CONTROLS);
+					if(currentGame.canModel){
+						await setControlsMode(MOVE_MODEL_CONTROLS);
+					}
 					break;
 				case 'KeyR':
-					await setControlsMode(ROTATE_MODEL_CONTROLS);
+					if(currentGame.canModel){
+						await setControlsMode(ROTATE_MODEL_CONTROLS);
+					}
 					break;
 				case 'KeyX':
-					await setControlsMode(DELETE_CONTROLS);
+					if(currentGame.canModel) {
+						await setControlsMode(DELETE_CONTROLS);
+					}
 					break;
 				case 'KeyF':
-					await setControlsMode(FOG_CONTROLS);
+					if(currentGame.canWriteFog){
+						await setControlsMode(FOG_CONTROLS);
+					}
 					break;
 			}
 		});

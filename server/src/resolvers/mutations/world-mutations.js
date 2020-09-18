@@ -13,6 +13,7 @@ import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
 import {PLACE, WORLD} from "../../../../common/src/type-constants";
 import {ServerConfig} from '../../models/server-config';
+import {getMonsters} from "../../open-5e-api-client";
 
 export const createWorld = async (name, isPublic, currentUser) => {
 
@@ -176,5 +177,16 @@ export const worldMutations = {
 				path: 'page map'
 			}}).execPopulate();
 		return world;
-	}
+	},
+	load5eContent: async (_, {worldId}, {currentUser}) => {
+		const world = await World.findById(worldId).populate('rootFolder');
+		if(!world){
+			throw new Error('World does not exist');
+		}
+		if(!await world.rootFolder.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to add a top level folder');
+		}
+		await getMonsters();
+		return world;
+	},
 };

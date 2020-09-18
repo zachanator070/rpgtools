@@ -87,6 +87,7 @@ export const SelectWorldModal = ({visibility, setVisibility}) => {
 							itemLayout="horizontal"
 							dataSource={worlds ? worlds.docs : []}
 							renderItem={getListItemComponent}
+							locale={{emptyText: <>No Worlds</>}}
 						/>
 					</div>
 				</Col>

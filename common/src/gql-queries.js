@@ -449,6 +449,13 @@ export const RENAME_WORLD = gql`
 		}
 	}
 `;
+export const LOAD_5E_CONTENT = gql`
+	mutation load5eContent($worldId: ID!){
+		load5eContent(worldId: $worldId){
+			_id
+		}
+	}
+`;
 export const REVOKE_ROLE_PERMISSION = gql`
 	mutation revokeRolePermission($roleId: ID!, $permissionAssignmentId: ID!){
 		revokeRolePermission(roleId: $roleId, permissionAssignmentId: $permissionAssignmentId){
