@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {Vector2, Vector3} from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {CameraControls} from "../controls/CameraControls";
-import {BRUSH_FOG, DEFAULT_MAP_SIZE, PaintControls} from "../controls/PaintControls";
+import {BRUSH_FOG, DEFAULT_BRUSH_SIZE, DEFAULT_MAP_SIZE, PaintControls} from "../controls/PaintControls";
 import {MoveControls} from "../controls/MoveControls";
 import {SelectControls} from "../controls/SelectControls";
 import {RotateControls} from "../controls/RotateControls";
@@ -279,8 +279,16 @@ export class GameRenderer{
 			this.addFogStroke,
 			.02
 		);
+
 		if(fogControlsSaveState){
 			this.fogControls.loadSaveState(fogControlsSaveState);
+		}
+		else{
+			// load default state
+			this.fogControls.setBrushFill(true);
+			this.fogControls.setBrushColor('#000000');
+			this.fogControls.setBrushType(BRUSH_FOG);
+			this.fogControls.setBrushSize(DEFAULT_BRUSH_SIZE);
 		}
 		this.fogControls.setupBrush();
 

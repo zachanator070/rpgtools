@@ -12,7 +12,7 @@ export const useGQLResponse = (query, data, error, displayErrors) => {
 		}
 		else if(error.networkError){
 			errorTitle = 'API Error';
-			errors = error.networkError.result.errors.map(networkError => networkError.message);
+			errors = error.networkError.result ? error.networkError.result.errors.map(networkError => networkError.message): [error.networkError.message];
 		}
 		else{
 			errors = [error.message];

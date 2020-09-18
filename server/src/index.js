@@ -12,6 +12,7 @@ import crypto from 'crypto';
 import * as http from "http";
 import {ServerConfig} from "./models/server-config";
 import {ModelRouter} from "./routers/model-router";
+import ExportRouter from "./routers/export-router";
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -57,6 +58,7 @@ const createServer = async () => {
 
 	server.use('/images', ImageRouter);
 	server.use('/models', ModelRouter);
+	server.use('/export', ExportRouter);
 
 	server.get('*', (req, res, next) => {
 		const needsSetup = serverNeedsSetup();

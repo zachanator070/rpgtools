@@ -112,7 +112,7 @@ const gameCommands = (game, message, currentUser) => {
 			description: 'Rolls dice for you. Displays results to all players.',
 			args: [{
 				name: 'DICE',
-				description: 'The dice that you wish to roll. Formatted <NUM>d<SIDES> where NUM is the number of dice to roll and SIDES is the number of sides on each dice'
+				description: 'The dice that you wish to roll. Formatted <NUM>d<SIDES> where <NUM> is the number of dice to roll and <SIDES> is the number of sides on each dice'
 			}],
 			options: [{
 				name: '-q',
