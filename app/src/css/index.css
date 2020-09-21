@@ -273,3 +273,7 @@ div.ant-upload-list-item {
 #viewer {
     border: none;
 }
+
+.ql-editor p{
+    font-size: medium;
+}

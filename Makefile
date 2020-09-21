@@ -46,7 +46,7 @@ dev-up:
 	docker-compose up -d dev-server
 
 build-dev:
-	docker-compose build --parallel dev-server
+	docker-compose build --parallel dev-server dev-builder
 
 # stops and destroys any running containers
 down:

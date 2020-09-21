@@ -12,6 +12,7 @@
     "apollo-server": "^2.14.2",
     "apollo-server-express": "latest",
     "apollo-server-testing": "^2.11.0",
+    "archiver": "^5.0.2",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
@@ -23,6 +24,7 @@
     "jest": "^26.4.0",
     "jimp": "^0.16.0",
     "jsonwebtoken": "^8.5.1",
+    "markdown-to-quill-delta": "^0.6.0",
     "minimist": ">=1.2.2",
     "mongodb": "^3.5.2",
     "mongoose": ">=5.7.5",
@@ -31,6 +33,7 @@
     "mongoose-paginate-v2": "^1.3.6",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.1",
+    "unzipper": "^0.10.11",
     "uuid": "^7.0.2"
   },
   "devDependencies": {}

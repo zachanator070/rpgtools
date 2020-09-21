@@ -5,7 +5,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 import {LoadingView} from "../LoadingView";
 import {PLACE} from "../../../../common/src/type-constants";
-import {Tooltip} from "antd";
+import {Button, Tooltip} from "antd";
 import {QuestionCircleOutlined} from '@ant-design/icons';
 
 
@@ -37,15 +37,15 @@ export const WikiContent = ({currentWiki}) => {
 
 	let coverImage = null;
 	if (currentWiki.coverImage) {
-		coverImage = <div className='padding-md' style={{width: '100%'}}>
-			<img alt={currentWiki.coverImage.name} style={{"objectFit": "contain", width: '100%'}}
+		coverImage = <div className='padding-md' style={{maxHeight: "500em", maxWidth: "500em"}}>
+			<img alt={currentWiki.coverImage.name} style={{"objectFit": "contain"}}
 			      src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}/>
 		</div>;
 	}
 
 	let mapIcon = null;
 	if (currentWiki.type === 'Place' && currentWiki.mapImage) {
-		mapIcon = <div className='padding-md' style={{width: '100%'}}>
+		mapIcon = <div className='padding-md' style={{maxHeight: "100em", maxWidth: "100em"}}>
 			<img alt={currentWiki.mapImage.name} style={{"objectFit": "contain"}}
 			     src={`/images/${currentWiki.mapImage.icon.chunks[0].fileId}`}/>
 			<span className='margin-md-left'>
@@ -76,7 +76,7 @@ export const WikiContent = ({currentWiki}) => {
 			<h2>{currentWiki.type}</h2>
 			{coverImage}
 			{mapIcon}
-			{currentWiki.type === PLACE && <>
+			{currentWiki.type === PLACE && currentWiki.mapImage && <>
 				Pixels per foot: {currentWiki.pixelsPerFoot}
 				<Tooltip title={'Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game.'}>
 					<QuestionCircleOutlined className={'margin-lg-left'}/>
@@ -98,6 +98,16 @@ export const WikiContent = ({currentWiki}) => {
 						<EditOutlined />Edit
 					</a>
 				}
+			</div>
+			<div className={'margin-lg'}>
+				<Button
+					type='primary'
+					onClick={() => {
+						window.location = `/export/${currentWiki.type}/${currentWiki._id}`;
+					}}
+		        >
+					Export
+				</Button>
 			</div>
 		</div>
 	);

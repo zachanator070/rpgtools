@@ -60,7 +60,7 @@ export const wikiMutations = {
 				writeStream = gfs.openUploadStream(wikiPageContent.filename);
 			}
 			else{
-				writeStream = gfs.openUploadStream(`wikiContent.${wikiPage._id}`);
+				writeStream = gfs.openUploadStream(`wikiContent.${wikiPage._id}.json`);
 			}
 			await new Promise((resolve, reject) => {
 

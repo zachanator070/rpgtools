@@ -51,8 +51,8 @@ export const createSessionContext = async ({req, res, connection}) => {
 				if (currentUser && currentUser.tokenVersion === data.version) {
 					console.log('Access token and refresh token renewed b/c refresh token still valid');
 					let tokens = await createTokens(currentUser);
-					res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms});
-					res.cookie('refreshToken', tokens.refreshToken, {maxAge: REFRESH_TOKEN_MAX_AGE.ms});
+					res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms, secure: false});
+					res.cookie('refreshToken', tokens.refreshToken, {maxAge: REFRESH_TOKEN_MAX_AGE.ms, secure: false});
 				} else {
 					// refreshToken was invalidated
 					console.log(`Refresh token expired because version did not match ${currentUser.tokenVersion} !== ${data.version}`);

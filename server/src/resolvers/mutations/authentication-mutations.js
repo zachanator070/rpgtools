@@ -24,8 +24,8 @@ export const authenticationMutations = {
 		let user = await User.findOne({username});
 		if (user && bcrypt.compareSync(password, user.password)) {
 			let tokens = await createTokens(user);
-			res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms});
-			res.cookie('refreshToken', tokens.refreshToken, {maxAge: REFRESH_TOKEN_MAX_AGE.ms});
+			res.cookie('accessToken', tokens.accessToken, {maxAge: ACCESS_TOKEN_MAX_AGE.ms, secure: false});
+			res.cookie('refreshToken', tokens.refreshToken, {maxAge: REFRESH_TOKEN_MAX_AGE.ms, secure: false});
 			return user;
 		}
 		throw Error('Login failure: username or password are incorrect');

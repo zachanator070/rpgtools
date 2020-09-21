@@ -1,6 +1,8 @@
 import {PermissionAssignment} from "./models/permission-assignement";
 import {Role} from './models/role';
 import {User} from './models/user';
+import {GridFSBucket} from "mongodb";
+import mongoose from "mongoose";
 
 export const cleanUpPermissions = async (subjectId) => {
 	const assignments = await PermissionAssignment.find({subject: subjectId});
@@ -17,4 +19,23 @@ export const cleanUpPermissions = async (subjectId) => {
 		}
 		await PermissionAssignment.deleteOne({_id: assignment._id});
 	}
+};
+
+export const createGfsFile = async (filename, readStream) => {
+	return new Promise((resolve, reject) => {
+
+		const gfs = new GridFSBucket(mongoose.connection.db);
+		const writeStream = gfs.openUploadStream(filename);
+
+		writeStream.on('finish', (file) => {
+			resolve(file._id);
+		});
+
+		writeStream.on('error', (err) => {
+			reject(err);
+			throw err;
+		});
+
+		readStream.pipe(writeStream);
+	});
 };

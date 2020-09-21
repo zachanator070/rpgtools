@@ -6,10 +6,11 @@ import Snow from 'quill/themes/snow';
 import Bold from 'quill/formats/bold';
 import Italic from 'quill/formats/italic';
 import Header from 'quill/formats/header';
-import mention from "quill-mention";
+import "quill-mention";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
+import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {LoadingView} from "../LoadingView";
@@ -22,7 +23,6 @@ Quill.register({
 	'formats/bold': Bold,
 	'formats/italic': Italic,
 	'formats/header': Header,
-	'modules/mention': mention
 });
 
 export const Editor = ({content, readOnly, onInit}) => {
@@ -43,34 +43,53 @@ export const Editor = ({content, readOnly, onInit}) => {
 
 	const {searchWikiPages} = useSearchWikiPages();
 
+	const toolBar = [
+		['bold', 'italic', 'underline', 'strike'],
+		['blockquote', 'code-block'],
+
+		[{ 'header': 1 }, { 'header': 2 }],
+		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+		[{ 'script': 'sub'}, { 'script': 'super' }],
+		[{ 'indent': '-1'}, { 'indent': '+1' }],
+		[{ 'direction': 'rtl' }],
+
+		[{ 'size': ['small', false, 'large', 'huge'] }],
+		[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+		[{ 'color': [] }, { 'background': [] }],
+		[{ 'font': [] }],
+		[{ 'align': [] }],
+
+		['clean'],
+		['image']
+	];
+
 	useEffect(() => {
 		if(currentWorld && !editorCreated.current){
 			const options = {
 				theme: 'snow',
 				readOnly: readOnly,
 				modules: {
-					toolbar: readOnly ? false : [
-						[{header: [1, 2, false]}],
-						['bold', 'italic', 'underline'],
-						['image', 'code-block']
-					],
+					toolbar: readOnly ? false : toolBar,
 					mention: {
 						dataAttributes: ['id', 'value', 'denotationChar', 'link', 'target'],
 						isolateCharacter: false,
-						source: (searchTerm, renderList, mentionChar) => {
+						source: async (searchTerm, renderList, mentionChar) => {
 							if (searchTerm === "") {
 								return renderList([], searchTerm);
 							}
-							searchWikiPages(searchTerm, currentWorld._id).then( (results) => {
-								let pages = results.searchWikiPages;
-								renderList(pages.map((result) => {
-									let url = `/ui/world/${currentWorld._id}/wiki/${result._id}/view`;
-									result.value = result.name;
-									result.link = url;
-									result.target = "_self";
-									return result;
-								}), searchTerm);
-							});
+							const allWikis = [];
+							for(let folder of currentWorld.folders){
+								allWikis.push(...folder.pages);
+							}
+							const results = allWikis.filter(wiki => wiki.name.toLowerCase().includes(searchTerm.toLowerCase()));
+							renderList(results.map((result) => {
+								let url = `/ui/world/${currentWorld._id}/wiki/${result._id}/view`;
+								result.value = result.name;
+								result.link = url;
+								result.target = "_self";
+								return result;
+							}), searchTerm);
 						},
 					}
 				},
@@ -92,5 +111,11 @@ export const Editor = ({content, readOnly, onInit}) => {
 		return <LoadingView/>;
 	}
 
-	return <div id="editor"/>;
+	return <div
+		id="editor"
+		style={{
+			color: 'black'
+		}}
+	/>;
+
 };

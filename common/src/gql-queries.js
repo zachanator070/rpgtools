@@ -450,10 +450,21 @@ export const RENAME_WORLD = gql`
 	}
 `;
 export const LOAD_5E_CONTENT = gql`
-	mutation load5eContent($worldId: ID!){
-		load5eContent(worldId: $worldId){
+	mutation load5eContent($worldId: ID!, $creatureCodex: Boolean, $tomeOfBeasts: Boolean){
+		load5eContent(worldId: $worldId, creatureCodex: $creatureCodex, tomeOfBeasts: $tomeOfBeasts){
 			_id
+			folders{
+			    ${CURRENT_WORLD_FOLDERS}
+		    }
+		    rootFolder{
+			    ${CURRENT_WORLD_FOLDERS}
+		    }
 		}
+	}
+`;
+export const IMPORT_CONTENT = gql`
+	mutation importContent($worldId: ID!, $zipFile: Upload!){
+		importContent(worldId: $worldId, zipFile: $zipFile)
 	}
 `;
 export const REVOKE_ROLE_PERMISSION = gql`

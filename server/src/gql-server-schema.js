@@ -47,7 +47,8 @@ export const typeDefs = gql`
         
         createWorld(name: String!, public: Boolean!): World!
         renameWorld(worldId: ID!, newName: String!): World!
-        load5eContent(worldId: ID!): World!
+        load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
+        importContent(worldId: ID!, zipFile: Upload!): Boolean!
         
         createRole(worldId: ID!, name: String!): World!
         deleteRole(roleId: ID!): World!

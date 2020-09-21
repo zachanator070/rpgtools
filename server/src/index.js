@@ -33,6 +33,11 @@ mongoose.set('useUnifiedTopology', true);
 const createServer = async () => {
 	const server = express();
 
+	server.use(bodyParser.json());
+	server.use(morgan('tiny'));
+
+	server.use(cookieParser());
+
 	await checkConfig();
 	const serverConfig = await ServerConfig.findOne();
 	if(serverNeedsSetup()){
@@ -80,11 +85,6 @@ const createServer = async () => {
 
 	server.use(express.static('../dist'));
 	server.use(express.static('src/static-assets'));
-
-	server.use(bodyParser.json());
-	server.use(morgan('tiny'));
-
-	server.use(cookieParser());
 
 	gqlServer.applyMiddleware({app: server, path: '/api'});
 
