@@ -8,7 +8,7 @@ export const useSearchWikiPages = () => {
 	const [filter, setFilter] = useState({name: null, type: null});
 	useEffect(() => {
 		(async () => {
-			if(!loading){
+			if(currentWorld){
 				let newWikis = [];
 				for(let folder of currentWorld.folders){
 					newWikis = newWikis.concat(folder.pages);
@@ -18,11 +18,14 @@ export const useSearchWikiPages = () => {
 		})();
 	},[currentWorld]);
 
+	const getWikis = (name, type) => name ? allWikis.filter(wiki => wiki.name.toLowerCase().includes(name.toLowerCase()) && (type === null || wiki.type === type)) : []
+
 	return {
 		searchWikiPages: async (name, type = null) => {
 			await setFilter({name, type});
+			return getWikis(name, type);
 		},
 		loading,
-		wikis: filter.name ? allWikis.filter(wiki => wiki.name.toLowerCase().includes(filter.name.toLowerCase()) && (filter.type === null || wiki.type === filter.type)) : [],
+		wikis: getWikis(filter.name, filter.type),
 	}
 };

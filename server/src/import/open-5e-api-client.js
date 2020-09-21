@@ -25,12 +25,6 @@ const get  = async function* (resource){
 	}
 }
 
-export const getMonsters = async () => {
-	const monsters = get('/monsters/');
-	let count = 0;
-
-	for await (let monster of monsters){
-		count ++;
-	}
-	console.log(count);
+export const getMonsters = () => {
+	return get('/monsters/');
 }

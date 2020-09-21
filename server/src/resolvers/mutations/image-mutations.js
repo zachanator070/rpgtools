@@ -35,7 +35,7 @@ function createChunk(x, y, height, width, image, parentImage){
 
 		Jimp.read(image).then((copy) => {
 			copy.crop( x * chunkSize, y * chunkSize, width, height);
-			const newFilename = `chunk.${x}.${y}.${parentImage.name}`;
+			const newFilename = `${parentImage._id}.chunk.${x}.${y}.${image.getExtension()}`;
 			const writeStream = gfs.openUploadStream(
 				newFilename,
 				{contentType: image.getMIME()}
@@ -88,7 +88,7 @@ function makeIcon(jimpImage, newImage) {
 				.then(image => {
 
 					image.scaleToFit(chunkSize, chunkSize, (err, scaledImage) => {
-						const newFilename = `chunk.0.0.${newImage.name}`;
+						const newFilename = `${newImage._id}.chunk.0.0.${jimpImage.getExtension()}`;
 						const writeStream = gfs.openUploadStream(
 							newFilename,
 							{contentType: jimpImage.getMIME()}
@@ -105,7 +105,7 @@ function makeIcon(jimpImage, newImage) {
 						};
 
 						writeStream.on('finish', (file) => {
-							Image.create(iconSchema, (err, newImage) => {
+							Image.create(iconSchema, (err, iconImage) => {
 								if (err) {
 									return reject(err);
 								}
@@ -115,17 +115,17 @@ function makeIcon(jimpImage, newImage) {
 									width: scaledImage.bitmap.width,
 									height: scaledImage.bitmap.height,
 									fileId: file._id,
-									image: newImage._id
+									image: iconImage._id
 								}, (err, chunk) => {
 									if (err) {
 										return reject(err);
 									}
-									newImage.chunks = [chunk._id];
-									newImage.save((err) => {
+									iconImage.chunks = [chunk._id];
+									iconImage.save((err) => {
 										if (err) {
 											return reject(err);
 										}
-										foundImage.icon = newImage._id;
+										foundImage.icon = iconImage._id;
 										foundImage.save((err) => {
 											if (err) {
 												return reject(err);
@@ -151,7 +151,7 @@ function makeIcon(jimpImage, newImage) {
 }
 
 export const imageMutations = {
-	createImage: async (parent, {file, worldId, chunkify}) => {
+	createImage: async (_, {file, worldId, chunkify}) => {
 		// @TODO need to check a permission here
 		if(chunkify === null){
 			chunkify = true;

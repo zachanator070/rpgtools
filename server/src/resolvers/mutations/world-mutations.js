@@ -11,9 +11,18 @@ import {Role} from "../../models/role";
 import {EVERYONE, WORLD_OWNER} from "../../../../common/src/role-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
-import {PLACE, WORLD} from "../../../../common/src/type-constants";
+import {ARTICLE, PLACE, WORLD} from "../../../../common/src/type-constants";
 import {ServerConfig} from '../../models/server-config';
-import {getMonsters} from "../../open-5e-api-client";
+import {getMonsters} from "../../import/open-5e-api-client";
+import {monsterToDelta} from "../../import/5e-to-quill-delta";
+import {Article} from "../../models/article";
+import {Readable} from 'stream';
+import {createGfsFile} from "../../db-helpers";
+import fetch from "node-fetch";
+import {imageMutations} from "./image-mutations";
+import unzipper from 'unzipper';
+import mongoose from 'mongoose';
+import {importFiles, SUPPORTED_TYPES} from "../../import";
 
 export const createWorld = async (name, isPublic, currentUser) => {
 
@@ -178,7 +187,7 @@ export const worldMutations = {
 			}}).execPopulate();
 		return world;
 	},
-	load5eContent: async (_, {worldId}, {currentUser}) => {
+	load5eContent: async (_, {worldId, creatureCodex, tomeOfBeasts}, {currentUser}) => {
 		const world = await World.findById(worldId).populate('rootFolder');
 		if(!world){
 			throw new Error('World does not exist');
@@ -186,7 +195,102 @@ export const worldMutations = {
 		if(!await world.rootFolder.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to add a top level folder');
 		}
-		await getMonsters();
+		const topFolder = await WikiFolder.create({name: '5e', world});
+		world.rootFolder.children.push(topFolder);
+		await world.rootFolder.save();
+		const createWikiContentFile = async (wikiId, content) => {
+
+			const readStream = Readable.from(content);
+			const filename = `wikiContent.${wikiId}`;
+			return createGfsFile(filename, readStream);
+
+		};
+
+		const monsterFolder = await WikiFolder.create({name: 'Monsters', world});
+		topFolder.children.push(monsterFolder);
+		await topFolder.save();
+		const monsters = getMonsters();
+		for await (let monster of monsters){
+			if(monster.document__slug === 'cc' && !creatureCodex){
+				continue;
+			}
+			if(monster.document__slug === 'tob' && !tomeOfBeasts){
+				continue;
+			}
+			const content = monsterToDelta(monster);
+			const page = await Article.create({name: monster.name, type: ARTICLE, world});
+			page.contentId = await createWikiContentFile(page._id, JSON.stringify(content));
+			if(monster.img_main){
+				const imageResponse = await fetch(monster.img_main);
+				page.coverImage = await imageMutations.createImage(null, {file: {filename: monster.img_main, createReadStream: () => imageResponse.body}, worldId: world._id, chunkify: false});
+			}
+			await page.save();
+			monsterFolder.pages.push(page);
+		}
+
+		await monsterFolder.save();
+
 		return world;
 	},
+	importContent: async (_, {worldId, zipFile}, {currentUser}) => {
+		const world = await World.findById(worldId).populate('rootFolder');
+		if(!world){
+			throw new Error('World does not exist');
+		}
+		if(!await world.rootFolder.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to add a top level folder');
+		}
+
+		zipFile = await zipFile;
+		const stream = zipFile.createReadStream();
+
+		const importedFiles = {};
+
+		await new Promise((resolve, reject) => {
+			const allImportPromises = [];
+			stream.pipe(unzipper.Parse())
+				.on('entry', async (entry) => {
+					const fileName = entry.path;
+					const modelName = fileName.split('.')[0];
+					if(SUPPORTED_TYPES.includes(modelName)){
+						allImportPromises.push(
+							new Promise((resolve, reject) => {
+								const rawData = [];
+								entry.on('data', (data) => {
+									rawData.push(data);
+								});
+								entry.on('end', () => {
+									resolve(rawData);
+								});
+								entry.on('error', (err) => {
+									reject(err);
+								});
+							}).then((buffer) => {
+									importedFiles[fileName] = buffer.toString();
+							})
+						);
+					}
+					else{
+						allImportPromises.push(
+							createGfsFile(fileName, entry).then((fileId) => {
+								importedFiles[fileName] = fileId;
+							})
+						);
+					}
+				})
+				.on('error', (error) => {
+					console.warn(error);
+					reject(error);
+				})
+				.on('finish', async () => {
+					await Promise.all(allImportPromises);
+					resolve();
+				});
+		});
+
+
+		await importFiles(importedFiles, world);
+
+		return true;
+	}
 };
