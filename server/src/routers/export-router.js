@@ -1,6 +1,6 @@
 import express from "express";
 import {createSessionContext} from "../authentication-helpers";
-import {ALL_WIKI_TYPES, ARTICLE} from "../../../common/src/type-constants";
+import {ALL_WIKI_TYPES, ARTICLE, PLACE} from "../../../common/src/type-constants";
 import {Article} from "../models/article";
 import mongodb, {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
@@ -42,7 +42,29 @@ const prepImage = async (image, archive) => {
 };
 
 const prepWikiPage = async (page, archive) => {
-	const pageObject = page.toJSON();
+	let pageObject = page.toJSON();
+
+	switch (page.constructor.modelName){
+		case PLACE:
+			await page.populate({
+				path: 'mapImage',
+				populate: {
+					path: 'icon chunks',
+					populate: {
+						path: 'chunks'
+					}
+				}
+			}).execPopulate();
+			pageObject = page.toJSON();
+			if(pageObject.mapImage){
+				await prepImage(pageObject.mapImage, archive);
+				if(pageObject.mapImage.icon){
+					await prepImage(pageObject.mapImage.icon, archive);
+				}
+			}
+			break;
+	}
+
 	if(pageObject.coverImage){
 		await prepImage(pageObject.coverImage, archive);
 		if(pageObject.coverImage.icon){
@@ -54,12 +76,7 @@ const prepWikiPage = async (page, archive) => {
 		archive.append(getReadStreamFromFile(contentFile), {name: contentFile.filename});
 		pageObject.contentId = contentFile.filename;
 	}
-	switch (page.constructor.modelName){
-		case ARTICLE:
-			break;
-		default:
-			throw new Error(`Model ${page.constructor.modelName} not supported`);
-	}
+
 	archive.append(Readable.from([JSON.stringify(pageObject)]), {name: `${page.constructor.modelName}.${pageObject._id}.json`});
 }
 

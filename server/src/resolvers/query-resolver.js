@@ -172,8 +172,7 @@ export default {
 		}
 
 		const permissions = [];
-		await world.populate('folders').execPopulate();
-		const folders = await WikiFolder.find({world});
+		const folders = await WikiFolder.find({world}).populate('pages');
 		const roles = await Role.find({world});
 		for(let permission of currentUser.allPermissions){
 			const subjectId = permission.subject._id;
@@ -183,7 +182,7 @@ export default {
 				keepPermission = true;
 			}
 			else if(subjectType === WIKI_FOLDER){
-				for(let folder of world.folders){
+				for(let folder of folders){
 					if(folder._id.equals(subjectId)){
 						keepPermission = true;
 						break;
