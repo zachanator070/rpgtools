@@ -289,7 +289,13 @@ export const worldMutations = {
 		});
 
 
-		await importFiles(importedFiles, world);
+		try{
+			await importFiles(importedFiles, world);
+		}
+		catch (e) {
+			console.log(e.message);
+			return false;
+		}
 
 		return true;
 	}

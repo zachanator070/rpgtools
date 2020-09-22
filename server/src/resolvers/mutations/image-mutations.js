@@ -87,28 +87,30 @@ function makeIcon(jimpImage, newImage) {
 			Jimp.read(jimpImage)
 				.then(image => {
 
-					image.scaleToFit(chunkSize, chunkSize, (err, scaledImage) => {
-						const newFilename = `${newImage._id}.chunk.0.0.${jimpImage.getExtension()}`;
-						const writeStream = gfs.openUploadStream(
-							newFilename,
-							{contentType: jimpImage.getMIME()}
-						);
+					const iconSchema = {
+						name: 'icon.' + newImage.name,
+						chunkList: [],
+						world: newImage.world._id,
+						chunkHeight: 1,
+						chunkWidth: 1,
+						width: chunkSize,
+						height: chunkSize
+					};
 
-						const iconSchema = {
-							name: 'icon.' + newImage.name,
-							chunkList: [],
-							world: newImage.world._id,
-							chunkHeight: 1,
-							chunkWidth: 1,
-							width: scaledImage.bitmap.width,
-							height: scaledImage.bitmap.height
-						};
+					Image.create(iconSchema, (err, iconImage) => {
+						if (err) {
+							return reject(err);
+						}
 
-						writeStream.on('finish', (file) => {
-							Image.create(iconSchema, (err, iconImage) => {
-								if (err) {
-									return reject(err);
-								}
+						image.scaleToFit(chunkSize, chunkSize, (err, scaledImage) => {
+							const newFilename = `${iconImage._id}.chunk.0.0.${jimpImage.getExtension()}`;
+							const writeStream = gfs.openUploadStream(
+								newFilename,
+								{contentType: jimpImage.getMIME()}
+							);
+
+							writeStream.on('finish', (file) => {
+
 								Chunk.create({
 									x: 0,
 									y: 0,
@@ -135,12 +137,12 @@ function makeIcon(jimpImage, newImage) {
 									});
 								});
 							});
-						});
-						writeStream.on('error', function (err) {
-							return reject(err);
-						});
-						scaledImage.getBuffer(jimpImage.getMIME(), (err, buffer) => {
-							writeStream.end(buffer);
+							writeStream.on('error', function (err) {
+								return reject(err);
+							});
+							scaledImage.getBuffer(jimpImage.getMIME(), (err, buffer) => {
+								writeStream.end(buffer);
+							});
 						});
 					});
 				}).catch(err => {

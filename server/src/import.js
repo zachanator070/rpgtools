@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
-import {ALL_WIKI_TYPES, ARTICLE} from "../../common/src/type-constants";
+import {ALL_WIKI_TYPES, ARTICLE, PLACE} from "../../common/src/type-constants";
 import {Chunk} from "./models/chunk";
+import {Image} from './models/image';
 
-export const SUPPORTED_TYPES = [ARTICLE];
+export const SUPPORTED_TYPES = [ARTICLE, PLACE];
 
 const normalizeImage = async (properties, importedFiles, world) => {
+	delete properties._id;
 	const chunks = [...properties.chunks];
 	properties.chunks = [];
 	properties.world = world;
@@ -13,13 +15,14 @@ const normalizeImage = async (properties, importedFiles, world) => {
 	}
 	const image = await Image.create(properties);
 	for(let chunk of chunks){
-		chunk.fileId = Object.keys(importedFiles)[chunk.fileId];
+		delete chunk._id;
+		chunk.fileId = importedFiles[chunk.fileId];
 		if(!chunk.fileId){
 			throw new Error(`chunk file ${chunk.fileId} not found!`);
 		}
 		chunk.world = world;
 		chunk.image = image;
-		properties.chunks.push(await Chunk.create(chunk));
+		image.chunks.push(await Chunk.create(chunk));
 	}
 	await image.save();
 	return image;
@@ -27,6 +30,7 @@ const normalizeImage = async (properties, importedFiles, world) => {
 
 const normalizeWikiPage = async (properties, importedFiles, world) => {
 
+	delete properties._id;
 	properties.world = world;
 
 	if(properties.contentId){
@@ -41,24 +45,31 @@ const normalizeWikiPage = async (properties, importedFiles, world) => {
 	}
 };
 
+const normalizePlace = async (properties, importedFiles, world) => {
+	if(properties.mapImage){
+		properties.mapImage = await normalizeImage(properties.mapImage, importedFiles, world);
+	}
+};
+
 export const importFiles = async (importedFiles, world) => {
+
+	const wikiFolder = world.rootFolder;
 
 	for(let fileName of Object.keys(importedFiles)){
 		const file = importedFiles[fileName];
 		const modelName = fileName.split('.')[0];
-
-		if(SUPPORTED_TYPES.includes(modelName)) {
+		if(ALL_WIKI_TYPES.includes(modelName)){
 			const model = mongoose.model(modelName);
 			const properties = JSON.parse(file);
-			if(ALL_WIKI_TYPES.includes(modelName)){
-				await normalizeWikiPage(properties, importedFiles, world);
-				switch (modelName){
-					case ARTICLE:
-						const article = await model.create(properties);
-						break;
-				}
+			await normalizeWikiPage(properties, importedFiles, world);
+			switch(modelName){
+				case PLACE:
+					await normalizePlace(properties, importedFiles, world);
+					break;
 			}
+			importedFiles[fileName] = await model.create(properties);
+			wikiFolder.pages.push(importedFiles[fileName]);
+			await wikiFolder.save();
 		}
-
 	}
 }
