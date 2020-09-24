@@ -1,4 +1,4 @@
-VERSION=`git describe --abbrev=0 --tags`
+VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(id -u):$(id -g)
 export CURRENT_UID
 
