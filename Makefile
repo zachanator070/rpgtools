@@ -30,7 +30,7 @@ build-with-stats: BUILD_WITH_STATS=true
 build-with-stats: prod-builder
 
 # runs production version of docker image with minimal depending services
-prod: build
+prod:
 	docker-compose up --build prod-server
 
 # runs development docker environment with auto transpiling and restarting services upon file change
