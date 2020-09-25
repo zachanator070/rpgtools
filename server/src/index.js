@@ -13,6 +13,7 @@ import * as http from "http";
 import {ServerConfig} from "./models/server-config";
 import {ModelRouter} from "./routers/model-router";
 import ExportRouter from "./routers/export-router";
+import {graphqlUploadExpress} from 'graphql-upload';
 
 const mongodb_host = process.env.MONGODB_HOST || "mongodb";
 const mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -85,6 +86,7 @@ const createServer = async () => {
 
 	server.use(express.static('../dist'));
 	server.use(express.static('src/static-assets'));
+	server.use(graphqlUploadExpress());
 
 	gqlServer.applyMiddleware({app: server, path: '/api'});
 

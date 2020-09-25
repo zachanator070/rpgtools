@@ -65,7 +65,7 @@ export const WikiEdit = () => {
 			await setType(currentWiki.type);
 		})();
 
-	}, []);
+	}, [currentWiki]);
 
 	if (!currentWiki) {
 		return (<div>{`404 - wiki ${wiki_id} not found`}</div>);
@@ -144,7 +144,10 @@ export const WikiEdit = () => {
 			</div>
 			<div className='margin-lg'>
 				<Upload
-					beforeUpload={setCoverToUpload}
+					beforeUpload={(file) => {
+						setCoverToUpload(file);
+						return false;
+					}}
 					multiple={false}
 					listType={'picture'}
 					fileList={coverImageList}
