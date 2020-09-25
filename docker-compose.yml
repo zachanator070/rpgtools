@@ -22,7 +22,7 @@ services:
       - rpgtools
 
   prod-server:
-    image: rpgtools:latest
+    image: zachanator070/rpgtools:latest
     env_file:
       - .env
     ports:
