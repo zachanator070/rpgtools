@@ -25,7 +25,6 @@ export const WorldMenu = () => {
 		<Menu>
 			{currentUser.username !== ANON_USERNAME &&
 				<Menu.Item key="0">
-					<CreateWorldModal visibility={createWorldModalVisibility} setVisibility={setCreateWorldModalVisibility}/>
 					<a
 						href="#"
 					   onClick={async () => await setCreateWorldModalVisibility(true)}
@@ -45,6 +44,7 @@ export const WorldMenu = () => {
 
 	return (
 		<span>
+			<CreateWorldModal visibility={createWorldModalVisibility} setVisibility={setCreateWorldModalVisibility}/>
 			<Dropdown overlay={menu} trigger={['click']}>
 				<Button>
 					{currentWorld ? currentWorld.name : 'No World Selected'} <DownOutlined/>

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "apollo-server": "^2.14.2",
-    "apollo-server-express": "latest",
+    "apollo-server-express": "^2.18.1",
     "apollo-server-testing": "^2.11.0",
     "archiver": "^5.0.2",
     "bcrypt": "^5.0.0",
@@ -20,6 +20,7 @@
     "esm": "^3.2.25",
     "express": "latest",
     "graphql-tag": "^2.10.3",
+    "graphql-upload": "^11.0.0",
     "gridfs-stream": "^1.1.1",
     "jest": "^26.4.0",
     "jimp": "^0.16.0",

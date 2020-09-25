@@ -391,4 +391,5 @@ export const typeDefs = gql`
 		rotation: Float!
 	}
 	
+	scalar Upload
 `;

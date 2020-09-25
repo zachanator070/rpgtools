@@ -33,6 +33,7 @@ export default new ApolloServer({
         },
     },
 	context: createSessionContext,
+    uploads: false,
     subscriptions: {
         onConnect: async (connectionParams, webSocket) => {
             let currentUser = null;

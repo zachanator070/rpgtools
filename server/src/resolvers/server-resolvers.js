@@ -20,6 +20,7 @@ import {Image} from "../models/image";
 import {pubsub} from "../gql-server";
 import {Model} from '../models/model';
 import {withFilter} from 'apollo-server';
+import {GraphQLUpload} from "graphql-upload";
 
 const getPermissions = async (document, documentType, currentUser) => {
 	const permissions = await PermissionAssignment.find({subject: document, subjectType: documentType});
@@ -384,8 +385,8 @@ export const serverResolvers = {
 		},
 		...permissionControlledInterfaceAttributes,
 	},
-
 	Model: {
 		...permissionControlledInterfaceAttributes,
-	}
+	},
+	Upload: GraphQLUpload
 };
