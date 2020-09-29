@@ -14,6 +14,7 @@ import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {LoadingView} from "../LoadingView";
+import List, { ListItem } from 'quill/formats/list';
 
 Quill.debug('error');
 
@@ -23,6 +24,8 @@ Quill.register({
 	'formats/bold': Bold,
 	'formats/italic': Italic,
 	'formats/header': Header,
+	'formats/list': List,
+	'formats/list-item': ListItem,
 });
 
 export const Editor = ({content, readOnly, onInit}) => {
