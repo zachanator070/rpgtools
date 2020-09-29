@@ -2,8 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {SlidingDrawer} from "../SlidingDrawerV2";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {Checkbox, Collapse, Comment, Input, Form, Button, List, Col, Row} from "antd";
-import {useGameChat} from "../../hooks/game/useGameChat";
-import {useGameChatSubscription} from "../../hooks/game/useGameChatSubscription";
 import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
 import useLeaveGame from "../../hooks/game/useLeaveGame";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";

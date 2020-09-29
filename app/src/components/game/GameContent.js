@@ -37,6 +37,7 @@ export const GameContent = ({currentGame}) => {
 	const {data: modelPositioned} = useGameModelPositionedSubscription();
 	const {gameModelDeleted} = useGameModelDeletedSubscription();
 	const {gameFogStrokeAdded} = useGameFogSubscription();
+	const renderParent = useRef();
 
 	useEffect(() => {
 		(async () => {
@@ -207,6 +208,14 @@ export const GameContent = ({currentGame}) => {
 			}
 
 		})();
+
+		const resize = function(){
+			if(renderer){
+				renderer.resize(renderParent.current.clientWidth, renderParent.current.clientWidth);
+			}
+		}
+
+		window.addEventListener('resize', resize);
 	}, [currentGame, renderer]);
 
 	return <>
@@ -230,9 +239,18 @@ export const GameContent = ({currentGame}) => {
 			</div>
 		</Modal>
 		<div
-			style={{flexGrow:1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden'}}
+			style={{
+				flexGrow:1,
+				display: 'flex',
+				flexDirection: 'column',
+				position: 'relative',
+				overflow: 'hidden'}}
+			ref={renderParent}
 		>
-			<canvas ref={renderCanvas} style={{width: '100%', height: '100%'}}/>
+			<canvas ref={renderCanvas} style={{
+				flexGrow:1,
+				display: 'flex'
+			}}/>
 			<GameDrawer renderer={renderer}/>
 			<GameControlsHelp controlsMode={controlsMode} setControlsMode={setControlsMode}/>
 		</div>

@@ -1,4 +1,4 @@
-import markdownToDelta from "markdown-to-quill-delta";
+
 
 const getModifier = (score) => {
 	return Math.floor((score - 10) /2);

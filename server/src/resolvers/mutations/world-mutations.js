@@ -13,8 +13,8 @@ import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
 import {ARTICLE, PLACE, WORLD} from "../../../../common/src/type-constants";
 import {ServerConfig} from '../../models/server-config';
-import {getMonsters} from "../../import/open-5e-api-client";
-import {monsterToDelta} from "../../import/5e-to-quill-delta";
+import {getAdventuringSections, getMonsters} from "../../fiveEImport/open-5e-api-client";
+import {monsterToDelta} from "../../fiveEImport/5e-monster-to-quill-delta";
 import {Article} from "../../models/article";
 import {Readable} from 'stream';
 import {createGfsFile} from "../../db-helpers";
@@ -22,7 +22,9 @@ import fetch from "node-fetch";
 import {imageMutations} from "./image-mutations";
 import unzipper from 'unzipper';
 import mongoose from 'mongoose';
-import {importFiles, SUPPORTED_TYPES} from "../../import";
+import {importFiles, SUPPORTED_TYPES} from "../../import/import";
+import {sectionToDelta} from "../../fiveEImport/5e-section-to-quill-delta";
+import {FiveEImporter} from "../../fiveEImport/five-e-importer";
 
 export const createWorld = async (name, isPublic, currentUser) => {
 
@@ -198,37 +200,11 @@ export const worldMutations = {
 		const topFolder = await WikiFolder.create({name: '5e', world});
 		world.rootFolder.children.push(topFolder);
 		await world.rootFolder.save();
-		const createWikiContentFile = async (wikiId, content) => {
 
-			const readStream = Readable.from(content);
-			const filename = `wikiContent.${wikiId}`;
-			return createGfsFile(filename, readStream);
+		const importer = new FiveEImporter(world);
 
-		};
-
-		const monsterFolder = await WikiFolder.create({name: 'Monsters', world});
-		topFolder.children.push(monsterFolder);
-		await topFolder.save();
-		const monsters = getMonsters();
-		for await (let monster of monsters){
-			if(monster.document__slug === 'cc' && !creatureCodex){
-				continue;
-			}
-			if(monster.document__slug === 'tob' && !tomeOfBeasts){
-				continue;
-			}
-			const content = monsterToDelta(monster);
-			const page = await Article.create({name: monster.name, type: ARTICLE, world});
-			page.contentId = await createWikiContentFile(page._id, JSON.stringify(content));
-			if(monster.img_main){
-				const imageResponse = await fetch(monster.img_main);
-				page.coverImage = await imageMutations.createImage(null, {file: {filename: monster.img_main, createReadStream: () => imageResponse.body}, worldId: world._id, chunkify: false});
-			}
-			await page.save();
-			monsterFolder.pages.push(page);
-		}
-
-		await monsterFolder.save();
+		// await importer.importMonsters(topFolder, creatureCodex, tomeOfBeasts);
+		await importer.importAdventurePages(topFolder);
 
 		return world;
 	},

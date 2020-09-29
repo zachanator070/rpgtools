@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import {ALL_WIKI_TYPES, ARTICLE, PLACE} from "../../common/src/type-constants";
-import {Chunk} from "./models/chunk";
-import {Image} from './models/image';
+import {ALL_WIKI_TYPES, ARTICLE, PLACE} from "../../../common/src/type-constants";
+import {Chunk} from "../models/chunk";
+import {Image} from '../models/image';
 
 export const SUPPORTED_TYPES = [ARTICLE, PLACE];
 

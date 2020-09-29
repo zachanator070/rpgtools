@@ -65,18 +65,16 @@ export class GameRenderer{
 		animate();
 	}
 
+	resize = (width, height) => {
+		this.camera.aspectRatio = width/height;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize( width, height );
+	}
+
 	setupScene(){
 
 		let renderHeight = this.renderRoot.clientHeight;
 		let renderWidth = this.renderRoot.clientWidth;
-
-		this.renderRoot.addEventListener('resize', () => {
-			renderHeight = this.renderRoot.clientHeight;
-			renderWidth = this.renderRoot.clientWidth;
-			this.camera.aspectRatio = renderWidth/renderHeight;
-			this.camera.updateProjectionMatrix();
-			this.renderer.setSize( renderWidth, renderHeight );
-		});
 
 		this.scene = new THREE.Scene();
 
