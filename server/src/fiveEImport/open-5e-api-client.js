@@ -3,7 +3,11 @@ const fetch = require('node-fetch');
 
 const BASE_URL = 'https://api.open5e.com';
 
-const get  = async function* (resource){
+const get = async (resource) => {
+
+}
+
+const getPages  = async function* (resource){
 	try{
 		let next = BASE_URL + resource;
 
@@ -26,5 +30,9 @@ const get  = async function* (resource){
 }
 
 export const getMonsters = () => {
-	return get('/monsters/');
+	return getPages('/monsters/');
 }
+
+export const getAdventuringSections = () => {
+	return getPages('/sections/');
+};
