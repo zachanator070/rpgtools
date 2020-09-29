@@ -1,51 +1,44 @@
 // Modified version of markdown-to-quill-delta package, default one was giving me trouble
 
-import visit from "unist-util-visit";
 import unified from "unified";
 import markdown from "remark-parse";
+import AsciiTable from 'ascii-table';
 
 export const markdownToDelta = (md) => {
 	const processor = unified().use(markdown);
 	const tree = processor.parse(md);
 	const ops = [];
-	const addNewline = () => ops.push({ insert: "\n" });
-	const flatten = (arr) => arr.reduce((flat, next) => flat.concat(next), []);
-	const listVisitor = (node) => {
-		if (node.ordered && node.start !== 1) {
-			throw Error("Quill-Delta numbered lists must start from 1.");
-		}
-		visit(node, "listItem", listItemVisitor(node));
-	};
-	const listItemVisitor = (listNode) => (node) => {
-		for (const child of node.children) {
-			visit(child, "paragraph", paragraphVisitor());
-			let listAttribute = "";
-			if (listNode.ordered) {
-				listAttribute = "ordered";
-			}
-			else if (node.checked) {
-				listAttribute = "checked";
-			}
-			else if (node.checked === false) {
-				listAttribute = "unchecked";
-			}
-			else {
-				listAttribute = "bullet";
-			}
-			ops.push({ insert: "\n", attributes: { list: listAttribute } });
-		}
-	};
 
-	const visitChildren = (node, inheritedAttributes) => {
+
+	const visitChildren = (node, nextNode={}, inheritedAttributes={}, inheritedProperties={}) => {
 		const ops = [];
-		for(let child of node.children) {
-			ops.push(...visitNode(child, inheritedAttributes));
+		for(let childIndex = 0; childIndex < node.children.length; childIndex ++) {
+			const child = node.children[childIndex];
+			let next = nextNode;
+			if(childIndex < node.children.length - 2){
+				next = node.children[childIndex + 1];
+			}
+			ops.push(...visitNode(child, next, inheritedAttributes, inheritedProperties));
 		}
 		return ops;
 	}
 
-	const visitNode = (node, inheritedAttributes, inheritedProperties) => {
+	const SPACED_ELEMENTS = ['paragraph', 'table'];
+
+	const visitNode = (node, nextNode={}, inheritedAttributes={}, inheritedProperties={}) => {
 		switch(node.type){
+			case "paragraph":
+				const paragraphOps = [
+					...visitChildren(node, nextNode, inheritedAttributes, inheritedProperties),
+					{insert: "\n"}
+				];
+				if(SPACED_ELEMENTS.includes(nextNode.type)){
+					paragraphOps.push({insert: "\n"});
+				}
+				else{
+					console.log(nextNode.type);
+				}
+				return paragraphOps;
 			case "text":
 				return [{
 					insert: node.value,
@@ -53,11 +46,11 @@ export const markdownToDelta = (md) => {
 					...inheritedProperties
 				}]
 			case "strong":
-				return visitChildren(node, Object.assign({}, inheritedAttributes, {bold: true}));
+				return visitChildren(node, nextNode, Object.assign({}, inheritedAttributes, {bold: true}), inheritedProperties);
 			case "emphasis":
-				return visitChildren(node, Object.assign({}, inheritedAttributes, {italic: true}));
+				return visitChildren(node, nextNode, Object.assign({}, inheritedAttributes, {italic: true}), inheritedProperties);
 			case "delete":
-				return visitChildren(node, Object.assign({}, inheritedAttributes, {strike: true}));
+				return visitChildren(node, nextNode, Object.assign({}, inheritedAttributes, {strike: true}), inheritedProperties);
 			case "image":
 				const imageOp = { insert: { image: node.url } };
 				if(node.alt){
@@ -65,7 +58,7 @@ export const markdownToDelta = (md) => {
 				}
 				return [imageOp];
 			case "link":
-				return visitChildren(node, inheritedAttributes, {link: node.url});
+				return visitChildren(node, nextNode, inheritedAttributes, {link: node.url});
 			case "inlineCode":
 				return [{
 					insert: node.value,
@@ -80,12 +73,17 @@ export const markdownToDelta = (md) => {
 							return "large";
 					}
 				};
-				return visitChildren(node, Object.assign({}, inheritedAttributes, { size: getHeadingSize(node.depth) }));
+				return [
+					{insert: "\n"},
+					...visitChildren(node, nextNode, Object.assign({}, inheritedAttributes, { size: getHeadingSize(node.depth) }), inheritedProperties),
+					{insert: "\n"},
+					{insert: "\n"},
+				];
 			case "list":
-				const listChildren = visitChildren(node, inheritedAttributes);
-				const listOps = [];
+				const listChildren = visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
+				const listOps = [{insert: "\n"}];
 				let listAttribute = "";
-
+				// have to do this calculation here because ordered attribute is on list node, not listItem node
 				for(let child of listChildren){
 					listOps.push(child);
 					if (node.ordered) {
@@ -102,80 +100,57 @@ export const markdownToDelta = (md) => {
 					}
 					listOps.push({ insert: "\n", attributes: { list: listAttribute } });
 				}
+				listOps.push({insert: "\n"})
 				return listOps;
+			case "listItem":
+				return visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
 			case "code":
 				return [
 					{ insert: node.value },
-					{ insert: "\n", attributes: { "code-block": true } }
+					{ insert: "\n", attributes: { "code-block": true } },
+					{insert: "\n"}
 				];
 			case "blockquote":
-				const blockQuoteChildren = visitChildren(node, inheritedAttributes);
+				const blockQuoteChildren = visitChildren(node, {}, inheritedAttributes, inheritedProperties);
+				blockQuoteChildren.pop();
+				blockQuoteChildren.push({attributes: {blockquote: true}, insert: "\n"});
 				return [
+					{insert: "\n"},
+					{insert: "\n"},
 					...blockQuoteChildren,
-					{blockquote: true},
 					{insert: "\n"}
 				];
 			case "table":
-				const cols = [];
-				for(let index = 0; index < node.children.length; index ++){
-					const child = node.children[index];
-					if(cols.lend)
+				const table = new AsciiTable();
+				table.removeBorder();
+				for(let child of node.children){
+					const cells = child.children.map(cell => visitChildren(cell, {}, inheritedAttributes, inheritedProperties).map(childOp => childOp.insert).join());
+					table.addRow(...cells);
 				}
+				const tableOps = [
+					{
+						attributes: Object.assign({}, inheritedAttributes, {font: "monospace"}),
+						insert: table.toString()
+					},
+					{insert: "\n"},
+				];
+				if(SPACED_ELEMENTS.includes(nextNode.type)){
+					tableOps.push({insert: "\n"});
+				}
+				return tableOps;
 			default:
 				throw new Error(`Unsupported note type: ${node.type}`);
 		}
 
 	};
 
-	const tableVisitor = (node) => {
-		const columns = [];
-		for(let child of node.children){
-
+	for (let index = 0; index<tree.children.length; index ++) {
+		const child = tree.children[index];
+		let nextNode = {};
+		if(index < tree.children.length - 2){
+			nextNode = tree.children[index + 1];
 		}
-	};
-	const blockQuoteVisitor = (node) => {
-		ops.push({blockquote: visitChildren(node)});
-	};
-	for (let child of tree.children) {
-		if (child.type === "paragraph") {
-			paragraphVisitor()(child);
-			if (nextType === "paragraph" ||
-				nextType === "code" ||
-				nextType === "heading") {
-				addNewline();
-				addNewline();
-			}
-			else if (nextType === "lastOne" || nextType === "list") {
-				addNewline();
-			}
-		}
-		else if (child.type === "list") {
-			listVisitor(child);
-			if (nextType === "list") {
-				addNewline();
-			}
-		}
-		else if (child.type === "code") {
-			ops.push({ insert: child.value });
-			ops.push({ insert: "\n", attributes: { "code-block": true } });
-			if (nextType === "paragraph" || nextType === "lastOne") {
-				addNewline();
-			}
-		}
-		else if (child.type === "heading") {
-			headingVisitor(child);
-			addNewline();
-		}
-		else if (child.type === "table") {
-			tableVisitor(child);
-			addNewline();
-		}
-		else if (child.type === 'blockquote'){
-			blockQuoteVisitor(child);
-		}
-		else {
-			throw new Error(`Unsupported child type: ${child.type}`);
-		}
+		ops.push(...visitNode(child, nextNode));
 	}
 	return ops;
 }
