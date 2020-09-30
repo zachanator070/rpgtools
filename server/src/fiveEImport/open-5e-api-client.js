@@ -36,3 +36,19 @@ export const getMonsters = () => {
 export const getAdventuringSections = () => {
 	return getPages('/sections/');
 };
+
+export const getRaces = () => {
+	return getPages('/races/');
+};
+
+export const getClasses = () => {
+	return getPages('/classes/');
+};
+
+export const getSpells = () => {
+	return getPages('/spells/');
+};
+
+export const getMagicItems = () => {
+	return getPages('/magicitems/');
+};

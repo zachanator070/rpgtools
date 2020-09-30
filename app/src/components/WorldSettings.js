@@ -9,6 +9,7 @@ import {useLoad5eContent} from "../hooks/world/useLoad5eContent";
 import {useImportContent} from "../hooks/world/useImportContent";
 import {ToolTip} from "./ToolTip";
 import {UploadOutlined} from '@ant-design/icons';
+import {useHistory} from 'react-router-dom';
 
 export default () => {
 	const {currentWorld, loading: currentWorldLoading} = useCurrentWorld();
@@ -18,6 +19,7 @@ export default () => {
 	const {importContent, loading: importLoading} = useImportContent();
 	const [getCC, setGetCC] = useState();
 	const [getTob, setGetTob] = useState();
+	const history = useHistory();
 
 	if(currentWorldLoading){
 		return <LoadingView/>;
@@ -87,6 +89,7 @@ export default () => {
 							loading={contentLoading}
 							onClick={async () => {
 								await load5eContent({worldId: currentWorld._id, creatureCodex: getCC, tomeOfBeasts: getTob});
+								history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`);
 							}}
 						>
 							Load
