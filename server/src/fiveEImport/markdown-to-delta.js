@@ -5,6 +5,29 @@ import markdown from "remark-parse";
 import AsciiTable from 'ascii-table';
 
 export const markdownToDelta = (md) => {
+
+	const fixGhettoTable = (text) => {
+		let fixedText = "";
+		let lastLineWasTable = false;
+		let lastLine = null;
+		for(let line of text.split('\n')){
+			if(line.includes('|')){
+				if(!lastLineWasTable && lastLine !== ''){
+					line = '\n' + line;
+				}
+				lastLineWasTable = true;
+			}
+			else{
+				lastLineWasTable = false;
+			}
+			lastLine = line;
+			fixedText += line + '\n';
+		}
+		return fixedText;
+	};
+
+	md = fixGhettoTable(md);
+
 	const processor = unified().use(markdown);
 	const tree = processor.parse(md);
 	const ops = [];
@@ -15,7 +38,7 @@ export const markdownToDelta = (md) => {
 		for(let childIndex = 0; childIndex < node.children.length; childIndex ++) {
 			const child = node.children[childIndex];
 			let next = nextNode;
-			if(childIndex < node.children.length - 2){
+			if(childIndex <= node.children.length - 2){
 				next = node.children[childIndex + 1];
 			}
 			ops.push(...visitNode(child, next, inheritedAttributes, inheritedProperties));
@@ -34,9 +57,6 @@ export const markdownToDelta = (md) => {
 				];
 				if(SPACED_ELEMENTS.includes(nextNode.type)){
 					paragraphOps.push({insert: "\n"});
-				}
-				else{
-					console.log(nextNode.type);
 				}
 				return paragraphOps;
 			case "text":
@@ -80,12 +100,22 @@ export const markdownToDelta = (md) => {
 					{insert: "\n"},
 				];
 			case "list":
-				const listChildren = visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
-				const listOps = [{insert: "\n"}];
+				const listOps = [];
 				let listAttribute = "";
 				// have to do this calculation here because ordered attribute is on list node, not listItem node
-				for(let child of listChildren){
-					listOps.push(child);
+				for(let child of node.children){
+
+					let listChildren = [];
+
+					if(child.children.length > 0){
+						listChildren = visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
+					}
+					else{
+						listChildren = visitNode(node, nextNode, inheritedAttributes, inheritedProperties);
+					}
+
+					ops.push(...listChildren);
+
 					if (node.ordered) {
 						listAttribute = "ordered";
 					}
@@ -100,10 +130,13 @@ export const markdownToDelta = (md) => {
 					}
 					listOps.push({ insert: "\n", attributes: { list: listAttribute } });
 				}
-				listOps.push({insert: "\n"})
 				return listOps;
 			case "listItem":
-				return visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
+				const itemChildrenOps = visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
+				if(itemChildrenOps.length > 0 && itemChildrenOps[itemChildrenOps.length - 1].insert === '\n'){
+					itemChildrenOps.pop();
+				}
+				return itemChildrenOps;
 			case "code":
 				return [
 					{ insert: node.value },
@@ -147,7 +180,7 @@ export const markdownToDelta = (md) => {
 	for (let index = 0; index<tree.children.length; index ++) {
 		const child = tree.children[index];
 		let nextNode = {};
-		if(index < tree.children.length - 2){
+		if(index <= tree.children.length - 2){
 			nextNode = tree.children[index + 1];
 		}
 		ops.push(...visitNode(child, nextNode));

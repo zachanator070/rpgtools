@@ -274,6 +274,6 @@ div.ant-upload-list-item {
     border: none;
 }
 
-.ql-editor p{
+.ql-editor li,p,blockquote{
     font-size: medium;
 }

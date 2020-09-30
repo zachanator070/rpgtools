@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import Quill from 'quill/core';
 import Toolbar from 'quill/modules/toolbar';
@@ -12,7 +12,6 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {LoadingView} from "../LoadingView";
 import List, { ListItem } from 'quill/formats/list';
 
@@ -32,7 +31,7 @@ export const Editor = ({content, readOnly, onInit}) => {
 
 	const {currentWorld, loading} = useCurrentWorld();
 	const editorCreated = useRef(false);
-	let editor = null;
+	const [editor, setEditor] = useState();
 
 	if(typeof(content) === "string"){
 		content = JSON.parse(content);
@@ -42,9 +41,7 @@ export const Editor = ({content, readOnly, onInit}) => {
 		if(content && editor){
 			editor.setContents(content);
 		}
-	});
-
-	const {searchWikiPages} = useSearchWikiPages();
+	}, [content, editor]);
 
 	const toolBar = [
 		['bold', 'italic', 'underline', 'strike'],
@@ -98,14 +95,15 @@ export const Editor = ({content, readOnly, onInit}) => {
 				},
 				placeholder: readOnly ? 'This tale has yet to be told' : 'Compose an epic...',
 			};
-			editor = new Quill('#editor', options);
+			const newEditor = new Quill('#editor', options);
 			if(onInit){
-				(async () => {await onInit(editor);})();
+				(async () => {await onInit(newEditor);})();
 			}
 			if (content) {
-				editor.setContents(content);
+				newEditor.setContents(content);
 			}
 			editorCreated.current = true;
+			(async () => {await setEditor(newEditor);})();
 		}
 
 	}, [currentWorld]);
