@@ -105,16 +105,9 @@ export const markdownToDelta = (md) => {
 				// have to do this calculation here because ordered attribute is on list node, not listItem node
 				for(let child of node.children){
 
-					let listChildren = [];
+					let listChildren = visitChildren(child, {}, inheritedAttributes, inheritedProperties).filter(op => op.insert !== '\n');
 
-					if(child.children.length > 0){
-						listChildren = visitChildren(node, nextNode, inheritedAttributes, inheritedProperties);
-					}
-					else{
-						listChildren = visitNode(node, nextNode, inheritedAttributes, inheritedProperties);
-					}
-
-					ops.push(...listChildren);
+					listOps.push(...listChildren);
 
 					if (node.ordered) {
 						listAttribute = "ordered";

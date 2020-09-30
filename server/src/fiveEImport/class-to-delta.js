@@ -1,12 +1,19 @@
 import {markdownToDelta} from "./markdown-to-delta";
 
 
-const getHeading = (title) => {
-	return [
+const getHeading = (title, newLine) => {
+	const ops = [
 		{insert: "\n"},
 		{insert: "\n"},
 		{insert: title, attributes: {size: 'large'}},
 	];
+	if(newLine){
+		ops.push(
+			{insert: "\n"},
+			{insert: "\n"},
+		)
+	}
+	return ops;
 }
 
 const getSubHeading = (title, newLine) => {
