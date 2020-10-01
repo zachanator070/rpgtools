@@ -207,6 +207,7 @@ export const worldMutations = {
 		// await importer.importAdventurePages(topFolder);
 		// await importer.importRaces(topFolder);
 		await importer.importClasses(topFolder);
+		await importer.importSpells(topFolder);
 		return world;
 	},
 	importContent: async (_, {worldId, zipFile}, {currentUser}) => {

@@ -277,3 +277,10 @@ div.ant-upload-list-item {
 .ql-editor li,p,blockquote{
     font-size: medium;
 }
+
+.ql-toolbar{
+    position: sticky;
+    top: -1em;
+    z-index: 1;
+    background: white;
+}

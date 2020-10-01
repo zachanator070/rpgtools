@@ -153,11 +153,17 @@ export const markdownToDelta = (md) => {
 					const cells = child.children.map(cell => visitChildren(cell, {}, inheritedAttributes, inheritedProperties).map(childOp => childOp.insert).join());
 					table.addRow(...cells);
 				}
+
+				const tableOp = {
+					attributes: Object.assign({}, inheritedAttributes, {font: "monospace"}),
+					insert: table.toString()
+				};
+				if(table.toString().split('\n')[0].length > 140){
+					tableOp.attributes.size = 'small';
+				}
+
 				const tableOps = [
-					{
-						attributes: Object.assign({}, inheritedAttributes, {font: "monospace"}),
-						insert: table.toString()
-					},
+					tableOp,
 					{insert: "\n"},
 				];
 				if(SPACED_ELEMENTS.includes(nextNode.type)){

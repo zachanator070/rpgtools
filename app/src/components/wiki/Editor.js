@@ -40,6 +40,12 @@ export const Editor = ({content, readOnly, onInit}) => {
 	useEffect(() => {
 		if(content && editor){
 			editor.setContents(content);
+			document.querySelectorAll(".ql-picker").forEach(tool => {
+				tool.addEventListener("mousedown", function(event) {
+					event.preventDefault();
+					event.stopPropagation();
+				});
+			});
 		}
 	}, [content, editor]);
 
