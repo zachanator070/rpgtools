@@ -18,7 +18,7 @@ export const WikView = () => {
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
 	return (wikiLoading || worldLoading) ? <LoadingView/> :
-		<>
+		<div style={{overflow: 'hidden'}}>
 			<PermissionModal
 				visibility={permissionModalVisibility}
 				setVisibility={setPermissionModalVisibility}
@@ -26,19 +26,35 @@ export const WikView = () => {
 				subjectType={currentWiki.type}
 				refetch={refetch}
 			/>
-			<Row>
-				<Col span={4} className='padding-md'>
+			<Row
+				style={{
+					height: '100%'
+				}}
+			>
+				<Col
+					span={4}
+					className='padding-md'
+					style={{
+						height: '100%',
+						overflowY: 'auto'
+					}}
+				>
 					<FolderView/>
 				</Col>
-				<Col span={16}>
+				<Col
+					span={16}
+					style={{
+						height: '100%',
+						overflowY: 'auto'
+					}}
+					className='padding-md'
+				>
 					<Switch>
 						<Route path={`${match.path}/edit`}>
 							<WikiEdit/>
 						</Route>
 						<Route path={`${match.path}/view`}>
-							<div>
-								<WikiContent currentWiki={currentWiki}/>
-							</div>
+							<WikiContent currentWiki={currentWiki}/>
 						</Route>
 					</Switch>
 				</Col>
@@ -52,5 +68,5 @@ export const WikView = () => {
 					</Route>
 				</Col>
 			</Row>
-		</>
+		</div>
 };

@@ -1,4 +1,4 @@
-import {getAdventuringSections, getClasses, getMonsters, getRaces} from "./open-5e-api-client";
+import {getAdventuringSections, getClasses, getMonsters, getRaces, getSpells} from "./open-5e-api-client";
 import {monsterToDelta} from "./monster-to-delta";
 import {Article} from "../models/article";
 import {ARTICLE} from "../../../common/src/type-constants";
@@ -10,6 +10,7 @@ import {Readable} from "stream";
 import {createGfsFile} from "../db-helpers";
 import {raceToDelta} from "./race-to-delta";
 import {classToDelta} from "./class-to-delta";
+import {spellToDelta} from "./spell-to-delta";
 
 export class FiveEImporter{
 
@@ -26,7 +27,7 @@ export class FiveEImporter{
 
 	createArticles = async (articles, getContent, getContainingFolder, filter = ()=>{}, callback = ()=>{}) => {
 		for await (let article of articles){
-			const content = getContent(article);
+			const content = await getContent(article);
 			const page = await Article.create({name: article.name, type: ARTICLE, world: this.world});
 			page.contentId = await this.createWikiContentFile(page._id, JSON.stringify(content));
 			await page.save();
@@ -86,5 +87,10 @@ export class FiveEImporter{
 	importClasses = async (topFolder) => {
 		const containingFolder = await this.createSubFolder(topFolder, 'Classes');
 		await this.createArticles(getClasses(), classToDelta, () => containingFolder);
+	}
+
+	importSpells = async (topFolder) => {
+		const containingFolder = await this.createSubFolder(topFolder, 'Spells');
+		await this.createArticles(getSpells(), spellToDelta, () => containingFolder);
 	}
 }

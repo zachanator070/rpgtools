@@ -69,7 +69,10 @@ export const WikiContent = ({currentWiki}) => {
 	}
 
 	return (
-		<div ref={wikiView} className='margin-md-top'>
+		<div
+			ref={wikiView}
+			className='margin-md-top'
+		>
 
 			<h1>{currentWiki.name}</h1>
 			{gotoMap}

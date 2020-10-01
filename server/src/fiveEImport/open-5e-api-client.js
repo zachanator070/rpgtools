@@ -3,10 +3,6 @@ const fetch = require('node-fetch');
 
 const BASE_URL = 'https://api.open5e.com';
 
-const get = async (resource) => {
-
-}
-
 const getPages  = async function* (resource){
 	try{
 		let next = BASE_URL + resource;
@@ -52,3 +48,7 @@ export const getSpells = () => {
 export const getMagicItems = () => {
 	return getPages('/magicitems/');
 };
+
+export const searchSpells = (term) =>{
+	return getPages(`/spells/?search=${term}`);
+}
