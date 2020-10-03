@@ -7,7 +7,8 @@ import {
 	HighlightOutlined,
 	QuestionCircleOutlined,
 	RedoOutlined,
-	VideoCameraOutlined
+	VideoCameraOutlined,
+	SelectOutlined
 } from '@ant-design/icons';
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 
@@ -45,7 +46,10 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 			Left click and drag to add fog of war to scene
 			<br/>
 			See "Fog Options" in side panel for more options
-		</>
+		</>,
+		SELECT_MODEL_CONTROLS: <>
+			Left click to see information and settings about the model
+		</>,
 	}
 
 	const mouseOverText = {
@@ -66,6 +70,9 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 		</>,
 		FOG_CONTROLS: <>
 			Fog of War Brush, hotkey: f
+		</>,
+		SELECT_MODEL_CONTROLS: <>
+			Select Model, hotkey: s
 		</>
 	}
 
@@ -75,7 +82,8 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 		MOVE_MODEL_CONTROLS: <DragOutlined/>,
 		ROTATE_MODEL_CONTROLS: <RedoOutlined/>,
 		DELETE_CONTROLS: <DeleteOutlined />,
-		FOG_CONTROLS: <CloudOutlined />
+		FOG_CONTROLS: <CloudOutlined />,
+		SELECT_MODEL_CONTROLS: <SelectOutlined />
 	};
 
 	const permission = {
@@ -84,7 +92,8 @@ export const GameControlsHelp = ({controlsMode, setControlsMode}) => {
 		MOVE_MODEL_CONTROLS: currentGame.canModel,
 		ROTATE_MODEL_CONTROLS: currentGame.canModel,
 		DELETE_CONTROLS: currentGame.canModel,
-		FOG_CONTROLS: currentGame.canWriteFog
+		FOG_CONTROLS: currentGame.canWriteFog,
+		SELECT_MODEL_CONTROLS: currentGame.canModel
 	}
 
 	const menu = Object.keys(icons).map((mode) => {

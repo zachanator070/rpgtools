@@ -6,9 +6,9 @@ import {SET_MODEL_COLOR} from "../../../../common/src/gql-queries";
 export const useSetModelColor = () => {
     const {currentGame} = useCurrentGame();
     const returnValues = useGQLMutation(SET_MODEL_COLOR);
-    const setModelPosition = returnValues.setModelPosition;
-    returnValues.setModelPosition = async (variables) => {
-        await setModelPosition({gameId: currentGame._id, positionedModelId: variables._id, ...variables});
+    const setModelColor = returnValues.setModelColor;
+    returnValues.setModelColor = async (variables) => {
+        await setModelColor({gameId: currentGame._id, positionedModelId: variables._id, ...variables});
     }
     return returnValues;
 };

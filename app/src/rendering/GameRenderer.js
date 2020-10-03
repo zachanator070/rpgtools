@@ -7,6 +7,8 @@ import {MoveControls} from "../controls/MoveControls";
 import {SelectControls} from "../controls/SelectControls";
 import {RotateControls} from "../controls/RotateControls";
 import {DeleteControls} from "../controls/DeleteControls";
+import {SelectModelControls} from "../controls/SelectModelControls";
+import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 
 export const CAMERA_CONTROLS = 'CAMERA_CONTROLS';
 export const PAINT_CONTROLS = 'PAINT_CONTROLS';
@@ -14,10 +16,11 @@ export const MOVE_MODEL_CONTROLS = 'MOVE_MODEL_CONTROLS';
 export const ROTATE_MODEL_CONTROLS = 'ROTATE_MODEL_CONTROLS';
 export const DELETE_CONTROLS = 'DELETE_CONTROLS';
 export const FOG_CONTROLS = 'FOG_CONTROLS';
+export const SELECT_MODEL_CONTROLS = 'SELECT_MODEL_CONTROLS';
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel, addFogStroke) {
+	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel, addFogStroke, selectCallback) {
 
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
@@ -25,6 +28,7 @@ export class GameRenderer{
 		this.setModelPosition = setModelPosition;
 		this.deleteModel = deleteModel;
 		this.addFogStroke = addFogStroke;
+		this.selectCallback = selectCallback;
 
 		this.renderer = null;
 		this.camera = null;
@@ -36,6 +40,7 @@ export class GameRenderer{
 		this.mouseCoords = new Vector2();
 
 		this.selectControls = null;
+		this.selectModelControls = null;
 		this.moveControls = null;
 		this.rotateControls = null;
 		this.paintControls = null;
@@ -51,6 +56,7 @@ export class GameRenderer{
 		this.pixelsPerFoot = mapImage ? mapImage.pixelsPerFoot : 1;
 
 		this.meshedModels = [];
+		this.originalMeshedModels = [];
 
 		this.setupScene();
 		this.setupRaycaster();
@@ -218,6 +224,7 @@ export class GameRenderer{
 		this.selectControls.disable();
 		this.rotateControls.disable();
 		this.deleteControls.disable();
+		this.selectModelControls.disable();
 
 		switch(mode){
 			case PAINT_CONTROLS:
@@ -237,6 +244,9 @@ export class GameRenderer{
 				break;
 			case FOG_CONTROLS:
 				this.fogControls.enable();
+				break;
+			case SELECT_MODEL_CONTROLS:
+				this.selectModelControls.enable();
 				break;
 		}
 	}
@@ -296,6 +306,11 @@ export class GameRenderer{
 		}
 		this.selectControls = new SelectControls(this.renderRoot, this.raycaster, this.meshedModels);
 
+		if(this.selectModelControls){
+			this.selectModelControls.tearDown();
+		}
+		this.selectModelControls = new SelectModelControls(this.renderRoot, this.selectControls, this.selectCallback);
+
 		if(this.moveControls){
 			this.moveControls.tearDown();
 		}
@@ -325,35 +340,54 @@ export class GameRenderer{
 			}
 		}
 		const model = positionedModel.model;
-		const loader = new GLTFLoader(this.loader);
 		// push onto cache before loading to prevent race condition from model subscription
 		this.meshedModels.push({
 			positionedModel,
 			mesh: null
 		});
-		loader.load( `/models/${model.fileId}`, ( gltf ) => {
+
+		const extension = model.fileName.split('.').pop();
+
+		const loader = extension === 'glb' ? new GLTFLoader(this.loader) : new OBJLoader(this.loader);
+
+		loader.load( `/models/${model.fileName}`, ( loadedModel ) => {
+
+			const loadedMesh = extension === 'glb' ? loadedModel.scene : loadedModel;
 
 			// get bounding box and scale to match board size
-			const bbox = new THREE.Box3().setFromObject(gltf.scene);
+			const bbox = new THREE.Box3().setFromObject(loadedMesh);
 			const depthScale = model.depth / bbox.getSize().z;
 			const widthScale = model.width / bbox.getSize().x;
 			const heightScale = model.height / bbox.getSize().y;
-			const mesh = gltf.scene;
-			mesh.scale.set(widthScale, heightScale, depthScale);
-			mesh.position.set(positionedModel.x, 0, positionedModel.z);
-			mesh.rotation.set(0, positionedModel.rotation, 0);
-			gltf.scene.traverse( function( child ) {
+
+			loadedMesh.scale.set(widthScale, heightScale, depthScale);
+			loadedMesh.position.set(positionedModel.x, 0, positionedModel.z);
+			loadedMesh.rotation.set(0, positionedModel.rotation, 0);
+			loadedMesh.traverse( function( child ) {
 				if ( child.isMesh ) {
 					child.castShadow = true;
 				}
 			});
 			for(let meshedModel of this.meshedModels){
 				if(meshedModel.positionedModel._id === positionedModel._id){
-					meshedModel.mesh = mesh;
+					meshedModel.mesh = loadedMesh;
+					if(extension === 'obj'){
+						this.setModelColor(meshedModel, '#787878');
+					}
+					const meshedModelClone = {
+						positionedModel: meshedModel.positionedModel,
+						mesh: loadedMesh.clone()
+					};
+					meshedModelClone.mesh.traverse((node) => {
+						if (node.isMesh) {
+							node.material = node.material.clone();
+						}
+					});
+					this.originalMeshedModels.push(meshedModelClone);
 					break;
 				}
 			}
-			this.scene.add(mesh);
+			this.scene.add(loadedMesh);
 
 		}, undefined, ( error ) => {
 
@@ -372,18 +406,62 @@ export class GameRenderer{
 
 	updateModel(positionedModel){
 		let targetModel = null;
-		for(let model of this.meshedModels){
-			if(model.positionedModel._id === positionedModel._id){
-				targetModel = model;
+		let targetOriginal = null;
+		for(let meshedModel of this.meshedModels){
+			if(meshedModel.positionedModel._id === positionedModel._id){
+				targetModel = meshedModel;
 				break;
 			}
 		}
-		if(!targetModel){
+		for(let meshedModel of this.originalMeshedModels){
+			if(meshedModel.positionedModel._id === positionedModel._id){
+				targetOriginal = meshedModel;
+				break;
+			}
+		}
+		if(!targetModel || !targetOriginal){
 			console.warn('Model not added!');
 			return;
 		}
 		targetModel.positionedModel = positionedModel;
 		targetModel.mesh.position.set(positionedModel.x, 0, positionedModel.z);
 		targetModel.mesh.rotation.set(0, positionedModel.rotation, 0);
+
+		this.setModelColor(targetModel, positionedModel.color);
+
+		targetOriginal.positionedModel = positionedModel;
+		targetOriginal.mesh.position.set(positionedModel.x, 0, positionedModel.z);
+		targetOriginal.mesh.rotation.set(0, positionedModel.rotation, 0);
+	}
+
+	setModelColor = (meshedModel, color) => {
+		if(color){
+			meshedModel.mesh.traverse( function( child ) {
+				if ( child.isMesh ) {
+					child.material.color.setHex( parseInt('0x' + color.substr(1)) );
+				}
+			});
+		}
+		else {
+			this.scene.remove(meshedModel.mesh);
+			let clonedModel = null;
+			for(let model of this.originalMeshedModels){
+				if(model.positionedModel._id === meshedModel.positionedModel._id){
+					clonedModel = model;
+				}
+			}
+			if(!clonedModel){
+				console.warn('Could not find original model');
+				return;
+			}
+			meshedModel.mesh = clonedModel.mesh.clone();
+			meshedModel.mesh.traverse((node) => {
+				if (node.isMesh) {
+					node.material = node.material.clone();
+				}
+			});
+			this.scene.add(meshedModel.mesh);
+		}
+
 	}
 }

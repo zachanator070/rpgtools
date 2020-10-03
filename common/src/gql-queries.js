@@ -647,10 +647,12 @@ export const GAME_MODEL = `
 		width
 		height
 		name
+		fileName
 	}
 	x
 	z
 	rotation
+	color
 `;
 export const GAME_MODELS = `
 	models{
@@ -921,7 +923,7 @@ export const SET_MODEL_POSITION = gql`
 
 export const SET_MODEL_COLOR = gql`
 	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
-		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
+		setModelColor(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
 			${GAME_MODEL}
 		}
 	}
