@@ -4,11 +4,10 @@ import mongoose from "mongoose";
 
 let ModelRouter = express.Router();
 
-ModelRouter.get('/:id', (req, res) => {
+ModelRouter.get('/:filename', (req, res) => {
 
 	const gfs = new GridFSBucket(mongoose.connection.db);
-	const id = new mongodb.ObjectID(req.params.id);
-	gfs.find({_id: id}).next( (err, file) => {
+	gfs.find({filename: req.params.filename}).next( (err, file) => {
 		if(err){
 			return res.status(500).send();
 		}

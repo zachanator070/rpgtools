@@ -1,7 +1,8 @@
-import {Vector3} from "three";
+import {ObjectLoader, Vector3} from "three";
 import * as THREE from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 
 const CAMERA_FOV = 50;
 
@@ -24,6 +25,7 @@ export class ModelRenderer{
 		this.loader = new THREE.LoadingManager(onProgress);
 
 		this.modelMesh = null;
+		this.originalModelMesh = null;
 
 		this.setupScene();
 
@@ -111,27 +113,64 @@ export class ModelRenderer{
 			this.scene.remove(this.modelMesh);
 			this.modelMesh = null;
 		}
-		const loader = new GLTFLoader(this.loader);
-		loader.load( modelUrl, ( gltf ) => {
+
+		const extension = modelUrl.split('.').pop();
+
+		const loader = extension === 'glb' ? new GLTFLoader(this.loader) : new OBJLoader(this.loader);
+		loader.load( modelUrl, ( model ) => {
+
+			const loadedModel = extension === 'glb' ? model.scene : model;
 
 			// get bounding box and scale to match board size
-			const bbox = new THREE.Box3().setFromObject(gltf.scene);
+			const bbox = new THREE.Box3().setFromObject(loadedModel);
 			const depthScale = this.modelDepth / bbox.getSize().z;
 			const widthScale = this.modelWidth / bbox.getSize().x;
 			const heightScale = this.modelHeight / bbox.getSize().y;
-			gltf.scene.scale.set(widthScale, heightScale, depthScale);
-			gltf.scene.traverse( function( child ) {
+			loadedModel.scale.set(widthScale, heightScale, depthScale);
+			loadedModel.traverse( function( child ) {
 				if ( child.isMesh ) {
 					child.castShadow = true;
 				}
 			});
-			this.modelMesh = gltf.scene;
+
+			this.modelMesh = loadedModel;
 			this.scene.add(this.modelMesh);
+			if(extension === 'obj'){
+				this.setModelColor('#787878');
+			}
+
+			this.originalModelMesh = this.modelMesh.clone();
+			this.originalModelMesh.traverse((node) => {
+				if (node.isMesh) {
+					node.material = node.material.clone();
+				}
+			});
 
 		}, undefined, ( error ) => {
 
 			console.error( error );
 
 		} );
+	}
+
+	setModelColor(color){
+		if(color){
+			this.modelMesh.traverse( function( child ) {
+				if ( child.isMesh ) {
+					child.material.color.setHex( parseInt('0x' + color.substr(1)) );
+				}
+			});
+		}
+		else {
+			this.scene.remove(this.modelMesh);
+			this.modelMesh = this.originalModelMesh.clone();
+			this.modelMesh.traverse((node) => {
+				if (node.isMesh) {
+					node.material = node.material.clone();
+				}
+			});
+			this.scene.add(this.modelMesh);
+		}
+
 	}
 }

@@ -55,13 +55,9 @@ export const typeDefs = gql`
         addUserRole(userId: ID!, roleId: ID!): World!
         removeUserRole(userId: ID!, roleId: ID!): World!
         
-        """ Grant a permission to a user """
         grantUserPermission(userId: ID!, permission: String!, subjectId: ID!, subjectType: String!): PermissionControlled!
-        """ Revoke a assigned permission from a user """
         revokeUserPermission(userId: ID!, permissionAssignmentId: ID!): PermissionControlled!
-        """ Grant a permission to a role """
         grantRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): Role!
-        """ Revoke a permission from a role """
         revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): Role!
         
         createFolder(name: String!, parentFolderId: ID!): World!
@@ -93,6 +89,7 @@ export const typeDefs = gql`
         addFogStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, strokeId: ID!): Game!
         addModel(gameId: ID!, modelId: ID!): Game!
         setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, rotation: Float!): PositionedModel!
+        setModelColor(gameId: ID!, positionedModelId: ID!, color: String): PositionedModel!
         deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!, notes: String): Model!
@@ -389,6 +386,7 @@ export const typeDefs = gql`
 		x: Float!
 		z: Float!
 		rotation: Float!
+		color: String
 	}
 	
 	scalar Upload

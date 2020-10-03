@@ -104,6 +104,9 @@ const gameSchema = new Schema({
 		rotation: {
 			type: Number,
 			required: [true, 'rotation required']
+		},
+		color: {
+			type: String
 		}
 	})]
 });

@@ -493,6 +493,33 @@ export const gameMutations = {
 
 		return model;
 	},
+	setModelColor: async (_, {gameId, positionedModelId, color}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if (!game) {
+			throw new Error('Game does not exist');
+		}
+		if (!await game.userCanModel(currentUser)) {
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		let positionedModel = null;
+		for (let model of game.models) {
+			if (model._id === positionedModelId) {
+				positionedModel = model;
+			}
+		}
+		if (!positionedModel) {
+			throw new Error(`Model with id ${positionedModelId} does not exist`);
+		}
+		positionedModel.color = color;
+
+		const model = positionedModel.toObject();
+		model.model = await Model.findById(model.model);
+
+		await pubsub.publish(GAME_MODEL_POSITIONED, {gameId, gameModelPositioned: model});
+
+		return model;
+
+	},
 	deletePositionedModel: async (_, {gameId, positionedModelId}, {currentUser}) => {
 		const game = await Game.findById(gameId);
 		if(!game){

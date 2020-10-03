@@ -39,7 +39,7 @@ export const ModelForm = ({callback, initialValues, loading, fileRequired=true})
 						return;
 					}
 					const file = value[0];
-					const supportedTypes = ['glb'];
+					const supportedTypes = ['glb', 'obj'];
 					const parts = file.name.split('.');
 
 					const type = parts.length > 0 ? parts[parts.length - 1] : null;
