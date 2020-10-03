@@ -1,6 +1,15 @@
 import {useMutation} from "@apollo/client";
-import {GRANT_USER_PERMISSION} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {ACCESS_CONTROL_LIST} from "../../../../common/src/gql-fragments";
 
+export const GRANT_USER_PERMISSION = gql`
+	mutation grantUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		grantUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
+			_id
+			${ACCESS_CONTROL_LIST}
+		}
+	}
+`;
 export const useGrantUserPermission = () => {
 	const [grantUserPermission, {data, loading, error}] = useMutation(GRANT_USER_PERMISSION);
 	return {

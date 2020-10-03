@@ -1,6 +1,13 @@
 import {useMutation} from "@apollo/client";
-import {UPDATE_PERSON} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const UPDATE_PERSON = gql`
+	mutation updatePerson($personId: ID!, $name: String, $content: String, $coverImageId: ID){
+		updatePerson(personId: $personId, name: $name, content: $content, coverImageId: $coverImageId){
+			_id
+		}
+	}
+`;
 export default () => {
 	const [updatePerson, {data, loading, error}] = useMutation(UPDATE_PERSON);
 	return {

@@ -1,6 +1,13 @@
 import {useMutation} from "@apollo/client";
-import {REGISTER_MUTATION} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const REGISTER_MUTATION = gql`
+    mutation register($registerCode: String!, $email: String!, $username: String!, $password: String!){
+        register(registerCode: $registerCode, email: $email, username: $username, password: $password){
+            _id
+        }
+    }
+`;
 export default (callback) => {
 	const [register, {data, loading, error}] = useMutation(REGISTER_MUTATION, {onCompleted: callback});
 	return {

@@ -9,7 +9,7 @@ import {Link} from "react-router-dom";
 import {MapBreadCrumbs} from "./MapBreadCrumbs";
 import {MapDrawer} from "./MapDrawer";
 import {useQuery} from "@apollo/client";
-import {MAP_WIKI_ID} from "../../../../common/src/gql-queries";
+import {MAP_WIKI_ID} from "../../hooks/map/useMapWiki";
 
 export const MapView = () => {
 

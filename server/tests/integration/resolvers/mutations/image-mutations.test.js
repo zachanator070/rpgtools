@@ -5,9 +5,9 @@ import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
 import {WikiFolder} from "../../../../src/models/wiki-folder";
-import {CREATE_IMAGE} from "../../../../../common/src/gql-queries";
 import fs from 'fs';
 import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {CREATE_IMAGE} from "../../../../../app/src/hooks/wiki/useCreateImage";
 
 process.env.TEST_SUITE = 'image-mutations-test';
 

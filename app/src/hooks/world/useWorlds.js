@@ -1,6 +1,21 @@
 import {useQuery} from "@apollo/client";
-import {GET_WORLDS} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const GET_WORLDS = gql`
+	query getWorlds($page: Int!){
+		worlds(page: $page){
+			docs{
+				_id
+				name
+				wikiPage {
+					_id
+					type
+				}
+			}
+			totalPages
+		}	
+	}
+`;
 export default (page) => {
 	const {data, loading, error} = useQuery(GET_WORLDS, {variables: {page}});
 	return {

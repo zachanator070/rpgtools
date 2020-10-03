@@ -1,7 +1,14 @@
 import {useMutation} from "@apollo/client";
 import useCurrentUser from "../authentication/useCurrentUser";
-import {DELETE_ROLE} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const DELETE_ROLE = gql`
+	mutation deleteRole($roleId: ID!){
+		deleteRole(roleId: $roleId){
+			_id
+		}
+	}
+`;
 export default () => {
 	const [deleteRole, {loading, error, data}] = useMutation(DELETE_ROLE);
 	const {refetch} = useCurrentUser();

@@ -1,6 +1,13 @@
-import {MY_GAMES} from "../../../../common/src/gql-queries";
 import {useQuery} from "@apollo/client";
+import gql from "graphql-tag";
 
+export const MY_GAMES = gql`
+	query myGames{
+		myGames{
+			_id
+		}
+	}
+`;
 export default () => {
 	const {data, loading, error, refetch} = useQuery(MY_GAMES);
 	return {

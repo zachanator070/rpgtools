@@ -1,6 +1,14 @@
 import {useMutation} from "@apollo/client";
-import {UPDATE_MODEL} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {MODEL_ATTRIBUTES} from "../../../../common/src/gql-fragments";
 
+export const UPDATE_MODEL = gql`
+	mutation updateModel($modelId: ID!, $name: String!, $file: Upload, $depth: Float!, $width: Float!, $height: Float!, $notes: String){
+		updateModel(modelId: $modelId, name: $name, file: $file, depth: $depth, width: $width, height: $height, notes: $notes){
+			${MODEL_ATTRIBUTES}
+		}
+	}
+`;
 export default () => {
 	const [updateModel, {data, loading, error}] = useMutation(UPDATE_MODEL);
 	return {

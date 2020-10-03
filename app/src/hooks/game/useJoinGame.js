@@ -1,6 +1,14 @@
 import {useMutation} from "@apollo/client";
-import {JOIN_GAME} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {GAME_ATTRIBUTES} from "../../../../common/src/gql-fragments";
 
+export const JOIN_GAME = gql`
+    mutation joinGame($gameId: ID!, $password: String){
+        joinGame(gameId: $gameId, password: $password){
+            ${GAME_ATTRIBUTES}
+        }
+    }
+`;
 export default (callback) => {
 	const [joinGame, {data, loading, error}] = useMutation(JOIN_GAME, {
 		onCompleted: callback

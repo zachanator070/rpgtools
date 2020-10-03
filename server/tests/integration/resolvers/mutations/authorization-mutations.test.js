@@ -4,17 +4,18 @@ import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {User} from "../../../../src/models/user";
 import {createTestClient} from "apollo-server-testing";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
-import {
-	ADD_USER_ROLE,
-	CREATE_ROLE, DELETE_ROLE,
-	GRANT_ROLE_PERMISSION,
-	GRANT_USER_PERMISSION, REMOVE_USER_ROLE, REVOKE_ROLE_PERMISSION,
-	REVOKE_USER_PERMISSION
-} from "../../../../../common/src/gql-queries";
 import {ANON_USERNAME, WIKI_READ, WIKI_RW, WORLD_READ} from "../../../../../common/src/permission-constants";
 import {PLACE, WORLD} from "../../../../../common/src/type-constants";
 import {PermissionAssignment} from "../../../../src/models/permission-assignement";
 import {Role} from "../../../../src/models/role";
+import {ADD_USER_ROLE} from "../../../../../app/src/hooks/authorization/useAddUserRole";
+import {CREATE_ROLE} from "../../../../../app/src/hooks/authorization/useCreateRole";
+import {DELETE_ROLE} from "../../../../../app/src/hooks/authorization/useDeleteRole";
+import {GRANT_ROLE_PERMISSION} from "../../../../../app/src/hooks/authorization/useGrantRolePermission";
+import {GRANT_USER_PERMISSION} from "../../../../../app/src/hooks/authorization/useGrantUserPermisison";
+import {REMOVE_USER_ROLE} from "../../../../../app/src/hooks/authorization/useRemoveUserRole";
+import {REVOKE_ROLE_PERMISSION} from "../../../../../app/src/hooks/authorization/useRevokeRolePermission";
+import {REVOKE_USER_PERMISSION} from "../../../../../app/src/hooks/authorization/useRevokeUserPermission";
 
 process.env.TEST_SUITE = 'authorization-mutations-test';
 

@@ -1,6 +1,16 @@
 import {useMutation} from "@apollo/client";
-import {CREATE_WORLD} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const CREATE_WORLD = gql`
+    mutation createWorld($name: String!, $public: Boolean!){
+        createWorld(name: $name, public: $public){
+            _id
+            wikiPage {
+                _id
+            }
+        }
+    }
+`;
 export default (callback) => {
 	const [createWorld, {data, loading, error}] = useMutation(CREATE_WORLD, {
 		onCompleted: callback

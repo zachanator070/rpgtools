@@ -5,12 +5,15 @@ import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {cleanUpPermissions} from "../../db-helpers";
-import {ARTICLE, PERSON, PLACE} from "../../../../common/src/type-constants";
+import {ARTICLE, ITEM, MONSTER, PERSON, PLACE} from "../../../../common/src/type-constants";
 import {authenticated} from "../../authentication-helpers";
 import {Place} from "../../models/place";
 import {Image} from "../../models/image";
 import {Person} from '../../models/person';
 import {Article} from "../../models/article";
+import {Item} from "../../models/item";
+import {Monster} from "../../models/monster";
+import {Model} from "../../models/model";
 
 export const wikiMutations = {
 	createWiki: authenticated(async (parent, {name, folderId}, {currentUser}) => {
@@ -110,6 +113,12 @@ export const wikiMutations = {
 				case ARTICLE:
 					wikiPage = Article.hydrate({_id: wikiPageObject._id});
 					break;
+				case ITEM:
+					wikiPage = Item.hydrate({_id: wikiPageObject._id});
+					break;
+				case MONSTER:
+					wikiPage = Monster.hydrate({_id: wikiPageObject._id});
+					break;
 			}
 			wikiPage.world = wikiPageObject.world._id;
 			wikiPage.name = wikiPageObject.name;
@@ -168,5 +177,21 @@ export const wikiMutations = {
 		await place.save();
 		await place.populate({path: 'mapImage', populate: {path: 'chunks icon', populate: {path: 'chunks'}}}).execPopulate();
 		return place;
+	},
+	updateModeledWiki: async (parent, {wikiId, model}, {currentUser}) => {
+		let wikiPage = await WikiPage.findById(wikiId).populate('world content');
+		if(!wikiPage){
+			throw new Error(`Wiki ${wikiId} does not exist`);
+		}
+		if(!await wikiPage.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to write to this page');
+		}
+		const foundModel = await Model.findById(model);
+		if(model && !foundModel){
+			throw new Error(`Model ${model} does not exist`);
+		}
+		wikiPage.model = foundModel;
+		await wikiPage.save();
+		return wikiPage;
 	}
 };

@@ -1,6 +1,11 @@
 import {useGQLMutation} from "../useGQLMutation";
-import {IMPORT_CONTENT} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const IMPORT_CONTENT = gql`
+	mutation importContent($worldId: ID!, $zipFile: Upload!){
+		importContent(worldId: $worldId, zipFile: $zipFile)
+	}
+`;
 export const useImportContent = () => {
 	return useGQLMutation(IMPORT_CONTENT);
 }

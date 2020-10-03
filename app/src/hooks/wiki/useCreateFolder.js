@@ -1,6 +1,17 @@
 import {useMutation} from "@apollo/client";
-import {CREATE_FOLDER} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {CURRENT_WORLD_FOLDERS} from "../../../../common/src/gql-fragments";
 
+export const CREATE_FOLDER = gql`
+	mutation createFolder($parentFolderId: ID!, $name: String!){
+		createFolder(parentFolderId: $parentFolderId, name: $name){
+			_id
+			folders{
+				${CURRENT_WORLD_FOLDERS}
+			}
+		}
+	}
+`;
 export default () => {
 	const [createFolder, {loading, error, data}] = useMutation(CREATE_FOLDER);
 	return {

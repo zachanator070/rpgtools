@@ -272,6 +272,14 @@ export const serverResolvers = {
 			return await getDocument(Image, page.mapImage);
 		}
 	},
+	Item: {
+		...wikiPageInterfaceAttributes,
+		...permissionControlledInterfaceAttributes
+	},
+	Monster: {
+		...wikiPageInterfaceAttributes,
+		...permissionControlledInterfaceAttributes
+	},
 	WikiFolder: {
 		world: async (page) => {
 			return await getDocument(World, page.world);

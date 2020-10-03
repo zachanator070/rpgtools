@@ -4,8 +4,9 @@ import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
-import {GENERATE_REGISTER_CODES, UNLOCK_SERVER} from "../../../../../common/src/gql-queries";
 import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {GENERATE_REGISTER_CODES} from "../../../../../app/src/hooks/server/useGenerateRegisterCodes";
+import {UNLOCK_SERVER} from "../../../../../app/src/hooks/server/useUnlockServer";
 
 process.env.TEST_SUITE = 'server-mutations-test';
 

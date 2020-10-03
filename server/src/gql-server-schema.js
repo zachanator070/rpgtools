@@ -65,14 +65,11 @@ export const typeDefs = gql`
         deleteFolder(folderId: ID!): World!
         moveFolder(folderId: ID!, parentFolderId: ID!): World!
         
-        """ Creates a generic wiki page """
         createWiki(name: String!, folderId: ID!): World!
-        """ Deletes any wiki page of any type """
         deleteWiki(wikiId: ID!): World!
-        """ Updates any wiki page of any type """
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
-        """ Update place specific attributes """
         updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
+        updateModeledWiki(wikiId: ID!, model: ID): WikiPage!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
@@ -202,6 +199,10 @@ export const typeDefs = gql`
 		type: String!
 	}
 	
+	interface ModeledWiki {
+	    model: Model
+	}
+	
 	type Article implements WikiPage & PermissionControlled {
 		_id: ID!
 		name: String!
@@ -228,7 +229,7 @@ export const typeDefs = gql`
 		canAdmin: Boolean!
 	}
 	
-	type Person implements WikiPage & PermissionControlled {
+	type Person implements WikiPage & PermissionControlled & ModeledWiki {
 		_id: ID!
 		name: String!
 		content: String
@@ -238,7 +239,34 @@ export const typeDefs = gql`
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
+		model: Model
 	}
+	
+	type Item implements WikiPage & PermissionControlled & ModeledWiki {
+	    _id: ID!
+		name: String!
+		content: String
+		world: World!
+		coverImage: Image
+		type: String!
+		accessControlList: [PermissionAssignment!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+		model: Model
+    }
+    
+    type Monster implements WikiPage & PermissionControlled & ModeledWiki {
+	    _id: ID!
+		name: String!
+		content: String
+		world: World!
+		coverImage: Image
+		type: String!
+		accessControlList: [PermissionAssignment!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+		model: Model
+    }
 	
 	type WikiFolder implements PermissionControlled{
 		_id: ID!

@@ -1,8 +1,16 @@
 import {useGQLMutation} from "../useGQLMutation";
 import useCurrentGame from "./useCurrentGame";
-import {SET_MODEL_COLOR} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {GAME_MODEL} from "../../../../common/src/gql-fragments";
 
 
+export const SET_MODEL_COLOR = gql`
+	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
+		setModelColor(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
+			${GAME_MODEL}
+		}
+	}
+`;
 export const useSetModelColor = () => {
     const {currentGame} = useCurrentGame();
     const returnValues = useGQLMutation(SET_MODEL_COLOR);

@@ -1,6 +1,18 @@
 import {useLazyQuery} from "@apollo/client";
-import {SEARCH_USERS} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const SEARCH_USERS = gql`
+	query searchUsers($username: String!){
+		users(username: $username){
+			page
+			totalPages
+			docs{
+				_id
+				username
+			}
+		}
+	}
+`;
 export const useSearchUsers = () => {
 	const [searchUsers, {data, loading, error}] = useLazyQuery(SEARCH_USERS);
 	return {

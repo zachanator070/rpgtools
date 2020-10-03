@@ -1,7 +1,16 @@
 import {useMutation} from "@apollo/client";
-import {CREATE_GAME} from "../../../../common/src/gql-queries";
 import useCurrentWorld from "../world/useCurrentWorld";
+import gql from "graphql-tag";
+import {ACCESS_CONTROL_LIST} from "../../../../common/src/gql-fragments";
 
+export const CREATE_GAME = gql`
+    mutation createGame($worldId: ID!, $password: String){
+        createGame(worldId: $worldId, password: $password){
+            _id
+            ${ACCESS_CONTROL_LIST}
+        }
+    }
+`;
 export default (callback) => {
 
 	const {currentWorld} = useCurrentWorld();
