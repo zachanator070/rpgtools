@@ -20,7 +20,8 @@ export class RotateControls {
 		}
 		const mapIntersect = intersects[0].point;
 		this.selectControls.selectedMeshedModel.mesh.lookAt(mapIntersect);
-		this.selectControls.selectedMeshedModel.positionedModel.rotation = this.selectControls.selectedMeshedModel.mesh.rotation.y;
+		this.selectControls.selectedMeshedModel.positionedModel.lookAtX = mapIntersect.x;
+		this.selectControls.selectedMeshedModel.positionedModel.lookAtZ = mapIntersect.z;
 	}
 
 	rotateDone = () => {

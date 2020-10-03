@@ -88,7 +88,7 @@ export const typeDefs = gql`
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
         addFogStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, strokeId: ID!): Game!
         addModel(gameId: ID!, modelId: ID!): Game!
-        setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, rotation: Float!): PositionedModel!
+        setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, lookAtX: Float!, lookAtZ: Float!): PositionedModel!
         setModelColor(gameId: ID!, positionedModelId: ID!, color: String): PositionedModel!
         deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
         
@@ -385,7 +385,8 @@ export const typeDefs = gql`
 		model: Model!
 		x: Float!
 		z: Float!
-		rotation: Float!
+		lookAtX: Float!
+		lookAtZ: Float!
 		color: String
 	}
 	

@@ -12,7 +12,7 @@ export const AddModelSection = ({renderer}) => {
 	const {currentGame} = useCurrentGame();
 	const {addModel} = useAddModel();
 
-	return <>
+	return <div>
 		<SelectModel
 			onChange={async (model) => await setSelectedModel(model)}
 			style={{marginBottom: '15px', width: 300}}
@@ -31,5 +31,5 @@ export const AddModelSection = ({renderer}) => {
 				<ModelViewer model={selectedModel}/>
 			</div>
 		}
-		</>;
+	</div>;
 };

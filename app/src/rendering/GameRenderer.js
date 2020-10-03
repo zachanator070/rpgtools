@@ -362,7 +362,7 @@ export class GameRenderer{
 
 			loadedMesh.scale.set(widthScale, heightScale, depthScale);
 			loadedMesh.position.set(positionedModel.x, 0, positionedModel.z);
-			loadedMesh.rotation.set(0, positionedModel.rotation, 0);
+			loadedMesh.lookAt(new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ));
 			loadedMesh.traverse( function( child ) {
 				if ( child.isMesh ) {
 					child.castShadow = true;
@@ -384,6 +384,9 @@ export class GameRenderer{
 						}
 					});
 					this.originalMeshedModels.push(meshedModelClone);
+					if(meshedModel.positionedModel.color){
+						this.setModelColor(meshedModel, meshedModel.positionedModel.color);
+					}
 					break;
 				}
 			}
@@ -423,15 +426,18 @@ export class GameRenderer{
 			console.warn('Model not added!');
 			return;
 		}
-		targetModel.positionedModel = positionedModel;
+
 		targetModel.mesh.position.set(positionedModel.x, 0, positionedModel.z);
-		targetModel.mesh.rotation.set(0, positionedModel.rotation, 0);
+		targetModel.mesh.lookAt(new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ));
 
-		this.setModelColor(targetModel, positionedModel.color);
-
-		targetOriginal.positionedModel = positionedModel;
 		targetOriginal.mesh.position.set(positionedModel.x, 0, positionedModel.z);
-		targetOriginal.mesh.rotation.set(0, positionedModel.rotation, 0);
+		targetOriginal.mesh.lookAt(new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ));
+
+		if(targetModel.positionedModel.color !== positionedModel.color){
+			this.setModelColor(targetModel, positionedModel.color);
+		}
+
+		targetModel.positionedModel = positionedModel;
 	}
 
 	setModelColor = (meshedModel, color) => {

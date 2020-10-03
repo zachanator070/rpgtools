@@ -101,9 +101,13 @@ const gameSchema = new Schema({
 			type: Number,
 			required: [true, 'z position required']
 		},
-		rotation: {
+		lookAtX: {
 			type: Number,
-			required: [true, 'rotation required']
+			required: [true, 'x look at point required']
+		},
+		lookAtZ: {
+			type: Number,
+			required: [true, 'z look at point required']
 		},
 		color: {
 			type: String
