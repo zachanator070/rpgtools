@@ -1,7 +1,17 @@
 import {useMutation} from "@apollo/client";
 import useCurrentUser from "../authentication/useCurrentUser";
-import {CREATE_ROLE} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES} from "../../../../common/src/gql-fragments";
 
+export const CREATE_ROLE = gql`
+	mutation createRole($worldId: ID!, $name: String!){
+		createRole(worldId: $worldId, name: $name){
+			_id
+			${ACCESS_CONTROL_LIST}
+			${CURRENT_WORLD_ROLES}
+		}
+	}
+`;
 export default () => {
 	const [createRole, {loading, error, data}] = useMutation(CREATE_ROLE);
 	const {refetch} = useCurrentUser();

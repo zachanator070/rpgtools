@@ -3,7 +3,6 @@ import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
-import {CREATE_IMAGE, CREATE_WIKI, DELETE_WIKI, UPDATE_PLACE, UPDATE_WIKI} from "../../../../../common/src/gql-queries";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
 import {Readable} from 'stream';
 import fs from "fs";
@@ -11,6 +10,11 @@ import {ARTICLE, PERSON} from "../../../../../common/src/type-constants";
 import {WikiPage} from "../../../../src/models/wiki-page";
 import {Article} from "../../../../src/models/article";
 import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {CREATE_IMAGE} from "../../../../../app/src/hooks/wiki/useCreateImage";
+import {CREATE_WIKI} from "../../../../../app/src/hooks/wiki/useCreateWiki";
+import {DELETE_WIKI} from "../../../../../app/src/hooks/wiki/useDeleteWiki";
+import {UPDATE_PLACE} from "../../../../../app/src/hooks/wiki/useUpdatePlace";
+import {UPDATE_WIKI} from "../../../../../app/src/hooks/wiki/useUpdateWiki";
 
 process.env.TEST_SUITE = 'wiki-mutations-test';
 

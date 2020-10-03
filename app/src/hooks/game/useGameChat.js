@@ -1,6 +1,13 @@
 import {useMutation} from "@apollo/client";
-import {GAME_CHAT} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const GAME_CHAT = gql`
+	mutation gameChat($gameId: ID!, $message: String!){
+		gameChat(gameId: $gameId, message: $message){
+			_id
+		}
+	}	
+`;
 export const useGameChat = () => {
 	const [gameChat, {data, loading, error}] = useMutation(GAME_CHAT);
 	return {

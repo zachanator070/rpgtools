@@ -1,7 +1,14 @@
 import {useGQLMutation} from "../useGQLMutation";
-import {ADD_FOG_STROKE} from "../../../../common/src/gql-queries";
 import useCurrentGame from "./useCurrentGame";
+import gql from "graphql-tag";
 
+export const ADD_FOG_STROKE = gql`
+	mutation addFogStroke($gameId: ID!, $path: [PathNodeInput!]!, $type: String!, $size: Int!, $strokeId: ID!){
+		addFogStroke(gameId: $gameId, path: $path, type: $type, size:$size, strokeId: $strokeId){
+			_id
+		}
+	}
+`;
 export const useAddFogStroke = () => {
 	const {currentGame} = useCurrentGame();
 	const returnValues = useGQLMutation(ADD_FOG_STROKE);

@@ -3,7 +3,7 @@ import {ModelRenderer} from "../../rendering/ModelRenderer";
 import {Button, Input} from "antd";
 
 
-export const ModelViewer = ({model}) => {
+export const ModelViewer = ({model, width, height}) => {
 	const [renderer, setRenderer] = useState();
 	const [modelColor, setModelColor] = useState();
 	const renderCanvas = useRef();
@@ -31,34 +31,43 @@ export const ModelViewer = ({model}) => {
 		}
 	}, [renderer, model]);
 
-	return <>
-		<div className={'margin-md'}>
+	return <div className={'margin-md-top'}>
+		<div>
+			<span className={'margin-md-right'}>
 			Select Color:
+		</span>
+			<Input
+				style={{
+					width: '100px'
+				}}
+				type={'color'}
+				value={modelColor}
+				onChange={async (e) => {
+					const value = e.target.value;
+					await setModelColor(value);
+				}}
+			/>
 		</div>
-		<Input
-			type={'color'}
-			value={modelColor}
-			onChange={async (e) => {
-				const value = e.target.value;
-				await setModelColor(value);
-			}}
-		/>
-		<Button
-			className={'margin-md'}
-			onClick={() => {
-				renderer.setModelColor(modelColor);
-			}}
-		>
-			Set Color
-		</Button>
-		<Button
-			className={'margin-md'}
-			onClick={() => {
-				renderer.setModelColor(null);
-			}}
-		>
-			Clear Color
-		</Button>
-		<canvas ref={renderCanvas} style={{width: '100%', height: '100%'}}/>
-	</>;
+
+		<div className={'margin-md-top'}>
+			<Button
+				className={'margin-md-right'}
+				onClick={() => {
+					renderer.setModelColor(modelColor);
+				}}
+			>
+				Set Color
+			</Button>
+			<Button
+				onClick={() => {
+					renderer.setModelColor(null);
+				}}
+			>
+				Clear Color
+			</Button>
+		</div>
+		<div className={'margin-md-top'}>
+			<canvas ref={renderCanvas} style={{width: width || 500, height: height || 700}}/>
+		</div>
+	</div>;
 };

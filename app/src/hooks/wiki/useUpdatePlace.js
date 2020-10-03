@@ -1,6 +1,15 @@
 import {useMutation} from "@apollo/client";
-import {UPDATE_PLACE} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {CURRENT_WIKI_PLACE_ATTRIBUTES} from "../../../../common/src/gql-fragments";
 
+export const UPDATE_PLACE = gql`
+	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
+		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
+			_id
+            ${CURRENT_WIKI_PLACE_ATTRIBUTES}
+		}
+	}
+`;
 export default () => {
 	const [updatePlace, {data, loading, error}] = useMutation(UPDATE_PLACE);
 	return {

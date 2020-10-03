@@ -1,10 +1,17 @@
 import {useGetModels} from "./useGetModels";
 import {useMyPermissions} from "../authorization/useMyPermissions";
 import {useGQLMutation} from "../useGQLMutation";
-import {DELETE_MODEL} from "../../../../common/src/gql-queries";
 import {useParams} from 'react-router-dom';
+import gql from "graphql-tag";
 
 
+export const DELETE_MODEL = gql`
+	mutation deleteModel($modelId: ID!){
+		deleteModel(modelId: $modelId){
+			_id
+		}
+	}
+`;
 export const useDeleteModel = (callback) => {
 	const {refetch} = useGetModels();
 	const {refetch: refetchPermissions} = useMyPermissions();

@@ -1,6 +1,11 @@
 import {useMutation} from "@apollo/client";
-import {LEAVE_GAME} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const LEAVE_GAME = gql`
+	mutation leaveGame($gameId: ID!){
+		leaveGame(gameId: $gameId)
+	}
+`;
 export default (callback) => {
 	const [leaveGame, {data, loading, error}] = useMutation(LEAVE_GAME, {
 		onCompleted: callback

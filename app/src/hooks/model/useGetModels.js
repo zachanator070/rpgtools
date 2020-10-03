@@ -1,8 +1,16 @@
 import useCurrentWorld from "../world/useCurrentWorld";
-import {GET_MODELS} from "../../../../common/src/gql-queries";
 import {useLazyQuery} from "@apollo/client";
 import React, {useEffect} from "react";
+import gql from "graphql-tag";
+import {MODEL_ATTRIBUTES} from "../../../../common/src/gql-fragments";
 
+export const GET_MODELS = gql`
+	query getModels($worldId: ID!){
+		models(worldId: $worldId){
+			${MODEL_ATTRIBUTES}
+		}
+	}
+`;
 export const useGetModels = () => {
 
 	const {currentWorld, loading} = useCurrentWorld();

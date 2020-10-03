@@ -1,6 +1,15 @@
 import {useGQLMutation} from "../useGQLMutation";
-import {ADD_MODEL} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {GAME_MODELS} from "../../../../common/src/gql-fragments";
 
+export const ADD_MODEL = gql`
+	mutation addModel($gameId: ID!, $modelId: ID!){
+		addModel(gameId: $gameId, modelId: $modelId){
+			_id
+			${GAME_MODELS}
+		}
+	}	
+`;
 export const useAddModel = () => {
 	return useGQLMutation(ADD_MODEL, {});
 };

@@ -7,8 +7,12 @@ import {Pin} from "../../../../src/models/pin";
 import {World} from '../../../../src/models/world'
 import {Article} from "../../../../src/models/article";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
-import {CREATE_PIN, CREATE_WORLD, DELETE_PIN, RENAME_WORLD, UPDATE_PIN} from "../../../../../common/src/gql-queries";
 import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {CREATE_PIN} from "../../../../../app/src/hooks/map/useCreatePin";
+import {CREATE_WORLD} from "../../../../../app/src/hooks/world/useCreateWorld";
+import {DELETE_PIN} from "../../../../../app/src/hooks/map/useDeletePin";
+import {RENAME_WORLD} from "../../../../../app/src/hooks/world/useRenameWorld";
+import {UPDATE_PIN} from "../../../../../app/src/hooks/map/useUpdatePin";
 
 process.env.TEST_SUITE = 'world-mutations-test';
 

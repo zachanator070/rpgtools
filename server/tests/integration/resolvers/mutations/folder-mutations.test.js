@@ -4,12 +4,14 @@ import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
-import {CREATE_FOLDER, DELETE_FOLDER, RENAME_FOLDER} from "../../../../../common/src/gql-queries";
 import {WikiFolder} from "../../../../src/models/wiki-folder";
 import {WikiPage} from "../../../../src/models/wiki-page";
 import {ARTICLE, WIKI_FOLDER} from "../../../../../common/src/type-constants";
 import {PermissionAssignment} from "../../../../src/models/permission-assignement";
 import {ANON_USERNAME, WIKI_RW} from "../../../../../common/src/permission-constants";
+import {CREATE_FOLDER} from "../../../../../app/src/hooks/wiki/useCreateFolder";
+import {DELETE_FOLDER} from "../../../../../app/src/hooks/wiki/useDeleteFolder";
+import {RENAME_FOLDER} from "../../../../../app/src/hooks/wiki/useRenameFolder";
 
 process.env.TEST_SUITE = 'folder-mutations-test';
 

@@ -4,9 +4,11 @@ import {ExportOutlined, EditOutlined} from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {useHistory, useParams} from "react-router-dom";
 import {LoadingView} from "../LoadingView";
-import {PLACE} from "../../../../common/src/type-constants";
+import {MODELED_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
 import {Button, Tooltip} from "antd";
 import {QuestionCircleOutlined} from '@ant-design/icons';
+import {SelectModel} from "../select/SelectModel";
+import {ModelViewer} from "../models/ModelViewer";
 
 
 export const WikiContent = ({currentWiki}) => {
@@ -85,6 +87,12 @@ export const WikiContent = ({currentWiki}) => {
 					<QuestionCircleOutlined className={'margin-lg-left'}/>
 				</Tooltip>
 			</>
+			}
+
+			{MODELED_WIKI_TYPES.includes(currentWiki.type) && currentWiki.model &&
+				<div className={'margin-lg'}>
+					<ModelViewer model={currentWiki.model}/>
+				</div>
 			}
 
 			<div className='padding-md'>

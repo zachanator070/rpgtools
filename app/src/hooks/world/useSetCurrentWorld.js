@@ -1,7 +1,14 @@
 import {useMutation} from "@apollo/client";
 import useCurrentUser from "../authentication/useCurrentUser";
-import {SET_CURRENT_WORLD} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const SET_CURRENT_WORLD = gql`
+	mutation setCurrentWorld($worldId: ID!){
+		setCurrentWorld(worldId: $worldId){
+			_id
+		}
+	}
+`;
 export const useSetCurrentWorld = () => {
 	const [setCurrentWorld, {loading}] = useMutation(SET_CURRENT_WORLD);
 	const {refetch} = useCurrentUser();

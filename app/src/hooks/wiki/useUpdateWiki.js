@@ -1,7 +1,15 @@
 import {useMutation} from "@apollo/client";
 import useCurrentWiki from "./useCurrentWiki";
-import {UPDATE_WIKI} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {CURRENT_WIKI_ATTRIBUTES} from "../../../../common/src/gql-fragments";
 
+export const UPDATE_WIKI = gql`
+	mutation updateWiki($wikiId: ID!, $name: String, $content: Upload, $coverImageId: ID, $type: String){
+		updateWiki(wikiId: $wikiId, name: $name, content: $content, coverImageId: $coverImageId, type: $type){
+			${CURRENT_WIKI_ATTRIBUTES}
+		}
+	}
+`;
 export default () => {
 	const [updateWiki, {data, loading, error}] = useMutation(UPDATE_WIKI);
 	const {refetch} = useCurrentWiki();

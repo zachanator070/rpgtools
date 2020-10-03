@@ -3,15 +3,13 @@ import {ApolloServer} from "apollo-server-express";
 import {typeDefs} from "../../../src/gql-server-schema";
 import {serverResolvers} from "../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
-import {
-	GET_CURRENT_USER,
-	GET_CURRENT_WIKI,
-	GET_CURRENT_WORLD,
-	GET_WORLDS,
-	SEARCH_USERS
-} from "../../../../common/src/gql-queries";
 import {createWorld} from "../../../src/resolvers/mutations/world-mutations";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";
+import {GET_CURRENT_WORLD} from "../../../../app/src/hooks/world/useCurrentWorld";
+import {GET_CURRENT_USER} from "../../../../app/src/hooks/authentication/useCurrentUser";
+import {SEARCH_USERS} from "../../../../app/src/hooks/authentication/useSearchUsers";
+import {GET_WORLDS} from "../../../../app/src/hooks/world/useWorlds";
+import {GET_CURRENT_WIKI} from "../../../../app/src/hooks/wiki/useCurrentWiki";
 
 process.env.TEST_SUITE = 'query-resolver-test';
 

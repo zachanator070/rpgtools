@@ -1,6 +1,13 @@
 import {useApolloClient, useMutation} from "@apollo/client";
-import {LOGIN_QUERY} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const LOGIN_QUERY = gql`
+    mutation login($username: String!, $password: String!){
+        login(username: $username, password: $password){
+            _id
+        }
+    }
+`;
 export default (callback) => {
 	const client = useApolloClient();
 	const [login, {loading, error}] = useMutation(LOGIN_QUERY, {

@@ -1,15 +1,14 @@
 import mongoose from 'mongoose';
-import {MODEL, PERSON} from "../../../common/src/type-constants";
+import {MODEL, MONSTER,} from "../../../common/src/type-constants";
 import {WikiPage} from "./wiki-page";
 
 const Schema = mongoose.Schema;
 
-const personSchema = new Schema({
+const monsterSchema = new Schema({
     model: {
         type: mongoose.Schema.ObjectId,
         ref: MODEL,
     }
 });
 
-
-export const Person = WikiPage.discriminator(PERSON, personSchema);
+export const Monster = WikiPage.discriminator(MONSTER, monsterSchema);

@@ -1,6 +1,15 @@
 import {useMutation} from "@apollo/client";
-import {REVOKE_ROLE_PERMISSION} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {PERMISSIONS_GRANTED} from "../../../../common/src/gql-fragments";
 
+export const REVOKE_ROLE_PERMISSION = gql`
+	mutation revokeRolePermission($roleId: ID!, $permissionAssignmentId: ID!){
+		revokeRolePermission(roleId: $roleId, permissionAssignmentId: $permissionAssignmentId){
+			_id
+			${PERMISSIONS_GRANTED}
+		}
+	}
+`;
 export const useRevokeRolePermission = () => {
 	const [revokeRolePermission, {data, loading, error}] = useMutation(REVOKE_ROLE_PERMISSION);
 	return {

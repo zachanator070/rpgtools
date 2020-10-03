@@ -8,11 +8,12 @@ import {useDeleteWiki} from "../../hooks/wiki/useDeleteWiki";
 import {useCreateImage} from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
-import useUpdatePerson from "../../hooks/wiki/useUpdatePerson";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
-import {ALL_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
-import {QuestionCircleOutlined} from "@ant-design/icons";
+import {ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
 import {ToolTip} from "../ToolTip";
+import {SelectModel} from "../select/SelectModel";
+import {ModelViewer} from "../models/ModelViewer";
+import {useUpdateModeledWiki} from "../../hooks/wiki/useUpdateModeledWiki";
 
 export const WikiEdit = () => {
 
@@ -32,7 +33,9 @@ export const WikiEdit = () => {
 	const {createImage} = useCreateImage();
 	const {updateWiki} = useUpdateWiki();
 	const {updatePlace} = useUpdatePlace();
-	const {updatePerson} = useUpdatePerson();
+	const {updateModeledWiki} = useUpdateModeledWiki();
+
+	const [selectedModel, setSelectedModel] = useState();
 
 	const [editor, setEditor] = useState(null);
 
@@ -63,6 +66,9 @@ export const WikiEdit = () => {
 			await loadMapImageList();
 			await setName(currentWiki.name);
 			await setType(currentWiki.type);
+			if(MODELED_WIKI_TYPES.includes(currentWiki.type)){
+				await setSelectedModel(currentWiki.model);
+			}
 		})();
 
 	}, [currentWiki]);
@@ -125,6 +131,9 @@ export const WikiEdit = () => {
 				mapImageId = null;
 			}
 			await updatePlace(currentWiki._id, mapImageId, pixelsPerFoot);
+		}
+		if(MODELED_WIKI_TYPES.includes(type)){
+			await updateModeledWiki({wikiId: currentWiki._id, model: selectedModel ? selectedModel._id : null});
 		}
 		await refetchWorld();
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
@@ -199,6 +208,16 @@ export const WikiEdit = () => {
 
 					</div>
 				</>
+			}
+
+			{MODELED_WIKI_TYPES.includes(type) &&
+					<div className={'margin-lg'}>
+						{type} model:
+						<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model}/>
+						{selectedModel &&
+							<ModelViewer model={selectedModel} />
+						}
+					</div>
 			}
 
 			<div className='margin-lg'>

@@ -1,6 +1,17 @@
 import {useMutation} from "@apollo/client";
-import {DELETE_WIKI} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
+import {CURRENT_WORLD_FOLDERS} from "../../../../common/src/gql-fragments";
 
+export const DELETE_WIKI = gql`
+	mutation deleteWiki($wikiId: ID!){
+		deleteWiki(wikiId: $wikiId) {
+			_id
+			folders{
+				${CURRENT_WORLD_FOLDERS}
+			}
+		}
+	}
+`;
 export const useDeleteWiki = () => {
 	const [deleteWiki, {data, loading, error}] = useMutation(DELETE_WIKI);
 	return {

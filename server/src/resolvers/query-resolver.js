@@ -4,12 +4,24 @@ import {ANON_USERNAME, WIKI_READ_ALL, WORLD_READ} from "../../../common/src/perm
 import {EVERYONE} from "../../../common/src/role-constants";
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
-import {ALL_WIKI_TYPES, GAME, PLACE, ROLE, SERVER_CONFIG, WIKI_FOLDER, WORLD} from "../../../common/src/type-constants";
+import {
+	ALL_WIKI_TYPES,
+	GAME, ITEM, MONSTER,
+	PERSON,
+	PLACE,
+	ROLE,
+	SERVER_CONFIG,
+	WIKI_FOLDER,
+	WORLD
+} from "../../../common/src/type-constants";
 import {ServerConfig} from '../models/server-config';
 import {Game} from "../models/game";
 import {Model} from '../models/model';
 import {WikiFolder} from "../models/wiki-folder";
 import {Role} from "../models/role";
+import {Person} from "../models/person";
+import {Monster} from "../models/monster";
+import {Item} from "../models/item";
 
 
 export default {
@@ -129,10 +141,21 @@ export default {
 		if(foundWiki && ! await foundWiki.userCanRead(currentUser)){
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
-		if(foundWiki.type === PLACE){
-			foundWiki = await Place.findById(wikiId).populate('mapImage coverImage');
-		}
 
+		switch(foundWiki.type){
+			case PLACE:
+				foundWiki = await Place.findById(wikiId).populate('mapImage coverImage');
+				break;
+			case PERSON:
+				foundWiki = await Person.findById(wikiId).populate('model');
+				break;
+			case ITEM:
+				foundWiki = await Item.findById(wikiId).populate('model');
+				break;
+			case MONSTER:
+				foundWiki = await Monster.findById(wikiId).populate('model');
+				break;
+		}
 		return foundWiki;
 	},
 	users: async (_, {username}) => {

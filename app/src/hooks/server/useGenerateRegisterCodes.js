@@ -1,6 +1,14 @@
 import {useMutation} from "@apollo/client";
-import {GENERATE_REGISTER_CODES} from "../../../../common/src/gql-queries";
+import gql from "graphql-tag";
 
+export const GENERATE_REGISTER_CODES = gql`
+	mutation generateRegisterCodes($amount: Int!){
+		generateRegisterCodes(amount: $amount){
+			_id
+			registerCodes
+		}
+	}
+`;
 export const useGenerateRegisterCodes = () => {
 	const [generateRegisterCodes, {data, loading, error}] = useMutation(GENERATE_REGISTER_CODES);
 	return {
