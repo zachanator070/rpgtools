@@ -4,7 +4,7 @@ import {
 	GameRenderer,
 	MOVE_MODEL_CONTROLS,
 	PAINT_CONTROLS,
-	ROTATE_MODEL_CONTROLS
+	ROTATE_MODEL_CONTROLS, SELECT_MODEL_CONTROLS
 } from "../../rendering/GameRenderer";
 import {Progress, Modal, notification} from "antd";
 import useAddStroke from "../../hooks/game/useAddStroke";
@@ -18,6 +18,7 @@ import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedMode
 import {useGameModelDeletedSubscription} from "../../hooks/game/useGameModelDeletedSubscription";
 import {useAddFogStroke} from "../../hooks/game/useAddFogStroke";
 import {useGameFogSubscription} from "../../hooks/game/useGameFogSubscription";
+import {ModelInfo} from "./ModelInfo";
 
 export const GameContent = ({currentGame}) => {
 
@@ -38,6 +39,9 @@ export const GameContent = ({currentGame}) => {
 	const {gameModelDeleted} = useGameModelDeletedSubscription();
 	const {gameFogStrokeAdded} = useGameFogSubscription();
 	const renderParent = useRef();
+
+	const [modelInfoVisible, setModelInfoVisible] = useState();
+	const [selectedModel, setSelectedModel] = useState();
 
 	useEffect(() => {
 		(async () => {
@@ -71,7 +75,11 @@ export const GameContent = ({currentGame}) => {
 							closable: false
 						});
 					},
-					addFogStroke
+					addFogStroke,
+					async (model) => {
+						await setSelectedModel(model);
+						await setModelInfoVisible(true);
+					}
 				)
 			);
 		})();
@@ -83,7 +91,7 @@ export const GameContent = ({currentGame}) => {
 		});
 
 		renderCanvas.current.addEventListener('keydown', async ({code}) => {
-			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX', 'KeyF'].includes(code)){
+			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX', 'KeyF', 'KeyS'].includes(code)){
 				return;
 			}
 			switch(code){
@@ -113,6 +121,11 @@ export const GameContent = ({currentGame}) => {
 				case 'KeyF':
 					if(currentGame.canWriteFog){
 						await setControlsMode(FOG_CONTROLS);
+					}
+					break;
+				case 'KeyS':
+					if(currentGame.canModel){
+						await setControlsMode(SELECT_MODEL_CONTROLS);
 					}
 					break;
 			}
@@ -251,6 +264,7 @@ export const GameContent = ({currentGame}) => {
 				flexGrow:1,
 				display: 'flex'
 			}}/>
+			<ModelInfo visible={modelInfoVisible} setVisible={setModelInfoVisible} positionedModel={selectedModel}/>
 			<GameDrawer renderer={renderer}/>
 			<GameControlsHelp controlsMode={controlsMode} setControlsMode={setControlsMode}/>
 		</div>
