@@ -77,6 +77,7 @@ export class GameRenderer{
 		let renderWidth = this.renderRoot.clientWidth;
 
 		this.scene = new THREE.Scene();
+		this.scene.background = new THREE.Color( 0x656970 );
 
 		this.scene.add(new THREE.AmbientLight(0xffffff, 1))
 
@@ -178,7 +179,7 @@ export class GameRenderer{
 
 		const groundGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
 		groundGeometry.rotateX(Math.PI/2);
-		this.groundMesh = new THREE.Mesh(groundGeometry, new THREE.MeshBasicMaterial({color: 0x386636}));
+		this.groundMesh = new THREE.Mesh(groundGeometry, new THREE.MeshBasicMaterial({color: 0xffffff}));
 		this.groundMesh.position.set(0, -.01, 0);
 		this.scene.add(this.groundMesh);
 

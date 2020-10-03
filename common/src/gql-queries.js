@@ -919,6 +919,14 @@ export const SET_MODEL_POSITION = gql`
 	}
 `;
 
+export const SET_MODEL_COLOR = gql`
+	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
+		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
+			${GAME_MODEL}
+		}
+	}
+`;
+
 export const GAME_MODEL_POSITIONED_SUBSCRIPTION = gql`
 	subscription gameModelPositioned($gameId: ID!){
 		gameModelPositioned(gameId: $gameId){
