@@ -18,7 +18,7 @@ export const ModelInfo = ({visible, setVisible, positionedModel}) => {
             <div
                 className={'margin-md'}
                 style={{
-                    position: 'relative',
+                    position: 'absolute',
                     top: '0px',
                     right: '0px'
                 }}

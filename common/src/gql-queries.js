@@ -651,7 +651,8 @@ export const GAME_MODEL = `
 	}
 	x
 	z
-	rotation
+	lookAtX
+	lookAtZ
 	color
 `;
 export const GAME_MODELS = `
@@ -914,8 +915,8 @@ export const MY_PERMISSIONS = gql`
 `;
 
 export const SET_MODEL_POSITION = gql`
-	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float, $rotation: Float!){
-		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, x: $x, z: $z, rotation: $rotation){
+	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float!, $lookAtX: Float!, $lookAtZ: Float!){
+		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, x: $x, z: $z, lookAtX: $lookAtX, lookAtZ: $lookAtZ){
 			${GAME_MODEL}
 		}
 	}

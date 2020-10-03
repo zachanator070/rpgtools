@@ -457,14 +457,15 @@ export const gameMutations = {
 			model: model,
 			x: 0,
 			z: 0,
-			rotation: 0
+			lookAtX: 0,
+			lookAtZ: 1
 		}
 		game.models.push(positionedModel);
 		await game.save();
 		await pubsub.publish(GAME_MODEL_ADDED, {gameId, gameModelAdded: positionedModel});
 		return game;
 	},
-	setModelPosition: async (_, {gameId, positionedModelId, x, z, rotation}, {currentUser}) => {
+	setModelPosition: async (_, {gameId, positionedModelId, x, z, lookAtX, lookAtZ}, {currentUser}) => {
 		const game = await Game.findById(gameId);
 		if(!game){
 			throw new Error('Game does not exist');
@@ -483,7 +484,8 @@ export const gameMutations = {
 		}
 		positionedModel.x = x;
 		positionedModel.z = z;
-		positionedModel.rotation = rotation;
+		positionedModel.lookAtX = lookAtX;
+		positionedModel.lookAtZ = lookAtZ;
 		await game.save();
 
 		const model = positionedModel.toObject();
@@ -511,6 +513,7 @@ export const gameMutations = {
 			throw new Error(`Model with id ${positionedModelId} does not exist`);
 		}
 		positionedModel.color = color;
+		await game.save();
 
 		const model = positionedModel.toObject();
 		model.model = await Model.findById(model.model);

@@ -37,8 +37,12 @@ export class MoveControls {
 
 	moveDone = () => {
 		if(this.selectControls.selectedMeshedModel){
+			this.selectControls.selectedMeshedModel.positionedModel.lookAtX += this.selectControls.selectedMeshedModel.mesh.position.x - this.selectControls.selectedMeshedModel.positionedModel.x;
+			this.selectControls.selectedMeshedModel.positionedModel.lookAtZ += this.selectControls.selectedMeshedModel.mesh.position.z - this.selectControls.selectedMeshedModel.positionedModel.z;
+
 			this.selectControls.selectedMeshedModel.positionedModel.x = this.selectControls.selectedMeshedModel.mesh.position.x;
 			this.selectControls.selectedMeshedModel.positionedModel.z = this.selectControls.selectedMeshedModel.mesh.position.z;
+
 			this.moveCallback(this.selectControls.selectedMeshedModel);
 		}
 		this.selectControls.clearSelection();
