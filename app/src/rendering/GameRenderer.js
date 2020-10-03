@@ -309,7 +309,7 @@ export class GameRenderer{
 		if(this.selectModelControls){
 			this.selectModelControls.tearDown();
 		}
-		this.selectModelControls = new SelectModelControls(this.renderRoot, this.selectControls, this.selectCallback);
+		this.selectModelControls = new SelectModelControls(this.renderRoot, this.camera, this.scene, this.selectControls, this.selectCallback);
 
 		if(this.moveControls){
 			this.moveControls.tearDown();
