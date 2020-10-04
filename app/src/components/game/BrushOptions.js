@@ -21,11 +21,16 @@ export const BrushOptions = ({renderer}) => {
 	return <>
 		<div className={'margin-md'}>
 			<h3>Brush Color</h3>
-			<Input type={'color'} value={brushColor} onChange={async (e) => {
-				const value = e.target.value;
-				await setBrushColor(value);
-				renderer.paintControls.setBrushColor(value);
-			}}/>
+			<Input
+				style={{width: '50px'}}
+				type={'color'}
+				value={brushColor}
+				onChange={async (e) => {
+					const value = e.target.value;
+					await setBrushColor(value);
+					renderer.paintControls.setBrushColor(value);
+				}}
+			/>
 		</div>
 		<div className={'margin-md'}>
 			<h3>Brush Type</h3>

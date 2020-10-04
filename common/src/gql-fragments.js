@@ -67,6 +67,16 @@ export const CURRENT_WORLD_WIKIS = `
 		canWrite
 		canAdmin
 	}
+	... on ModeledWiki{
+	    model {
+	        name
+	        fileName
+	        width
+	        depth
+	        height
+	        _id
+        }
+    }
 `;
 
 export const CURRENT_WORLD_FOLDERS = `
@@ -258,6 +268,10 @@ export const GAME_MODEL = `
 	lookAtX
 	lookAtZ
 	color
+	wiki{
+	    _id
+	    name
+    }
 `;
 export const GAME_MODELS = `
 	models{

@@ -27,7 +27,7 @@ export const EditPinModal = ({visibility, setVisibility, pinId}) => {
 	}
 
 	const save = async () => {
-		await updatePin(pinId, page);
+		await updatePin(pinId, page._id);
 		await setVisibility(false);
 	};
 

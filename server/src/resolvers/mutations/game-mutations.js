@@ -22,6 +22,7 @@ import {
 import {cleanUpPermissions} from "../../db-helpers";
 import {Place} from "../../models/place";
 import {v4 as uuidv4} from 'uuid';
+import {WikiPage} from "../../models/wiki-page";
 
 const gameCommands = (game, message, currentUser) => {
 
@@ -440,7 +441,7 @@ export const gameMutations = {
 		await pubsub.publish(GAME_FOG_STROKE_ADDED, {gameId, gameFogStrokeAdded: newStroke});
 		return game;
 	},
-	addModel: async (_, {gameId, modelId}, {currentUser}) => {
+	addModel: async (_, {gameId, modelId, wikiId}, {currentUser}) => {
 		const game = await Game.findById(gameId);
 		if(!game){
 			throw new Error('Game does not exist');
@@ -452,13 +453,18 @@ export const gameMutations = {
 		if(!model){
 			throw new Error('Model does not exist');
 		}
+		const wiki = await WikiPage.findById(wikiId);
+		if(wikiId && !wiki){
+			throw new Error(`Cannot find wiki with ID ${wikiId}`);
+		}
 		const positionedModel = {
 			_id: uuidv4(),
 			model: model,
 			x: 0,
 			z: 0,
 			lookAtX: 0,
-			lookAtZ: 1
+			lookAtZ: 1,
+			wiki
 		}
 		game.models.push(positionedModel);
 		await game.save();
@@ -490,6 +496,7 @@ export const gameMutations = {
 
 		const model = positionedModel.toObject();
 		model.model = await Model.findById(model.model);
+		model.wiki = await WikiPage.findById(model.wiki);
 
 		await pubsub.publish(GAME_MODEL_POSITIONED, {gameId, gameModelPositioned: model});
 
@@ -517,6 +524,7 @@ export const gameMutations = {
 
 		const model = positionedModel.toObject();
 		model.model = await Model.findById(model.model);
+		model.wiki = await WikiPage.findById(model.wiki);
 
 		await pubsub.publish(GAME_MODEL_POSITIONED, {gameId, gameModelPositioned: model});
 
@@ -544,5 +552,34 @@ export const gameMutations = {
 		await game.save();
 		await pubsub.publish(GAME_MODEL_DELETED, {gameId, gameModelDeleted: positionedModel});
 		return game;
+	},
+	setPositionedModelWiki: async (_, {gameId, positionedModelId, wikiId}, {currentUser}) => {
+		const game = await Game.findById(gameId);
+		if (!game) {
+			throw new Error('Game does not exist');
+		}
+		if (!await game.userCanModel(currentUser)) {
+			throw new Error('You do not have permission to change the location for this game');
+		}
+		let positionedModel = null;
+		for (let model of game.models) {
+			if (model._id === positionedModelId) {
+				positionedModel = model;
+			}
+		}
+		if (!positionedModel) {
+			throw new Error(`Model with id ${positionedModelId} does not exist`);
+		}
+		const wiki = await WikiPage.findById(wikiId);
+		if (wikiId && !wiki) {
+			throw new Error(`Cannot find wiki with ID ${wikiId}`);
+		}
+		positionedModel.wiki = wiki;
+		await game.save();
+		const model = positionedModel.toObject();
+		model.model = await Model.findById(model.model);
+		model.wiki = await WikiPage.findById(model.wiki);
+		await pubsub.publish(GAME_MODEL_POSITIONED, {gameId, gameModelPositioned: model});
+		return model;
 	}
 };

@@ -94,6 +94,12 @@ const permissionControlledInterfaceAttributes = {
 	},
 };
 
+const modeledWikiAttributes = {
+	model: async (document, _, {currentUser}) => {
+		return await getDocument(Model, document.model);
+	}
+}
+
 export const GAME_CHAT_EVENT = 'GAME_CHAT_EVENT';
 export const ROSTER_CHANGE_EVENT = 'PLAYER_JOINED_EVENT';
 export const GAME_MAP_CHANGE = 'GAME_MAP_CHANGE';
@@ -263,7 +269,8 @@ export const serverResolvers = {
 	},
 	Person: {
 		...wikiPageInterfaceAttributes,
-		...permissionControlledInterfaceAttributes
+		...permissionControlledInterfaceAttributes,
+		...modeledWikiAttributes
 	},
 	Place: {
 		...wikiPageInterfaceAttributes,
@@ -274,11 +281,13 @@ export const serverResolvers = {
 	},
 	Item: {
 		...wikiPageInterfaceAttributes,
-		...permissionControlledInterfaceAttributes
+		...permissionControlledInterfaceAttributes,
+		...modeledWikiAttributes
 	},
 	Monster: {
 		...wikiPageInterfaceAttributes,
-		...permissionControlledInterfaceAttributes
+		...permissionControlledInterfaceAttributes,
+		...modeledWikiAttributes
 	},
 	WikiFolder: {
 		world: async (page) => {
@@ -370,11 +379,12 @@ export const serverResolvers = {
 		players: async (game) => {
 			return await getDocuments(User, game.players);
 		},
-		models: async (game) => {
+		models: async (game, _, {currentUser}) => {
 			const models = [];
 			for(let model of game.models){
 				model = model.toObject();
 				model.model = await Model.findById(model.model);
+				model.wiki = await getPermissionControlledDocument(WikiPage, model.wiki, currentUser);
 				models.push(model);
 			}
 			return models;

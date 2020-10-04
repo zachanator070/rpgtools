@@ -5,7 +5,7 @@ import {ARTICLE} from "../../../../common/src/type-constants";
 export const useSearchWikiPages = () => {
 	const {currentWorld, loading} = useCurrentWorld();
 	const [allWikis, setAllWikis] = useState([]);
-	const [filter, setFilter] = useState({name: null, type: null});
+	const [filter, setFilter] = useState({name: null, types: null});
 	useEffect(() => {
 		(async () => {
 			if(currentWorld){
@@ -18,14 +18,14 @@ export const useSearchWikiPages = () => {
 		})();
 	},[currentWorld]);
 
-	const getWikis = (name, type) => name ? allWikis.filter(wiki => wiki.name.toLowerCase().includes(name.toLowerCase()) && (type === null || wiki.type === type)) : []
+	const getWikis = (name, types) => name ? allWikis.filter(wiki => wiki.name.toLowerCase().includes(name.toLowerCase()) && (types === null || types.includes(wiki.type))) : []
 
 	return {
-		searchWikiPages: async (name, type = null) => {
-			await setFilter({name, type});
-			return getWikis(name, type);
+		searchWikiPages: async (name, types = null) => {
+			await setFilter({name, types});
+			return getWikis(name, types);
 		},
 		loading,
-		wikis: getWikis(filter.name, filter.type),
+		wikis: getWikis(filter.name, filter.types),
 	}
 };

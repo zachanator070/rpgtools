@@ -3,6 +3,7 @@ import {Button, Collapse, Comment, Form, Input, List} from "antd";
 import {useGameChatSubscription} from "../../hooks/game/useGameChatSubscription";
 import {useGameChat} from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
+import {CloseOutlined, CommentOutlined} from "@ant-design/icons";
 
 
 export const GameChat = () => {
@@ -13,6 +14,8 @@ export const GameChat = () => {
 	const {data: gameChatMessage} = useGameChatSubscription();
 	const {gameChat, loading: chatLoading} = useGameChat();
 	const [comment, setComment] = useState();
+
+	const [visible, setVisible] = useState(true);
 
 	const scrollChat = () => {
 		const element = document.getElementById("chat");
@@ -50,12 +53,34 @@ export const GameChat = () => {
 	};
 
 	return <>
+		<a onClick={async () => await setVisible(true)}>
+			<div
+				className={'margin-lg padding-md'}
+				style={{
+					borderRadius: '10px',
+					position: 'absolute',
+					top: '0px',
+					right: '0px',
+					backgroundColor: 'white'
+				}}
+			>
+				<CommentOutlined />
+			</div>
+		</a>
 		<div
 			id={'chat'}
+			className={'padding-lg'}
 			style={{
+				display: visible ? 'block' : 'none',
+				position: 'absolute',
+				top: '0px',
+				right: '0px',
 				overflowY: 'scroll',
 				overflowX: 'hidden',
-				height: '512px'
+				height: '50%',
+				width: '33%',
+				backgroundColor: 'white',
+				borderBottom: 'thin solid grey'
 			}}
 		>
 			<List
@@ -77,21 +102,36 @@ export const GameChat = () => {
 					/>;
 				}}
 			/>
+			<Comment
+				content={
+					<>
+						<Form.Item>
+							<Input.TextArea ref={chatInput} disabled={chatLoading} rows={4} onChange={async value => {await setComment(value.target.value)}} value={comment} onPressEnter={submitComment}/>
+						</Form.Item>
+						<Form.Item>
+							<Button htmlType="submit" loading={chatLoading} onClick={submitComment} type="primary">
+								Add Comment
+							</Button>
+						</Form.Item>
+					</>
+				}
+			/>
+			<span
+				style={{
+					display: 'inline'
+				}}
+			>
+				<a className={'margin-md'} onClick={async () => await setVisible(false)}>
+					<CloseOutlined />
+				</a>
+				<h2
+					style={{
+						display: 'inline'
+					}}
+				>Game Chat</h2>
+			</span>
+
 		</div>
 
-		<Comment
-			content={
-				<>
-					<Form.Item>
-						<Input.TextArea ref={chatInput} disabled={chatLoading} rows={4} onChange={async value => {await setComment(value.target.value)}} value={comment} onPressEnter={submitComment}/>
-					</Form.Item>
-					<Form.Item>
-						<Button htmlType="submit" loading={chatLoading} onClick={submitComment} type="primary">
-							Add Comment
-						</Button>
-					</Form.Item>
-				</>
-			}
-		/>
 	</>;
 };

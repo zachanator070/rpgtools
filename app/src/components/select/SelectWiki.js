@@ -1,31 +1,50 @@
 import React, {useState} from 'react';
-import {Select, Spin} from "antd";
+import {Button, Select, Spin} from "antd";
 import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {SearchOutlined} from "@ant-design/icons";
 
-export const SelectWiki = ({type, onChange, style}) => {
+export const SelectWiki = ({types, onChange, style, filter, showClear=false}) => {
 	const {searchWikiPages, wikis, loading} = useSearchWikiPages();
 	const [value, setValue] = useState();
 
-	const options = wikis.map((wiki) => {return <Select.Option key={wiki._id} value={wiki._id}>{wiki.name}</Select.Option>});
+	let potentialWikis = wikis;
+	if(filter){
+		potentialWikis = wikis.filter(filter);
+	}
 
-	return <Select
-		showSearch
-		value={value}
-		showArrow={false}
-		filterOption={false}
-		notFoundContent={loading ? <Spin size="small" /> : null}
-		onSearch={async (term) => {await searchWikiPages(term, type)}}
-		onSelect={async (newValue) => {
-			await setValue(newValue);
-			if(onChange){
-				await onChange(newValue);
+	const options = potentialWikis.map((wiki) => {return <Select.Option key={wiki._id} value={wiki._id}>{wiki.name}</Select.Option>});
+
+	const onSelect = async (newValue) => {
+		await setValue(newValue);
+		if(onChange){
+			for(let wiki of potentialWikis){
+				if(wiki._id === newValue){
+					await onChange(wiki);
+				}
 			}
-		}}
-		placeholder="Search for a wiki page"
-		style={style ? style : { width: 200 }}
-		suffixIcon={<SearchOutlined />}
-	>
-		{options}
-	</Select>
+		}
+	};
+
+	return <span>
+
+		<Select
+			showSearch
+			value={value}
+			showArrow={false}
+			filterOption={false}
+			notFoundContent={loading ? <Spin size="small" /> : null}
+			onSearch={async (term) => {await searchWikiPages(term, types)}}
+			onSelect={onSelect}
+			placeholder="Search for a wiki page"
+			style={style ? style : { width: 200 }}
+			suffixIcon={<SearchOutlined />}
+		>
+			{options}
+		</Select>
+		{showClear &&
+			<span className={'margin-md-left'}>
+				<Button onClick={async () => await onSelect(null)}>Clear</Button>
+			</span>
+		}
+	</span>;
 };

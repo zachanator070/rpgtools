@@ -10,17 +10,19 @@ import {DeleteControls} from "../controls/DeleteControls";
 import {SelectModelControls} from "../controls/SelectModelControls";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 
-export const CAMERA_CONTROLS = 'CAMERA_CONTROLS';
-export const PAINT_CONTROLS = 'PAINT_CONTROLS';
-export const MOVE_MODEL_CONTROLS = 'MOVE_MODEL_CONTROLS';
-export const ROTATE_MODEL_CONTROLS = 'ROTATE_MODEL_CONTROLS';
-export const DELETE_CONTROLS = 'DELETE_CONTROLS';
-export const FOG_CONTROLS = 'FOG_CONTROLS';
-export const SELECT_MODEL_CONTROLS = 'SELECT_MODEL_CONTROLS';
+export const CAMERA_CONTROLS = 'Camera Controls';
+export const PAINT_CONTROLS = 'Paint Controls';
+export const MOVE_MODEL_CONTROLS = 'Move Model Controls';
+export const ROTATE_MODEL_CONTROLS = 'Rotate Model Controls';
+export const DELETE_CONTROLS = 'Delete Controls';
+export const FOG_CONTROLS = 'Fog Controls';
+export const SELECT_MODEL_CONTROLS = 'Select Model Controls';
+export const SELECT_LOCATION_CONTROLS = 'Game Location';
+export const ADD_MODEL_CONTROLS = 'Add Model';
 
 export class GameRenderer{
 
-	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel, addFogStroke, selectCallback) {
+	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel, addFogStroke) {
 
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
@@ -28,7 +30,6 @@ export class GameRenderer{
 		this.setModelPosition = setModelPosition;
 		this.deleteModel = deleteModel;
 		this.addFogStroke = addFogStroke;
-		this.selectCallback = selectCallback;
 
 		this.renderer = null;
 		this.camera = null;
@@ -309,7 +310,7 @@ export class GameRenderer{
 		if(this.selectModelControls){
 			this.selectModelControls.tearDown();
 		}
-		this.selectModelControls = new SelectModelControls(this.renderRoot, this.camera, this.scene, this.selectControls, this.selectCallback);
+		this.selectModelControls = new SelectModelControls(this.renderRoot, this.camera, this.scene, this.selectControls);
 
 		if(this.moveControls){
 			this.moveControls.tearDown();
