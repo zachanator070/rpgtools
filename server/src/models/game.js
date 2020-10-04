@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {GAME, IMAGE, PLACE, WORLD} from "../../../common/src/type-constants";
+import {GAME, IMAGE, MODEL, PLACE, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
 import {
 	GAME_ADMIN, GAME_ADMIN_ALL, GAME_FOG_WRITE, GAME_MODEL, GAME_PAINT, GAME_READ, GAME_RW,
 } from "../../../common/src/permission-constants";
@@ -90,7 +90,7 @@ const gameSchema = new Schema({
 		},
 		model: {
 			type: mongoose.Schema.ObjectId,
-			ref: 'model',
+			ref: MODEL,
 			required: [true,  'model required']
 		},
 		x: {
@@ -111,7 +111,11 @@ const gameSchema = new Schema({
 		},
 		color: {
 			type: String
-		}
+		},
+		wiki: {
+			type: mongoose.Schema.ObjectId,
+			ref: WIKI_PAGE,
+		},
 	})]
 });
 

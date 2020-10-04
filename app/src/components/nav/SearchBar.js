@@ -12,8 +12,8 @@ export const SearchBarV2 = () => {
 		return <LoadingView/>;
 	}
 	return <>
-		<SelectWiki style={{ width: '100%' }} onChange={(wikiId) => {
-			history.push(`/ui/world/${currentWorld._id}/wiki/${wikiId}/view`)
+		<SelectWiki style={{ width: '100%' }} onChange={(wiki) => {
+			history.push(`/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`)
 		}}/>
 	</>;
 }

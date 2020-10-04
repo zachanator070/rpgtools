@@ -34,8 +34,8 @@ export const ModelViewer = ({model, width, height}) => {
 	return <div className={'margin-md-top'}>
 		<div>
 			<span className={'margin-md-right'}>
-			Select Color:
-		</span>
+				Preview Color:
+			</span>
 			<Input
 				style={{
 					width: '100px'

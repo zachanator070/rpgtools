@@ -213,7 +213,9 @@ export const WikiEdit = () => {
 			{MODELED_WIKI_TYPES.includes(type) &&
 					<div className={'margin-lg'}>
 						{type} model:
-						<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model}/>
+						<span className={'margin-md'}>
+							<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model}/>
+						</span>
 						{selectedModel &&
 							<ModelViewer model={selectedModel} />
 						}

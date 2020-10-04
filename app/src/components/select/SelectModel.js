@@ -5,13 +5,13 @@ import {SearchOutlined} from "@ant-design/icons";
 import {useSearchFolders} from "../../hooks/wiki/useSearchFolders";
 import {useSearchModels} from "../../hooks/model/useSearchModels";
 
-export const SelectModel = ({onChange, style, defaultModel}) => {
+export const SelectModel = ({onChange, style, defaultModel, showClear=true}) => {
 	const {searchModels, models, loading} = useSearchModels();
 	const [value, setValue] = useState();
 
 	const options = models.map((model) => {return <Select.Option key={model._id} value={model._id}>{model.name}</Select.Option>});
 
-	return <span className={'margin-md-left'} >
+	return <span>
 		<Select
 			showSearch
 			value={value}
@@ -37,7 +37,9 @@ export const SelectModel = ({onChange, style, defaultModel}) => {
 		>
 			{options}
 		</Select>
-		<Button className={'margin-md-left'} onClick={async () => {await setValue(null); await onChange(null)}} type={'danger'}>Clear</Button>
+		{showClear &&
+			<Button className={'margin-md-left'} onClick={async () => {await setValue(null); await onChange(null)}} type={'danger'}>Clear</Button>
+		}
 	</span>
 
 };

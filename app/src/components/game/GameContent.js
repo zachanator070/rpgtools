@@ -9,8 +9,7 @@ import {
 import {Progress, Modal, notification} from "antd";
 import useAddStroke from "../../hooks/game/useAddStroke";
 import {useGameStrokeSubscription} from "../../hooks/game/useGameStrokeSubscription";
-import {GameDrawer} from "./GameDrawer";
-import {GameControlsHelp} from "./GameControlsHelp";
+import {GameControlsToolbar} from "./GameControlsToolbar";
 import {useGameModelAddedSubscription} from "../../hooks/game/useGameModelAddedSubscription";
 import {useSetModelPosition} from "../../hooks/game/useSetModelPosition";
 import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelPosistionedSubscription";
@@ -18,7 +17,9 @@ import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedMode
 import {useGameModelDeletedSubscription} from "../../hooks/game/useGameModelDeletedSubscription";
 import {useAddFogStroke} from "../../hooks/game/useAddFogStroke";
 import {useGameFogSubscription} from "../../hooks/game/useGameFogSubscription";
-import {ModelInfo} from "./ModelInfo";
+import {ControlsContextWindow} from "./ControlsContextWindow";
+import {GameChat} from "./GameChat";
+import {GameWikiDrawer} from "./GameWikiDrawer";
 
 export const GameContent = ({currentGame}) => {
 
@@ -32,6 +33,8 @@ export const GameContent = ({currentGame}) => {
 	const {deletePositionedModel} = useDeletePositionedModel();
 	const {addFogStroke} = useAddFogStroke();
 
+	const [gameWikiId, setGameWikiId] = useState();
+
 	const [controlsMode, setControlsMode] = useState(CAMERA_CONTROLS);
 	const {data: gameStrokeAdded} = useGameStrokeSubscription();
 	const {data: gameModelAdded} = useGameModelAddedSubscription();
@@ -39,9 +42,6 @@ export const GameContent = ({currentGame}) => {
 	const {gameModelDeleted} = useGameModelDeletedSubscription();
 	const {gameFogStrokeAdded} = useGameFogSubscription();
 	const renderParent = useRef();
-
-	const [modelInfoVisible, setModelInfoVisible] = useState();
-	const [selectedModel, setSelectedModel] = useState();
 
 	useEffect(() => {
 		(async () => {
@@ -75,11 +75,7 @@ export const GameContent = ({currentGame}) => {
 							closable: false
 						});
 					},
-					addFogStroke,
-					async (model) => {
-						await setSelectedModel(model);
-						await setModelInfoVisible(true);
-					}
+					addFogStroke
 				)
 			);
 		})();
@@ -264,9 +260,10 @@ export const GameContent = ({currentGame}) => {
 				flexGrow:1,
 				display: 'flex'
 			}}/>
-			<ModelInfo visible={modelInfoVisible} setVisible={setModelInfoVisible} positionedModel={selectedModel}/>
-			<GameDrawer renderer={renderer}/>
-			<GameControlsHelp controlsMode={controlsMode} setControlsMode={setControlsMode}/>
+			<GameChat/>
+			<GameWikiDrawer wikiId={gameWikiId}/>
+			<ControlsContextWindow renderer={renderer} controlsMode={controlsMode} setGameWikiId={setGameWikiId}/>
+			<GameControlsToolbar controlsMode={controlsMode} setControlsMode={setControlsMode}/>
 		</div>
 	</>;
 

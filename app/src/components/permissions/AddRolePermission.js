@@ -30,7 +30,7 @@ export const AddRolePermission = ({role}) => {
 		</Select>;
 	}
 	else if(ALL_WIKI_TYPES.includes(permissionToAddSubjectType)){
-		selectSubject = <SelectWiki type={permissionToAddSubjectType} onChange={setPermissionToAddSubject}/>;
+		selectSubject = <SelectWiki types={[permissionToAddSubjectType]} onChange={async (wiki) => await setPermissionToAddSubject(wiki._id)}/>;
 	}
 	else if(permissionToAddSubjectType === ROLE){
 		selectSubject = <SelectRole onChange={setPermissionToAddSubject}/>;

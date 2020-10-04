@@ -84,9 +84,10 @@ export const typeDefs = gql`
         setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
         addFogStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, strokeId: ID!): Game!
-        addModel(gameId: ID!, modelId: ID!): Game!
+        addModel(gameId: ID!, modelId: ID!, wikiId: ID): Game!
         setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, lookAtX: Float!, lookAtZ: Float!): PositionedModel!
         setModelColor(gameId: ID!, positionedModelId: ID!, color: String): PositionedModel!
+        setPositionedModelWiki(gameId: ID!, positionedModelId: ID!, wikiId: ID): PositionedModel!
         deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!, notes: String): Model!
@@ -416,6 +417,7 @@ export const typeDefs = gql`
 		lookAtX: Float!
 		lookAtZ: Float!
 		color: String
+		wiki: WikiPage
 	}
 	
 	scalar Upload
