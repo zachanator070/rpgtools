@@ -36,7 +36,7 @@ export const ControlsContextWindow = ({renderer, controlsMode, setGameWikiId}) =
             content = <ModelInfo renderer={renderer} setGameWikiId={setGameWikiId}/>;
             break;
         case SELECT_LOCATION_CONTROLS:
-            content = <GameLocationSettings/>;
+            content = <GameLocationSettings setGameWikiId={setGameWikiId}/>;
             break;
         case ADD_MODEL_CONTROLS:
             content = <AddModelSection/>;

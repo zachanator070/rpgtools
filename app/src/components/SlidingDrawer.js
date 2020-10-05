@@ -1,40 +1,43 @@
-import React from 'react';
-import {DoubleLeftOutlined, DoubleRightOutlined} from "@ant-design/icons";
+ import React, {useState} from 'react';
+ import {Button, Drawer} from "antd";
+ import {MenuOutlined} from '@ant-design/icons';
 
-export const SlidingDrawer = ({side, show, setShow, children}) => {
+export const SlidingDrawer = ({title, placement, children, startVisible}) => {
 
-	let leftButton = null;
-	let rightButton = null;
-	if (side === 'left') {
-		rightButton = <div className={`drawer-button`}>
-			<a href='#' onClick={() => {
-				setShow(!show)
-			}}>
-				{show ? <DoubleLeftOutlined /> : <DoubleRightOutlined />}
-			</a>
-		</div>;
-	} else {
-		leftButton = <div className={`drawer-button`} style={{left: '-50px'}}>
-			<a href='#' onClick={() => {
-				setShow(!show)
-			}}>
-				{show ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
-			</a>
-		</div>;
-	}
+	const [visible, setVisible] = useState(startVisible || false);
 
-	const drawerStyle = {
-		height: `100%`,
-		width: show ? `33%` : '0%',
+	const buttonStyle = {
+		position: 'absolute',
+		padding: '2em',
+		top: '0%',
 	};
 
-	return (
-		<div style={drawerStyle} className={`drawer absolute-${side}`}>
-			{leftButton}
-			<div className={`drawer-content`} style={{display: show ? null : 'none'}}>
-				{children}
-			</div>
-			{rightButton}
+	if(placement === 'right'){
+		buttonStyle.right = '0';
+	}
+	else{
+		buttonStyle.left = '0';
+	}
+
+	return <>
+		<div style={buttonStyle}>
+			<Button onClick={async () => await setVisible(true)}>
+				<MenuOutlined />
+			</Button>
 		</div>
-	);
+		<Drawer
+			title={title}
+			placement={placement || 'right'}
+			closable={true}
+			onClose={async () => await setVisible(false)}
+			visible={visible}
+			mask={false}
+			maskClosable={false}
+			getContainer={false}
+			style={{ position: 'absolute'}}
+			width={'512px'}
+		>
+			{children}
+		</Drawer>
+	</>;
 };

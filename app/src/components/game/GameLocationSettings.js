@@ -1,23 +1,20 @@
 import React, {useState} from 'react';
-import {Link} from "react-router-dom";
 import {SelectWiki} from "../select/SelectWiki";
 import {PLACE} from "../../../../common/src/type-constants";
 import {Button, Checkbox} from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {useSetGameMap} from "../../hooks/game/useSetGameMap";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
 
-export const GameLocationSettings = () => {
+export const GameLocationSettings = ({setGameWikiId}) => {
 
-    const {currentWorld, loading: worldLoading} = useCurrentWorld();
     const {currentGame, loading: gameLoading} = useCurrentGame();
     const [selectedLocation, setSelectedLocation] = useState();
     const [clearPaint, setClearPaint] = useState();
     const [setFog, setSetFog] = useState();
     const {setGameMap} = useSetGameMap();
 
-    if(worldLoading || gameLoading){
+    if(gameLoading){
         return <LoadingView/>;
     }
 
@@ -25,8 +22,7 @@ export const GameLocationSettings = () => {
         <div className={'margin-lg-top margin-lg-bottom'}>
             <h3>Current Location</h3>
             {currentGame.map ?
-                <Link
-                    to={`/ui/world/${currentWorld._id}/wiki/${currentGame.map._id}/view`}>{currentGame.map.name}</Link>
+                <a onClick={async () => await setGameWikiId(currentGame.map._id)}>{currentGame.map.name}</a>
                 :
                 <p>No current location</p>
             }
