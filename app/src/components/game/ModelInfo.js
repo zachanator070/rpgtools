@@ -5,16 +5,19 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {SelectWiki} from "../select/SelectWiki";
 import {useSetPositionedModelWiki} from "../../hooks/game/useSetPositionedModelWiki";
 import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelPosistionedSubscription";
+import {LoadingView} from "../LoadingView";
+import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedModel";
 
 export const ModelInfo = ({renderer, setGameWikiId}) => {
 
-    const {currentGame} = useCurrentGame();
+    const {currentGame, loading} = useCurrentGame();
     const [positionedModel, setPositionedModel] = useState();
     const [newWiki, setNewWiki] = useState();
     const [color, setColor] = useState();
     const {setModelColor} = useSetModelColor();
     const {setPositionedModelWiki} = useSetPositionedModelWiki();
     const {gameModelPositioned} = useGameModelPositionedSubscription();
+    const {deletePositionedModel} = useDeletePositionedModel();
 
     useEffect(() => {
         if(renderer){
@@ -37,6 +40,10 @@ export const ModelInfo = ({renderer, setGameWikiId}) => {
             })();
         }
     }, [gameModelPositioned]);
+
+    if(loading){
+        return <LoadingView/>;
+    }
 
     let content = null;
 
@@ -90,7 +97,6 @@ export const ModelInfo = ({renderer, setGameWikiId}) => {
                         }}
                     />
                     <div>
-
                         <Button
                             className={'margin-md'}
                             onClick={async () => {
@@ -106,6 +112,17 @@ export const ModelInfo = ({renderer, setGameWikiId}) => {
                             }}
                         >
                             Clear Color
+                        </Button>
+                    </div>
+                    <div>
+                        <Button
+                            type={'danger'}
+                            onClick={async () => {
+                                await renderer.selectModelControls.select();
+                                await deletePositionedModel({gameId: currentGame._id, positionedModelId: positionedModel._id});
+                            }}
+                        >
+                            Delete Model
                         </Button>
                     </div>
                 </>

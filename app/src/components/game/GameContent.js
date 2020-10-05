@@ -1,10 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
+	ADD_MODEL_CONTROLS,
 	CAMERA_CONTROLS, DELETE_CONTROLS, FOG_CONTROLS,
 	GameRenderer,
 	MOVE_MODEL_CONTROLS,
 	PAINT_CONTROLS,
-	ROTATE_MODEL_CONTROLS, SELECT_MODEL_CONTROLS
+	ROTATE_MODEL_CONTROLS, SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
 } from "../../rendering/GameRenderer";
 import {Progress, Modal, notification} from "antd";
 import useAddStroke from "../../hooks/game/useAddStroke";
@@ -87,7 +88,7 @@ export const GameContent = ({currentGame}) => {
 		});
 
 		renderCanvas.current.addEventListener('keydown', async ({code}) => {
-			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX', 'KeyF', 'KeyS'].includes(code)){
+			if(!["KeyP", "KeyC", 'KeyM', "KeyR", 'KeyX', 'KeyF', 'KeyS', 'KeyA', 'KeyL'].includes(code)){
 				return;
 			}
 			switch(code){
@@ -120,9 +121,15 @@ export const GameContent = ({currentGame}) => {
 					}
 					break;
 				case 'KeyS':
-					if(currentGame.canModel){
-						await setControlsMode(SELECT_MODEL_CONTROLS);
+					await setControlsMode(SELECT_MODEL_CONTROLS);
+					break;
+				case 'KeyA':
+					if(currentGame.canModel) {
+						await setControlsMode(ADD_MODEL_CONTROLS);
 					}
+					break;
+				case 'KeyL':
+					await setControlsMode(SELECT_LOCATION_CONTROLS);
 					break;
 			}
 		});
@@ -218,9 +225,9 @@ export const GameContent = ({currentGame}) => {
 
 		})();
 
-		const resize = function(){
+		const resize = () => {
 			if(renderer){
-				renderer.resize(renderParent.current.clientWidth, renderParent.current.clientWidth);
+				renderer.resize(renderParent.current.clientWidth, renderParent.current.clientHeight);
 			}
 		}
 

@@ -305,7 +305,7 @@ export class GameRenderer{
 		if(this.selectControls){
 			this.selectControls.tearDown();
 		}
-		this.selectControls = new SelectControls(this.renderRoot, this.raycaster, this.meshedModels);
+		this.selectControls = new SelectControls(this.renderRoot, this.raycaster, this);
 
 		if(this.selectModelControls){
 			this.selectModelControls.tearDown();
@@ -401,11 +401,24 @@ export class GameRenderer{
 	}
 
 	removeModel = (positionedModel) => {
+		if(this.selectModelControls.selectControls.selectedMeshedModel &&
+			this.selectModelControls.selectControls.selectedMeshedModel.positionedModel._id === positionedModel._id){
+			this.selectModelControls.selectControls.clearSelection();
+			this.selectModelControls.constructGlow();
+		}
+		let meshedModelToRemove = null;
 		for(let meshedModel of this.meshedModels){
 			if(meshedModel.positionedModel._id === positionedModel._id){
-				this.scene.remove(meshedModel.mesh);
+				meshedModelToRemove = meshedModel;
 			}
 		}
+		if(!meshedModelToRemove){
+			console.warn('Could not find meshed model to delete');
+			return;
+		}
+		this.meshedModels = this.meshedModels.filter(meshedModel => meshedModel.positionedModel._id !== meshedModelToRemove.positionedModel._id);
+		this.scene.remove(meshedModelToRemove.mesh);
+
 	}
 
 	updateModel(positionedModel){
@@ -439,6 +452,11 @@ export class GameRenderer{
 		}
 
 		targetModel.positionedModel = positionedModel;
+
+		if(this.selectModelControls.selectControls.selectedMeshedModel &&
+			this.selectModelControls.selectControls.selectedMeshedModel.positionedModel._id === positionedModel._id){
+			this.selectModelControls.constructGlow();
+		}
 	}
 
 	setModelColor = (meshedModel, color) => {

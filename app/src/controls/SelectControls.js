@@ -2,10 +2,10 @@
 
 export class SelectControls {
 
-	constructor(renderRoot, raycaster, meshedModels) {
+	constructor(renderRoot, raycaster, renderer) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
-		this.meshedModels = meshedModels;
+		this.renderer = renderer;
 
 		this.selectedMeshedModel = null;
 		this.intersectionPoint = null;
@@ -21,16 +21,14 @@ export class SelectControls {
 	}
 
 	selectModel = () => {
-		if(this.selectedMeshedModel){
-			return;
-		}
 		const allObjects = [];
-		for(let model of this.meshedModels){
+		for(let model of this.renderer.meshedModels){
 			allObjects.push(...this.getAllChildren(model.mesh));
 			allObjects.push(model.mesh);
 		}
 		const intersects = this.raycaster.intersectObjects(allObjects);
 		if(intersects.length === 0){
+			this.clearSelection();
 			return;
 		}
 		let selectedMesh = intersects[0].object;
@@ -40,8 +38,8 @@ export class SelectControls {
 			}
 			selectedMesh = selectedMesh.parent;
 		}
-		for(let meshedModel of this.meshedModels){
-			if(meshedModel.mesh === selectedMesh){
+		for(let meshedModel of this.renderer.meshedModels){
+			if(meshedModel.mesh.id === selectedMesh.id){
 				this.selectedMeshedModel = meshedModel;
 				break;
 			}

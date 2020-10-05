@@ -382,9 +382,10 @@ export const serverResolvers = {
 		models: async (game, _, {currentUser}) => {
 			const models = [];
 			for(let model of game.models){
+				const modelWiki = model.wiki;
 				model = model.toObject();
 				model.model = await Model.findById(model.model);
-				model.wiki = await getPermissionControlledDocument(WikiPage, model.wiki, currentUser);
+				model.wiki = await getPermissionControlledDocument(WikiPage, modelWiki, currentUser);
 				models.push(model);
 			}
 			return models;

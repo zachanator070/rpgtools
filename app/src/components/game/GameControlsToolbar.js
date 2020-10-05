@@ -76,7 +76,7 @@ export const GameControlsToolbar = ({controlsMode, setControlsMode}) => {
 		Paint Brush, hotkey: p
 	</>;
 	mouseOverText[ADD_MODEL_CONTROLS] = <>
-		Add Model
+		Add Model, hotkey: a
 	</>;
 	mouseOverText[MOVE_MODEL_CONTROLS] = <>
 		Move Model, hotkey: m
@@ -94,7 +94,7 @@ export const GameControlsToolbar = ({controlsMode, setControlsMode}) => {
 		Select Model, hotkey: s
 	</>;
 	mouseOverText[SELECT_LOCATION_CONTROLS] = <>
-		Game Location
+		Game Location, hotkey: l
 	</>;
 
 	const icons = {};
