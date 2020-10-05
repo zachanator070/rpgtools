@@ -7,7 +7,6 @@ import {LoadingView} from "../LoadingView";
 import {MODELED_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
 import {Button, Tooltip} from "antd";
 import {QuestionCircleOutlined} from '@ant-design/icons';
-import {SelectModel} from "../select/SelectModel";
 import {ModelViewer} from "../models/ModelViewer";
 
 
@@ -91,7 +90,7 @@ export const WikiContent = ({currentWiki}) => {
 
 			{MODELED_WIKI_TYPES.includes(currentWiki.type) && currentWiki.model &&
 				<div className={'margin-lg'}>
-					<ModelViewer model={currentWiki.model}/>
+					<ModelViewer model={currentWiki.model} showColorControls={false} defaultColor={currentWiki.modelColor}/>
 				</div>
 			}
 

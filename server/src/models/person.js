@@ -8,6 +8,9 @@ const personSchema = new Schema({
     model: {
         type: mongoose.Schema.ObjectId,
         ref: MODEL,
+    },
+    modelColor: {
+        type: String
     }
 });
 

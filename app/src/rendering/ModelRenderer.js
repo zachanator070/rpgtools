@@ -26,6 +26,7 @@ export class ModelRenderer{
 
 		this.modelMesh = null;
 		this.originalModelMesh = null;
+		this.modelColor = null;
 
 		this.setupScene();
 
@@ -135,8 +136,13 @@ export class ModelRenderer{
 
 			this.modelMesh = loadedModel;
 			this.scene.add(this.modelMesh);
+			// give obj a mesh with gray color
 			if(extension === 'obj'){
-				this.setModelColor('#787878');
+				this.modelMesh.traverse( function( child ) {
+					if ( child.isMesh ) {
+						child.material.color.setHex( parseInt('0x787878') );
+					}
+				});
 			}
 
 			this.originalModelMesh = this.modelMesh.clone();
@@ -146,6 +152,10 @@ export class ModelRenderer{
 				}
 			});
 
+			if(this.modelColor){
+				this.setModelColor(this.modelColor);
+			}
+
 		}, undefined, ( error ) => {
 
 			console.error( error );
@@ -154,6 +164,10 @@ export class ModelRenderer{
 	}
 
 	setModelColor(color){
+		this.modelColor = color;
+		if(!this.modelMesh){
+			return;
+		}
 		if(color){
 			this.modelMesh.traverse( function( child ) {
 				if ( child.isMesh ) {

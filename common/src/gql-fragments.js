@@ -76,6 +76,7 @@ export const CURRENT_WORLD_WIKIS = `
 	        height
 	        _id
         }
+        modelColor
     }
 `;
 
@@ -197,7 +198,9 @@ export const CURRENT_WIKI_ATTRIBUTES = `
         model{
             ${MODEL_ATTRIBUTES}
         }
+        modelColor
     }
+    
 `;
 
 
