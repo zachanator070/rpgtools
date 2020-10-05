@@ -1,5 +1,5 @@
 import React from 'react';
-import {SlidingDrawer} from "../SlidingDrawerV2";
+import {SlidingDrawer} from "../SlidingDrawer";
 import {WikiContent} from "../wiki/WikiContent";
 import useMapWiki from "../../hooks/map/useMapWiki";
 

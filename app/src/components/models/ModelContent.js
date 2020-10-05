@@ -60,7 +60,10 @@ export const ModelContent = ({model}) => {
 					<Table size={'small'} dataSource={statsData} columns={statsColumns} pagination={false} showHeader={false}/>
 				</div>
 				<div className={'margin-lg'}>
-					Notes: {model.notes}
+					Notes:
+					<div>
+						{model.notes && <textarea rows={15} cols={50} readOnly={true} value={model.notes}/>}
+					</div>
 				</div>
 				<div className={'margin-lg'}>
 					<Button type={'primary'} onClick={() => history.push(`/ui/world/${currentWorld._id}/model/${model._id}/edit`)}>Edit<EditOutlined /></Button>
