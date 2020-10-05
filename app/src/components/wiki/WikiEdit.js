@@ -28,6 +28,7 @@ export const WikiEdit = () => {
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
 	const [pixelsPerFoot, setPixelsPerFoot] = useState(0);
+	const [modelColor, setModelColor] = useState();
 	const [saving, setSaving] = useState(false);
 	const {deleteWiki} = useDeleteWiki();
 	const {createImage} = useCreateImage();
@@ -68,6 +69,7 @@ export const WikiEdit = () => {
 			await setType(currentWiki.type);
 			if(MODELED_WIKI_TYPES.includes(currentWiki.type)){
 				await setSelectedModel(currentWiki.model);
+				await setModelColor(currentWiki.modelColor);
 			}
 		})();
 
@@ -133,7 +135,7 @@ export const WikiEdit = () => {
 			await updatePlace(currentWiki._id, mapImageId, pixelsPerFoot);
 		}
 		if(MODELED_WIKI_TYPES.includes(type)){
-			await updateModeledWiki({wikiId: currentWiki._id, model: selectedModel ? selectedModel._id : null});
+			await updateModeledWiki({wikiId: currentWiki._id, model: selectedModel ? selectedModel._id : null, color: modelColor});
 		}
 		await refetchWorld();
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
@@ -217,7 +219,7 @@ export const WikiEdit = () => {
 							<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model}/>
 						</span>
 						{selectedModel &&
-							<ModelViewer model={selectedModel} />
+							<ModelViewer model={selectedModel} defaultColor={currentWiki.modelColor} showColorControls={true} onChangeColor={setModelColor}/>
 						}
 					</div>
 			}

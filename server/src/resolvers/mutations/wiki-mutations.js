@@ -178,7 +178,7 @@ export const wikiMutations = {
 		await place.populate({path: 'mapImage', populate: {path: 'chunks icon', populate: {path: 'chunks'}}}).execPopulate();
 		return place;
 	},
-	updateModeledWiki: async (parent, {wikiId, model}, {currentUser}) => {
+	updateModeledWiki: async (parent, {wikiId, model, color}, {currentUser}) => {
 		let wikiPage = await WikiPage.findById(wikiId).populate('world content');
 		if(!wikiPage){
 			throw new Error(`Wiki ${wikiId} does not exist`);
@@ -191,6 +191,7 @@ export const wikiMutations = {
 			throw new Error(`Model ${model} does not exist`);
 		}
 		wikiPage.model = foundModel;
+		wikiPage.modelColor = color;
 		await wikiPage.save();
 		return wikiPage;
 	}

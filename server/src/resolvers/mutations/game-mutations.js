@@ -441,7 +441,7 @@ export const gameMutations = {
 		await pubsub.publish(GAME_FOG_STROKE_ADDED, {gameId, gameFogStrokeAdded: newStroke});
 		return game;
 	},
-	addModel: async (_, {gameId, modelId, wikiId}, {currentUser}) => {
+	addModel: async (_, {gameId, modelId, wikiId, color}, {currentUser}) => {
 		const game = await Game.findById(gameId);
 		if(!game){
 			throw new Error('Game does not exist');
@@ -464,7 +464,8 @@ export const gameMutations = {
 			z: 0,
 			lookAtX: 0,
 			lookAtZ: 1,
-			wiki
+			wiki,
+			color
 		}
 		game.models.push(positionedModel);
 		await game.save();

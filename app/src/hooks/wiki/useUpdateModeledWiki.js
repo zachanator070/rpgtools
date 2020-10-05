@@ -4,8 +4,8 @@ import gql from "graphql-tag";
 
 
 const UPDATE_MODELED_WIKI = gql`
-    mutation updateModeledWiki($wikiId: ID!, $model: ID){
-        updateModeledWiki(wikiId: $wikiId, model: $model){
+    mutation updateModeledWiki($wikiId: ID!, $model: ID, $color: String){
+        updateModeledWiki(wikiId: $wikiId, model: $model, color: $color){
             ${CURRENT_WIKI_ATTRIBUTES}
         }
     }   

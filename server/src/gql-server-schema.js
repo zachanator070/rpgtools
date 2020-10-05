@@ -69,7 +69,7 @@ export const typeDefs = gql`
         deleteWiki(wikiId: ID!): World!
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
-        updateModeledWiki(wikiId: ID!, model: ID): WikiPage!
+        updateModeledWiki(wikiId: ID!, model: ID, color: String): WikiPage!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         
@@ -84,7 +84,7 @@ export const typeDefs = gql`
         setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
         addStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, color: String!, fill: Boolean!, strokeId: ID!): Game!
         addFogStroke(gameId: ID!, path: [PathNodeInput!]!, type: String!, size: Int!, strokeId: ID!): Game!
-        addModel(gameId: ID!, modelId: ID!, wikiId: ID): Game!
+        addModel(gameId: ID!, modelId: ID!, wikiId: ID, color: String): Game!
         setModelPosition(gameId: ID!, positionedModelId: ID!, x: Float!, z: Float, lookAtX: Float!, lookAtZ: Float!): PositionedModel!
         setModelColor(gameId: ID!, positionedModelId: ID!, color: String): PositionedModel!
         setPositionedModelWiki(gameId: ID!, positionedModelId: ID!, wikiId: ID): PositionedModel!
@@ -202,6 +202,7 @@ export const typeDefs = gql`
 	
 	interface ModeledWiki {
 	    model: Model
+	    modelColor: String
 	}
 	
 	type Article implements WikiPage & PermissionControlled {
@@ -241,6 +242,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		model: Model
+		modelColor: String
 	}
 	
 	type Item implements WikiPage & PermissionControlled & ModeledWiki {
@@ -254,6 +256,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		model: Model
+		modelColor: String
     }
     
     type Monster implements WikiPage & PermissionControlled & ModeledWiki {
@@ -267,6 +270,7 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		model: Model
+		modelColor: String
     }
 	
 	type WikiFolder implements PermissionControlled{

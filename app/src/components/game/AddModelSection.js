@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SelectModel} from "../select/SelectModel";
 import {Switch, Button} from "antd";
 import {ModelViewer} from "../models/ModelViewer";
@@ -13,8 +13,15 @@ export const AddModelSection = () => {
 	const [selectedModel, setSelectedModel] = useState();
 	const {currentGame} = useCurrentGame();
 	const {addModel} = useAddModel();
+	const [modelColor, setModelColor] = useState();
 
 	const [wikiSearch, setWikiSearch] = useState(true);
+
+	useEffect(() => {
+		(async() => {
+			await setSelectedModel(null);
+		})();
+	}, [wikiSearch]);
 
 	return <div className={'margin-lg'}>
 		<div>
@@ -32,7 +39,10 @@ export const AddModelSection = () => {
 		{wikiSearch ?
 			<SelectWiki
 				filter={(wiki) => MODELED_WIKI_TYPES.includes(wiki.type) && wiki.model}
-				onChange={async (wiki) => await setSelectedModel({model: wiki.model, wiki})}
+				onChange={async (wiki) => {
+					await setSelectedModel({model: wiki.model, wiki});
+					await setModelColor(wiki.modelColor);
+				}}
 			/>
 			:
 			<SelectModel
@@ -46,14 +56,14 @@ export const AddModelSection = () => {
 			className={'margin-lg'}
 			disabled={!selectedModel}
 			onClick={async () => {
-				await addModel({gameId: currentGame._id, modelId: selectedModel.model._id, wikiId: selectedModel.wiki ? selectedModel.wiki._id : null});
+				await addModel({gameId: currentGame._id, modelId: selectedModel.model._id, wikiId: selectedModel.wiki ? selectedModel.wiki._id : null, color: modelColor});
 			}}
 		>
 			Add Model
 		</Button>
 		{selectedModel &&
 			<div style={{width: '100%', height: '500px'}}>
-				<ModelViewer model={selectedModel.model}/>
+				<ModelViewer model={selectedModel.model} defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor} showColorControls={true} onChangeColor={setModelColor}/>
 			</div>
 		}
 	</div>;
