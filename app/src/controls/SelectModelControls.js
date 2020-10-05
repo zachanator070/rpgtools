@@ -10,6 +10,7 @@ export class SelectModelControls {
         this.scene = scene;
         this.selectControls = selectControls;
         this.subscribers = [];
+        this.selectedPositionedModel = null;
     }
 
     subscribe = (subscriberFunction) => {
@@ -69,7 +70,6 @@ export class SelectModelControls {
         for(let subscriber of this.subscribers){
             await subscriber(this.selectControls.selectedMeshedModel ? this.selectControls.selectedMeshedModel.positionedModel : null);
         }
-        this.selectControls.clearSelection();
     }
 
     enable = () => {

@@ -10,11 +10,10 @@ export class DeleteControls {
 	}
 
 	deleteModelEvent = () => {
-		if(!this.selectControls.selectedMeshedModel){
-			return;
+		if(this.selectControls.selectedMeshedModel){
+			this.deleteModel(this.selectControls.selectedMeshedModel.positionedModel);
+			this.selectControls.clearSelection();
 		}
-		this.deleteModel(this.selectControls.selectedMeshedModel.positionedModel);
-		this.selectControls.clearSelection();
 	}
 
 	enable = () => {
@@ -28,6 +27,7 @@ export class DeleteControls {
 	}
 
 	tearDown = () => {
-		this.renderRoot.removeEventListener('mousedown', this.deleteModel);
+		this.selectControls.tearDown();
+		this.renderRoot.removeEventListener('mousedown', this.deleteModelEvent);
 	}
 }
