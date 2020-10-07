@@ -11,19 +11,11 @@ import {Role} from "../../models/role";
 import {EVERYONE, WORLD_OWNER} from "../../../../common/src/role-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
-import {ARTICLE, PLACE, WORLD} from "../../../../common/src/type-constants";
+import {PLACE, WORLD} from "../../../../common/src/type-constants";
 import {ServerConfig} from '../../models/server-config';
-import {getAdventuringSections, getMonsters} from "../../fiveEImport/open-5e-api-client";
-import {monsterToDelta} from "../../fiveEImport/monster-to-delta";
-import {Article} from "../../models/article";
-import {Readable} from 'stream';
 import {createGfsFile} from "../../db-helpers";
-import fetch from "node-fetch";
-import {imageMutations} from "./image-mutations";
 import unzipper from 'unzipper';
-import mongoose from 'mongoose';
 import {importFiles, SUPPORTED_TYPES} from "../../import/import";
-import {sectionToDelta} from "../../fiveEImport/section-to-delta";
 import {FiveEImporter} from "../../fiveEImport/five-e-importer";
 
 export const createWorld = async (name, isPublic, currentUser) => {
@@ -203,11 +195,25 @@ export const worldMutations = {
 
 		const importer = new FiveEImporter(world);
 
-		// await importer.importMonsters(topFolder, creatureCodex, tomeOfBeasts);
-		// await importer.importAdventurePages(topFolder);
-		// await importer.importRaces(topFolder);
-		await importer.importClasses(topFolder);
-		await importer.importSpells(topFolder);
+		// have to do these in series before import b/c of race condition where rootFolder.save was throwing ParallelSaveError
+		const monsterFolder = await importer.createSubFolder(topFolder, 'Monsters');
+		const racesFolder = await importer.createSubFolder(topFolder, 'Races');
+		const classesFolder = await importer.createSubFolder(topFolder, 'Classes');
+		const spellsFolder = await importer.createSubFolder(topFolder, 'Spells');
+
+		await Promise.all([
+			importer.importMonsters(monsterFolder, creatureCodex, tomeOfBeasts),
+			importer.importAdventurePages(topFolder),
+			importer.importRaces(racesFolder),
+			(async () => {
+				await importer.importSpells(spellsFolder);
+				// spells are required to be populated before classes can be imported
+				await importer.importClasses(classesFolder, world);
+			})()
+		]).catch((err) => {
+			console.warn(err);
+		});
+
 		return world;
 	},
 	importContent: async (_, {worldId, zipFile}, {currentUser}) => {

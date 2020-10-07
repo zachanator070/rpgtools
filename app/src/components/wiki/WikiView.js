@@ -19,13 +19,16 @@ export const WikView = () => {
 
 	return (wikiLoading || worldLoading) ? <LoadingView/> :
 		<div style={{overflow: 'hidden'}}>
-			<PermissionModal
-				visibility={permissionModalVisibility}
-				setVisibility={setPermissionModalVisibility}
-				subject={currentWiki}
-				subjectType={currentWiki.type}
-				refetch={refetch}
-			/>
+			{currentWiki &&
+				<PermissionModal
+					visibility={permissionModalVisibility}
+					setVisibility={setPermissionModalVisibility}
+					subject={currentWiki}
+					subjectType={currentWiki.type}
+					refetch={refetch}
+				/>
+			}
+
 			<Row
 				style={{
 					height: '100%'
@@ -60,11 +63,13 @@ export const WikView = () => {
 				</Col>
 				<Col span={4} className='padding-md'>
 					<Route path={`${match.path}/view`}>
-						<a title={'View permissions for this page'} onClick={async () => {
-							await setPermissionModalVisibility(true);
-						}}>
-							<TeamOutlined style={{fontSize: '20px'}}/>
-						</a>
+						{currentWiki &&
+							<a title={'View permissions for this page'} onClick={async () => {
+								await setPermissionModalVisibility(true);
+							}}>
+								<TeamOutlined style={{fontSize: '20px'}}/>
+							</a>
+						}
 					</Route>
 				</Col>
 			</Row>

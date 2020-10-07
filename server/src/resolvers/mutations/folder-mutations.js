@@ -3,6 +3,7 @@ import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {WIKI_FOLDER} from "../../../../common/src/type-constants";
 import {cleanUpPermissions} from "../../db-helpers";
+import {WikiPage} from "../../models/wiki-page";
 
 /**
  * Throws an error if the user does not have write access to any of the children folders or pages.
@@ -34,6 +35,23 @@ const checkUserWritePermissionForFolderContents = async (user, folderId) => {
 	}
 
 };
+
+const recurseDeleteFolder = async (folder) => {
+
+	await folder.populate('pages children').execPopulate();
+
+	for(let child of folder.children){
+		await recurseDeleteFolder(child);
+	}
+
+	for(let page of folder.pages){
+		await cleanUpPermissions(page._id);
+		await WikiPage.deleteOne({_id: page._id});
+	}
+
+	await cleanUpPermissions(folder._id);
+	await WikiFolder.deleteOne({_id: folder._id});
+}
 
 export const folderMutations = {
 	createFolder: async (_, {name, parentFolderId}, {currentUser}) => {
@@ -83,14 +101,13 @@ export const folderMutations = {
 			throw new Error('You cannot delete the root folder of a world');
 		}
 
-		await cleanUpPermissions(folderId);
-		await WikiFolder.deleteOne({_id: folderId});
-
 		const parents = await WikiFolder.find({children: folder._id});
 		for(let parent of parents){
 			parent.children = parent.children.filter(child => ! child.equals(folder._id));
 			await parent.save();
 		}
+
+		await recurseDeleteFolder(folder);
 
 		return folder.world;
 

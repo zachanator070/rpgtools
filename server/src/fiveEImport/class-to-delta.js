@@ -4,7 +4,7 @@ import {searchSpells} from "./open-5e-api-client";
 import {Article} from "../models/article";
 
 
-export const classToDelta = async (characterClass) => {
+export const classToDelta = async (characterClass, world) => {
 	const ops = [];
 
 	ops.push(...getHeading('Hit Points'));
@@ -68,7 +68,10 @@ export const classToDelta = async (characterClass) => {
 			ops.push({insert: "\n", attributes: {header: 2}});
 			ops.push({insert: "\n"});
 			for(let spell of classSpells[level]){
-				const article = await Article.findOne({name: spell.name});
+				const article = await Article.findOne({name: spell.name, world});
+				if(!article){
+					console.warn(`Could not find spell for ${spell.name}`);
+				}
 				ops.push(
 					{
 						insert: {
