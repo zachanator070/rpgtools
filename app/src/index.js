@@ -10,6 +10,8 @@ import {clientTypeDefs} from "./clientTypeDefs";
 import {clientResolvers} from "./clientResolvers";
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { ApolloProvider, split, HttpLink } from '@apollo/client';
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
 import { getMainDefinition } from '@apollo/client/utilities';
 import './favicon.ico';
 
@@ -83,5 +85,13 @@ getIntrospectionData().then((introspectionData) => {
 		connectToDevTools: true
 	});
 
-	ReactDOM.render(<BrowserRouter> <ApolloProvider client={client}><App/></ApolloProvider></BrowserRouter>, document.getElementById('app'));
+	ReactDOM.render(
+		<DndProvider backend={HTML5Backend}>
+			<BrowserRouter>
+				<ApolloProvider client={client}>
+					<App/>
+				</ApolloProvider>
+			</BrowserRouter>
+		</DndProvider>
+		, document.getElementById('app'));
 });

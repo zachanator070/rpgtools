@@ -46,8 +46,7 @@ export class FiveEImporter{
 
 	};
 	
-	importMonsters = async (topFolder, creatureCodex, tomeOfBeasts) => {
-		const containingFolder = await this.createSubFolder(topFolder, 'Monsters');
+	importMonsters = async (containingFolder, creatureCodex, tomeOfBeasts) => {
 		await this.createArticles(
 			getMonsters(),
 			monsterToDelta,
@@ -79,18 +78,15 @@ export class FiveEImporter{
 			});
 	}
 
-	importRaces = async (topFolder) => {
-		const containingFolder = await this.createSubFolder(topFolder, 'Races');
+	importRaces = async (containingFolder) => {
 		await this.createArticles(getRaces(), raceToDelta, () => containingFolder);
 	}
 
-	importClasses = async (topFolder) => {
-		const containingFolder = await this.createSubFolder(topFolder, 'Classes');
-		await this.createArticles(getClasses(), classToDelta, () => containingFolder);
+	importClasses = async (containingFolder, world) => {
+		await this.createArticles(getClasses(), async (className) => classToDelta(className, world), () => containingFolder);
 	}
 
-	importSpells = async (topFolder) => {
-		const containingFolder = await this.createSubFolder(topFolder, 'Spells');
+	importSpells = async (containingFolder) => {
 		await this.createArticles(getSpells(), spellToDelta, () => containingFolder);
 	}
 }

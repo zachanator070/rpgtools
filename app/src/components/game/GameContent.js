@@ -21,6 +21,7 @@ import {useGameFogSubscription} from "../../hooks/game/useGameFogSubscription";
 import {ControlsContextWindow} from "./ControlsContextWindow";
 import {GameChat} from "./GameChat";
 import {GameWikiDrawer} from "./GameWikiDrawer";
+import {InitiativeTracker} from "./InitiativeTracker";
 
 export const GameContent = ({currentGame}) => {
 
@@ -267,6 +268,7 @@ export const GameContent = ({currentGame}) => {
 				flexGrow:1,
 				display: 'flex'
 			}}/>
+			<InitiativeTracker/>
 			<GameChat/>
 			<GameWikiDrawer wikiId={gameWikiId}/>
 			<ControlsContextWindow renderer={renderer} controlsMode={controlsMode} setGameWikiId={setGameWikiId}/>

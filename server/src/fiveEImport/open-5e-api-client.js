@@ -10,6 +10,7 @@ const getPages  = async function* (resource){
 		while(next){
 			const response = await fetch(next);
 			if(!response.ok){
+				console.warn(response.ok);
 				throw new Error(`Error while fetching open5e resource ${resource}`);
 			}
 			const json = await response.json();
