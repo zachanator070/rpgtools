@@ -70,13 +70,14 @@ publish:
 
 # performs minimal install on a debian host
 install:
-	sudo apt update
 	sudo apt install mongodb
+	sudo systemctl enable mongodb
 	sudo mkdir /etc/rpgtools
 	sudo cp .env.example /etc/rpgtools/.env
 	sudo cp rpgtools.service /lib/systemd/system
-	sudo systemd daemon-reload
-	sudo systemd start rpgtools
+	sudo systemctl daemon-reload
+	sudo systemctl start rpgtools
+	sudo systemctl enable rpgtools
 	echo rpgtools is now available
 
 ci: install-deps lint test
