@@ -76,9 +76,7 @@ export const GameLoginView = () => {
 						initialValues={{
 							remember: true,
 						}}
-						onFinish={async ({createPassword}) => {
-							await createGame(createPassword);
-						}}
+						onFinish={createGame}
 						onFinishFailed={onFinishFailed}
 					>
 
@@ -87,6 +85,13 @@ export const GameLoginView = () => {
 							name="createPassword"
 						>
 							<Input.Password />
+						</Form.Item>
+
+						<Form.Item
+							label="Character Name"
+							name="characterName"
+						>
+							<Input />
 						</Form.Item>
 
 						<Form.Item {...tailLayout}>
@@ -109,9 +114,7 @@ export const GameLoginView = () => {
 					initialValues={{
 						remember: true,
 					}}
-					onFinish={async ({gameId, password}) => {
-						await joinGame(gameId, password);
-					}}
+					onFinish={joinGame}
 					onFinishFailed={onFinishFailed}
 				>
 					<Form.Item
@@ -132,6 +135,13 @@ export const GameLoginView = () => {
 						name="password"
 					>
 						<Input.Password />
+					</Form.Item>
+
+					<Form.Item
+						label="Character Name"
+						name="characterName"
+					>
+						<Input />
 					</Form.Item>
 
 					<Form.Item {...tailLayout}>

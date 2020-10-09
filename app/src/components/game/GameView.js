@@ -21,8 +21,8 @@ export const GameView = () => {
 	useEffect(() => {
 		if(currentGame){
 			let hostGone = true;
-			for(let player of currentGame.players){
-				if(player._id === currentGame.host._id){
+			for(let character of currentGame.characters){
+				if(character.player._id === currentGame.host._id){
 					hostGone = false;
 				}
 			}

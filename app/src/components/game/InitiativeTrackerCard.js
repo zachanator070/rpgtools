@@ -1,15 +1,19 @@
 import React from 'react';
 import {useDrag, useDrop} from "react-dnd";
 import {INITIATIVE_CARD} from "./DragAndDropConstants";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
 
 export const InitiativeTrackerCard = ({name, color, data, setData}) => {
+
+    const {currentGame} = useCurrentGame();
 
     const [props, dragRef] = useDrag({
         item: {
             type: INITIATIVE_CARD,
             name,
             color
-        }
+        },
+        canDrag: () => currentGame.canWrite
     });
 
     const [dropProps, dropRef] = useDrop({

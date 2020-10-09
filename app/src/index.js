@@ -9,11 +9,12 @@ import {createUploadLink} from "apollo-upload-client";
 import {clientTypeDefs} from "./clientTypeDefs";
 import {clientResolvers} from "./clientResolvers";
 import { WebSocketLink } from '@apollo/client/link/ws';
-import { ApolloProvider, split, HttpLink } from '@apollo/client';
+import {ApolloProvider, split, HttpLink, ApolloLink} from '@apollo/client';
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DndProvider } from 'react-dnd'
 import { getMainDefinition } from '@apollo/client/utilities';
 import './favicon.ico';
+import {RetryLink} from "@apollo/client/link/retry";
 
 getIntrospectionData().then((introspectionData) => {
 	const fragmentMatcher = new IntrospectionFragmentMatcher({
@@ -39,10 +40,20 @@ getIntrospectionData().then((introspectionData) => {
 	new_uri += "//" + loc.host;
 	new_uri += '/graphql';
 
-	const httpLink = createUploadLink({
-		uri: loc.protocol + '//' + window.location.host + '/api',
-		credentials: 'same-origin',
-	});
+
+	const httpLink = ApolloLink.from([
+		new RetryLink({
+			attempts: {
+				retryIf: (error, _operation) => {
+					return error === 'Refresh token expired';
+				}
+			}
+		}),
+		createUploadLink({
+			uri: loc.protocol + '//' + window.location.host + '/api',
+			credentials: 'same-origin',
+		})
+	]);
 
 	function getCookie(name) {
 		const value = `; ${document.cookie}`;

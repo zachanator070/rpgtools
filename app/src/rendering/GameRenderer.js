@@ -9,6 +9,7 @@ import {RotateControls} from "../controls/RotateControls";
 import {DeleteControls} from "../controls/DeleteControls";
 import {SelectModelControls} from "../controls/SelectModelControls";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
+import EventEmitter from 'events';
 
 export const CAMERA_CONTROLS = 'Camera Controls';
 export const PAINT_CONTROLS = 'Paint Controls';
@@ -20,10 +21,12 @@ export const SELECT_MODEL_CONTROLS = 'Select Model Controls';
 export const SELECT_LOCATION_CONTROLS = 'Game Location';
 export const ADD_MODEL_CONTROLS = 'Add Model';
 
-export class GameRenderer{
+export const CONTROLS_SETUP_EVENT = 'controls setup';
+
+export class GameRenderer extends EventEmitter{
 
 	constructor(renderRoot, mapImage, addStroke, onProgress=() => {}, setModelPosition, deleteModel, addFogStroke) {
-
+		super();
 		this.renderRoot = renderRoot;
 		this.mapImage = mapImage;
 		this.addStroke = addStroke;
@@ -332,6 +335,8 @@ export class GameRenderer{
 		this.deleteControls = new DeleteControls(this.renderRoot, this.selectControls, this.deleteModel);
 
 		this.changeControls(this.currentControls);
+
+		this.emit(CONTROLS_SETUP_EVENT);
 	}
 
 	addModel(positionedModel){

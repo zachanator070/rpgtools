@@ -7,6 +7,7 @@ import {useSetPositionedModelWiki} from "../../hooks/game/useSetPositionedModelW
 import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelPosistionedSubscription";
 import {LoadingView} from "../LoadingView";
 import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedModel";
+import {CONTROLS_SETUP_EVENT} from "../../rendering/GameRenderer";
 
 export const ModelInfo = ({renderer, setGameWikiId}) => {
 
@@ -21,7 +22,10 @@ export const ModelInfo = ({renderer, setGameWikiId}) => {
 
     useEffect(() => {
         if(renderer){
-            renderer.selectModelControls.subscribe(async (model) => await setPositionedModel(model));
+            renderer.on(CONTROLS_SETUP_EVENT, () => {
+                renderer.selectModelControls.subscribe(async (model) => await setPositionedModel(model));
+            });
+
         }
     }, [renderer]);
 

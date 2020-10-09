@@ -1,31 +1,21 @@
 import React, {useState} from 'react';
 import {InitiativeTrackerCard} from "./InitiativeTrackerCard";
 import {InitiativeTrackerDummyCard} from "./InitiativeTrackerDummyCard";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
+import {useSetCharacterOrder} from "../../hooks/game/useSetCharacterOrder";
+import {useGameRosterSubscription} from "../../hooks/game/useGameRosterSubscription";
 
 export const InitiativeTracker = () => {
 
-    const genColor = () => '#' + Math.floor(Math.random()*16777215).toString(16);
+    const {currentGame} = useCurrentGame();
+    const {setCharacterOrder} = useSetCharacterOrder();
+    const {gameRosterChange} = useGameRosterSubscription();
 
-    const [data, setData] = useState(
-        [
-            {
-                name: 'zach',
-                color: genColor()
-            },
-            {
-                name: 'breyton',
-                color: genColor()
-            },
-            {
-                name: 'parker',
-                color: genColor()
-            },
-            {
-                name: 'alyssum',
-                color: genColor()
-            },
-        ]
-    );
+    const setData = async (characters) => {
+        await setCharacterOrder({characters: characters.map(character => {
+            return {name: character.name};
+        })});
+    }
 
     return <div
         style={{
@@ -41,8 +31,8 @@ export const InitiativeTracker = () => {
             height: '60px'
         }}
     >
-        <InitiativeTrackerDummyCard setData={setData} data={data} side={'left'}/>
-        {data.map(player => <InitiativeTrackerCard {...player} setData={setData} data={data}/>)}
-        <InitiativeTrackerDummyCard setData={setData} data={data} side={'right'}/>
+        <InitiativeTrackerDummyCard setData={setData} data={currentGame.characters} side={'left'}/>
+        {currentGame.characters.map(player => <InitiativeTrackerCard key={player.name} {...player} setData={setData} data={currentGame.characters}/>)}
+        <InitiativeTrackerDummyCard setData={setData} data={currentGame.characters} side={'right'}/>
     </div>;
 }

@@ -36,7 +36,9 @@ export const createSessionContext = async ({req, res, connection}) => {
 
 	const refreshToken = req.cookies["refreshToken"];
 	const accessToken = req.cookies["accessToken"];
-	if (refreshToken || accessToken) {
+
+	// if access token wasn't given but refresh token was
+	if(accessToken || refreshToken){
 		try {
 			let data = jwt.verify(accessToken, process.env['ACCESS_TOKEN_SECRET'], {maxAge: ACCESS_TOKEN_MAX_AGE.string});
 			currentUser = await getCurrentUser(data.userId);
@@ -62,9 +64,12 @@ export const createSessionContext = async ({req, res, connection}) => {
 			} catch (e){
 				// refreshToken is expired
 				console.log(`Refresh token expired because ${e.message}`);
+				throw new Error('Refresh token expired');
 			}
 		}
+
 	}
+
 
 	if(!currentUser){
 		currentUser = new User({username: ANON_USERNAME});
@@ -78,5 +83,6 @@ export const createSessionContext = async ({req, res, connection}) => {
 	};
 };
 
-export const ACCESS_TOKEN_MAX_AGE = {string: '15min', ms: 1000 * 60 * 15};
+// export const ACCESS_TOKEN_MAX_AGE = {string: '15min', ms: 1000 * 60 * 15};
+export const ACCESS_TOKEN_MAX_AGE = {string: '1min', ms: 1000 * 60};
 export const REFRESH_TOKEN_MAX_AGE = {string: '1d', ms: 1000 * 60 * 60 * 24};

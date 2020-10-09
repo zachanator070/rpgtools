@@ -4,8 +4,11 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import useLeaveGame from "../../hooks/game/useLeaveGame";
 import {useHistory} from 'react-router-dom';
 import useMyGames from "../../hooks/game/useMyGames";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 
 export const LeaveGameButton = () => {
+
+    const {currentWorld} = useCurrentWorld();
 
     const history = useHistory();
 

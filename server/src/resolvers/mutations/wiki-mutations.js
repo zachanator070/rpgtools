@@ -152,7 +152,7 @@ export const wikiMutations = {
 		}
 
 		await cleanUpPermissions(wikiPage._id);
-		await WikiPage.deleteOne({_id: wikiId});
+		await wikiPage.deleteOne();
 		return wikiPage.world;
 	},
 	updatePlace: async (parent, {placeId, mapImageId, pixelsPerFoot}, {currentUser}) => {

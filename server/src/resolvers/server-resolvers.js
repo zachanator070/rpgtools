@@ -190,7 +190,7 @@ export const serverResolvers = {
 			return await getPermissionControlledDocument(WikiFolder, world.rootFolder, currentUser);
 		},
 		wikiPage: async (world, _, {currentUser}) => {
-			return await getPermissionControlledDocument(Place, world.wikiPage, currentUser);
+			return await getDocument(Place, world.wikiPage);
 		},
 		canAddRoles: async (world, _, {currentUser}) => {
 			return currentUser.hasPermission(ROLE_ADD, world._id);
@@ -278,6 +278,11 @@ export const serverResolvers = {
 		mapImage: async (page) => {
 			return await getDocument(Image, page.mapImage);
 		}
+	},
+	ModeledWiki: {
+		__resolveType: async (page) => {
+			return page.type;
+		},
 	},
 	Item: {
 		...wikiPageInterfaceAttributes,
@@ -374,10 +379,18 @@ export const serverResolvers = {
 			return await getPermissionControlledDocument(World, game.world, currentUser);
 		},
 		map: async (game, _, {currentUser}) => {
-			return await getPermissionControlledDocument(Place, game.map, currentUser);
+			return await getDocument(Place, game.map);
 		},
-		players: async (game) => {
-			return await getDocuments(User, game.players);
+		characters: async (game) => {
+			const characters = [];
+			for(let character of game.characters){
+				characters.push({
+					name: character.name,
+					color: character.color,
+					player: await getDocument(User, character.player)
+				})
+			}
+			return characters;
 		},
 		models: async (game, _, {currentUser}) => {
 			const models = [];
