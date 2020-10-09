@@ -4,6 +4,7 @@ import {Image} from '../../models/image';
 import {Chunk} from '../../models/chunk';
 import {GridFSBucket} from "mongodb";
 import Jimp from 'jimp';
+import {deleteGfsFile} from "../../db-helpers";
 
 const chunkSize = 250;
 
@@ -198,4 +199,20 @@ export const imageMutations = {
 		await makeIcon(image, newImage);
 		return newImage;
 	}
+};
+
+export const deleteImage = async (image) => {
+	console.log(`deleting image ${image._id}`);
+	if(image instanceof mongoose.Types.ObjectId){
+		image = await Image.findById(image);
+	}
+	await image.populate('chunks').execPopulate();
+	for(let chunk of image.chunks){
+		await deleteGfsFile(chunk.fileId);
+		await Chunk.deleteOne({_id: chunk._id});
+	}
+	if(image.icon){
+		await deleteImage(image.icon);
+	}
+	await Image.deleteOne({_id: image._id});
 };

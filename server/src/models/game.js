@@ -52,12 +52,20 @@ const gameSchema = new Schema({
 		type: mongoose.Schema.ObjectId,
 		ref: PLACE,
 	},
-	players: [{
+	characters: [new Schema({
+		name: {
+			type: String,
+		},
+		player: {
 			type: mongoose.Schema.ObjectId,
 			ref: 'User',
 			required: [true, 'player id required']
+		},
+		color: {
+			type: String,
+			required: [true, 'color is required']
 		}
-	],
+	})],
 	host: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'User',
@@ -120,13 +128,13 @@ const gameSchema = new Schema({
 });
 
 gameSchema.methods.userInGame = async function(user) {
-	for(let player of this.players){
-		if(player instanceof mongoose.Types.ObjectId){
-			if(user._id.equals(player)){
+	for(let character of this.characters){
+		if(character.player instanceof mongoose.Types.ObjectId){
+			if(user._id.equals(character.player)){
 				return true;
 			}
 		}
-		else if(player._id.equals(user._id)){
+		else if(character.player._id.equals(user._id)){
 			return true;
 		}
 	}

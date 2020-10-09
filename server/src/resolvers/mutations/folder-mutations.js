@@ -46,7 +46,7 @@ const recurseDeleteFolder = async (folder) => {
 
 	for(let page of folder.pages){
 		await cleanUpPermissions(page._id);
-		await WikiPage.deleteOne({_id: page._id});
+		await page.deleteOne();
 	}
 
 	await cleanUpPermissions(folder._id);

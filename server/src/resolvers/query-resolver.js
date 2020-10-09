@@ -172,7 +172,7 @@ export default {
 		if(currentUser.username === ANON_USERNAME){
 			return [];
 		}
-		return Game.find({players: currentUser._id});
+		return Game.find({"characters.player": currentUser._id});
 	},
 	models: async (_, {worldId}, {currentUser}) => {
 		const models = await Model.find({world: worldId});

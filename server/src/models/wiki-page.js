@@ -9,7 +9,10 @@ import {
 	WIKI_RW_ALL
 } from "../../../common/src/permission-constants";
 import {GridFSBucket} from "mongodb";
-import { IMAGE, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
+import {IMAGE, PLACE, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
+import {deleteImage} from "../resolvers/mutations/image-mutations";
+import {deleteGfsFile} from "../db-helpers";
+import {World} from "./world";
 
 const Schema = mongoose.Schema;
 
@@ -70,11 +73,22 @@ wikiPageSchema.methods.userCanWrite = async function(user){
 };
 
 wikiPageSchema.methods.userCanRead = async function(user){
+	if(this.type === PLACE && await World.findOne({wikiPage: this._id})){
+		return true;
+	}
 	return await user.hasPermission(WIKI_READ, this._id) ||
 	await user.hasPermission(WIKI_READ_ALL, this.world) || await this.userCanWrite(user);
 };
 
-// @TODO add post remove hook to delete cover image
+wikiPageSchema.pre('deleteOne', { document: true, query: false }, async function(){
+	console.log(`Deleting wiki ${Object.keys(this).join(' ')}`);
+	if(this.coverImage){
+		await deleteImage(this.coverImage);
+	}
+	if(this.contentId){
+		await deleteGfsFile(this.contentId);
+	}
+});
 
 wikiPageSchema.plugin(mongoosePaginate);
 

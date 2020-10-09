@@ -211,10 +211,13 @@ export const GAME_MESSAGE = `
     timestamp
 `;
 
-export const GAME_PLAYERS = `
-	players {
-        _id
-        username
+export const GAME_CHARACTERS = `
+	characters {
+	    name
+	    player {
+            _id
+            username
+        }
     }
 `;
 
@@ -307,7 +310,7 @@ export const GAME_ATTRIBUTES = `
     canWriteFog
     canWrite
     canAdmin
-    ${GAME_PLAYERS}
+    ${GAME_CHARACTERS}
     messages{
         ${GAME_MESSAGE}
     }

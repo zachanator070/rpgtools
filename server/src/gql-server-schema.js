@@ -77,8 +77,8 @@ export const typeDefs = gql`
         updatePin(pinId: ID!, pageId: ID): World!
         deletePin(pinId: ID!): World!
         
-        createGame(worldId: ID!, password: String): Game!
-        joinGame(gameId: ID!, password: String): Game!
+        createGame(worldId: ID!, password: String, characterName: String): Game!
+        joinGame(gameId: ID!, password: String, characterName: String): Game!
         leaveGame(gameId: ID!): Boolean!
         gameChat(gameId: ID!, message: String!): Game!
         setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
@@ -89,6 +89,7 @@ export const typeDefs = gql`
         setModelColor(gameId: ID!, positionedModelId: ID!, color: String): PositionedModel!
         setPositionedModelWiki(gameId: ID!, positionedModelId: ID!, wikiId: ID): PositionedModel!
         deletePositionedModel(gameId: ID!, positionedModelId: ID!): Game!
+        setCharacterOrder(gameId: ID!, characters: [CharacterInput!]!): Game!
         
         createModel(name: String!, file: Upload!, worldId: ID!, depth: Float!, width: Float!, height: Float!, notes: String): Model!
         updateModel(modelId: ID!, name: String!, file: Upload, depth: Float!, width: Float!, height: Float!, notes: String): Model!
@@ -357,7 +358,7 @@ export const typeDefs = gql`
 		_id: ID!
 		world: World!
 		map: Place
-		players: [User!]!
+		characters: [GameCharacter!]!
 		messages: [GameMessage!]!
 		host: User!
 		accessControlList: [PermissionAssignment!]!
@@ -370,6 +371,15 @@ export const typeDefs = gql`
 		fog: [FogStroke!]!
 		models: [PositionedModel!]!
 	}
+	
+	type GameCharacter {
+	    name: String
+	    player: User!
+    }
+    
+    input CharacterInput{
+        name: String
+    }
 	
 	type Stroke{
 		_id: String

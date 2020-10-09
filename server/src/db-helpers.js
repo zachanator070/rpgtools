@@ -39,3 +39,13 @@ export const createGfsFile = async (filename, readStream) => {
 		readStream.pipe(writeStream);
 	});
 };
+
+export const deleteGfsFile = async (fileId) => {
+	return new Promise((resolve, reject) => {
+		const gfs = new GridFSBucket(mongoose.connection.db);
+
+		gfs.delete(new mongoose.Types.ObjectId(fileId), (error) => {
+			resolve();
+		})
+	});
+}

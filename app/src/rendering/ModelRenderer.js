@@ -120,6 +120,11 @@ export class ModelRenderer{
 		const loader = extension === 'glb' ? new GLTFLoader(this.loader) : new OBJLoader(this.loader);
 		loader.load( modelUrl, ( model ) => {
 
+			// we have switched pages and the load from the last page has finished
+			if(this.modelMesh){
+				return;
+			}
+
 			const loadedModel = extension === 'glb' ? model.scene : model;
 
 			// get bounding box and scale to match board size
