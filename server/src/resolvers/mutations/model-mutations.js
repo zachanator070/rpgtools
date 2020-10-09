@@ -4,6 +4,9 @@ import {Model} from "../../models/model";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {MODEL} from "../../../../common/src/type-constants";
 import {cleanUpPermissions, createGfsFile, deleteGfsFile} from "../../db-helpers";
+import {Game} from "../../models/game";
+import {pubsub} from "../../gql-server";
+import {GAME_MODEL_DELETED} from "../server-resolvers";
 
 export const modelMutations = {
 	createModel: async (_, {name, file, worldId, depth, width, height, notes}, {currentUser}) => {
@@ -60,6 +63,13 @@ export const modelMutations = {
 		}
 		if(!await model.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to delete this model');
+		}
+		const games = await Game.find({"models.model": model._id});
+		for(let game of games){
+			const positionedModel = game.models.find(otherModel => otherModel.model.equals(model._id));
+			game.models = game.models.filter((positionedModel) => !positionedModel.model.equals(model._id));
+			await game.save();
+			await pubsub.publish(GAME_MODEL_DELETED, {gameId: game._id.toString(), gameModelDeleted: positionedModel.toObject()});
 		}
 		await Model.deleteOne({_id: modelId});
 		await cleanUpPermissions(modelId);
