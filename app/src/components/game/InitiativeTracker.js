@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {InitiativeTrackerCard} from "./InitiativeTrackerCard";
 import {InitiativeTrackerDummyCard} from "./InitiativeTrackerDummyCard";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
@@ -10,6 +10,19 @@ export const InitiativeTracker = () => {
     const {currentGame} = useCurrentGame();
     const {setCharacterOrder} = useSetCharacterOrder();
     const {gameRosterChange} = useGameRosterSubscription();
+    const [roster, setRoster] = useState();
+
+    useEffect(() => {
+        if(currentGame){
+            setRoster(currentGame.characters);
+        }
+    }, [currentGame]);
+
+    useEffect(() => {
+        if(gameRosterChange){
+            setRoster(gameRosterChange.characters);
+        }
+    }, [gameRosterChange]);
 
     const setData = async (characters) => {
         await setCharacterOrder({characters: characters.map(character => {
@@ -31,8 +44,8 @@ export const InitiativeTracker = () => {
             height: '60px'
         }}
     >
-        <InitiativeTrackerDummyCard setData={setData} data={currentGame.characters} side={'left'}/>
-        {currentGame.characters.map(player => <InitiativeTrackerCard key={player.name} {...player} setData={setData} data={currentGame.characters}/>)}
-        <InitiativeTrackerDummyCard setData={setData} data={currentGame.characters} side={'right'}/>
+        <InitiativeTrackerDummyCard setData={setData} data={roster} side={'left'}/>
+        {roster && roster.map(player => <InitiativeTrackerCard key={player.name} {...player} setData={setData} data={roster}/>)}
+        <InitiativeTrackerDummyCard setData={setData} data={roster} side={'right'}/>
     </div>;
 }
