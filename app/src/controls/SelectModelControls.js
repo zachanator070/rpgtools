@@ -1,20 +1,19 @@
 import * as THREE from 'three';
 import {SubdivisionModifier} from "three/examples/jsm/modifiers/SubdivisionModifier";
 import {MeshBasicMaterial, Vector3} from "three";
+import EventEmitter from 'events';
 
-export class SelectModelControls {
+export const MODEL_SELECTED_EVENT = 'model selected';
+
+export class SelectModelControls extends EventEmitter{
 
     constructor(renderRoot, camera, scene, selectControls) {
+        super();
         this.renderRoot = renderRoot;
         this.camera = camera;
         this.scene = scene;
         this.selectControls = selectControls;
-        this.subscribers = [];
         this.selectedPositionedModel = null;
-    }
-
-    subscribe = (subscriberFunction) => {
-        this.subscribers.push(subscriberFunction);
     }
 
     constructGlow = () => {
@@ -65,11 +64,15 @@ export class SelectModelControls {
         this.scene.add(this.glow);
     }
 
+    getPositionedModel = () => {
+        if(this.selectControls && this.selectControls.selectedMeshedModel){
+            return this.selectControls.selectedMeshedModel.positionedModel;
+        }
+    }
+
     select = async () => {
         this.constructGlow();
-        for(let subscriber of this.subscribers){
-            await subscriber(this.selectControls.selectedMeshedModel ? this.selectControls.selectedMeshedModel.positionedModel : null);
-        }
+        this.emit(MODEL_SELECTED_EVENT, this.selectControls.selectedMeshedModel ? this.selectControls.selectedMeshedModel.positionedModel : null);
     }
 
     enable = () => {

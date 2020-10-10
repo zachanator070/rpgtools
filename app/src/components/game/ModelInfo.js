@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useSetModelColor} from "../../hooks/game/useSetModelColor";
 import {Button, Input} from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
@@ -8,6 +8,7 @@ import {useGameModelPositionedSubscription} from "../../hooks/game/useGameModelP
 import {LoadingView} from "../LoadingView";
 import {useDeletePositionedModel} from "../../hooks/game/useDeletePositionedModel";
 import {CONTROLS_SETUP_EVENT} from "../../rendering/GameRenderer";
+import {MODEL_SELECTED_EVENT} from "../../controls/SelectModelControls";
 
 export const ModelInfo = ({renderer, setGameWikiId}) => {
 
@@ -20,13 +21,34 @@ export const ModelInfo = ({renderer, setGameWikiId}) => {
     const {gameModelPositioned} = useGameModelPositionedSubscription();
     const {deletePositionedModel} = useDeletePositionedModel();
 
+    const onControlsSetup = useRef(() => {
+        renderer.selectModelControls.on(MODEL_SELECTED_EVENT, (model) => {
+            setPositionedModel(model);
+        });
+    });
+
+    const onModelSelected = useRef((model) => {
+        setPositionedModel(model);
+    });
+
     useEffect(() => {
         if(renderer){
-            renderer.on(CONTROLS_SETUP_EVENT, () => {
-                renderer.selectModelControls.subscribe(async (model) => await setPositionedModel(model));
-            });
+            renderer.on(CONTROLS_SETUP_EVENT, onControlsSetup.current);
 
+            if(renderer.selectModelControls){
+                renderer.selectModelControls.on(MODEL_SELECTED_EVENT, onModelSelected.current);
+                (async () => {await setPositionedModel(renderer.selectModelControls.getPositionedModel())})();
+            }
         }
+        return () => {
+            if(renderer){
+                renderer.off(CONTROLS_SETUP_EVENT, onControlsSetup.current);
+
+                if(renderer.selectModelControls){
+                    renderer.selectModelControls.off(MODEL_SELECTED_EVENT, onModelSelected.current);
+                }
+            }
+        };
     }, [renderer]);
 
     useEffect(() => {
