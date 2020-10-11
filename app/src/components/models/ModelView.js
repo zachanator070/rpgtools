@@ -84,9 +84,8 @@ export const ModelView = () => {
 			</Col>
 			<Col span={4}>
 				{selectedModel &&
-				<Route path={`${match.path}/view`}>
 					<div className={'margin-lg'}>
-						<a title={'View permissions for this page'} onClick={async () => {
+						<a title={'View permissions for this model'} onClick={async () => {
 							await setPermissionModalVisibility(true);
 						}}>
 							<TeamOutlined style={{fontSize: '20px'}}/>
@@ -99,7 +98,6 @@ export const ModelView = () => {
 							refetch={refetch}
 						/>
 					</div>
-				</Route>
 				}
 			</Col>
 		</Row>
