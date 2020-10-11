@@ -47,5 +47,6 @@ export default new ApolloServer({
             await currentUser.recalculateAllPermissions();
             return {currentUser};
         },
+        keepAlive: 1000
     },
 });
