@@ -71,7 +71,7 @@ export const GameChat = () => {
 			id={'chat'}
 			className={'padding-lg'}
 			style={{
-				display: visible ? 'block' : 'none',
+				display: visible ? 'flex' : 'none',
 				position: 'absolute',
 				top: '0px',
 				right: '0px',
@@ -80,10 +80,17 @@ export const GameChat = () => {
 				height: '50%',
 				width: '33%',
 				backgroundColor: 'white',
-				borderBottom: 'thin solid grey'
+				borderBottom: 'thin solid grey',
+				justifyContent: 'flex-end',
+				flexDirection: 'column'
 			}}
 		>
 			<List
+				style={{
+					flexGrow: '1',
+					display: 'flex',
+					alignItems: 'flex-end'
+				}}
 				dataSource={messages}
 				itemLayout="horizontal"
 				locale={{emptyText: <div>No messages</div>}}
