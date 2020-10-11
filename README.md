@@ -38,6 +38,38 @@ This simple install is not secure. If you plan on having rpgtools accept connect
     - recommended config would be to use a reverse proxy like nginx or apache with a generated certificate
     using letsencrypt
 
+If your install will be behind a proxy server, be sure to configure the proxy server to address the following issues:
+- Limits on request size. Uploads can be rather large, and a proxy server can block requests if they are larger than
+a default value.
+- Websockets. Proxy servers can block websockets if they are not configured to allow them. see [nginx](http://nginx.org/en/docs/http/websocket.html)
+
+If using nginx as a proxy server, the following configuration will address these problems:
+
+```
+map $http_upgrade $connection_upgrade {
+         default upgrade;
+         '' close;
+ }
+ 
+ server {
+         server_name rpgtools.thezachcave.com;
+ 
+         proxy_connect_timeout       60s;
+         proxy_send_timeout          300s;
+         proxy_read_timeout          300s;
+ 
+         client_max_body_size 100M;
+ 
+         location / {
+                 proxy_pass http://127.0.0.1:3000/;
+                 proxy_http_version 1.1;
+                 proxy_set_header Upgrade $http_upgrade;
+                 proxy_set_header Connection $connection_upgrade;
+                 proxy_set_header Host $host;
+         }
+ }
+```
+
 ### Linux
 #### Requirements
 - docker
