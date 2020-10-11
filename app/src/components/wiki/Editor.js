@@ -33,13 +33,11 @@ export const Editor = ({content, readOnly, onInit}) => {
 	const editorCreated = useRef(false);
 	const [editor, setEditor] = useState();
 
-	if(typeof(content) === "string"){
-		content = JSON.parse(content);
-	}
+	const prevContent = useRef(content);
 
 	useEffect(() => {
-		if(content && editor){
-			editor.setContents(content);
+		if(content && editor && content !== prevContent){
+			editor.setContents(JSON.parse(content));
 			document.querySelectorAll(".ql-picker").forEach(tool => {
 				tool.addEventListener("mousedown", function(event) {
 					event.preventDefault();

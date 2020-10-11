@@ -14,6 +14,7 @@ import {ToolTip} from "../ToolTip";
 import {SelectModel} from "../select/SelectModel";
 import {ModelViewer} from "../models/ModelViewer";
 import {useUpdateModeledWiki} from "../../hooks/wiki/useUpdateModeledWiki";
+import {LoadingView} from "../LoadingView";
 
 export const WikiEdit = () => {
 
@@ -67,6 +68,7 @@ export const WikiEdit = () => {
 			await loadMapImageList();
 			await setName(currentWiki.name);
 			await setType(currentWiki.type);
+			await setPixelsPerFoot(currentWiki.pixelsPerFoot);
 			if(MODELED_WIKI_TYPES.includes(currentWiki.type)){
 				await setSelectedModel(currentWiki.model);
 				await setModelColor(currentWiki.modelColor);
@@ -141,125 +143,132 @@ export const WikiEdit = () => {
 		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 	};
 
-	return (
-		<div>
-			<div className='margin-lg'>
-				Article Name: <Input placeholder="Article Name" style={{width: 120}} value={name}
-				                     onChange={async (event) => await setName(event.target.value)}/>
-			</div>
-			<div className='margin-lg'>
-				Type: <Select defaultValue={currentWiki.type} style={{width: 120}}
-				              onChange={setType}>
-				{options}
-			</Select>
-			</div>
-			<div className='margin-lg'>
-				<Upload
-					beforeUpload={(file) => {
-						setCoverToUpload(file);
-						return false;
-					}}
-					multiple={false}
-					listType={'picture'}
-					fileList={coverImageList}
-					className='upload-list-inline'
-					onChange={async (files) => {
-						await setCoverImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
-						if (files.fileList.length === 0) {
-							await setCoverToUpload(null);
-						}
-					}}
-				>
-					<Button>
-						<UploadOutlined /> Select Cover Image
-					</Button>
-				</Upload>
-				{coverRevert}
-			</div>
-			{type === PLACE &&
-				<>
-					<div className='margin-lg'>
-						<Upload
-							beforeUpload={setMapToUpload}
-							multiple={false}
-							listType={'picture'}
-							fileList={mapImageList}
-							className='upload-list-inline'
-							onChange={async (files) => {
-								await setMapImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
-								if (files.fileList.length === 0) {
-									await setMapToUpload(null);
-								}
-							}}
-						>
-							<Button>
-								<UploadOutlined /> Select Map Image
-							</Button>
-						</Upload>
-						{mapRevert}
-					</div>
-					<div className='margin-lg'>
-						Pixels Per Foot:
-						<InputNumber
-							value={pixelsPerFoot}
-							onChange={async (value) => await setPixelsPerFoot(value)}
-						/>
-                        <ToolTip>
-	                        {'Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game.'}
-                        </ToolTip>
+	if(saving){
+		return <span>
+			<span className={'margin-lg'}><LoadingView/></span> Saving {currentWiki.name} ...
+		</span>;
+	}
 
-					</div>
-				</>
-			}
-
-			{MODELED_WIKI_TYPES.includes(type) &&
-					<div className={'margin-lg'}>
-						{type} model:
-						<span className={'margin-md'}>
-							<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model}/>
-						</span>
-						{selectedModel &&
-							<ModelViewer model={selectedModel} defaultColor={currentWiki.modelColor} showColorControls={true} onChangeColor={setModelColor}/>
-						}
-					</div>
-			}
-
-			<div className='margin-lg'>
-				<Editor
-					content={currentWiki.content}
-					onInit={async (editor) => {await setEditor(editor)}}
-				/>
-			</div>
-
-			<div>
-				{saving && <div>Saving ... </div>}
-				<Button type='primary' disabled={saving} onClick={save}>
-					<SaveOutlined />
-					Save
-				</Button>
-				<Button type='danger' disabled={saving} className='margin-md-left' onClick={() => {
-					history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
-				}}><UndoOutlined />Discard</Button>
-				<span className='absolute-right'>
-						<Button
-							type='primary'
-							danger
-							disabled={saving}
-							onClick={() => {
-								Modal.confirm({
-									title: "Confirm Delete",
-									content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
-									onOk: async () => {
-										await deleteWiki(currentWiki._id);
-										history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
-									}
-								});
-							}}
-						>
-							<DeleteOutlined />Delete Page
-						</Button>
-					</span>
-			</div>
+	return <div>
+		<div className='margin-lg'>
+			Article Name: <Input placeholder="Article Name" style={{width: 120}} value={name}
+			                     onChange={async (event) => await setName(event.target.value)}/>
 		</div>
-	);
+		<div className='margin-lg'>
+			Type: <Select defaultValue={currentWiki.type} style={{width: 120}}
+			              onChange={setType}>
+			{options}
+		</Select>
+		</div>
+		<div className='margin-lg'>
+			<Upload
+				beforeUpload={(file) => {
+					setCoverToUpload(file);
+					return false;
+				}}
+				multiple={false}
+				listType={'picture'}
+				fileList={coverImageList}
+				className='upload-list-inline'
+				onChange={async (files) => {
+					await setCoverImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
+					if (files.fileList.length === 0) {
+						await setCoverToUpload(null);
+					}
+				}}
+			>
+				<Button>
+					<UploadOutlined /> Select Cover Image
+				</Button>
+			</Upload>
+			{coverRevert}
+		</div>
+		{type === PLACE &&
+			<>
+				<div className='margin-lg'>
+					<Upload
+						beforeUpload={(file) => {
+							setMapToUpload(file);
+							return false;
+						}}
+						multiple={false}
+						listType={'picture'}
+						fileList={mapImageList}
+						className='upload-list-inline'
+						onChange={async (files) => {
+							await setMapImageList(files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []);
+							if (files.fileList.length === 0) {
+								await setMapToUpload(null);
+							}
+						}}
+					>
+						<Button>
+							<UploadOutlined /> Select Map Image
+						</Button>
+					</Upload>
+					{mapRevert}
+				</div>
+				<div className='margin-lg'>
+					Pixels Per Foot:
+					<InputNumber
+						value={pixelsPerFoot}
+						onChange={async (value) => await setPixelsPerFoot(value)}
+					/>
+                    <ToolTip>
+                        {'Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game.'}
+                    </ToolTip>
+
+				</div>
+			</>
+		}
+
+		{MODELED_WIKI_TYPES.includes(type) &&
+				<div className={'margin-lg'}>
+					{type} model:
+					<span className={'margin-md'}>
+						<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model}/>
+					</span>
+					{selectedModel &&
+						<ModelViewer model={selectedModel} defaultColor={currentWiki.modelColor} showColorControls={true} onChangeColor={setModelColor}/>
+					}
+				</div>
+		}
+
+		<div className='margin-lg'>
+			<Editor
+				content={currentWiki.content}
+				onInit={async (editor) => {await setEditor(editor)}}
+			/>
+		</div>
+
+		<div>
+			{saving && <div>Saving ... </div>}
+			<Button type='primary' disabled={saving} onClick={save}>
+				<SaveOutlined />
+				Save
+			</Button>
+			<Button type='danger' disabled={saving} className='margin-md-left' onClick={() => {
+				history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
+			}}><UndoOutlined />Discard</Button>
+			<span className='absolute-right'>
+					<Button
+						type='primary'
+						danger
+						disabled={saving}
+						onClick={() => {
+							Modal.confirm({
+								title: "Confirm Delete",
+								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
+								onOk: async () => {
+									await deleteWiki(currentWiki._id);
+									history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
+								}
+							});
+						}}
+					>
+						<DeleteOutlined />Delete Page
+					</Button>
+				</span>
+		</div>
+	</div>;
 };
