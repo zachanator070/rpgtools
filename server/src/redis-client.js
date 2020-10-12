@@ -12,8 +12,8 @@ if(client){
     client.on('connect', () => {
         console.log(`Connected to ${process.env.REDIS_URL}`);
     });
-    client.on('error', () => {
-        console.log(`Error while connecting to ${process.env.REDIS_URL}`);
+    client.on('error', (error) => {
+        console.log(`Error while connecting to ${process.env.REDIS_URL}: ${error}`);
     });
 }
 
