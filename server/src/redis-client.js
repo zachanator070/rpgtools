@@ -1,4 +1,5 @@
 import redis from 'redis';
+import {promisify} from 'util';
 import redisStreams from 'redis-streams';
 redisStreams(redis);
 
@@ -18,3 +19,8 @@ if(client){
 }
 
 export const redisClient = client;
+
+export const getAsync = client ? promisify(client.get).bind(client) : () => {};
+export const setAsync = client ? promisify(client.set).bind(client) : () => {};
+export const delAsync = client ? promisify(client.del).bind(client) : () => {};
+export const existsAsync = client ? promisify(client.exist).bind(client) : () => {};

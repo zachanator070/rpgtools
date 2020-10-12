@@ -7,6 +7,12 @@ import {cleanUpPermissions, createGfsFile, deleteGfsFile} from "../../db-helpers
 import {Game} from "../../models/game";
 import {pubsub} from "../../gql-server";
 import {GAME_MODEL_DELETED} from "../server-resolvers";
+import {delAsync, getAsync, setAsync} from "../../redis-client";
+
+const filenameExists = async (filename) => {
+	const models = await Model.find({filename});
+	return models.length > 1;
+}
 
 export const modelMutations = {
 	createModel: async (_, {name, file, worldId, depth, width, height, notes}, {currentUser}) => {
@@ -17,6 +23,10 @@ export const modelMutations = {
 		const world = await World.findById(worldId);
 		if(!world){
 			throw new Error(`World with id ${worldId} does not exist`);
+		}
+
+		if(await filenameExists(file.filename)){
+			throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
 		}
 
 		file = await file;
@@ -41,6 +51,11 @@ export const modelMutations = {
 			throw new Error('You do not have permission to edit this model');
 		}
 		if(file){
+
+			if(await filenameExists(file.filename)){
+				throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
+			}
+
 			if(model.fileId){
 				await deleteGfsFile(model.fileId);
 			}
@@ -54,6 +69,9 @@ export const modelMutations = {
 		model.height = height;
 		model.notes = notes;
 		await model.save();
+		if(await getAsync(model.fileName)){
+			await delAsync(model.fileName);
+		}
 		return model;
 	},
 	deleteModel: async (_, {modelId}, {currentUser}) => {
@@ -72,6 +90,9 @@ export const modelMutations = {
 			await pubsub.publish(GAME_MODEL_DELETED, {gameId: game._id.toString(), gameModelDeleted: positionedModel.toObject()});
 		}
 		await Model.deleteOne({_id: modelId});
+		if(await getAsync(model.fileName)){
+			await delAsync(model.fileName);
+		}
 		await cleanUpPermissions(modelId);
 		return model;
 	}
