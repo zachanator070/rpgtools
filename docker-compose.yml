@@ -17,6 +17,7 @@ services:
     - "9229:9229"
     depends_on:
       - mongodb
+      - redis
       - dev-builder
     networks:
       - rpgtools
@@ -29,6 +30,7 @@ services:
       - "${PORT:-3000}:${PORT:-3000}"
     depends_on:
       - mongodb
+      - redis
     networks:
       - rpgtools
 
@@ -68,8 +70,13 @@ services:
       - "27017:27017"
     networks:
       rpgtools:
-        aliases:
-        - "mongodb"
+
+  redis:
+    image: 'redis:latest'
+    ports:
+      - "6379:6379"
+    networks:
+      rpgtools:
 
   test-db:
     image: "mongo:latest"
