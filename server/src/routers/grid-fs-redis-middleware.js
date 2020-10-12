@@ -13,7 +13,7 @@ export const gridFsRedisMiddleware = (key) => (req, res, next) => {
             searchParams._id = new mongodb.ObjectID(req.params.id);
         }
         else{
-            searchParams[key] = req.params.key;
+            searchParams[key] = req.params[key];
         }
         gfs.find(searchParams).next( (err, file) => {
 
