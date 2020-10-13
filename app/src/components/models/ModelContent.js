@@ -65,9 +65,25 @@ export const ModelContent = ({model}) => {
 						{model.notes && <textarea rows={15} cols={50} readOnly={true} value={model.notes}/>}
 					</div>
 				</div>
-				<div className={'margin-lg'}>
-					<Button type={'primary'} onClick={() => history.push(`/ui/world/${currentWorld._id}/model/${model._id}/edit`)}>Edit<EditOutlined /></Button>
-				</div>
+				<span>
+					<div className={'margin-lg'}>
+						<Button type={'primary'} onClick={() => history.push(`/ui/world/${currentWorld._id}/model/${model._id}/edit`)}>
+							Edit
+							<EditOutlined />
+						</Button>
+					</div>
+					<div className={'margin-lg'}>
+						<Button
+							type='primary'
+							onClick={() => {
+								window.location = `/export/Model/${model._id}`;
+							}}
+						>
+							Export
+						</Button>
+					</div>
+				</span>
+
 			</Col>
 			<Col span={12}>
 				<div style={{width: 500, height: 750}}>

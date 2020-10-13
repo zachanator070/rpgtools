@@ -1,84 +1,10 @@
 import express from "express";
 import {createSessionContext} from "../authentication-helpers";
-import {ALL_WIKI_TYPES, ARTICLE, PLACE} from "../../../common/src/type-constants";
-import {Article} from "../models/article";
-import mongodb, {GridFSBucket} from "mongodb";
-import mongoose from "mongoose";
+import {ALL_WIKI_TYPES, MODEL, WIKI_FOLDER} from "../../../common/src/type-constants";
 import archiver from 'archiver';
-import {Readable} from 'stream';
-import {WikiPage} from "../models/wiki-page";
+import { exportModel, exportWikiFolder,	exportWikiPage } from "../contentImportExport/export";
 
 let ExportRouter = express.Router();
-
-const getFileFromFileId = async (fileId) => {
-	return new Promise((resolve, reject) => {
-		const gfs = new GridFSBucket(mongoose.connection.db);
-		const id = new mongodb.ObjectID(fileId);
-		gfs.find({_id: id}).next( (err, file) => {
-			if(err){
-				reject(err);
-				return;
-			}
-			if(file === null ){
-				reject(`file not found with id ${fileId}`);
-				return;
-			}
-			resolve(file);
-		});
-	});
-};
-
-const getReadStreamFromFile = (file) => {
-	const gfs = new GridFSBucket(mongoose.connection.db);
-	return gfs.openDownloadStream(file._id);
-}
-
-const prepImage = async (image, archive) => {
-	for(let chunk of image.chunks){
-		const chunkFile = (await getFileFromFileId(chunk.fileId));
-		archive.append(getReadStreamFromFile(chunkFile), {name: chunkFile.filename})
-		chunk.fileId = chunkFile.filename;
-	}
-};
-
-const prepWikiPage = async (page, archive) => {
-	let pageObject = page.toJSON();
-
-	switch (page.constructor.modelName){
-		case PLACE:
-			await page.populate({
-				path: 'mapImage',
-				populate: {
-					path: 'icon chunks',
-					populate: {
-						path: 'chunks'
-					}
-				}
-			}).execPopulate();
-			pageObject = page.toJSON();
-			if(pageObject.mapImage){
-				await prepImage(pageObject.mapImage, archive);
-				if(pageObject.mapImage.icon){
-					await prepImage(pageObject.mapImage.icon, archive);
-				}
-			}
-			break;
-	}
-
-	if(pageObject.coverImage){
-		await prepImage(pageObject.coverImage, archive);
-		if(pageObject.coverImage.icon){
-			await prepImage(pageObject.coverImage.icon, archive);
-		}
-	}
-	if(pageObject.contentId){
-		const contentFile = await getFileFromFileId(pageObject.contentId);
-		archive.append(getReadStreamFromFile(contentFile), {name: contentFile.filename});
-		pageObject.contentId = contentFile.filename;
-	}
-
-	archive.append(Readable.from([JSON.stringify(pageObject)]), {name: `${page.constructor.modelName}.${pageObject._id}.json`});
-}
 
 ExportRouter.get('/:model/:id', async (req, res) => {
 	const context = await createSessionContext({req, res, connection: null});
@@ -107,23 +33,17 @@ ExportRouter.get('/:model/:id', async (req, res) => {
 		archive.pipe(res);
 
 		if(ALL_WIKI_TYPES.includes(modelName)){
-			const page = await WikiPage.findById(docId).populate({
-				path: 'coverImage',
-				populate: {
-					path: 'chunks icon',
-					populate: {
-						path: 'chunks',
-					}
-				}
-			});
-			if(!page){
-				return res.sendStatus(404);
-			}
-			if(!await page.userCanRead(currentUser)){
-				return res.sendStatus(403);
-			}
-			await prepWikiPage(page, archive);
+			await exportWikiPage(docId, archive, currentUser, res);
 
+		}
+		else if(modelName === MODEL){
+			await exportModel(docId, archive, currentUser, res);
+		}
+		else if(modelName === WIKI_FOLDER){
+			await exportWikiFolder(docId, archive, currentUser, res);
+		}
+		else{
+			return res.status(400).send(`Export type ${modelName} not supported`);
 		}
 
 		return archive.finalize();

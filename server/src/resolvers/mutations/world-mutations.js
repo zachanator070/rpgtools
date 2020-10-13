@@ -13,9 +13,6 @@ import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
 import {PLACE, WORLD} from "../../../../common/src/type-constants";
 import {ServerConfig} from '../../models/server-config';
-import {createGfsFile} from "../../db-helpers";
-import unzipper from 'unzipper';
-import {importFiles, SUPPORTED_TYPES} from "../../import/import";
 import {FiveEImporter} from "../../fiveEImport/five-e-importer";
 
 export const createWorld = async (name, isPublic, currentUser) => {
@@ -215,72 +212,5 @@ export const worldMutations = {
 		});
 
 		return world;
-	},
-	importContent: async (_, {worldId, zipFile}, {currentUser}) => {
-		const world = await World.findById(worldId).populate('rootFolder');
-		if(!world){
-			throw new Error('World does not exist');
-		}
-		if(!await world.rootFolder.userCanWrite(currentUser)){
-			throw new Error('You do not have permission to add a top level folder');
-		}
-
-		zipFile = await zipFile;
-		const stream = zipFile.createReadStream();
-
-		const importedFiles = {};
-
-		await new Promise((resolve, reject) => {
-			const allImportPromises = [];
-			stream.pipe(unzipper.Parse())
-				.on('entry', async (entry) => {
-					const fileName = entry.path;
-					const modelName = fileName.split('.')[0];
-					if(SUPPORTED_TYPES.includes(modelName)){
-						allImportPromises.push(
-							new Promise((resolve, reject) => {
-								const rawData = [];
-								entry.on('data', (data) => {
-									rawData.push(data);
-								});
-								entry.on('end', () => {
-									resolve(rawData);
-								});
-								entry.on('error', (err) => {
-									reject(err);
-								});
-							}).then((buffer) => {
-									importedFiles[fileName] = buffer.toString();
-							})
-						);
-					}
-					else{
-						allImportPromises.push(
-							createGfsFile(fileName, entry).then((fileId) => {
-								importedFiles[fileName] = fileId;
-							})
-						);
-					}
-				})
-				.on('error', (error) => {
-					console.warn(error);
-					reject(error);
-				})
-				.on('finish', async () => {
-					await Promise.all(allImportPromises);
-					resolve();
-				});
-		});
-
-
-		try{
-			await importFiles(importedFiles, world);
-		}
-		catch (e) {
-			console.log(e.message);
-			return false;
-		}
-
-		return true;
 	}
 };

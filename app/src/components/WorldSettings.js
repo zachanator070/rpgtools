@@ -6,9 +6,6 @@ import {useRenameWorld} from "../hooks/world/useRenameWorld";
 import {WORLD} from "../../../common/src/type-constants";
 import {LoadingView} from "./LoadingView";
 import {useLoad5eContent} from "../hooks/world/useLoad5eContent";
-import {useImportContent} from "../hooks/world/useImportContent";
-import {ToolTip} from "./ToolTip";
-import {UploadOutlined} from '@ant-design/icons';
 import {useHistory} from 'react-router-dom';
 
 export default () => {
@@ -16,7 +13,6 @@ export default () => {
 	const [newName, setNewName] = useState();
 	const {renameWorld, loading} = useRenameWorld();
 	const {load5eContent, loading: contentLoading} = useLoad5eContent();
-	const {importContent, loading: importLoading} = useImportContent();
 	const [getCC, setGetCC] = useState();
 	const [getTob, setGetTob] = useState();
 	const history = useHistory();
@@ -28,15 +24,6 @@ export default () => {
 	if(!currentWorld){
 		return <div>404 - World not found</div>;
 	}
-
-	const formItemLayout = {
-		labelCol: { span: 2 },
-		wrapperCol: { span: 22 },
-	};
-
-	const tailLayout = {
-		wrapperCol: { offset: 2, span: 22 },
-	};
 
 	return <div className='margin-md-left margin-md-top margin-lg-bottom'>
 		<h1>Settings for {currentWorld.name}</h1>
@@ -94,62 +81,6 @@ export default () => {
 						>
 							Load
 						</Button>
-					</div>
-				</Col>
-				<Col span={4}/>
-			</Row>
-			<Row className={'margin-lg-top'}>
-				<Col span={4}/>
-				<Col span={16}>
-					<Modal visible={importLoading} closable={false} footer={null}>
-						<LoadingView/> Importing content ...
-					</Modal>
-					<h2>Import Content</h2>
-					<div className={'margin-lg-top'}>
-						<Form
-							onFinish={async ({file}) => {
-								await importContent({worldId: currentWorld._id, zipFile: file[0].originFileObj});
-							}}
-						>
-							<Form.Item
-								{...formItemLayout}
-								label={<div><ToolTip>Supported file types: <br/><ul><li>.zip</li></ul></ToolTip> File</div>}
-								name="file"
-								rules={[
-									{required: true, message: 'File required'},
-									{validator: async (rule, value) => {
-											// this function has to be async b/c the validator has to return a promise
-											if(!value || value.length !== 1){
-												return;
-											}
-											const file = value[0];
-											const supportedTypes = ['zip'];
-											const parts = file.name.split('.');
-
-											const type = parts.length > 0 ? parts[parts.length - 1] : null;
-											if(!supportedTypes.includes(type)){
-												throw new Error(`File type ${type} not supported`);
-											}
-										}}
-								]}
-								getValueFromEvent={(e) => {
-									return e.fileList.length > 0 ? [e.fileList[0]] : [];
-								}}
-								valuePropName="fileList"
-							>
-								<Upload
-									multiple={false}
-									beforeUpload={() => false}
-								>
-									<Button icon={<UploadOutlined />}>Select File</Button>
-								</Upload>
-							</Form.Item>
-							<Form.Item {...tailLayout}>
-								<Button type="primary" htmlType="submit" loading={loading}>
-									Submit
-								</Button>
-							</Form.Item>
-						</Form>
 					</div>
 				</Col>
 				<Col span={4}/>

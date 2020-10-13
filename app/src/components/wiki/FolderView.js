@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Modal} from "antd";
+import {Button, Col, Form, Modal, Upload} from "antd";
 import {
 	FileTextOutlined,
 	RightOutlined,
@@ -8,7 +8,7 @@ import {
 	FolderAddOutlined,
 	EditOutlined,
 	DeleteOutlined,
-	ImportOutlined
+	ImportOutlined, DownloadOutlined, UploadOutlined
 } from '@ant-design/icons';
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -19,6 +19,8 @@ import {useHistory} from "react-router-dom";
 import useCreateFolder from "../../hooks/wiki/useCreateFolder";
 import {LoadingView} from "../LoadingView";
 import {MoveFolderModal} from "../modals/MoveFolderModal";
+import {ToolTip} from "../ToolTip";
+import {useImportContent} from "../../hooks/world/useImportContent";
 
 export const FolderView = () => {
 
@@ -38,6 +40,9 @@ export const FolderView = () => {
 	const {deleteFolder} = useDeleteFolder();
 	const {createWiki} = useCreateWiki();
 	const {createFolder} = useCreateFolder();
+	const {importContent, loading: importLoading} = useImportContent();
+	const [importModalVisibility, setImportModalVisibility] = useState(false);
+	const [importFolder, setImportFolder] = useState();
 
 
 	const editingInput = useRef(null);
@@ -218,7 +223,25 @@ export const FolderView = () => {
 				}}
 			>
 				<DeleteOutlined/>
-			</a>
+			</a>,
+			<a
+				title={'Export this folder'}
+				href={`/export/WikiFolder/${folder._id}`}
+				key='export'
+			>
+				<DownloadOutlined />
+			</a>,
+			<a
+				title={'Import Content'}
+				href='#'
+				key='import'
+				onClick={() => {
+					setImportFolder(folder);
+					setImportModalVisibility(true);
+				}}
+			>
+				<UploadOutlined />
+			</a>,
 		];
 
 		if (!folder.canWrite || folderBeingHovered !== folder._id) {
@@ -273,8 +296,73 @@ export const FolderView = () => {
 		);
 	};
 
+	const formItemLayout = {
+		labelCol: { span: 10 },
+		wrapperCol: { span: 14 },
+	};
+
+	const tailLayout = {
+		wrapperCol: { offset: 10, span: 14 },
+	};
+
 	return (
 		<div className='margin-md' style={{fontSize: '17px'}}>
+			<Modal visible={importLoading} closable={false} footer={null}>
+				<LoadingView/> Importing content ...
+			</Modal>
+			<Modal
+				visible={importModalVisibility}
+				footer={null}
+			>
+				<h2>Import Content</h2>
+				<div className={'margin-lg-top'}>
+					<Form
+						onFinish={async ({file}) => {
+							setImportModalVisibility(false);
+							await importContent({folderId: importFolder._id, zipFile: file[0].originFileObj});
+						}}
+					>
+						<Form.Item
+							{...formItemLayout}
+							label={<div><ToolTip>Supported file types: <br/><ul><li>.zip</li></ul></ToolTip> File</div>}
+							name="file"
+							rules={[
+								{required: true, message: 'File required'},
+								{validator: async (rule, value) => {
+										// this function has to be async b/c the validator has to return a promise
+										if(!value || value.length !== 1){
+											return;
+										}
+										const file = value[0];
+										const supportedTypes = ['zip'];
+										const parts = file.name.split('.');
+
+										const type = parts.length > 0 ? parts[parts.length - 1] : null;
+										if(!supportedTypes.includes(type)){
+											throw new Error(`File type ${type} not supported`);
+										}
+									}}
+							]}
+							getValueFromEvent={(e) => {
+								return e.fileList.length > 0 ? [e.fileList[0]] : [];
+							}}
+							valuePropName="fileList"
+						>
+							<Upload
+								multiple={false}
+								beforeUpload={() => false}
+							>
+								<Button icon={<UploadOutlined />}>Select File</Button>
+							</Upload>
+						</Form.Item>
+						<Form.Item {...tailLayout}>
+							<Button type="primary" htmlType="submit" loading={importLoading}>
+								Submit
+							</Button>
+						</Form.Item>
+					</Form>
+				</div>
+			</Modal>
 			{folderBeingMoved &&
 				<MoveFolderModal
 					visibility={moveFolderModalVisibility}

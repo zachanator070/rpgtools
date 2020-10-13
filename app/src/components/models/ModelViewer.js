@@ -1,12 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ModelRenderer} from "../../rendering/ModelRenderer";
 import {Button, Input} from "antd";
+import {LoadingView} from "../LoadingView";
 
 
 export const ModelViewer = ({model, width, height, defaultColor, showColorControls, onChangeColor}) => {
 	const [renderer, setRenderer] = useState();
 	const [modelColor, setModelColor] = useState(defaultColor);
 	const renderCanvas = useRef();
+	const [modelLoading, setModelLoading] = useState(true);
+
+	const defaultWidth = 500;
+	const defaultHeight = 700;
 
 	useEffect(() => {
 		(async () => {
@@ -16,7 +21,7 @@ export const ModelViewer = ({model, width, height, defaultColor, showColorContro
 					model.depth,
 					model.width,
 					model.height,
-					() => {}
+					(loading) => {setModelLoading(loading)}
 				)
 			);
 		})();
@@ -79,7 +84,31 @@ export const ModelViewer = ({model, width, height, defaultColor, showColorContro
 		</>}
 
 		<div className={'margin-md-top'}>
-			<canvas ref={renderCanvas} style={{width: width || 500, height: height || 700}}/>
+			{modelLoading &&
+				<div
+					style={{
+						width: width || defaultWidth,
+						height: height || defaultHeight,
+						backgroundColor: 'rgba(140,140,140,0.4)',
+						position: 'absolute',
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+			     >
+				<div
+					style={{
+						backgroundColor: 'white',
+						borderRadius: '10px',
+						padding: '10px',
+					}}
+				>
+					<LoadingView/> Loading Model ...
+				</div>
+				</div>
+			}
+			<canvas ref={renderCanvas} style={{width: width || defaultWidth, height: height || defaultHeight}}/>
 		</div>
 	</div>;
 };

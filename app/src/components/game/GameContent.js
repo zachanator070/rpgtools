@@ -242,7 +242,7 @@ export const GameContent = ({currentGame}) => {
 			closable={false}
 		>
 			<div className={'margin-lg'}>
-				Loading {urlLoading}
+				Loaded {urlLoading}
 				<br/>
 				<Progress
 					strokeColor={{
