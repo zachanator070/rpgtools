@@ -23,4 +23,4 @@ export const redisClient = client;
 export const getAsync = client ? promisify(client.get).bind(client) : () => {};
 export const setAsync = client ? promisify(client.set).bind(client) : () => {};
 export const delAsync = client ? promisify(client.del).bind(client) : () => {};
-export const existsAsync = client ? promisify(client.exist).bind(client) : () => {};
+export const existsAsync = client ? promisify(client.exists).bind(client) : () => {};

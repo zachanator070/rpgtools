@@ -1,7 +1,7 @@
 import {PermissionAssignment} from "./models/permission-assignement";
 import {Role} from './models/role';
 import {User} from './models/user';
-import {GridFSBucket} from "mongodb";
+import mongodb, {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 
 export const cleanUpPermissions = async (subjectId) => {
@@ -48,4 +48,25 @@ export const deleteGfsFile = async (fileId) => {
 			resolve();
 		})
 	});
+}
+export const getGfsFileFromFileId = async (fileId) => {
+	return new Promise((resolve, reject) => {
+		const gfs = new GridFSBucket(mongoose.connection.db);
+		const id = new mongodb.ObjectID(fileId);
+		gfs.find({_id: id}).next((err, file) => {
+			if (err) {
+				reject(err);
+				return;
+			}
+			if (file === null) {
+				reject(`file not found with id ${fileId}`);
+				return;
+			}
+			resolve(file);
+		});
+	});
+};
+export const getReadStreamFromFile = (file) => {
+	const gfs = new GridFSBucket(mongoose.connection.db);
+	return gfs.openDownloadStream(file._id);
 }

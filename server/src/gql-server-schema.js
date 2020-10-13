@@ -48,7 +48,6 @@ export const typeDefs = gql`
         createWorld(name: String!, public: Boolean!): World!
         renameWorld(worldId: ID!, newName: String!): World!
         load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
-        importContent(worldId: ID!, zipFile: Upload!): Boolean!
         
         createRole(worldId: ID!, name: String!): World!
         deleteRole(roleId: ID!): World!
@@ -64,6 +63,7 @@ export const typeDefs = gql`
         renameFolder(folderId: ID!, name: String!): WikiFolder!
         deleteFolder(folderId: ID!): World!
         moveFolder(folderId: ID!, parentFolderId: ID!): World!
+        importContent(folderId: ID!, zipFile: Upload!): WikiFolder!
         
         createWiki(name: String!, folderId: ID!): World!
         deleteWiki(wikiId: ID!): World!

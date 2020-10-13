@@ -3,7 +3,7 @@ import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {WIKI_FOLDER} from "../../../../common/src/type-constants";
 import {cleanUpPermissions} from "../../db-helpers";
-import {WikiPage} from "../../models/wiki-page";
+import {ContentImporter} from "../../contentImportExport/import";
 
 /**
  * Throws an error if the user does not have write access to any of the children folders or pages.
@@ -139,5 +139,31 @@ export const folderMutations = {
 		await parentFolder.save();
 		return folder.world;
 
+	},
+	importContent: async (_, {folderId, zipFile}, {currentUser}) => {
+		const folder = await WikiFolder.findById(folderId).populate({
+			path: 'world',
+			populate: {
+				path: 'rootFolder',
+				populate: {
+					path: 'children'
+				}
+			}
+		});
+		if(!folder){
+			throw new Error('Folder does not exist');
+		}
+		if(!await folder.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to add content to this folder');
+		}
+
+		zipFile = await zipFile;
+		const stream = zipFile.createReadStream();
+
+		const importer = new ContentImporter();
+
+		await importer.importArchive(stream, folder);
+
+		return folder;
 	}
 };

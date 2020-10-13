@@ -22,7 +22,8 @@ export class ModelRenderer{
 		this.modelWidth = modelWidth;
 		this.modelHeight = modelHeight;
 
-		this.loader = new THREE.LoadingManager(onProgress);
+		this.loader = new THREE.LoadingManager(() => onProgress(false));
+		this.loader.onStart = () => onProgress(true);
 
 		this.modelMesh = null;
 		this.originalModelMesh = null;
@@ -41,6 +42,22 @@ export class ModelRenderer{
 		return Math.pow(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2), .5);
 	}
 
+	// calculate distance to get everything in view
+	positionCamera() {
+
+		const verticalFOV = CAMERA_FOV * Math.PI / 180;
+		const horizontalFOV = (2 * Math.atan( Math.tan( verticalFOV / 2 ) * this.aspect ));
+		let cameraZ = Math.max(
+			((this.modelHeight*1.1)/2)/Math.tan(verticalFOV/2),
+			((this.modelWidth*1.1)/2)/Math.tan(horizontalFOV/2),
+		);
+		let cameraY = this.modelHeight * .7;
+
+		this.camera.position.set(0, cameraY, cameraZ);
+		this.orbitControls.target = new Vector3(0, this.modelHeight / 2, 0);
+		this.orbitControls.update();
+	}
+
 	setupScene(){
 
 		let renderHeight = this.renderRoot.clientHeight;
@@ -49,7 +66,8 @@ export class ModelRenderer{
 		this.renderRoot.addEventListener('resize', () => {
 			renderHeight = this.renderRoot.clientHeight;
 			renderWidth = this.renderRoot.clientWidth;
-			this.camera.aspectRatio = renderWidth/renderHeight;
+			this.aspect = renderWidth/renderHeight
+			this.camera.aspectRatio = this.aspect;
 			this.camera.updateProjectionMatrix();
 			this.renderer.setSize( renderWidth, renderHeight );
 		});
@@ -59,18 +77,8 @@ export class ModelRenderer{
 		this.scene.add(new THREE.AmbientLight(0xffffff, 1))
 
 		// setup camera
-		const aspect = renderWidth / renderHeight
-		this.camera = new THREE.PerspectiveCamera( CAMERA_FOV, aspect, 0.1, 10000 );
-		// calculate distance to get everything in view
-		const verticalFOV = CAMERA_FOV * Math.PI / 180;
-		const horizontalFOV = (2 * Math.atan( Math.tan( verticalFOV / 2 ) * aspect ));
-		let cameraZ = Math.max(
-			((this.modelHeight*1.1)/2)/Math.tan(verticalFOV/2),
-			((this.modelWidth*1.1)/2)/Math.tan(horizontalFOV/2),
-		);
-		let cameraY = this.modelHeight * .7;
-
-		this.camera.position.set(0, cameraY, cameraZ);
+		this.aspect = renderWidth / renderHeight
+		this.camera = new THREE.PerspectiveCamera( CAMERA_FOV, this.aspect, 0.1, 10000 );
 
 		// setup renderer
 		this.renderer = new THREE.WebGLRenderer({canvas: this.renderRoot, antialias: true});
@@ -82,6 +90,8 @@ export class ModelRenderer{
 		this.orbitControls = new OrbitControls( this.camera, this.renderRoot );
 		this.orbitControls.target = new Vector3(0, this.modelHeight / 2, 0);
 		this.orbitControls.update();
+
+		this.positionCamera();
 
 		// setup light
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, .25 );
@@ -114,6 +124,7 @@ export class ModelRenderer{
 			this.scene.remove(this.modelMesh);
 			this.modelMesh = null;
 		}
+		this.positionCamera();
 
 		const extension = modelUrl.split('.').pop();
 
