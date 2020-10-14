@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
 import {
+	FOLDER_READ_ALL_CHILDREN, FOLDER_READ_ALL_PAGES, FOLDER_RW_ALL_PAGES,
 	ROLE_ADMIN,
 	ROLE_ADMIN_ALL, WIKI_ADMIN, WIKI_ADMIN_ALL,
 	WIKI_READ,
@@ -13,6 +14,7 @@ import {IMAGE, PLACE, WIKI_PAGE, WORLD} from "../../../common/src/type-constants
 import {deleteImage} from "../resolvers/mutations/image-mutations";
 import {deleteGfsFile} from "../db-helpers";
 import {World} from "./world";
+import {WikiFolder} from "./wiki-folder";
 
 const Schema = mongoose.Schema;
 
@@ -68,7 +70,13 @@ wikiPageSchema.methods.userCanAdmin = async function(user) {
 };
 
 wikiPageSchema.methods.userCanWrite = async function(user){
-	return await user.hasPermission(WIKI_RW, this._id) ||
+	const parentFolder = await WikiFolder.findOne({pages: this._id});
+	let parentWriteAll = false;
+	if(parentFolder){
+		parentWriteAll = await user.hasPermission(FOLDER_RW_ALL_PAGES, parentFolder._id);
+	}
+	return parentWriteAll ||
+		await user.hasPermission(WIKI_RW, this._id) ||
 		await user.hasPermission(WIKI_RW_ALL, this.world);
 };
 
@@ -76,8 +84,15 @@ wikiPageSchema.methods.userCanRead = async function(user){
 	if(this.type === PLACE && await World.findOne({wikiPage: this._id})){
 		return true;
 	}
-	return await user.hasPermission(WIKI_READ, this._id) ||
-	await user.hasPermission(WIKI_READ_ALL, this.world) || await this.userCanWrite(user);
+	const parentFolder = await WikiFolder.findOne({pages: this._id});
+	let parentReadAll = false;
+	if(parentFolder){
+		parentReadAll = await user.hasPermission(FOLDER_READ_ALL_PAGES, parentFolder._id);
+	}
+	return parentReadAll ||
+		await user.hasPermission(WIKI_READ, this._id) ||
+		await user.hasPermission(WIKI_READ_ALL, this.world) ||
+		await this.userCanWrite(user);
 };
 
 wikiPageSchema.pre('deleteOne', { document: true, query: false }, async function(){

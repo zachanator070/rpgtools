@@ -164,6 +164,6 @@ export const folderMutations = {
 
 		await importer.importArchive(stream, folder);
 
-		return folder;
+		return folder.world;
 	}
 };

@@ -194,5 +194,34 @@ export const wikiMutations = {
 		wikiPage.modelColor = color;
 		await wikiPage.save();
 		return wikiPage;
+	},
+	moveWiki: async (_, {wikiId, folderId}, {currentUser}) => {
+		const wikiPage = await WikiPage.findById(wikiId).populate('world content');
+		if(!wikiPage){
+			throw new Error(`Wiki ${wikiId} does not exist`);
+		}
+		if(!await wikiPage.userCanWrite(currentUser)){
+			throw new Error('You do not have permission to write to this page');
+		}
+
+		const folder = await WikiFolder.findById(folderId);
+		if(!folder){
+			throw new Error('Folder does not exist');
+		}
+		if(!await folder.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to write to the folder ${folderId}`)
+		}
+
+		const oldFolder = await WikiFolder.findOne({pages: wikiId});
+		if(oldFolder && !await oldFolder.userCanWrite(currentUser)){
+			throw new Error(`You do not have permission to write to the folder ${oldFolder._id}`);
+		}
+
+		folder.pages.push(wikiPage);
+		await folder.save();
+		oldFolder.pages = oldFolder.pages.filter(pageId => !pageId.equals(wikiPage._id));
+		await oldFolder.save();
+
+		return wikiPage.world;
 	}
 };

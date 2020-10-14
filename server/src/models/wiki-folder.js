@@ -3,9 +3,9 @@ import {WikiPage} from './wiki-page';
 import {
 	FOLDER_ADMIN, FOLDER_ADMIN_ALL,
 	FOLDER_READ,
-	FOLDER_READ_ALL,
+	FOLDER_READ_ALL, FOLDER_READ_ALL_CHILDREN,
 	FOLDER_RW,
-	FOLDER_RW_ALL,
+	FOLDER_RW_ALL, FOLDER_RW_ALL_CHILDREN,
 	ROLE_ADMIN, ROLE_ADMIN_ALL
 } from "../../../common/src/permission-constants";
 import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
@@ -37,13 +37,26 @@ wikiFolderSchema.methods.userCanAdmin = async function(user) {
 };
 
 wikiFolderSchema.methods.userCanWrite = async function(user){
-	return await user.hasPermission(FOLDER_RW, this._id) ||
+	const parentFolder = await WikiFolder.findOne({children: this._id});
+	let parentWriteAll = false;
+	if(parentFolder){
+		parentWriteAll = await user.hasPermission(FOLDER_RW_ALL_CHILDREN, parentFolder._id);
+	}
+	return parentWriteAll ||
+		await user.hasPermission(FOLDER_RW, this._id) ||
 		await user.hasPermission(FOLDER_RW_ALL, this.world);
 };
 
 wikiFolderSchema.methods.userCanRead = async function(user){
-	return await user.hasPermission(FOLDER_READ, this._id) ||
-		await user.hasPermission(FOLDER_READ_ALL, this.world) || await this.userCanWrite(user);
+	const parentFolder = await WikiFolder.findOne({children: this._id});
+	let parentReadAll = false;
+	if(parentFolder){
+		parentReadAll = await user.hasPermission(FOLDER_READ_ALL_CHILDREN, parentFolder._id);
+	}
+	return  parentReadAll ||
+		await user.hasPermission(FOLDER_READ, this._id) ||
+		await user.hasPermission(FOLDER_READ_ALL, this.world) ||
+		await this.userCanWrite(user);
 };
 
 wikiFolderSchema.post('remove', async function(folder) {

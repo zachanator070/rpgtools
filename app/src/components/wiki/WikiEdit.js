@@ -15,6 +15,8 @@ import {SelectModel} from "../select/SelectModel";
 import {ModelViewer} from "../models/ModelViewer";
 import {useUpdateModeledWiki} from "../../hooks/wiki/useUpdateModeledWiki";
 import {LoadingView} from "../LoadingView";
+import {useMoveWiki} from "../../hooks/wiki/useMoveWiki";
+import {MoveWikiButton} from "./MoveWikiButton";
 
 export const WikiEdit = () => {
 
@@ -36,6 +38,7 @@ export const WikiEdit = () => {
 	const {updateWiki} = useUpdateWiki();
 	const {updatePlace} = useUpdatePlace();
 	const {updateModeledWiki} = useUpdateModeledWiki();
+	const {moveWiki} = useMoveWiki();
 
 	const [selectedModel, setSelectedModel] = useState();
 
@@ -247,6 +250,7 @@ export const WikiEdit = () => {
 				<SaveOutlined />
 				Save
 			</Button>
+			<MoveWikiButton wikiPage={currentWiki}/>
 			<Button type='danger' disabled={saving} className='margin-md-left' onClick={() => {
 				history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 			}}><UndoOutlined />Discard</Button>
