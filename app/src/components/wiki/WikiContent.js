@@ -10,7 +10,7 @@ import {QuestionCircleOutlined} from '@ant-design/icons';
 import {ModelViewer} from "../models/ModelViewer";
 
 
-export const WikiContent = ({currentWiki}) => {
+export const WikiContent = ({currentWiki, wikiLoading}) => {
 
 	const history = useHistory();
 
@@ -28,7 +28,7 @@ export const WikiContent = ({currentWiki}) => {
 		}
 	};
 
-	if(loading){
+	if(loading || wikiLoading){
 		return <LoadingView/>;
 	}
 
@@ -93,22 +93,29 @@ export const WikiContent = ({currentWiki}) => {
 					readOnly={true}
 				/>
 			</div>
-			<div className='padding-md'>
-				{currentWiki.canWrite &&
+
+		<span>
+			{currentWiki.canWrite &&
+				<span className='margin-lg'>
 					<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`}>
-						<EditOutlined />Edit
+						<Button type={'primary'}>
+							<EditOutlined />Edit
+						</Button>
 					</Link>
-				}
-			</div>
-			<div className={'margin-lg'}>
+				</span>
+			}
+
+			<span className={'margin-lg'}>
 				<Button
 					type='primary'
 					onClick={() => {
 						window.location = `/export/${currentWiki.type}/${currentWiki._id}`;
 					}}
-		        >
+				>
 					Export
 				</Button>
-			</div>
+			</span>
+		</span>
+
 		</div>;
 };

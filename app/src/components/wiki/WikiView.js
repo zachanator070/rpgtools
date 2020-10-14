@@ -17,61 +17,60 @@ export const WikView = () => {
 
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
-	return (wikiLoading || worldLoading) ? <LoadingView/> :
-		<div style={{overflow: 'hidden'}}>
-			{currentWiki &&
-				<PermissionModal
-					visibility={permissionModalVisibility}
-					setVisibility={setPermissionModalVisibility}
-					subject={currentWiki}
-					subjectType={currentWiki.type}
-					refetch={refetch}
-				/>
-			}
+	return <div style={{overflow: 'hidden'}}>
+		{currentWiki &&
+			<PermissionModal
+				visibility={permissionModalVisibility}
+				setVisibility={setPermissionModalVisibility}
+				subject={currentWiki}
+				subjectType={currentWiki.type}
+				refetch={refetch}
+			/>
+		}
 
-			<Row
+		<Row
+			style={{
+				height: '100%'
+			}}
+		>
+			<Col
+				span={4}
+				className='padding-md'
 				style={{
-					height: '100%'
+					height: '100%',
+					overflowY: 'auto'
 				}}
 			>
-				<Col
-					span={4}
-					className='padding-md'
-					style={{
-						height: '100%',
-						overflowY: 'auto'
-					}}
-				>
-					<FolderView/>
-				</Col>
-				<Col
-					span={16}
-					style={{
-						height: '100%',
-						overflowY: 'auto'
-					}}
-					className='padding-md'
-				>
-					<Switch>
-						<Route path={`${match.path}/edit`}>
-							<WikiEdit/>
-						</Route>
-						<Route path={`${match.path}/view`}>
-							<WikiContent currentWiki={currentWiki}/>
-						</Route>
-					</Switch>
-				</Col>
-				<Col span={4} className='padding-md'>
-					<Route path={`${match.path}/view`}>
-						{currentWiki &&
-							<a title={'View permissions for this page'} onClick={async () => {
-								await setPermissionModalVisibility(true);
-							}}>
-								<TeamOutlined style={{fontSize: '20px'}}/>
-							</a>
-						}
+				<FolderView/>
+			</Col>
+			<Col
+				span={16}
+				style={{
+					height: '100%',
+					overflowY: 'auto'
+				}}
+				className='padding-md'
+			>
+				<Switch>
+					<Route path={`${match.path}/edit`}>
+						<WikiEdit/>
 					</Route>
-				</Col>
-			</Row>
-		</div>
+					<Route path={`${match.path}/view`}>
+						<WikiContent currentWiki={currentWiki} wikiLoading={wikiLoading}/>
+					</Route>
+				</Switch>
+			</Col>
+			<Col span={4} className='padding-md'>
+				<Route path={`${match.path}/view`}>
+					{currentWiki &&
+						<a title={'View permissions for this page'} onClick={async () => {
+							await setPermissionModalVisibility(true);
+						}}>
+							<TeamOutlined style={{fontSize: '20px'}}/>
+						</a>
+					}
+				</Route>
+			</Col>
+		</Row>
+	</div>
 };
