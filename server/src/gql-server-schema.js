@@ -63,13 +63,14 @@ export const typeDefs = gql`
         renameFolder(folderId: ID!, name: String!): WikiFolder!
         deleteFolder(folderId: ID!): World!
         moveFolder(folderId: ID!, parentFolderId: ID!): World!
-        importContent(folderId: ID!, zipFile: Upload!): WikiFolder!
+        importContent(folderId: ID!, zipFile: Upload!): World!
         
         createWiki(name: String!, folderId: ID!): World!
         deleteWiki(wikiId: ID!): World!
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
         updateModeledWiki(wikiId: ID!, model: ID, color: String): WikiPage!
+        moveWiki(wikiId: ID!, folderId: ID!): World!
         
         createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
         

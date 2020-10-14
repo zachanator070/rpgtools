@@ -14,6 +14,7 @@ import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
 import List, { ListItem } from 'quill/formats/list';
+import {Link} from "react-router-dom";
 
 Quill.debug('error');
 
@@ -94,7 +95,7 @@ export const Editor = ({content, readOnly, onInit}) => {
 								result.target = "_self";
 								return result;
 							}), searchTerm);
-						},
+						}
 					}
 				},
 				placeholder: readOnly ? 'This tale has yet to be told' : 'Compose an epic...',

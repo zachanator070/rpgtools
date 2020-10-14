@@ -2,48 +2,46 @@ import React from 'react';
 import {Breadcrumb} from "antd";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import {useHistory} from 'react-router-dom';
-import {useAllWikis} from "../../hooks/wiki/useAllWikis";
+import {Link} from 'react-router-dom';
 
 export const MapBreadCrumbs = () => {
 
-	const {currentMap} = useCurrentMap();
+	const {currentMap, loading} = useCurrentMap();
 	const {currentWorld} = useCurrentWorld();
-	const history = useHistory();
 
-	const getPinFromPageId = (pageId) => {
-		for (let pin of currentWorld.pins) {
-			if (pin.page && pin.page._id === pageId) {
-				return pin;
-			}
-		}
-	};
-
-	const path = [];
-	let nextMapToRender = currentMap;
-	while (true) {
-		const currentPin = getPinFromPageId(currentMap._id);
-		path.push({
-			name: nextMapToRender.name,
-			id: nextMapToRender._id
-		});
-
-		if (nextMapToRender._id === currentWorld.wikiPage._id) {
-			break;
-		}
-		if (!currentPin) {
-			break;
-		}
-		nextMapToRender = currentPin.map;
+	if(loading || !currentMap){
+		return null;
 	}
 
+	const getMapPins = (map) => {
+		return currentWorld.pins.filter(pin => pin.map._id === map._id);
+	}
+
+	const bfs = (map, target, path) => {
+		if(path.find(otherMap => otherMap._id === map._id)){
+			return [];
+		}
+		let currentPath = [...path, map];
+		if(map._id === target._id){
+			return currentPath;
+		}
+		const pins = getMapPins(map);
+		for(let pin of pins){
+			const newPath = bfs(pin.page, target, currentPath);
+			if(newPath.length > 0){
+				return newPath;
+			}
+		}
+		return [];
+	}
+
+	const path = bfs(currentWorld.wikiPage, currentMap, []);
+
 	const breadCrumbs = [];
-	for (let map of path.reverse()) {
+	for (let map of path) {
 		breadCrumbs.push(
-			<Breadcrumb.Item key={map.id}>
-				<a href="#" onClick={() => {
-					history.push(`/ui/world/${currentWorld._id}/map/${map.id}`);
-				}}>{map.name}</a>
+			<Breadcrumb.Item key={map._id}>
+				<Link to={`/ui/world/${currentWorld._id}/map/${map._id}`}>{map.name}</Link>
 			</Breadcrumb.Item>
 		);
 	}
