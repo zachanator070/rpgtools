@@ -66,13 +66,13 @@ export const ModelContent = ({model}) => {
 					</div>
 				</div>
 				<span>
-					<div className={'margin-lg'}>
+					<span className={'margin-lg'}>
 						<Button type={'primary'} onClick={() => history.push(`/ui/world/${currentWorld._id}/model/${model._id}/edit`)}>
 							Edit
 							<EditOutlined />
 						</Button>
-					</div>
-					<div className={'margin-lg'}>
+					</span>
+					<span className={'margin-lg'}>
 						<Button
 							type='primary'
 							onClick={() => {
@@ -81,7 +81,7 @@ export const ModelContent = ({model}) => {
 						>
 							Export
 						</Button>
-					</div>
+					</span>
 				</span>
 
 			</Col>

@@ -79,12 +79,12 @@ export const WIKI_PERMISSIONS = [WIKI_READ, WIKI_RW, WIKI_ADMIN];
 export const FOLDER_READ = 'Read access to a single wiki folder';
 export const FOLDER_RW = 'Write access to a single wiki folder';
 export const FOLDER_ADMIN = 'Able to change permissions for a single wiki folder';
-export const FOLDER_READ_ALL_CHILDREN = 'Able to read any direct child folder of a single wiki folder';
-export const FOLDER_RW_ALL_CHILDREN = 'Able to write to any direct child folder of a single wiki folder';
+export const FOLDER_READ_ALL_CHILDREN = 'Able to read any direct child folder of a wiki folder';
+export const FOLDER_RW_ALL_CHILDREN = 'Able to write to any direct child folder of a wiki folder';
 export const FOLDER_READ_ALL_PAGES = 'Able to read any wiki page in a wiki folder';
-export const FOLDER_RW_ALL_PAGES = 'Able to read any wiki page in a wiki folder';
+export const FOLDER_RW_ALL_PAGES = 'Able to write to any wiki page in a wiki folder';
 
-export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW, FOLDER_ADMIN];
+export const WIKI_FOLDER_PERMISSIONS = [FOLDER_READ, FOLDER_RW, FOLDER_ADMIN, FOLDER_READ_ALL_CHILDREN, FOLDER_RW_ALL_CHILDREN, FOLDER_READ_ALL_PAGES, FOLDER_RW_ALL_PAGES];
 
 
 // model permissions

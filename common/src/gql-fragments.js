@@ -91,6 +91,7 @@ export const CURRENT_WORLD_FOLDERS = `
 	pages{
 		${CURRENT_WORLD_WIKIS}
 	}
+	${ACCESS_CONTROL_LIST}
 `;
 
 export const CURRENT_WORLD_PINS = `

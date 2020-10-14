@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
 import {
-	FOLDER_READ_ALL_CHILDREN, FOLDER_READ_ALL_PAGES, FOLDER_RW_ALL_PAGES,
-	ROLE_ADMIN,
-	ROLE_ADMIN_ALL, WIKI_ADMIN, WIKI_ADMIN_ALL,
+	FOLDER_READ_ALL_PAGES,
+	FOLDER_RW_ALL_PAGES,
+	WIKI_ADMIN,
+	WIKI_ADMIN_ALL,
 	WIKI_READ,
 	WIKI_READ_ALL,
 	WIKI_RW,
@@ -96,12 +97,18 @@ wikiPageSchema.methods.userCanRead = async function(user){
 };
 
 wikiPageSchema.pre('deleteOne', { document: true, query: false }, async function(){
-	console.log(`Deleting wiki ${Object.keys(this).join(' ')}`);
 	if(this.coverImage){
 		await deleteImage(this.coverImage);
 	}
 	if(this.contentId){
 		await deleteGfsFile(this.contentId);
+	}
+	// doing this to avoid circular dependency
+	const pinModel = mongoose.model('Pin');
+	const pins = await pinModel.find({page: this._id});
+	for(let pin of pins){
+		pin.page = null;
+		await pin.save();
 	}
 });
 

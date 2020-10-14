@@ -25,18 +25,18 @@ export const PermissionEditor = ({subject, subjectType, refetch}) => {
 	const [selectedPermission, setSelectedPermission] = useState(possiblePermissions.length > 0 ? possiblePermissions[0] : null);
 	const [selectedPermissionAssignment, setSelectedPermissionAssignment] = useState(null);
 
-	const updateSelectedPermission = async (permission) => {
+	const updateSelectedPermission = (permission) => {
 		for(let assignment of subject.accessControlList){
 			if(assignment.permission === permission){
-				await setSelectedPermissionAssignment(assignment);
+				setSelectedPermissionAssignment(assignment);
 				return;
 			}
 		}
-		await setSelectedPermissionAssignment(null);
+		setSelectedPermissionAssignment(null);
 	};
 
 	useEffect(() => {
-		(async () => await updateSelectedPermission(possiblePermissions[0]))();
+		updateSelectedPermission(selectedPermission ?? possiblePermissions[0]);
 	}, [subject]);
 
 	if(subject === null || subjectType === null){
@@ -82,7 +82,7 @@ export const PermissionEditor = ({subject, subjectType, refetch}) => {
 										<List.Item key={selectedPermissionAssignment._id + '.' + item._id}>
 											{permissionGroup === 'users' ? item.username : item.name}
 											{subject.canAdmin &&
-											<Button className='margin-md-left' type='primary' danger
+												<Button className='margin-md-left' type='primary' danger
 											        onClick={async () => {
 												        if(permissionGroup === 'users'){
 													        await revokeUserPermission(item._id, selectedPermissionAssignment._id);
@@ -92,8 +92,8 @@ export const PermissionEditor = ({subject, subjectType, refetch}) => {
 												        }
 												        await refetch();
 											        }}>
-												<DeleteOutlined/>
-											</Button>
+													<DeleteOutlined/>
+												</Button>
 											}
 										</List.Item>
 									);

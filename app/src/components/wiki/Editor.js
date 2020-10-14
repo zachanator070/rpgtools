@@ -14,7 +14,6 @@ import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
 import List, { ListItem } from 'quill/formats/list';
-import {Link} from "react-router-dom";
 
 Quill.debug('error');
 
