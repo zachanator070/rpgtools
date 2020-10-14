@@ -90,7 +90,9 @@ export const PermissionEditor = ({subject, subjectType, refetch}) => {
 												        else {
 													        await revokeRolePermission(item._id, selectedPermissionAssignment._id);
 												        }
-												        await refetch();
+												        if(refetch){
+													        await refetch();
+												        }
 											        }}>
 													<DeleteOutlined/>
 												</Button>
@@ -134,7 +136,9 @@ export const PermissionEditor = ({subject, subjectType, refetch}) => {
 							else{
 								await grantRolePermission(permissionAssigneeId, permission, subject._id, subjectType);
 							}
-							await refetch();
+							if(refetch){
+								await refetch();
+							}
 						}}>Add {permissionGroup === 'users' ? 'user' : 'role'}</Button>
 					</Col>
 				</Row>
