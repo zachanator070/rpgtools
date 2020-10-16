@@ -44,9 +44,7 @@ getIntrospectionData().then((introspectionData) => {
 	const httpLink = ApolloLink.from([
 		new RetryLink({
 			attempts: {
-				retryIf: (error, _operation) => {
-					return error === 'Refresh token expired';
-				}
+				max: 3
 			}
 		}),
 		createUploadLink({
