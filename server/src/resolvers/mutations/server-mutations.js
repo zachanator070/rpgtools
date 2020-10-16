@@ -38,7 +38,7 @@ export const serverMutations = {
 		if(!server){
 			throw new Error('Server config doesnt exist!');
 		}
-		if(await server.userCanWrite(currentUser)){
+		if(!await server.userCanWrite(currentUser)){
 			throw new Error('You do not have permission to call this method');
 		}
 		const newCodes = Array(amount).fill('').map(() => uuidv4());
