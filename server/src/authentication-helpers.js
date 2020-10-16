@@ -84,5 +84,5 @@ export const createSessionContext = async ({req, res, connection}) => {
 };
 
 // export const ACCESS_TOKEN_MAX_AGE = {string: '15min', ms: 1000 * 60 * 15};
-export const ACCESS_TOKEN_MAX_AGE = {string: '1d', ms: 1000 * 60 * 60 * 24};
+export const ACCESS_TOKEN_MAX_AGE = {string: '1m', ms: 1000 * 60};
 export const REFRESH_TOKEN_MAX_AGE = {string: '1d', ms: 1000 * 60 * 60 * 24};
