@@ -8,6 +8,8 @@ Tool set for playing an RPG game
 - docker
 - docker-compose
 - make (optional)
+- jq (for prod build)
+- lerna (npm install -g lerna)
 
 ### Production Environment
 `docker-compose up prod-server`

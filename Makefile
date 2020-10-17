@@ -5,7 +5,7 @@ export CURRENT_UID
 # Builds rpgtools docker image
 build: prod-builder clean-uncompressed
 	echo "Building version ${VERSION}"
-	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f server/Dockerfile .
+	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f packages/server/Dockerfile .
 
 # cleans built transpiled js and node modules
 clean:
@@ -46,7 +46,7 @@ dev-up:
 	docker-compose up -d dev-server
 
 build-dev:
-	docker-compose build --parallel dev-server dev-builder
+	docker-compose build dev-server dev-builder
 
 # stops and destroys any running containers
 down:
