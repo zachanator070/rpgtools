@@ -1,21 +1,24 @@
 FROM node:14.11.0-slim
 
-WORKDIR /home/node/app
+WORKDIR /home/node/app/packages
 
-ADD common/package.json common/package.json
-ADD common/package-lock.json common/package-lock.json
-RUN cd common && npm install
+RUN npm install -g lerna
+ADD lerna.json ../lerna.json
+ADD package.json ../package.json
 
-WORKDIR /home/node/app/server
+ADD packages/common/package.json common/package.json
+ADD packages/common/package-lock.json common/package-lock.json
 
-ADD server/package.json package.json
-ADD server/package-lock.json package-lock.json
-RUN npm install
+WORKDIR /home/node/app/packages/server
+
+ADD packages/server/package.json package.json
+ADD packages/server/package-lock.json package-lock.json
 RUN npm install -g kill-port
+RUN lerna bootstrap
 
-ADD common/src ../common/src
-ADD server/src src
-ADD dist ../dist
+ADD packages/common/src ../common/src
+ADD packages/server/src src
+ADD packages/frontend/dist ../dist
 
 EXPOSE 3000
 

@@ -55,7 +55,8 @@
     "uuid": "latest",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "webpack-visualizer-plugin": "^0.1.11"
+    "webpack-visualizer-plugin": "^0.1.11",
+    "@rpgtools/common":"0.1.0"
   },
   "devDependencies": {}
 }
