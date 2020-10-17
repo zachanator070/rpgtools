@@ -3,7 +3,7 @@ import {ALL_PERMISSIONS} from '../../../common/src/permission-constants';
 import {
 	PERMISSION_ASSIGNMENT,
 	PERMISSION_CONTROLLED_TYPES,
-} from "../../../common/src/type-constants";
+} from "@rpgtools/common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

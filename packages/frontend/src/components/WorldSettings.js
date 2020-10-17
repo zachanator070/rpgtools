@@ -3,7 +3,7 @@ import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import {PermissionEditor} from "./permissions/PermissionEditor";
 import {Form, Upload, Button, Col, Input, Row, Modal, Checkbox} from "antd";
 import {useRenameWorld} from "../hooks/world/useRenameWorld";
-import {WORLD} from "../../../common/src/type-constants";
+import {WORLD} from "@rpgtools/common/src/type-constants";
 import {LoadingView} from "./LoadingView";
 import {useLoad5eContent} from "../hooks/world/useLoad5eContent";
 import {useHistory} from 'react-router-dom';

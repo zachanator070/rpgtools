@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import {LeftOutlined} from "@ant-design/icons";
 import {useGenerateRegisterCodes} from "../../hooks/server/useGenerateRegisterCodes";
 import {PermissionEditor} from "../permissions/PermissionEditor";
-import {SERVER_CONFIG} from "../../../../common/src/type-constants";
+import {SERVER_CONFIG} from "@rpgtools/common/src/type-constants";
 
 export default () => {
 

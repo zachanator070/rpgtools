@@ -5,7 +5,7 @@ import {ModelViewer} from "../models/ModelViewer";
 import {useAddModel} from "../../hooks/game/useAddModel";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {SelectWiki} from "../select/SelectWiki";
-import {MODELED_WIKI_TYPES} from "../../../../common/src/type-constants";
+import {MODELED_WIKI_TYPES} from "@rpgtools/common/src/type-constants";
 
 
 export const AddModelSection = () => {

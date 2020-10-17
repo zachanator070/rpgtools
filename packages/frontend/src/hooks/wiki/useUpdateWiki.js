@@ -1,7 +1,7 @@
 import {useMutation} from "@apollo/client";
 import useCurrentWiki from "./useCurrentWiki";
 import gql from "graphql-tag";
-import {CURRENT_WIKI_ATTRIBUTES} from "../../../../common/src/gql-fragments";
+import {CURRENT_WIKI_ATTRIBUTES} from "@rpgtools/common/src/gql-fragments";
 
 export const UPDATE_WIKI = gql`
 	mutation updateWiki($wikiId: ID!, $name: String, $content: Upload, $coverImageId: ID, $type: String){

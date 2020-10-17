@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {GAME_ATTRIBUTES} from "../../../../common/src/gql-fragments";
+import {GAME_ATTRIBUTES} from "@rpgtools/common/src/gql-fragments";
 import {useGQLMutation} from "../useGQLMutation";
 
 export const JOIN_GAME = gql`

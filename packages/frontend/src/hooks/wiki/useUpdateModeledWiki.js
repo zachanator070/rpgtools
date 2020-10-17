@@ -1,4 +1,4 @@
-import {CURRENT_WIKI_ATTRIBUTES} from "../../../../common/src/gql-fragments";
+import {CURRENT_WIKI_ATTRIBUTES} from "@rpgtools/common/src/gql-fragments";
 import {useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
 

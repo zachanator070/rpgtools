@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {ITEM, MODEL, PERSON} from "../../../common/src/type-constants";
+import {ITEM, MODEL, PERSON} from "@rpgtools/common/src/type-constants";
 import {WikiPage} from "./wiki-page";
 
 const Schema = mongoose.Schema;

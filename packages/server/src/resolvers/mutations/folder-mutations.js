@@ -1,7 +1,7 @@
-import {FOLDER_ADMIN, FOLDER_RW} from "../../../../common/src/permission-constants";
+import {FOLDER_ADMIN, FOLDER_RW} from "@rpgtools/common/src/permission-constants";
 import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {WIKI_FOLDER} from "../../../../common/src/type-constants";
+import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants";
 import {cleanUpPermissions} from "../../db-helpers";
 import {ContentImporter} from "../../contentImportExport/import";
 

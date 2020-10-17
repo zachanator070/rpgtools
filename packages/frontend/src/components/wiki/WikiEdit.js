@@ -9,7 +9,7 @@ import {useCreateImage} from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
-import {ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
+import {ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
 import {ToolTip} from "../ToolTip";
 import {SelectModel} from "../select/SelectModel";
 import {ModelViewer} from "../models/ModelViewer";

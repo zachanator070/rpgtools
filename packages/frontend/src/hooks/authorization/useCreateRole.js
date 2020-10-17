@@ -1,7 +1,7 @@
 import {useMutation} from "@apollo/client";
 import useCurrentUser from "../authentication/useCurrentUser";
 import gql from "graphql-tag";
-import {ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES} from "../../../../common/src/gql-fragments";
+import {ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES} from "@rpgtools/common/src/gql-fragments";
 
 export const CREATE_ROLE = gql`
 	mutation createRole($worldId: ID!, $name: String!){

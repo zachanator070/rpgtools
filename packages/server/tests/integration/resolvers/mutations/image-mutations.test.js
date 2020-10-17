@@ -6,7 +6,7 @@ import {createTestClient} from "apollo-server-testing";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
 import {WikiFolder} from "../../../../src/models/wiki-folder";
 import fs from 'fs';
-import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {CREATE_IMAGE} from "../../../../../app/src/hooks/wiki/useCreateImage";
 
 process.env.TEST_SUITE = 'image-mutations-test';

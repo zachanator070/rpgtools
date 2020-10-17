@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import {WikiPage} from "./wiki-page";
-import {PLACE} from "../../../common/src/type-constants";
+import {PLACE} from "@rpgtools/common/src/type-constants";
 import {deleteImage} from "../resolvers/mutations/image-mutations";
 
 const Schema = mongoose.Schema;

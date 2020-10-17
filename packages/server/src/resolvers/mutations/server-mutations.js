@@ -4,9 +4,9 @@ import {registerUser} from "./authentication-mutations";
 import {checkConfig} from "../../server-needs-setup";
 import { v4 as uuidv4 } from 'uuid';
 import {Role} from "../../models/role";
-import {SERVER_ADMIN_ROLE, SERVER_PERMISSIONS} from "../../../../common/src/permission-constants";
+import {SERVER_ADMIN_ROLE, SERVER_PERMISSIONS} from "@rpgtools/common/src/permission-constants";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {SERVER_CONFIG} from "../../../../common/src/type-constants";
+import {SERVER_CONFIG} from "@rpgtools/common/src/type-constants";
 
 export const serverMutations = {
 	unlockServer: async (_, {unlockCode, email, username, password}) => {

@@ -9,9 +9,9 @@ import {
 	WIKI_READ_ALL,
 	WIKI_RW,
 	WIKI_RW_ALL
-} from "../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import {GridFSBucket} from "mongodb";
-import {IMAGE, PLACE, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
+import {IMAGE, PLACE, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import {deleteImage} from "../resolvers/mutations/image-mutations";
 import {deleteGfsFile} from "../db-helpers";
 import {World} from "./world";

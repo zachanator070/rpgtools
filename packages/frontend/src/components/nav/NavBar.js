@@ -9,7 +9,7 @@ import {LoadingView} from "../LoadingView";
 import {SearchBarV2} from "./SearchBar";
 import {GlobalOutlined, UserOutlined, CloudServerOutlined} from "@ant-design/icons";
 import useServerConfig from "../../hooks/server/useServerConfig";
-import {ANON_USERNAME} from "../../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {LoginModal} from "../modals/LoginModal";
 import {RegisterModal} from "../modals/RegisterModal";
 
