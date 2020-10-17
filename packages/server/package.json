@@ -1,5 +1,5 @@
 {
-  "name": "rpgtools",
+  "name": "@rpgtools/server",
   "version": "1.0.0",
   "description": "Tool set for playing an RPG game",
   "license": "MIT",
