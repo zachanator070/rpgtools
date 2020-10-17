@@ -1,11 +1,11 @@
 import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {WIKI_ADMIN, WIKI_RW} from "../../../../common/src/permission-constants";
+import {WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {GridFSBucket} from "mongodb";
 import mongoose from "mongoose";
 import {cleanUpPermissions} from "../../db-helpers";
-import {ARTICLE, ITEM, MONSTER, PERSON, PLACE} from "../../../../common/src/type-constants";
+import {ARTICLE, ITEM, MONSTER, PERSON, PLACE} from "@rpgtools/common/src/type-constants";
 import {authenticated} from "../../authentication-helpers";
 import {Place} from "../../models/place";
 import {Image} from "../../models/image";

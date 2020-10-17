@@ -6,8 +6,8 @@ import {User} from "../models/user";
 import {
 	GAME_HOST, MODEL_ADD,
 	ROLE_ADD,
-} from "../../../common/src/permission-constants";
-import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
+} from "@rpgtools/common/src/permission-constants";
+import {ALL_USERS, EVERYONE} from "@rpgtools/common/src/role-constants";
 import {getLoader} from "../get-loader";
 import {WikiPage} from "../models/wiki-page";
 import mongoose from 'mongoose';

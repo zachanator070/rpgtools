@@ -20,7 +20,7 @@ import {
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {LeaveGameButton} from "./LeaveGameButton";
 import {PermissionModal} from "../modals/PermissionModal";
-import {GAME} from "../../../../common/src/type-constants";
+import {GAME} from "@rpgtools/common/src/type-constants";
 
 export const GameControlsToolbar = ({controlsMode, setControlsMode}) => {
 

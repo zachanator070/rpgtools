@@ -1,6 +1,6 @@
 import {useMutation} from "@apollo/client";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_ROLES} from "../../../../common/src/gql-fragments";
+import {CURRENT_WORLD_ROLES} from "@rpgtools/common/src/gql-fragments";
 
 export const REMOVE_USER_ROLE = gql`
 	mutation removeUserRole($userId: ID!, $roleId: ID!){

@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2'
-import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "../../../common/src/type-constants";
+import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "@rpgtools/common/src/type-constants";
 import {Role} from "./role";
-import {ALL_USERS, EVERYONE} from "../../../common/src/role-constants";
-import {ANON_USERNAME} from "../../../common/src/permission-constants";
+import {ALL_USERS, EVERYONE} from "@rpgtools/common/src/role-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {PermissionAssignment} from "./permission-assignement";
 
 const Schema = mongoose.Schema;

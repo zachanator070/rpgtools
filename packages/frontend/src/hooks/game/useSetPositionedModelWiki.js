@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {GAME_MODEL} from "../../../../common/src/gql-fragments";
+import {GAME_MODEL} from "@rpgtools/common/src/gql-fragments";
 import useCurrentGame from "./useCurrentGame";
 import {useGQLMutation} from "../useGQLMutation";
 

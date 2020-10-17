@@ -4,7 +4,7 @@ import {typeDefs} from './gql-server-schema';
 import {serverResolvers} from "./resolvers/server-resolvers";
 import jwt from "jsonwebtoken";
 import {User} from "./models/user";
-import {ANON_USERNAME} from "../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 
 const ps = new PubSub();
 export const pubsub = ps;

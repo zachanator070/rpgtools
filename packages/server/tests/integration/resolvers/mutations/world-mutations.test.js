@@ -7,7 +7,7 @@ import {Pin} from "../../../../src/models/pin";
 import {World} from '../../../../src/models/world'
 import {Article} from "../../../../src/models/article";
 import {createWorld} from "../../../../src/resolvers/mutations/world-mutations";
-import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {CREATE_PIN} from "../../../../../app/src/hooks/map/useCreatePin";
 import {CREATE_WORLD} from "../../../../../app/src/hooks/world/useCreateWorld";
 import {DELETE_PIN} from "../../../../../app/src/hooks/map/useDeletePin";
