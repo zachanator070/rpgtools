@@ -242,6 +242,35 @@ export default {
 			}
 		}
 		return permissions;
-
+	},
+	wikisInFolder: async (_, {folderId, page=1}, {currentUser}) => {
+		const folder = await WikiFolder.findById(folderId);
+		if(!folder){
+			throw new Error('Folder does not exist');
+		}
+		if(!await folder.userCanRead(currentUser)){
+			throw new Error ('You do not have permission to read this folder');
+		}
+		const results = await WikiPage.paginate({_id: {$in: folder.pages}}, {page})
+		return results;
+	},
+	folders: async (_, {worldId}, {currentUser}) => {
+		const world = await World.findById(worldId);
+		if(!world){
+			throw new Error('World does not exist');
+		}
+		if(!await world.userCanRead(currentUser)){
+			throw new Error ('You do not have permission to read this World');
+		}
+		return WikiFolder.find({world: world._id});
+	},
+	getFolderPath: async (_, {wikiId}, {currentUser}) => {
+		const path = [];
+		let folder = await WikiFolder.findOne({pages: wikiId});
+		while(folder){
+			path.push(folder);
+			folder = await WikiFolder.findOne({children: folder._id});
+		}
+		return path;
 	}
 };
