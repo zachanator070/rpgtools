@@ -71,6 +71,9 @@ const wikiPageInterfaceAttributes = {
 	world: async (page) => {
 		return await getDocument(World, page.world);
 	},
+	folder: async (page) => {
+		return WikiFolder.findOne({pages: page._id});
+	},
 	coverImage: async (page) => {
 		return await getDocument(Image, page.coverImage);
 	},

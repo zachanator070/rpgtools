@@ -16,6 +16,13 @@ export const typeDefs = gql`
         wiki(wikiId: ID!): WikiPage
         """Search for a wiki page by name"""
         wikis(worldId: ID!, name: String!, type: String): WikiPagePaginatedResult!
+        """Get all wikis that are in a set of folders"""
+        wikisInFolder(folderId: ID!, page: Int): WikiPagePaginatedResult!
+        
+        """Get all wiki folders for a world"""
+        folders(worldId: ID!): [WikiFolder!]!
+        """Get a path to the root folder for a wiki page"""
+        getFolderPath(wikiId: ID!): [WikiFolder!]!
         
         """Search for users by username"""
         users(username: String!): UserPaginatedResult!
@@ -181,7 +188,7 @@ export const typeDefs = gql`
     }
     
     type WikiPagePaginatedResult {
-        docs: [Role!]!
+        docs: [WikiPage!]!
         totalDocs: Int!
         limit: Int!
         page: Int!
@@ -200,6 +207,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 	}
 	
 	interface ModeledWiki {
@@ -214,6 +222,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -228,6 +237,7 @@ export const typeDefs = gql`
 		mapImage: Image
 		pixelsPerFoot: Int
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -240,6 +250,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -254,6 +265,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -268,6 +280,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
