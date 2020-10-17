@@ -4,14 +4,14 @@ services:
   dev-server:
     build:
       context: .
-      dockerfile: ./server/Dockerfile
+      dockerfile: ./packages/server/Dockerfile
     command: "npm run start-dev"
     env_file:
       - .env
     volumes:
-    - ./server/src:/home/node/app/server/src
-    - ./common/src:/home/node/app/common/src
-    - ./dist:/home/node/app/dist
+    - ./packages/server/src:/home/node/app/server/src
+    - ./packages/common/src:/home/node/app/common/src
+    - ./packages/frontend/dist:/home/node/app/dist
     ports:
     - "${PORT:-3000}:${PORT:-3000}"
     - "9229:9229"
@@ -37,13 +37,13 @@ services:
   dev-builder:
     build:
       context: .
-      dockerfile: ./app/Dockerfile
+      dockerfile: ./packages/frontend/Dockerfile
     env_file:
      - .env
     volumes:
-     - ./app/src:/home/node/app/app/src
-     - ./common/src:/home/node/app/common/src
-     - ./dist:/home/node/app/app/dist
+     - ./packages/frontend/src:/home/node/app/frontend/src
+     - ./packages/common/src:/home/node/app/common/src
+     - ./packages/frontend/dist:/home/node/app/dist
     command: "npm run start-dev"
     networks:
      - rpgtools
@@ -51,12 +51,12 @@ services:
   prod-builder:
     build:
       context: .
-      dockerfile: ./app/Dockerfile
+      dockerfile: ./packages/frontend/Dockerfile
     user: ${CURRENT_UID}
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
-     - ./dist:/home/node/app/app/dist
+     - ./packages/frontend/dist:/home/node/app/frontend/dist
     networks:
      - rpgtools
 
