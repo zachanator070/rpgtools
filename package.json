@@ -16,6 +16,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.19.0",
     "jest": "^25.1.0",
-    "jest-transform-stub": "^2.0.0"
+    "jest-transform-stub": "^2.0.0",
+    "lerna": "^3.22.1"
   }
 }

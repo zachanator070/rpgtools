@@ -1,5 +1,5 @@
 {
-  "name": "rpgtools-common",
+  "name": "@rpgtools/common",
   "version": "0.1.0",
   "description": "Tool set for playing an RPG game",
   "license": "MIT",

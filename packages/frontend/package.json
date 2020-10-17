@@ -1,5 +1,5 @@
 {
-  "name": "rpgtools-builder",
+  "name": "@rpgtools/frontend",
   "version": "1.0.0",
   "description": "Tool set for playing an RPG game",
   "license": "MIT",
