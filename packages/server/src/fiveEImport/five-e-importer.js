@@ -1,7 +1,7 @@
 import {getAdventuringSections, getClasses, getMonsters, getRaces, getSpells} from "./open-5e-api-client";
 import {monsterToDelta} from "./monster-to-delta";
 import {Article} from "../models/article";
-import {ARTICLE} from "../../../common/src/type-constants";
+import {ARTICLE} from "@rpgtools/common/src/type-constants";
 import fetch from "node-fetch";
 import {imageMutations} from "../resolvers/mutations/image-mutations";
 import {WikiFolder} from "../models/wiki-folder";

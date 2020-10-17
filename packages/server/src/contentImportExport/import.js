@@ -7,7 +7,7 @@ import {
 	MONSTER,
 	PERSON,
 	PLACE
-} from "../../../common/src/type-constants";
+} from "@rpgtools/common/src/type-constants";
 import {Chunk} from "../models/chunk";
 import {Image} from '../models/image';
 import unzipper from "unzipper";

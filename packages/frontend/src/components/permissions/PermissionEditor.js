@@ -3,7 +3,7 @@ import {Button, Col, Input, List, Modal, Radio, Row, Select, Tabs} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {
 	getPermissionsBySubjectType,
-} from "../../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import {useGrantUserPermission} from "../../hooks/authorization/useGrantUserPermisison";
 import {useGrantRolePermission} from "../../hooks/authorization/useGrantRolePermission";

@@ -7,8 +7,8 @@ import {
 	FOLDER_RW,
 	FOLDER_RW_ALL, FOLDER_RW_ALL_CHILDREN,
 	ROLE_ADMIN, ROLE_ADMIN_ALL
-} from "../../../common/src/permission-constants";
-import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "../../../common/src/type-constants";
+} from "@rpgtools/common/src/permission-constants";
+import {WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

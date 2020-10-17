@@ -1,6 +1,6 @@
 import useCurrentWorld from "../world/useCurrentWorld";
 import {useEffect, useState} from "react";
-import {ARTICLE} from "../../../../common/src/type-constants";
+import {ARTICLE} from "@rpgtools/common/src/type-constants";
 
 export const useSearchWikiPages = () => {
 	const {currentWorld, loading} = useCurrentWorld();

@@ -1,6 +1,6 @@
 import {useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
-import {GAME_FOG_STROKES, GAME_MAP, GAME_STROKES} from "../../../../common/src/gql-fragments";
+import {GAME_FOG_STROKES, GAME_MAP, GAME_STROKES} from "@rpgtools/common/src/gql-fragments";
 
 export const SET_GAME_MAP = gql`
 	mutation setGameMap($gameId: ID!, $placeId: ID!, $clearPaint: Boolean, $setFog: Boolean){

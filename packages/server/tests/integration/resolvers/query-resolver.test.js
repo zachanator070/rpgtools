@@ -4,7 +4,7 @@ import {typeDefs} from "../../../src/gql-server-schema";
 import {serverResolvers} from "../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
 import {createWorld} from "../../../src/resolvers/mutations/world-mutations";
-import {ANON_USERNAME} from "../../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {GET_CURRENT_WORLD} from "../../../../app/src/hooks/world/useCurrentWorld";
 import {GET_CURRENT_USER} from "../../../../app/src/hooks/authentication/useCurrentUser";
 import {SEARCH_USERS} from "../../../../app/src/hooks/authentication/useSearchUsers";

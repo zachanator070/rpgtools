@@ -2,16 +2,16 @@ import {authenticated} from "../../authentication-helpers";
 import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE, WORLD_PERMISSIONS,
-} from "../../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import {World} from "../../models/world";
 import {Place} from "../../models/place";
 import {WikiFolder} from "../../models/wiki-folder";
 import {PermissionAssignment} from "../../models/permission-assignement";
 import {Role} from "../../models/role";
-import {EVERYONE, WORLD_OWNER} from "../../../../common/src/role-constants";
+import {EVERYONE, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
 import {WikiPage} from "../../models/wiki-page";
 import {Pin} from "../../models/pin";
-import {PLACE, WORLD} from "../../../../common/src/type-constants";
+import {PLACE, WORLD} from "@rpgtools/common/src/type-constants";
 import {ServerConfig} from '../../models/server-config';
 import {FiveEImporter} from "../../fiveEImport/five-e-importer";
 
