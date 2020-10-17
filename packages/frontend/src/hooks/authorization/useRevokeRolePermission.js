@@ -1,6 +1,6 @@
 import {useMutation} from "@apollo/client";
 import gql from "graphql-tag";
-import {PERMISSIONS_GRANTED} from "../../../../common/src/gql-fragments";
+import {PERMISSIONS_GRANTED} from "@rpgtools/common/src/gql-fragments";
 
 export const REVOKE_ROLE_PERMISSION = gql`
 	mutation revokeRolePermission($roleId: ID!, $permissionAssignmentId: ID!){

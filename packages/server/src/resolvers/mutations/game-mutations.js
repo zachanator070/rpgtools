@@ -4,13 +4,13 @@ import {
 	GAME_PAINT,
 	GAME_PERMISSIONS,
 	GAME_READ,
-} from "../../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import {Game} from "../../models/game";
 import {Model} from '../../models/model';
 import bcrypt from "bcrypt";
 import {SALT_ROUNDS} from "./authentication-mutations";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {GAME} from "../../../../common/src/type-constants";
+import {GAME} from "@rpgtools/common/src/type-constants";
 import {pubsub} from "../../gql-server";
 import {
 	GAME_CHAT_EVENT, GAME_FOG_STROKE_ADDED,

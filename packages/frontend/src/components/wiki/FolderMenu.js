@@ -17,7 +17,7 @@ import {useHistory} from 'react-router-dom';
 import {ToolTip} from "../ToolTip";
 import {useImportContent} from "../../hooks/world/useImportContent";
 import {PermissionEditor} from "../permissions/PermissionEditor";
-import {WIKI_FOLDER} from "../../../../common/src/type-constants";
+import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 
 export const FolderMenu = ({folder}) => {

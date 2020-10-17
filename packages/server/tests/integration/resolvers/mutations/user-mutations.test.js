@@ -4,7 +4,7 @@ import {typeDefs} from "../../../../src/gql-server-schema";
 import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {createTestClient} from "apollo-server-testing";
 import {World} from "../../../../src/models/world";
-import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {SET_CURRENT_WORLD} from "../../../../../app/src/hooks/world/useSetCurrentWorld";
 
 process.env.TEST_SUITE = 'user-mutations-test';

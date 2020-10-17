@@ -4,7 +4,7 @@ import {serverResolvers} from "../../../../src/resolvers/server-resolvers";
 import {typeDefs} from '../../../../src/gql-server-schema';
 import {User} from "../../../../src/models/user";
 import {ServerConfig} from "../../../../src/models/server-config";
-import {ANON_USERNAME} from "../../../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {LOGIN_QUERY} from "../../../../../app/src/hooks/authentication/useLogin";
 import {REGISTER_MUTATION} from "../../../../../app/src/hooks/authentication/useRegister";
 

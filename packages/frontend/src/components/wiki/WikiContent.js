@@ -4,7 +4,7 @@ import {ExportOutlined, EditOutlined} from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {Link, useHistory, useParams} from "react-router-dom";
 import {LoadingView} from "../LoadingView";
-import {MODELED_WIKI_TYPES, PLACE} from "../../../../common/src/type-constants";
+import {MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
 import {Button, Tooltip} from "antd";
 import {QuestionCircleOutlined} from '@ant-design/icons';
 import {ModelViewer} from "../models/ModelViewer";

@@ -1,8 +1,8 @@
 import {World} from "../../models/world";
-import {MODEL_ADD, MODEL_ADMIN, MODEL_RW} from "../../../../common/src/permission-constants";
+import {MODEL_ADD, MODEL_ADMIN, MODEL_RW} from "@rpgtools/common/src/permission-constants";
 import {Model} from "../../models/model";
 import {PermissionAssignment} from "../../models/permission-assignement";
-import {MODEL} from "../../../../common/src/type-constants";
+import {MODEL} from "@rpgtools/common/src/type-constants";
 import {cleanUpPermissions, createGfsFile, deleteGfsFile} from "../../db-helpers";
 import {Game} from "../../models/game";
 import {pubsub} from "../../gql-server";

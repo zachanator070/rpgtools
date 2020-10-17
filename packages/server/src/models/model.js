@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {MODEL, WORLD} from "../../../common/src/type-constants";
+import {MODEL, WORLD} from "@rpgtools/common/src/type-constants";
 import {
 	MODEL_ADMIN,
 	MODEL_ADMIN_ALL,
@@ -7,7 +7,7 @@ import {
 	MODEL_READ_ALL,
 	MODEL_RW,
 	MODEL_RW_ALL
-} from "../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 
 
 const Schema = mongoose.Schema;

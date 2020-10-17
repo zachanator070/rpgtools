@@ -1,7 +1,7 @@
 import {World} from '../models/world';
 import {User} from '../models/user';
-import {ANON_USERNAME, WIKI_READ_ALL, WORLD_READ} from "../../../common/src/permission-constants";
-import {EVERYONE} from "../../../common/src/role-constants";
+import {ANON_USERNAME, WIKI_READ_ALL, WORLD_READ} from "@rpgtools/common/src/permission-constants";
+import {EVERYONE} from "@rpgtools/common/src/role-constants";
 import {WikiPage} from "../models/wiki-page";
 import {Place} from '../models/place';
 import {
@@ -13,7 +13,7 @@ import {
 	SERVER_CONFIG,
 	WIKI_FOLDER,
 	WORLD
-} from "../../../common/src/type-constants";
+} from "@rpgtools/common/src/type-constants";
 import {ServerConfig} from '../models/server-config';
 import {Game} from "../models/game";
 import {Model} from '../models/model';

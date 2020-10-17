@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {SelectWiki} from "../select/SelectWiki";
-import {PLACE} from "../../../../common/src/type-constants";
+import {PLACE} from "@rpgtools/common/src/type-constants";
 import {Button, Checkbox} from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {useSetGameMap} from "../../hooks/game/useSetGameMap";

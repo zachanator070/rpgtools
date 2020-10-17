@@ -8,12 +8,12 @@ import useCreateRole from "../../hooks/authorization/useCreateRole";
 import useDeleteRole from "../../hooks/authorization/useDeleteRole";
 import {
 	ROLE,
-} from "../../../../common/src/type-constants";
+} from "@rpgtools/common/src/type-constants";
 import {useRevokeRolePermission} from "../../hooks/authorization/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
 import {SelectUser} from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
-import {ROLE_ADMIN} from "../../../../common/src/permission-constants";
+import {ROLE_ADMIN} from "@rpgtools/common/src/permission-constants";
 import {useRevokeUserPermission} from "../../hooks/authorization/useRevokeUserPermission";
 import {useGrantUserPermission} from "../../hooks/authorization/useGrantUserPermisison";
 import {AddRolePermission} from "./AddRolePermission";

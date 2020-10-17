@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import {v4 as uuidv4} from "uuid";
 import {User} from "./models/user";
-import {ANON_USERNAME} from "../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 
 export const authenticated = next => (root, args, context, info) => {
 	if (!context.currentUser || context.currentUser.username === ANON_USERNAME) {

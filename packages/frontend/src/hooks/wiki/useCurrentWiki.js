@@ -5,7 +5,7 @@ import {
     ACCESS_CONTROL_LIST,
     CURRENT_WIKI_ATTRIBUTES,
     CURRENT_WIKI_PLACE_ATTRIBUTES
-} from "../../../../common/src/gql-fragments";
+} from "@rpgtools/common/src/gql-fragments";
 
 export const GET_CURRENT_WIKI = gql`
     query currentWiki($wikiId: ID!){

@@ -1,7 +1,7 @@
 import {useQuery} from "@apollo/client";
 import {useParams} from 'react-router-dom';
 import gql from "graphql-tag";
-import {ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES} from "../../../../common/src/gql-fragments";
+import {ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES} from "@rpgtools/common/src/gql-fragments";
 
 export const GET_SERVER_CONFIG = gql`
     query serverConfig{

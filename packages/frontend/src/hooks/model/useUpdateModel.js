@@ -1,6 +1,6 @@
 import {useMutation} from "@apollo/client";
 import gql from "graphql-tag";
-import {MODEL_ATTRIBUTES} from "../../../../common/src/gql-fragments";
+import {MODEL_ATTRIBUTES} from "@rpgtools/common/src/gql-fragments";
 
 export const UPDATE_MODEL = gql`
 	mutation updateModel($modelId: ID!, $name: String!, $file: Upload, $depth: Float!, $width: Float!, $height: Float!, $notes: String){
