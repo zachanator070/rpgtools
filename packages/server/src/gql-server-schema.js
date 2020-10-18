@@ -72,7 +72,7 @@ export const typeDefs = gql`
         moveFolder(folderId: ID!, parentFolderId: ID!): World!
         importContent(folderId: ID!, zipFile: Upload!): World!
         
-        createWiki(name: String!, folderId: ID!): World!
+        createWiki(name: String!, folderId: ID!): WikiFolder!
         deleteWiki(wikiId: ID!): World!
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
