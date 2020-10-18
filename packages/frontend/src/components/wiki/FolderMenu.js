@@ -20,7 +20,7 @@ import {PermissionEditor} from "../permissions/PermissionEditor";
 import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 
-export const FolderMenu = ({folder}) => {
+export const FolderMenu = ({folder, children, refetchWikis}) => {
 
     const {createWiki} = useCreateWiki();
     const {createFolder} = useCreateFolder();
@@ -48,6 +48,7 @@ export const FolderMenu = ({folder}) => {
             key="createWiki"
             onClick={async () => {
                 await createWiki('New Page', folder._id);
+                await refetchWikis();
             }}
         >
             <FileAddOutlined />
@@ -87,7 +88,8 @@ export const FolderMenu = ({folder}) => {
                     title: 'Confirm Delete',
                     content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
                     onOk: async () => {
-                        await deleteFolder(folder._id)
+                        await deleteFolder(folder._id);
+                        await refetchWikis();
                     },
                     onCancel: () => {
                     },
@@ -132,7 +134,7 @@ export const FolderMenu = ({folder}) => {
         menu.unshift(...canWriteMenu);
     }
 
-    return <>
+    return <div>
         <Modal
             footer={null}
             title={`Rename ${folder.name}`}
@@ -253,15 +255,19 @@ export const FolderMenu = ({folder}) => {
         </Modal>
         <Dropdown
             overlay={
-                <Menu>
+                <Menu
+                    onClick={(event) => {
+                        event.domEvent.stopPropagation();
+                    }}
+                >
                     {menu.length > 0 ? menu : <Menu.Item>You don't have permission to do anything here</Menu.Item>}
                 </Menu>
             }
             trigger={['contextMenu']}
         >
             <div>
-                {folder.name}
+                {children}
             </div>
         </Dropdown>
-    </>;
+    </div>;
 };
