@@ -39,7 +39,15 @@ export const WikiEdit = () => {
 	const {updateWiki} = useUpdateWiki();
 	const {updatePlace} = useUpdatePlace();
 	const {updateModeledWiki} = useUpdateModeledWiki();
-	const {fetch} = useWikisInFolder();
+	const {fetch, refetch} = useWikisInFolder();
+
+	useEffect(() => {
+		if(currentWiki){
+			(async () => {
+				await fetch({folderId: currentWiki.folder._id});
+			})();
+		}
+	}, [currentWiki])
 
 	const [selectedModel, setSelectedModel] = useState();
 
@@ -266,7 +274,7 @@ export const WikiEdit = () => {
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {
 									await deleteWiki(currentWiki._id);
-									await fetch({folderId: currentWiki.folder._id});
+									await refetch({folderId: currentWiki.folder._id});
 									history.push(`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`)
 								}
 							});

@@ -47,6 +47,13 @@ export const useWikisInFolder = (variables) => {
                 }
             }
         })
-    }
+    };
+    useEffect(() => {
+        if(result.wikisInFolder && result.wikisInFolder.nextPage){
+            (async () => {
+                await result.fetchMore({...variables, page: result.wikisInFolder.nextPage});
+            })();
+        }
+    }, [result.wikisInFolder]);
     return result;
 };
