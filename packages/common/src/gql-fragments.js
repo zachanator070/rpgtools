@@ -88,9 +88,6 @@ export const CURRENT_WORLD_FOLDERS = `
 	children{
 		_id
 	}
-	pages{
-		${CURRENT_WORLD_WIKIS}
-	}
 	${ACCESS_CONTROL_LIST}
 `;
 
@@ -200,6 +197,9 @@ export const CURRENT_WIKI_ATTRIBUTES = `
             ${MODEL_ATTRIBUTES}
         }
         modelColor
+    }
+    folder{
+        _id
     }
     
 `;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {useWikisInFolder} from "../../hooks/wiki/useWikisInFolder";
 import {useFolders} from "../../hooks/wiki/useFolders";
 import {LoadingView} from "../LoadingView";
@@ -6,13 +6,24 @@ import {useEffect, useState} from "react";
 import {DownOutlined, FileTextOutlined, FolderOpenOutlined, FolderOutlined, RightOutlined} from "@ant-design/icons";
 import {Link} from "react-router-dom";
 import {FolderMenu} from "./FolderMenu";
+import {useParams} from 'react-router-dom';
+import {useGetFolderPath} from "../../hooks/wiki/useGetFolderPath";
 
 export const FolderTree = ({folder, initialExpanded, indent=0}) => {
-    const {fetch, fetchMore, wikisInFolder, loading: wikisLoading, refetch} = useWikisInFolder({folderId: folder._id});
-    const {folders, foldersLoading} = useFolders();
+    const params = useParams();
+    const {fetchMore, wikisInFolder, loading: wikisLoading, refetch: refetchWikis} = useWikisInFolder({folderId: folder._id});
+    const {folders, loading: foldersLoading, refetch: refetchFolders} = useFolders({worldId: params.world_id});
+    const {getFolderPath, loading: folderPathLoading} = useGetFolderPath({wikiId: params.wiki_id});
     const [expanded, setExpanded] = useState(false);
     const [pages, setPages] = useState([]);
-    const [animateArrow, setAnimateArrow] = useState(false)
+    const [animateArrow, setAnimateArrow] = useState(false);
+    const isMounted = useRef(false);
+
+    useEffect(() => {
+        if(getFolderPath){
+            setExpanded(expanded || getFolderPath.find(otherFolder => otherFolder._id === folder._id));
+        }
+    }, [getFolderPath])
 
     const getWikiComponent = (wiki) => <div key={wiki._id}>
         <Link
@@ -36,26 +47,19 @@ export const FolderTree = ({folder, initialExpanded, indent=0}) => {
     }, [initialExpanded]);
 
     useEffect(() => {
-        if(wikisInFolder && !wikisLoading){
+        isMounted.current = true;
+        if(wikisInFolder && !wikisLoading && isMounted.current && isMounted.current){
             setPages([...wikisInFolder.docs.map(getWikiComponent)]);
             (async () => {
-                if(wikisInFolder.nextPage){
+                if(wikisInFolder.nextPage && isMounted.current){
                     await fetchMore({folderId: folder._id, page: wikisInFolder.nextPage});
                 }
             })();
         }
-
+        return () => isMounted.current = false;
     }, [wikisInFolder, wikisLoading]);
 
-    useEffect(() => {
-        if(expanded && !wikisInFolder){
-            (async () => {
-                await fetch({folderId: folder._id});
-            })();
-        }
-    }, [expanded, wikisInFolder]);
-
-    if(foldersLoading || !folders){
+    if(foldersLoading){
         return <div><LoadingView/></div>;
     }
 
@@ -68,7 +72,12 @@ export const FolderTree = ({folder, initialExpanded, indent=0}) => {
     }}/>
     const folderIcon = expanded ? <FolderOpenOutlined /> : <FolderOutlined />;
 
-    const children = folder.children.map(child => <FolderTree key={child._id} indent={indent + 1} folder={folders.find(otherFolder => otherFolder._id === child._id)}/> );
+    const childrenFolders = folder.children.map(child => folders.find(otherFolder => otherFolder._id === child._id));
+    // race condition where we rerender before folders have been passed to this component correctly
+    if(childrenFolders.filter(child => child === undefined).length > 0){
+        return <LoadingView/>;
+    }
+    const childrenComponents = childrenFolders.map(child => <FolderTree key={child._id} indent={indent + 1} folder={child}/> );
 
     return <div>
         <div
@@ -82,7 +91,8 @@ export const FolderTree = ({folder, initialExpanded, indent=0}) => {
         >
             <FolderMenu
                 folder={folder}
-                refetchWikis={refetch}
+                refetchFolders={refetchFolders}
+                refetchWikis={refetchWikis}
             >
                 {arrow} {folderIcon} {folder.name}
             </FolderMenu>
@@ -103,7 +113,7 @@ export const FolderTree = ({folder, initialExpanded, indent=0}) => {
                     />
                     <div>
                         {pages}
-                        {children}
+                        {childrenComponents}
                     </div>
                 </div>
             }

@@ -6,9 +6,6 @@ export const IMPORT_CONTENT = gql`
 	mutation importContent($folderId: ID!, $zipFile: Upload!){
 		importContent(folderId: $folderId, zipFile: $zipFile){
 			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
 			rootFolder{
 				${CURRENT_WORLD_FOLDERS}
 			}
