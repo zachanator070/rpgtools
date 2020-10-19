@@ -47,17 +47,10 @@ export const FolderTree = ({folder, initialExpanded, indent=0}) => {
     }, [initialExpanded]);
 
     useEffect(() => {
-        isMounted.current = true;
-        if(wikisInFolder && !wikisLoading && isMounted.current && isMounted.current){
-            setPages([...wikisInFolder.docs.map(getWikiComponent)]);
-            (async () => {
-                if(wikisInFolder.nextPage && isMounted.current){
-                    await fetchMore({folderId: folder._id, page: wikisInFolder.nextPage});
-                }
-            })();
+        if(wikisInFolder){
+            setPages(wikisInFolder.docs.map(getWikiComponent));
         }
-        return () => isMounted.current = false;
-    }, [wikisInFolder, wikisLoading]);
+    }, [wikisInFolder])
 
     if(foldersLoading){
         return <div><LoadingView/></div>;
