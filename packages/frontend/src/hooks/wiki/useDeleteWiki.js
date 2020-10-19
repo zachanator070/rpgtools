@@ -6,9 +6,6 @@ export const DELETE_WIKI = gql`
 	mutation deleteWiki($wikiId: ID!){
 		deleteWiki(wikiId: $wikiId) {
 			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
 		}
 	}
 `;

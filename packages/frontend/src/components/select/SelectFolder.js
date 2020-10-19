@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
 import {Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchFolders} from "../../hooks/wiki/useSearchFolders";
+import {useParams} from 'react-router-dom';
+import {useFolders} from "../../hooks/wiki/useFolders";
 
 export const SelectFolder = ({onChange, style}) => {
-	const {searchFolders, folders, loading} = useSearchFolders();
+	const params = useParams();
+	const {refetch, folders, loading} = useFolders({worldId: params.world_id});
 	const [value, setValue] = useState();
 
-	const options = folders.map((folder) => {return <Select.Option key={folder._id} value={folder._id}>{folder.name}</Select.Option>});
+	const options = folders && folders.map((folder) => {return <Select.Option key={folder._id} value={folder._id}>{folder.name}</Select.Option>});
 
 	return <Select
 		showSearch
@@ -15,7 +17,7 @@ export const SelectFolder = ({onChange, style}) => {
 		showArrow={false}
 		filterOption={false}
 		notFoundContent={loading ? <Spin size="small" /> : null}
-		onSearch={async (term) => {await searchFolders(term)}}
+		onSearch={async (term) => {await refetch({worldId: params.world_id, name: term})}}
 		onSelect={async (newValue) => {
 			await setValue(newValue);
 			if(onChange){

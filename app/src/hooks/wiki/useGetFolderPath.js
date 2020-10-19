@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {useGQLLazyQuery} from "../useGQLLazyQuery";
+import {useGQLQuery} from "../useGQLQuery";
 
 const GET_FOLDER_PATH = gql`
     query getFolderPath($wikiId: ID!){
@@ -10,6 +10,6 @@ const GET_FOLDER_PATH = gql`
     }
 `;
 
-export const useGetFolderPath = () => {
-    return useGQLLazyQuery(GET_FOLDER_PATH);
+export const useGetFolderPath = (variables) => {
+    return useGQLQuery(GET_FOLDER_PATH, variables);
 }

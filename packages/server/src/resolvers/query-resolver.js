@@ -254,7 +254,7 @@ export default {
 		const results = await WikiPage.paginate({_id: {$in: folder.pages}}, {page})
 		return results;
 	},
-	folders: async (_, {worldId}, {currentUser}) => {
+	wikis: async (_, {worldId, name, types}, {currentUser}) => {
 		const world = await World.findById(worldId);
 		if(!world){
 			throw new Error('World does not exist');
@@ -262,7 +262,32 @@ export default {
 		if(!await world.userCanRead(currentUser)){
 			throw new Error ('You do not have permission to read this World');
 		}
-		return WikiFolder.find({world: world._id});
+
+		const conditions = {world: world._id};
+		if(name){
+			conditions.name = {$regex: name, $options: 'i'};
+		}
+		if(types && types.length > 0){
+			conditions.type = {$in: types};
+		}
+
+		return WikiPage.paginate(conditions);
+	},
+	folders: async (_, {worldId, name}, {currentUser}) => {
+		const world = await World.findById(worldId);
+		if(!world){
+			throw new Error('World does not exist');
+		}
+		if(!await world.userCanRead(currentUser)){
+			throw new Error ('You do not have permission to read this World');
+		}
+
+		const conditions = {world: world._id};
+		if(name){
+			conditions.name = {$regex: name, $options: 'i'};
+		}
+
+		return WikiFolder.find(conditions);
 	},
 	getFolderPath: async (_, {wikiId}, {currentUser}) => {
 		const path = [];

@@ -59,7 +59,7 @@ export const GameChat = () => {
 				style={{
 					borderRadius: '10px',
 					position: 'absolute',
-					bottom: '0px',
+					top: '0px',
 					right: '0px',
 					backgroundColor: 'white'
 				}}
@@ -68,7 +68,6 @@ export const GameChat = () => {
 			</div>
 		</a>
 		<div
-			id={'chat'}
 			className={'padding-lg'}
 			style={{
 				display: visible ? 'flex' : 'none',
@@ -88,9 +87,10 @@ export const GameChat = () => {
 			<List
 				style={{
 					flexGrow: '1',
-					display: 'flex',
-					alignItems: 'flex-end'
+					alignItems: 'flex-end',
+					overflowY: 'scroll'
 				}}
+				id={'chat'}
 				dataSource={messages}
 				itemLayout="horizontal"
 				locale={{emptyText: <div>No messages</div>}}

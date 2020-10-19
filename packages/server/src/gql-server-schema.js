@@ -15,12 +15,12 @@ export const typeDefs = gql`
         """Get a wiki by id"""
         wiki(wikiId: ID!): WikiPage
         """Search for a wiki page by name"""
-        wikis(worldId: ID!, name: String!, type: String): WikiPagePaginatedResult!
+        wikis(worldId: ID!, name: String, types: [String!]): WikiPagePaginatedResult!
         """Get all wikis that are in a set of folders"""
         wikisInFolder(folderId: ID!, page: Int): WikiPagePaginatedResult!
         
         """Get all wiki folders for a world"""
-        folders(worldId: ID!): [WikiFolder!]!
+        folders(worldId: ID!, name: String): [WikiFolder!]!
         """Get a path to the root folder for a wiki page"""
         getFolderPath(wikiId: ID!): [WikiFolder!]!
         
@@ -138,7 +138,6 @@ export const typeDefs = gql`
 		rootFolder: WikiFolder
 		roles: [Role!]!
 		pins: [Pin!]!
-		folders: [WikiFolder!]!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -292,7 +291,6 @@ export const typeDefs = gql`
 		_id: ID!
 		name: String!
 		world: World!
-		pages: [WikiPage!]!
 		children: [WikiFolder!]!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!

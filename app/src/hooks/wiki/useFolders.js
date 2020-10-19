@@ -1,11 +1,9 @@
-import {useGQLLazyQuery} from "../useGQLLazyQuery";
-import useCurrentWorld from "../world/useCurrentWorld";
-import {useEffect} from "react";
 import gql from "graphql-tag";
+import {useGQLQuery} from "../useGQLQuery";
 
 const FOLDERS = gql`
-    query folders($worldId: ID!){
-        folders(worldId: $worldId){
+    query folders($worldId: ID!, $name: String){
+        folders(worldId: $worldId, name: $name){
             _id
             name
             children{
@@ -18,17 +16,6 @@ const FOLDERS = gql`
     }
 `;
 
-export const useFolders = () => {
-    const {currentWorld, loading} = useCurrentWorld();
-    const result = useGQLLazyQuery(FOLDERS);
-    if(loading){
-        result.loading = loading || result.loading;
-    }
-
-    useEffect(() => {
-        if(currentWorld){
-            result.fetch({worldId: currentWorld._id});
-        }
-    }, [currentWorld]);
-    return result;
+export const useFolders = (variables) => {
+    return useGQLQuery(FOLDERS, variables);
 }

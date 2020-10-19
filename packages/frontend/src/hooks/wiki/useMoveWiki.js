@@ -6,9 +6,6 @@ export const MOVE_WIKI = gql`
 	mutation moveWiki($wikiId: ID!, $folderId: ID!){
 		moveWiki(wikiId: $wikiId, folderId: $folderId){
 			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
 		}
 	}
 `;
