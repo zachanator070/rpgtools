@@ -15,7 +15,6 @@ import {SelectModel} from "../select/SelectModel";
 import {ModelViewer} from "../models/ModelViewer";
 import {useUpdateModeledWiki} from "../../hooks/wiki/useUpdateModeledWiki";
 import {LoadingView} from "../LoadingView";
-import {useMoveWiki} from "../../hooks/wiki/useMoveWiki";
 import {MoveWikiButton} from "./MoveWikiButton";
 import {useWikisInFolder} from "../../hooks/wiki/useWikisInFolder";
 
@@ -41,6 +40,7 @@ export const WikiEdit = () => {
 	const {updateModeledWiki} = useUpdateModeledWiki();
 	const {fetch, refetch} = useWikisInFolder();
 
+	// need to fetch query before you can use refetch, see how refetch is used
 	useEffect(() => {
 		if(currentWiki){
 			(async () => {

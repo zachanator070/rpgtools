@@ -155,9 +155,16 @@ export const Map = ({menuItems, extras}) => {
 					alt=''
 					key={chunk._id}
 					src={`/images/${chunk.fileId}`}
-					style={{position: 'absolute', left: newX, top: newY, width: width, height: height}}
-					draggable="false"
+					style={{
+						position: 'absolute',
+						left: newX,
+						top: newY,
+						width: width,
+						height: height,
+					}}
+					draggable={false}
 					className='map-tile'
+					onMouseDown="if (event.preventDefault) event.preventDefault()"
 				/>
 			);
 		}
