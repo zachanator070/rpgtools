@@ -284,3 +284,23 @@ div.ant-upload-list-item {
     z-index: 1;
     background: white;
 }
+
+@keyframes arrow-rotate-back{
+
+    from {
+        transform: rotate(0deg)
+    }
+    to {
+        transform: rotate(-90deg)
+    }
+}
+
+@keyframes arrow-rotate{
+
+    from {
+        transform: rotate(-90deg)
+    }
+    to {
+        transform: rotate(0deg)
+    }
+}

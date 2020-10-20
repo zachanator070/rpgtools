@@ -2,7 +2,6 @@
 import React, {useState} from 'react';
 import {Button, Select, Spin} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {useSearchFolders} from "../../hooks/wiki/useSearchFolders";
 import {useSearchModels} from "../../hooks/model/useSearchModels";
 
 export const SelectModel = ({onChange, style, defaultModel, showClear=true}) => {

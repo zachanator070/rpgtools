@@ -38,7 +38,7 @@ export const AddModelSection = () => {
 		</div>
 		{wikiSearch ?
 			<SelectWiki
-				filter={(wiki) => MODELED_WIKI_TYPES.includes(wiki.type) && wiki.model}
+				types={MODELED_WIKI_TYPES}
 				onChange={async (wiki) => {
 					await setSelectedModel({model: wiki.model, wiki});
 					await setModelColor(wiki.modelColor);

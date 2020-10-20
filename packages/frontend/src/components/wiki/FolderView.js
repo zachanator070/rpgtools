@@ -2,22 +2,26 @@ import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import {LoadingView} from "../LoadingView";
 import React, {useEffect, useState} from "react";
-import {DownOutlined, FileTextOutlined, FolderOutlined, InfoCircleOutlined} from '@ant-design/icons';
+import {DownOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {Tree} from 'antd';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {FolderMenu} from "./FolderMenu";
+import {useWikisInFolder} from "../../hooks/wiki/useWikisInFolder";
+import {useFolders} from "../../hooks/wiki/useFolders";
+import {useGetFolderPath} from "../../hooks/wiki/useGetFolderPath";
 
 
 export const FolderView = () => {
-    const {currentWiki} = useCurrentWiki();
+    const {currentWiki, loading: wikiLoading} = useCurrentWiki();
     const {currentWorld, loading: worldLoading} = useCurrentWorld();
-    const history = useHistory();
-    const [renderWiki, setRenderWiki] = useState();
     const [expandedKeys, setExpandedKeys] = useState();
     const [treeData, setTreeData] = useState();
+    const {fetch: fetchWikis, fetchMore, wikisInFolder} = useWikisInFolder();
+    const {folders, foldersLoading} = useFolders();
+    const {fetch: fetchFolderPath, data: folderPath} = useGetFolderPath();
 
     const getFolderTreeData = (folder) => {
-        const populatedFolder = currentWorld.folders.find(otherFolder => otherFolder._id === folder._id);
+        const populatedFolder = folders.find(otherFolder => otherFolder._id === folder._id);
         const data = {
             title: populatedFolder.name,
             key: populatedFolder._id,
@@ -26,7 +30,6 @@ export const FolderView = () => {
             children: []
         }
         data.children.push(...populatedFolder.children.map(getFolderTreeData));
-        data.children.push(...populatedFolder.pages.map(getPageTreeData));
         return data;
     }
 
@@ -38,37 +41,60 @@ export const FolderView = () => {
         }
     }
 
-    const bfs = (folder, target, path) => {
-        const currentPath = [...path, folder._id];
-        const populatedFolder = currentWorld.folders.find(otherFolder => otherFolder._id === folder._id);
-        for(let page of populatedFolder.pages){
-            if(page._id === target._id){
-                return currentPath;
+    const findTreeNode = (key, currentNode) => {
+        if(currentNode.key === key){
+            return currentNode;
+        }
+        for(let child of currentNode.children){
+            const childResult = findTreeNode(key, child);
+            if(childResult){
+                return childResult;
             }
         }
-        for(let child of populatedFolder.children){
-            const newPath = bfs(child, target, currentPath);
-            if(newPath.length > 0){
-                return newPath;
-            }
-        }
-        return [];
     }
 
     useEffect(() => {
-        if(currentWiki && !renderWiki){
-            setRenderWiki(currentWiki);
+        if(wikisInFolder){
+            for(let wiki of wikisInFolder.docs){
+                const node = findTreeNode(wiki.folder._id, treeData);
+                node.children.push(getPageTreeData(wiki));
+            }
+            if(wikisInFolder.nextPage){
+                (async () => {
+                   await fetchMore({page: wikisInFolder.nextPage});
+                })();
+            }
         }
-    }, [currentWiki]);
+    }, [wikisInFolder]);
 
     useEffect(() => {
-        if(renderWiki && currentWorld){
-            setExpandedKeys(bfs(currentWorld.rootFolder, renderWiki, []));
-            setTreeData([getFolderTreeData(currentWorld.rootFolder)]);
+        if(expandedKeys){
+            (async () => {
+                for(let key of expandedKeys){
+                    await fetchWikis({folderId: key});
+                }
+            })();
         }
-    }, [renderWiki, currentWorld]);
 
-    if(!renderWiki || worldLoading || !expandedKeys || !treeData){
+    }, [expandedKeys]);
+
+    useEffect(() => {
+        if(folderPath){
+            setExpandedKeys(folderPath.map(folder => folder._id));
+        }
+    }, [folderPath]);
+
+    useEffect(() => {
+        if(currentWiki && folders && currentWorld){
+            setTreeData([getFolderTreeData(currentWorld.rootFolder)]);
+            (async () => {
+                await fetchFolderPath({wikiId: currentWiki._id});
+            })();
+        }
+
+    }, [currentWiki, folders, currentWorld])
+
+    if(wikiLoading || worldLoading || !expandedKeys || !treeData || foldersLoading){
         return <LoadingView/>;
     }
 

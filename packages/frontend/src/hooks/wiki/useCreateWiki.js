@@ -5,10 +5,7 @@ import {CURRENT_WORLD_FOLDERS} from "@rpgtools/common/src/gql-fragments";
 export const CREATE_WIKI = gql`
 	mutation createWiki($name: String!, $folderId: ID!){
 		createWiki(name: $name, folderId: $folderId){
-			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
+			${CURRENT_WORLD_FOLDERS}
 		}
 	}
 `;

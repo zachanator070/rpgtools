@@ -71,6 +71,9 @@ const wikiPageInterfaceAttributes = {
 	world: async (page) => {
 		return await getDocument(World, page.world);
 	},
+	folder: async (page) => {
+		return WikiFolder.findOne({pages: page._id});
+	},
 	coverImage: async (page) => {
 		return await getDocument(Image, page.coverImage);
 	},
@@ -204,15 +207,6 @@ export const serverResolvers = {
 		pins: async (world, _, {currentUser}) => {
 			return await getPermissionControlledDocuments(Pin, world.pins, currentUser);
 		},
-		folders: async (world, _, {currentUser}) => {
-			const folders = [];
-			for(let folder of await WikiFolder.find({world: world._id})){
-				if(await folder.userCanRead(currentUser)){
-					folders.push(folder);
-				}
-			}
-			return folders;
-		},
 		...permissionControlledInterfaceAttributes
 	},
 	PermissionControlled: {
@@ -300,9 +294,6 @@ export const serverResolvers = {
 		},
 		children: async (folder, _, {currentUser}) => {
 			return await getPermissionControlledDocuments(WikiFolder, folder.children, currentUser);
-		},
-		pages: async (folder, _, {currentUser}) => {
-			return await getPermissionControlledDocuments(WikiPage, folder.pages, currentUser);
 		},
 		...permissionControlledInterfaceAttributes
 	},

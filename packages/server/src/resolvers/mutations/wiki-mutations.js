@@ -39,7 +39,7 @@ export const wikiMutations = {
 		}
 
 		await newPage.populate('world').execPopulate();
-		return newPage.world;
+		return folder;
 	}),
 	updateWiki: async (parent, {wikiId, name, content, coverImageId, type}, {currentUser}) => {
 		let wikiPage = await WikiPage.findById(wikiId).populate('world content');

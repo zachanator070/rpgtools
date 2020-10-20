@@ -6,9 +6,9 @@ import {LoadingView} from "../LoadingView";
 import {PermissionModal} from "../modals/PermissionModal";
 import {Col, Row} from "antd";
 import {TeamOutlined} from '@ant-design/icons';
-import {FolderView} from "./FolderView";
 import {WikiEdit} from "./WikiEdit";
 import {WikiContent} from "./WikiContent";
+import {FolderTree} from "./FolderTree";
 
 export const WikView = () => {
 	const {currentWiki, loading: wikiLoading, refetch} = useCurrentWiki();
@@ -41,7 +41,7 @@ export const WikView = () => {
 					overflowY: 'auto'
 				}}
 			>
-				<FolderView/>
+				<FolderTree folder={currentWorld.rootFolder}/>
 			</Col>
 			<Col
 				span={16}

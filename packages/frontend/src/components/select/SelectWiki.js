@@ -2,22 +2,20 @@ import React, {useState} from 'react';
 import {Button, Select, Spin} from "antd";
 import {useSearchWikiPages} from "../../hooks/wiki/useSearchWikiPages";
 import {SearchOutlined} from "@ant-design/icons";
+import {useParams} from 'react-router-dom';
 
-export const SelectWiki = ({types, onChange, style, filter, showClear=false}) => {
-	const {searchWikiPages, wikis, loading} = useSearchWikiPages();
+
+export const SelectWiki = ({types, onChange, style, showClear=false}) => {
+	const params = useParams();
+	const {refetch, wikis, loading} = useSearchWikiPages({worldId: params.world_id, types});
 	const [value, setValue] = useState();
 
-	let potentialWikis = wikis;
-	if(filter){
-		potentialWikis = wikis.filter(filter);
-	}
-
-	const options = potentialWikis.map((wiki) => {return <Select.Option key={wiki._id} value={wiki._id}>{wiki.name}</Select.Option>});
+	const options = wikis && wikis.docs.map((wiki) => {return <Select.Option key={wiki._id} value={wiki._id}>{wiki.name}</Select.Option>});
 
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
 		if(onChange){
-			for(let wiki of potentialWikis){
+			for(let wiki of wikis.docs){
 				if(wiki._id === newValue){
 					await onChange(wiki);
 				}
@@ -33,7 +31,7 @@ export const SelectWiki = ({types, onChange, style, filter, showClear=false}) =>
 			showArrow={false}
 			filterOption={false}
 			notFoundContent={loading ? <Spin size="small" /> : null}
-			onSearch={async (term) => {await searchWikiPages(term, types)}}
+			onSearch={async (term) => {await refetch({worldId: params.world_id, types, name: term})}}
 			onSelect={onSelect}
 			placeholder="Search for a wiki page"
 			style={style ? style : { width: 200 }}

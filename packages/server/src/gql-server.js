@@ -49,4 +49,5 @@ export default new ApolloServer({
         },
         keepAlive: 1000
     },
+    tracing: process.env.NODE_ENV === "development"
 });
