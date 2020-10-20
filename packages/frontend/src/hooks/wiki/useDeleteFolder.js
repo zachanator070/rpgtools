@@ -1,14 +1,10 @@
 import {useMutation} from "@apollo/client";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_FOLDERS} from "@rpgtools/common/src/gql-fragments";
 
 export const DELETE_FOLDER = gql`
 	mutation deleteFolder($folderId: ID!){
 		deleteFolder(folderId: $folderId){
 			_id
-			folders{
-				${CURRENT_WORLD_FOLDERS}
-			}
 		}
 	}
 	

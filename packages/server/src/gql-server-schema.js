@@ -15,7 +15,14 @@ export const typeDefs = gql`
         """Get a wiki by id"""
         wiki(wikiId: ID!): WikiPage
         """Search for a wiki page by name"""
-        wikis(worldId: ID!, name: String!, type: String): WikiPagePaginatedResult!
+        wikis(worldId: ID!, name: String, types: [String!]): WikiPagePaginatedResult!
+        """Get all wikis that are in a set of folders"""
+        wikisInFolder(folderId: ID!, page: Int): WikiPagePaginatedResult!
+        
+        """Get all wiki folders for a world"""
+        folders(worldId: ID!, name: String): [WikiFolder!]!
+        """Get a path to the root folder for a wiki page"""
+        getFolderPath(wikiId: ID!): [WikiFolder!]!
         
         """Search for users by username"""
         users(username: String!): UserPaginatedResult!
@@ -65,7 +72,7 @@ export const typeDefs = gql`
         moveFolder(folderId: ID!, parentFolderId: ID!): World!
         importContent(folderId: ID!, zipFile: Upload!): World!
         
-        createWiki(name: String!, folderId: ID!): World!
+        createWiki(name: String!, folderId: ID!): WikiFolder!
         deleteWiki(wikiId: ID!): World!
         updateWiki(wikiId: ID!, name: String, content: Upload, coverImageId: ID, type: String): WikiPage!
         updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
@@ -131,7 +138,6 @@ export const typeDefs = gql`
 		rootFolder: WikiFolder
 		roles: [Role!]!
 		pins: [Pin!]!
-		folders: [WikiFolder!]!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -181,7 +187,7 @@ export const typeDefs = gql`
     }
     
     type WikiPagePaginatedResult {
-        docs: [Role!]!
+        docs: [WikiPage!]!
         totalDocs: Int!
         limit: Int!
         page: Int!
@@ -200,6 +206,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 	}
 	
 	interface ModeledWiki {
@@ -214,6 +221,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -228,6 +236,7 @@ export const typeDefs = gql`
 		mapImage: Image
 		pixelsPerFoot: Int
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -240,6 +249,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -254,6 +264,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -268,6 +279,7 @@ export const typeDefs = gql`
 		world: World!
 		coverImage: Image
 		type: String!
+		folder: WikiFolder!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
@@ -279,7 +291,6 @@ export const typeDefs = gql`
 		_id: ID!
 		name: String!
 		world: World!
-		pages: [WikiPage!]!
 		children: [WikiFolder!]!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
