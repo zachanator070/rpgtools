@@ -61,7 +61,7 @@ restart:
 	docker-compose restart
 
 # pushes built docker container to dockerhub
-publish:
+publish: build
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
 	docker tag rpgtools:${VERSION} ${DOCKER_USERNAME}/rpgtools:${VERSION}
 	docker tag rpgtools:latest ${DOCKER_USERNAME}/rpgtools:latest
