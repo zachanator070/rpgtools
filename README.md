@@ -18,7 +18,7 @@ where users will interact with the service.
 
 `touch .env && docker-compose up prod-builder && docker-compose up prod-server`
 or
-`make build prod`
+`make prod`
 
 The production environment will run the following docker containers:
 - nodejs webserver
