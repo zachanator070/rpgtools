@@ -9,6 +9,9 @@ jobs:
   - stage: build docker image
     script:
     - make build
+  - stage: publish docker image
+    if: type != pull_request
+    script:
     - make publish
 env:
   global:
