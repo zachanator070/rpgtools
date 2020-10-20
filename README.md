@@ -12,23 +12,68 @@ Tool set for playing an RPG game
 - lerna (npm install -g lerna)
 
 ### Production Environment
-`docker-compose up prod-server`
+
+This environment is to be used by those that wish to run rpgtools in an optimized setting 
+where users will interact with the service.
+
+`touch .env && docker-compose up prod-builder && docker-compose up prod-server`
 or
-`make prod`
+`make build prod`
+
+The production environment will run the following docker containers:
+- nodejs webserver
+- mongodb database
+- redis in-memory cache
+- webpack bundler
+
+The bundler runs once to create the website bundle that will be received via the webserver.
+After this, the bundler will immediately shutdown.
 
 ### Development Environment
-`docker-compose up dev-server`
+
+This environment is for anyone that wishes to contribute to the codebase and actively change
+the source of rpgtools while having access to debug tools.
+
+`touch .env && docker-compose up dev-server`
 or 
 `make dev`
 
+The development environment will run the following docker containers:
+- nodejs webserver
+- mongodb database
+- redis in-memory cache
+- webpack bundler
+
+In this configuration, the bundler will stay running and attempt to rebuild the website bundle
+when a code change occurs. 
+
 ## Environment file options
-The environment options that are support are explained in the provided example environment file.
+The environment options that are supported are explained in the provided example environment file.
   
 See [.env.example](https://github.com/zachanator070/rpgtools/blob/master/.env.example)
   
 ## Install
 
-### WARNING
+If you wish to run rpgtools on a host while ensuring that the service is always up and will
+run at startup, follow the instructions below for your target operating system.
+
+### Linux
+#### Requirements
+- docker
+- docker-compose
+- make
+
+A simple make target has been provided to install on a linux debian-based host.
+This simple install will:
+- install a systemd unit file
+- install mongodb
+- install a basic config under /etc/rpgtools
+
+To run this simple install use the command:
+
+`make install`
+
+#### WARNING
 This simple install is not secure. If you plan on having rpgtools accept connections from the public internet, it is recommended to tighten security in the following ways:
 - replace private keys in environment file
     - /etc/rpgtools/.env for linux hosts and .env file in your home folder of this repo for windows hosts
@@ -37,8 +82,8 @@ This simple install is not secure. If you plan on having rpgtools accept connect
     - If you don't want the NSA or quantum computers to crack your authentication tokens, use a private key
     of at least 384 bytes (3072-bit) see [wikipedia](https://en.wikipedia.org/wiki/Key_size#Asymmetric_algorithm_key_lengths)
 - use https
-    - recommended config would be to use a reverse proxy like nginx or apache with a generated certificate
-    using letsencrypt
+    - it is recommended to use a reverse proxy like nginx or apache with a generated certificate
+    using [letsencrypt](https://letsencrypt.org/)
 
 If your install will be behind a proxy server, be sure to configure the proxy server to address the following issues:
 - Limits on request size. Uploads can be rather large, and a proxy server can block requests if they are larger than
@@ -71,22 +116,6 @@ map $http_upgrade $connection_upgrade {
          }
  }
 ```
-
-### Linux
-#### Requirements
-- docker
-- docker-compose
-- make
-
-A simple make target has been provided to install on a linux debian-based host.
-This simple install will:
-- install a systemd unit file
-- install mongodb
-- install a basic config under /etc/rpgtools
-
-To run this simple install use the command:
-
-`make install`
 
 ### Windows
 No current install method yet
