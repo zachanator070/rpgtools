@@ -1,6 +1,5 @@
 import gql from "graphql-tag";
-import {CURRENT_WORLD_WIKIS} from "../../../../common/src/gql-fragments";
-import {useGQLQuery} from "../useGQLQuery";
+import {CURRENT_WORLD_WIKIS} from "@rpgtools/common/src/gql-fragments";
 import {useGQLLazyQuery} from "../useGQLLazyQuery";
 import {useEffect} from "react";
 

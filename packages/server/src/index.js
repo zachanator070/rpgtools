@@ -84,7 +84,7 @@ const createServer = async () => {
 	});
 
 
-	server.use(express.static('../dist'));
+	server.use(express.static('dist'));
 	server.use(express.static('src/static-assets'));
 	server.use(graphqlUploadExpress());
 
