@@ -42,7 +42,6 @@ init-env:
 
 # runs development docker images
 dev-up:
-	mkdir -p dist
 	docker-compose up -d dev-server
 
 build-dev:
