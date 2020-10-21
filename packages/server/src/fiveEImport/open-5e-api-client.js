@@ -1,55 +1,53 @@
+const fetch = require("node-fetch");
 
-const fetch = require('node-fetch');
+const BASE_URL = "https://api.open5e.com";
 
-const BASE_URL = 'https://api.open5e.com';
+const getPages = async function* (resource) {
+  try {
+    let next = BASE_URL + resource;
 
-const getPages  = async function* (resource){
-	try{
-		let next = BASE_URL + resource;
-
-		while(next){
-			const response = await fetch(next);
-			if(!response.ok){
-				console.warn(response.ok);
-				throw new Error(`Error while fetching open5e resource ${resource}`);
-			}
-			const json = await response.json();
-			let results = json.results;
-			for(let result of results){
-				yield result;
-			}
-			next = json.next;
-		}
-	}
-	catch (e){
-		console.warn(e.message);
-	}
-}
+    while (next) {
+      const response = await fetch(next);
+      if (!response.ok) {
+        console.warn(response.ok);
+        throw new Error(`Error while fetching open5e resource ${resource}`);
+      }
+      const json = await response.json();
+      let results = json.results;
+      for (let result of results) {
+        yield result;
+      }
+      next = json.next;
+    }
+  } catch (e) {
+    console.warn(e.message);
+  }
+};
 
 export const getMonsters = () => {
-	return getPages('/monsters/');
-}
+  return getPages("/monsters/");
+};
 
 export const getAdventuringSections = () => {
-	return getPages('/sections/');
+  return getPages("/sections/");
 };
 
 export const getRaces = () => {
-	return getPages('/races/');
+  return getPages("/races/");
 };
 
 export const getClasses = () => {
-	return getPages('/classes/');
+  return getPages("/classes/");
 };
 
 export const getSpells = () => {
-	return getPages('/spells/');
+  return getPages("/spells/");
 };
 
 export const getMagicItems = () => {
-	return getPages('/magicitems/');
+  return getPages("/magicitems/");
 };
 
-export const searchSpells = (term) =>{
-	return getPages(`/spells/?search=${term}`);
-}
+export const searchSpells = (term) => {
+  return getPages(`/spells/?search=${term}`);
+};
