@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import mongoosePaginate from "mongoose-aggregate-paginate-v2";
+import mongoosePaginate from "mongoose-paginate-v2";
 import {
   ROLE_ADMIN_ALL,
   WORLD_ADMIN,
@@ -8,12 +8,10 @@ import {
 } from "@rpgtools/common/src/permission-constants";
 import { WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import {
-  MODEL,
   PIN,
   PLACE,
   ROLE,
   WIKI_FOLDER,
-  WIKI_PAGE,
   WORLD,
 } from "@rpgtools/common/src/type-constants";
 import { ServerConfig } from "./server-config";
