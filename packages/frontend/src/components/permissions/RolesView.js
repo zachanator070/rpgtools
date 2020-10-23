@@ -1,21 +1,14 @@
 import React, {useState} from 'react';
 import {Button, Col, Input, List, Row, Select, Table, Tabs} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import {LoadingView} from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateRole from "../../hooks/authorization/useCreateRole";
 import useDeleteRole from "../../hooks/authorization/useDeleteRole";
-import {
-	ROLE,
-} from "@rpgtools/common/src/type-constants";
 import {useRevokeRolePermission} from "../../hooks/authorization/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
 import {SelectUser} from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
-import {ROLE_ADMIN} from "@rpgtools/common/src/permission-constants";
-import {useRevokeUserPermission} from "../../hooks/authorization/useRevokeUserPermission";
-import {useGrantUserPermission} from "../../hooks/authorization/useGrantUserPermisison";
 import {AddRolePermission} from "./AddRolePermission";
 
 export const RolesView = () => {

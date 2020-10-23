@@ -4,7 +4,7 @@ import {
 	ALL_WIKI_TYPES, ARTICLE,
 	PERMISSION_CONTROLLED_TYPES,
 	ROLE,
-	WIKI_FOLDER,
+	WIKI_FOLDER, WIKI_PAGE,
 	WORLD
 } from "@rpgtools/common/src/type-constants";
 import {getPermissionsBySubjectType} from "@rpgtools/common/src/permission-constants";
@@ -26,17 +26,17 @@ export const AddRolePermission = ({role}) => {
 	let selectSubject = null;
 	if(permissionToAddSubjectType === WORLD){
 		selectSubject = <Select style={{width: '200px'}} onChange={setPermissionToAddSubject}>
-			<Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>
+			{currentWorld.canAdmin && <Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>}
 		</Select>;
 	}
-	else if(ALL_WIKI_TYPES.includes(permissionToAddSubjectType)){
-		selectSubject = <SelectWiki types={[permissionToAddSubjectType]} onChange={async (wiki) => await setPermissionToAddSubject(wiki._id)}/>;
+	else if(permissionToAddSubjectType === WIKI_PAGE){
+		selectSubject = <SelectWiki canAdmin={true} onChange={async (wiki) => await setPermissionToAddSubject(wiki._id)}/>;
 	}
 	else if(permissionToAddSubjectType === ROLE){
-		selectSubject = <SelectRole onChange={setPermissionToAddSubject}/>;
+		selectSubject = <SelectRole canAdmin={true} onChange={setPermissionToAddSubject}/>;
 	}
 	else if(permissionToAddSubjectType === WIKI_FOLDER){
-		selectSubject = <SelectFolder onChange={setPermissionToAddSubject}/>;
+		selectSubject = <SelectFolder canAdmin={true} onChange={setPermissionToAddSubject}/>;
 	}
 
 	let availablePermissions = getPermissionsBySubjectType(permissionToAddSubjectType);
@@ -51,10 +51,11 @@ export const AddRolePermission = ({role}) => {
 				onChange={async (value) => {
 					await setPermissionToAdd(null);
 					await setPermissionToAddSubjectType(value);
+					await setPermissionToAddSubject(null);
 				}}
 				value={permissionToAddSubjectType}
 			>
-				{[WORLD, ARTICLE, ROLE, WIKI_FOLDER].map(permission =>
+				{[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map(permission =>
 					<Select.Option key={permission}>{permission}</Select.Option>)}
 			</Select>
 		</div>
@@ -64,7 +65,6 @@ export const AddRolePermission = ({role}) => {
 				<Select
 					style={{width: '200px'}}
 					onChange={async (value) => {
-						await setPermissionToAddSubject(value);
 						await setPermissionToAdd(value);
 					}}
 					value={permissionToAdd}

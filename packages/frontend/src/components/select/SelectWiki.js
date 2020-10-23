@@ -5,9 +5,9 @@ import {SearchOutlined} from "@ant-design/icons";
 import {useParams} from 'react-router-dom';
 
 
-export const SelectWiki = ({types, onChange, style, showClear=false}) => {
+export const SelectWiki = ({types, onChange, style, showClear=false, canAdmin}) => {
 	const params = useParams();
-	const {refetch, wikis, loading} = useSearchWikiPages({worldId: params.world_id, types});
+	const {refetch, wikis, loading} = useSearchWikiPages({worldId: params.world_id, types, canAdmin});
 	const [value, setValue] = useState();
 
 	const options = wikis && wikis.docs.map((wiki) => {return <Select.Option key={wiki._id} value={wiki._id}>{wiki.name}</Select.Option>});
@@ -31,7 +31,7 @@ export const SelectWiki = ({types, onChange, style, showClear=false}) => {
 			showArrow={false}
 			filterOption={false}
 			notFoundContent={loading ? <Spin size="small" /> : null}
-			onSearch={async (term) => {await refetch({worldId: params.world_id, types, name: term})}}
+			onSearch={async (term) => {await refetch({worldId: params.world_id, types, name: term, canAdmin})}}
 			onSelect={onSelect}
 			placeholder="Search for a wiki page"
 			style={style ? style : { width: 200 }}

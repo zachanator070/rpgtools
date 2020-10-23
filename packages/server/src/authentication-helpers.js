@@ -11,20 +11,27 @@ export const authenticated = (next) => (root, args, context, info) => {
   return next(root, args, context, info);
 };
 
-export const createTokens = async (user) => {
+export const createTokens = async (user, version) => {
   const accessToken = jwt.sign(
     { userId: user._id },
     process.env["ACCESS_TOKEN_SECRET"],
     { expiresIn: ACCESS_TOKEN_MAX_AGE.string }
   );
-  let version = uuidv4();
+  if (!version) {
+    version = uuidv4();
+  }
   const refreshToken = jwt.sign(
-    { version: version, userId: user._id },
+    {
+      version: version,
+      userId: user._id,
+    },
     process.env["REFRESH_TOKEN_SECRET"],
     { expiresIn: REFRESH_TOKEN_MAX_AGE.string }
   );
-  user.tokenVersion = version;
-  await user.save();
+  if (version !== user.tokenVersion) {
+    user.tokenVersion = version;
+    await user.save();
+  }
   return { accessToken, refreshToken };
 };
 
@@ -53,7 +60,6 @@ export const createSessionContext = async ({ req, res, connection }) => {
       currentUser = await getCurrentUser(data.userId);
     } catch (e) {
       // accessToken is expired
-      console.log(`Access token expired because ${e.message}`);
       res.clearCookie("accessToken");
       try {
         let data = jwt.verify(
@@ -64,10 +70,7 @@ export const createSessionContext = async ({ req, res, connection }) => {
         currentUser = await getCurrentUser(data.userId);
         // if refreshToken is still valid issue new access token and refresh token
         if (currentUser && currentUser.tokenVersion === data.version) {
-          console.log(
-            "Access token and refresh token renewed b/c refresh token still valid"
-          );
-          let tokens = await createTokens(currentUser);
+          let tokens = await createTokens(currentUser, data.version);
           res.cookie("accessToken", tokens.accessToken, {
             maxAge: ACCESS_TOKEN_MAX_AGE.ms,
             secure: false,
@@ -78,15 +81,11 @@ export const createSessionContext = async ({ req, res, connection }) => {
           });
         } else {
           // refreshToken was invalidated
-          console.log(
-            `Refresh token expired because version did not match ${currentUser.tokenVersion} !== ${data.version}`
-          );
           currentUser = null;
           res.clearCookie("refreshToken");
         }
       } catch (e) {
         // refreshToken is expired
-        console.log(`Refresh token expired because ${e.message}`);
         throw new Error("Refresh token expired");
       }
     }
@@ -104,6 +103,5 @@ export const createSessionContext = async ({ req, res, connection }) => {
   };
 };
 
-// export const ACCESS_TOKEN_MAX_AGE = {string: '15min', ms: 1000 * 60 * 15};
 export const ACCESS_TOKEN_MAX_AGE = { string: "1m", ms: 1000 * 60 };
 export const REFRESH_TOKEN_MAX_AGE = { string: "1d", ms: 1000 * 60 * 60 * 24 };

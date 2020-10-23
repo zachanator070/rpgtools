@@ -1,5 +1,8 @@
 import { World } from "../models/world";
 import { User } from "../models/user";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { WikiPage } from "../models/wiki-page";
+import { Place } from "../models/place";
 import {
   ANON_USERNAME,
   WIKI_READ_ALL,
@@ -46,104 +49,16 @@ export default {
 
     return world;
   },
-  worlds: async (_, { page }, { currentUser }) => {
-    const PAGE_SIZE = 2;
-
-    let userRoles = currentUser ? currentUser.roles : [];
-    let userPermissions = currentUser ? currentUser.permissions : [];
-    for (let userRole of userRoles) {
-      userPermissions.push(...userRole.permissions);
-    }
-    userPermissions = userPermissions.filter(
-      (permission) => permission.permission === WORLD_READ
-    );
-    const worldsUserCanRead = userPermissions.map(
-      (permission) => permission.subject
-    );
-    // NOTE: unsure that this is actually more efficient than using World.find and filtering based on permissions the
-    // user has in currentUser.allPermissions
-    const worldAggregate = World.aggregate([
-      {
-        $lookup: {
-          from: "roles",
-          localField: "roles",
-          foreignField: "_id",
-          as: "roles",
-        },
-      },
-      {
-        $unwind: {
-          path: "$roles",
-        },
-      },
-      {
-        $lookup: {
-          from: "permissionassignments",
-          localField: "roles.permissions",
-          foreignField: "_id",
-          as: "roles.permissions",
-        },
-      },
-      {
-        $group: {
-          _id: "$_id",
-          roles: {
-            $push: "$roles",
-          },
-          name: {
-            $first: "$name",
-          },
-          rootFolder: {
-            $first: "$rootFolder",
-          },
-          wikiPage: {
-            $first: "$wikiPage",
-          },
-        },
-      },
-      {
-        $project: {
-          roles: {
-            $filter: {
-              input: "$roles",
-              as: "role",
-              cond: {
-                $eq: ["$$role.name", EVERYONE],
-              },
-            },
-          },
-          name: true,
-          rootFolder: true,
-          wikiPage: true,
-        },
-      },
-      {
-        $match: {
-          $or: [
-            {
-              "roles.permissions.permission": WIKI_READ_ALL,
-            },
-            {
-              _id: {
-                $in: worldsUserCanRead,
-              },
-            },
-          ],
-        },
-      },
-    ]);
-
-    if (!page) {
-      page = 1;
-    }
-    const results = await World.aggregatePaginate(worldAggregate, {
-      page: page,
-      limit: PAGE_SIZE,
-    });
-    // convert objects to mongoose Models
+  worlds: async (_, { canAdmin, page }, { currentUser }) => {
+    const results = await World.paginate();
     const docs = [];
     for (let world of results.docs) {
-      docs.push(await World.findById(world._id).populate("wikiPage"));
+      if (canAdmin !== undefined && !(await world.userCanAdmin(currentUser))) {
+        continue;
+      }
+      if (await world.userCanRead(currentUser)) {
+        docs.push(world);
+      }
     }
     results.docs = docs;
     return results;
@@ -153,7 +68,6 @@ export default {
     if (foundWiki && !(await foundWiki.userCanRead(currentUser))) {
       throw new Error(`You do not have permission to read wiki ${wikiId}`);
     }
-
     switch (foundWiki.type) {
       case PLACE:
         foundWiki = await Place.findById(wikiId).populate(
@@ -265,9 +179,16 @@ export default {
       { _id: { $in: folder.pages } },
       { page }
     );
+    const docs = [];
+    for (let doc of results.docs) {
+      if (await doc.userCanRead(currentUser)) {
+        docs.push(doc);
+      }
+    }
+    results.docs = docs;
     return results;
   },
-  wikis: async (_, { worldId, name, types }, { currentUser }) => {
+  wikis: async (_, { worldId, name, types, canAdmin }, { currentUser }) => {
     const world = await World.findById(worldId);
     if (!world) {
       throw new Error("World does not exist");
@@ -283,10 +204,21 @@ export default {
     if (types && types.length > 0) {
       conditions.type = { $in: types };
     }
+    const results = await WikiPage.paginate(conditions);
 
-    return WikiPage.paginate(conditions);
+    const docs = [];
+    for (let doc of results.docs) {
+      if (canAdmin !== undefined && !(await doc.userCanAdmin(currentUser))) {
+        continue;
+      }
+      if (await doc.userCanRead(currentUser)) {
+        docs.push(doc);
+      }
+    }
+    results.docs = docs;
+    return results;
   },
-  folders: async (_, { worldId, name }, { currentUser }) => {
+  folders: async (_, { worldId, name, canAdmin }, { currentUser }) => {
     const world = await World.findById(worldId);
     if (!world) {
       throw new Error("World does not exist");
@@ -300,7 +232,46 @@ export default {
       conditions.name = { $regex: name, $options: "i" };
     }
 
-    return WikiFolder.find(conditions);
+    const results = await WikiFolder.find(conditions);
+
+    const docs = [];
+    for (let doc of results) {
+      if (canAdmin !== undefined && !(await doc.userCanAdmin(currentUser))) {
+        continue;
+      }
+      if (await doc.userCanRead(currentUser)) {
+        docs.push(doc);
+      }
+    }
+    return docs;
+  },
+  roles: async (_, { worldId, name, canAdmin }, { currentUser }) => {
+    const world = await World.findById(worldId);
+    if (!world) {
+      throw new Error("World does not exist");
+    }
+    if (!(await world.userCanRead(currentUser))) {
+      throw new Error("You do not have permission to read this World");
+    }
+
+    const conditions = { world: world._id };
+    if (name) {
+      conditions.name = { $regex: name, $options: "i" };
+    }
+
+    const results = await Role.paginate(conditions);
+
+    const docs = [];
+    for (let doc of results.docs) {
+      if (canAdmin !== undefined && !(await doc.userCanAdmin(currentUser))) {
+        continue;
+      }
+      if (await doc.userCanRead(currentUser)) {
+        docs.push(doc);
+      }
+    }
+    results.docs = docs;
+    return results;
   },
   getFolderPath: async (_, { wikiId }, { currentUser }) => {
     const path = [];

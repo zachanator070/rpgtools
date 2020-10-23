@@ -3,8 +3,8 @@ import {useGQLQuery} from "../useGQLQuery";
 import {MODEL_ATTRIBUTES} from "@rpgtools/common/src/gql-fragments";
 
 const SEARCH_WIKIS = gql`
-	query wikis($worldId: ID!, $name: String, $types: [String!]){
-		wikis(worldId: $worldId, name: $name, types: $types){
+	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean){
+		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin){
 			docs{
 				_id
 				name
@@ -14,6 +14,9 @@ const SEARCH_WIKIS = gql`
 			        }
 			        modelColor
 			    }
+			    ... on PermissionControlled{
+			        canAdmin
+		        }
 			}
 			nextPage
 		}

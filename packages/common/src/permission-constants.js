@@ -5,6 +5,7 @@ import {
   ROLE,
   SERVER_CONFIG,
   WIKI_FOLDER,
+  WIKI_PAGE,
   WORLD,
 } from "./type-constants";
 
@@ -148,7 +149,10 @@ export const PUBLIC_WORLD_PERMISSIONS = [
 export const getPermissionsBySubjectType = (subjectType) => {
   if (subjectType === ROLE) {
     return ROLE_PERMISSIONS;
-  } else if (ALL_WIKI_TYPES.includes(subjectType)) {
+  } else if (
+    subjectType === WIKI_PAGE ||
+    ALL_WIKI_TYPES.includes(subjectType)
+  ) {
     return WIKI_PERMISSIONS;
   } else if (subjectType === WORLD) {
     return WORLD_PERMISSIONS;
