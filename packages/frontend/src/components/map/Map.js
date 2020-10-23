@@ -143,21 +143,19 @@ export const Map = ({menuItems, extras}) => {
 			const standardChunkHeight = 250;
 
 			let newWidth = chunk.width;
-			// newWidth *= zoom.current;
 			newWidth = Math.ceil(newWidth);
 
 			let newHeight = chunk.height;
-			// newHeight *= zoom.current;
 			newHeight = Math.ceil(newHeight);
 
 			const newX = chunk.x * standardChunkWidth;
 			const newY = chunk.y * standardChunkHeight;
 
-			const base_image = new Image();
+			const base_image = new Image(chunk.width, chunk.height);
 			base_image.src = `/images/${chunk.fileId}`;
 			const mapContext = mapCanvas.current.getContext('2d');
 			base_image.onload = () => {
-				mapContext.drawImage(base_image, 0, 0, chunk.width, chunk.height, newX, newY, newWidth, newHeight);
+				mapContext.drawImage(base_image, newX, newY);
 			}
 		}
 
