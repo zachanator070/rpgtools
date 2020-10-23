@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import {WikiPage} from "./wiki-page";
-import {ARTICLE} from "@rpgtools/common/src/type-constants";
+import mongoose from "mongoose";
+import { WikiPage } from "./wiki-page";
+import { ARTICLE } from "@rpgtools/common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

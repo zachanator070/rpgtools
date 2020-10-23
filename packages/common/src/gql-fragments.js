@@ -22,7 +22,6 @@ export const PERMISSIONS_GRANTED = `
 	}
 `;
 
-
 export const ACCESS_CONTROL_LIST = `
 	... on PermissionControlled {
 		canWrite
@@ -204,7 +203,6 @@ export const CURRENT_WIKI_ATTRIBUTES = `
     
 `;
 
-
 export const GAME_MESSAGE = `
     sender
     receiver
@@ -299,7 +297,7 @@ export const GAME_FOG_STROKES = `
 	fog{
 		${GAME_FOG}
 	}
-`
+`;
 export const GAME_ATTRIBUTES = `
 	_id
     ${GAME_MAP}
@@ -322,4 +320,3 @@ export const GAME_ATTRIBUTES = `
     ${GAME_MODELS}
     ${ACCESS_CONTROL_LIST}
 `;
-
