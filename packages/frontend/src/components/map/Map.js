@@ -17,6 +17,7 @@ export const Map = ({menuItems, extras}) => {
 
 	const mapContainer = useRef({offsetWidth: 1, offsetHeight: 1});
 	const map = useRef(null);
+	const mapCanvas = useRef();
 
 	const {currentMap, loading} = useCurrentMap();
 
@@ -74,13 +75,13 @@ export const Map = ({menuItems, extras}) => {
 	}, []);
 
 	useEffect(() => {
-		(async () => {
-			await calcDefaultPosition();
-		})();
-
+		if(currentMap && width && height){
+			calcDefaultPosition();
+			getChunks();
+		}
 	}, [currentMap, width, height]);
 	
-	const calcDefaultPosition = async () => {
+	const calcDefaultPosition = () => {
 		if (width === 0 || height === 0) {
 			return;
 		}
@@ -92,7 +93,7 @@ export const Map = ({menuItems, extras}) => {
 		zoom.current = smallestRatio;
 		x.current = -currentMap.mapImage.width / 2;
 		y.current = -currentMap.mapImage.height / 2;
-		await setCoordsHash(`${x.current}.${y.current}`);
+		setCoordsHash(`${x.current}.${y.current}`);
 	};
 
 	const handleWheelEvent = async (event) => {
@@ -135,40 +136,31 @@ export const Map = ({menuItems, extras}) => {
 	};
 
 	const getChunks = () => {
-		let chunks = [];
+
 		for (let chunk of currentMap.mapImage.chunks) {
 
-			const coordinates = translate(chunk.x * 250, chunk.y * 250);
-			const newX = coordinates[0];
-			const newY = coordinates[1];
+			const standardChunkWidth = 250;
+			const standardChunkHeight = 250;
 
-			let width = chunk.width;
-			width *= zoom.current;
-			width = Math.ceil(width);
+			let newWidth = chunk.width;
+			// newWidth *= zoom.current;
+			newWidth = Math.ceil(newWidth);
 
-			let height = chunk.height;
-			height *= zoom.current;
-			height = Math.ceil(height);
+			let newHeight = chunk.height;
+			// newHeight *= zoom.current;
+			newHeight = Math.ceil(newHeight);
 
-			chunks.push(
-				<img
-					alt=''
-					key={chunk._id}
-					src={`/images/${chunk.fileId}`}
-					style={{
-						position: 'absolute',
-						left: newX,
-						top: newY,
-						width: width,
-						height: height,
-					}}
-					draggable={false}
-					className='map-tile'
-					onMouseDown="if (event.preventDefault) event.preventDefault()"
-				/>
-			);
+			const newX = chunk.x * standardChunkWidth;
+			const newY = chunk.y * standardChunkHeight;
+
+			const base_image = new Image();
+			base_image.src = `/images/${chunk.fileId}`;
+			const mapContext = mapCanvas.current.getContext('2d');
+			base_image.onload = () => {
+				mapContext.drawImage(base_image, 0, 0, chunk.width, chunk.height, newX, newY, newWidth, newHeight);
+			}
 		}
-		return chunks;
+
 	};
 
 	if(!menuItems){
@@ -196,8 +188,6 @@ export const Map = ({menuItems, extras}) => {
 		return <LoadingView/>;
 	}
 
-	let images = getChunks();
-
 	const clonedExtras = [];
 
 	for (let extra of extras || []) {
@@ -215,7 +205,18 @@ export const Map = ({menuItems, extras}) => {
 			lastMouseY.current = event.clientY;
 		}}
 	>
-		{images}
+		<canvas
+			ref={mapCanvas}
+			style={{
+				position: 'absolute',
+				left: translate(0,0)[0],
+				top: translate(0,0)[1],
+				width: currentMap.mapImage.width * zoom.current,
+				height: currentMap.mapImage.height * zoom.current
+			}}
+			width={currentMap.mapImage.width}
+			height={currentMap.mapImage.height}
+		/>
 		{clonedExtras}
 	</div>;
 

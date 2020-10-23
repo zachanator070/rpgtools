@@ -24,7 +24,7 @@ export const NavBar = () => {
 	const {logout} = useLogout();
 
 	if (userLoading || worldLoading || serverConfigLoading) {
-		return <LoadingView/>;
+		return <></>;
 	}
 
 	let loginOptions = null;
