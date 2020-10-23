@@ -2,8 +2,8 @@ import gql from "graphql-tag";
 import {useGQLQuery} from "../useGQLQuery";
 
 const FOLDERS = gql`
-    query folders($worldId: ID!, $name: String){
-        folders(worldId: $worldId, name: $name){
+    query folders($worldId: ID!, $name: String, $canAdmin: Boolean){
+        folders(worldId: $worldId, name: $name, canAdmin: $canAdmin){
             _id
             name
             children{

@@ -13,7 +13,7 @@ export const typeDefs = gql`
     """
     Get all worlds
     """
-    worlds(page: Int): WorldPaginatedResult
+    worlds(canAdmin: Boolean, page: Int): WorldPaginatedResult
 
     """
     Get a wiki by id
@@ -26,6 +26,8 @@ export const typeDefs = gql`
       worldId: ID!
       name: String
       types: [String!]
+      canAdmin: Boolean
+      page: Int
     ): WikiPagePaginatedResult!
     """
     Get all wikis that are in a set of folders
@@ -35,7 +37,12 @@ export const typeDefs = gql`
     """
     Get all wiki folders for a world
     """
-    folders(worldId: ID!, name: String): [WikiFolder!]!
+    folders(
+      worldId: ID!
+      name: String
+      canAdmin: Boolean
+      page: Int
+    ): [WikiFolder!]!
     """
     Get a path to the root folder for a wiki page
     """
@@ -49,7 +56,12 @@ export const typeDefs = gql`
     """
     Search for roles by name
     """
-    roles(worldId: ID!, name: String!): RolePaginatedResult!
+    roles(
+      worldId: ID!
+      name: String
+      canAdmin: Boolean
+      page: Int
+    ): RolePaginatedResult!
 
     """
     Get a game by id
