@@ -28,6 +28,11 @@ export const ADD_MODEL_CONTROLS = "Add Model";
 
 export const CONTROLS_SETUP_EVENT = "controls setup";
 
+export const MAP_Y_POSITION = 0;
+export const DRAW_Y_POSITION = 0.05;
+export const FOG_Y_POSITION = 0.1;
+export const GROUND_Y_POSITION = -0.01;
+
 export class GameRenderer extends EventEmitter {
   constructor(
     renderRoot,
@@ -108,8 +113,8 @@ export class GameRenderer extends EventEmitter {
     this.camera = new THREE.PerspectiveCamera(
       75,
       renderWidth / renderHeight,
-      0.1,
-      10000
+      1,
+      700
     );
     let cameraZ = DEFAULT_MAP_SIZE;
     let cameraY = DEFAULT_MAP_SIZE;
@@ -206,11 +211,12 @@ export class GameRenderer extends EventEmitter {
 
     const mapGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
     mapGeometry.rotateX(-Math.PI / 2);
-
     this.mapMesh = new THREE.Mesh(
       mapGeometry,
       new THREE.MeshPhongMaterial({ map: this.mapTexture })
     );
+
+    this.mapMesh.position.set(0, MAP_Y_POSITION, 0);
     this.mapMesh.receiveShadow = true;
     this.scene.add(this.mapMesh);
 
@@ -220,7 +226,7 @@ export class GameRenderer extends EventEmitter {
       groundGeometry,
       new THREE.MeshBasicMaterial({ color: 0xffffff })
     );
-    this.groundMesh.position.set(0, -0.01, 0);
+    this.groundMesh.position.set(0, GROUND_Y_POSITION, 0);
     this.scene.add(this.groundMesh);
 
     this.setupControls();
@@ -303,7 +309,8 @@ export class GameRenderer extends EventEmitter {
       this.scene,
       this.mapMesh,
       { pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage },
-      this.addStroke
+      this.addStroke,
+      DRAW_Y_POSITION
     );
     if (paintControlsSaveState) {
       this.paintControls.loadSaveState(paintControlsSaveState);
@@ -321,7 +328,7 @@ export class GameRenderer extends EventEmitter {
       this.mapMesh,
       { pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage },
       this.addFogStroke,
-      0.02
+      FOG_Y_POSITION
     );
 
     if (fogControlsSaveState) {
