@@ -4,14 +4,6 @@ import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import { WikiPage } from "../models/wiki-page";
 import { Place } from "../models/place";
 import {
-  ANON_USERNAME,
-  WIKI_READ_ALL,
-  WORLD_READ,
-} from "@rpgtools/common/src/permission-constants";
-import { EVERYONE } from "@rpgtools/common/src/role-constants";
-import { WikiPage } from "../models/wiki-page";
-import { Place } from "../models/place";
-import {
   ALL_WIKI_TYPES,
   GAME,
   ITEM,

@@ -7,9 +7,7 @@
   "scripts": {},
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "prettier": "^2.1.2"
-  },
-  "devDependencies": {
+    "prettier": "^2.1.2",
     "@babel/preset-env": "^7.8.7",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
