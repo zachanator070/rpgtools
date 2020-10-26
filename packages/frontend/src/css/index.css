@@ -305,3 +305,7 @@ blockquote {
     transform: rotate(0deg);
   }
 }
+
+.ant-tabs-content{
+  height: 100%;
+}

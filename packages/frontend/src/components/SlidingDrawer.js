@@ -2,9 +2,17 @@ import React, { useState } from "react";
 import { Button, Drawer } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 
-export const SlidingDrawer = ({ title, placement, children, startVisible }) => {
-  const [visible, setVisible] = useState(startVisible || false);
-
+export const SlidingDrawer = ({
+  title,
+  placement,
+  children,
+  startVisible,
+  visible,
+  setVisible,
+}) => {
+  if (visible === undefined || setVisible === undefined) {
+    [visible, setVisible] = useState(startVisible || false);
+  }
   const buttonStyle = {
     position: "absolute",
     padding: "2em",
