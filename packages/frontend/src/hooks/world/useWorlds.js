@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
-import {useGQLQuery} from "../useGQLQuery";
+import { useGQLQuery } from "../useGQLQuery";
 
 export const GET_WORLDS = gql`
-	query worlds($canAdmin: Boolean, $page: Int){
-		worlds(canAdmin: $canAdmin, page: $page){
-			docs{
+	query worlds($canAdmin: Boolean, $page: Int) {
+		worlds(canAdmin: $canAdmin, page: $page) {
+			docs {
 				_id
 				name
 				wikiPage {
@@ -13,7 +13,7 @@ export const GET_WORLDS = gql`
 				}
 			}
 			totalPages
-		}	
+		}
 	}
 `;
 export default (variables) => {

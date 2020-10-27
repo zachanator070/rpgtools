@@ -1,6 +1,6 @@
-import {useGQLMutation} from "../useGQLMutation";
+import { useGQLMutation } from "../useGQLMutation";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_FOLDERS} from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_FOLDERS } from "@rpgtools/common/src/gql-fragments";
 
 export const LOAD_5E_CONTENT = gql`
 	mutation load5eContent($worldId: ID!, $creatureCodex: Boolean, $tomeOfBeasts: Boolean){
@@ -14,4 +14,4 @@ export const LOAD_5E_CONTENT = gql`
 `;
 export const useLoad5eContent = () => {
 	return useGQLMutation(LOAD_5E_CONTENT);
-}
+};

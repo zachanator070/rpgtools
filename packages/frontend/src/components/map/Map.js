@@ -1,10 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Dropdown, Icon, Menu} from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Dropdown, Icon, Menu } from "antd";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
-import {LoadingView} from "../LoadingView";
+import { LoadingView } from "../LoadingView";
 
-export const Map = ({menuItems, extras}) => {
-
+export const Map = ({ menuItems, extras }) => {
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 
@@ -15,23 +14,27 @@ export const Map = ({menuItems, extras}) => {
 	const y = useRef(0);
 	const [coordsHash, setCoordsHash] = useState(null);
 
-	const mapContainer = useRef({offsetWidth: 1, offsetHeight: 1});
+	const mapContainer = useRef({ offsetWidth: 1, offsetHeight: 1 });
 	const map = useRef(null);
 	const mapCanvas = useRef();
 
-	const {currentMap, loading} = useCurrentMap();
+	const { currentMap, loading } = useCurrentMap();
 
 	const updateWindowDimensions = async () => {
-		if (mapContainer.current && (mapContainer.current.offsetWidth !== width || mapContainer.current.offsetHeight !== height)) {
+		if (
+			mapContainer.current &&
+			(mapContainer.current.offsetWidth !== width ||
+				mapContainer.current.offsetHeight !== height)
+		) {
 			await setWidth(mapContainer.current.offsetWidth);
 			await setHeight(mapContainer.current.offsetHeight);
 		}
 	};
 
 	useEffect(() => {
-		window.addEventListener('resize', updateWindowDimensions);
+		window.addEventListener("resize", updateWindowDimensions);
 		return () => {
-			window.removeEventListener('resize', updateWindowDimensions);
+			window.removeEventListener("resize", updateWindowDimensions);
 		};
 	}, []);
 
@@ -57,30 +60,30 @@ export const Map = ({menuItems, extras}) => {
 	};
 
 	const startMoving = (event) => {
-		if(event.button === 0){
-			map.current.addEventListener('mousemove', updateMapPosition);
+		if (event.button === 0) {
+			map.current.addEventListener("mousemove", updateMapPosition);
 		}
 	};
 
 	const stopMoving = () => {
-		map.current.removeEventListener('mousemove', updateMapPosition);
+		map.current.removeEventListener("mousemove", updateMapPosition);
 	};
 	useEffect(() => {
-		map.current.addEventListener('mousedown', startMoving);
-		map.current.addEventListener('mouseup', stopMoving);
+		map.current.addEventListener("mousedown", startMoving);
+		map.current.addEventListener("mouseup", stopMoving);
 		return () => {
-			map.current.removeEventListener('mousedown', startMoving);
-			map.current.removeEventListener('mouseup', stopMoving);
+			map.current.removeEventListener("mousedown", startMoving);
+			map.current.removeEventListener("mouseup", stopMoving);
 		};
 	}, []);
 
 	useEffect(() => {
-		if(currentMap && width && height){
+		if (currentMap && width && height) {
 			calcDefaultPosition();
 			getChunks();
 		}
 	}, [currentMap, width, height]);
-	
+
 	const calcDefaultPosition = () => {
 		if (width === 0 || height === 0) {
 			return;
@@ -97,7 +100,7 @@ export const Map = ({menuItems, extras}) => {
 	};
 
 	const handleWheelEvent = async (event) => {
-		let zoomRate = .1;
+		let zoomRate = 0.1;
 		if (event.deltaY > 0) {
 			zoomRate *= -1;
 		}
@@ -106,12 +109,10 @@ export const Map = ({menuItems, extras}) => {
 			zoom.current = newZoom;
 			await setCoordsHash(`${x.current}.${y.current}.${zoom.current}`);
 		}
-
 	};
 
 	// translates world to view coordinates
 	const translate = (worldX, worldY) => {
-
 		worldX += x.current;
 		worldY += y.current;
 
@@ -125,20 +126,17 @@ export const Map = ({menuItems, extras}) => {
 		worldY = Math.floor(worldY);
 
 		return [worldX, worldY];
-
 	};
 
 	const reverseTranslate = (worldX, worldY) => {
 		return [
 			(worldX - width / 2) / zoom.current - x.current,
-			(worldY - height / 2) / zoom.current - y.current
+			(worldY - height / 2) / zoom.current - y.current,
 		];
 	};
 
 	const getChunks = () => {
-
 		for (let chunk of currentMap.mapImage.chunks) {
-
 			const standardChunkWidth = 250;
 			const standardChunkHeight = 250;
 
@@ -153,90 +151,90 @@ export const Map = ({menuItems, extras}) => {
 
 			const base_image = new Image(chunk.width, chunk.height);
 			base_image.src = `/images/${chunk.fileId}`;
-			const mapContext = mapCanvas.current.getContext('2d');
+			const mapContext = mapCanvas.current.getContext("2d");
 			base_image.onload = () => {
 				mapContext.drawImage(base_image, newX, newY);
-			}
+			};
 		}
-
 	};
 
-	if(!menuItems){
+	if (!menuItems) {
 		menuItems = [];
 	}
 	const getDropdownMenu = () => {
 		const items = [];
 		for (let item of menuItems) {
 			items.push(
-				<Menu.Item key={item.name} onClick={() => {
-					const boundingBox = map.current.getBoundingClientRect();
-					const newPinX = lastMouseX.current - boundingBox.x;
-					const newPinY = lastMouseY.current - boundingBox.y;
-					const coords = reverseTranslate(newPinX, newPinY);
-					item.onClick(coords[0], coords[1]);
-				}}>{item.name}</Menu.Item>
+				<Menu.Item
+					key={item.name}
+					onClick={() => {
+						const boundingBox = map.current.getBoundingClientRect();
+						const newPinX = lastMouseX.current - boundingBox.x;
+						const newPinY = lastMouseY.current - boundingBox.y;
+						const coords = reverseTranslate(newPinX, newPinY);
+						item.onClick(coords[0], coords[1]);
+					}}
+				>
+					{item.name}
+				</Menu.Item>
 			);
 		}
 
 		return items;
 	};
 
-
 	if (loading) {
-		return <LoadingView/>;
+		return <LoadingView />;
 	}
 
 	const clonedExtras = [];
 
 	for (let extra of extras || []) {
 		clonedExtras.push(
-			React.cloneElement(extra, {translate: translate, reverseTranslate: reverseTranslate})
+			React.cloneElement(extra, {
+				translate: translate,
+				reverseTranslate: reverseTranslate,
+			})
 		);
 	}
 
-	const mapComponent = <div
-		ref={map}
-		className='margin-none overflow-hidden flex-grow-1 position-relative flex-column'
-		onWheel={handleWheelEvent}
-		onMouseDown={(event) => {
-			lastMouseX.current = event.clientX;
-			lastMouseY.current = event.clientY;
-		}}
-	>
-		<canvas
-			ref={mapCanvas}
-			style={{
-				position: 'absolute',
-				left: translate(0,0)[0],
-				top: translate(0,0)[1],
-				width: currentMap.mapImage.width * zoom.current,
-				height: currentMap.mapImage.height * zoom.current
+	const mapComponent = (
+		<div
+			ref={map}
+			className="margin-none overflow-hidden flex-grow-1 position-relative flex-column"
+			onWheel={handleWheelEvent}
+			onMouseDown={(event) => {
+				lastMouseX.current = event.clientX;
+				lastMouseY.current = event.clientY;
 			}}
-			width={currentMap.mapImage.width}
-			height={currentMap.mapImage.height}
-		/>
-		{clonedExtras}
-	</div>;
+		>
+			<canvas
+				ref={mapCanvas}
+				style={{
+					position: "absolute",
+					left: translate(0, 0)[0],
+					top: translate(0, 0)[1],
+					width: currentMap.mapImage.width * zoom.current,
+					height: currentMap.mapImage.height * zoom.current,
+				}}
+				width={currentMap.mapImage.width}
+				height={currentMap.mapImage.height}
+			/>
+			{clonedExtras}
+		</div>
+	);
 
 	const menu = getDropdownMenu();
 
 	return (
-		<div ref={mapContainer} className='flex-grow-1 flex-column'>
-			{currentMap.canWrite && menu.length > 0 ?
-				<Dropdown
-					overlay={
-						<Menu>
-							{menu}
-						</Menu>
-					}
-					trigger={['contextMenu']}
-				>
+		<div ref={mapContainer} className="flex-grow-1 flex-column">
+			{currentMap.canWrite && menu.length > 0 ? (
+				<Dropdown overlay={<Menu>{menu}</Menu>} trigger={["contextMenu"]}>
 					{mapComponent}
 				</Dropdown>
-				:
+			) : (
 				mapComponent
-			}
+			)}
 		</div>
 	);
 };
-

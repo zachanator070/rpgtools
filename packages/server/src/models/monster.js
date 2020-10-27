@@ -5,13 +5,13 @@ import { WikiPage } from "./wiki-page";
 const Schema = mongoose.Schema;
 
 const monsterSchema = new Schema({
-  model: {
-    type: mongoose.Schema.ObjectId,
-    ref: MODEL,
-  },
-  modelColor: {
-    type: String,
-  },
+	model: {
+		type: mongoose.Schema.ObjectId,
+		ref: MODEL,
+	},
+	modelColor: {
+		type: String,
+	},
 });
 
 export const Monster = WikiPage.discriminator(MONSTER, monsterSchema);

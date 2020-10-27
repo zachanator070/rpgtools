@@ -1,5 +1,5 @@
-import React from 'react';
+import React from "react";
 
 export const WorldSelectPrompt = () => {
-	return (<>Please select a world</>);
+	return <>Please select a world</>;
 };

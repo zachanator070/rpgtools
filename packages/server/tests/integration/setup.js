@@ -21,70 +21,70 @@ process.env.REFRESH_TOKEN_SECRET = "asdf1234";
 jest.setTimeout(1000 * 60 * 5);
 
 beforeEach(async function (done) {
-  /*
+	/*
 	  Define clearDB function that will loop through all
 	  the collections in our mongoose connection and drop them.
 	*/
-  async function clearDB() {
-    const collections = await mongoose.connection.db
-      .listCollections()
-      .toArray();
-    for (let collection of collections) {
-      try {
-        await mongoose.connection.db.dropCollection(collection.name);
-      } catch (e) {
-        console.log(`error while clearing collections: ${e.message}`);
-      }
-    }
-  }
+	async function clearDB() {
+		const collections = await mongoose.connection.db
+			.listCollections()
+			.toArray();
+		for (let collection of collections) {
+			try {
+				await mongoose.connection.db.dropCollection(collection.name);
+			} catch (e) {
+				console.log(`error while clearing collections: ${e.message}`);
+			}
+		}
+	}
 
-  /*
+	/*
 	  If the mongoose connection is closed,
 	  start it up using the test url and database name
 	  provided by the node runtime ENV
 	*/
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(
-      `mongodb://localhost:27017/${process.env.TEST_SUITE}`,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        autoIndex: false,
-      }
-    );
-  }
+	if (mongoose.connection.readyState === 0) {
+		await mongoose.connect(
+			`mongodb://localhost:27017/${process.env.TEST_SUITE}`,
+			{
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+				autoIndex: false,
+			}
+		);
+	}
 
-  await clearDB();
+	await clearDB();
 
-  return done();
+	return done();
 });
 
 beforeEach(async () => {
-  await User.ensureIndexes({ loc: "2d" });
-  await User.create({
-    username: "tester",
-    password: bcrypt.hashSync("tester", SALT_ROUNDS),
-  });
-  const server = await ServerConfig.create({
-    version: "1.0",
-    unlockCode: "asdf",
-    registerCodes: [],
-  });
-  const allUsersRole = await Role.create({ name: ALL_USERS });
-  const createWorldPermissions = await PermissionAssignment.create({
-    permission: WORLD_CREATE,
-    subject: server._id,
-    subjectType: SERVER_CONFIG,
-  });
-  allUsersRole.permissions.push(createWorldPermissions._id);
-  await allUsersRole.save();
+	await User.ensureIndexes({ loc: "2d" });
+	await User.create({
+		username: "tester",
+		password: bcrypt.hashSync("tester", SALT_ROUNDS),
+	});
+	const server = await ServerConfig.create({
+		version: "1.0",
+		unlockCode: "asdf",
+		registerCodes: [],
+	});
+	const allUsersRole = await Role.create({ name: ALL_USERS });
+	const createWorldPermissions = await PermissionAssignment.create({
+		permission: WORLD_CREATE,
+		subject: server._id,
+		subjectType: SERVER_CONFIG,
+	});
+	allUsersRole.permissions.push(createWorldPermissions._id);
+	await allUsersRole.save();
 });
 
 afterEach(async function (done) {
-  await mongoose.disconnect();
-  return done();
+	await mongoose.disconnect();
+	return done();
 });
 
 afterAll((done) => {
-  return done();
+	return done();
 });

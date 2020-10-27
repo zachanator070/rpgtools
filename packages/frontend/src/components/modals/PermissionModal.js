@@ -1,10 +1,15 @@
-import React from 'react';
-import {Modal} from "antd";
-import {PermissionEditor} from "../permissions/PermissionEditor";
+import React from "react";
+import { Modal } from "antd";
+import { PermissionEditor } from "../permissions/PermissionEditor";
 
-export const PermissionModal = ({visibility, setVisibility, subject, subjectType, refetch}) => {
-
-	if(subject === null || subjectType === null){
+export const PermissionModal = ({
+	visibility,
+	setVisibility,
+	subject,
+	subjectType,
+	refetch,
+}) => {
+	if (subject === null || subjectType === null) {
 		return <></>;
 	}
 
@@ -18,10 +23,13 @@ export const PermissionModal = ({visibility, setVisibility, subject, subjectType
 				await setVisibility(false);
 			}}
 			footer={[]}
-			width={'750px'}
+			width={"750px"}
 		>
-			<PermissionEditor subject={subject} subjectType={subjectType} refetch={refetch}/>
+			<PermissionEditor
+				subject={subject}
+				subjectType={subjectType}
+				refetch={refetch}
+			/>
 		</Modal>
 	);
 };
-

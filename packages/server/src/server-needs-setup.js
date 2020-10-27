@@ -5,15 +5,15 @@ import { Role } from "./models/role";
 let needsSetup = false;
 
 export const checkConfig = async () => {
-  let adminRole = await Role.findOne({ name: SERVER_ADMIN_ROLE });
-  if (!adminRole) {
-    needsSetup = true;
-    return;
-  }
-  const users = await User.find({ roles: adminRole });
-  needsSetup = users.length === 0;
+	let adminRole = await Role.findOne({ name: SERVER_ADMIN_ROLE });
+	if (!adminRole) {
+		needsSetup = true;
+		return;
+	}
+	const users = await User.find({ roles: adminRole });
+	needsSetup = users.length === 0;
 };
 
 export const serverNeedsSetup = () => {
-  return needsSetup;
+	return needsSetup;
 };

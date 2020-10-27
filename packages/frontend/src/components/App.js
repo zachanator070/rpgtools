@@ -10,25 +10,25 @@ import { ServerSetup } from "./server/ServerSetup";
 import ServerSettings from "./server/ServerSettings";
 
 export default () => {
-  return (
-    <Switch>
-      <Route path="/ui/world/:world_id">
-        <NavBar />
-        <AppContent />
-      </Route>
-      <Route path="/ui/setup">
-        <ServerSetup />
-      </Route>
-      <Route path={`/ui/serverSettings`}>
-        <ServerSettings />
-      </Route>
-      <Route exact path={"/"}>
-        <NavBar />
-        <DefaultView />
-      </Route>
-      <Route>
-        <Redirect to={"/"} />
-      </Route>
-    </Switch>
-  );
+	return (
+		<Switch>
+			<Route path="/ui/world/:world_id">
+				<NavBar />
+				<AppContent />
+			</Route>
+			<Route path="/ui/setup">
+				<ServerSetup />
+			</Route>
+			<Route path={`/ui/serverSettings`}>
+				<ServerSettings />
+			</Route>
+			<Route exact path={"/"}>
+				<NavBar />
+				<DefaultView />
+			</Route>
+			<Route>
+				<Redirect to={"/"} />
+			</Route>
+		</Switch>
+	);
 };

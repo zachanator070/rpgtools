@@ -1,20 +1,20 @@
-import {User} from "../../../src/models/user";
-import {ApolloServer} from "apollo-server-express";
-import {typeDefs} from "../../../src/gql-server-schema";
-import {serverResolvers} from "../../../src/resolvers/server-resolvers";
-import {createTestClient} from "apollo-server-testing";
-import {createWorld} from "../../../src/resolvers/mutations/world-mutations";
-import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
-import {GET_CURRENT_WORLD} from "../../../../app/src/hooks/world/useCurrentWorld";
-import {GET_CURRENT_USER} from "../../../../app/src/hooks/authentication/useCurrentUser";
-import {SEARCH_USERS} from "../../../../app/src/hooks/authentication/useSearchUsers";
-import {GET_WORLDS} from "../../../../app/src/hooks/world/useWorlds";
-import {GET_CURRENT_WIKI} from "../../../../app/src/hooks/wiki/useCurrentWiki";
+import { User } from "../../../src/models/user";
+import { ApolloServer } from "apollo-server-express";
+import { typeDefs } from "../../../src/gql-server-schema";
+import { serverResolvers } from "../../../src/resolvers/server-resolvers";
+import { createTestClient } from "apollo-server-testing";
+import { createWorld } from "../../../src/resolvers/mutations/world-mutations";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { GET_CURRENT_WORLD } from "../../../../app/src/hooks/world/useCurrentWorld";
+import { GET_CURRENT_USER } from "../../../../app/src/hooks/authentication/useCurrentUser";
+import { SEARCH_USERS } from "../../../../app/src/hooks/authentication/useSearchUsers";
+import { GET_WORLDS } from "../../../../app/src/hooks/world/useWorlds";
+import { GET_CURRENT_WIKI } from "../../../../app/src/hooks/wiki/useCurrentWiki";
 
-process.env.TEST_SUITE = 'query-resolver-test';
+process.env.TEST_SUITE = "query-resolver-test";
 
-describe('query resolver', () => {
-	let currentUser = new User({username: ANON_USERNAME});
+describe("query resolver", () => {
+	let currentUser = new User({ username: ANON_USERNAME });
 
 	const server = new ApolloServer({
 		typeDefs,
@@ -23,69 +23,72 @@ describe('query resolver', () => {
 			return {
 				currentUser: currentUser,
 				res: {
-					cookie: () => {
-					}
-				}
+					cookie: () => {},
+				},
 			};
-		}
+		},
 	});
 
-	const {query} = createTestClient(server);
+	const { query } = createTestClient(server);
 
-	test('no current user', async () => {
-		const result = await query({query: GET_CURRENT_USER});
+	test("no current user", async () => {
+		const result = await query({ query: GET_CURRENT_USER });
 		expect(result).toMatchSnapshot({
 			data: {
 				currentUser: {
-					_id: expect.any(String)
-				}
-			}
+					_id: expect.any(String),
+				},
+			},
 		});
 	});
 
-	test('users', async () => {
-		await User.create({username: 'tester2'});
-		const result = await query({query: SEARCH_USERS, variables:{username: 'tester2'}});
+	test("users", async () => {
+		await User.create({ username: "tester2" });
+		const result = await query({
+			query: SEARCH_USERS,
+			variables: { username: "tester2" },
+		});
 		expect(result).toMatchSnapshot({
 			data: {
 				users: {
 					docs: expect.arrayContaining([
 						expect.objectContaining({
-							_id: expect.any(String)
-						})
-					])
-				}
-			}
+							_id: expect.any(String),
+						}),
+					]),
+				},
+			},
 		});
 	});
 
-	describe('with authenticated user', () => {
-
+	describe("with authenticated user", () => {
 		beforeEach(async () => {
-			currentUser = await User.findOne({username: 'tester'});
+			currentUser = await User.findOne({ username: "tester" });
 		});
 
-		test('current user', async () => {
-			const result = await query({query: GET_CURRENT_USER});
+		test("current user", async () => {
+			const result = await query({ query: GET_CURRENT_USER });
 			expect(result).toMatchSnapshot({
 				data: {
 					currentUser: {
-						_id: expect.any(String)
-					}
-				}
+						_id: expect.any(String),
+					},
+				},
 			});
 		});
 
-		describe('with existing world', () => {
-
+		describe("with existing world", () => {
 			let world = null;
 
 			beforeEach(async () => {
-				world = await createWorld('Earth', false, currentUser);
+				world = await createWorld("Earth", false, currentUser);
 			});
 
-			test('world', async () => {
-				const result = await query({query: GET_CURRENT_WORLD, variables: {worldId: world._id.toString()}});
+			test("world", async () => {
+				const result = await query({
+					query: GET_CURRENT_WORLD,
+					variables: { worldId: world._id.toString() },
+				});
 				expect(result).toMatchSnapshot({
 					data: {
 						world: {
@@ -96,17 +99,17 @@ describe('query resolver', () => {
 									members: expect.arrayContaining([
 										expect.objectContaining({
 											_id: expect.any(String),
-										})
+										}),
 									]),
 									permissions: expect.arrayContaining([
 										expect.objectContaining({
 											_id: expect.any(String),
 											subject: expect.objectContaining({
 												_id: expect.any(String),
-											})
-										})
+											}),
+										}),
 									]),
-								})
+								}),
 							]),
 							wikiPage: {
 								_id: expect.any(String),
@@ -116,17 +119,16 @@ describe('query resolver', () => {
 								children: expect.arrayContaining([
 									expect.objectContaining({
 										_id: expect.any(String),
-									})
-								])
+									}),
+								]),
 							},
 							folders: expect.arrayContaining([
-
 								expect.objectContaining({
 									_id: expect.any(String),
 									children: expect.arrayContaining([
 										expect.objectContaining({
 											_id: expect.any(String),
-										})
+										}),
 									]),
 									pages: [],
 								}),
@@ -136,18 +138,21 @@ describe('query resolver', () => {
 									pages: expect.arrayContaining([
 										expect.objectContaining({
 											_id: expect.any(String),
-										})
+										}),
 									]),
-								})
-							])
-						}
-					}
+								}),
+							]),
+						},
+					},
 				});
 			});
 
-			test('worlds with one private and one public world', async () => {
-				const otherWorld = await createWorld('Azeroth', true, currentUser);
-				const result = await query({query: GET_WORLDS, variables: {page: 1}});
+			test("worlds with one private and one public world", async () => {
+				const otherWorld = await createWorld("Azeroth", true, currentUser);
+				const result = await query({
+					query: GET_WORLDS,
+					variables: { page: 1 },
+				});
 				await currentUser.recalculateAllPermissions();
 				expect(result).toMatchSnapshot({
 					data: {
@@ -157,49 +162,57 @@ describe('query resolver', () => {
 									_id: expect.any(String),
 									wikiPage: expect.objectContaining({
 										_id: expect.any(String),
-									})
-								})
-							])
-						}
-					}
+									}),
+								}),
+							]),
+						},
+					},
 				});
 			});
 
-			test('wiki', async () => {
-				const result = await query({query: GET_CURRENT_WIKI, variables: {wikiId: world.wikiPage._id.toString()}});
+			test("wiki", async () => {
+				const result = await query({
+					query: GET_CURRENT_WIKI,
+					variables: { wikiId: world.wikiPage._id.toString() },
+				});
 				expect(result).toMatchSnapshot({
 					data: {
 						wiki: {
 							_id: expect.any(String),
 							world: {
 								_id: expect.any(String),
-							}
-						}
-					}
+							},
+						},
+					},
 				});
 			});
 		});
 	});
 
-	describe('with existing world', () => {
-
+	describe("with existing world", () => {
 		let world = null;
 
 		beforeEach(async () => {
-			const user = await User.findOne({username: 'tester'});
-			world = await createWorld('Earth', false, user);
+			const user = await User.findOne({ username: "tester" });
+			world = await createWorld("Earth", false, user);
 		});
 
-		test('world', async () => {
-			const result = await query({query: GET_CURRENT_WORLD, variables: {worldId: world._id.toString()}});
+		test("world", async () => {
+			const result = await query({
+				query: GET_CURRENT_WORLD,
+				variables: { worldId: world._id.toString() },
+			});
 			expect(result).toMatchSnapshot();
 		});
 
-		test('worlds with one private and one public world', async () => {
-			const user = await User.findOne({username: 'tester'}).populate({path: 'roles', populate: {path: 'permissions'}});
-			const otherWorld = await createWorld('Azeroth', true, user);
+		test("worlds with one private and one public world", async () => {
+			const user = await User.findOne({ username: "tester" }).populate({
+				path: "roles",
+				populate: { path: "permissions" },
+			});
+			const otherWorld = await createWorld("Azeroth", true, user);
 			await currentUser.recalculateAllPermissions();
-			const result = await query({query: GET_WORLDS, variables: {page: 1}});
+			const result = await query({ query: GET_WORLDS, variables: { page: 1 } });
 			expect(result).toMatchSnapshot({
 				data: {
 					worlds: {
@@ -208,20 +221,25 @@ describe('query resolver', () => {
 								_id: expect.any(String),
 								wikiPage: expect.objectContaining({
 									_id: expect.any(String),
-								})
-							})
-						])
-					}
-				}
+								}),
+							}),
+						]),
+					},
+				},
 			});
 		});
 
-		test('wiki no permission', async () => {
-			const result = await query({query: GET_CURRENT_WIKI, variables: {wikiId: world.wikiPage._id.toString()}});
+		test("wiki no permission", async () => {
+			const result = await query({
+				query: GET_CURRENT_WIKI,
+				variables: { wikiId: world.wikiPage._id.toString() },
+			});
 			expect(result).toMatchSnapshot({
-				errors: [{
-					message: expect.any(String)
-				}]
+				errors: [
+					{
+						message: expect.any(String),
+					},
+				],
 			});
 		});
 	});

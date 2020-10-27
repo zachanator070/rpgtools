@@ -1,27 +1,26 @@
-import React, {useState} from 'react';
-import {Button, Form, Modal, Select} from "antd";
+import React, { useState } from "react";
+import { Button, Form, Modal, Select } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import {useUpdatePin} from "../../hooks/map/useUpdatePin";
-import {useDeletePin} from "../../hooks/map/useDeletePin";
-import {SelectWiki} from "../select/SelectWiki";
+import { useUpdatePin } from "../../hooks/map/useUpdatePin";
+import { useDeletePin } from "../../hooks/map/useDeletePin";
+import { SelectWiki } from "../select/SelectWiki";
 
-export const EditPinModal = ({visibility, setVisibility, pinId}) => {
-
+export const EditPinModal = ({ visibility, setVisibility, pinId }) => {
 	const [page, setPage] = useState(null);
 
-	const {currentWorld, loading: worldLoading} = useCurrentWorld();
+	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 
-	const {updatePin, loading: updateLoading} = useUpdatePin();
-	const {deletePin, loading: deleteLoading} = useDeletePin();
+	const { updatePin, loading: updateLoading } = useUpdatePin();
+	const { deletePin, loading: deleteLoading } = useDeletePin();
 
-	if(worldLoading){
+	if (worldLoading) {
 		return <></>;
 	}
 
 	let pinBeingEdited = null;
 	let possiblePins = currentWorld ? currentWorld.pins : [];
-	for(let pin of possiblePins){
-		if(pin._id === pinId){
+	for (let pin of possiblePins) {
+		if (pin._id === pinId) {
 			pinBeingEdited = pin;
 		}
 	}
@@ -32,11 +31,11 @@ export const EditPinModal = ({visibility, setVisibility, pinId}) => {
 	};
 
 	const formItemLayout = {
-		labelCol: {span: 4},
-		wrapperCol: {span: 14},
+		labelCol: { span: 4 },
+		wrapperCol: { span: 14 },
 	};
 	const noLabelItem = {
-		wrapperCol: {span: 10, offset: 4}
+		wrapperCol: { span: 10, offset: 4 },
 	};
 
 	return (
@@ -50,19 +49,32 @@ export const EditPinModal = ({visibility, setVisibility, pinId}) => {
 				}}
 				footer={null}
 			>
-				<Form layout='horizontal'>
+				<Form layout="horizontal">
 					<Form.Item label="Page" {...formItemLayout}>
-						<SelectWiki onChange={setPage}/>
+						<SelectWiki onChange={setPage} />
 					</Form.Item>
-					<Form.Item
-						{...noLabelItem}>
-						<Button type="primary" htmlType="button" disabled={updateLoading || deleteLoading} onClick={async () => {
-							await save();
-						}}>Save</Button>
-						<Button className='margin-md-left' type="danger" disabled={updateLoading || deleteLoading} onClick={async () => {
-							await deletePin(pinId);
-							await setVisibility(false);
-						}}>Delete</Button>
+					<Form.Item {...noLabelItem}>
+						<Button
+							type="primary"
+							htmlType="button"
+							disabled={updateLoading || deleteLoading}
+							onClick={async () => {
+								await save();
+							}}
+						>
+							Save
+						</Button>
+						<Button
+							className="margin-md-left"
+							type="danger"
+							disabled={updateLoading || deleteLoading}
+							onClick={async () => {
+								await deletePin(pinId);
+								await setVisibility(false);
+							}}
+						>
+							Delete
+						</Button>
 					</Form.Item>
 				</Form>
 			</Modal>

@@ -10,14 +10,14 @@ import { gameMutations } from "./mutations/game-mutations";
 import { modelMutations } from "./mutations/model-mutations";
 
 export default {
-  ...authenticationMutations,
-  ...worldMutations,
-  ...authorizationMutations,
-  ...folderMutations,
-  ...wikiMutations,
-  ...userResolvers,
-  ...imageMutations,
-  ...serverMutations,
-  ...gameMutations,
-  ...modelMutations,
+	...authenticationMutations,
+	...worldMutations,
+	...authorizationMutations,
+	...folderMutations,
+	...wikiMutations,
+	...userResolvers,
+	...imageMutations,
+	...serverMutations,
+	...gameMutations,
+	...modelMutations,
 };

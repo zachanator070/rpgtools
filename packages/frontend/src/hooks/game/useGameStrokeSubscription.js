@@ -1,7 +1,7 @@
-import {useParams} from "react-router-dom";
-import {useGQLSubscription} from "../useGQLSubscription";
+import { useParams } from "react-router-dom";
+import { useGQLSubscription } from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {GAME_STROKE} from "@rpgtools/common/src/gql-fragments";
+import { GAME_STROKE } from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_STROKE_SUBSCRIPTION = gql`
 	subscription gameStrokeAdded($gameId: ID!){
@@ -11,6 +11,6 @@ export const GAME_STROKE_SUBSCRIPTION = gql`
 	}
 `;
 export const useGameStrokeSubscription = () => {
-	const {game_id} = useParams();
-	return useGQLSubscription(GAME_STROKE_SUBSCRIPTION, {gameId: game_id});
+	const { game_id } = useParams();
+	return useGQLSubscription(GAME_STROKE_SUBSCRIPTION, { gameId: game_id });
 };

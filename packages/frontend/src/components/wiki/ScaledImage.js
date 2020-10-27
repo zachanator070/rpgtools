@@ -1,7 +1,6 @@
-import React, {Component, useRef, useState, useEffect} from 'react';
+import React, { Component, useRef, useState, useEffect } from "react";
 
-export const ScaledImage = ({src, width: propWidth, height: propHeight}) => {
-
+export const ScaledImage = ({ src, width: propWidth, height: propHeight }) => {
 	const scaledImage = useRef();
 	const [width, setWidth] = useState(propWidth);
 	const [height, setHeight] = useState(propHeight);
@@ -26,7 +25,7 @@ export const ScaledImage = ({src, width: propWidth, height: propHeight}) => {
 		setHeight(currentHeight * biggestScale);
 	};
 
-	const onImgLoad = ({target: img}) => {
+	const onImgLoad = ({ target: img }) => {
 		resize();
 	};
 
@@ -35,7 +34,12 @@ export const ScaledImage = ({src, width: propWidth, height: propHeight}) => {
 	}, [width, height]);
 
 	return (
-		<img alt='' ref={scaledImage} style={{width: width, height: height}}
-		     onLoad={onImgLoad} src={src}/>
+		<img
+			alt=""
+			ref={scaledImage}
+			style={{ width: width, height: height }}
+			onLoad={onImgLoad}
+			src={src}
+		/>
 	);
 };

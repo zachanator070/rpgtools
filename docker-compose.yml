@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   dev-server:
     build:
       context: .
@@ -9,12 +8,12 @@ services:
     env_file:
       - .env
     volumes:
-    - ./packages/server/src:/home/node/app/packages/server/src
-    - ./packages/common/src:/home/node/app/packages/common/src
-    - ./packages/frontend/dist:/home/node/app/packages/server/dist
+      - ./packages/server/src:/home/node/app/packages/server/src
+      - ./packages/common/src:/home/node/app/packages/common/src
+      - ./packages/frontend/dist:/home/node/app/packages/server/dist
     ports:
-    - "${PORT:-3000}:${PORT:-3000}"
-    - "9229:9229"
+      - "${PORT:-3000}:${PORT:-3000}"
+      - "9229:9229"
     depends_on:
       - mongodb
       - redis
@@ -39,14 +38,14 @@ services:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
     env_file:
-     - .env
+      - .env
     volumes:
-     - ./packages/frontend/src:/home/node/app/packages/frontend/src
-     - ./packages/common/src:/home/node/app/packages/common/src
-     - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
+      - ./packages/frontend/src:/home/node/app/packages/frontend/src
+      - ./packages/common/src:/home/node/app/packages/common/src
+      - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
     command: "npm run start-dev"
     networks:
-     - rpgtools
+      - rpgtools
 
   prod-builder:
     build:
@@ -56,14 +55,14 @@ services:
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
-     - ./packages/frontend/dist:/home/node/app/frontend/dist
+      - ./packages/frontend/dist:/home/node/app/frontend/dist
     networks:
-     - rpgtools
+      - rpgtools
 
   mongodb:
     image: "mongo:latest"
     environment:
-      MONGO_INITDB_DATABASE: 'rpgtools'
+      MONGO_INITDB_DATABASE: "rpgtools"
     volumes:
       - ./dev/mongodb-init:/docker-entrypoint-initdb.d
     ports:
@@ -72,7 +71,7 @@ services:
       rpgtools:
 
   redis:
-    image: 'redis:latest'
+    image: "redis:latest"
     ports:
       - "6379:6379"
     networks:
@@ -81,7 +80,7 @@ services:
   test-db:
     image: "mongo:latest"
     environment:
-      MONGO_INITDB_DATABASE: 'rpgtools'
+      MONGO_INITDB_DATABASE: "rpgtools"
     ports:
       - "27017:27017"
     networks:

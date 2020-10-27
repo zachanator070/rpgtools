@@ -1,6 +1,6 @@
-import {useMutation} from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_PINS} from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_PINS } from "@rpgtools/common/src/gql-fragments";
 
 export const DELETE_PIN = gql`
 	mutation deletePin($pinId: ID!){
@@ -11,13 +11,13 @@ export const DELETE_PIN = gql`
 	}
 `;
 export const useDeletePin = () => {
-	const [deletePin, {loading, data, error}] = useMutation(DELETE_PIN);
+	const [deletePin, { loading, data, error }] = useMutation(DELETE_PIN);
 	return {
 		deletePin: async (pinId) => {
-			return deletePin({variables: {pinId}});
+			return deletePin({ variables: { pinId } });
 		},
 		loading,
 		pin: data ? data.deletePin : [],
-		errors: error ? error.graphQLErrors.map(error => error.message) : []
-	}
+		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+	};
 };
