@@ -13,10 +13,10 @@ WORKDIR /home/node/app/packages/frontend
 
 ADD packages/frontend/package.json package.json
 ADD packages/frontend/package-lock.json package-lock.json
+RUN lerna bootstrap
+
 ADD packages/frontend/webpack.config.js webpack.config.js
 ADD packages/frontend/webpack-dev.config.js webpack-dev.config.js
-
-RUN lerna bootstrap
 
 RUN mkdir -p dist
 RUN chmod o+w dist

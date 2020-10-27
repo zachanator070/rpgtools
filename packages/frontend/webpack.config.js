@@ -96,17 +96,6 @@ module.exports = {
 					},
 				],
 			},
-			// {
-			// 	test: /\.svg$/,
-			// 	use: [
-			// 		{
-			// 			loader: "html-loader",
-			// 			options: {
-			// 				minimize: true,
-			// 			},
-			// 		},
-			// 	],
-			// },
 			{
 				test: /\.css$/,
 				use: [MiniCssExtractPlugin.loader, "css-loader"],
@@ -114,6 +103,17 @@ module.exports = {
 			{
 				test: /\.(png|jpg|gif|ico|svg)$/,
 				use: ["file-loader?name=[name].[ext]"],
+				exclude: {
+					or: [
+						function (item) {
+							return item.match(/node_modules\/quill\/assets\/icons\/(.*).svg/);
+						},
+					],
+				},
+			},
+			{
+				test: /node_modules\/quill\/assets\/icons\/(.*).svg/,
+				use: [{ loader: "html-loader", options: { minimize: true } }],
 			},
 			{
 				test: /\.(woff|woff2|eot|ttf|otf)$/,
