@@ -1,26 +1,24 @@
 module.exports = function (api) {
 	api.cache(true);
 	return {
-		presets: [
-			'@babel/preset-env',
-		],
+		presets: ["@babel/preset-env"],
 		env: {
 			test: {
 				presets: [
 					[
-						'@babel/preset-env',
+						"@babel/preset-env",
 						{
 							targets: {
-								node: 'current',
+								node: "current",
 							},
 						},
 					],
 				],
 				plugins: [
-					'transform-es2015-modules-commonjs',
-					'babel-plugin-dynamic-import-node',
+					"transform-es2015-modules-commonjs",
+					"babel-plugin-dynamic-import-node",
 				],
 			},
-		}
+		},
 	};
 };

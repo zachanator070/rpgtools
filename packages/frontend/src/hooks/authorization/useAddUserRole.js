@@ -1,6 +1,9 @@
-import {useMutation} from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import {ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES} from "@rpgtools/common/src/gql-fragments";
+import {
+	ACCESS_CONTROL_LIST,
+	CURRENT_WORLD_ROLES,
+} from "@rpgtools/common/src/gql-fragments";
 
 export const ADD_USER_ROLE = gql`
 	mutation addUserRole($userId: ID!, $roleId: ID!){
@@ -12,13 +15,13 @@ export const ADD_USER_ROLE = gql`
 	}
 `;
 export default () => {
-	const [addUserRole, {loading, error, data}] = useMutation(ADD_USER_ROLE);
+	const [addUserRole, { loading, error, data }] = useMutation(ADD_USER_ROLE);
 	return {
 		addUserRole: async (userId, roleId) => {
-			await addUserRole({variables: {userId, roleId}});
+			await addUserRole({ variables: { userId, roleId } });
 		},
 		loading,
-		errors: error ? error.graphQLErrors.map(error => error.message) : [],
-		world: data ? data.addUserRole : null
-	}
-}
+		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+		world: data ? data.addUserRole : null,
+	};
+};

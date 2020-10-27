@@ -13,8 +13,8 @@ const SET_CHARACTER_ORDER = gql`
 `;
 
 export const useSetCharacterOrder = () => {
-  const { currentGame } = useCurrentGame();
-  return useGQLMutation(SET_CHARACTER_ORDER, {
-    gameId: currentGame && currentGame._id,
-  });
+	const { currentGame } = useCurrentGame();
+	return useGQLMutation(SET_CHARACTER_ORDER, {
+		gameId: currentGame && currentGame._id,
+	});
 };

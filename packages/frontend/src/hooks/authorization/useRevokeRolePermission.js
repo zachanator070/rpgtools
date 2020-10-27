@@ -1,6 +1,6 @@
-import {useMutation} from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import {PERMISSIONS_GRANTED} from "@rpgtools/common/src/gql-fragments";
+import { PERMISSIONS_GRANTED } from "@rpgtools/common/src/gql-fragments";
 
 export const REVOKE_ROLE_PERMISSION = gql`
 	mutation revokeRolePermission($roleId: ID!, $permissionAssignmentId: ID!){
@@ -11,13 +11,17 @@ export const REVOKE_ROLE_PERMISSION = gql`
 	}
 `;
 export const useRevokeRolePermission = () => {
-	const [revokeRolePermission, {data, loading, error}] = useMutation(REVOKE_ROLE_PERMISSION);
+	const [revokeRolePermission, { data, loading, error }] = useMutation(
+		REVOKE_ROLE_PERMISSION
+	);
 	return {
 		revokeRolePermission: async (roleId, permissionAssignmentId) => {
-			return await revokeRolePermission({variables: {roleId, permissionAssignmentId}});
+			return await revokeRolePermission({
+				variables: { roleId, permissionAssignmentId },
+			});
 		},
 		loading,
 		subject: data ? data.revokeRolePermission : null,
-		errors: error ? error.graphQLErrors.map(error => error.message) : []
-	}
+		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+	};
 };

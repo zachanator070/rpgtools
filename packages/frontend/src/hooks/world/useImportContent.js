@@ -1,6 +1,6 @@
-import {useGQLMutation} from "../useGQLMutation";
+import { useGQLMutation } from "../useGQLMutation";
 import gql from "graphql-tag";
-import {CURRENT_WORLD_FOLDERS} from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_FOLDERS } from "@rpgtools/common/src/gql-fragments";
 
 export const IMPORT_CONTENT = gql`
 	mutation importContent($folderId: ID!, $zipFile: Upload!){
@@ -14,4 +14,4 @@ export const IMPORT_CONTENT = gql`
 `;
 export const useImportContent = () => {
 	return useGQLMutation(IMPORT_CONTENT);
-}
+};

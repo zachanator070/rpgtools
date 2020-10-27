@@ -2,18 +2,18 @@ os: linux
 dist: bionic
 language: minimal
 before_install:
-- sudo apt-get update
-- sudo apt-get -y install make docker-compose gnupg2 pass
+  - sudo apt-get update
+  - sudo apt-get -y install make docker-compose gnupg2 pass
 jobs:
   include:
-  - stage: build docker image
-    script:
-    - make build
-  - stage: publish docker image
-    if: type != pull_request
-    script:
-    - make publish
+    - stage: build docker image
+      script:
+        - make build
+    - stage: publish docker image
+      if: type != pull_request
+      script:
+        - make publish
 env:
   global:
-  - secure: AV1GNHt23aK/YendFUV8LI/31iIg+RgpL/g2CdIzkCDIOSt37CcXE/JkEgVgG5Ovi5rtcFtMzhZQZ96BVeJcDhwCckNWBXbUixNKyREscXbFJduhddBTugl4LmDS8WZAyt49QEoXRzWxyuBqPiPJfOiLUVQQqvurdJe8+hGXG63kyT92eLoLnG2hpEmjDZja2xKapuP+Ea6Y4/u1+Fgs/kBeW1H8Daywarm0FeintNbcRUYmQgngk4aEibsOG3z8M+RNwF/wIxk/mrni4lPtS2ZN+8YZiBBhQdv/w20ZkeNkQkk34plFoMU471NikWg452zvPbIYi+HQ/t1y3YCPH2AHM5FCeOBoDSAT6h71FnD9C0jQ3fwQZK/amA4oNK6wKwAT9YjXBPiBgqVV+5rVk2xYS612dzLG4TCihA93JSkoBrx+81TjNPVjItz44A+LVONqkj1VHPATR4eHyhQCN7Q2O7savtNPXWfGZsaKgIbR9Vff3itMV9dXGnomg1ey9rLrXh79hC/QYorUWm+VGoDCtepzrmW/onGNjQhQ0VpIUrwqpBPvB+NLyOgblOzz3TdcMrZsO7BQT6QWxcdyY8j4aauUkQZcEfPJnxakLFaoxLZiBAjLKetYLaaeedkn5louTacJqAvYcBYLhfmC9tGuZU52SKa64Mx0mpX7wu4=
-  - secure: TwQqpHfRNPqZD0U/xHZUjTZ4u3py9pW1ZPXxYeB/aEPK0r0dgRhK9jWV+fz70uvDszHOeXDoaMVpfh3ztqA0Tu2TdiC8S9qsRi61lLPhjVLuENcaCOT7qgtPIuScWOsnZ6GYjZPbHcBi5agsWRKjwuekOxIrouiiGPFnnSYWo7Eb0wvEWRt5z7CFBNrS78VbyJnNHA9Ybh/JvYf44LdoQcLanlocYUqH/GciisFzsNc2/qq0qHoAVM7hR5+DRV5LGmdYwuZoTD015aQnuGsnnAMN3rnIvHS1WzGCYuHs59l9LFMT/VqjgJ/KP+/uub3OwCrPyZTjCZIxLxpqC2dMcCUN5pTpns7+3u+oXBrE4jWz49JhAoZT2ugxJyEdR1ooGLDZWoCwJA+uhCcEKMNIyYdcEnhKsR+fgpAyJRbFMx1RokJ2iM/lYRcyrLo/q2mTJTdmuA/A7tvUL9kvBBt/FRFS/dR7a+vZUGg/DkApaO6qv3SIke9uV5ERnxPGSZ1nXc6AbU1NCPMsSHwD6dlkHzP7pmPIXf5FUbuby5MdSHUEeeqbd2Vi28IX0dTSqc7niqJuYCgA+cVGoADIgUCi9JdPi4C88krvYteKVgcw31ZnvnaUcHl42KnYS0vOh4BjwvWRv3f+OBvLFBehM3rD/iFTMI+8kbbs8qwmgox8Xcc=
+    - secure: AV1GNHt23aK/YendFUV8LI/31iIg+RgpL/g2CdIzkCDIOSt37CcXE/JkEgVgG5Ovi5rtcFtMzhZQZ96BVeJcDhwCckNWBXbUixNKyREscXbFJduhddBTugl4LmDS8WZAyt49QEoXRzWxyuBqPiPJfOiLUVQQqvurdJe8+hGXG63kyT92eLoLnG2hpEmjDZja2xKapuP+Ea6Y4/u1+Fgs/kBeW1H8Daywarm0FeintNbcRUYmQgngk4aEibsOG3z8M+RNwF/wIxk/mrni4lPtS2ZN+8YZiBBhQdv/w20ZkeNkQkk34plFoMU471NikWg452zvPbIYi+HQ/t1y3YCPH2AHM5FCeOBoDSAT6h71FnD9C0jQ3fwQZK/amA4oNK6wKwAT9YjXBPiBgqVV+5rVk2xYS612dzLG4TCihA93JSkoBrx+81TjNPVjItz44A+LVONqkj1VHPATR4eHyhQCN7Q2O7savtNPXWfGZsaKgIbR9Vff3itMV9dXGnomg1ey9rLrXh79hC/QYorUWm+VGoDCtepzrmW/onGNjQhQ0VpIUrwqpBPvB+NLyOgblOzz3TdcMrZsO7BQT6QWxcdyY8j4aauUkQZcEfPJnxakLFaoxLZiBAjLKetYLaaeedkn5louTacJqAvYcBYLhfmC9tGuZU52SKa64Mx0mpX7wu4=
+    - secure: TwQqpHfRNPqZD0U/xHZUjTZ4u3py9pW1ZPXxYeB/aEPK0r0dgRhK9jWV+fz70uvDszHOeXDoaMVpfh3ztqA0Tu2TdiC8S9qsRi61lLPhjVLuENcaCOT7qgtPIuScWOsnZ6GYjZPbHcBi5agsWRKjwuekOxIrouiiGPFnnSYWo7Eb0wvEWRt5z7CFBNrS78VbyJnNHA9Ybh/JvYf44LdoQcLanlocYUqH/GciisFzsNc2/qq0qHoAVM7hR5+DRV5LGmdYwuZoTD015aQnuGsnnAMN3rnIvHS1WzGCYuHs59l9LFMT/VqjgJ/KP+/uub3OwCrPyZTjCZIxLxpqC2dMcCUN5pTpns7+3u+oXBrE4jWz49JhAoZT2ugxJyEdR1ooGLDZWoCwJA+uhCcEKMNIyYdcEnhKsR+fgpAyJRbFMx1RokJ2iM/lYRcyrLo/q2mTJTdmuA/A7tvUL9kvBBt/FRFS/dR7a+vZUGg/DkApaO6qv3SIke9uV5ERnxPGSZ1nXc6AbU1NCPMsSHwD6dlkHzP7pmPIXf5FUbuby5MdSHUEeeqbd2Vi28IX0dTSqc7niqJuYCgA+cVGoADIgUCi9JdPi4C88krvYteKVgcw31ZnvnaUcHl42KnYS0vOh4BjwvWRv3f+OBvLFBehM3rD/iFTMI+8kbbs8qwmgox8Xcc=

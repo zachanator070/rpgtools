@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
-import {useGQLQuery} from "../useGQLQuery";
-import {useParams} from 'react-router-dom';
+import { useGQLQuery } from "../useGQLQuery";
+import { useParams } from "react-router-dom";
 
 const SEARCH_ROLES = gql`
-	query roles($worldId: ID!, $name: String, $canAdmin: Boolean){
-		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin){
-			docs{
+	query roles($worldId: ID!, $name: String, $canAdmin: Boolean) {
+		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
+			docs {
 				_id
 				name
 			}
@@ -15,5 +15,5 @@ const SEARCH_ROLES = gql`
 
 export const useSearchRoles = (variables) => {
 	const params = useParams();
-	return useGQLQuery(SEARCH_ROLES, {worldId: params.world_id, ...variables});
+	return useGQLQuery(SEARCH_ROLES, { worldId: params.world_id, ...variables });
 };

@@ -1,6 +1,6 @@
-import {CURRENT_WIKI_ATTRIBUTES} from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WIKI_ATTRIBUTES } from "@rpgtools/common/src/gql-fragments";
 import gql from "graphql-tag";
-import {useGQLLazyQuery} from "../useGQLLazyQuery";
+import { useGQLLazyQuery } from "../useGQLLazyQuery";
 
 export const GAME_WIKI = gql`
 	query wiki($wikiId: ID!){
@@ -11,7 +11,5 @@ export const GAME_WIKI = gql`
 `;
 
 export default () => {
-
-    return useGQLLazyQuery(GAME_WIKI);
-
-}
+	return useGQLLazyQuery(GAME_WIKI);
+};

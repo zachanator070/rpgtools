@@ -1,7 +1,7 @@
-import {useParams} from "react-router-dom";
-import {useGQLSubscription} from "../useGQLSubscription";
+import { useParams } from "react-router-dom";
+import { useGQLSubscription } from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {GAME_MODEL} from "@rpgtools/common/src/gql-fragments";
+import { GAME_MODEL } from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_MODEL_ADDED_SUBSCRIPTION = gql`
 	subscription gameModelAdded($gameId: ID!){
@@ -11,6 +11,6 @@ export const GAME_MODEL_ADDED_SUBSCRIPTION = gql`
 	}
 `;
 export const useGameModelAddedSubscription = () => {
-	const {game_id} = useParams();
-	return useGQLSubscription(GAME_MODEL_ADDED_SUBSCRIPTION, {gameId: game_id});
+	const { game_id } = useParams();
+	return useGQLSubscription(GAME_MODEL_ADDED_SUBSCRIPTION, { gameId: game_id });
 };

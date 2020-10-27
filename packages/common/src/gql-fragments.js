@@ -217,6 +217,12 @@ export const GAME_CHARACTERS = `
             _id
             username
         }
+        str
+        dex
+        con
+        int
+        wis
+        cha
     }
 `;
 

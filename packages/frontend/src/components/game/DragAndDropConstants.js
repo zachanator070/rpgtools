@@ -1,1 +1,1 @@
-export const INITIATIVE_CARD = 'InitiativeTrackerCard';
+export const INITIATIVE_CARD = "InitiativeTrackerCard";

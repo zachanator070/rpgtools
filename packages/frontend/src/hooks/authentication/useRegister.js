@@ -1,19 +1,35 @@
-import {useMutation} from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
 export const REGISTER_MUTATION = gql`
-    mutation register($registerCode: String!, $email: String!, $username: String!, $password: String!){
-        register(registerCode: $registerCode, email: $email, username: $username, password: $password){
-            _id
-        }
-    }
+	mutation register(
+		$registerCode: String!
+		$email: String!
+		$username: String!
+		$password: String!
+	) {
+		register(
+			registerCode: $registerCode
+			email: $email
+			username: $username
+			password: $password
+		) {
+			_id
+		}
+	}
 `;
 export default (callback) => {
-	const [register, {data, loading, error}] = useMutation(REGISTER_MUTATION, {onCompleted: callback});
+	const [register, { data, loading, error }] = useMutation(REGISTER_MUTATION, {
+		onCompleted: callback,
+	});
 	return {
-		register: async (registerCode, email, username, password) => {await register({variables: {registerCode, email, username, password}})},
+		register: async (registerCode, email, username, password) => {
+			await register({
+				variables: { registerCode, email, username, password },
+			});
+		},
 		loading,
 		user: data ? data.register : null,
-		errors: error ? error.graphQLErrors.map(error => error.message) : []
+		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
 	};
-}
+};

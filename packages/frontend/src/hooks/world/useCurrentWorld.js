@@ -1,13 +1,12 @@
-import {useQuery} from "@apollo/client";
-import {useParams} from 'react-router-dom';
+import { useQuery } from "@apollo/client";
+import { useParams } from "react-router-dom";
 import gql from "graphql-tag";
 import {
-    ACCESS_CONTROL_LIST,
-    CURRENT_WORLD_FOLDERS,
-    CURRENT_WORLD_PINS,
-    CURRENT_WORLD_ROLES
+	ACCESS_CONTROL_LIST,
+	CURRENT_WORLD_FOLDERS,
+	CURRENT_WORLD_PINS,
+	CURRENT_WORLD_ROLES,
 } from "@rpgtools/common/src/gql-fragments";
-
 
 export const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID){
@@ -49,12 +48,14 @@ export const GET_CURRENT_WORLD = gql`
     
 `;
 export default () => {
-	const {world_id} = useParams();
-	const {data, loading, error, refetch} = useQuery(GET_CURRENT_WORLD, {variables: {worldId: world_id}});
+	const { world_id } = useParams();
+	const { data, loading, error, refetch } = useQuery(GET_CURRENT_WORLD, {
+		variables: { worldId: world_id },
+	});
 	return {
 		currentWorld: data ? data.world : null,
 		loading,
-		errors: error ? error.graphQLErrors.map(error => error.message) : [],
-		refetch
+		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+		refetch,
 	};
-}
+};
