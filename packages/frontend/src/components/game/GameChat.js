@@ -4,14 +4,17 @@ import { useGameChatSubscription } from "../../hooks/game/useGameChatSubscriptio
 import { useGameChat } from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { CloseOutlined, CommentOutlined } from "@ant-design/icons";
+import { useCurrentCharacter } from "../../hooks/game/useCurrentCharacter";
 
 export const GameChat = () => {
 	const { currentGame } = useCurrentGame();
+	const { currentCharacter } = useCurrentCharacter();
 	const [messages, setMessages] = useState([]);
 	const chatInput = useRef();
 	const { data: gameChatMessage } = useGameChatSubscription();
 	const { gameChat, loading: chatLoading } = useGameChat();
 	const [comment, setComment] = useState();
+	const [historyIndex, setHistoryIndex] = useState(-1);
 
 	const scrollChat = () => {
 		const element = document.getElementById("chat");
@@ -46,6 +49,16 @@ export const GameChat = () => {
 			await setComment(null);
 			chatInput.current.focus();
 		}
+	};
+
+	const getHistory = (index) => {
+		const history = messages
+			.filter((message) => message.sender === currentCharacter.name)
+			.reverse();
+		if (index >= 0 && index < history.length) {
+			return history[index].message;
+		}
+		return "";
 	};
 
 	return (
@@ -95,6 +108,22 @@ export const GameChat = () => {
 								rows={4}
 								onChange={async (value) => {
 									await setComment(value.target.value);
+								}}
+								onKeyDown={(e) => {
+									if (e.key === "ArrowUp") {
+										const historyItem = getHistory(historyIndex + 1);
+										if (historyItem) {
+											setComment(historyItem);
+											setHistoryIndex(historyIndex + 1);
+										}
+									} else if (e.key === "ArrowDown") {
+										if (historyIndex >= 0) {
+											setComment(getHistory(historyIndex - 1));
+											setHistoryIndex(historyIndex - 1);
+										}
+									} else {
+										setHistoryIndex(-1);
+									}
 								}}
 								value={comment}
 								onPressEnter={submitComment}
