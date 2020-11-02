@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get -y install make docker-compose gnupg2 pass
 jobs:
   include:
-    - stage: build docker image
+    - stage: ci
       script:
         - make build
     - stage: publish docker image
