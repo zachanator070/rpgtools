@@ -10,9 +10,10 @@ build: prod-builder clean-uncompressed
 # cleans built transpiled js and node modules
 clean:
 	rm -rf node_modules
-	rm -rf dist
-	rm -rf app/node_modules
-	rm -rf server/node_modules
+	rm -rf packages/frontend/dist
+	rm -rf packages/frontend/node_modules
+	rm -rf packages/server/node_modules
+	rm -rf packages/common/node_modules
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
