@@ -18,7 +18,7 @@ RUN lerna bootstrap
 
 ADD packages/common/src ../common/src
 ADD packages/server/src src
-ADD packages/frontend/dist ../dist
+ADD packages/frontend/dist dist
 
 EXPOSE 3000
 
