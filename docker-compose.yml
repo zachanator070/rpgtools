@@ -55,7 +55,7 @@ services:
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
     volumes:
-      - ./packages/frontend/dist:/home/node/app/frontend/dist
+      - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
     networks:
       - rpgtools
 

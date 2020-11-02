@@ -3,5 +3,5 @@
 node_modules/
 .env
 dist/
-dev/mongodb-init/*.js
+dev/mongodb-init/dump/
 coverage/
