@@ -17,6 +17,8 @@ import { createGfsFile } from "../db-helpers";
 import { raceToDelta } from "./race-to-delta";
 import { classToDelta } from "./class-to-delta";
 import { spellToDelta } from "./spell-to-delta";
+import {getRules} from "./dnd-5e-api-client";
+import {ruleToDelta} from "./rule-to-delta";
 
 export class FiveEImporter {
 	constructor(world) {
@@ -34,10 +36,13 @@ export class FiveEImporter {
 		articles,
 		getContent,
 		getContainingFolder,
-		filter = () => {},
+		filter = (article) => true,
 		callback = () => {}
 	) => {
 		for await (let article of articles) {
+			if(!filter(article)){
+				continue;
+			}
 			const content = await getContent(article);
 			const page = await Article.create({
 				name: article.name,
@@ -70,7 +75,7 @@ export class FiveEImporter {
 			(monster) =>
 				(monster.document__slug === "cc" && creatureCodex) ||
 				(monster.document__slug === "tob" && tomeOfBeasts) ||
-				monster.document__slug === "wotc",
+				monster.document__slug === "wotc-srd",
 			async (monster, page) => {
 				if (monster.img_main) {
 					const imageResponse = await fetch(monster.img_main);
@@ -127,4 +132,12 @@ export class FiveEImporter {
 			() => containingFolder
 		);
 	};
+
+	importRules = async (containingFolder, rulesToGet) => {
+		await this.createArticles(
+			await getRules(rulesToGet),
+			ruleToDelta,
+			() => containingFolder
+		)
+	}
 }
