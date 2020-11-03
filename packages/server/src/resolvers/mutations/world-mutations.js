@@ -239,7 +239,12 @@ export const worldMutations = {
 
 		await Promise.all([
 			importer.importMonsters(monsterFolder, creatureCodex, tomeOfBeasts),
-			importer.importAdventurePages(topFolder),
+			(async () => {
+				await importer.importAdventurePages(topFolder);
+				// adventure pages creates a rules folder that importRules needs
+				const rulesFolder = (await WikiFolder.findById(topFolder._id).populate('children')).children.find(folder => folder.name === 'Rules');
+				await importer.importRules(rulesFolder, ['combat', 'adventuring', 'using-ability-scores']);
+			})(),
 			importer.importRaces(racesFolder),
 			(async () => {
 				await importer.importSpells(spellsFolder);

@@ -169,7 +169,7 @@ export default {
 		}
 		const results = await WikiPage.paginate(
 			{ _id: { $in: folder.pages } },
-			{ page }
+			{ sort: {name: 1}, page }
 		);
 		const docs = [];
 		for (let doc of results.docs) {
