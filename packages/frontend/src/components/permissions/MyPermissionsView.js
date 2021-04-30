@@ -1,11 +1,6 @@
 import { Col, Row, Table } from "antd";
 import React from "react";
-import {
-	ALL_WIKI_TYPES,
-	ROLE,
-	WIKI_FOLDER,
-	WORLD,
-} from "@rpgtools/common/src/type-constants";
+import { ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WORLD } from "../../../../common/src/type-constants";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import { LoadingView } from "../LoadingView";
@@ -23,11 +18,7 @@ export const MyPermissionsView = () => {
 	const getPermissionSubjectName = (assignment) => {
 		let name = assignment.subject._id;
 
-		if (
-			[WORLD, WIKI_FOLDER, ROLE]
-				.concat(ALL_WIKI_TYPES)
-				.includes(assignment.subjectType)
-		) {
+		if ([WORLD, WIKI_FOLDER, ROLE].concat(ALL_WIKI_TYPES).includes(assignment.subjectType)) {
 			name = assignment.subject.name;
 		}
 
@@ -54,13 +45,9 @@ export const MyPermissionsView = () => {
 		});
 	}
 
-	let allPermissionNames = permissionAssignments.map(
-		(assignment) => assignment.permission
-	);
+	let allPermissionNames = permissionAssignments.map((assignment) => assignment.permission);
 	allPermissionNames = [...new Set(allPermissionNames)];
-	let allSubjectNames = permissionAssignments.map(
-		(assignment) => assignment.subject
-	);
+	let allSubjectNames = permissionAssignments.map((assignment) => assignment.subject);
 	allSubjectNames = [...new Set(allSubjectNames)];
 	let allSources = permissionAssignments.map((assignment) => assignment.source);
 	allSources = [...new Set(allSources)];

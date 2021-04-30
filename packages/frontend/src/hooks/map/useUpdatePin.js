@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import { CURRENT_WORLD_PINS } from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_PINS } from "../../../../common/src/gql-fragments";
 
 export const UPDATE_PIN = gql`
 	mutation updatePin($pinId: ID!, $pageId: ID){

@@ -43,6 +43,7 @@ init-env:
 
 # runs development docker images
 dev-up:
+	mkdir -p packages/frontend/dist
 	docker-compose up -d dev-server
 
 build-dev:
@@ -86,9 +87,9 @@ ci: install-deps lint test
 install-deps:
 	# installs node modules needed by CI
 	npm install
-	cd server && npm install
-	cd app && npm install
-	cd common && npm install
+	cd packages/server && npm install
+	cd packages/frontend && npm install
+	cd packages/common && npm install
 
 lint:
 	npx eslint server/src app/src common/src

@@ -7,7 +7,7 @@ import {
 } from "./open-5e-api-client";
 import { monsterToDelta } from "./monster-to-delta";
 import { Article } from "../models/article";
-import { ARTICLE } from "@rpgtools/common/src/type-constants";
+import { ARTICLE } from "../../../common/src/type-constants";
 import fetch from "node-fetch";
 import { imageMutations } from "../resolvers/mutations/image-mutations";
 import { WikiFolder } from "../models/wiki-folder";
@@ -17,8 +17,8 @@ import { createGfsFile } from "../db-helpers";
 import { raceToDelta } from "./race-to-delta";
 import { classToDelta } from "./class-to-delta";
 import { spellToDelta } from "./spell-to-delta";
-import {getRules} from "./dnd-5e-api-client";
-import {ruleToDelta} from "./rule-to-delta";
+import { getRules } from "./dnd-5e-api-client";
+import { ruleToDelta } from "./rule-to-delta";
 
 export class FiveEImporter {
 	constructor(world) {
@@ -40,7 +40,7 @@ export class FiveEImporter {
 		callback = () => {}
 	) => {
 		for await (let article of articles) {
-			if(!filter(article)){
+			if (!filter(article)) {
 				continue;
 			}
 			const content = await getContent(article);
@@ -49,10 +49,7 @@ export class FiveEImporter {
 				type: ARTICLE,
 				world: this.world,
 			});
-			page.contentId = await this.createWikiContentFile(
-				page._id,
-				JSON.stringify(content)
-			);
+			page.contentId = await this.createWikiContentFile(page._id, JSON.stringify(content));
 			await page.save();
 			const containingFolder = await getContainingFolder(article);
 			containingFolder.pages.push(page);
@@ -126,18 +123,10 @@ export class FiveEImporter {
 	};
 
 	importSpells = async (containingFolder) => {
-		await this.createArticles(
-			getSpells(),
-			spellToDelta,
-			() => containingFolder
-		);
+		await this.createArticles(getSpells(), spellToDelta, () => containingFolder);
 	};
 
 	importRules = async (containingFolder, rulesToGet) => {
-		await this.createArticles(
-			await getRules(rulesToGet),
-			ruleToDelta,
-			() => containingFolder
-		)
-	}
+		await this.createArticles(await getRules(rulesToGet), ruleToDelta, () => containingFolder);
+	};
 }

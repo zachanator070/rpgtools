@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
+import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "../../../common/src/type-constants";
 import {
 	GAME_ADMIN,
 	GAME_ADMIN_ALL,
@@ -8,7 +8,7 @@ import {
 	GAME_PAINT,
 	GAME_READ,
 	GAME_RW,
-} from "@rpgtools/common/src/permission-constants";
+} from "../../../common/src/permission-constants";
 
 const Schema = mongoose.Schema;
 

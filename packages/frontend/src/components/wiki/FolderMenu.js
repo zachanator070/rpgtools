@@ -19,14 +19,9 @@ import { useDeleteFolder } from "../../hooks/wiki/useDeleteFolder";
 import { ToolTip } from "../ToolTip";
 import { useImportContent } from "../../hooks/world/useImportContent";
 import { PermissionEditor } from "../permissions/PermissionEditor";
-import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import { WIKI_FOLDER } from "../../../../common/src/type-constants";
 
-export const FolderMenu = ({
-	folder,
-	children,
-	refetchFolders,
-	refetchWikis,
-}) => {
+export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) => {
 	const { createWiki } = useCreateWiki();
 	const { createFolder } = useCreateFolder();
 	const { renameFolder } = useRenameFolder();
@@ -35,13 +30,9 @@ export const FolderMenu = ({
 
 	const { importContent, loading: importLoading } = useImportContent();
 	const [renameModalVisibility, setRenameModalVisibility] = useState(false);
-	const [moveFolderModalVisibility, setMoveFolderModalVisibility] = useState(
-		false
-	);
+	const [moveFolderModalVisibility, setMoveFolderModalVisibility] = useState(false);
 	const [importModalVisibility, setImportModalVisibility] = useState(false);
-	const [permissionModalVisibility, setPermissionModalVisibility] = useState(
-		false
-	);
+	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
 	const layout = {
 		labelCol: { span: 8 },
@@ -253,8 +244,7 @@ export const FolderMenu = ({
 											const supportedTypes = ["zip"];
 											const parts = file.name.split(".");
 
-											const type =
-												parts.length > 0 ? parts[parts.length - 1] : null;
+											const type = parts.length > 0 ? parts[parts.length - 1] : null;
 											if (!supportedTypes.includes(type)) {
 												throw new Error(`File type ${type} not supported`);
 											}
@@ -271,11 +261,7 @@ export const FolderMenu = ({
 								</Upload>
 							</Form.Item>
 							<Form.Item {...tailLayout}>
-								<Button
-									type="primary"
-									htmlType="submit"
-									loading={importLoading}
-								>
+								<Button type="primary" htmlType="submit" loading={importLoading}>
 									Submit
 								</Button>
 							</Form.Item>
@@ -292,11 +278,7 @@ export const FolderMenu = ({
 						event.stopPropagation();
 					}}
 				>
-					<PermissionEditor
-						subjectType={WIKI_FOLDER}
-						subject={folder}
-						refetch={refetchFolders}
-					/>
+					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={refetchFolders} />
 				</Modal>
 			</div>
 			<Dropdown
@@ -309,9 +291,7 @@ export const FolderMenu = ({
 						{menu.length > 0 ? (
 							menu
 						) : (
-							<Menu.Item>
-								You don't have permission to do anything here
-							</Menu.Item>
+							<Menu.Item>You don't have permission to do anything here</Menu.Item>
 						)}
 					</Menu>
 				}

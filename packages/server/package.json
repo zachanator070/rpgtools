@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/zachanator070/rpgtools",
 	"scripts": {
-		"start": "nodejs -r esm src/index.js",
+		"start": "node -r esm src/index.js",
 		"start-dev": "npx nodemon --watch src --delay 80ms --exec 'kill-port --port 9229; node --inspect=0.0.0.0:9229 -r esm src/index.js'"
 	},
 	"dependencies": {
@@ -21,6 +21,7 @@
 		"dataloader": "^2.0.0",
 		"esm": "^3.2.25",
 		"express": "latest",
+		"graphql": "^15.5.0",
 		"graphql-tag": "^2.10.3",
 		"graphql-upload": "^11.0.0",
 		"gridfs-stream": "^1.1.1",
@@ -41,8 +42,6 @@
 		"unified": "^9.2.0",
 		"unist-util-visit": "^2.0.3",
 		"unzipper": "^0.10.11",
-		"uuid": "^7.0.2",
-		"@rpgtools/common": "0.1.0"
-	},
-	"devDependencies": {}
+		"uuid": "^7.0.2"
+	}
 }

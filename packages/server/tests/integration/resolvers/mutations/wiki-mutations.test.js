@@ -6,15 +6,14 @@ import { createTestClient } from "apollo-server-testing";
 import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
 import { Readable } from "stream";
 import fs from "fs";
-import { ARTICLE, PERSON } from "@rpgtools/common/src/type-constants";
-import { WikiPage } from "../../../../src/models/wiki-page";
+import { ARTICLE } from "../../../../../common/src/type-constants";
 import { Article } from "../../../../src/models/article";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { CREATE_IMAGE } from "../../../../../app/src/hooks/wiki/useCreateImage";
-import { CREATE_WIKI } from "../../../../../app/src/hooks/wiki/useCreateWiki";
-import { DELETE_WIKI } from "../../../../../app/src/hooks/wiki/useDeleteWiki";
-import { UPDATE_PLACE } from "../../../../../app/src/hooks/wiki/useUpdatePlace";
-import { UPDATE_WIKI } from "../../../../../app/src/hooks/wiki/useUpdateWiki";
+import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
+import { CREATE_IMAGE } from "../../../../../frontend/src/hooks/wiki/useCreateImage";
+import { CREATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useCreateWiki";
+import { DELETE_WIKI } from "../../../../../frontend/src/hooks/wiki/useDeleteWiki";
+import { UPDATE_PLACE } from "../../../../../frontend/src/hooks/wiki/useUpdatePlace";
+import { UPDATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useUpdateWiki";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
@@ -172,9 +171,7 @@ describe("user mutations", () => {
 				let testFile = {
 					filename: "server/tests/integration/resolvers/mutations/testmap.png",
 					createReadStream: () =>
-						fs.createReadStream(
-							"server/tests/integration/resolvers/mutations/testmap.png"
-						),
+						fs.createReadStream("server/tests/integration/resolvers/mutations/testmap.png"),
 				};
 				const imageResult = await mutate({
 					mutation: CREATE_IMAGE,
@@ -288,9 +285,7 @@ describe("user mutations", () => {
 				let testFile = {
 					filename: "server/tests/integration/resolvers/mutations/testmap.png",
 					createReadStream: () =>
-						fs.createReadStream(
-							"server/tests/integration/resolvers/mutations/testmap.png"
-						),
+						fs.createReadStream("server/tests/integration/resolvers/mutations/testmap.png"),
 				};
 				const imageResult = await mutate({
 					mutation: CREATE_IMAGE,

@@ -3,7 +3,7 @@ import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import { PermissionEditor } from "./permissions/PermissionEditor";
 import { Form, Upload, Button, Col, Input, Row, Modal, Checkbox } from "antd";
 import { useRenameWorld } from "../hooks/world/useRenameWorld";
-import { WORLD } from "@rpgtools/common/src/type-constants";
+import { WORLD } from "../../../common/src/type-constants";
 import { LoadingView } from "./LoadingView";
 import { useLoad5eContent } from "../hooks/world/useLoad5eContent";
 import { useHistory } from "react-router-dom";
@@ -77,14 +77,10 @@ export default () => {
 							</Modal>
 							<h2>Load 5e Content</h2>
 							<div className={"margin-lg"}>
-								<Checkbox
-									onChange={async (e) => await setGetCC(e.target.checked)}
-								>
+								<Checkbox onChange={async (e) => await setGetCC(e.target.checked)}>
 									Creature Codex
 								</Checkbox>
-								<Checkbox
-									onChange={async (e) => await setGetTob(e.target.checked)}
-								>
+								<Checkbox onChange={async (e) => await setGetTob(e.target.checked)}>
 									Tome of Beasts
 								</Checkbox>
 							</div>

@@ -1,11 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useGQLSubscription } from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {
-	GAME_FOG_STROKES,
-	GAME_MAP,
-	GAME_STROKES,
-} from "@rpgtools/common/src/gql-fragments";
+import { GAME_FOG_STROKES, GAME_MAP, GAME_STROKES } from "../../../../common/src/gql-fragments";
 
 export const GAME_MAP_SUBSCRIPTION = gql`
 	subscription gameMapChange($gameId: ID!,){

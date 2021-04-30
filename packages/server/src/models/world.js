@@ -5,15 +5,9 @@ import {
 	WORLD_ADMIN,
 	WORLD_READ,
 	WORLD_READ_ALL,
-} from "@rpgtools/common/src/permission-constants";
-import { WORLD_OWNER } from "@rpgtools/common/src/role-constants";
-import {
-	PIN,
-	PLACE,
-	ROLE,
-	WIKI_FOLDER,
-	WORLD,
-} from "@rpgtools/common/src/type-constants";
+} from "../../../common/src/permission-constants";
+import { WORLD_OWNER } from "../../../common/src/role-constants";
+import { PIN, PLACE, ROLE, WIKI_FOLDER, WORLD } from "../../../common/src/type-constants";
 import { ServerConfig } from "./server-config";
 
 const Schema = mongoose.Schema;
@@ -56,8 +50,7 @@ worldSchema.methods.userCanRead = async function (user) {
 	const serverConfig = await ServerConfig.findOne();
 	return (
 		(await user.hasPermission(WORLD_READ, this._id)) ||
-		(serverConfig &&
-			(await user.hasPermission(WORLD_READ_ALL, serverConfig._id)))
+		(serverConfig && (await user.hasPermission(WORLD_READ_ALL, serverConfig._id)))
 	);
 };
 

@@ -2,18 +2,17 @@ FROM node:14.11.0-slim
 
 WORKDIR /home/node/app/packages
 
-RUN npm install -g lerna
-ADD lerna.json ../lerna.json
 ADD package.json ../package.json
 
-ADD packages/common/package.json common/package.json
-ADD packages/common/package-lock.json common/package-lock.json
+WORKDIR /home/node/app/packages/common
+ADD packages/common/package.json package.json
+ADD packages/common/package-lock.json package-lock.json
+RUN npm install
 
 WORKDIR /home/node/app/packages/frontend
-
 ADD packages/frontend/package.json package.json
 ADD packages/frontend/package-lock.json package-lock.json
-RUN lerna bootstrap
+RUN npm install
 
 ADD packages/frontend/webpack.config.js webpack.config.js
 ADD packages/frontend/webpack-dev.config.js webpack-dev.config.js

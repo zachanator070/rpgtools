@@ -1,15 +1,11 @@
-import {
-	ROLE_ADD,
-	ROLE_ADMIN,
-	ROLE_RW,
-} from "@rpgtools/common/src/permission-constants";
+import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "../../../../common/src/permission-constants";
 import { Role } from "../../models/role";
 import { World } from "../../models/world";
 import { User } from "../../models/user";
 import { PermissionAssignment } from "../../models/permission-assignement";
 import { cleanUpPermissions } from "../../db-helpers";
-import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
-import { ROLE } from "@rpgtools/common/src/type-constants";
+import { EVERYONE, WORLD_OWNER } from "../../../../common/src/role-constants";
+import { ROLE } from "../../../../common/src/type-constants";
 import { authenticated } from "../../authentication-helpers";
 
 export const authorizationMutations = {
@@ -51,19 +47,15 @@ export const authorizationMutations = {
 		await user.save();
 		return newPermission.subject;
 	},
-	revokeUserPermission: async (
-		_,
-		{ userId, permissionAssignmentId },
-		{ currentUser }
-	) => {
+	revokeUserPermission: async (_, { userId, permissionAssignmentId }, { currentUser }) => {
 		const user = await User.findById(userId).populate("permissions");
 		if (!user) {
 			throw new Error("User does not exist");
 		}
 
-		let permissionAssignment = await PermissionAssignment.findById(
-			permissionAssignmentId
-		).populate("subject");
+		let permissionAssignment = await PermissionAssignment.findById(permissionAssignmentId).populate(
+			"subject"
+		);
 		if (permissionAssignment) {
 			if (!(await permissionAssignment.userCanWrite(currentUser))) {
 				throw new Error(
@@ -114,24 +106,18 @@ export const authorizationMutations = {
 		await newPermission.save();
 		role.permissions.push(newPermission);
 		await role.save();
-		await role
-			.populate({ path: "permissions", populate: { path: "subject" } })
-			.execPopulate();
+		await role.populate({ path: "permissions", populate: { path: "subject" } }).execPopulate();
 		return role;
 	},
-	revokeRolePermission: async (
-		_,
-		{ roleId, permissionAssignmentId },
-		{ currentUser }
-	) => {
+	revokeRolePermission: async (_, { roleId, permissionAssignmentId }, { currentUser }) => {
 		const role = await Role.findById(roleId).populate("permissions");
 		if (!role) {
 			throw new Error("User does not exist");
 		}
 
-		let permissionAssignment = await PermissionAssignment.findById(
-			permissionAssignmentId
-		).populate("subject");
+		let permissionAssignment = await PermissionAssignment.findById(permissionAssignmentId).populate(
+			"subject"
+		);
 		if (permissionAssignment) {
 			if (!(await permissionAssignment.userCanWrite(currentUser))) {
 				throw new Error(
@@ -261,9 +247,7 @@ export const authorizationMutations = {
 			}
 		}
 
-		user.roles = user.roles.filter(
-			(userRole) => !userRole._id.equals(role._id)
-		);
+		user.roles = user.roles.filter((userRole) => !userRole._id.equals(role._id));
 		await user.save();
 		await role.world
 			.populate({

@@ -8,7 +8,7 @@ import {
 	MONSTER,
 	PERSON,
 	PLACE,
-} from "@rpgtools/common/src/type-constants";
+} from "../../../common/src/type-constants";
 import { Chunk } from "../models/chunk";
 import { Image } from "../models/image";
 import unzipper from "unzipper";
@@ -115,8 +115,7 @@ export class ContentImporter {
 					`Wiki page ${properties.name} references content ${properties.contentId} but is not provided in archive`
 				);
 			}
-			properties.contentId = await this.processedDocs[properties.contentId]
-				.promise;
+			properties.contentId = await this.processedDocs[properties.contentId].promise;
 		}
 
 		if (properties.coverImage) {
@@ -228,11 +227,9 @@ export class ContentImporter {
 						);
 					} else {
 						fileReadingPromises.push(
-							createGfsFile(this.getFilenameFromPath(path), entry).then(
-								(fileId) => {
-									fileContents[path] = fileId;
-								}
-							)
+							createGfsFile(this.getFilenameFromPath(path), entry).then((fileId) => {
+								fileContents[path] = fileId;
+							})
 						);
 					}
 				})

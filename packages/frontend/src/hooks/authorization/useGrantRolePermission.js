@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import { PERMISSIONS_GRANTED } from "@rpgtools/common/src/gql-fragments";
+import { PERMISSIONS_GRANTED } from "../../../../common/src/gql-fragments";
 
 export const GRANT_ROLE_PERMISSION = gql`
 	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
@@ -11,9 +11,7 @@ export const GRANT_ROLE_PERMISSION = gql`
 	}
 `;
 export const useGrantRolePermission = () => {
-	const [grantRolePermission, { data, loading, error }] = useMutation(
-		GRANT_ROLE_PERMISSION
-	);
+	const [grantRolePermission, { data, loading, error }] = useMutation(GRANT_ROLE_PERMISSION);
 	return {
 		grantRolePermission: async (roleId, permission, subjectId, subjectType) => {
 			return await grantRolePermission({

@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-	Button,
-	Input,
-	Modal,
-	Select,
-	Upload,
-	InputNumber,
-	Tooltip,
-} from "antd";
-import {
-	UploadOutlined,
-	SaveOutlined,
-	DeleteOutlined,
-	UndoOutlined,
-} from "@ant-design/icons";
+import { Button, Input, Modal, Select, Upload, InputNumber, Tooltip } from "antd";
+import { UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined } from "@ant-design/icons";
 import { Editor } from "./Editor";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import { useHistory, useParams } from "react-router-dom";
@@ -22,11 +9,7 @@ import { useCreateImage } from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
-import {
-	ALL_WIKI_TYPES,
-	MODELED_WIKI_TYPES,
-	PLACE,
-} from "@rpgtools/common/src/type-constants";
+import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "../../../../common/src/type-constants";
 import { ToolTip } from "../ToolTip";
 import { SelectModel } from "../select/SelectModel";
 import { ModelViewer } from "../models/ModelViewer";
@@ -169,38 +152,24 @@ export const WikiEdit = () => {
 	const save = async () => {
 		await setSaving(true);
 
-		let coverImageId = currentWiki.coverImage
-			? currentWiki.coverImage._id
-			: null;
+		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
 		if (coverToUpload instanceof File) {
-			const coverUploadResult = await createImage(
-				coverToUpload,
-				currentWorld._id,
-				false
-			);
+			const coverUploadResult = await createImage(coverToUpload, currentWorld._id, false);
 			coverImageId = coverUploadResult.data.createImage._id;
 		}
 		if (coverToUpload === null) {
 			coverImageId = null;
 		}
 
-		const contents = new File(
-			[JSON.stringify(editor.getContents())],
-			"contents.json",
-			{
-				type: "text/plain",
-			}
-		);
+		const contents = new File([JSON.stringify(editor.getContents())], "contents.json", {
+			type: "text/plain",
+		});
 		await updateWiki(currentWiki._id, name, contents, coverImageId, type);
 
 		if (type === PLACE) {
 			let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
 			if (mapToUpload) {
-				const mapUploadResult = await createImage(
-					mapToUpload,
-					currentWorld._id,
-					true
-				);
+				const mapUploadResult = await createImage(mapToUpload, currentWorld._id, true);
 				mapImageId = mapUploadResult.data.createImage._id;
 			}
 			if (mapToUpload === null) {
@@ -243,11 +212,7 @@ export const WikiEdit = () => {
 			</div>
 			<div className="margin-lg">
 				Type:{" "}
-				<Select
-					defaultValue={currentWiki.type}
-					style={{ width: 120 }}
-					onChange={setType}
-				>
+				<Select defaultValue={currentWiki.type} style={{ width: 120 }} onChange={setType}>
 					{options}
 				</Select>
 			</div>
@@ -263,9 +228,7 @@ export const WikiEdit = () => {
 					className="upload-list-inline"
 					onChange={async (files) => {
 						await setCoverImageList(
-							files.fileList.length > 0
-								? [files.fileList[files.fileList.length - 1]]
-								: []
+							files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []
 						);
 						if (files.fileList.length === 0) {
 							await setCoverToUpload(null);
@@ -292,9 +255,7 @@ export const WikiEdit = () => {
 							className="upload-list-inline"
 							onChange={async (files) => {
 								await setMapImageList(
-									files.fileList.length > 0
-										? [files.fileList[files.fileList.length - 1]]
-										: []
+									files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []
 								);
 								if (files.fileList.length === 0) {
 									await setMapToUpload(null);
@@ -326,10 +287,7 @@ export const WikiEdit = () => {
 				<div className={"margin-lg"}>
 					{type} model:
 					<span className={"margin-md"}>
-						<SelectModel
-							onChange={setSelectedModel}
-							defaultModel={currentWiki.model}
-						/>
+						<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model} />
 					</span>
 					{selectedModel && (
 						<ModelViewer
@@ -363,9 +321,7 @@ export const WikiEdit = () => {
 					disabled={saving}
 					className="margin-md-left"
 					onClick={() => {
-						history.push(
-							`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`
-						);
+						history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 					}}
 				>
 					<UndoOutlined />

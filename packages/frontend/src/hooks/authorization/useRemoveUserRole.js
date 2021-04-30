@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import { CURRENT_WORLD_ROLES } from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_ROLES } from "../../../../common/src/gql-fragments";
 
 export const REMOVE_USER_ROLE = gql`
 	mutation removeUserRole($userId: ID!, $roleId: ID!){
@@ -11,9 +11,7 @@ export const REMOVE_USER_ROLE = gql`
 	}
 `;
 export default () => {
-	const [removeUserRole, { loading, error, data }] = useMutation(
-		REMOVE_USER_ROLE
-	);
+	const [removeUserRole, { loading, error, data }] = useMutation(REMOVE_USER_ROLE);
 	return {
 		removeUserRole: async (userId, roleId) => {
 			await removeUserRole({ variables: { userId, roleId } });

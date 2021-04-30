@@ -1,11 +1,11 @@
 import { Role } from "../models/role";
 import { WikiFolder } from "../models/wiki-folder";
 import { Place } from "../models/place";
-import { GAME_HOST, MODEL_ADD, ROLE_ADD } from "@rpgtools/common/src/permission-constants";
+import { GAME_HOST, MODEL_ADD, ROLE_ADD } from "../../../common/src/permission-constants";
 import { Pin } from "../models/pin";
 import { PermissionAssignment } from "../models/permission-assignement";
 import { World } from "../models/world";
-import { ALL_USERS, EVERYONE } from "@rpgtools/common/src/role-constants";
+import { ALL_USERS, EVERYONE } from "../../../common/src/role-constants";
 import { User } from "../models/user";
 import { Image } from "../models/image";
 import { Chunk } from "../models/chunk";

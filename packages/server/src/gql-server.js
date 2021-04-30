@@ -8,7 +8,7 @@ import { typeDefs } from "./gql-server-schema";
 import { serverResolvers } from "./resolvers/server-resolvers";
 import jwt from "jsonwebtoken";
 import { User } from "./models/user";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ANON_USERNAME } from "../../common/src/permission-constants";
 
 const ps = new PubSub();
 export const pubsub = ps;
@@ -43,11 +43,9 @@ export default new ApolloServer({
 		onConnect: async (connectionParams, webSocket) => {
 			let currentUser = null;
 			if (connectionParams.accessToken) {
-				let data = jwt.verify(
-					connectionParams.accessToken,
-					process.env["ACCESS_TOKEN_SECRET"],
-					{ maxAge: ACCESS_TOKEN_MAX_AGE.string }
-				);
+				let data = jwt.verify(connectionParams.accessToken, process.env["ACCESS_TOKEN_SECRET"], {
+					maxAge: ACCESS_TOKEN_MAX_AGE.string,
+				});
 				currentUser = await getCurrentUser(data.userId);
 			} else {
 				currentUser = new User({ username: ANON_USERNAME });

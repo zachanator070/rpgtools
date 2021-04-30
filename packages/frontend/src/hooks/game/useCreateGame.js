@@ -1,6 +1,6 @@
 import useCurrentWorld from "../world/useCurrentWorld";
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST } from "@rpgtools/common/src/gql-fragments";
+import { ACCESS_CONTROL_LIST } from "../../../../common/src/gql-fragments";
 import { useGQLMutation } from "../useGQLMutation";
 
 export const CREATE_GAME = gql`

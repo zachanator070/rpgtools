@@ -1,9 +1,9 @@
 import { Role } from "./models/role";
 import { PermissionAssignment } from "./models/permission-assignement";
-import { ALL_USERS } from "@rpgtools/common/src/role-constants";
-import { WORLD_CREATE } from "@rpgtools/common/src/permission-constants";
+import { ALL_USERS } from "../../common/src/role-constants";
+import { WORLD_CREATE } from "../../common/src/permission-constants";
 import { ServerConfig } from "./models/server-config";
-import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
+import { SERVER_CONFIG } from "../../common/src/type-constants";
 import { v4 as uuidv4 } from "uuid";
 
 export const seedDefaultRoles = async () => {

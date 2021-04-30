@@ -4,17 +4,13 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import { LoadingView } from "../LoadingView";
 import { DownOutlined } from "@ant-design/icons";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ANON_USERNAME } from "../../../../common/src/permission-constants";
 import { CreateWorldModal } from "../modals/CreateWorldModal";
 import { SelectWorldModal } from "../modals/SelectWorldModal";
 
 export const WorldMenu = () => {
-	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(
-		false
-	);
-	const [selectWorldModalVisibility, setSelectWorldModalVisibility] = useState(
-		false
-	);
+	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);
+	const [selectWorldModalVisibility, setSelectWorldModalVisibility] = useState(false);
 
 	const { currentUser, loading } = useCurrentUser();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
@@ -27,10 +23,7 @@ export const WorldMenu = () => {
 		<Menu>
 			{currentUser.username !== ANON_USERNAME && (
 				<Menu.Item key="0">
-					<a
-						href="#"
-						onClick={async () => await setCreateWorldModalVisibility(true)}
-					>
+					<a href="#" onClick={async () => await setCreateWorldModalVisibility(true)}>
 						New World
 					</a>
 				</Menu.Item>
@@ -40,10 +33,7 @@ export const WorldMenu = () => {
 					visibility={selectWorldModalVisibility}
 					setVisibility={setSelectWorldModalVisibility}
 				/>
-				<a
-					href="#"
-					onClick={async () => await setSelectWorldModalVisibility(true)}
-				>
+				<a href="#" onClick={async () => await setSelectWorldModalVisibility(true)}>
 					Select World
 				</a>
 			</Menu.Item>
@@ -58,8 +48,7 @@ export const WorldMenu = () => {
 			/>
 			<Dropdown overlay={menu} trigger={["click"]}>
 				<Button>
-					{currentWorld ? currentWorld.name : "No World Selected"}{" "}
-					<DownOutlined />
+					{currentWorld ? currentWorld.name : "No World Selected"} <DownOutlined />
 				</Button>
 			</Dropdown>
 		</span>

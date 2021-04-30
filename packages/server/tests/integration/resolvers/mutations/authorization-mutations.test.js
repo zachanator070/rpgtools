@@ -9,18 +9,18 @@ import {
 	WIKI_READ,
 	WIKI_RW,
 	WORLD_READ,
-} from "@rpgtools/common/src/permission-constants";
-import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
+} from "../../../../../common/src/permission-constants";
+import { PLACE, WORLD } from "../../../../../common/src/type-constants";
 import { PermissionAssignment } from "../../../../src/models/permission-assignement";
 import { Role } from "../../../../src/models/role";
-import { ADD_USER_ROLE } from "../../../../../app/src/hooks/authorization/useAddUserRole";
-import { CREATE_ROLE } from "../../../../../app/src/hooks/authorization/useCreateRole";
-import { DELETE_ROLE } from "../../../../../app/src/hooks/authorization/useDeleteRole";
-import { GRANT_ROLE_PERMISSION } from "../../../../../app/src/hooks/authorization/useGrantRolePermission";
-import { GRANT_USER_PERMISSION } from "../../../../../app/src/hooks/authorization/useGrantUserPermisison";
-import { REMOVE_USER_ROLE } from "../../../../../app/src/hooks/authorization/useRemoveUserRole";
-import { REVOKE_ROLE_PERMISSION } from "../../../../../app/src/hooks/authorization/useRevokeRolePermission";
-import { REVOKE_USER_PERMISSION } from "../../../../../app/src/hooks/authorization/useRevokeUserPermission";
+import { ADD_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useAddUserRole";
+import { CREATE_ROLE } from "../../../../../frontend/src/hooks/authorization/useCreateRole";
+import { DELETE_ROLE } from "../../../../../frontend/src/hooks/authorization/useDeleteRole";
+import { GRANT_ROLE_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useGrantRolePermission";
+import { GRANT_USER_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useGrantUserPermisison";
+import { REMOVE_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useRemoveUserRole";
+import { REVOKE_ROLE_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useRevokeRolePermission";
+import { REVOKE_USER_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useRevokeUserPermission";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 

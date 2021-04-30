@@ -5,15 +5,10 @@ import { WorldMenu } from "./WorldMenu";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useLogout from "../../hooks/authentication/useLogout";
-import { LoadingView } from "../LoadingView";
 import { SearchBarV2 } from "./SearchBar";
-import {
-	GlobalOutlined,
-	UserOutlined,
-	CloudServerOutlined,
-} from "@ant-design/icons";
+import { GlobalOutlined, UserOutlined, CloudServerOutlined } from "@ant-design/icons";
 import useServerConfig from "../../hooks/server/useServerConfig";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ANON_USERNAME } from "../../../../common/src/permission-constants";
 import { LoginModal } from "../modals/LoginModal";
 import { RegisterModal } from "../modals/RegisterModal";
 
@@ -51,10 +46,7 @@ export const NavBar = () => {
 						Login
 					</a>
 					<span className={"margin-md-left margin-md-right"}>or</span>
-					<a
-						href="#"
-						onClick={async () => await setRegisterModalVisibility(true)}
-					>
+					<a href="#" onClick={async () => await setRegisterModalVisibility(true)}>
 						Register
 					</a>
 				</div>
@@ -64,10 +56,7 @@ export const NavBar = () => {
 
 	return (
 		<div className="shadow-sm padding-sm nav-bar">
-			<LoginModal
-				setVisibility={setLoginModalVisibility}
-				visibility={loginModalVisibility}
-			/>
+			<LoginModal setVisibility={setLoginModalVisibility} visibility={loginModalVisibility} />
 			<RegisterModal
 				setVisibility={setRegisterModalVisibility}
 				visibility={registerModalVisibility}
@@ -78,10 +67,7 @@ export const NavBar = () => {
 						<WorldMenu />
 						{currentWorld && currentWorld.canWrite && (
 							<span className="margin-lg-left">
-								<Link
-									to={`/ui/world/${currentWorld._id}/settings`}
-									title="World Settings"
-								>
+								<Link to={`/ui/world/${currentWorld._id}/settings`} title="World Settings">
 									<GlobalOutlined />
 								</Link>
 							</span>
@@ -103,15 +89,11 @@ export const NavBar = () => {
 						<Col span={4}>
 							<div className="margin-sm-top">
 								<Divider type="vertical" />
-								<Link
-									to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}
-								>
+								<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
 									Map
 								</Link>
 								<Divider type="vertical" />
-								<Link
-									to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}
-								>
+								<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>
 									Wiki
 								</Link>
 								<Divider type="vertical" />
@@ -131,11 +113,7 @@ export const NavBar = () => {
 						<></>
 					</Col>
 				)}
-				<Col
-					span={6}
-					className={"padding-md-right"}
-					style={{ textAlign: "right" }}
-				>
+				<Col span={6} className={"padding-md-right"} style={{ textAlign: "right" }}>
 					{(serverConfig.canAdmin || serverConfig.canWrite) && (
 						<Link to={`/ui/serverSettings`} className={"margin-lg-right"}>
 							<CloudServerOutlined />

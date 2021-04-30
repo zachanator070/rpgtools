@@ -27,17 +27,11 @@ import {
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { LeaveGameButton } from "./LeaveGameButton";
 import { PermissionModal } from "../modals/PermissionModal";
-import { GAME } from "@rpgtools/common/src/type-constants";
+import { GAME } from "../../../../common/src/type-constants";
 
 export const GameControlsToolbar = ({ controlsMode, setControlsMode }) => {
-	const {
-		currentGame,
-		loading,
-		refetch: refetchCurrentGame,
-	} = useCurrentGame();
-	const [permissionModalVisibility, setPermissionModalVisibility] = useState(
-		false
-	);
+	const { currentGame, loading, refetch: refetchCurrentGame } = useCurrentGame();
+	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
 	if (loading) {
 		return <></>;
@@ -61,12 +55,8 @@ export const GameControlsToolbar = ({ controlsMode, setControlsMode }) => {
 		</>
 	);
 	toolTipText[ADD_MODEL_CONTROLS] = <>Add a model to this game</>;
-	toolTipText[MOVE_MODEL_CONTROLS] = (
-		<>Left click on a model and drag to move it</>
-	);
-	toolTipText[ROTATE_MODEL_CONTROLS] = (
-		<>Left click on a model and drag to rotate it</>
-	);
+	toolTipText[MOVE_MODEL_CONTROLS] = <>Left click on a model and drag to move it</>;
+	toolTipText[ROTATE_MODEL_CONTROLS] = <>Left click on a model and drag to rotate it</>;
 	toolTipText[DELETE_CONTROLS] = <>Left click on a mode to delete it</>;
 	toolTipText[FOG_CONTROLS] = (
 		<>
@@ -78,9 +68,7 @@ export const GameControlsToolbar = ({ controlsMode, setControlsMode }) => {
 	toolTipText[SELECT_MODEL_CONTROLS] = (
 		<>Left click to see information and settings about the model</>
 	);
-	toolTipText[SELECT_LOCATION_CONTROLS] = (
-		<>See controls window to change location of this game</>
-	);
+	toolTipText[SELECT_LOCATION_CONTROLS] = <>See controls window to change location of this game</>;
 
 	const mouseOverText = {};
 	mouseOverText[CAMERA_CONTROLS] = <>Move Camera, hotkey: c</>;

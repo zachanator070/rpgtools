@@ -1,10 +1,7 @@
-import {
-	FOLDER_ADMIN,
-	FOLDER_RW,
-} from "@rpgtools/common/src/permission-constants";
+import { FOLDER_ADMIN, FOLDER_RW } from "../../../../common/src/permission-constants";
 import { WikiFolder } from "../../models/wiki-folder";
 import { PermissionAssignment } from "../../models/permission-assignement";
-import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import { WIKI_FOLDER } from "../../../../common/src/type-constants";
 import { cleanUpPermissions } from "../../db-helpers";
 import { ContentImporter } from "../../contentImportExport/import";
 
@@ -21,17 +18,13 @@ const checkUserWritePermissionForFolderContents = async (user, folderId) => {
 	await folder.populate("pages childFolder").execPopulate();
 
 	if (!(await folder.userCanWrite(user))) {
-		throw new Error(
-			`You do not have write permission for the folder ${folderId}`
-		);
+		throw new Error(`You do not have write permission for the folder ${folderId}`);
 	}
 
 	// pages are auto populated
 	for (let childPage of folder.pages) {
 		if (!(await childPage.userCanWrite(user))) {
-			throw new Error(
-				`You do not have write permission for the page ${childPage._id}`
-			);
+			throw new Error(`You do not have write permission for the page ${childPage._id}`);
 		}
 	}
 
@@ -100,9 +93,7 @@ export const folderMutations = {
 		return folder;
 	},
 	deleteFolder: async (_, { folderId }, { currentUser }) => {
-		const folder = await WikiFolder.findById(folderId).populate(
-			"pages children world"
-		);
+		const folder = await WikiFolder.findById(folderId).populate("pages children world");
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
@@ -115,9 +106,7 @@ export const folderMutations = {
 
 		const parents = await WikiFolder.find({ children: folder._id });
 		for (let parent of parents) {
-			parent.children = parent.children.filter(
-				(child) => !child.equals(folder._id)
-			);
+			parent.children = parent.children.filter((child) => !child.equals(folder._id));
 			await parent.save();
 		}
 
@@ -142,9 +131,7 @@ export const folderMutations = {
 
 		for (let folderToCheck of [folder, parentFolder, currentParent]) {
 			if (!(await folderToCheck.userCanWrite(currentUser))) {
-				throw new Error(
-					`You do not have permission to edit folder ${folder.name}`
-				);
+				throw new Error(`You do not have permission to edit folder ${folder.name}`);
 			}
 		}
 
@@ -170,9 +157,7 @@ export const folderMutations = {
 			throw new Error("Folder does not exist");
 		}
 		if (!(await folder.userCanWrite(currentUser))) {
-			throw new Error(
-				"You do not have permission to add content to this folder"
-			);
+			throw new Error("You do not have permission to add content to this folder");
 		}
 
 		zipFile = await zipFile;

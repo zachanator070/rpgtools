@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import gql from "graphql-tag";
-import { GAME_ATTRIBUTES } from "@rpgtools/common/src/gql-fragments";
+import { GAME_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const GET_GAME = gql`
 	query getGame($gameId: ID!){

@@ -9,14 +9,9 @@ import {
 	WIKI_READ_ALL,
 	WIKI_RW,
 	WIKI_RW_ALL,
-} from "@rpgtools/common/src/permission-constants";
+} from "../../../common/src/permission-constants";
 import { GridFSBucket } from "mongodb";
-import {
-	IMAGE,
-	PLACE,
-	WIKI_PAGE,
-	WORLD,
-} from "@rpgtools/common/src/type-constants";
+import { IMAGE, PLACE, WIKI_PAGE, WORLD } from "../../../common/src/type-constants";
 import { deleteImage } from "../resolvers/mutations/image-mutations";
 import { deleteGfsFile } from "../db-helpers";
 import { World } from "./world";
@@ -83,10 +78,7 @@ wikiPageSchema.methods.userCanWrite = async function (user) {
 	const parentFolder = await WikiFolder.findOne({ pages: this._id });
 	let parentWriteAll = false;
 	if (parentFolder) {
-		parentWriteAll = await user.hasPermission(
-			FOLDER_RW_ALL_PAGES,
-			parentFolder._id
-		);
+		parentWriteAll = await user.hasPermission(FOLDER_RW_ALL_PAGES, parentFolder._id);
 	}
 	return (
 		parentWriteAll ||
@@ -102,10 +94,7 @@ wikiPageSchema.methods.userCanRead = async function (user) {
 	const parentFolder = await WikiFolder.findOne({ pages: this._id });
 	let parentReadAll = false;
 	if (parentFolder) {
-		parentReadAll = await user.hasPermission(
-			FOLDER_READ_ALL_PAGES,
-			parentFolder._id
-		);
+		parentReadAll = await user.hasPermission(FOLDER_READ_ALL_PAGES, parentFolder._id);
 	}
 	return (
 		parentReadAll ||
@@ -115,25 +104,21 @@ wikiPageSchema.methods.userCanRead = async function (user) {
 	);
 };
 
-wikiPageSchema.pre(
-	"deleteOne",
-	{ document: true, query: false },
-	async function () {
-		if (this.coverImage) {
-			await deleteImage(this.coverImage);
-		}
-		if (this.contentId) {
-			await deleteGfsFile(this.contentId);
-		}
-		// doing this to avoid circular dependency
-		const pinModel = mongoose.model("Pin");
-		const pins = await pinModel.find({ page: this._id });
-		for (let pin of pins) {
-			pin.page = null;
-			await pin.save();
-		}
+wikiPageSchema.pre("deleteOne", { document: true, query: false }, async function () {
+	if (this.coverImage) {
+		await deleteImage(this.coverImage);
 	}
-);
+	if (this.contentId) {
+		await deleteGfsFile(this.contentId);
+	}
+	// doing this to avoid circular dependency
+	const pinModel = mongoose.model("Pin");
+	const pins = await pinModel.find({ page: this._id });
+	for (let pin of pins) {
+		pin.page = null;
+		await pin.save();
+	}
+});
 
 wikiPageSchema.plugin(mongoosePaginate);
 

@@ -3,7 +3,7 @@ import { ALL_PERMISSIONS } from "../../../common/src/permission-constants";
 import {
 	PERMISSION_ASSIGNMENT,
 	PERMISSION_CONTROLLED_TYPES,
-} from "@rpgtools/common/src/type-constants";
+} from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 
@@ -38,8 +38,7 @@ permissionAssignmentSchema.methods.userCanWrite = async function (user) {
 // you can only read permissions assigned if you can grant them or if you have access to the permission
 permissionAssignmentSchema.methods.userCanRead = async function (user) {
 	return (
-		(await user.hasPermission(this.permission, this.subject)) ||
-		(await this.userCanWrite(user))
+		(await user.hasPermission(this.permission, this.subject)) || (await this.userCanWrite(user))
 	);
 };
 

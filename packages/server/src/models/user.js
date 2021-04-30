@@ -1,14 +1,9 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-import {
-	PERMISSION_ASSIGNMENT,
-	ROLE,
-	USER,
-	WORLD,
-} from "@rpgtools/common/src/type-constants";
+import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "../../../common/src/type-constants";
 import { Role } from "./role";
-import { ALL_USERS, EVERYONE } from "@rpgtools/common/src/role-constants";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ALL_USERS, EVERYONE } from "../../../common/src/role-constants";
+import { ANON_USERNAME } from "../../../common/src/permission-constants";
 import { PermissionAssignment } from "./permission-assignement";
 
 const Schema = mongoose.Schema;
@@ -124,10 +119,7 @@ userSchema.methods.hasPermission = async function (permission, subjectId) {
 		if (subject instanceof mongoose.Model) {
 			subject = subject._id;
 		}
-		if (
-			userPermission.permission === permission &&
-			userPermission.subject.equals(subjectId)
-		) {
+		if (userPermission.permission === permission && userPermission.subject.equals(subjectId)) {
 			return true;
 		}
 	}
@@ -155,11 +147,7 @@ userSchema.methods.hasRole = async function (role) {
 	return false;
 };
 
-userSchema.methods.grantPermission = async function (
-	permission,
-	subjectId,
-	subjectType
-) {
+userSchema.methods.grantPermission = async function (permission, subjectId, subjectType) {
 	if (await this.hasPermission(permission, subjectId)) {
 		return;
 	}
