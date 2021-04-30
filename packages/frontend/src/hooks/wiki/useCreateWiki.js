@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import { CURRENT_WORLD_FOLDERS } from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_FOLDERS } from "../../../../common/src/gql-fragments";
 
 export const CREATE_WIKI = gql`
 	mutation createWiki($name: String!, $folderId: ID!){

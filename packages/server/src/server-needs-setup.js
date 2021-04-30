@@ -1,4 +1,4 @@
-import { SERVER_ADMIN_ROLE } from "@rpgtools/common/src/permission-constants";
+import { SERVER_ADMIN_ROLE } from "../../common/src/permission-constants";
 import { User } from "./models/user";
 import { Role } from "./models/role";
 

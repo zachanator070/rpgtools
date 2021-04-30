@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { User } from "./models/user";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ANON_USERNAME } from "../../common/src/permission-constants";
 
 export const authenticated = (next) => (root, args, context, info) => {
 	if (!context.currentUser || context.currentUser.username === ANON_USERNAME) {
@@ -12,11 +12,9 @@ export const authenticated = (next) => (root, args, context, info) => {
 };
 
 export const createTokens = async (user, version) => {
-	const accessToken = jwt.sign(
-		{ userId: user._id },
-		process.env["ACCESS_TOKEN_SECRET"],
-		{ expiresIn: ACCESS_TOKEN_MAX_AGE.string }
-	);
+	const accessToken = jwt.sign({ userId: user._id }, process.env["ACCESS_TOKEN_SECRET"], {
+		expiresIn: ACCESS_TOKEN_MAX_AGE.string,
+	});
 	if (!version) {
 		version = uuidv4();
 	}
@@ -62,11 +60,9 @@ export const createSessionContext = async ({ req, res, connection }) => {
 			// accessToken is expired
 			res.clearCookie("accessToken");
 			try {
-				let data = jwt.verify(
-					refreshToken,
-					process.env["REFRESH_TOKEN_SECRET"],
-					{ maxAge: REFRESH_TOKEN_MAX_AGE.string }
-				);
+				let data = jwt.verify(refreshToken, process.env["REFRESH_TOKEN_SECRET"], {
+					maxAge: REFRESH_TOKEN_MAX_AGE.string,
+				});
 				currentUser = await getCurrentUser(data.userId);
 				// if refreshToken is still valid issue new access token and refresh token
 				if (currentUser && currentUser.tokenVersion === data.version) {

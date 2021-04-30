@@ -1,10 +1,14 @@
-import { GAME_HOST, GAME_PERMISSIONS, GAME_READ } from "@rpgtools/common/src/permission-constants";
+import {
+	GAME_HOST,
+	GAME_PERMISSIONS,
+	GAME_READ,
+} from "../../../../common/src/permission-constants";
 import { Game } from "../../models/game";
 import { Model } from "../../models/model";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "./authentication-mutations";
 import { PermissionAssignment } from "../../models/permission-assignement";
-import { GAME } from "@rpgtools/common/src/type-constants";
+import { GAME } from "../../../../common/src/type-constants";
 import { pubsub } from "../../gql-server";
 import { cleanUpPermissions } from "../../db-helpers";
 import { Place } from "../../models/place";

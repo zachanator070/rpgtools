@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CURRENT_WORLD_WIKIS } from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WORLD_WIKIS } from "../../../../common/src/gql-fragments";
 import { useGQLLazyQuery } from "../useGQLLazyQuery";
 import { useEffect } from "react";
 
@@ -39,10 +39,7 @@ export const useWikisInFolder = (variables) => {
 
 				return {
 					wikisInFolder: {
-						docs: [
-							...prev.wikisInFolder.docs,
-							...fetchMoreResult.wikisInFolder.docs,
-						],
+						docs: [...prev.wikisInFolder.docs, ...fetchMoreResult.wikisInFolder.docs],
 						nextPage: fetchMoreResult.wikisInFolder.nextPage,
 						__typename: "WikiPagePaginatedResult",
 					},

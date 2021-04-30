@@ -3,7 +3,7 @@ import { useGetModels } from "../../hooks/model/useGetModels";
 import { Row, Col, List, Button } from "antd";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { PermissionModal } from "../modals/PermissionModal";
-import { MODEL } from "@rpgtools/common/src/type-constants";
+import { MODEL } from "../../../../common/src/type-constants";
 import { TeamOutlined } from "@ant-design/icons";
 import { LoadingView } from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -18,12 +18,8 @@ export const ModelView = () => {
 
 	const [selectedModel, setSelectedModel] = useState();
 	const match = useRouteMatch();
-	const [permissionModalVisibility, setPermissionModalVisibility] = useState(
-		false
-	);
-	const [createModelModalVisibility, setCreateModelModalVisibility] = useState(
-		false
-	);
+	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
+	const [createModelModalVisibility, setCreateModelModalVisibility] = useState(false);
 	const params = useParams();
 	const history = useHistory();
 
@@ -74,9 +70,7 @@ export const ModelView = () => {
 									<List.Item key={model._id}>
 										<a
 											onClick={async () =>
-												history.push(
-													`/ui/world/${currentWorld._id}/model/${model._id}/view`
-												)
+												history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`)
 											}
 										>
 											{model.name}

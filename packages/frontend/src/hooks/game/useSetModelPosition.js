@@ -1,7 +1,7 @@
 import { useGQLMutation } from "../useGQLMutation";
 import useCurrentGame from "./useCurrentGame";
 import gql from "graphql-tag";
-import { GAME_MODEL } from "@rpgtools/common/src/gql-fragments";
+import { GAME_MODEL } from "../../../../common/src/gql-fragments";
 
 export const SET_MODEL_POSITION = gql`
 	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float!, $lookAtX: Float!, $lookAtZ: Float!){

@@ -4,12 +4,12 @@ import { typeDefs } from "../../../src/gql-server-schema";
 import { serverResolvers } from "../../../src/resolvers/server-resolvers";
 import { createTestClient } from "apollo-server-testing";
 import { createWorld } from "../../../src/resolvers/mutations/world-mutations";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { GET_CURRENT_WORLD } from "../../../../app/src/hooks/world/useCurrentWorld";
-import { GET_CURRENT_USER } from "../../../../app/src/hooks/authentication/useCurrentUser";
-import { SEARCH_USERS } from "../../../../app/src/hooks/authentication/useSearchUsers";
-import { GET_WORLDS } from "../../../../app/src/hooks/world/useWorlds";
-import { GET_CURRENT_WIKI } from "../../../../app/src/hooks/wiki/useCurrentWiki";
+import { ANON_USERNAME } from "../../../../common/src/permission-constants";
+import { GET_CURRENT_WORLD } from "../../../../frontend/src/hooks/world/useCurrentWorld";
+import { GET_CURRENT_USER } from "../../../../frontend/src/hooks/authentication/useCurrentUser";
+import { SEARCH_USERS } from "../../../../frontend/src/hooks/authentication/useSearchUsers";
+import { GET_WORLDS } from "../../../../frontend/src/hooks/world/useWorlds";
+import { GET_CURRENT_WIKI } from "../../../../frontend/src/hooks/wiki/useCurrentWiki";
 
 process.env.TEST_SUITE = "query-resolver-test";
 

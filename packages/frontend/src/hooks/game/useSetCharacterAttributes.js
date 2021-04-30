@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import useCurrentGame from "./useCurrentGame";
 import { useGQLMutation } from "../useGQLMutation";
-import { GAME_CHARACTERS } from "@rpgtools/common/src/gql-fragments";
+import { GAME_CHARACTERS } from "../../../../common/src/gql-fragments";
 
 const SET_CHARACTER_ATTRIBUTES = gql`
 	mutation setCharacterAttributes($gameId: ID!, $str: Int, $dex: Int, $con: Int, $int: Int, $wis: Int, $cha: Int){

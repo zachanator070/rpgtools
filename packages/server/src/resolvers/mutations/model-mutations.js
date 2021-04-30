@@ -1,17 +1,9 @@
 import { World } from "../../models/world";
-import {
-	MODEL_ADD,
-	MODEL_ADMIN,
-	MODEL_RW,
-} from "@rpgtools/common/src/permission-constants";
+import { MODEL_ADD, MODEL_ADMIN, MODEL_RW } from "../../../../common/src/permission-constants";
 import { Model } from "../../models/model";
 import { PermissionAssignment } from "../../models/permission-assignement";
-import { MODEL } from "@rpgtools/common/src/type-constants";
-import {
-	cleanUpPermissions,
-	createGfsFile,
-	deleteGfsFile,
-} from "../../db-helpers";
+import { MODEL } from "../../../../common/src/type-constants";
+import { cleanUpPermissions, createGfsFile, deleteGfsFile } from "../../db-helpers";
 import { Game } from "../../models/game";
 import { pubsub } from "../../gql-server";
 import { delAsync, existsAsync, getAsync, setAsync } from "../../redis-client";
@@ -23,11 +15,7 @@ const filenameExists = async (filename) => {
 };
 
 export const modelMutations = {
-	createModel: async (
-		_,
-		{ name, file, worldId, depth, width, height, notes },
-		{ currentUser }
-	) => {
+	createModel: async (_, { name, file, worldId, depth, width, height, notes }, { currentUser }) => {
 		if (!(await currentUser.hasPermission(MODEL_ADD, worldId))) {
 			throw new Error("You do not have permission to add models to this world");
 		}
@@ -39,9 +27,7 @@ export const modelMutations = {
 
 		file = await file;
 		if (await filenameExists(file.filename)) {
-			throw new Error(
-				`Filename ${file.filename} already exists, filenames must be unique`
-			);
+			throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
 		}
 
 		const fileId = await createGfsFile(file.filename, file.createReadStream());
@@ -67,11 +53,7 @@ export const modelMutations = {
 		await currentUser.save();
 		return model;
 	},
-	updateModel: async (
-		_,
-		{ modelId, name, file, depth, width, height, notes },
-		{ currentUser }
-	) => {
+	updateModel: async (_, { modelId, name, file, depth, width, height, notes }, { currentUser }) => {
 		const model = await Model.findById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
@@ -90,15 +72,10 @@ export const modelMutations = {
 			file = await file;
 
 			if (await filenameExists(file.filename)) {
-				throw new Error(
-					`Filename ${file.filename} already exists, filenames must be unique`
-				);
+				throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
 			}
 
-			model.fileId = await createGfsFile(
-				file.filename,
-				file.createReadStream()
-			);
+			model.fileId = await createGfsFile(file.filename, file.createReadStream());
 			model.fileName = file.filename;
 		}
 		model.name = name;
@@ -119,9 +96,7 @@ export const modelMutations = {
 		}
 		const games = await Game.find({ "models.model": model._id });
 		for (let game of games) {
-			const positionedModel = game.models.find((otherModel) =>
-				otherModel.model.equals(model._id)
-			);
+			const positionedModel = game.models.find((otherModel) => otherModel.model.equals(model._id));
 			game.models = game.models.filter(
 				(positionedModel) => !positionedModel.model.equals(model._id)
 			);

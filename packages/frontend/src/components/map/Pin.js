@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useSetMapWiki from "../../hooks/map/useSetMapWiki";
 import { EditPinModal } from "../modals/EditPinModal";
-import { PLACE } from "@rpgtools/common/src/type-constants";
+import { PLACE } from "../../../../common/src/type-constants";
 
 export const Pin = ({ pin, translate }) => {
 	const history = useHistory();

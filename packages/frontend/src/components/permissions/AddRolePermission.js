@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { Button, Select } from "antd";
-import {
-	ALL_WIKI_TYPES,
-	ARTICLE,
-	PERMISSION_CONTROLLED_TYPES,
-	ROLE,
-	WIKI_FOLDER,
-	WIKI_PAGE,
-	WORLD,
-} from "@rpgtools/common/src/type-constants";
-import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
+import { ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD } from "../../../../common/src/type-constants";
+import { getPermissionsBySubjectType } from "../../../../common/src/permission-constants";
 import { SelectRole } from "../select/SelectRole";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { SelectWiki } from "../select/SelectWiki";
@@ -20,9 +12,7 @@ import { SelectFolder } from "../select/SelectFolder";
 export const AddRolePermission = ({ role }) => {
 	const { currentWorld } = useCurrentWorld();
 	const [permissionToAdd, setPermissionToAdd] = useState(null);
-	const [permissionToAddSubjectType, setPermissionToAddSubjectType] = useState(
-		null
-	);
+	const [permissionToAddSubjectType, setPermissionToAddSubjectType] = useState(null);
 	const [permissionToAddSubject, setPermissionToAddSubject] = useState(null);
 	const { grantRolePermission, errors } = useGrantRolePermission();
 
@@ -31,9 +21,7 @@ export const AddRolePermission = ({ role }) => {
 		selectSubject = (
 			<Select style={{ width: "200px" }} onChange={setPermissionToAddSubject}>
 				{currentWorld.canAdmin && (
-					<Select.Option value={currentWorld._id}>
-						{currentWorld.name}
-					</Select.Option>
+					<Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>
 				)}
 			</Select>
 		);
@@ -45,18 +33,12 @@ export const AddRolePermission = ({ role }) => {
 			/>
 		);
 	} else if (permissionToAddSubjectType === ROLE) {
-		selectSubject = (
-			<SelectRole canAdmin={true} onChange={setPermissionToAddSubject} />
-		);
+		selectSubject = <SelectRole canAdmin={true} onChange={setPermissionToAddSubject} />;
 	} else if (permissionToAddSubjectType === WIKI_FOLDER) {
-		selectSubject = (
-			<SelectFolder canAdmin={true} onChange={setPermissionToAddSubject} />
-		);
+		selectSubject = <SelectFolder canAdmin={true} onChange={setPermissionToAddSubject} />;
 	}
 
-	let availablePermissions = getPermissionsBySubjectType(
-		permissionToAddSubjectType
-	);
+	let availablePermissions = getPermissionsBySubjectType(permissionToAddSubjectType);
 
 	return (
 		<div className={"margin-lg-top"}>

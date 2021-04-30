@@ -6,7 +6,7 @@ import {
 	CURRENT_WORLD_FOLDERS,
 	CURRENT_WORLD_PINS,
 	CURRENT_WORLD_ROLES,
-} from "@rpgtools/common/src/gql-fragments";
+} from "../../../../common/src/gql-fragments";
 
 export const GET_CURRENT_WORLD = gql`
     query getCurrentWorld($worldId: ID){

@@ -3,7 +3,7 @@ import { Button, Checkbox, Form, Input, Modal } from "antd";
 import useCreateWorld from "../../hooks/world/useCreateWorld";
 import { useHistory } from "react-router-dom";
 import { useSetCurrentWorld } from "../../hooks/world/useSetCurrentWorld";
-import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
+import { PUBLIC_WORLD_PERMISSIONS } from "../../../../common/src/permission-constants";
 import { ToolTip } from "../ToolTip";
 
 export const CreateWorldModal = ({ visibility, setVisibility }) => {
@@ -15,9 +15,7 @@ export const CreateWorldModal = ({ visibility, setVisibility }) => {
 
 	const { createWorld, loading, errors } = useCreateWorld(async (data) => {
 		await setCurrentWorld(data.createWorld._id);
-		history.push(
-			`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`
-		);
+		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 	});
 
 	const formItemLayout = {
@@ -47,8 +45,7 @@ export const CreateWorldModal = ({ visibility, setVisibility }) => {
 					</Checkbox>
 					<ToolTip>
 						<>
-							Public worlds will have the following permissions given to any
-							visitor:
+							Public worlds will have the following permissions given to any visitor:
 							<br />
 							<ul>
 								{PUBLIC_WORLD_PERMISSIONS.map((permission) => (

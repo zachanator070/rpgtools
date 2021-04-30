@@ -1,17 +1,11 @@
 import { WikiFolder } from "../../models/wiki-folder";
 import { PermissionAssignment } from "../../models/permission-assignement";
-import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
+import { WIKI_ADMIN, WIKI_RW } from "../../../../common/src/permission-constants";
 import { WikiPage } from "../../models/wiki-page";
 import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { cleanUpPermissions } from "../../db-helpers";
-import {
-	ARTICLE,
-	ITEM,
-	MONSTER,
-	PERSON,
-	PLACE,
-} from "@rpgtools/common/src/type-constants";
+import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "../../../../common/src/type-constants";
 import { authenticated } from "../../authentication-helpers";
 import { Place } from "../../models/place";
 import { Image } from "../../models/image";
@@ -22,52 +16,44 @@ import { Monster } from "../../models/monster";
 import { Model } from "../../models/model";
 
 export const wikiMutations = {
-	createWiki: authenticated(
-		async (parent, { name, folderId }, { currentUser }) => {
-			const folder = await WikiFolder.findById(folderId);
-			if (!folder) {
-				throw new Error("Folder does not exist");
-			}
-
-			if (!(await folder.userCanWrite(currentUser))) {
-				throw new Error(
-					`You do not have permission to write to the folder ${folderId}`
-				);
-			}
-
-			const newPage = await WikiPage.create({
-				name,
-				world: folder.world,
-				type: ARTICLE,
-			});
-			folder.pages.push(newPage);
-			await folder.save();
-
-			if (!(await newPage.userCanWrite(currentUser))) {
-				const readPermission = await PermissionAssignment.create({
-					permission: WIKI_RW,
-					subject: newPage._id,
-					subjectType: ARTICLE,
-				});
-				currentUser.permissions.push(readPermission);
-				const adminPermission = await PermissionAssignment.create({
-					permission: WIKI_ADMIN,
-					subject: newPage._id,
-					subjectType: ARTICLE,
-				});
-				currentUser.permissions.push(adminPermission);
-				await currentUser.save();
-			}
-
-			await newPage.populate("world").execPopulate();
-			return folder;
+	createWiki: authenticated(async (parent, { name, folderId }, { currentUser }) => {
+		const folder = await WikiFolder.findById(folderId);
+		if (!folder) {
+			throw new Error("Folder does not exist");
 		}
-	),
-	updateWiki: async (
-		parent,
-		{ wikiId, name, content, coverImageId, type },
-		{ currentUser }
-	) => {
+
+		if (!(await folder.userCanWrite(currentUser))) {
+			throw new Error(`You do not have permission to write to the folder ${folderId}`);
+		}
+
+		const newPage = await WikiPage.create({
+			name,
+			world: folder.world,
+			type: ARTICLE,
+		});
+		folder.pages.push(newPage);
+		await folder.save();
+
+		if (!(await newPage.userCanWrite(currentUser))) {
+			const readPermission = await PermissionAssignment.create({
+				permission: WIKI_RW,
+				subject: newPage._id,
+				subjectType: ARTICLE,
+			});
+			currentUser.permissions.push(readPermission);
+			const adminPermission = await PermissionAssignment.create({
+				permission: WIKI_ADMIN,
+				subject: newPage._id,
+				subjectType: ARTICLE,
+			});
+			currentUser.permissions.push(adminPermission);
+			await currentUser.save();
+		}
+
+		await newPage.populate("world").execPopulate();
+		return folder;
+	}),
+	updateWiki: async (parent, { wikiId, name, content, coverImageId, type }, { currentUser }) => {
 		let wikiPage = await WikiPage.findById(wikiId).populate("world content");
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
@@ -175,9 +161,7 @@ export const wikiMutations = {
 		const parentFolder = await WikiFolder.findOne({ pages: wikiPage._id });
 
 		if (parentFolder) {
-			parentFolder.pages = parentFolder.pages.filter(
-				(page) => !page._id.equals(wikiPage._id)
-			);
+			parentFolder.pages = parentFolder.pages.filter((page) => !page._id.equals(wikiPage._id));
 			await parentFolder.save();
 		}
 
@@ -185,11 +169,7 @@ export const wikiMutations = {
 		await wikiPage.deleteOne();
 		return wikiPage.world;
 	},
-	updatePlace: async (
-		parent,
-		{ placeId, mapImageId, pixelsPerFoot },
-		{ currentUser }
-	) => {
+	updatePlace: async (parent, { placeId, mapImageId, pixelsPerFoot }, { currentUser }) => {
 		const place = await Place.findById(placeId);
 		if (!place) {
 			throw new Error(`Place ${placeId} does not exist`);
@@ -217,11 +197,7 @@ export const wikiMutations = {
 			.execPopulate();
 		return place;
 	},
-	updateModeledWiki: async (
-		parent,
-		{ wikiId, model, color },
-		{ currentUser }
-	) => {
+	updateModeledWiki: async (parent, { wikiId, model, color }, { currentUser }) => {
 		let wikiPage = await WikiPage.findById(wikiId).populate("world content");
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
@@ -252,23 +228,17 @@ export const wikiMutations = {
 			throw new Error("Folder does not exist");
 		}
 		if (!(await folder.userCanWrite(currentUser))) {
-			throw new Error(
-				`You do not have permission to write to the folder ${folderId}`
-			);
+			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
 		const oldFolder = await WikiFolder.findOne({ pages: wikiId });
 		if (oldFolder && !(await oldFolder.userCanWrite(currentUser))) {
-			throw new Error(
-				`You do not have permission to write to the folder ${oldFolder._id}`
-			);
+			throw new Error(`You do not have permission to write to the folder ${oldFolder._id}`);
 		}
 
 		folder.pages.push(wikiPage);
 		await folder.save();
-		oldFolder.pages = oldFolder.pages.filter(
-			(pageId) => !pageId.equals(wikiPage._id)
-		);
+		oldFolder.pages = oldFolder.pages.filter((pageId) => !pageId.equals(wikiPage._id));
 		await oldFolder.save();
 
 		return wikiPage.world;

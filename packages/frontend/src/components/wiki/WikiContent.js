@@ -4,7 +4,7 @@ import { ExportOutlined, EditOutlined } from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { LoadingView } from "../LoadingView";
-import { MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
+import { MODELED_WIKI_TYPES, PLACE } from "../../../../common/src/type-constants";
 import { Button, Tooltip } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ModelViewer } from "../models/ModelViewer";
@@ -55,10 +55,7 @@ export const WikiContent = ({ currentWiki, wikiLoading }) => {
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
 			{currentWiki.coverImage && (
-				<div
-					className="padding-md"
-					style={{ maxHeight: "500em", maxWidth: "500em" }}
-				>
+				<div className="padding-md" style={{ maxHeight: "500em", maxWidth: "500em" }}>
 					<img
 						alt={currentWiki.coverImage.name}
 						style={{ objectFit: "contain" }}
@@ -67,10 +64,7 @@ export const WikiContent = ({ currentWiki, wikiLoading }) => {
 				</div>
 			)}
 			{currentWiki.type === PLACE && currentWiki.mapImage && (
-				<div
-					className="padding-md"
-					style={{ maxHeight: "100em", maxWidth: "100em" }}
-				>
+				<div className="padding-md" style={{ maxHeight: "100em", maxWidth: "100em" }}>
 					<img
 						alt={currentWiki.mapImage.name}
 						style={{ objectFit: "contain" }}
@@ -80,9 +74,7 @@ export const WikiContent = ({ currentWiki, wikiLoading }) => {
 						<a
 							href="#"
 							onClick={() => {
-								history.push(
-									`/ui/world/${currentWorld._id}/map/${currentWiki._id}`
-								);
+								history.push(`/ui/world/${currentWorld._id}/map/${currentWiki._id}`);
 							}}
 						>
 							Go to Map <ExportOutlined />
@@ -120,9 +112,7 @@ export const WikiContent = ({ currentWiki, wikiLoading }) => {
 			<span>
 				{currentWiki.canWrite && (
 					<span className="margin-lg">
-						<Link
-							to={`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`}
-						>
+						<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`}>
 							<Button type={"primary"}>
 								<EditOutlined />
 								Edit

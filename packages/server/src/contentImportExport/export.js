@@ -1,17 +1,11 @@
 import { getGfsFileFromFileId, getReadStreamFromFile } from "../db-helpers";
 import { Readable } from "stream";
 import { WikiFolder } from "../models/wiki-folder";
-import { MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
+import { MODELED_WIKI_TYPES, PLACE } from "../../../common/src/type-constants";
 import { WikiPage } from "../models/wiki-page";
 import { Model } from "../models/model";
 
-export const exportWikiPage = async (
-	docId,
-	archive,
-	currentUser,
-	res,
-	errorOut = true
-) => {
+export const exportWikiPage = async (docId, archive, currentUser, res, errorOut = true) => {
 	const page = await WikiPage.findById(docId).populate({
 		path: "coverImage world",
 		populate: {

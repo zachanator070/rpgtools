@@ -7,12 +7,9 @@ import {
 	ROLE_READ_ALL,
 	ROLE_RW,
 	ROLE_RW_ALL,
-} from "@rpgtools/common/src/permission-constants";
-import { ALL_USERS, EVERYONE } from "@rpgtools/common/src/role-constants";
-import {
-	PERMISSION_ASSIGNMENT,
-	WORLD,
-} from "@rpgtools/common/src/type-constants";
+} from "../../../common/src/permission-constants";
+import { ALL_USERS, EVERYONE } from "../../../common/src/role-constants";
+import { PERMISSION_ASSIGNMENT, WORLD } from "../../../common/src/type-constants";
 
 const Schema = mongoose.Schema;
 

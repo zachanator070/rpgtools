@@ -2,7 +2,7 @@ import useCurrentWorld from "../world/useCurrentWorld";
 import { useLazyQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import gql from "graphql-tag";
-import { MODEL_ATTRIBUTES } from "@rpgtools/common/src/gql-fragments";
+import { MODEL_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const GET_MODELS = gql`
 	query getModels($worldId: ID!){
@@ -13,10 +13,7 @@ export const GET_MODELS = gql`
 `;
 export const useGetModels = () => {
 	const { currentWorld, loading } = useCurrentWorld();
-	const [
-		getModels,
-		{ data, loading: modelLoading, error, refetch },
-	] = useLazyQuery(GET_MODELS);
+	const [getModels, { data, loading: modelLoading, error, refetch }] = useLazyQuery(GET_MODELS);
 
 	useEffect(() => {
 		(async () => {

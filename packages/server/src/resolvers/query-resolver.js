@@ -1,6 +1,6 @@
 import { World } from "../models/world";
 import { User } from "../models/user";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ANON_USERNAME } from "../../../common/src/permission-constants";
 import { WikiPage } from "../models/wiki-page";
 import { Place } from "../models/place";
 import {
@@ -14,7 +14,7 @@ import {
 	SERVER_CONFIG,
 	WIKI_FOLDER,
 	WORLD,
-} from "@rpgtools/common/src/type-constants";
+} from "../../../common/src/type-constants";
 import { ServerConfig } from "../models/server-config";
 import { Game } from "../models/game";
 import { Model } from "../models/model";
@@ -62,9 +62,7 @@ export default {
 		}
 		switch (foundWiki.type) {
 			case PLACE:
-				foundWiki = await Place.findById(wikiId).populate(
-					"mapImage coverImage"
-				);
+				foundWiki = await Place.findById(wikiId).populate("mapImage coverImage");
 				break;
 			case PERSON:
 				foundWiki = await Person.findById(wikiId).populate("model");
@@ -169,7 +167,7 @@ export default {
 		}
 		const results = await WikiPage.paginate(
 			{ _id: { $in: folder.pages } },
-			{ sort: {name: 1}, page }
+			{ sort: { name: 1 }, page }
 		);
 		const docs = [];
 		for (let doc of results.docs) {

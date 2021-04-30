@@ -3,16 +3,16 @@ import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
-} from "@rpgtools/common/src/permission-constants";
+} from "../../../../common/src/permission-constants";
 import { World } from "../../models/world";
 import { Place } from "../../models/place";
 import { WikiFolder } from "../../models/wiki-folder";
 import { PermissionAssignment } from "../../models/permission-assignement";
 import { Role } from "../../models/role";
-import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
+import { EVERYONE, WORLD_OWNER } from "../../../../common/src/role-constants";
 import { WikiPage } from "../../models/wiki-page";
 import { Pin } from "../../models/pin";
-import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
+import { PLACE, WORLD } from "../../../../common/src/type-constants";
 import { ServerConfig } from "../../models/server-config";
 import { FiveEImporter } from "../../fiveEImport/five-e-importer";
 
@@ -97,19 +97,17 @@ export const createWorld = async (name, isPublic, currentUser) => {
 };
 
 export const worldMutations = {
-	createWorld: authenticated(
-		async (parent, { name, public: isPublic }, { currentUser }) => {
-			const server = await ServerConfig.findOne();
-			if (!server) {
-				throw new Error("Server config doesnt exist!");
-			}
-			if (!(await currentUser.hasPermission(WORLD_CREATE, server._id))) {
-				throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
-			}
-
-			return createWorld(name, isPublic, currentUser);
+	createWorld: authenticated(async (parent, { name, public: isPublic }, { currentUser }) => {
+		const server = await ServerConfig.findOne();
+		if (!server) {
+			throw new Error("Server config doesnt exist!");
 		}
-	),
+		if (!(await currentUser.hasPermission(WORLD_CREATE, server._id))) {
+			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
+		}
+
+		return createWorld(name, isPublic, currentUser);
+	}),
 	renameWorld: async (_, { worldId, newName }, { currentUser }) => {
 		const world = await World.findById(worldId);
 		if (!world) {
@@ -174,9 +172,7 @@ export const worldMutations = {
 
 		pin.page = page;
 		await pin.save();
-		await pin
-			.populate({ path: "map", populate: { path: "world" } })
-			.execPopulate();
+		await pin.populate({ path: "map", populate: { path: "world" } }).execPopulate();
 		const world = pin.map.world;
 		await world
 			.populate({
@@ -198,9 +194,7 @@ export const worldMutations = {
 			throw new Error(`You do not have permission to delete this pin`);
 		}
 
-		await pin
-			.populate({ path: "map", populate: { path: "world" } })
-			.execPopulate();
+		await pin.populate({ path: "map", populate: { path: "world" } }).execPopulate();
 		const world = pin.map.world;
 		await pin.delete();
 		await world
@@ -213,11 +207,7 @@ export const worldMutations = {
 			.execPopulate();
 		return world;
 	},
-	load5eContent: async (
-		_,
-		{ worldId, creatureCodex, tomeOfBeasts },
-		{ currentUser }
-	) => {
+	load5eContent: async (_, { worldId, creatureCodex, tomeOfBeasts }, { currentUser }) => {
 		const world = await World.findById(worldId).populate("rootFolder");
 		if (!world) {
 			throw new Error("World does not exist");
@@ -242,8 +232,10 @@ export const worldMutations = {
 			(async () => {
 				await importer.importAdventurePages(topFolder);
 				// adventure pages creates a rules folder that importRules needs
-				const rulesFolder = (await WikiFolder.findById(topFolder._id).populate('children')).children.find(folder => folder.name === 'Rules');
-				await importer.importRules(rulesFolder, ['combat', 'adventuring', 'using-ability-scores']);
+				const rulesFolder = (
+					await WikiFolder.findById(topFolder._id).populate("children")
+				).children.find((folder) => folder.name === "Rules");
+				await importer.importRules(rulesFolder, ["combat", "adventuring", "using-ability-scores"]);
 			})(),
 			importer.importRaces(racesFolder),
 			(async () => {

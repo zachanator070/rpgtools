@@ -2,10 +2,10 @@ import { User } from "../../src/models/user";
 import { SALT_ROUNDS } from "../../src/resolvers/mutations/authentication-mutations";
 import { ServerConfig } from "../../src/models/server-config";
 import { Role } from "../../src/models/role";
-import { ALL_USERS } from "@rpgtools/common/src/role-constants";
+import { ALL_USERS } from "../../../common/src/role-constants";
 import { PermissionAssignment } from "../../src/models/permission-assignement";
-import { WORLD_CREATE } from "@rpgtools/common/src/permission-constants";
-import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
+import { WORLD_CREATE } from "../../../common/src/permission-constants";
+import { SERVER_CONFIG } from "../../../common/src/type-constants";
 
 const mongoose = require("mongoose");
 mongoose.set("useFindAndModify", false);
@@ -26,9 +26,7 @@ beforeEach(async function (done) {
 	  the collections in our mongoose connection and drop them.
 	*/
 	async function clearDB() {
-		const collections = await mongoose.connection.db
-			.listCollections()
-			.toArray();
+		const collections = await mongoose.connection.db.listCollections().toArray();
 		for (let collection of collections) {
 			try {
 				await mongoose.connection.db.dropCollection(collection.name);
@@ -44,14 +42,11 @@ beforeEach(async function (done) {
 	  provided by the node runtime ENV
 	*/
 	if (mongoose.connection.readyState === 0) {
-		await mongoose.connect(
-			`mongodb://localhost:27017/${process.env.TEST_SUITE}`,
-			{
-				useNewUrlParser: true,
-				useUnifiedTopology: true,
-				autoIndex: false,
-			}
-		);
+		await mongoose.connect(`mongodb://localhost:27017/${process.env.TEST_SUITE}`, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			autoIndex: false,
+		});
 	}
 
 	await clearDB();

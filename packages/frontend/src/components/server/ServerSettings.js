@@ -6,15 +6,12 @@ import { Link } from "react-router-dom";
 import { LeftOutlined } from "@ant-design/icons";
 import { useGenerateRegisterCodes } from "../../hooks/server/useGenerateRegisterCodes";
 import { PermissionEditor } from "../permissions/PermissionEditor";
-import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
+import { SERVER_CONFIG } from "../../../../common/src/type-constants";
 
 export default () => {
 	const { serverConfig, loading } = useServerConfig();
 	const [amount, setAmount] = useState(0);
-	const {
-		generateRegisterCodes,
-		loading: generateLoading,
-	} = useGenerateRegisterCodes();
+	const { generateRegisterCodes, loading: generateLoading } = useGenerateRegisterCodes();
 
 	if (loading) {
 		return <LoadingView />;
@@ -49,14 +46,9 @@ export default () => {
 				<Row className={"margin-md-top"}>
 					<Col span={4} />
 					<Col span={16}>
+						<span className={"margin-lg-right"}>Number of codes to generate:</span>
 						<span className={"margin-lg-right"}>
-							Number of codes to generate:
-						</span>
-						<span className={"margin-lg-right"}>
-							<InputNumber
-								value={amount}
-								onChange={async (value) => await setAmount(value)}
-							/>
+							<InputNumber value={amount} onChange={async (value) => await setAmount(value)} />
 						</span>
 						<Button
 							type={"primary"}
@@ -75,10 +67,7 @@ export default () => {
 				<Col span={4} />
 				<Col span={16}>
 					<h2>Server Permissions</h2>
-					<PermissionEditor
-						subject={serverConfig}
-						subjectType={SERVER_CONFIG}
-					/>
+					<PermissionEditor subject={serverConfig} subjectType={SERVER_CONFIG} />
 				</Col>
 				<Col span={4} />
 			</Row>

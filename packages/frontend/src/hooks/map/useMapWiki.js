@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { CURRENT_WIKI_ATTRIBUTES } from "@rpgtools/common/src/gql-fragments";
+import { CURRENT_WIKI_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 import gql from "graphql-tag";
 
 export const MAP_WIKI = gql`

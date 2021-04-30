@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-	Button,
-	Col,
-	Input,
-	List,
-	Modal,
-	Radio,
-	Row,
-	Select,
-	Tabs,
-} from "antd";
+import { Button, Col, List, Radio, Row, Tabs } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser";
+import { getPermissionsBySubjectType } from "../../../../common/src/permission-constants";
 import { useGrantUserPermission } from "../../hooks/authorization/useGrantUserPermisison";
 import { useGrantRolePermission } from "../../hooks/authorization/useGrantRolePermission";
 import { useRevokeUserPermission } from "../../hooks/authorization/useRevokeUserPermission";
@@ -31,10 +20,7 @@ export const PermissionEditor = ({ subject, subjectType, refetch }) => {
 	const [selectedPermission, setSelectedPermission] = useState(
 		possiblePermissions.length > 0 ? possiblePermissions[0] : null
 	);
-	const [
-		selectedPermissionAssignment,
-		setSelectedPermissionAssignment,
-	] = useState(null);
+	const [selectedPermissionAssignment, setSelectedPermissionAssignment] = useState(null);
 
 	const updateSelectedPermission = (permission) => {
 		for (let assignment of subject.accessControlList) {
@@ -94,12 +80,8 @@ export const PermissionEditor = ({ subject, subjectType, refetch }) => {
 									locale={{ emptyText: <div>No {permissionGroup}</div> }}
 									renderItem={(item) => {
 										return (
-											<List.Item
-												key={selectedPermissionAssignment._id + "." + item._id}
-											>
-												{permissionGroup === "users"
-													? item.username
-													: item.name}
+											<List.Item key={selectedPermissionAssignment._id + "." + item._id}>
+												{permissionGroup === "users" ? item.username : item.name}
 												{subject.canAdmin && (
 													<Button
 														className="margin-md-left"

@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { useGQLQuery } from "../useGQLQuery";
-import { MODEL_ATTRIBUTES } from "@rpgtools/common/src/gql-fragments";
+import { MODEL_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 const SEARCH_WIKIS = gql`
 	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean){
