@@ -1,5 +1,5 @@
-import { ServerConfig } from "../../../../src/models/server-config";
-import { User } from "../../../../src/models/user";
+import { ServerConfig } from "../../../../src/dal/mongodb/models/server-config";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";

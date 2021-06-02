@@ -1,9 +1,9 @@
-import { User } from "../../../../src/models/user";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
 import { createTestClient } from "apollo-server-testing";
-import { World } from "../../../../src/models/world";
+import { World } from "../../../../src/dal/mongodb/models/world";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { SET_CURRENT_WORLD } from "../../../../../frontend/src/hooks/world/useSetCurrentWorld";
 

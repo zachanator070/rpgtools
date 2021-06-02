@@ -1,7 +1,7 @@
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
-import { User } from "../../../../src/models/user";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { createTestClient } from "apollo-server-testing";
 import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
 import {
@@ -11,8 +11,8 @@ import {
 	WORLD_READ,
 } from "../../../../../common/src/permission-constants";
 import { PLACE, WORLD } from "../../../../../common/src/type-constants";
-import { PermissionAssignment } from "../../../../src/models/permission-assignement";
-import { Role } from "../../../../src/models/role";
+import { PermissionAssignment } from "../../../../src/dal/mongodb/models/permission-assignment";
+import { Role } from "../../../../src/dal/mongodb/models/role";
 import { ADD_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useAddUserRole";
 import { CREATE_ROLE } from "../../../../../frontend/src/hooks/authorization/useCreateRole";
 import { DELETE_ROLE } from "../../../../../frontend/src/hooks/authorization/useDeleteRole";

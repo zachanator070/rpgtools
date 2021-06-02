@@ -1,13 +1,13 @@
-import { User } from "../../../../src/models/user";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
 import { createTestClient } from "apollo-server-testing";
 import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
-import { WikiFolder } from "../../../../src/models/wiki-folder";
-import { WikiPage } from "../../../../src/models/wiki-page";
+import { WikiFolder } from "../../../../src/dal/mongodb/models/wiki-folder";
+import { WikiPageModel } from "../../../../src/dal/mongodb/models/wiki-page";
 import { ARTICLE, WIKI_FOLDER } from "../../../../../common/src/type-constants";
-import { PermissionAssignment } from "../../../../src/models/permission-assignement";
+import { PermissionAssignment } from "../../../../src/dal/mongodb/models/permission-assignment";
 import { ANON_USERNAME, WIKI_RW } from "../../../../../common/src/permission-constants";
 import { CREATE_FOLDER } from "../../../../../frontend/src/hooks/wiki/useCreateFolder";
 import { DELETE_FOLDER } from "../../../../../frontend/src/hooks/wiki/useDeleteFolder";
@@ -179,7 +179,7 @@ describe("folder-mutations", () => {
 
 			beforeEach(async () => {
 				otherUser = await User.create({ username: "tester2" });
-				const childPage = await WikiPage.create({
+				const childPage = await WikiPageModel.create({
 					name: "page",
 					type: ARTICLE,
 					world: world,

@@ -1,11 +1,11 @@
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
-import { User } from "../../../../src/models/user";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { createTestClient } from "apollo-server-testing";
-import { Pin } from "../../../../src/models/pin";
-import { World } from "../../../../src/models/world";
-import { Article } from "../../../../src/models/article";
+import { Pin } from "../../../../src/dal/mongodb/models/pin";
+import { World } from "../../../../src/dal/mongodb/models/world";
+import { Article } from "../../../../src/dal/mongodb/models/article";
 import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { CREATE_PIN } from "../../../../../frontend/src/hooks/map/useCreatePin";

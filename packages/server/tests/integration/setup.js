@@ -1,9 +1,9 @@
-import { User } from "../../src/models/user";
+import { User } from "../../src/dal/mongodb/models/user";
 import { SALT_ROUNDS } from "../../src/resolvers/mutations/authentication-mutations";
-import { ServerConfig } from "../../src/models/server-config";
-import { Role } from "../../src/models/role";
+import { ServerConfig } from "../../src/dal/mongodb/models/server-config";
+import { Role } from "../../src/dal/mongodb/models/role";
 import { ALL_USERS } from "../../../common/src/role-constants";
-import { PermissionAssignment } from "../../src/models/permission-assignement";
+import { PermissionAssignment } from "../../src/dal/mongodb/models/permission-assignment";
 import { WORLD_CREATE } from "../../../common/src/permission-constants";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 
