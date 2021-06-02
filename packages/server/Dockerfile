@@ -1,4 +1,4 @@
-FROM node:14.11.0-slim
+FROM node:16.0.0-slim
 
 WORKDIR /home/node/app/packages
 
@@ -17,7 +17,6 @@ RUN npm install
 
 ADD packages/common/src ../common/src
 ADD packages/server/src src
-ADD packages/frontend/dist dist
 
 EXPOSE 3000
 

@@ -1,10 +1,10 @@
-import { User } from "../../../../src/models/user";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
 import { createTestClient } from "apollo-server-testing";
 import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
-import { WikiFolder } from "../../../../src/models/wiki-folder";
+import { WikiFolder } from "../../../../src/dal/mongodb/models/wiki-folder";
 import fs from "fs";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { CREATE_IMAGE } from "../../../../../frontend/src/hooks/wiki/useCreateImage";
@@ -67,7 +67,7 @@ describe("folder-mutations", () => {
 
 		describe("with authenticated user", () => {
 			beforeEach(async () => {
-				currentUser = await User.find({ username: "tester" });
+				currentUser = await User.find({ conditions: { username: "tester" } });
 			});
 
 			test("create image no permission", async () => {

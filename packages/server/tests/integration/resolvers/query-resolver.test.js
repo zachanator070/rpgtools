@@ -1,4 +1,4 @@
-import { User } from "../../../src/models/user";
+import { User } from "../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../src/gql-server-schema";
 import { serverResolvers } from "../../../src/resolvers/server-resolvers";

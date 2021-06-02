@@ -1,4 +1,4 @@
-FROM node:14.11.0-slim
+FROM node:16.0.0-slim
 
 WORKDIR /home/node/app/packages
 

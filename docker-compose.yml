@@ -4,20 +4,19 @@ services:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
-    command: "npm run start-dev"
+    command: "npm run dev"
     env_file:
       - .env
     volumes:
       - ./packages/server/src:/home/node/app/packages/server/src
       - ./packages/common/src:/home/node/app/packages/common/src
-      - ./packages/frontend/dist:/home/node/app/packages/server/dist
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
       - "9229:9229"
     depends_on:
       - mongodb
       - redis
-      - dev-builder
+      - dev-frontend-builder
     networks:
       - rpgtools
 
@@ -33,7 +32,7 @@ services:
     networks:
       - rpgtools
 
-  dev-builder:
+  dev-frontend-builder:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
@@ -47,7 +46,7 @@ services:
     networks:
       - rpgtools
 
-  prod-builder:
+  prod-frontend-builder:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile

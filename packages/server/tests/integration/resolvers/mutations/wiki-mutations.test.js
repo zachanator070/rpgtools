@@ -1,4 +1,4 @@
-import { User } from "../../../../src/models/user";
+import { User } from "../../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
@@ -7,7 +7,7 @@ import { createWorld } from "../../../../src/resolvers/mutations/world-mutations
 import { Readable } from "stream";
 import fs from "fs";
 import { ARTICLE } from "../../../../../common/src/type-constants";
-import { Article } from "../../../../src/models/article";
+import { Article } from "../../../../src/dal/mongodb/models/article";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { CREATE_IMAGE } from "../../../../../frontend/src/hooks/wiki/useCreateImage";
 import { CREATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useCreateWiki";

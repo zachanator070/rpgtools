@@ -3,7 +3,7 @@ CURRENT_UID=$(id -u):$(id -g)
 export CURRENT_UID
 
 # Builds rpgtools docker image
-build: prod-builder clean-uncompressed
+build: prod-frontend-builder clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f packages/server/Dockerfile .
 
@@ -21,14 +21,14 @@ clean-uncompressed:
 	rm -f dist/app.css
 
 # runs the js transpiler docker image
-prod-builder: clean init-env
+prod-frontend-builder: clean init-env
 	mkdir -p dist
-	docker-compose up --build prod-builder
+	docker-compose up --build prod-frontend-builder
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
 	export BUILD_WITH_STATS
-build-with-stats: prod-builder
+build-with-stats: prod-frontend-builder
 
 # runs production version of docker image with minimal depending services
 prod: init-env
@@ -47,7 +47,7 @@ dev-up:
 	docker-compose up -d dev-server
 
 build-dev:
-	docker-compose build dev-server dev-builder
+	docker-compose build dev-server dev-frontend-builder
 
 # stops and destroys any running containers
 down:
