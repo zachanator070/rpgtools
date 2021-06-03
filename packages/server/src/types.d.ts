@@ -1,10 +1,7 @@
 import { FilterCondition } from "./dal/filter-condition";
 import { Document, Schema } from "mongoose";
 import { User } from "./domain-entities/user";
-import { AuthenticationService } from "./services/authentication-service";
-import { AuthorizationService } from "./services/authorization-service";
 import { SecurityContext } from "./security-context";
-import { WikiFolderService } from "./services/wiki-folder-service";
 import { Article } from "./domain-entities/article";
 import { Chunk } from "./domain-entities/chunk.";
 import { Game } from "./domain-entities/game";
@@ -22,35 +19,7 @@ import { WikiFolder } from "./domain-entities/wiki-folder";
 import { WikiPage } from "./domain-entities/wiki-page";
 import { World } from "./domain-entities/world";
 import { File } from "./domain-entities/file";
-import { ContentExportService } from "./services/content-export-service";
-import { ContentImportService } from "./services/content-import-service";
-import { GameService } from "./services/game-service";
-import { ImageService } from "./services/image-service";
-import { ModelService } from "./services/model-service";
-import { ServerConfigService } from "./services/server-config-service";
-import { SrdImportService } from "./services/srd-import-service";
-import { UserService } from "./services/user-service";
-import { WikiPageService } from "./services/wiki-page-service";
-import { WorldService } from "./services/world-service";
 import { Readable, Writable } from "stream";
-import jwt from "jsonwebtoken";
-import {
-	ACCESS_TOKEN,
-	ACCESS_TOKEN_MAX_AGE,
-	REFRESH_TOKEN,
-	REFRESH_TOKEN_MAX_AGE,
-} from "./constants";
-import { v4 as uuidv4 } from "uuid";
-import bcrypt from "bcrypt";
-import { SALT_ROUNDS } from "./resolvers/mutations/authentication-mutations";
-import {
-	ANON_USERNAME,
-	ROLE_ADD,
-	ROLE_ADMIN,
-	ROLE_RW,
-} from "../../common/src/permission-constants";
-import { ROLE } from "../../common/src/type-constants";
-import { EVERYONE, WORLD_OWNER } from "../../common/src/role-constants";
 
 export interface DomainEntity {
 	_id: string;
@@ -162,12 +131,16 @@ export type AuthenticationTokens = {
 	refreshToken: string;
 };
 export interface AuthenticationService {
-	createTokens(user: User, version?: string): Promise<AuthenticationTokens>;
-	getCurrentUser(userId: string): Promise<User>;
-	getUserFromAccessToken(accessToken?: string): Promise<User>;
-	getUserFromRefreshToken(refreshToken?: string): Promise<User>;
+	createTokens(user: User, version: string, unitOfWork: UnitOfWork): Promise<AuthenticationTokens>;
+	getUserFromAccessToken(accessToken: string, unitOfWork: UnitOfWork): Promise<User>;
+	getUserFromRefreshToken(refreshToken: string, unitOfWork: UnitOfWork): Promise<User>;
 	getRefreshTokenVersion(refreshToken: string): Promise<string>;
-	registerUser(email: string, username: string, password: string): Promise<User>;
+	registerUser(
+		email: string,
+		username: string,
+		password: string,
+		unitOfWork: UnitOfWork
+	): Promise<User>;
 	login(username: string, password: string, cookieManager: CookieManager): Promise<User>;
 	logout(currentUser: User, cookieManager: CookieManager): Promise<string>;
 	register(registerCode: string, email: string, username: string, password: string): Promise<User>;
