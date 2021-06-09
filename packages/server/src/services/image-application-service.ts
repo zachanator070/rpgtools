@@ -5,7 +5,9 @@ import { Chunk } from "../domain-entities/chunk.";
 import Jimp from "jimp";
 import { Readable } from "stream";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
+import { injectable } from "inversify";
 
+@injectable()
 export class ImageApplicationService implements ImageService {
 	chunkSize = 250;
 

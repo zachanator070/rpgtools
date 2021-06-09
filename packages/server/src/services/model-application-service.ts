@@ -1,7 +1,7 @@
 import { AuthorizationService, Cache, EventPublisher, ModelService } from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "../../../common/src/permission-constants";
 import { MODEL } from "../../../common/src/type-constants";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { ModelAuthorizationRuleset } from "../security/model-authorization-ruleset";
 import { SecurityContext } from "../security-context";
@@ -13,6 +13,7 @@ import { FilterCondition } from "../dal/filter-condition";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
 
+@injectable()
 export class ModelApplicationService implements ModelService {
 	@inject(INJECTABLE_TYPES.Cache)
 	cache: Cache;

@@ -15,13 +15,13 @@ import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { Role } from "../domain-entities/role";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WorldAuthorizationRuleset } from "../security/world-authorization-ruleset";
-import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
 import { Pin } from "../domain-entities/pin";
 import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
+import { injectable } from "inversify";
 
+@injectable()
 export class WorldApplicationService implements WorldService {
 	worldAuthorizationRuleset = new WorldAuthorizationRuleset();
-	wikiPageAuthorizationRuleset = new WikiPageAuthorizationRuleset();
 	pinAuthorizationRuleset = new PinAuthorizationRuleset();
 
 	private makeWorld = async (

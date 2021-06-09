@@ -6,7 +6,7 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import { MongodbRoleRepository } from "./dal/mongodb/repositories/mongodb-role-repository";
 import { INJECTABLE_TYPES } from "./injectable-types";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { MongodbUserRepository } from "./dal/mongodb/repositories/mongodb-user-repository";
 import { MongodbServerConfigRepository } from "./dal/mongodb/repositories/mongodb-server-config-repository";
 import { FilterCondition } from "./dal/filter-condition";
@@ -16,8 +16,10 @@ import { Seeder } from "./types";
 
 export interface RPGToolsServer {
 	start(): Promise<void>;
+	checkConfig(): Promise<void>;
 }
 
+@injectable()
 export class ExpressRPGToolsServer implements RPGToolsServer {
 	DEFAULT_PORT = 3000;
 

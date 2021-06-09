@@ -2,7 +2,7 @@ import { SessionContext } from "../../types";
 import { container } from "../../inversify.config";
 import { WorldService } from "../../services/world-application-service";
 import { INJECTABLE_TYPES } from "../../injectable-types";
-import { SrdImportService } from "../../services/srd-import-service";
+import { SrdImportService } from "../../services/srd-import-application-service";
 
 type createWorldArgs = {
 	name: string;

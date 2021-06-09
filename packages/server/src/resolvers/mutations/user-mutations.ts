@@ -1,12 +1,14 @@
-import { authenticated } from "../../authentication-helpers";
+import { SessionContext, UserService } from "../../types";
+import { container } from "../../inversify.config";
+import { INJECTABLE_TYPES } from "../../injectable-types";
 
 export const userResolvers = {
-	setCurrentWorld: authenticated(
-		async (parent, { worldId }, { currentUser }) => {
-			currentUser.currentWorld = worldId;
-			await currentUser.save();
-			await currentUser.populate("currentWorld").execPopulate();
-			return currentUser;
-		}
-	),
+	setCurrentWorld: async (
+		_: any,
+		{ worldId }: { worldId: string },
+		{ securityContext }: SessionContext
+	) => {
+		const service = container.get<UserService>(INJECTABLE_TYPES.UserService);
+		return service.setCurrentWorld(securityContext, worldId);
+	},
 };
