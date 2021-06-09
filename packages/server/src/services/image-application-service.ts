@@ -1,40 +1,36 @@
-import { ApplicationService, ChunkRepository, FileRepository, ImageRepository } from "../types";
+import { ImageService, UnitOfWork } from "../types";
 import { Image } from "../domain-entities/image";
-import { INJECTABLE_TYPES } from "../injectable-types";
-import { inject } from "inversify";
 import { File } from "../domain-entities/file";
 import { Chunk } from "../domain-entities/chunk.";
 import Jimp from "jimp";
-import { FileUpload } from "graphql-upload";
 import { Readable } from "stream";
+import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
-export class ImageService implements ApplicationService {
-	@inject(INJECTABLE_TYPES.ImageRepository)
-	imageRepository: ImageRepository;
-	@inject(INJECTABLE_TYPES.ChunkRepository)
-	chunkRepository: ChunkRepository;
-	@inject(INJECTABLE_TYPES.FileRepository)
-	fileRepository: FileRepository;
-
+export class ImageApplicationService implements ImageService {
 	chunkSize = 250;
 
-	createImage = async (worldId: string, chunkify: boolean, file: FileUpload) => {
+	createImage = async (
+		worldId: string,
+		chunkify: boolean,
+		filename: string,
+		readStream: Readable,
+		givenUnitOfWork?: UnitOfWork
+	) => {
+		const unitOfWork = givenUnitOfWork ?? new DbUnitOfWork();
 		// @TODO need to check a permission here
 		if (chunkify === null) {
 			chunkify = true;
 		}
-		file = await file;
-		const stream = file.createReadStream();
 
 		const rawData: any[] = await new Promise((resolve, reject) => {
 			const rawData: any[] = [];
-			stream.on("data", (data) => {
+			readStream.on("data", (data) => {
 				rawData.push(data);
 			});
-			stream.on("end", () => {
+			readStream.on("end", () => {
 				resolve(rawData);
 			});
-			stream.on("error", (err) => {
+			readStream.on("error", (err) => {
 				reject(err);
 			});
 		});
@@ -42,7 +38,7 @@ export class ImageService implements ApplicationService {
 		const image = await Jimp.read(Buffer.concat(rawData));
 		const newImage = new Image(
 			"",
-			file.filename,
+			filename,
 			worldId,
 			image.bitmap.width,
 			image.bitmap.height,
@@ -59,22 +55,32 @@ export class ImageService implements ApplicationService {
 				image.bitmap.height,
 				image.bitmap.width,
 				image,
-				newImage
+				newImage,
+				unitOfWork
 			);
 			newImage.chunks.push(chunk._id);
 			newImage.chunkHeight = 1;
 			newImage.chunkWidth = 1;
 		} else {
-			await this.createChunkRecurse(0, 0, image, newImage);
+			await this.createChunkRecurse(0, 0, image, newImage, unitOfWork);
 			newImage.chunkHeight = Math.ceil(image.bitmap.height / this.chunkSize);
 			newImage.chunkWidth = Math.ceil(image.bitmap.width / this.chunkSize);
 		}
-		await this.makeIcon(image, newImage);
-		await this.imageRepository.create(newImage);
+		await this.makeIcon(image, newImage, unitOfWork);
+		await unitOfWork.imageRepository.create(newImage);
+		if (!givenUnitOfWork) {
+			await unitOfWork.commit();
+		}
 		return newImage;
 	};
 
-	async createChunkRecurse(x: number, y: number, image: Jimp, parentImage: Image) {
+	private async createChunkRecurse(
+		x: number,
+		y: number,
+		image: Jimp,
+		parentImage: Image,
+		unitOfWork: UnitOfWork
+	) {
 		const xOk = image.bitmap.width - x * this.chunkSize > 0;
 		const yOk = image.bitmap.height - y * this.chunkSize > 0;
 		let width = this.chunkSize;
@@ -89,21 +95,22 @@ export class ImageService implements ApplicationService {
 			return;
 		}
 		if (xOk) {
-			const chunk = await this.createChunk(x, y, height, width, image, parentImage);
+			const chunk = await this.createChunk(x, y, height, width, image, parentImage, unitOfWork);
 			parentImage.chunks.push(chunk._id);
-			await this.createChunkRecurse(x + 1, y, image, parentImage);
+			await this.createChunkRecurse(x + 1, y, image, parentImage, unitOfWork);
 		} else if (yOk) {
-			await this.createChunkRecurse(0, y + 1, image, parentImage);
+			await this.createChunkRecurse(0, y + 1, image, parentImage, unitOfWork);
 		}
 	}
 
-	createChunk = async (
+	private createChunk = async (
 		x: number,
 		y: number,
 		height: number,
 		width: number,
 		jimpImage: Jimp,
-		parentImage: Image
+		parentImage: Image,
+		unitOfWork: UnitOfWork
 	): Promise<Chunk> => {
 		return new Promise((resolve, reject) => {
 			Jimp.read(jimpImage).then(async (copy) => {
@@ -112,14 +119,14 @@ export class ImageService implements ApplicationService {
 				const buffer: Buffer = await copy.getBufferAsync(jimpImage.getMIME());
 				const stream = Readable.from(buffer);
 				const file = new File("", newFilename, stream, jimpImage.getMIME());
-				await this.fileRepository.create(file);
+				await unitOfWork.fileRepository.create(file);
 				const chunk = new Chunk("", x, y, width, height, file._id, parentImage._id);
 				resolve(chunk);
 			});
 		});
 	};
 
-	makeIcon(jimpImage: Jimp, newImage: Image) {
+	private makeIcon(jimpImage: Jimp, newImage: Image, unitOfWork: UnitOfWork) {
 		return new Promise(async (resolve, reject) => {
 			Jimp.read(jimpImage)
 				.then(async (image) => {
@@ -142,10 +149,11 @@ export class ImageService implements ApplicationService {
 								scaledImage.bitmap.height,
 								scaledImage.bitmap.width,
 								scaledImage,
-								iconImage
+								iconImage,
+								unitOfWork
 							);
 							iconImage.chunks = [iconChunk._id];
-							await this.imageRepository.create(iconImage);
+							await unitOfWork.imageRepository.create(iconImage);
 							newImage.icon = iconImage._id;
 							resolve(iconImage);
 						})();
@@ -157,18 +165,20 @@ export class ImageService implements ApplicationService {
 		});
 	}
 
-	deleteImage = async (image: Image) => {
+	public deleteImage = async (image: Image) => {
+		const unitOfWork = new DbUnitOfWork();
 		console.log(`deleting image ${image._id}`);
 		for (let chunkId of image.chunks) {
-			const chunk: Chunk = await this.chunkRepository.findById(chunkId);
-			const file: File = await this.fileRepository.findById(chunk.fileId);
-			await this.fileRepository.delete(file);
-			await this.chunkRepository.delete(chunk);
+			const chunk: Chunk = await unitOfWork.chunkRepository.findById(chunkId);
+			const file: File = await unitOfWork.fileRepository.findById(chunk.fileId);
+			await unitOfWork.fileRepository.delete(file);
+			await unitOfWork.chunkRepository.delete(chunk);
 		}
 		if (image.icon) {
-			const icon = await this.imageRepository.findById(image.icon);
+			const icon = await unitOfWork.imageRepository.findById(image.icon);
 			await this.deleteImage(icon);
 		}
-		await this.imageRepository.delete(image);
+		await unitOfWork.imageRepository.delete(image);
+		await unitOfWork.commit();
 	};
 }

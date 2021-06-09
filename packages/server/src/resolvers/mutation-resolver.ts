@@ -1,6 +1,6 @@
 import { authorizationMutations } from "./mutations/authorization-mutations";
 import { authenticationMutations } from "./mutations/authentication-mutations";
-import { folderMutations } from "./mutations/folder-mutations";
+import { wikiFolderMutations } from "./mutations/wiki-folder-mutations";
 import { worldMutations } from "./mutations/world-mutations";
 import { wikiMutations } from "./mutations/wiki-mutations";
 import { userResolvers } from "./mutations/user-mutations";
@@ -13,7 +13,7 @@ export default {
 	...authenticationMutations,
 	...worldMutations,
 	...authorizationMutations,
-	...folderMutations,
+	...wikiFolderMutations,
 	...wikiMutations,
 	...userResolvers,
 	...imageMutations,

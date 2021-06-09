@@ -1,4 +1,6 @@
-import { SessionContext } from "../../types";
+import { AuthorizationService, SessionContext } from "../../types";
+import { container } from "../../inversify.config";
+import { INJECTABLE_TYPES } from "../../injectable-types";
 
 export const authorizationMutations = {
 	grantUserPermission: async (
@@ -9,8 +11,11 @@ export const authorizationMutations = {
 			subjectId,
 			subjectType,
 		}: { userId: string; permission: string; subjectId: string; subjectType: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.grantUserPermission(
 			securityContext,
 			permission,
@@ -22,8 +27,11 @@ export const authorizationMutations = {
 	revokeUserPermission: async (
 		_: any,
 		{ userId, permission, subjectId }: { userId: string; permission: string; subjectId: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.revokeUserPermission(
 			securityContext,
 			permission,
@@ -39,8 +47,11 @@ export const authorizationMutations = {
 			subjectId,
 			subjectType,
 		}: { roleId: string; permission: string; subjectId: string; subjectType: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.grantRolePermission(
 			securityContext,
 			roleId,
@@ -52,8 +63,11 @@ export const authorizationMutations = {
 	revokeRolePermission: async (
 		_: any,
 		{ roleId, permission, subjectId }: { roleId: string; permission: string; subjectId: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.revokeRolePermission(
 			securityContext,
 			roleId,
@@ -64,29 +78,41 @@ export const authorizationMutations = {
 	createRole: async (
 		_: any,
 		{ worldId, name }: { worldId: string; name: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.createRole(securityContext, worldId, name);
 	},
 	deleteRole: async (
 		_: any,
 		{ roleId }: { roleId: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		await authorizationService.deleteRole(securityContext, roleId);
 	},
 	addUserRole: async (
 		_: any,
 		{ userId, roleId }: { userId: string; roleId: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.addUserRole(securityContext, userId, roleId);
 	},
 	removeUserRole: async (
 		_: any,
 		{ userId, roleId }: { userId: string; roleId: string },
-		{ securityContext, authorizationService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const authorizationService = container.get<AuthorizationService>(
+			INJECTABLE_TYPES.AuthorizationService
+		);
 		return await authorizationService.removeUserRole(securityContext, userId, roleId);
 	},
 };

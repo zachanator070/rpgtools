@@ -1,10 +1,10 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { Place } from "./place";
 import { WikiPageModel } from "./wiki-page";
 import { PIN, PLACE, WIKI_PAGE } from "../../../../../common/src/type-constants";
-import {MongoDBEntity} from "../../../types";
+import { MongoDBEntity } from "../../../types";
 
-export class PinDocument extends MongoDBEntity{
+export class PinDocument extends MongoDBEntity {
 	public x: number;
 	public y: number;
 	public map: Schema.Types.ObjectId;
@@ -30,16 +30,5 @@ const pinSchema = new Schema({
 		ref: WIKI_PAGE,
 	},
 });
-
-pinSchema.methods.userCanRead = async function (user) {
-	const map = await Place.findById(this.map);
-	const page = await WikiPageModel.findById(this.page);
-	return (await map.userCanRead(user)) && (page ? await page.userCanRead(user) : true);
-};
-
-pinSchema.methods.userCanWrite = async function (user) {
-	const map = await Place.findById(this.map);
-	return await map.userCanWrite(user);
-};
 
 export const PinModel = mongoose.model<PinDocument>(PIN, pinSchema);

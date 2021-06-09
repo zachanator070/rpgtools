@@ -1,14 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import {
-	GAME_ADMIN,
-	GAME_ADMIN_ALL,
-	GAME_FOG_WRITE,
-	GAME_MODEL,
-	GAME_PAINT,
-	GAME_READ,
-	GAME_RW,
-} from "../../../../../common/src/permission-constants";
 import { MongoDBEntity } from "../../../types";
 
 export class PathNodeDocument extends MongoDBEntity {
@@ -222,18 +213,5 @@ const gameSchema = new Schema({
 		}),
 	],
 });
-
-gameSchema.methods.userInGame = async function (user) {
-	for (let character of this.characters) {
-		if (character.player instanceof mongoose.Types.ObjectId) {
-			if (user._id.equals(character.player)) {
-				return true;
-			}
-		} else if (character.player._id.equals(user._id)) {
-			return true;
-		}
-	}
-	return false;
-};
 
 export const GameModel = mongoose.model<GameDocument>(GAME, gameSchema);

@@ -1,16 +1,6 @@
-import {
-	ApplicationService,
-	AuthorizationService,
-	EntityAuthorizationRuleset,
-	PermissionAssignmentRepository,
-	RoleRepository,
-	UserRepository,
-	WorldRepository,
-} from "../types";
+import { AuthorizationService, EntityAuthorizationRuleset, UnitOfWork } from "../types";
 import { User } from "../domain-entities/user";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { inject } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
 import { SecurityContext } from "../security-context";
 import { FilterCondition } from "../dal/filter-condition";
 import { PermissionAssignmentAuthorizationRuleset } from "../security/permission-assignment-authorization-ruleset";
@@ -20,20 +10,11 @@ import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "../../../common/src/permission-co
 import { ROLE } from "../../../common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
 import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
+import { DbUnitOfWork } from "../dal/db-unit-of-work";
+import { injectable } from "inversify";
 
+@injectable()
 export class AuthorizationApplicationService implements AuthorizationService {
-	@inject(INJECTABLE_TYPES.PermissionAssignmentRepository)
-	permissionAssignmentRepository: PermissionAssignmentRepository;
-
-	@inject(INJECTABLE_TYPES.UserRepository)
-	userRepository: UserRepository;
-
-	@inject(INJECTABLE_TYPES.RoleRepository)
-	roleRepository: RoleRepository;
-
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: WorldRepository;
-
 	permissionAssignmentAuthorizationRuleset: EntityAuthorizationRuleset<PermissionAssignment> = new PermissionAssignmentAuthorizationRuleset();
 	roleAuthorizationRuleset: EntityAuthorizationRuleset<Role> = new RoleAuthorizationRuleset();
 
@@ -44,11 +25,12 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectType: string,
 		userId: string
 	): Promise<User> => {
-		const user = await this.userRepository.findOne([new FilterCondition("_id", userId)]);
+		const unitOfWork = new DbUnitOfWork();
+		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error(`User with id ${userId} does not exist`);
 		}
-		let assignment: PermissionAssignment = await this.permissionAssignmentRepository.findOne([
+		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
 			new FilterCondition("permission", permission),
 			new FilterCondition("subjectId", subjectId),
 			new FilterCondition("subjectType", subjectType),
@@ -64,7 +46,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			);
 		}
 		if (needsCreation) {
-			await this.permissionAssignmentRepository.create(assignment);
+			await unitOfWork.permissionAssignmentRepository.create(assignment);
 		}
 		// check if user already has that permission
 		for (let userPermission of user.permissions) {
@@ -73,7 +55,8 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			}
 		}
 		user.permissions.push(assignment._id);
-		await this.userRepository.update(user);
+		await unitOfWork.userRepository.update(user);
+		await unitOfWork.commit();
 		return user;
 	};
 
@@ -83,12 +66,13 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectId: string,
 		userId: string
 	): Promise<User> => {
-		const user = await this.userRepository.findOne([new FilterCondition("_id", userId)]);
+		const unitOfWork = new DbUnitOfWork();
+		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error("User does not exist");
 		}
 
-		let permissionAssignment = await this.permissionAssignmentRepository.findOne([
+		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
 			new FilterCondition("permission", permission),
 			new FilterCondition("subjectId", subjectId),
 		]);
@@ -106,9 +90,9 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			user.permissions = user.permissions.filter(
 				(userPermission) => userPermission !== permissionAssignment._id
 			);
-			await this.userRepository.update(user);
+			await unitOfWork.userRepository.update(user);
 		}
-
+		await unitOfWork.commit();
 		return user;
 	};
 
@@ -119,11 +103,12 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectType: string,
 		userId: string
 	): Promise<Role> => {
-		const role = await this.roleRepository.findOne([new FilterCondition("_id", userId)]);
+		const unitOfWork = new DbUnitOfWork();
+		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!role) {
 			throw new Error(`Role with id ${userId} does not exist`);
 		}
-		let assignment: PermissionAssignment = await this.permissionAssignmentRepository.findOne([
+		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
 			new FilterCondition("permission", permission),
 			new FilterCondition("subjectId", subjectId),
 			new FilterCondition("subjectType", subjectType),
@@ -139,7 +124,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			);
 		}
 		if (needsCreation) {
-			await this.permissionAssignmentRepository.create(assignment);
+			await unitOfWork.permissionAssignmentRepository.create(assignment);
 		}
 		// check if user already has that permission
 		for (let userPermission of role.permissions) {
@@ -148,7 +133,8 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			}
 		}
 		role.permissions.push(assignment._id);
-		await this.roleRepository.update(role);
+		await unitOfWork.roleRepository.update(role);
+		await unitOfWork.commit();
 		return role;
 	};
 
@@ -158,12 +144,13 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		permission: string,
 		subjectId: string
 	): Promise<Role> => {
-		const role = await this.roleRepository.findOne([new FilterCondition("_id", roleId)]);
+		const unitOfWork = new DbUnitOfWork();
+		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
 		if (!role) {
 			throw new Error("Role does not exist");
 		}
 
-		let permissionAssignment = await this.permissionAssignmentRepository.findOne([
+		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
 			new FilterCondition("permission", permission),
 			new FilterCondition("subjectId", subjectId),
 		]);
@@ -181,14 +168,15 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			role.permissions = role.permissions.filter(
 				(userPermission) => userPermission !== permissionAssignment._id
 			);
-			await this.roleRepository.update(role);
+			await unitOfWork.roleRepository.update(role);
 		}
-
+		await unitOfWork.commit();
 		return role;
 	};
 
 	createRole = async (context: SecurityContext, worldId: string, name: string): Promise<World> => {
-		const world = await this.worldRepository.findById(worldId);
+		const unitOfWork = new DbUnitOfWork();
+		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
@@ -196,20 +184,22 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			throw new Error(`You do not have permission to add roles to this world`);
 		}
 		const newRole = new Role("", name, worldId, []);
-		await this.roleRepository.create(newRole);
+		await unitOfWork.roleRepository.create(newRole);
 		world.roles.push(newRole._id);
-		await this.worldRepository.update(world);
+		await unitOfWork.worldRepository.update(world);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
 			const permissionAssignment = new PermissionAssignment("", permission, newRole._id, ROLE);
-			await this.permissionAssignmentRepository.create(permissionAssignment);
+			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
 		}
-		await this.userRepository.update(context.user);
+		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.commit();
 		return world;
 	};
 
 	deleteRole = async (context: SecurityContext, roleId: string): Promise<World> => {
-		const role = await this.roleRepository.findById(roleId);
+		const unitOfWork = new DbUnitOfWork();
+		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
@@ -219,41 +209,42 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		if (role.name === WORLD_OWNER || role.name === EVERYONE) {
 			throw new Error("You cannot delete this role");
 		}
-		const world = await this.worldRepository.findById(role.world);
+		const world = await unitOfWork.worldRepository.findById(role.world);
 		world.roles = world.roles.filter((otherRole) => {
 			return otherRole === role._id;
 		});
-		await this.worldRepository.update(world);
-		await this.cleanUpPermissions(role._id);
-		await this.roleRepository.delete(role);
+		await unitOfWork.worldRepository.update(world);
+		await this.cleanUpPermissions(role._id, unitOfWork);
+		await unitOfWork.roleRepository.delete(role);
+		await unitOfWork.commit();
 		return world;
 	};
 
 	// deletes permissions of a subject that has been delete
-	cleanUpPermissions = async (subjectId: string) => {
-		const assignments = await this.permissionAssignmentRepository.find([
+	cleanUpPermissions = async (subjectId: string, unitOfWork: UnitOfWork) => {
+		const assignments = await unitOfWork.permissionAssignmentRepository.find([
 			new FilterCondition("subject", subjectId),
 		]);
 		for (let assignment of assignments) {
-			const roles = await this.roleRepository.find([
+			const roles = await unitOfWork.roleRepository.find([
 				new FilterCondition("permissions", assignment._id),
 			]);
 			for (let role of roles) {
 				role.permissions = role.permissions.filter((permission) => {
 					return permission !== assignment._id;
 				});
-				await this.roleRepository.update(role);
+				await unitOfWork.roleRepository.update(role);
 			}
-			const users = await this.userRepository.find([
+			const users = await unitOfWork.userRepository.find([
 				new FilterCondition("permissions", assignment._id),
 			]);
 			for (let user of users) {
 				user.permissions = user.permissions.filter((permission) => {
 					return permission !== assignment._id;
 				});
-				await this.userRepository.update(user);
+				await unitOfWork.userRepository.update(user);
 			}
-			await this.permissionAssignmentRepository.delete(assignment);
+			await unitOfWork.permissionAssignmentRepository.delete(assignment);
 		}
 	};
 
@@ -262,12 +253,13 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		userId: string,
 		roleId: string
 	): Promise<World> => {
-		const role = await this.roleRepository.findById(roleId);
+		const unitOfWork = new DbUnitOfWork();
+		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
 
-		const user = await this.userRepository.findById(userId);
+		const user = await unitOfWork.userRepository.findById(userId);
 		if (!user) {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
@@ -277,8 +269,10 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		}
 
 		user.roles.push(role._id);
-		await this.userRepository.update(user);
-		return await this.worldRepository.findById(role.world);
+		await unitOfWork.userRepository.update(user);
+		const world = await unitOfWork.worldRepository.findById(role.world);
+		await unitOfWork.commit();
+		return world;
 	};
 
 	removeUserRole = async (
@@ -286,12 +280,13 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		userId: string,
 		roleId: string
 	): Promise<World> => {
-		const role = await this.roleRepository.findById(roleId);
+		const unitOfWork = new DbUnitOfWork();
+		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
 
-		const user = await this.userRepository.findById(userId);
+		const user = await unitOfWork.userRepository.findById(userId);
 		if (!user) {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
@@ -301,14 +296,18 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		}
 
 		if (role.name === WORLD_OWNER) {
-			const otherOwners = await this.userRepository.find([new FilterCondition("roles", role._id)]);
+			const otherOwners = await unitOfWork.userRepository.find([
+				new FilterCondition("roles", role._id),
+			]);
 			if (otherOwners.length === 1) {
 				throw new Error("World must have at least one owner");
 			}
 		}
 
 		user.roles = user.roles.filter((userRole) => userRole !== role._id);
-		await this.userRepository.update(user);
-		return await this.worldRepository.findById(role.world);
+		await unitOfWork.userRepository.update(user);
+		const world = await unitOfWork.worldRepository.findById(role.world);
+		await unitOfWork.commit();
+		return world;
 	};
 }

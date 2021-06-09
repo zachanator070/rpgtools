@@ -1,12 +1,4 @@
-import {
-	ApplicationService,
-	Cache,
-	FileRepository,
-	ModelRepository,
-	PermissionAssignmentRepository,
-	UserRepository,
-	WorldRepository,
-} from "../types";
+import { AuthorizationService, Cache, EventPublisher, ModelService } from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "../../../common/src/permission-constants";
 import { MODEL } from "../../../common/src/type-constants";
 import { inject } from "inversify";
@@ -18,26 +10,26 @@ import { File } from "../domain-entities/file";
 import { Model } from "../domain-entities/model";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { FilterCondition } from "../dal/filter-condition";
+import { DbUnitOfWork } from "../dal/db-unit-of-work";
+import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
 
-export class ModelService implements ApplicationService {
-	@inject(INJECTABLE_TYPES.ModelRepository)
-	modelRepository: ModelRepository;
-	@inject(INJECTABLE_TYPES.FileRepository)
-	fileRepository: FileRepository;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentRepository)
-	permissionAssignmentRepository: PermissionAssignmentRepository;
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: WorldRepository;
-	@inject(INJECTABLE_TYPES.UserRepository)
-	userRepository: UserRepository;
-
+export class ModelApplicationService implements ModelService {
 	@inject(INJECTABLE_TYPES.Cache)
 	cache: Cache;
 
+	@inject(INJECTABLE_TYPES.EventPublisher)
+	eventPublisher: EventPublisher;
+
+	@inject(INJECTABLE_TYPES.AuthorizationService)
+	authorizationService: AuthorizationService;
+
 	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
 
-	filenameExists = async (filename: string) => {
-		const models = await this.modelRepository.find([new FilterCondition("filename", filename)]);
+	private filenameExists = async (filename: string) => {
+		const unitOfWork = new DbUnitOfWork();
+		const models = await unitOfWork.modelRepository.find([
+			new FilterCondition("filename", filename),
+		]);
 		return models.length > 1;
 	};
 
@@ -51,7 +43,8 @@ export class ModelService implements ApplicationService {
 		height: number,
 		notes: string
 	) => {
-		const world = await this.worldRepository.findById(worldId);
+		const unitOfWork = new DbUnitOfWork();
+		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} does not exist`);
 		}
@@ -67,7 +60,7 @@ export class ModelService implements ApplicationService {
 		}
 
 		const file = new File("", fileUpload.filename, fileUpload.createReadStream());
-		await this.fileRepository.create(file);
+		await unitOfWork.fileRepository.create(file);
 		const model = new Model(
 			"",
 			worldId,
@@ -81,11 +74,12 @@ export class ModelService implements ApplicationService {
 		);
 		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
 			const permissionAssignment = new PermissionAssignment("", permission, model._id, MODEL);
-			await this.permissionAssignmentRepository.create(permissionAssignment);
+			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
 			context.permissions.push(permissionAssignment);
 		}
-		await this.userRepository.update(context.user);
+		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.commit();
 		return model;
 	};
 
@@ -99,7 +93,8 @@ export class ModelService implements ApplicationService {
 		notes: string,
 		file?: FileUpload
 	) => {
-		const model = await this.modelRepository.findById(modelId);
+		const unitOfWork = new DbUnitOfWork();
+		const model = await unitOfWork.modelRepository.findById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
@@ -112,8 +107,8 @@ export class ModelService implements ApplicationService {
 			}
 
 			if (model.fileId) {
-				const file = await this.fileRepository.findById(model.fileId);
-				await this.fileRepository.delete(file);
+				const file = await unitOfWork.fileRepository.findById(model.fileId);
+				await unitOfWork.fileRepository.delete(file);
 			}
 			file = await file;
 
@@ -121,7 +116,7 @@ export class ModelService implements ApplicationService {
 				throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
 			}
 			const newFile = new File("", file.filename, file.createReadStream());
-			await this.fileRepository.create(newFile);
+			await unitOfWork.fileRepository.create(newFile);
 			model.fileId = newFile._id;
 			model.fileName = file.filename;
 		}
@@ -130,7 +125,36 @@ export class ModelService implements ApplicationService {
 		model.width = width;
 		model.height = height;
 		model.notes = notes;
-		await this.modelRepository.update(model);
+		await unitOfWork.modelRepository.update(model);
+		await unitOfWork.commit();
+		return model;
+	};
+
+	deleteModel = async (context: SecurityContext, modelId: string) => {
+		const unitOfWork = new DbUnitOfWork();
+		const model = await unitOfWork.modelRepository.findById(modelId);
+		if (!model) {
+			throw new Error(`Model with id ${modelId} does not exist`);
+		}
+		if (!(await this.modelAuthorizationRuleset.canWrite(context, model))) {
+			throw new Error("You do not have permission to delete this model");
+		}
+		const games = await unitOfWork.gameRepository.find([new FilterCondition("models", modelId)]);
+		for (let game of games) {
+			const positionedModel = game.models.find((otherModel) => otherModel.model === model._id);
+			game.models = game.models.filter((positionedModel) => positionedModel.model !== model._id);
+			await unitOfWork.gameRepository.update(game);
+			await this.eventPublisher.publish(GAME_MODEL_DELETED, {
+				gameId: game._id.toString(),
+				gameModelDeleted: positionedModel,
+			});
+		}
+		await unitOfWork.modelRepository.delete(model);
+		if (await this.cache.exists(model.fileName)) {
+			await this.cache.delete(model.fileName);
+		}
+		await this.authorizationService.cleanUpPermissions(modelId, unitOfWork);
+		await unitOfWork.commit();
 		return model;
 	};
 }

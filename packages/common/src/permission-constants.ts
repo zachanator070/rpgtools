@@ -143,7 +143,7 @@ export const PUBLIC_WORLD_PERMISSIONS = [
 	MODEL_READ_ALL,
 ];
 
-export const getPermissionsBySubjectType = (subjectType) => {
+export const getPermissionsBySubjectType = (subjectType: string) => {
 	if (subjectType === ROLE) {
 		return ROLE_PERMISSIONS;
 	} else if (subjectType === WIKI_PAGE || ALL_WIKI_TYPES.includes(subjectType)) {

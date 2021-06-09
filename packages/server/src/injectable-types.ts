@@ -18,6 +18,25 @@ export const INJECTABLE_TYPES = {
 	WorldRepository: Symbol.for("WorldRepository"),
 	FileRepository: Symbol.for("FileRepository"),
 
+	ArchiveArticleRepository: Symbol.for("ArchiveArticleRepository"),
+	ArchiveChunkRepository: Symbol.for("ArchiveChunkRepository"),
+	ArchiveGameRepository: Symbol.for("ArchiveGameRepository"),
+	ArchiveImageRepository: Symbol.for("ArchiveImageRepository"),
+	ArchiveItemRepository: Symbol.for("ArchiveItemRepository"),
+	ArchiveModelRepository: Symbol.for("ArchiveModelRepository"),
+	ArchiveMonsterRepository: Symbol.for("ArchiveMonsterRepository"),
+	ArchivePermissionAssignmentRepository: Symbol.for("ArchivePermissionAssignmentRepository"),
+	ArchivePersonRepository: Symbol.for("ArchivePersonRepository"),
+	ArchivePinRepository: Symbol.for("ArchivePinRepository"),
+	ArchivePlaceRepository: Symbol.for("ArchivePlaceRepository"),
+	ArchiveRoleRepository: Symbol.for("ArchiveRoleRepository"),
+	ArchiveServerConfigRepository: Symbol.for("ArchiveServerConfigRepository"),
+	ArchiveUserRepository: Symbol.for("ArchiveUserRepository"),
+	ArchiveWikiFolderRepository: Symbol.for("ArchiveWikiFolderRepository"),
+	ArchiveWikiPageRepository: Symbol.for("ArchiveWikiPageRepository"),
+	ArchiveWorldRepository: Symbol.for("ArchiveWorldRepository"),
+	ArchiveFileRepository: Symbol.for("ArchiveFileRepository"),
+
 	AuthenticationService: Symbol.for("AuthenticationService"),
 	AuthorizationService: Symbol.for("AuthorizationService"),
 	ContentExportService: Symbol.for("ContentExportService"),
@@ -33,7 +52,12 @@ export const INJECTABLE_TYPES = {
 	WorldService: Symbol.for("WorldService"),
 
 	SessionContextFactory: Symbol.for("SessionContextFactory"),
+
 	Open5eApiClient: Symbol.for("Open5eApiClient"),
 
 	Cache: Symbol.for("Cache"),
+
+	ArchiveFactory: Symbol.for("ArchiveFactory"),
+
+	EventPublisher: Symbol.for("EventPublisher"),
 };
