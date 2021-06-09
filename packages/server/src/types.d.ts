@@ -368,3 +368,33 @@ export interface ModelService {
 	) => Promise<Model>;
 	deleteModel: (context: SecurityContext, modelId: string) => Promise<Model>;
 }
+export interface SrdImportService {
+	import5eSrd: (
+		context: SecurityContext,
+		worldId: string,
+		importCreatureCodex: boolean,
+		importTomeOfBeasts: boolean
+	) => Promise<void>;
+}
+export interface ServerConfigService {
+	unlockServer: (
+		unlockCode: string,
+		email: string,
+		username: string,
+		password: string
+	) => Promise<boolean>;
+	generateRegisterCodes: (context: SecurityContext, amount: number) => Promise<ServerConfig>;
+}
+export interface UserService {
+	setCurrentWorld: (context: SecurityContext, worldId: string) => Promise<User>;
+}
+export interface WikiFolderService {
+	createFolder: (context: SecurityContext, name: string, parentFolderId: string) => Promise<World>;
+	renameFolder: (context: SecurityContext, folderId: string, name: string) => Promise<WikiFolder>;
+	deleteFolder: (context: SecurityContext, folderId: string) => Promise<World>;
+	moveFolder: (
+		context: SecurityContext,
+		folderId: string,
+		parentFolderId: string
+	) => Promise<World>;
+}

@@ -60,4 +60,6 @@ export const INJECTABLE_TYPES = {
 	ArchiveFactory: Symbol.for("ArchiveFactory"),
 
 	EventPublisher: Symbol.for("EventPublisher"),
+
+	RpgToolsServer: Symbol.for("RpgToolsServer"),
 };

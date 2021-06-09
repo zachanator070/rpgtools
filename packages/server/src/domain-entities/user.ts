@@ -1,5 +1,4 @@
 import { DomainEntity } from "../types";
-import { Role } from "./role";
 
 export class User implements DomainEntity {
 	public _id: string;
@@ -7,7 +6,7 @@ export class User implements DomainEntity {
 	public username: string;
 	public password: string;
 	public tokenVersion: string;
-	public currentWorldId: string;
+	public currentWorld: string;
 	public roles: string[];
 	public permissions: string[];
 
@@ -26,7 +25,7 @@ export class User implements DomainEntity {
 		this.username = username;
 		this.password = password;
 		this.tokenVersion = tokenVersion;
-		this.currentWorldId = currentWorldId;
+		this.currentWorld = currentWorldId;
 		this.roles = roleIds;
 		this.permissions = permissionIds;
 	}

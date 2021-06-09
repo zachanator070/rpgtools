@@ -1,4 +1,4 @@
-import { ApplicationService, ImageService, UnitOfWork } from "../types";
+import { ImageService, SrdImportService, UnitOfWork } from "../types";
 import { World } from "../domain-entities/world";
 import { Readable } from "stream";
 import {
@@ -9,7 +9,7 @@ import {
 import fetch from "node-fetch";
 import { Article } from "../domain-entities/article";
 import { WikiFolder } from "../domain-entities/wiki-folder";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
@@ -19,7 +19,8 @@ import { DeltaFactory } from "../five-e-import/delta-factory";
 import { Monster } from "../domain-entities/monster";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
-export class SrdImportService implements ApplicationService {
+@injectable()
+export class SrdImportApplicationService implements SrdImportService {
 	@inject(INJECTABLE_TYPES.ImageService)
 	imageService: ImageService;
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
