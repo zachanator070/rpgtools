@@ -1,11 +1,4 @@
-import {
-	ApplicationService,
-	ArticleRepository,
-	FileRepository,
-	MonsterRepository,
-	WikiFolderRepository,
-	WorldRepository,
-} from "../types";
+import { ApplicationService, ImageService, UnitOfWork } from "../types";
 import { World } from "../domain-entities/world";
 import { Readable } from "stream";
 import {
@@ -14,7 +7,6 @@ import {
 	Open5eRuleSection,
 } from "../five-e-import/open-5e-api-client";
 import fetch from "node-fetch";
-import { imageMutations } from "../resolvers/mutations/image-mutations";
 import { Article } from "../domain-entities/article";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { inject } from "inversify";
@@ -25,18 +17,11 @@ import { SecurityContext } from "../security-context";
 import { File } from "../domain-entities/file";
 import { DeltaFactory } from "../five-e-import/delta-factory";
 import { Monster } from "../domain-entities/monster";
+import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 export class SrdImportService implements ApplicationService {
-	@inject(INJECTABLE_TYPES.WikiFolderRepository)
-	wikiFolderRepository: WikiFolderRepository;
-	@inject(INJECTABLE_TYPES.ArticleRepository)
-	articleRepository: ArticleRepository;
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: WorldRepository;
-	@inject(INJECTABLE_TYPES.FileRepository)
-	fileRepository: FileRepository;
-	@inject(INJECTABLE_TYPES.MonsterRepository)
-	monsterRepository: MonsterRepository;
+	@inject(INJECTABLE_TYPES.ImageService)
+	imageService: ImageService;
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	open5eApiClient: Open5eApiClient;
 
@@ -50,68 +35,79 @@ export class SrdImportService implements ApplicationService {
 		importCreatureCodex: boolean,
 		importTomeOfBeasts: boolean
 	): Promise<void> => {
-		const world = await this.worldRepository.findById(worldId);
+		const unitOfWork = new DbUnitOfWork();
+		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		const rootFolder = await this.wikiFolderRepository.findById(world.rootFolder);
+		const rootFolder = await unitOfWork.wikiFolderRepository.findById(world.rootFolder);
 		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, rootFolder))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
 		const topFolder = new WikiFolder("", "5e", worldId, [], []);
-		await this.wikiFolderRepository.create(topFolder);
+		await unitOfWork.wikiFolderRepository.create(topFolder);
 		rootFolder.children.push(topFolder._id);
-		await this.wikiFolderRepository.update(rootFolder);
+		await unitOfWork.wikiFolderRepository.update(rootFolder);
 
 		// have to do these in series before import b/c of race condition where rootFolder.save was throwing ParallelSaveError
-		const monsterFolder = await this.createSubFolder(topFolder, "Monsters", world);
-		const racesFolder = await this.createSubFolder(topFolder, "Races", world);
-		const classesFolder = await this.createSubFolder(topFolder, "Classes", world);
-		const spellsFolder = await this.createSubFolder(topFolder, "Spells", world);
+		const monsterFolder = await this.createSubFolder(topFolder, "Monsters", world, unitOfWork);
+		const racesFolder = await this.createSubFolder(topFolder, "Races", world, unitOfWork);
+		const classesFolder = await this.createSubFolder(topFolder, "Classes", world, unitOfWork);
+		const spellsFolder = await this.createSubFolder(topFolder, "Spells", world, unitOfWork);
 
 		await Promise.all([
-			this.importMonsters(monsterFolder, importCreatureCodex, importTomeOfBeasts),
+			this.importMonsters(monsterFolder, importCreatureCodex, importTomeOfBeasts, unitOfWork),
 			(async () => {
-				await this.importAdventurePages(topFolder);
+				await this.importAdventurePages(topFolder, unitOfWork);
 				// adventure pages creates a rules folder that importRules needs
 				const rulesFolder = (
-					await this.wikiFolderRepository.find([
+					await unitOfWork.wikiFolderRepository.find([
 						new FilterCondition("_id", topFolder.children, FILTER_CONDITION_OPERATOR_IN),
 					])
 				).find((folder) => folder.name === "Rules");
-				await this.importRules(rulesFolder);
+				await this.importRules(rulesFolder, unitOfWork);
 			})(),
-			this.importRaces(racesFolder),
+			this.importRaces(racesFolder, unitOfWork),
 			(async () => {
-				await this.importSpells(spellsFolder);
+				await this.importSpells(spellsFolder, unitOfWork);
 				// spells are required to be populated before classes can be imported
-				await this.importClasses(classesFolder, world);
+				await this.importClasses(classesFolder, unitOfWork);
 			})(),
 		]).catch((err) => {
 			console.warn(err);
 		});
 	};
 
-	createSubFolder = async (topFolder: WikiFolder, name: string, world: World) => {
+	createSubFolder = async (
+		topFolder: WikiFolder,
+		name: string,
+		world: World,
+		unitOfWork: UnitOfWork
+	) => {
 		const subFolder = new WikiFolder("", name, world._id, [], []);
-		await this.wikiFolderRepository.create(subFolder);
+		await unitOfWork.wikiFolderRepository.create(subFolder);
 		topFolder.children.push(subFolder._id);
-		await this.wikiFolderRepository.update(topFolder);
+		await unitOfWork.wikiFolderRepository.update(topFolder);
 		return subFolder;
 	};
 
-	createWikiContentFile = async (wikiId: string, content: string): Promise<File> => {
+	createWikiContentFile = async (
+		wikiId: string,
+		content: string,
+		unitOfWork: UnitOfWork
+	): Promise<File> => {
 		const readStream = Readable.from(content);
 		const filename = `wikiContent.${wikiId}`;
 		const file = new File("", filename, readStream);
-		await this.fileRepository.create(file);
+		await unitOfWork.fileRepository.create(file);
 		return file;
 	};
 
 	importMonsters = async (
 		containingFolder: WikiFolder,
 		creatureCodex: boolean,
-		tomeOfBeasts: boolean
+		tomeOfBeasts: boolean,
+		unitOfWork: UnitOfWork
 	) => {
 		const filter = (monster: Open5eMonster) =>
 			(monster.document__slug === "cc" && creatureCodex) ||
@@ -124,104 +120,123 @@ export class SrdImportService implements ApplicationService {
 			const monsterPage = new Monster("", monster.name, containingFolder.world, "", "", "", "");
 			if (monster.img_main) {
 				const imageResponse = await fetch(monster.img_main);
-				const coverImage = await imageMutations.createImage(null, {
-					file: {
-						filename: monster.img_main,
-						createReadStream: () => imageResponse.body,
-					},
-					worldId: containingFolder.world,
-					chunkify: false,
-				});
+				const coverImage = await this.imageService.createImage(
+					containingFolder.world,
+					false,
+					monster.img_main,
+					Readable.from(imageResponse.body)
+				);
 				monsterPage.coverImage = coverImage._id;
 			}
-			await this.monsterRepository.create(monsterPage);
+			await unitOfWork.monsterRepository.create(monsterPage);
 			const content = this.deltaFactory.fromMonster(monster);
 			const contentFile = await this.createWikiContentFile(
 				monsterPage._id,
-				JSON.stringify(content)
+				JSON.stringify(content),
+				unitOfWork
 			);
 			monsterPage.contentId = contentFile._id;
-			await this.monsterRepository.update(monsterPage);
+			await unitOfWork.monsterRepository.update(monsterPage);
 			containingFolder.pages.push(monsterPage._id);
-			await this.wikiFolderRepository.update(containingFolder);
+			await unitOfWork.wikiFolderRepository.update(containingFolder);
 		}
 	};
 
-	importAdventurePages = async (topFolder: WikiFolder) => {
+	importAdventurePages = async (topFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		const folders: WikiFolder[] = [];
 		for await (let article of this.open5eApiClient.getAdventuringSections()) {
 			const page = new Article("", article.name, topFolder.world, "", "");
-			await this.articleRepository.create(page);
+			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromSection(article);
-			const contentFile = await this.createWikiContentFile(page._id, JSON.stringify(content));
+			const contentFile = await this.createWikiContentFile(
+				page._id,
+				JSON.stringify(content),
+				unitOfWork
+			);
 			page.contentId = contentFile._id;
-			await this.articleRepository.update(page);
+			await unitOfWork.articleRepository.update(page);
 			const containingFolder = folders.find((folder) => folder.name === article.parent);
 			if (!containingFolder) {
 				const containingFolder = new WikiFolder("", article.parent, topFolder.world, [], []);
-				await this.wikiFolderRepository.create(containingFolder);
+				await unitOfWork.wikiFolderRepository.create(containingFolder);
 				topFolder.children.push(containingFolder._id);
-				await this.wikiFolderRepository.update(topFolder);
+				await unitOfWork.wikiFolderRepository.update(topFolder);
 				folders.push(containingFolder);
 			}
 			containingFolder.pages.push(page._id);
-			await this.wikiFolderRepository.update(containingFolder);
+			await unitOfWork.wikiFolderRepository.update(containingFolder);
 		}
 	};
 
-	importRaces = async (containingFolder: WikiFolder) => {
+	importRaces = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let article of this.open5eApiClient.getRaces()) {
 			const page = new Article("", article.name, containingFolder.world, "", "");
-			await this.articleRepository.create(page);
+			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromRace(article);
-			const contentFile = await this.createWikiContentFile(page._id, JSON.stringify(content));
+			const contentFile = await this.createWikiContentFile(
+				page._id,
+				JSON.stringify(content),
+				unitOfWork
+			);
 			page.contentId = contentFile._id;
-			await this.articleRepository.update(page);
+			await unitOfWork.articleRepository.update(page);
 			containingFolder.pages.push(page._id);
-			await this.wikiFolderRepository.update(containingFolder);
+			await unitOfWork.wikiFolderRepository.update(containingFolder);
 		}
 	};
 
-	importClasses = async (containingFolder: WikiFolder, world: World) => {
+	importClasses = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let article of this.open5eApiClient.getClasses()) {
 			const page = new Article("", article.name, containingFolder.world, "", "");
-			await this.articleRepository.create(page);
+			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromCharacterClass(article, containingFolder.world);
-			const contentFile = await this.createWikiContentFile(page._id, JSON.stringify(content));
+			const contentFile = await this.createWikiContentFile(
+				page._id,
+				JSON.stringify(content),
+				unitOfWork
+			);
 			page.contentId = contentFile._id;
-			await this.articleRepository.update(page);
+			await unitOfWork.articleRepository.update(page);
 			containingFolder.pages.push(page._id);
-			await this.wikiFolderRepository.update(containingFolder);
+			await unitOfWork.wikiFolderRepository.update(containingFolder);
 		}
 	};
 
-	importSpells = async (containingFolder: WikiFolder) => {
+	importSpells = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let article of this.open5eApiClient.getSpells()) {
 			const page = new Article("", article.name, containingFolder.world, "", "");
-			await this.articleRepository.create(page);
+			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromSpell(article);
-			const contentFile = await this.createWikiContentFile(page._id, JSON.stringify(content));
+			const contentFile = await this.createWikiContentFile(
+				page._id,
+				JSON.stringify(content),
+				unitOfWork
+			);
 			page.contentId = contentFile._id;
-			await this.articleRepository.update(page);
+			await unitOfWork.articleRepository.update(page);
 			containingFolder.pages.push(page._id);
-			await this.wikiFolderRepository.update(containingFolder);
+			await unitOfWork.wikiFolderRepository.update(containingFolder);
 		}
 	};
 
-	importRules = async (containingFolder: WikiFolder) => {
+	importRules = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let rule of this.open5eApiClient.getRules()) {
 			const page = new Article("", rule.name, containingFolder.world, "", "");
-			await this.articleRepository.create(page);
+			await unitOfWork.articleRepository.create(page);
 			const subSections: Open5eRuleSection[] = [];
 			for (let section of rule.subsections) {
 				subSections.push(await this.open5eApiClient.getRuleSubSection(section.index));
 			}
 			const content = this.deltaFactory.fromRule(rule, subSections);
-			const contentFile = await this.createWikiContentFile(page._id, JSON.stringify(content));
+			const contentFile = await this.createWikiContentFile(
+				page._id,
+				JSON.stringify(content),
+				unitOfWork
+			);
 			page.contentId = contentFile._id;
-			await this.articleRepository.update(page);
+			await unitOfWork.articleRepository.update(page);
 			containingFolder.pages.push(page._id);
-			await this.wikiFolderRepository.update(containingFolder);
+			await unitOfWork.wikiFolderRepository.update(containingFolder);
 		}
 	};
 }

@@ -4,7 +4,7 @@ import { User } from "./domain-entities/user";
 import { SecurityContext } from "./security-context";
 import { Article } from "./domain-entities/article";
 import { Chunk } from "./domain-entities/chunk.";
-import { Game } from "./domain-entities/game";
+import { Character, Game, InGameModel, PathNode } from "./domain-entities/game";
 import { Image } from "./domain-entities/image";
 import { Item } from "./domain-entities/item";
 import { Model } from "./domain-entities/model";
@@ -20,6 +20,7 @@ import { WikiPage } from "./domain-entities/wiki-page";
 import { World } from "./domain-entities/world";
 import { File } from "./domain-entities/file";
 import { Readable, Writable } from "stream";
+import { FileUpload } from "graphql-upload";
 
 export interface DomainEntity {
 	_id: string;
@@ -65,8 +66,6 @@ export interface DomainEntityFactory<
 > {
 	build(entity: DBType): DomainType;
 }
-
-export interface ApplicationService {}
 
 export abstract class CookieManager {
 	setCookie: (cookie: string, value: string, age: number) => void;
@@ -115,6 +114,34 @@ export interface UnitOfWork {
 	fileRepository: FileRepository;
 
 	commit(): Promise<void>;
+}
+
+export interface Archive {
+	articleRepository: ArticleRepository;
+	chunkRepository: ChunkRepository;
+	gameRepository: GameRepository;
+	imageRepository: ImageRepository;
+	itemRepository: ItemRepository;
+	modelRepository: ModelRepository;
+	monsterRepository: MonsterRepository;
+	permissionAssignmentRepository: PermissionAssignmentRepository;
+	personRepository: PersonRepository;
+	pinRepository: PinRepository;
+	placeRepository: PlaceRepository;
+	roleRepository: RoleRepository;
+	serverConfigRepository: ServerConfigRepository;
+	userRepository: UserRepository;
+	wikiFolderRepository: WikiFolderRepository;
+	wikiPageRepository: WikiPageRepository;
+	worldRepository: WorldRepository;
+	fileRepository: FileRepository;
+
+	pipe(output: Writable): Promise<void>;
+}
+
+export interface AbstractArchiveFactory {
+	createDefault(): Archive;
+	fromZipStream(input: Readable): Promise<Archive>;
 }
 
 export interface Cache {
@@ -175,7 +202,169 @@ export interface AuthorizationService {
 	): Promise<Role>;
 	createRole(context: SecurityContext, worldId: string, name: string): Promise<World>;
 	deleteRole(context: SecurityContext, roleId: string): Promise<World>;
-	cleanUpPermissions(subjectId: string): Promise<void>;
+	cleanUpPermissions(subjectId: string, unitOfWork: UnitOfWork): Promise<void>;
 	addUserRole(context: SecurityContext, userId: string, roleId: string): Promise<World>;
 	removeUserRole(context: SecurityContext, userId: string, roleId: string): Promise<World>;
+}
+
+export interface ContentExportService {
+	exportWikiPage(
+		context: SecurityContext,
+		docId: string,
+		wikiType: string,
+		archive: Archive
+	): Promise<void>;
+	exportModel(context: SecurityContext, docId: string, archive: Archive): Promise<void>;
+	exportWikiFolder(
+		context: SecurityContext,
+		docId: string,
+		archive: Archive,
+		errorOut?: boolean
+	): Promise<void>;
+}
+export interface ContentImportService {
+	importContent(context: SecurityContext, folderId: string, zipFile: FileUpload): Promise<World>;
+}
+
+export interface EventPublisher {
+	publish(event: string, payload: any): Promise<void>;
+	asyncIterator(events: string[]): AsyncIterator<any>;
+}
+export interface ImageService {
+	createImage: (
+		worldId: string,
+		chunkify: boolean,
+		filename: string,
+		readStream: Readable,
+		givenUnitOfWork?: UnitOfWork
+	) => Promise<Image>;
+}
+export interface GameService {
+	createGame: (
+		context: SecurityContext,
+		worldId: string,
+		password: string,
+		characterName: string
+	) => Promise<Game>;
+	joinGame: (
+		context: SecurityContext,
+		gameId: string,
+		password: string,
+		characterName: string
+	) => Promise<Game>;
+	leaveGame: (context: SecurityContext, gameId: string) => Promise<boolean>;
+	gameChat: (context: SecurityContext, gameId: string, message: string) => Promise<Game>;
+	setGameMap: (
+		context: SecurityContext,
+		gameId: string,
+		placeId: string,
+		clearPaint: boolean,
+		setFog: boolean
+	) => Promise<Game>;
+	addStroke: (
+		context: SecurityContext,
+		gameId: string,
+		path: PathNode[],
+		type: string,
+		size: number,
+		color: string,
+		fill: boolean,
+		strokeId: string
+	) => Promise<Game>;
+	addFogStroke: (
+		context: SecurityContext,
+		gameId: string,
+		path: PathNode[],
+		type: string,
+		size: number,
+		strokeId: string
+	) => Promise<Game>;
+	addModel: (
+		context: SecurityContext,
+		gameId: string,
+		modelId: string,
+		wikiId: string,
+		color: string
+	) => Promise<Game>;
+	setModelPosition: (
+		context: SecurityContext,
+		gameId: string,
+		positionedModelId: string,
+		x: number,
+		z: number,
+		lookAtX: number,
+		lookAtZ: number
+	) => Promise<InGameModel>;
+	setModelColor: (
+		context: SecurityContext,
+		gameId: string,
+		positionedModelId: string,
+		color: string
+	) => Promise<any>;
+	deletePositionedModel: (
+		context: SecurityContext,
+		gameId: string,
+		positionedModelId: string
+	) => Promise<Game>;
+	setPositionedModelWiki: (
+		context: SecurityContext,
+		gameId: string,
+		positionedModelId: string,
+		wikiId: string
+	) => Promise<any>;
+	setCharacterOrder: (
+		context: SecurityContext,
+		gameId: string,
+		characters: Character[]
+	) => Promise<Game>;
+	setCharacterAttributes: (
+		context: SecurityContext,
+		gameId: string,
+		str: number,
+		dex: number,
+		con: number,
+		int: number,
+		wis: number,
+		cha: number
+	) => Promise<Game>;
+}
+export interface WorldService {
+	createWorld: (
+		name: string,
+		isPublic: boolean,
+		securityContext: SecurityContext
+	) => Promise<World>;
+	renameWorld: (context: SecurityContext, worldId: string, newName: string) => Promise<World>;
+	createPin: (
+		context: SecurityContext,
+		mapId: string,
+		wikiId: string,
+		x: number,
+		y: number
+	) => Promise<World>;
+	updatePin: (context: SecurityContext, pinId: string, pageId: string) => Promise<World>;
+	deletePin: (context: SecurityContext, pinId: string) => Promise<World>;
+}
+export interface ModelService {
+	createModel: (
+		context: SecurityContext,
+		worldId: string,
+		name: string,
+		fileUpload: FileUpload,
+		depth: number,
+		width: number,
+		height: number,
+		notes: string
+	) => Promise<Model>;
+	updateModel: (
+		context: SecurityContext,
+		modelId: string,
+		name: string,
+		depth: number,
+		width: number,
+		height: number,
+		notes: string,
+		file?: FileUpload
+	) => Promise<Model>;
+	deleteModel: (context: SecurityContext, modelId: string) => Promise<Model>;
 }

@@ -129,10 +129,10 @@ export class Message implements DomainEntity {
 	public sender: string;
 	public receiver: string;
 	public message: string;
-	public timestamp: string;
+	public timestamp: number;
 	public _id: string;
 
-	constructor(sender: string, receiver: string, message: string, timestamp: string, id: string) {
+	constructor(sender: string, receiver: string, message: string, timestamp: number, id: string) {
 		this.sender = sender;
 		this.receiver = receiver;
 		this.message = message;
@@ -149,7 +149,7 @@ export class InGameModel implements DomainEntity {
 	public lookAtX: number;
 	public lookAtZ: number;
 	public color?: string;
-	public wikiId?: string;
+	public wiki?: string;
 
 	constructor(
 		id: string,
@@ -168,6 +168,6 @@ export class InGameModel implements DomainEntity {
 		this.lookAtX = lookAtX;
 		this.lookAtZ = lookAtZ;
 		this.color = color;
-		this.wikiId = wikiId;
+		this.wiki = wikiId;
 	}
 }

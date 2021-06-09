@@ -22,7 +22,7 @@ const userSchema = new Schema({
 		type: String,
 		required: [true, "username field required"],
 		validate: [
-			(username) => {
+			(username: string) => {
 				return username !== ANON_USERNAME;
 			},
 			"cannot save anonymous user",

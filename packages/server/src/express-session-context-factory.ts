@@ -22,7 +22,7 @@ import {
 	ACCESS_TOKEN_MAX_AGE,
 	REFRESH_TOKEN,
 	REFRESH_TOKEN_MAX_AGE,
-} from "./services/authentication-service";
+} from "./services/authentication-application-service";
 
 export class ExpressSessionContextParameters implements SessionContextParameters, ExpressContext {
 	req: Request;

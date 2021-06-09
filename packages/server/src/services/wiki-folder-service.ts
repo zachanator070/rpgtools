@@ -18,7 +18,7 @@ import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorizatio
 import { SecurityContext } from "../security-context";
 import { Article } from "../domain-entities/article";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
-import { AuthorizationService } from "./authorization-service";
+import { AuthorizationService } from "./authorization-application-service";
 import { FOLDER_ADMIN, FOLDER_RW } from "../../../common/src/permission-constants";
 import { WIKI_FOLDER } from "../../../common/src/type-constants";
 import { World } from "../domain-entities/world";

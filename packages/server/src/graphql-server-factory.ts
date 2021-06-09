@@ -6,7 +6,10 @@ import jwt from "jsonwebtoken";
 import { ANON_USERNAME } from "../../common/src/permission-constants";
 import { inject } from "inversify";
 import { INJECTABLE_TYPES } from "./injectable-types";
-import { ACCESS_TOKEN_MAX_AGE, AuthenticationService } from "./services/authentication-service";
+import {
+	ACCESS_TOKEN_MAX_AGE,
+	AuthenticationService,
+} from "./services/authentication-application-service";
 import { SessionContextFactory } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { User } from "./domain-entities/user";

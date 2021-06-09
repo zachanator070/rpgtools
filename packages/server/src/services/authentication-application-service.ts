@@ -5,6 +5,7 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { FilterCondition } from "../dal/filter-condition";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import { injectable } from "inversify";
 
 export type CookieConstants = {
 	string: string;
@@ -15,6 +16,7 @@ export const REFRESH_TOKEN: string = "refreshToken";
 export const ACCESS_TOKEN_MAX_AGE: CookieConstants = { string: "1m", ms: 1000 * 60 };
 export const REFRESH_TOKEN_MAX_AGE: CookieConstants = { string: "1d", ms: 1000 * 60 * 60 * 24 };
 
+@injectable()
 export class AuthenticationApplicationService implements AuthenticationService {
 	SALT_ROUNDS = 10;
 

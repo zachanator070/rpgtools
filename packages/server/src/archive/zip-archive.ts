@@ -1,4 +1,5 @@
 import {
+	Archive,
 	ArticleRepository,
 	ChunkRepository,
 	DomainEntity,
@@ -20,29 +21,11 @@ import {
 	WikiFolderRepository,
 	WikiPageRepository,
 	WorldRepository,
-} from "../../types";
-import { WikiPage } from "../../domain-entities/wiki-page";
-import { InMemoryArticleRepository } from "../in-memory/repositories/in-memory-article-repository";
-import { InMemoryChunkRepository } from "../in-memory/repositories/in-memory-chunk-repository";
-import { InMemoryGameRepository } from "../in-memory/repositories/in-memory-game-repository";
-import { InMemoryImageRepository } from "../in-memory/repositories/in-memory-image-repository";
-import { InMemoryItemRepository } from "../in-memory/repositories/in-memory-item-repository";
-import { InMemoryModelRepository } from "../in-memory/repositories/in-memory-model-repository";
-import { InMemoryMonsterRepository } from "../in-memory/repositories/in-memory-monster-repository";
-import { InMemoryPermissionAssignmentRepository } from "../in-memory/repositories/in-memory-permission-assignment-repository";
-import { InMemoryPersonRepository } from "../in-memory/repositories/in-memory-person-repository";
-import { InMemoryPinRepository } from "../in-memory/repositories/in-memory-pin-repository";
-import { InMemoryPlaceRepository } from "../in-memory/repositories/in-memory-place-repository";
-import { InMemoryRoleRepository } from "../in-memory/repositories/in-memory-role-repository";
-import { InMemoryServerConfigRepository } from "../in-memory/repositories/in-memory-server-config-repository";
-import { InMemoryUserRepository } from "../in-memory/repositories/in-memory-user-repository";
-import { InMemoryWikiFolderRepository } from "../in-memory/repositories/in-memory-wiki-folder-repository";
-import { InMemoryWikiPageRepository } from "../in-memory/repositories/in-memory-wiki-page-repository";
-import { InMemoryWorldRepository } from "../in-memory/repositories/in-memory-world-repository";
-import { FilterCondition } from "../filter-condition";
+} from "../types";
+import { WikiPage } from "../domain-entities/wiki-page";
+import { FilterCondition } from "../dal/filter-condition";
 import archiver from "archiver";
 import { Readable, Writable } from "stream";
-import { InMemoryFileRepository } from "../in-memory/repositories/in-memory-file-repository";
 import {
 	ARTICLE,
 	CHUNK,
@@ -55,21 +38,58 @@ import {
 	PLACE,
 	WIKI_FOLDER,
 	WORLD,
-} from "../../../../common/src/type-constants";
-import { Model } from "../../domain-entities/model";
-import { Chunk } from "../../domain-entities/chunk.";
-import { World } from "../../domain-entities/world";
-import { Article } from "../../domain-entities/article";
-import { Image } from "../../domain-entities/image";
-import { InMemoryUnitOfWork } from "../in-memory/in-memory-unit-of-work";
+} from "../../../common/src/type-constants";
+import { Model } from "../domain-entities/model";
+import { Chunk } from "../domain-entities/chunk.";
+import { World } from "../domain-entities/world";
+import { Article } from "../domain-entities/article";
+import { Image } from "../domain-entities/image";
+import { inject } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
-export class ZipArchiveUnitOfWork extends InMemoryUnitOfWork {
+export class ZipArchive implements Archive {
+	@inject(INJECTABLE_TYPES.ArchiveArticleRepository)
+	articleRepository: ArticleRepository;
+	@inject(INJECTABLE_TYPES.ArchiveChunkRepository)
+	chunkRepository: ChunkRepository;
+	@inject(INJECTABLE_TYPES.ArchiveFileRepository)
+	fileRepository: FileRepository;
+	@inject(INJECTABLE_TYPES.ArchiveGameRepository)
+	gameRepository: GameRepository;
+	@inject(INJECTABLE_TYPES.ArchiveImageRepository)
+	imageRepository: ImageRepository;
+	@inject(INJECTABLE_TYPES.ArchiveImageRepository)
+	itemRepository: ItemRepository;
+	@inject(INJECTABLE_TYPES.ArchiveModelRepository)
+	modelRepository: ModelRepository;
+	@inject(INJECTABLE_TYPES.ArchiveMonsterRepository)
+	monsterRepository: MonsterRepository;
+	@inject(INJECTABLE_TYPES.ArchivePermissionAssignmentRepository)
+	permissionAssignmentRepository: PermissionAssignmentRepository;
+	@inject(INJECTABLE_TYPES.ArchivePersonRepository)
+	personRepository: PersonRepository;
+	@inject(INJECTABLE_TYPES.ArchivePinRepository)
+	pinRepository: PinRepository;
+	@inject(INJECTABLE_TYPES.ArchivePlaceRepository)
+	placeRepository: PlaceRepository;
+	@inject(INJECTABLE_TYPES.ArchiveRoleRepository)
+	roleRepository: RoleRepository;
+	@inject(INJECTABLE_TYPES.ArchiveServerConfigRepository)
+	serverConfigRepository: ServerConfigRepository;
+	@inject(INJECTABLE_TYPES.ArchiveUserRepository)
+	userRepository: UserRepository;
+	@inject(INJECTABLE_TYPES.ArchiveWikiFolderRepository)
+	wikiFolderRepository: WikiFolderRepository;
+	@inject(INJECTABLE_TYPES.ArchiveWikiPageRepository)
+	wikiPageRepository: WikiPageRepository;
+	@inject(INJECTABLE_TYPES.ArchiveWorldRepository)
+	worldRepository: WorldRepository;
+
 	archive = archiver("zip", {
 		zlib: { level: 9 }, // Sets the compression level.
 	});
 
-	constructor(outputStream: Writable) {
-		super();
+	constructor() {
 		this.archive.on("warning", function (err) {
 			if (err.code === "ENOENT") {
 				console.error(err.message);
@@ -82,8 +102,6 @@ export class ZipArchiveUnitOfWork extends InMemoryUnitOfWork {
 		this.archive.on("error", function (err) {
 			throw err;
 		});
-
-		this.archive.pipe(outputStream);
 	}
 
 	private getWikiPagePath = async (page: WikiPage): Promise<string> => {
@@ -117,7 +135,8 @@ export class ZipArchiveUnitOfWork extends InMemoryUnitOfWork {
 		}
 	};
 
-	commit = async (): Promise<void> => {
+	pipe = async (output: Writable): Promise<void> => {
+		this.archive.pipe(output);
 		await this.dumpRepo<Article>(this.articleRepository, ARTICLE, this.getWikiPagePath);
 		await this.dumpRepo(this.chunkRepository, CHUNK, async (entity: Chunk) => "chunks");
 		for (let file of await this.fileRepository.find([])) {

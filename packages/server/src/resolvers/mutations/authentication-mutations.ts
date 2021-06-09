@@ -1,5 +1,7 @@
-import { SessionContext } from "../../types";
+import { AuthenticationService, SessionContext } from "../../types";
 import { IResolverObject } from "apollo-server-express";
+import { container } from "../../inversify.config";
+import { INJECTABLE_TYPES } from "../../injectable-types";
 export const SALT_ROUNDS = 10;
 
 type LoginArgs = {
@@ -18,22 +20,27 @@ export const authenticationMutations: IResolverObject<any, SessionContext> = {
 	login: async (
 		parent: any,
 		{ username, password }: LoginArgs,
-		{ cookieManager, authenticationService }: SessionContext
+		{ cookieManager }: SessionContext
 	) => {
+		const authenticationService = container.get<AuthenticationService>(
+			INJECTABLE_TYPES.AuthenticationService
+		);
 		await authenticationService.login(username, password, cookieManager);
 	},
-	logout: async (
-		parent: any,
-		any: any,
-		{ cookieManager, authenticationService, currentUser }: SessionContext
-	) => {
-		await authenticationService.logout(currentUser, cookieManager);
+	logout: async (parent: any, any: any, { cookieManager, securityContext }: SessionContext) => {
+		const authenticationService = container.get<AuthenticationService>(
+			INJECTABLE_TYPES.AuthenticationService
+		);
+		await authenticationService.logout(securityContext.user, cookieManager);
 	},
 	register: async (
 		parent: any,
 		{ registerCode, email, username, password }: RegisterArgs,
-		{ authenticationService }: SessionContext
+		{}: SessionContext
 	) => {
+		const authenticationService = container.get<AuthenticationService>(
+			INJECTABLE_TYPES.AuthenticationService
+		);
 		await authenticationService.register(registerCode, email, username, password);
 	},
 };

@@ -1,7 +1,9 @@
 import { GameModel } from "../../dal/mongodb/models/game";
 import { GAME_MODEL_DELETED } from "../subscription-resolvers";
-import { SessionContext } from "../../types";
+import { ModelService, SessionContext } from "../../types";
 import { FileUpload } from "graphql-upload";
+import { container } from "../../inversify.config";
+import { INJECTABLE_TYPES } from "../../injectable-types";
 
 export const modelMutations = {
 	createModel: async (
@@ -23,8 +25,9 @@ export const modelMutations = {
 			height: number;
 			notes: string;
 		},
-		{ securityContext, modelService }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
 		return await modelService.createModel(
 			securityContext,
 			worldId,
@@ -55,8 +58,9 @@ export const modelMutations = {
 			height: number;
 			notes: string;
 		},
-		{ modelService, securityContext }: SessionContext
+		{ securityContext }: SessionContext
 	) => {
+		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
 		return await modelService.updateModel(
 			securityContext,
 			modelId,
@@ -68,31 +72,12 @@ export const modelMutations = {
 			file
 		);
 	},
-	deleteModel: async (_, { modelId }, { currentUser }) => {
-		const model = await Model.findById(modelId);
-		if (!model) {
-			throw new Error(`Model with id ${modelId} does not exist`);
-		}
-		if (!(await model.userCanWrite(currentUser))) {
-			throw new Error("You do not have permission to delete this model");
-		}
-		const games = await GameModel.find({ "models.model": model._id });
-		for (let game of games) {
-			const positionedModel = game.models.find((otherModel) => otherModel.model.equals(model._id));
-			game.models = game.models.filter(
-				(positionedModel) => !positionedModel.model.equals(model._id)
-			);
-			await game.save();
-			await pubsub.publish(GAME_MODEL_DELETED, {
-				gameId: game._id.toString(),
-				gameModelDeleted: positionedModel.toObject(),
-			});
-		}
-		await Model.deleteOne({ _id: modelId });
-		if (await existsAsync(model.fileName)) {
-			await delAsync(model.fileName);
-		}
-		await cleanUpPermissions(modelId);
-		return model;
+	deleteModel: async (
+		_: any,
+		{ modelId }: { modelId: string },
+		{ securityContext }: SessionContext
+	) => {
+		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
+		return await modelService.deleteModel(securityContext, modelId);
 	},
 };
