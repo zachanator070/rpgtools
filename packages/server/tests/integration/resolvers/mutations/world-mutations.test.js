@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
-import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
+import { allResolvers } from "../../../../src/resolvers/all-resolvers";
 import { User } from "../../../../src/dal/mongodb/models/user";
 import { createTestClient } from "apollo-server-testing";
 import { Pin } from "../../../../src/dal/mongodb/models/pin";
@@ -21,7 +21,7 @@ describe("world-mutations", () => {
 
 	const server = new ApolloServer({
 		typeDefs,
-		resolvers: serverResolvers,
+		resolvers: allResolvers,
 		context: () => {
 			return {
 				currentUser: currentUser,

@@ -1,5 +1,7 @@
 import { withFilter } from "apollo-server";
-import { pubsub } from "../gql-server";
+import { container } from "../inversify.config";
+import { EventPublisher } from "../types";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 export const GAME_CHAT_EVENT = "GAME_CHAT_EVENT";
 export const ROSTER_CHANGE_EVENT = "PLAYER_JOINED_EVENT";
@@ -10,10 +12,14 @@ export const GAME_MODEL_DELETED = "GAME_MODEL_DELETED";
 export const GAME_MODEL_POSITIONED = "GAME_MODEL_POSITIONED";
 export const GAME_FOG_STROKE_ADDED = "GAME_FOG_STROKE_ADDED";
 
+const getPubSub = () => {
+	return container.get<EventPublisher>(INJECTABLE_TYPES.EventPublisher);
+};
+
 export const SubscriptionResolvers = {
 	gameChat: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_CHAT_EVENT]),
+			() => getPubSub().asyncIterator([GAME_CHAT_EVENT]),
 			(payload, { gameId }, { currentUser }) => {
 				return (
 					payload.gameId === gameId &&
@@ -26,7 +32,7 @@ export const SubscriptionResolvers = {
 	},
 	gameRosterChange: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([ROSTER_CHANGE_EVENT]),
+			() => getPubSub().asyncIterator([ROSTER_CHANGE_EVENT]),
 			(payload, { gameId }) => {
 				return payload.gameRosterChange._id.equals(gameId);
 			}
@@ -34,7 +40,7 @@ export const SubscriptionResolvers = {
 	},
 	gameMapChange: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_MAP_CHANGE]),
+			() => getPubSub().asyncIterator([GAME_MAP_CHANGE]),
 			(payload, { gameId }) => {
 				return payload.gameMapChange._id.equals(gameId);
 			}
@@ -42,7 +48,7 @@ export const SubscriptionResolvers = {
 	},
 	gameStrokeAdded: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_STROKE_EVENT]),
+			() => getPubSub().asyncIterator([GAME_STROKE_EVENT]),
 			(payload, { gameId }) => {
 				return payload.gameId === gameId;
 			}
@@ -50,7 +56,7 @@ export const SubscriptionResolvers = {
 	},
 	gameFogStrokeAdded: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_FOG_STROKE_ADDED]),
+			() => getPubSub().asyncIterator([GAME_FOG_STROKE_ADDED]),
 			(payload, { gameId }) => {
 				return payload.gameId === gameId;
 			}
@@ -58,7 +64,7 @@ export const SubscriptionResolvers = {
 	},
 	gameModelAdded: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_MODEL_ADDED]),
+			() => getPubSub().asyncIterator([GAME_MODEL_ADDED]),
 			(payload, { gameId }) => {
 				return payload.gameId === gameId;
 			}
@@ -66,7 +72,7 @@ export const SubscriptionResolvers = {
 	},
 	gameModelDeleted: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_MODEL_DELETED]),
+			() => getPubSub().asyncIterator([GAME_MODEL_DELETED]),
 			(payload, { gameId }) => {
 				return payload.gameId === gameId;
 			}
@@ -74,7 +80,7 @@ export const SubscriptionResolvers = {
 	},
 	gameModelPositioned: {
 		subscribe: withFilter(
-			() => pubsub.asyncIterator([GAME_MODEL_POSITIONED]),
+			() => getPubSub().asyncIterator([GAME_MODEL_POSITIONED]),
 			(payload, { gameId }) => {
 				return payload.gameId === gameId;
 			}
