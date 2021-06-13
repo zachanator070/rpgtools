@@ -1,6 +1,6 @@
 import { createTestClient } from "apollo-server-testing";
 import { ApolloServer } from "apollo-server-express";
-import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
+import { allResolvers } from "../../../../src/resolvers/all-resolvers";
 import { typeDefs } from "../../../../src/gql-server-schema";
 import { User } from "../../../../src/dal/mongodb/models/user";
 import { ServerConfig } from "../../../../src/dal/mongodb/models/server-config";
@@ -13,7 +13,7 @@ process.env.TEST_SUITE = "authentication-mutations-test";
 describe("authentication-mutations", () => {
 	const server = new ApolloServer({
 		typeDefs,
-		resolvers: serverResolvers,
+		resolvers: allResolvers,
 		context: () => {
 			return {
 				currentUser: new User({ username: ANON_USERNAME }),

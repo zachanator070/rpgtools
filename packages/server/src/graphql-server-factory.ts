@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "./gql-server-schema";
-import { serverResolvers } from "./resolvers/server-resolvers";
+import { allResolvers } from "./resolvers/all-resolvers";
 
 import jwt from "jsonwebtoken";
 import { ANON_USERNAME } from "../../common/src/permission-constants";
@@ -41,7 +41,7 @@ export class GraphqlServerFactory {
 	create = (): ApolloServer => {
 		return new ApolloServer({
 			typeDefs,
-			resolvers: serverResolvers,
+			resolvers: allResolvers,
 			playground: {
 				settings: {
 					"editor.cursorShape": "line",

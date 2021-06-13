@@ -21,6 +21,7 @@ import { World } from "./domain-entities/world";
 import { File } from "./domain-entities/file";
 import { Readable, Writable } from "stream";
 import { FileUpload } from "graphql-upload";
+import { ModeledPage } from "./domain-entities/modeled-page";
 
 export interface DomainEntity {
 	_id: string;
@@ -397,4 +398,29 @@ export interface WikiFolderService {
 		folderId: string,
 		parentFolderId: string
 	) => Promise<World>;
+}
+export interface WikiPageService {
+	createWiki: (context: SecurityContext, name: string, folderId: string) => Promise<WikiFolder>;
+	updateWiki: (
+		context: SecurityContext,
+		wikiId: string,
+		readStream?: Readable,
+		name?: string,
+		coverImageId?: string,
+		type?: string
+	) => Promise<WikiPage>;
+	deleteWiki: (context: SecurityContext, wikiId: string) => Promise<string>;
+	updatePlace: (
+		context: SecurityContext,
+		placeId: string,
+		pixelsPerFoot: number,
+		mapImageId?: string
+	) => Promise<Place>;
+	updateModeledWiki: (
+		context: SecurityContext,
+		wikiId: string,
+		model: string,
+		color: string
+	) => Promise<ModeledPage>;
+	moveWiki: (context: SecurityContext, wikiId: string, folderId: string) => Promise<string>;
 }

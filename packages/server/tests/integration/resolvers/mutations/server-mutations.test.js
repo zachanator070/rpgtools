@@ -2,7 +2,7 @@ import { ServerConfig } from "../../../../src/dal/mongodb/models/server-config";
 import { User } from "../../../../src/dal/mongodb/models/user";
 import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "../../../../src/gql-server-schema";
-import { serverResolvers } from "../../../../src/resolvers/server-resolvers";
+import { allResolvers } from "../../../../src/resolvers/all-resolvers";
 import { createTestClient } from "apollo-server-testing";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { GENERATE_REGISTER_CODES } from "../../../../../frontend/src/hooks/server/useGenerateRegisterCodes";
@@ -15,7 +15,7 @@ describe("server mutations", () => {
 
 	const server = new ApolloServer({
 		typeDefs,
-		resolvers: serverResolvers,
+		resolvers: allResolvers,
 		context: () => {
 			return {
 				currentUser: currentUser,
