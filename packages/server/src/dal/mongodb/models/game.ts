@@ -49,7 +49,7 @@ export class MessageDocument extends MongoDBEntity {
 	public sender: string;
 	public receiver: string;
 	public message: string;
-	public timestamp: string;
+	public timestamp: number;
 }
 
 export class InGameModelDocument extends MongoDBEntity {

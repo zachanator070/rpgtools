@@ -21,7 +21,7 @@ import { injectable } from "inversify";
 export class ArchiveFactory implements AbstractArchiveFactory {
 	public createDefault = (): Archive => new ZipArchive();
 
-	public fromZipStream = async (archiveReadStream: Readable): Promise<ZipArchive> => {
+	public zipFromZipStream = async (archiveReadStream: Readable): Promise<ZipArchive> => {
 		const archive = new ZipArchive();
 		await new Promise((resolve: (value?: any) => any, reject: (error?: any) => any) => {
 			const fileReadingPromises: Promise<any>[] = [];

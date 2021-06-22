@@ -1,8 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import mongoosePaginate from "mongoose-paginate-v2";
 import { GridFSBucket } from "mongodb";
-import { IMAGE, PLACE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import { deleteImage } from "../../../resolvers/mutations/image-mutations";
+import { IMAGE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
 import { MongoDBEntity } from "../../../types";
 
 export class WikiPageDocument extends MongoDBEntity {
@@ -42,8 +40,8 @@ const wikiPageSchema = new Schema(
 				const file = await gfs.find({ _id: this.contentId }).next();
 				if (file) {
 					const stream = gfs.openDownloadStream(file._id);
-					const chunks = [];
-					await new Promise((resolve, reject) => {
+					const chunks: any[] = [];
+					await new Promise((resolve: (value?: any) => void, reject) => {
 						stream.on("data", (data) => {
 							chunks.push(data);
 						});
@@ -64,23 +62,5 @@ const wikiPageSchema = new Schema(
 		discriminatorKey: "type",
 	}
 );
-
-wikiPageSchema.pre("deleteOne", { document: true, query: false }, async function () {
-	if (this.coverImage) {
-		await deleteImage(this.coverImage);
-	}
-	if (this.contentId) {
-		await deleteGfsFile(this.contentId);
-	}
-	// doing this to avoid circular dependency
-	const pinModel = mongoose.model("Pin");
-	const pins = await pinModel.find({ page: this._id });
-	for (let pin of pins) {
-		pin.page = null;
-		await pin.save();
-	}
-});
-
-wikiPageSchema.plugin(mongoosePaginate);
 
 export const WikiPageModel = mongoose.model<ModeledWikiDocument>(WIKI_PAGE, wikiPageSchema);

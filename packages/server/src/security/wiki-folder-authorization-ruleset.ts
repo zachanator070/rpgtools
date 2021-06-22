@@ -1,21 +1,64 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset, WikiFolderRepository } from "../types";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { SecurityContext } from "../security-context";
+import { World } from "../domain-entities/world";
+import {
+	FOLDER_ADMIN,
+	FOLDER_ADMIN_ALL,
+	FOLDER_READ,
+	FOLDER_READ_ALL,
+	FOLDER_READ_ALL_CHILDREN,
+	FOLDER_RW,
+	FOLDER_RW_ALL,
+	FOLDER_RW_ALL_CHILDREN,
+} from "../../../common/src/permission-constants";
+import { WikiFolder } from "../domain-entities/wiki-folder";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
+import { FilterCondition } from "../dal/filter-condition";
 
-export class WikiFolderAuthorizationRuleset implements EntityAuthorizationRuleset<WikiPage> {
-	canAdmin(context: SecurityContext, entity: WikiPage): Promise<boolean> {
-		return Promise.resolve(false);
-	}
+@injectable()
+export class WikiFolderAuthorizationRuleset
+	implements EntityAuthorizationRuleset<WikiFolder, WikiFolder> {
+	@inject(INJECTABLE_TYPES.WikiFolderRepository)
+	wikiFolderRepository: WikiFolderRepository;
 
-	canCreate(context: SecurityContext, entity: DomainEntity): Promise<boolean> {
-		return Promise.resolve(false);
-	}
+	canAdmin = async (context: SecurityContext, entity: WikiFolder): Promise<boolean> =>
+		(await context.hasPermission(FOLDER_ADMIN, entity._id)) ||
+		(await context.hasPermission(FOLDER_ADMIN_ALL, entity.world));
 
-	canRead(context: SecurityContext, entity: WikiPage): Promise<boolean> {
-		return Promise.resolve(false);
-	}
+	canCreate = async (context: SecurityContext, entity: WikiFolder): Promise<boolean> => {
+		return this.canWrite(context, entity);
+	};
 
-	canWrite(context: SecurityContext, entity: WikiPage): Promise<boolean> {
-		return Promise.resolve(false);
-	}
+	canRead = async (context: SecurityContext, entity: WikiFolder): Promise<boolean> => {
+		const parentFolder = await this.wikiFolderRepository.findOne([
+			new FilterCondition("children", entity._id),
+		]);
+		let parentReadAll = false;
+		if (parentFolder) {
+			parentReadAll = await context.hasPermission(FOLDER_READ_ALL_CHILDREN, parentFolder._id);
+		}
+		return (
+			parentReadAll ||
+			(await context.hasPermission(FOLDER_READ, entity._id)) ||
+			(await context.hasPermission(FOLDER_READ_ALL, entity.world)) ||
+			(await this.canWrite(context, entity))
+		);
+	};
+
+	canWrite = async (context: SecurityContext, entity: WikiFolder): Promise<boolean> => {
+		const parentFolder = await this.wikiFolderRepository.findOne([
+			new FilterCondition("children", entity._id),
+		]);
+		let parentWriteAll = false;
+		if (parentFolder) {
+			parentWriteAll = context.hasPermission(FOLDER_RW_ALL_CHILDREN, parentFolder._id);
+		}
+		return (
+			parentWriteAll ||
+			(await context.hasPermission(FOLDER_RW, entity._id)) ||
+			(await context.hasPermission(FOLDER_RW_ALL, entity.world))
+		);
+	};
 }

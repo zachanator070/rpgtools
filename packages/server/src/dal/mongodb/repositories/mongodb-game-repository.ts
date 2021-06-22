@@ -8,7 +8,7 @@ import {
 	PathNode,
 	Stroke,
 } from "../../../domain-entities/game";
-import { DatabaseEntity, DomainEntityFactory, GameRepository } from "../../../types";
+import { GameRepository } from "../../../types";
 import { Model } from "mongoose";
 import {
 	CharacterDocument,

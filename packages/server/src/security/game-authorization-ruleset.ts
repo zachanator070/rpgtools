@@ -10,8 +10,9 @@ import {
 	GAME_READ,
 	GAME_RW,
 } from "../../../common/src/permission-constants";
+import { World } from "../domain-entities/world";
 
-export class GameAuthorizationRuleset implements EntityAuthorizationRuleset<Game> {
+export class GameAuthorizationRuleset implements EntityAuthorizationRuleset<Game, World> {
 	canAdmin = async (context: SecurityContext, entity: Game): Promise<boolean> => {
 		return (
 			context.hasPermission(GAME_ADMIN, entity._id) ||
@@ -19,7 +20,7 @@ export class GameAuthorizationRuleset implements EntityAuthorizationRuleset<Game
 		);
 	};
 
-	canCreate = async (context: SecurityContext, entity: DomainEntity): Promise<boolean> => {
+	canCreate = async (context: SecurityContext, entity: World): Promise<boolean> => {
 		return context.hasPermission(GAME_RW, entity._id);
 	};
 

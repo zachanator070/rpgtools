@@ -1,7 +1,7 @@
 import { ImageService, UnitOfWork } from "../types";
 import { Image } from "../domain-entities/image";
 import { File } from "../domain-entities/file";
-import { Chunk } from "../domain-entities/chunk.";
+import { Chunk } from "../domain-entities/chunk";
 import Jimp from "jimp";
 import { Readable } from "stream";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";

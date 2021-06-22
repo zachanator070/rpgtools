@@ -1,4 +1,5 @@
 import { WikiPage } from "./wiki-page";
+import { PLACE } from "../../../common/src/type-constants";
 
 export class Place extends WikiPage {
 	public mapImage?: string;
@@ -17,4 +18,6 @@ export class Place extends WikiPage {
 		this.mapImage = mapImageId;
 		this.pixelsPerFoot = pixelsPerFoot;
 	}
+
+	type: string = PLACE;
 }

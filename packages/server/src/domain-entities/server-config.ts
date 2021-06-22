@@ -1,4 +1,6 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { ServerConfigAuthorizationRuleset } from "../security/server-config-authorization-ruleset";
+import { SERVER_CONFIG } from "../../../common/src/type-constants";
 
 export class ServerConfig implements DomainEntity {
 	public _id: string;
@@ -20,4 +22,10 @@ export class ServerConfig implements DomainEntity {
 		this.adminUsers = adminUserIds;
 		this.unlockCode = unlockCode;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<
+		ServerConfig,
+		DomainEntity
+	> = new ServerConfigAuthorizationRuleset();
+	type: string = SERVER_CONFIG;
 }

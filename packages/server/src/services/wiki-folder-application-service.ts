@@ -2,7 +2,9 @@ import {
 	AuthorizationService,
 	EntityAuthorizationRuleset,
 	UnitOfWork,
+	WikiFolderRepository,
 	WikiFolderService,
+	WorldRepository,
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
@@ -11,7 +13,11 @@ import { WikiPage } from "../domain-entities/wiki-page";
 import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
 import { SecurityContext } from "../security-context";
 import { Article } from "../domain-entities/article";
-import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
+import {
+	FILTER_CONDITION_OPERATOR_IN,
+	FILTER_CONDITION_REGEX,
+	FilterCondition,
+} from "../dal/filter-condition";
 import { FOLDER_ADMIN, FOLDER_RW } from "../../../common/src/permission-constants";
 import { WIKI_FOLDER } from "../../../common/src/type-constants";
 import { World } from "../domain-entities/world";
@@ -21,11 +27,22 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 @injectable()
 export class WikiFolderApplicationService implements WikiFolderService {
-	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<WikiFolder> = new WikiFolderAuthorizationRuleset();
-	wikiPageAuthorizationRuleset: EntityAuthorizationRuleset<WikiPage> = new WikiPageAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<
+		WikiFolder,
+		WikiFolder
+	> = new WikiFolderAuthorizationRuleset();
+	wikiPageAuthorizationRuleset: EntityAuthorizationRuleset<
+		WikiPage,
+		WikiFolder
+	> = new WikiPageAuthorizationRuleset();
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
+
+	@inject(INJECTABLE_TYPES.WorldRepository)
+	worldRepository: WorldRepository;
+	@inject(INJECTABLE_TYPES.WikiFolderRepository)
+	wikiFolderRepository: WikiFolderRepository;
 
 	private checkUserWritePermissionForFolderContents = async (
 		context: SecurityContext,
@@ -64,9 +81,10 @@ export class WikiFolderApplicationService implements WikiFolderService {
 			await this.recurseDeleteFolder(child, unitOfWork);
 		}
 
-		for (let page of folder.pages) {
-			await this.authorizationService.cleanUpPermissions(page, unitOfWork);
-			await unitOfWork.wikiPageRepository.delete(new WikiPage(page, "", "", "", ""));
+		for (let pageId of folder.pages) {
+			await this.authorizationService.cleanUpPermissions(pageId, unitOfWork);
+			const page = await unitOfWork.wikiPageRepository.findById(pageId);
+			await unitOfWork.wikiPageRepository.delete(page);
 		}
 
 		await this.authorizationService.cleanUpPermissions(folder._id, unitOfWork);
@@ -189,5 +207,53 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		const world = await unitOfWork.worldRepository.findById(folder.world);
 		await unitOfWork.commit();
 		return world;
+	};
+
+	getFolders = async (
+		context: SecurityContext,
+		worldId: string,
+		name: string,
+		canAdmin: boolean
+	): Promise<WikiFolder[]> => {
+		const world = await this.worldRepository.findById(worldId);
+		if (!world) {
+			throw new Error("World does not exist");
+		}
+		if (!(await world.authorizationRuleset.canRead(context, world))) {
+			throw new Error("You do not have permission to read this World");
+		}
+
+		const conditions: FilterCondition[] = [new FilterCondition("world", worldId)];
+		if (name) {
+			conditions.push(new FilterCondition("name", name, FILTER_CONDITION_REGEX));
+		}
+
+		const results = await this.wikiFolderRepository.find(conditions);
+
+		const docs = [];
+		for (let doc of results) {
+			if (
+				canAdmin !== undefined &&
+				!(await this.wikiFolderAuthorizationRuleset.canAdmin(context, doc))
+			) {
+				continue;
+			}
+			if (await this.wikiFolderAuthorizationRuleset.canRead(context, doc)) {
+				docs.push(doc);
+			}
+		}
+		return docs;
+	};
+
+	getFolderPath = async (context: SecurityContext, wikiId: string): Promise<WikiFolder[]> => {
+		const path = [];
+		let folder = await this.wikiFolderRepository.findOne([new FilterCondition("pages", wikiId)]);
+		while (folder) {
+			path.push(folder);
+			folder = await this.wikiFolderRepository.findOne([
+				new FilterCondition("children", folder._id),
+			]);
+		}
+		return path;
 	};
 }

@@ -1,11 +1,24 @@
-import { AuthorizationService, EventPublisher, GameService } from "../types";
-import { GAME_HOST, GAME_PERMISSIONS, GAME_READ } from "../../../common/src/permission-constants";
+import { AuthorizationService, EventPublisher, GameRepository, GameService } from "../types";
+import {
+	ANON_USERNAME,
+	GAME_HOST,
+	GAME_PERMISSIONS,
+	GAME_READ,
+} from "../../../common/src/permission-constants";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
 import { GAME } from "../../../common/src/type-constants";
 import { SecurityContext } from "../security-context";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { Character, Game, InGameModel, Message, PathNode, Stroke } from "../domain-entities/game";
+import {
+	Character,
+	FogStroke,
+	Game,
+	InGameModel,
+	Message,
+	PathNode,
+	Stroke,
+} from "../domain-entities/game";
 import {
 	GAME_CHAT_EVENT,
 	GAME_FOG_STROKE_ADDED,
@@ -28,9 +41,13 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
 import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
+import { GameModel } from "../dal/mongodb/models/game";
 
 @injectable()
 export class GameApplicationService implements GameService {
+	@inject(INJECTABLE_TYPES.GameRepository)
+	gameRepository: GameRepository;
+
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
 
@@ -307,20 +324,14 @@ export class GameApplicationService implements GameService {
 			const oldMapSize = Math.max(oldMap.height, oldMap.width);
 
 			game.strokes = [
-				{
-					path: [
-						{
-							_id: uuidv4(),
-							x: 0,
-							y: 0,
-						},
-					],
-					color: "#FFFFFF",
-					size: Math.ceil(oldMapSize / oldPlace.pixelsPerFoot / 2),
-					fill: true,
-					type: "erase",
-					_id: uuidv4(),
-				},
+				new Stroke(
+					uuidv4(),
+					[new PathNode(uuidv4(), 0, 0)],
+					"#FFFFFF",
+					Math.ceil(oldMapSize / oldPlace.pixelsPerFoot / 2),
+					true,
+					"erase"
+				),
 			];
 		}
 
@@ -328,18 +339,18 @@ export class GameApplicationService implements GameService {
 			const newMaxSize = Math.max(newMap.height, newMap.width);
 
 			game.fog = [
-				{
-					path: [
-						{
-							_id: uuidv4(),
-							x: Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-							y: Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-						},
+				new FogStroke(
+					uuidv4(),
+					[
+						new PathNode(
+							uuidv4(),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
+						),
 					],
-					size: newMaxSize,
-					type: "fog",
-					_id: uuidv4(),
-				},
+					newMaxSize,
+					"fog"
+				),
 			];
 		} else {
 			game.fog = [];
@@ -396,12 +407,7 @@ export class GameApplicationService implements GameService {
 		if (!(await this.gameAuthorizationRuleSet.userCanWriteFog(context, game))) {
 			throw new Error("You do not have permission to edit fog for this game");
 		}
-		const newStroke = {
-			path,
-			size,
-			type,
-			_id: strokeId,
-		};
+		const newStroke = new FogStroke(strokeId, path, size, type);
 		game.fog.push(newStroke);
 		await unitOfWork.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_FOG_STROKE_ADDED, {
@@ -654,5 +660,20 @@ export class GameApplicationService implements GameService {
 		await unitOfWork.gameRepository.update(game);
 		await unitOfWork.commit();
 		return game;
+	};
+
+	getGame = async (context: SecurityContext, gameId: string): Promise<Game> => {
+		const foundGame = await this.gameRepository.findById(gameId);
+		if (foundGame && !(await this.gameAuthorizationRuleSet.canRead(context, foundGame))) {
+			throw new Error("You do not have permission to read this game");
+		}
+		return foundGame;
+	};
+
+	getMyGames = async (context: SecurityContext): Promise<Game[]> => {
+		if (context.user.username === ANON_USERNAME) {
+			return [];
+		}
+		return this.gameRepository.find([new FilterCondition("characters.player", context.user._id)]);
 	};
 }

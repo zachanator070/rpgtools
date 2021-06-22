@@ -16,7 +16,7 @@ import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorizatio
 import { Place } from "../domain-entities/place";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Image } from "../domain-entities/image";
-import { Chunk } from "../domain-entities/chunk.";
+import { Chunk } from "../domain-entities/chunk";
 import { Item } from "../domain-entities/item";
 import { Monster } from "../domain-entities/monster";
 import { Person } from "../domain-entities/person";

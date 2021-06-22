@@ -15,8 +15,8 @@ import { injectable } from "inversify";
 
 @injectable()
 export class AuthorizationApplicationService implements AuthorizationService {
-	permissionAssignmentAuthorizationRuleset: EntityAuthorizationRuleset<PermissionAssignment> = new PermissionAssignmentAuthorizationRuleset();
-	roleAuthorizationRuleset: EntityAuthorizationRuleset<Role> = new RoleAuthorizationRuleset();
+	permissionAssignmentAuthorizationRuleset: PermissionAssignmentAuthorizationRuleset = new PermissionAssignmentAuthorizationRuleset();
+	roleAuthorizationRuleset: RoleAuthorizationRuleset = new RoleAuthorizationRuleset();
 
 	grantUserPermission = async (
 		context: SecurityContext,

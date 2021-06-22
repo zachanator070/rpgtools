@@ -4,10 +4,13 @@ import {
 	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
 } from "../../filter-condition";
+import { PaginatedResult } from "../../paginated-result";
 
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	implements Repository<Type> {
 	items = new Map<string, Type>();
+
+	PAGE_LIMIT = 100;
 
 	create = async (entity: Type): Promise<void> => {
 		if (this.items.get(entity._id)) {
@@ -25,6 +28,12 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 
 	find = async (conditions: FilterCondition[]): Promise<Type[]> => {
 		let results: Type[] = Array.from(this.items.values());
+		results = this.filter(conditions, results);
+		return results;
+	};
+
+	private filter = (conditions: FilterCondition[], resultsArray: Type[]): Type[] => {
+		let results = [...resultsArray];
 		for (let filter of conditions) {
 			results = results.filter((entity: any) => {
 				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
@@ -53,5 +62,30 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	update = async (entity: Type): Promise<void> => {
 		await this.delete(entity);
 		await this.create(entity);
+	};
+
+	findPaginated = async (
+		conditions: FilterCondition[],
+		page: number
+	): Promise<PaginatedResult<Type>> => {
+		let results = await this.find(conditions);
+		const count = results.length;
+		const startIndex = (page - 1) * this.PAGE_LIMIT;
+		results = results.slice(startIndex, startIndex + 100 + 1);
+		const totalPages = Math.ceil(count / this.PAGE_LIMIT);
+		const prevPage = page - 1 >= 1 ? page - 1 : 1;
+		const nextPage = page + 1 <= totalPages ? page + 1 : totalPages;
+		return new PaginatedResult(
+			results,
+			count,
+			this.PAGE_LIMIT,
+			page,
+			totalPages,
+			page,
+			page - 1 >= 1,
+			page + 1 <= totalPages,
+			prevPage,
+			nextPage
+		);
 	};
 }

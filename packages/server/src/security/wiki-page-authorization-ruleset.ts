@@ -17,14 +17,18 @@ import {
 } from "../../../common/src/permission-constants";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 
-export class WikiPageAuthorizationRuleset implements EntityAuthorizationRuleset<WikiPage> {
+export class WikiPageAuthorizationRuleset
+	implements EntityAuthorizationRuleset<WikiPage, WikiFolder> {
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: Repository<World>;
 
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: Repository<WikiFolder>;
 
-	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<WikiPage> = new WikiPageAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<
+		WikiPage,
+		WikiFolder
+	> = new WikiPageAuthorizationRuleset();
 
 	canAdmin = async (context: SecurityContext, entity: WikiPage): Promise<boolean> => {
 		return (

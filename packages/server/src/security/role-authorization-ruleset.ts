@@ -13,7 +13,7 @@ import {
 import { ALL_USERS, EVERYONE } from "../../../common/src/role-constants";
 import { World } from "../domain-entities/world";
 
-export class RoleAuthorizationRuleset implements EntityAuthorizationRuleset<Role> {
+export class RoleAuthorizationRuleset implements EntityAuthorizationRuleset<Role, World> {
 	canAdmin = async (context: SecurityContext, entity: Role): Promise<boolean> => {
 		return (
 			context.hasPermission(ROLE_ADMIN, entity._id) ||

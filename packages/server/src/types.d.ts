@@ -3,7 +3,7 @@ import { Document, Schema } from "mongoose";
 import { User } from "./domain-entities/user";
 import { SecurityContext } from "./security-context";
 import { Article } from "./domain-entities/article";
-import { Chunk } from "./domain-entities/chunk.";
+import { Chunk } from "./domain-entities/chunk";
 import { Character, Game, InGameModel, PathNode } from "./domain-entities/game";
 import { Image } from "./domain-entities/image";
 import { Item } from "./domain-entities/item";
@@ -22,9 +22,12 @@ import { File } from "./domain-entities/file";
 import { Readable, Writable } from "stream";
 import { FileUpload } from "graphql-upload";
 import { ModeledPage } from "./domain-entities/modeled-page";
+import { PaginatedResult } from "./dal/paginated-result";
 
 export interface DomainEntity {
 	_id: string;
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 }
 
 export interface Repository<Type extends DomainEntity> {
@@ -34,6 +37,11 @@ export interface Repository<Type extends DomainEntity> {
 	delete(entity: Type): Promise<void>;
 	findOne(conditions: FilterCondition[]): Promise<Type>;
 	findById(id: string): Promise<Type>;
+	findPaginated(
+		conditions: FilterCondition[],
+		page: number,
+		sort?: string
+	): Promise<PaginatedResult<Type>>;
 }
 
 export interface ArticleRepository extends Repository<Article> {}
@@ -87,11 +95,14 @@ export interface Seeder {
 	seed(): Promise<void>;
 }
 
-export interface EntityAuthorizationRuleset<Type extends DomainEntity> {
+export interface EntityAuthorizationRuleset<
+	Type extends DomainEntity,
+	Parent extends DomainEntity
+> {
 	canRead(context: SecurityContext, entity: Type): Promise<boolean>;
 	canWrite(context: SecurityContext, entity: Type): Promise<boolean>;
 	canAdmin(context: SecurityContext, entity: Type): Promise<boolean>;
-	canCreate(context: SecurityContext, entity: DomainEntity): Promise<boolean>;
+	canCreate(context: SecurityContext, entity: Parent): Promise<boolean>;
 }
 
 export interface UnitOfWork {
@@ -142,7 +153,7 @@ export interface Archive {
 
 export interface AbstractArchiveFactory {
 	createDefault(): Archive;
-	fromZipStream(input: Readable): Promise<Archive>;
+	zipFromZipStream(input: Readable): Promise<Archive>;
 }
 
 export interface Cache {
@@ -328,6 +339,8 @@ export interface GameService {
 		wis: number,
 		cha: number
 	) => Promise<Game>;
+	getGame: (context: SecurityContext, gameId: string) => Promise<Game>;
+	getMyGames: (context: SecurityContext) => Promise<Game[]>;
 }
 export interface WorldService {
 	createWorld: (
@@ -345,7 +358,10 @@ export interface WorldService {
 	) => Promise<World>;
 	updatePin: (context: SecurityContext, pinId: string, pageId: string) => Promise<World>;
 	deletePin: (context: SecurityContext, pinId: string) => Promise<World>;
+	getWorld: (context: SecurityContext, worldId: string) => Promise<World>;
+	getWorlds: (context: SecurityContext, page: number) => Promise<PaginatedResult<World>>;
 }
+
 export interface ModelService {
 	createModel: (
 		context: SecurityContext,
@@ -368,6 +384,7 @@ export interface ModelService {
 		file?: FileUpload
 	) => Promise<Model>;
 	deleteModel: (context: SecurityContext, modelId: string) => Promise<Model>;
+	getModels: (context: SecurityContext, worldId: string) => Promise<Model[]>;
 }
 export interface SrdImportService {
 	import5eSrd: (
@@ -385,9 +402,11 @@ export interface ServerConfigService {
 		password: string
 	) => Promise<boolean>;
 	generateRegisterCodes: (context: SecurityContext, amount: number) => Promise<ServerConfig>;
+	getServerConfig: () => Promise<ServerConfig>;
 }
 export interface UserService {
 	setCurrentWorld: (context: SecurityContext, worldId: string) => Promise<User>;
+	getUsers: (context: SecurityContext, username: string) => Promise<User[]>;
 }
 export interface WikiFolderService {
 	createFolder: (context: SecurityContext, name: string, parentFolderId: string) => Promise<World>;
@@ -398,6 +417,13 @@ export interface WikiFolderService {
 		folderId: string,
 		parentFolderId: string
 	) => Promise<World>;
+	getFolders: (
+		context: SecurityContext,
+		worldId: string,
+		name: string,
+		canAdmin: boolean
+	) => Promise<WikiFolder[]>;
+	getFolderPath: (context: SecurityContext, wikiId: string) => Promise<WikiFolder[]>;
 }
 export interface WikiPageService {
 	createWiki: (context: SecurityContext, name: string, folderId: string) => Promise<WikiFolder>;
@@ -423,4 +449,32 @@ export interface WikiPageService {
 		color: string
 	) => Promise<ModeledPage>;
 	moveWiki: (context: SecurityContext, wikiId: string, folderId: string) => Promise<string>;
+	getWiki: (context: SecurityContext, wikiId: string) => Promise<WikiPage>;
+	getWikisInFolder: (
+		context: SecurityContext,
+		folderId: string,
+		page: number
+	) => Promise<PaginatedResult<WikiPage>>;
+}
+
+export interface DataLoader<T extends DomainEntity> {
+	getDocument: (id: string) => Promise<T>;
+	getDocuments: (ids: string[]) => Promise<T[]>;
+	getPermissionControlledDocument: (context: SecurityContext, id: string) => Promise<T>;
+	getPermissionControlledDocuments: (context: SecurityContext, ids: string[]) => Promise<T[]>;
+}
+
+export interface ApiServer {
+	start(): Promise<void>;
+
+	checkConfig(): Promise<void>;
+}
+export interface RoleService {
+	getRoles: (
+		context: SecurityContext,
+		worldId: string,
+		name: string,
+		canAdmin: boolean,
+		page: number
+	) => Promise<PaginatedResult<Role>>;
 }

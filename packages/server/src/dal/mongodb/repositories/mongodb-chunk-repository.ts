@@ -1,5 +1,5 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
-import { Chunk } from "../../../domain-entities/chunk.";
+import { Chunk } from "../../../domain-entities/chunk";
 import { ChunkRepository, DomainEntityFactory } from "../../../types";
 import { ChunkDocument, ChunkModel } from "../models/chunk";
 import { Model } from "mongoose";

@@ -1,4 +1,4 @@
-import { UnitOfWork, WorldService } from "../types";
+import { UnitOfWork, WorldRepository, WorldService } from "../types";
 import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
@@ -17,12 +17,16 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WorldAuthorizationRuleset } from "../security/world-authorization-ruleset";
 import { Pin } from "../domain-entities/pin";
 import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class WorldApplicationService implements WorldService {
 	worldAuthorizationRuleset = new WorldAuthorizationRuleset();
 	pinAuthorizationRuleset = new PinAuthorizationRuleset();
+
+	@inject(INJECTABLE_TYPES.WorldRepository)
+	worldRepository: WorldRepository;
 
 	private makeWorld = async (
 		name: string,
@@ -188,5 +192,30 @@ export class WorldApplicationService implements WorldService {
 		const world = await unitOfWork.worldRepository.findById(map.world);
 		await unitOfWork.commit();
 		return world;
+	};
+
+	getWorld = async (context: SecurityContext, worldId: string) => {
+		const world = await this.worldRepository.findById(worldId);
+
+		if (!world) {
+			return null;
+		}
+		if (!(await this.worldAuthorizationRuleset.canRead(context, world))) {
+			return null;
+		}
+
+		return world;
+	};
+
+	getWorlds = async (context: SecurityContext, page: number) => {
+		const results = await this.worldRepository.findPaginated([], page);
+		const docs = [];
+		for (let world of results.docs) {
+			if (await this.worldAuthorizationRuleset.canRead(context, world)) {
+				docs.push(world);
+			}
+		}
+		results.docs = docs;
+		return results;
 	};
 }

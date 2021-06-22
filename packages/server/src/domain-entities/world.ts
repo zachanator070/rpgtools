@@ -1,4 +1,6 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { WorldAuthorizationRuleset } from "../security/world-authorization-ruleset";
+import { WORLD } from "../../../common/src/type-constants";
 
 export class World implements DomainEntity {
 	public _id: string;
@@ -23,4 +25,10 @@ export class World implements DomainEntity {
 		this.roles = roleIds;
 		this.pins = pinIds;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<
+		this,
+		DomainEntity
+	> = new WorldAuthorizationRuleset();
+	type: string = WORLD;
 }

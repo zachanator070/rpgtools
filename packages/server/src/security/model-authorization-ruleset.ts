@@ -12,7 +12,7 @@ import {
 } from "../../../common/src/permission-constants";
 import { World } from "../domain-entities/world";
 
-export class ModelAuthorizationRuleset implements EntityAuthorizationRuleset<Model> {
+export class ModelAuthorizationRuleset implements EntityAuthorizationRuleset<Model, World> {
 	canAdmin = async (context: SecurityContext, entity: Model): Promise<boolean> => {
 		return (
 			context.hasPermission(MODEL_ADMIN, entity._id) ||

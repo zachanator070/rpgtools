@@ -1,5 +1,6 @@
 export const FILTER_CONDITION_OPERATOR_IN = "in";
 export const FILTER_CONDITION_OPERATOR_EQUALS = "=";
+export const FILTER_CONDITION_REGEX = "regex";
 
 export class FilterCondition {
 	public field: string;

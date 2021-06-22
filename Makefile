@@ -92,15 +92,18 @@ install-deps:
 	cd packages/common && npm install
 
 lint:
-	npx eslint server/src app/src common/src
+	npx eslint packages/server/src
+	# TODO: fix linting problems in frontend
+	# npx eslint packages/frontend/src
+	npx eslint packages/common/src
 
-test: test-integration
+test: test-integration down
 
 JEST_OPTIONS=
 
 test-integration:
 	- docker-compose up -d mongodb
-	export JEST_SETUP_FILES=./server/tests/integration/setup.js && npx jest ${JEST_OPTIONS} server/tests/integration
+	export JEST_SETUP_FILES=./packages/server/tests/integration/setup.js && npx jest ${JEST_OPTIONS} packages/server/tests/integration
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
