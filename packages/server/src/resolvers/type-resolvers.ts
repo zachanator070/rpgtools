@@ -72,7 +72,7 @@ const permissionControlledInterfaceAttributes = {
 };
 
 const modeledWikiAttributes = {
-	model: async (document: ModeledPage, _: any, {}: SessionContext) => {
+	model: async (document: ModeledPage, _: any, __: SessionContext) => {
 		const dataLoader = container.get<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader);
 		return dataLoader.getDocument(document.model);
 	},
@@ -90,7 +90,7 @@ export const TypeResolvers = {
 			);
 			return dataLoader.getPermissionControlledDocument(securityContext, world.rootFolder);
 		},
-		wikiPage: async (world: World, _: any, {}: SessionContext) => {
+		wikiPage: async (world: World, _: any, __: SessionContext) => {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
 			return dataLoader.getDocument(world.wikiPage);
 		},
@@ -268,7 +268,7 @@ export const TypeResolvers = {
 		...permissionControlledInterfaceAttributes,
 	},
 	PermissionAssignment: {
-		subject: async (assignment: PermissionAssignment, _: any, {}: SessionContext) => {
+		subject: async (assignment: PermissionAssignment, _: any, __: SessionContext) => {
 			const mapper = new RepositoryMapper();
 			const repository = mapper.map<DomainEntity>(assignment.subjectType);
 			return repository.findById(assignment.subjectId);

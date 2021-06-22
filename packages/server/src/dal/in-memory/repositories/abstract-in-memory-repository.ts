@@ -32,20 +32,6 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 		return results;
 	};
 
-	private filter = (conditions: FilterCondition[], resultsArray: Type[]): Type[] => {
-		let results = [...resultsArray];
-		for (let filter of conditions) {
-			results = results.filter((entity: any) => {
-				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
-					return entity[filter.field] === filter.value;
-				} else if (filter.operator === FILTER_CONDITION_OPERATOR_IN) {
-					return filter.value.includes(entity[filter.field]);
-				}
-			});
-		}
-		return results;
-	};
-
 	findById = async (id: string): Promise<Type> => {
 		return this.items.get(id) ?? null;
 	};
@@ -87,5 +73,20 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 			prevPage,
 			nextPage
 		);
+	};
+
+	private filter = (conditions: FilterCondition[], resultsArray: Type[]): Type[] => {
+		let results = [...resultsArray];
+		for (let filter of conditions) {
+			results = results.filter((entity: any) => {
+				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
+					return entity[filter.field] === filter.value;
+				} else if (filter.operator === FILTER_CONDITION_OPERATOR_IN) {
+					return filter.value.includes(entity[filter.field]);
+				}
+				return false;
+			});
+		}
+		return results;
 	};
 }

@@ -24,7 +24,7 @@
 		"apollo-link-http": "^1.5.17",
 		"apollo-upload-client": "^12.1.0",
 		"babel-jest": "^24.9.0",
-		"babel-loader": "^8.1.0",
+		"babel-loader": "^8.2.2",
 		"babel-plugin-dynamic-import-node": "^2.3.3",
 		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
 		"clean-webpack-plugin": "^3.0.0",
@@ -34,7 +34,6 @@
 		"graphql": "^14.7.0",
 		"graphql-tag": "latest",
 		"html-loader": "^0.5.5",
-		"html-webpack-plugin": "^3.2.0",
 		"jest-transform-stub": "^2.0.0",
 		"mini-css-extract-plugin": "^0.9.0",
 		"quill": "^1.3.7",
@@ -52,9 +51,7 @@
 		"ts-loader": "^6.2.2",
 		"typescript": "^3.9.7",
 		"uuid": "latest",
-		"webpack": "^4.44.2",
-		"webpack-cli": "^3.3.12",
+		"webpack": "^4.46.0",
 		"webpack-visualizer-plugin": "^0.1.11"
-	},
-	"devDependencies": {}
+	}
 }

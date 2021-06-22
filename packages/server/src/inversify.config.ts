@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Container, interfaces } from "inversify";
 import {
 	ArticleRepository,

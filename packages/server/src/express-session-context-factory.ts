@@ -3,7 +3,6 @@ import {
 	CookieManager,
 	SessionContext,
 	SessionContextFactory,
-	SessionContextParameters,
 	UnitOfWork,
 } from "./types";
 import { Request, Response } from "express";
@@ -24,7 +23,7 @@ import {
 	REFRESH_TOKEN_MAX_AGE,
 } from "./services/authentication-application-service";
 
-export class ExpressSessionContextParameters implements SessionContextParameters, ExpressContext {
+export class ExpressSessionContextParameters implements ExpressContext {
 	req: Request;
 	res: Response;
 	connection?: ExecutionParams;

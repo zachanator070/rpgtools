@@ -1,38 +1,44 @@
-import { ServerConfig } from "../../../../src/dal/mongodb/models/server-config";
-import { User } from "../../../../src/dal/mongodb/models/user";
-import { ApolloServer } from "apollo-server-express";
-import { typeDefs } from "../../../../src/gql-server-schema";
-import { allResolvers } from "../../../../src/resolvers/all-resolvers";
 import { createTestClient } from "apollo-server-testing";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { GENERATE_REGISTER_CODES } from "../../../../../frontend/src/hooks/server/useGenerateRegisterCodes";
 import { UNLOCK_SERVER } from "../../../../../frontend/src/hooks/server/useUnlockServer";
+import { container } from "../../../../src/inversify.config";
+import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import {
+	CookieManager,
+	ServerConfigRepository,
+	SessionContext,
+	SessionContextFactory,
+} from "../../../../src/types";
+import { SecurityContext } from "../../../../src/security-context";
+import { User } from "../../../../src/domain-entities/user";
+import { ExpressApiServer } from "../../../../src/express-api-server";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
-	let currentUser = new User({ username: ANON_USERNAME });
+	let currentUser = new User("", "", ANON_USERNAME, "", "", "", [], []);
+	container.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory).to(
+		class implements SessionContextFactory {
+			create = async (parameters: any): Promise<SessionContext> => ({
+				securityContext: new SecurityContext(currentUser, [], []),
+				cookieManager: new (class extends CookieManager {})(),
+			});
+		}
+	);
 
-	const server = new ApolloServer({
-		typeDefs,
-		resolvers: allResolvers,
-		context: () => {
-			return {
-				currentUser: currentUser,
-				res: {
-					cookie: () => {},
-				},
-			};
-		},
-	});
+	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
 
-	const { mutate } = createTestClient(server);
+	const { mutate } = createTestClient(server.gqlServer);
 
 	describe("with locked server", () => {
 		afterEach(async () => {
-			const server = await ServerConfig.findOne();
+			const serverConfigRepository = container.get<ServerConfigRepository>(
+				INJECTABLE_TYPES.ServerConfigRepository
+			);
+			const server = await serverConfigRepository.findOne([]);
 			server.adminUsers = [];
-			await server.save();
+			await serverConfigRepository.update(server);
 		});
 
 		test("unlock", async () => {

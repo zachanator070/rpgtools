@@ -137,7 +137,7 @@ export class ExpressApiServer implements ApiServer {
 		}
 	};
 
-	connectToDB = async () => {
+	initDb = async () => {
 		mongoose.set("useNewUrlParser", true);
 		mongoose.set("useFindAndModify", false);
 		mongoose.set("useCreateIndex", true);
@@ -191,7 +191,7 @@ export class ExpressApiServer implements ApiServer {
 	};
 
 	start = async () => {
-		await this.connectToDB();
+		await this.initDb();
 		await this.startListen();
 	};
 }

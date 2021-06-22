@@ -28,63 +28,6 @@ export class WorldApplicationService implements WorldService {
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;
 
-	private makeWorld = async (
-		name: string,
-		isPublic: boolean,
-		context: SecurityContext,
-		unitOfWork: UnitOfWork
-	) => {
-		const world = new World("", name, "", "", [], []);
-		await unitOfWork.worldRepository.create(world);
-		const rootWiki = new Place("", name, world._id, "", "", "", 0);
-		await unitOfWork.placeRepository.create(rootWiki);
-		const rootFolder = new WikiFolder("", name, world._id, [], []);
-		await unitOfWork.wikiFolderRepository.create(rootFolder);
-		const placeFolder = new WikiFolder("", "Places", world._id, [rootWiki._id], []);
-		await unitOfWork.wikiFolderRepository.create(placeFolder);
-		const peopleFolder = new WikiFolder("", "People", world._id, [], []);
-		await unitOfWork.wikiFolderRepository.create(peopleFolder);
-		rootFolder.children.push(placeFolder._id, peopleFolder._id);
-		await unitOfWork.wikiFolderRepository.update(rootFolder);
-
-		world.rootFolder = rootFolder._id;
-		world.wikiPage = rootWiki._id;
-
-		const ownerPermissions = [];
-		for (const permission of WORLD_PERMISSIONS) {
-			const permissionAssignment = new PermissionAssignment("", permission, world._id, WORLD);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-			ownerPermissions.push(permissionAssignment._id);
-			context.permissions.push(permissionAssignment);
-		}
-		const ownerRole = new Role("", WORLD_OWNER, world._id, ownerPermissions);
-		context.user.roles.push(ownerRole._id);
-		await unitOfWork.userRepository.update(context.user);
-
-		const everyonePerms = [];
-		if (isPublic) {
-			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
-				let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-					new FilterCondition("permission", permission),
-					new FilterCondition("subjectId", world._id),
-					new FilterCondition("subjectType", WORLD),
-				]);
-				if (!permissionAssignment) {
-					permissionAssignment = new PermissionAssignment("", permission, world._id, WORLD);
-					await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-				}
-				everyonePerms.push(permissionAssignment._id);
-				context.permissions.push(permissionAssignment);
-			}
-		}
-		const everyoneRole = new Role("", EVERYONE, world._id, everyonePerms);
-
-		world.roles = [ownerRole._id, everyoneRole._id];
-		await unitOfWork.worldRepository.update(world);
-
-		return world;
-	};
-
 	createWorld = async (
 		name: string,
 		isPublic: boolean,
@@ -217,5 +160,62 @@ export class WorldApplicationService implements WorldService {
 		}
 		results.docs = docs;
 		return results;
+	};
+
+	private makeWorld = async (
+		name: string,
+		isPublic: boolean,
+		context: SecurityContext,
+		unitOfWork: UnitOfWork
+	) => {
+		const world = new World("", name, "", "", [], []);
+		await unitOfWork.worldRepository.create(world);
+		const rootWiki = new Place("", name, world._id, "", "", "", 0);
+		await unitOfWork.placeRepository.create(rootWiki);
+		const rootFolder = new WikiFolder("", name, world._id, [], []);
+		await unitOfWork.wikiFolderRepository.create(rootFolder);
+		const placeFolder = new WikiFolder("", "Places", world._id, [rootWiki._id], []);
+		await unitOfWork.wikiFolderRepository.create(placeFolder);
+		const peopleFolder = new WikiFolder("", "People", world._id, [], []);
+		await unitOfWork.wikiFolderRepository.create(peopleFolder);
+		rootFolder.children.push(placeFolder._id, peopleFolder._id);
+		await unitOfWork.wikiFolderRepository.update(rootFolder);
+
+		world.rootFolder = rootFolder._id;
+		world.wikiPage = rootWiki._id;
+
+		const ownerPermissions = [];
+		for (const permission of WORLD_PERMISSIONS) {
+			const permissionAssignment = new PermissionAssignment("", permission, world._id, WORLD);
+			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
+			ownerPermissions.push(permissionAssignment._id);
+			context.permissions.push(permissionAssignment);
+		}
+		const ownerRole = new Role("", WORLD_OWNER, world._id, ownerPermissions);
+		context.user.roles.push(ownerRole._id);
+		await unitOfWork.userRepository.update(context.user);
+
+		const everyonePerms = [];
+		if (isPublic) {
+			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
+				let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
+					new FilterCondition("permission", permission),
+					new FilterCondition("subjectId", world._id),
+					new FilterCondition("subjectType", WORLD),
+				]);
+				if (!permissionAssignment) {
+					permissionAssignment = new PermissionAssignment("", permission, world._id, WORLD);
+					await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
+				}
+				everyonePerms.push(permissionAssignment._id);
+				context.permissions.push(permissionAssignment);
+			}
+		}
+		const everyoneRole = new Role("", EVERYONE, world._id, everyonePerms);
+
+		world.roles = [ownerRole._id, everyoneRole._id];
+		await unitOfWork.worldRepository.update(world);
+
+		return world;
 	};
 }

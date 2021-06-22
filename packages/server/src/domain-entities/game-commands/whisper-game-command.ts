@@ -22,9 +22,9 @@ export class WhisperGameCommand extends AbstractGameCommand {
 			optional: false,
 		},
 	];
-	command: string = "/w";
-	description: string = "Whisper private message to another player";
-	echoCommand: boolean = false;
+	command = "/w";
+	description = "Whisper private message to another player";
+	echoCommand = false;
 	options: GameCommandOptionDefinition[];
 
 	characters: Character[];

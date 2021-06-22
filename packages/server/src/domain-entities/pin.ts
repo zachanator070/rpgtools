@@ -11,6 +11,9 @@ export class Pin implements DomainEntity {
 	public map: string;
 	public page?: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<Pin, Place> = new PinAuthorizationRuleset();
+	type: string = PIN;
+
 	constructor(id: string, x: number, y: number, mapId: string, pageId: string) {
 		this._id = id;
 		this.x = x;
@@ -18,7 +21,4 @@ export class Pin implements DomainEntity {
 		this.map = mapId;
 		this.page = pageId;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<Pin, Place> = new PinAuthorizationRuleset();
-	type: string = PIN;
 }

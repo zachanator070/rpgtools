@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import mongoosePaginate from "mongoose-paginate-v2";
 import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "../../../../../common/src/type-constants";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { MongoDBEntity } from "../../../types";
@@ -52,7 +51,5 @@ const userSchema = new Schema({
 		},
 	],
 });
-
-userSchema.plugin(mongoosePaginate);
 
 export const UserModel = mongoose.model<UserDocument>(USER, userSchema);

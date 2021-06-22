@@ -2,10 +2,10 @@ import { SessionContext, SrdImportService, WorldService } from "../../types";
 import { container } from "../../inversify.config";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 
-type createWorldArgs = {
+interface createWorldArgs {
 	name: string;
 	public: boolean;
-};
+}
 
 export const worldMutations = {
 	createWorld: async (

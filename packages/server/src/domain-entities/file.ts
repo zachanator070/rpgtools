@@ -10,13 +10,13 @@ export class File implements DomainEntity {
 	mimeType: string;
 	readStream: Readable;
 
-	constructor(id: string, filename: string, readStream: Readable, mimeType: string = "") {
+	authorizationRuleset: EntityAuthorizationRuleset<File, World> = new FileAuthorizationRuleset();
+	type: string = FILE;
+
+	constructor(id: string, filename: string, readStream: Readable, mimeType = "") {
 		this._id = id;
 		this.filename = filename;
 		this.readStream = readStream;
 		this.mimeType = mimeType;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<File, World> = new FileAuthorizationRuleset();
-	type: string = FILE;
 }

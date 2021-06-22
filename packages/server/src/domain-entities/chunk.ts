@@ -12,6 +12,9 @@ export class Chunk implements DomainEntity {
 	public fileId: string;
 	public image: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<Chunk, Image> = new ChunkAuthorizationRuleset();
+	type: string = CHUNK;
+
 	constructor(
 		id: string,
 		x: number,
@@ -29,7 +32,4 @@ export class Chunk implements DomainEntity {
 		this.fileId = fileId;
 		this.image = imageId;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<Chunk, Image> = new ChunkAuthorizationRuleset();
-	type: string = CHUNK;
 }

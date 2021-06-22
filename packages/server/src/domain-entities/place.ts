@@ -5,6 +5,8 @@ export class Place extends WikiPage {
 	public mapImage?: string;
 	public pixelsPerFoot?: number;
 
+	type: string = PLACE;
+
 	constructor(
 		id: string,
 		name: string,
@@ -18,6 +20,4 @@ export class Place extends WikiPage {
 		this.mapImage = mapImageId;
 		this.pixelsPerFoot = pixelsPerFoot;
 	}
-
-	type: string = PLACE;
 }

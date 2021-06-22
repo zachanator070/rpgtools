@@ -9,6 +9,12 @@ export class World implements DomainEntity {
 	public rootFolder?: string;
 	public roles: string[];
 	public pins: string[];
+	public type: string = WORLD;
+
+	public authorizationRuleset: EntityAuthorizationRuleset<
+		this,
+		DomainEntity
+	> = new WorldAuthorizationRuleset();
 
 	constructor(
 		id: string,
@@ -25,10 +31,4 @@ export class World implements DomainEntity {
 		this.roles = roleIds;
 		this.pins = pinIds;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<
-		this,
-		DomainEntity
-	> = new WorldAuthorizationRuleset();
-	type: string = WORLD;
 }

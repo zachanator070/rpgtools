@@ -31,38 +31,39 @@ export interface DomainEntity {
 }
 
 export interface Repository<Type extends DomainEntity> {
-	create(entity: Type): Promise<void>;
-	find(conditions: FilterCondition[]): Promise<Type[]>;
-	update(entity: Type): Promise<void>;
-	delete(entity: Type): Promise<void>;
-	findOne(conditions: FilterCondition[]): Promise<Type>;
-	findById(id: string): Promise<Type>;
-	findPaginated(
+	create: (entity: Type) => Promise<void>;
+	find: (conditions: FilterCondition[]) => Promise<Type[]>;
+	update: (entity: Type) => Promise<void>;
+	delete: (entity: Type) => Promise<void>;
+	findOne: (conditions: FilterCondition[]) => Promise<Type>;
+	findById: (id: string) => Promise<Type>;
+	findPaginated: (
 		conditions: FilterCondition[],
 		page: number,
 		sort?: string
-	): Promise<PaginatedResult<Type>>;
+	) => Promise<PaginatedResult<Type>>;
 }
 
-export interface ArticleRepository extends Repository<Article> {}
-export interface ChunkRepository extends Repository<Chunk> {}
-export interface FileRepository extends Repository<File> {}
-export interface GameRepository extends Repository<Game> {}
-export interface ImageRepository extends Repository<Image> {}
-export interface ItemRepository extends Repository<Item> {}
-export interface ModelRepository extends Repository<Model> {}
-export interface MonsterRepository extends Repository<Monster> {}
-export interface PermissionAssignmentRepository extends Repository<PermissionAssignment> {}
-export interface PersonRepository extends Repository<Person> {}
-export interface PinRepository extends Repository<Pin> {}
-export interface PlaceRepository extends Repository<Place> {}
-export interface RoleRepository extends Repository<Role> {}
-export interface ServerConfigRepository extends Repository<ServerConfig> {}
-export interface UserRepository extends Repository<User> {}
-export interface WikiFolderRepository extends Repository<WikiFolder> {}
-export interface WikiPageRepository extends Repository<WikiPage> {}
-export interface WorldRepository extends Repository<World> {}
+export type ArticleRepository = Repository<Article>;
+export type ChunkRepository = Repository<Chunk>;
+export type FileRepository = Repository<File>;
+export type GameRepository = Repository<Game>;
+export type ImageRepository = Repository<Image>;
+export type ItemRepository = Repository<Item>;
+export type ModelRepository = Repository<Model>;
+export type MonsterRepository = Repository<Monster>;
+export type PermissionAssignmentRepository = Repository<PermissionAssignment>;
+export type PersonRepository = Repository<Person>;
+export type PinRepository = Repository<Pin>;
+export type PlaceRepository = Repository<Place>;
+export type RoleRepository = Repository<Role>;
+export type ServerConfigRepository = Repository<ServerConfig>;
+export type UserRepository = Repository<User>;
+export type WikiFolderRepository = Repository<WikiFolder>;
+export type WikiPageRepository = Repository<WikiPage>;
+export type WorldRepository = Repository<World>;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DatabaseEntity {}
 
 export abstract class MongoDBEntity extends Document implements DatabaseEntity {
@@ -73,7 +74,7 @@ export interface DomainEntityFactory<
 	DBType extends DatabaseEntity,
 	DomainType extends DomainEntity
 > {
-	build(entity: DBType): DomainType;
+	build: (entity: DBType) => DomainType;
 }
 
 export abstract class CookieManager {
@@ -81,28 +82,27 @@ export abstract class CookieManager {
 	clearCookie: (cookie: string) => void;
 }
 
-export type SessionContext = {
+export interface SessionContext {
 	cookieManager: CookieManager;
 	securityContext: SecurityContext;
-};
+}
 
-export interface SessionContextParameters {}
 export interface SessionContextFactory {
-	create(parameters: SessionContextParameters): Promise<SessionContext>;
+	create: (parameters: any) => Promise<SessionContext>;
 }
 
 export interface Seeder {
-	seed(): Promise<void>;
+	seed: () => Promise<void>;
 }
 
 export interface EntityAuthorizationRuleset<
 	Type extends DomainEntity,
 	Parent extends DomainEntity
 > {
-	canRead(context: SecurityContext, entity: Type): Promise<boolean>;
-	canWrite(context: SecurityContext, entity: Type): Promise<boolean>;
-	canAdmin(context: SecurityContext, entity: Type): Promise<boolean>;
-	canCreate(context: SecurityContext, entity: Parent): Promise<boolean>;
+	canRead: (context: SecurityContext, entity: Type) => Promise<boolean>;
+	canWrite: (context: SecurityContext, entity: Type) => Promise<boolean>;
+	canAdmin: (context: SecurityContext, entity: Type) => Promise<boolean>;
+	canCreate: (context: SecurityContext, entity: Parent) => Promise<boolean>;
 }
 
 export interface UnitOfWork {
@@ -125,7 +125,7 @@ export interface UnitOfWork {
 	worldRepository: WorldRepository;
 	fileRepository: FileRepository;
 
-	commit(): Promise<void>;
+	commit: () => Promise<void>;
 }
 
 export interface Archive {
@@ -148,99 +148,112 @@ export interface Archive {
 	worldRepository: WorldRepository;
 	fileRepository: FileRepository;
 
-	pipe(output: Writable): Promise<void>;
+	pipe: (output: Writable) => Promise<void>;
 }
 
 export interface AbstractArchiveFactory {
-	createDefault(): Archive;
-	zipFromZipStream(input: Readable): Promise<Archive>;
+	createDefault: () => Archive;
+	zipFromZipStream: (input: Readable) => Promise<Archive>;
 }
 
 export interface Cache {
-	get(key: string): Promise<string | null>;
-	set(key: string, value: string, timeout?: number): Promise<void>;
-	delete(key: string): Promise<void>;
-	exists(key: string): Promise<boolean>;
+	get: (key: string) => Promise<string | null>;
+	set: (key: string, value: string, timeout?: number) => Promise<void>;
+	delete: (key: string) => Promise<void>;
+	exists: (key: string) => Promise<boolean>;
 	readStream: (key: string) => Readable;
 	writeStream: (value: string, timeout: number) => Writable;
 }
 
-export type AuthenticationTokens = {
+export interface AuthenticationTokens {
 	accessToken: string;
 	refreshToken: string;
-};
+}
 export interface AuthenticationService {
-	createTokens(user: User, version: string, unitOfWork: UnitOfWork): Promise<AuthenticationTokens>;
-	getUserFromAccessToken(accessToken: string, unitOfWork: UnitOfWork): Promise<User>;
-	getUserFromRefreshToken(refreshToken: string, unitOfWork: UnitOfWork): Promise<User>;
-	getRefreshTokenVersion(refreshToken: string): Promise<string>;
-	registerUser(
+	createTokens: (
+		user: User,
+		version: string,
+		unitOfWork: UnitOfWork
+	) => Promise<AuthenticationTokens>;
+	getUserFromAccessToken: (accessToken: string, unitOfWork: UnitOfWork) => Promise<User>;
+	getUserFromRefreshToken: (refreshToken: string, unitOfWork: UnitOfWork) => Promise<User>;
+	getRefreshTokenVersion: (refreshToken: string) => Promise<string>;
+	registerUser: (
 		email: string,
 		username: string,
 		password: string,
 		unitOfWork: UnitOfWork
-	): Promise<User>;
-	login(username: string, password: string, cookieManager: CookieManager): Promise<User>;
-	logout(currentUser: User, cookieManager: CookieManager): Promise<string>;
-	register(registerCode: string, email: string, username: string, password: string): Promise<User>;
+	) => Promise<User>;
+	login: (username: string, password: string, cookieManager: CookieManager) => Promise<User>;
+	logout: (currentUser: User, cookieManager: CookieManager) => Promise<string>;
+	register: (
+		registerCode: string,
+		email: string,
+		username: string,
+		password: string
+	) => Promise<User>;
 }
 
 export interface AuthorizationService {
-	grantUserPermission(
+	grantUserPermission: (
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
 		subjectType: string,
 		userId: string
-	): Promise<User>;
-	revokeUserPermission(
+	) => Promise<User>;
+	revokeUserPermission: (
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
 		userId: string
-	): Promise<User>;
-	grantRolePermission(
+	) => Promise<User>;
+	grantRolePermission: (
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
 		subjectType: string,
 		userId: string
-	): Promise<Role>;
-	revokeRolePermission(
+	) => Promise<Role>;
+	revokeRolePermission: (
 		context: SecurityContext,
 		roleId: string,
 		permission: string,
 		subjectId: string
-	): Promise<Role>;
-	createRole(context: SecurityContext, worldId: string, name: string): Promise<World>;
-	deleteRole(context: SecurityContext, roleId: string): Promise<World>;
-	cleanUpPermissions(subjectId: string, unitOfWork: UnitOfWork): Promise<void>;
-	addUserRole(context: SecurityContext, userId: string, roleId: string): Promise<World>;
-	removeUserRole(context: SecurityContext, userId: string, roleId: string): Promise<World>;
+	) => Promise<Role>;
+	createRole: (context: SecurityContext, worldId: string, name: string) => Promise<World>;
+	deleteRole: (context: SecurityContext, roleId: string) => Promise<World>;
+	cleanUpPermissions: (subjectId: string, unitOfWork: UnitOfWork) => Promise<void>;
+	addUserRole: (context: SecurityContext, userId: string, roleId: string) => Promise<World>;
+	removeUserRole: (context: SecurityContext, userId: string, roleId: string) => Promise<World>;
 }
 
 export interface ContentExportService {
-	exportWikiPage(
+	exportWikiPage: (
 		context: SecurityContext,
 		docId: string,
 		wikiType: string,
 		archive: Archive
-	): Promise<void>;
-	exportModel(context: SecurityContext, docId: string, archive: Archive): Promise<void>;
-	exportWikiFolder(
+	) => Promise<void>;
+	exportModel: (context: SecurityContext, docId: string, archive: Archive) => Promise<void>;
+	exportWikiFolder: (
 		context: SecurityContext,
 		docId: string,
 		archive: Archive,
 		errorOut?: boolean
-	): Promise<void>;
+	) => Promise<void>;
 }
 export interface ContentImportService {
-	importContent(context: SecurityContext, folderId: string, zipFile: FileUpload): Promise<World>;
+	importContent: (
+		context: SecurityContext,
+		folderId: string,
+		zipFile: FileUpload
+	) => Promise<World>;
 }
 
 export interface EventPublisher {
-	publish(event: string, payload: any): Promise<void>;
-	asyncIterator(events: string[]): AsyncIterator<any>;
+	publish: (event: string, payload: any) => Promise<void>;
+	asyncIterator: (events: string[]) => AsyncIterator<any>;
 }
 export interface ImageService {
 	createImage: (
@@ -465,9 +478,11 @@ export interface DataLoader<T extends DomainEntity> {
 }
 
 export interface ApiServer {
-	start(): Promise<void>;
+	start: () => Promise<void>;
 
-	checkConfig(): Promise<void>;
+	checkConfig: () => Promise<void>;
+
+	initDb: () => Promise<void>;
 }
 export interface RoleService {
 	getRoles: (

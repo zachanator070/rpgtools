@@ -44,53 +44,6 @@ export class WikiFolderApplicationService implements WikiFolderService {
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: WikiFolderRepository;
 
-	private checkUserWritePermissionForFolderContents = async (
-		context: SecurityContext,
-		folderId: string,
-		unitOfWork: UnitOfWork
-	) => {
-		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
-
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folder))) {
-			throw new Error(`You do not have write permission for the folder ${folderId}`);
-		}
-
-		// pages are auto populated
-		for (let childPage of folder.pages) {
-			if (
-				!(await this.wikiPageAuthorizationRuleset.canWrite(
-					context,
-					new Article(childPage, "", "", "", "")
-				))
-			) {
-				throw new Error(`You do not have write permission for the page ${childPage}`);
-			}
-		}
-
-		// children folders are not auto populated
-		for (let childFolder of folder.children) {
-			await this.checkUserWritePermissionForFolderContents(context, childFolder, unitOfWork);
-		}
-	};
-
-	private recurseDeleteFolder = async (folder: WikiFolder, unitOfWork: UnitOfWork) => {
-		const children = await unitOfWork.wikiFolderRepository.find([
-			new FilterCondition("_id", folder.children, FILTER_CONDITION_OPERATOR_IN),
-		]);
-		for (let child of children) {
-			await this.recurseDeleteFolder(child, unitOfWork);
-		}
-
-		for (let pageId of folder.pages) {
-			await this.authorizationService.cleanUpPermissions(pageId, unitOfWork);
-			const page = await unitOfWork.wikiPageRepository.findById(pageId);
-			await unitOfWork.wikiPageRepository.delete(page);
-		}
-
-		await this.authorizationService.cleanUpPermissions(folder._id, unitOfWork);
-		await unitOfWork.wikiFolderRepository.delete(folder);
-	};
-
 	createFolder = async (
 		context: SecurityContext,
 		name: string,
@@ -255,5 +208,52 @@ export class WikiFolderApplicationService implements WikiFolderService {
 			]);
 		}
 		return path;
+	};
+
+	private recurseDeleteFolder = async (folder: WikiFolder, unitOfWork: UnitOfWork) => {
+		const children = await unitOfWork.wikiFolderRepository.find([
+			new FilterCondition("_id", folder.children, FILTER_CONDITION_OPERATOR_IN),
+		]);
+		for (let child of children) {
+			await this.recurseDeleteFolder(child, unitOfWork);
+		}
+
+		for (let pageId of folder.pages) {
+			await this.authorizationService.cleanUpPermissions(pageId, unitOfWork);
+			const page = await unitOfWork.wikiPageRepository.findById(pageId);
+			await unitOfWork.wikiPageRepository.delete(page);
+		}
+
+		await this.authorizationService.cleanUpPermissions(folder._id, unitOfWork);
+		await unitOfWork.wikiFolderRepository.delete(folder);
+	};
+
+	private checkUserWritePermissionForFolderContents = async (
+		context: SecurityContext,
+		folderId: string,
+		unitOfWork: UnitOfWork
+	) => {
+		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
+
+		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folder))) {
+			throw new Error(`You do not have write permission for the folder ${folderId}`);
+		}
+
+		// pages are auto populated
+		for (let childPage of folder.pages) {
+			if (
+				!(await this.wikiPageAuthorizationRuleset.canWrite(
+					context,
+					new Article(childPage, "", "", "", "")
+				))
+			) {
+				throw new Error(`You do not have write permission for the page ${childPage}`);
+			}
+		}
+
+		// children folders are not auto populated
+		for (let childFolder of folder.children) {
+			await this.checkUserWritePermissionForFolderContents(context, childFolder, unitOfWork);
+		}
 	};
 }

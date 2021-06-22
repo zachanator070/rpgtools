@@ -9,6 +9,12 @@ export abstract class WikiPage implements DomainEntity {
 	public contentId?: string;
 	public content?: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<
+		this,
+		DomainEntity
+	> = new WikiPageAuthorizationRuleset();
+	abstract type: string;
+
 	constructor(id: string, name: string, worldId: string, coverImageId: string, contentId: string) {
 		this._id = id;
 		this.name = name;
@@ -16,10 +22,4 @@ export abstract class WikiPage implements DomainEntity {
 		this.coverImage = coverImageId;
 		this.contentId = contentId;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<
-		this,
-		DomainEntity
-	> = new WikiPageAuthorizationRuleset();
-	abstract type: string;
 }

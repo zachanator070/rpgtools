@@ -76,6 +76,62 @@ export class ImageApplicationService implements ImageService {
 		return newImage;
 	};
 
+	public deleteImage = async (image: Image): Promise<void> => {
+		const unitOfWork = new DbUnitOfWork();
+		console.log(`deleting image ${image._id}`);
+		for (let chunkId of image.chunks) {
+			const chunk: Chunk = await unitOfWork.chunkRepository.findById(chunkId);
+			const file: File = await unitOfWork.fileRepository.findById(chunk.fileId);
+			await unitOfWork.fileRepository.delete(file);
+			await unitOfWork.chunkRepository.delete(chunk);
+		}
+		if (image.icon) {
+			const icon = await unitOfWork.imageRepository.findById(image.icon);
+			await this.deleteImage(icon);
+		}
+		await unitOfWork.imageRepository.delete(image);
+		await unitOfWork.commit();
+	};
+
+	private makeIcon(jimpImage: Jimp, newImage: Image, unitOfWork: UnitOfWork) {
+		return new Promise((resolve, reject) => {
+			Jimp.read(jimpImage)
+				.then(async (image) => {
+					const iconImage = new Image(
+						"",
+						"icon." + newImage.name,
+						newImage.world,
+						this.chunkSize,
+						this.chunkSize,
+						1,
+						1,
+						[],
+						""
+					);
+					image.scaleToFit(this.chunkSize, this.chunkSize, (err, scaledImage) => {
+						(async () => {
+							const iconChunk = await this.createChunk(
+								0,
+								0,
+								scaledImage.bitmap.height,
+								scaledImage.bitmap.width,
+								scaledImage,
+								iconImage,
+								unitOfWork
+							);
+							iconImage.chunks = [iconChunk._id];
+							await unitOfWork.imageRepository.create(iconImage);
+							newImage.icon = iconImage._id;
+							resolve(iconImage);
+						})();
+					});
+				})
+				.catch((err) => {
+					return reject(err);
+				});
+		});
+	}
+
 	private async createChunkRecurse(
 		x: number,
 		y: number,
@@ -126,61 +182,5 @@ export class ImageApplicationService implements ImageService {
 				resolve(chunk);
 			});
 		});
-	};
-
-	private makeIcon(jimpImage: Jimp, newImage: Image, unitOfWork: UnitOfWork) {
-		return new Promise(async (resolve, reject) => {
-			Jimp.read(jimpImage)
-				.then(async (image) => {
-					const iconImage = new Image(
-						"",
-						"icon." + newImage.name,
-						newImage.world,
-						this.chunkSize,
-						this.chunkSize,
-						1,
-						1,
-						[],
-						""
-					);
-					image.scaleToFit(this.chunkSize, this.chunkSize, (err, scaledImage) => {
-						(async () => {
-							const iconChunk = await this.createChunk(
-								0,
-								0,
-								scaledImage.bitmap.height,
-								scaledImage.bitmap.width,
-								scaledImage,
-								iconImage,
-								unitOfWork
-							);
-							iconImage.chunks = [iconChunk._id];
-							await unitOfWork.imageRepository.create(iconImage);
-							newImage.icon = iconImage._id;
-							resolve(iconImage);
-						})();
-					});
-				})
-				.catch((err) => {
-					return reject(err);
-				});
-		});
-	}
-
-	public deleteImage = async (image: Image) => {
-		const unitOfWork = new DbUnitOfWork();
-		console.log(`deleting image ${image._id}`);
-		for (let chunkId of image.chunks) {
-			const chunk: Chunk = await unitOfWork.chunkRepository.findById(chunkId);
-			const file: File = await unitOfWork.fileRepository.findById(chunk.fileId);
-			await unitOfWork.fileRepository.delete(file);
-			await unitOfWork.chunkRepository.delete(chunk);
-		}
-		if (image.icon) {
-			const icon = await unitOfWork.imageRepository.findById(image.icon);
-			await this.deleteImage(icon);
-		}
-		await unitOfWork.imageRepository.delete(image);
-		await unitOfWork.commit();
 	};
 }
