@@ -3,10 +3,14 @@ import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
-import { AuthenticationService, ServerConfigService } from "../types";
+import {
+	ApiServer,
+	AuthenticationService,
+	ServerConfigRepository,
+	ServerConfigService,
+} from "../types";
 import { Role } from "../domain-entities/role";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { RPGToolsServer } from "../express-rpgtools-server";
 import { v4 as uuidv4 } from "uuid";
 import { ServerConfigAuthorizationRuleset } from "../security/server-config-authorization-ruleset";
 import { SecurityContext } from "../security-context";
@@ -16,10 +20,13 @@ export class ServerConfigApplicationService implements ServerConfigService {
 	@inject(INJECTABLE_TYPES.AuthenticationService)
 	authenticationService: AuthenticationService;
 
-	@inject(INJECTABLE_TYPES.RpgToolsServer)
-	server: RPGToolsServer;
+	@inject(INJECTABLE_TYPES.ApiServer)
+	server: ApiServer;
 
 	serverConfigAuthorizationRuleset: ServerConfigAuthorizationRuleset = new ServerConfigAuthorizationRuleset();
+
+	@inject(INJECTABLE_TYPES.ServerConfigRepository)
+	serverConfigRepository: ServerConfigRepository;
 
 	unlockServer = async (unlockCode: string, email: string, username: string, password: string) => {
 		const unitOfWork = new DbUnitOfWork();
@@ -75,5 +82,9 @@ export class ServerConfigApplicationService implements ServerConfigService {
 		await unitOfWork.serverConfigRepository.update(server);
 		await unitOfWork.commit();
 		return server;
+	};
+
+	getServerConfig = async () => {
+		return this.serverConfigRepository.findOne([]);
 	};
 }

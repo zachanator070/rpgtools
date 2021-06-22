@@ -1,4 +1,8 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
+import { World } from "./world";
+import { Place } from "./place";
+import { PIN } from "../../../common/src/type-constants";
 
 export class Pin implements DomainEntity {
 	public _id: string;
@@ -14,4 +18,7 @@ export class Pin implements DomainEntity {
 		this.map = mapId;
 		this.page = pageId;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<Pin, Place> = new PinAuthorizationRuleset();
+	type: string = PIN;
 }

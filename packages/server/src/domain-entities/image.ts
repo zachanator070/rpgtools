@@ -1,4 +1,7 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { World } from "./world";
+import { IMAGE } from "../../../common/src/type-constants";
+import { ImageAuthorizationRuleset } from "../security/image-authorization-ruleset";
 
 export class Image implements DomainEntity {
 	public _id: string;
@@ -32,4 +35,7 @@ export class Image implements DomainEntity {
 		this.chunks = chunkIds;
 		this.icon = iconId;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<Image, World> = new ImageAuthorizationRuleset();
+	type: string = IMAGE;
 }

@@ -43,30 +43,19 @@ export const markdownToDelta = (md) => {
 			if (childIndex <= node.children.length - 2) {
 				next = node.children[childIndex + 1];
 			}
-			ops.push(
-				...visitNode(child, next, inheritedAttributes, inheritedProperties)
-			);
+			ops.push(...visitNode(child, next, inheritedAttributes, inheritedProperties));
 		}
 		return ops;
 	};
 
 	const SPACED_ELEMENTS = ["paragraph", "table"];
 
-	const visitNode = (
-		node,
-		nextNode = {},
-		inheritedAttributes = {},
-		inheritedProperties = {}
-	) => {
+	// eslint-disable-next-line complexity
+	const visitNode = (node, nextNode = {}, inheritedAttributes = {}, inheritedProperties = {}) => {
 		switch (node.type) {
 			case "paragraph":
 				const paragraphOps = [
-					...visitChildren(
-						node,
-						nextNode,
-						inheritedAttributes,
-						inheritedProperties
-					),
+					...visitChildren(node, nextNode, inheritedAttributes, inheritedProperties),
 					{ insert: "\n" },
 				];
 				if (SPACED_ELEMENTS.includes(nextNode.type)) {
@@ -85,21 +74,21 @@ export const markdownToDelta = (md) => {
 				return visitChildren(
 					node,
 					nextNode,
-					Object.assign({}, inheritedAttributes, { bold: true }),
+					{ ...inheritedAttributes, bold: true },
 					inheritedProperties
 				);
 			case "emphasis":
 				return visitChildren(
 					node,
 					nextNode,
-					Object.assign({}, inheritedAttributes, { italic: true }),
+					{ ...inheritedAttributes, italic: true },
 					inheritedProperties
 				);
 			case "delete":
 				return visitChildren(
 					node,
 					nextNode,
-					Object.assign({}, inheritedAttributes, { strike: true }),
+					{ ...inheritedAttributes, strike: true },
 					inheritedProperties
 				);
 			case "image":
@@ -116,9 +105,7 @@ export const markdownToDelta = (md) => {
 				return [
 					{
 						insert: node.value,
-						attributes: Object.assign({}, inheritedAttributes, {
-							font: "monospace",
-						}),
+						attributes: { ...inheritedAttributes, font: "monospace" },
 					},
 				];
 			case "heading":
@@ -135,9 +122,7 @@ export const markdownToDelta = (md) => {
 					...visitChildren(
 						node,
 						nextNode,
-						Object.assign({}, inheritedAttributes, {
-							size: getHeadingSize(node.depth),
-						}),
+						{ ...inheritedAttributes, size: getHeadingSize(node.depth) },
 						inheritedProperties
 					),
 					{ insert: "\n" },
@@ -201,12 +186,7 @@ export const markdownToDelta = (md) => {
 					attributes: { blockquote: true },
 					insert: "\n",
 				});
-				return [
-					{ insert: "\n" },
-					{ insert: "\n" },
-					...blockQuoteChildren,
-					{ insert: "\n" },
-				];
+				return [{ insert: "\n" }, { insert: "\n" }, ...blockQuoteChildren, { insert: "\n" }];
 			case "table":
 				const table = new AsciiTable();
 				table.removeBorder();
@@ -220,9 +200,7 @@ export const markdownToDelta = (md) => {
 				}
 
 				const tableOp = {
-					attributes: Object.assign({}, inheritedAttributes, {
-						font: "monospace",
-					}),
+					attributes: { ...inheritedAttributes, font: "monospace" },
 					insert: table.toString(),
 				};
 				if (table.toString().split("\n")[0].length > 140) {

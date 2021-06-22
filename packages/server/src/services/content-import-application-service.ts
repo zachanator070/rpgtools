@@ -36,7 +36,7 @@ class DeferredPromise {
 
 @injectable()
 export class ContentImportApplicationService implements ContentImportService {
-	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<WikiFolder> = new WikiFolderAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset = new WikiFolderAuthorizationRuleset();
 
 	processedDocs: Map<string, DeferredPromise> = new Map<string, DeferredPromise>();
 
@@ -60,7 +60,7 @@ export class ContentImportApplicationService implements ContentImportService {
 		zipFile = await zipFile;
 		const archiveReadStream = zipFile.createReadStream();
 		// probably need to detect here what kind of file we are dealing with then create an archive based upon the file type
-		const archive = await this.archiveFactory.fromZipStream(archiveReadStream);
+		const archive = await this.archiveFactory.zipFromZipStream(archiveReadStream);
 
 		try {
 			await this.processArchive(archive, folder, unitOfWork);

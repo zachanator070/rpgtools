@@ -1,6 +1,7 @@
 export const INJECTABLE_TYPES = {
 	ArticleRepository: Symbol.for("ArticleRepository"),
 	ChunkRepository: Symbol.for("ChunkRepository"),
+	FileRepository: Symbol.for("FileRepository"),
 	GameRepository: Symbol.for("GameRepository"),
 	ImageRepository: Symbol.for("ImageRepository"),
 	ItemRepository: Symbol.for("ItemRepository"),
@@ -16,7 +17,6 @@ export const INJECTABLE_TYPES = {
 	WikiFolderRepository: Symbol.for("WikiFolderRepository"),
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
-	FileRepository: Symbol.for("FileRepository"),
 
 	ArchiveArticleRepository: Symbol.for("ArchiveArticleRepository"),
 	ArchiveChunkRepository: Symbol.for("ArchiveChunkRepository"),
@@ -44,6 +44,7 @@ export const INJECTABLE_TYPES = {
 	GameService: Symbol.for("GameService"),
 	ImageService: Symbol.for("ImageService"),
 	ModelService: Symbol.for("ModelService"),
+	RoleService: Symbol.for("RoleService"),
 	ServerConfigService: Symbol.for("ServerConfigService"),
 	SrdImportService: Symbol.for("SrdImportService"),
 	UserService: Symbol.for("UserService"),
@@ -61,5 +62,24 @@ export const INJECTABLE_TYPES = {
 
 	EventPublisher: Symbol.for("EventPublisher"),
 
-	RpgToolsServer: Symbol.for("RpgToolsServer"),
+	ApiServer: Symbol.for("ApiServer"),
+
+	ArticleDataLoader: Symbol.for("ArticleDataLoader"),
+	ChunkDataLoader: Symbol.for("ChunkDataLoader"),
+	FileDataLoader: Symbol.for("FileDataLoader"),
+	GameDataLoader: Symbol.for("GameDataLoader"),
+	ImageDataLoader: Symbol.for("ImageDataLoader"),
+	ItemDataLoader: Symbol.for("ItemDataLoader"),
+	ModelDataLoader: Symbol.for("ModelDataLoader"),
+	MonsterDataLoader: Symbol.for("MonsterDataLoader"),
+	PermissionAssignmentDataLoader: Symbol.for("PermissionAssignmentDataLoader"),
+	PersonDataLoader: Symbol.for("PersonDataLoader"),
+	PinDataLoader: Symbol.for("PinDataLoader"),
+	PlaceDataLoader: Symbol.for("PlaceDataLoader"),
+	RoleDataLoader: Symbol.for("RoleDataLoader"),
+	ServerConfigDataLoader: Symbol.for("ServerConfigDataLoader"),
+	UserDataLoader: Symbol.for("UserDataLoader"),
+	WikiFolderDataLoader: Symbol.for("WikiFolderDataLoader"),
+	WikiPageDataLoader: Symbol.for("WikiPageDataLoader"),
+	WorldDataLoader: Symbol.for("WorldDataLoader"),
 };

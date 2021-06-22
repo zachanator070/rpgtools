@@ -12,8 +12,9 @@ import {
 } from "../../../common/src/permission-constants";
 import { inject } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
+import { ServerConfigAuthorizationRuleset } from "./server-config-authorization-ruleset";
 
-export class WorldAuthorizationRuleset implements EntityAuthorizationRuleset<World> {
+export class WorldAuthorizationRuleset implements EntityAuthorizationRuleset<World, ServerConfig> {
 	@inject(INJECTABLE_TYPES.ServerConfigRepository)
 	serverConfigRepository: Repository<ServerConfig>;
 

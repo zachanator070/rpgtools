@@ -11,8 +11,9 @@ import { PlaceAuthorizationRuleset } from "./place-authorization-ruleset";
 import { inject } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { Place } from "../domain-entities/place";
+import { World } from "../domain-entities/world";
 
-export class PinAuthorizationRuleset implements EntityAuthorizationRuleset<Pin> {
+export class PinAuthorizationRuleset implements EntityAuthorizationRuleset<Pin, Place> {
 	@inject(INJECTABLE_TYPES.WikiPageRepository)
 	wikiPageRepository: WikiPageRepository;
 	@inject(INJECTABLE_TYPES.PlaceRepository)

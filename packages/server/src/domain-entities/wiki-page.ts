@@ -1,6 +1,7 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
 
-export class WikiPage implements DomainEntity {
+export abstract class WikiPage implements DomainEntity {
 	public _id: string;
 	public name: string;
 	public world: string;
@@ -15,4 +16,10 @@ export class WikiPage implements DomainEntity {
 		this.coverImage = coverImageId;
 		this.contentId = contentId;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<
+		this,
+		DomainEntity
+	> = new WikiPageAuthorizationRuleset();
+	abstract type: string;
 }

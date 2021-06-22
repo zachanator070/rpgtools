@@ -1,4 +1,6 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
+import { WIKI_FOLDER } from "../../../common/src/type-constants";
 
 export class WikiFolder implements DomainEntity {
 	public _id: string;
@@ -14,4 +16,10 @@ export class WikiFolder implements DomainEntity {
 		this.pages = pageIds;
 		this.children = childrenIds;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<
+		WikiFolder,
+		WikiFolder
+	> = new WikiFolderAuthorizationRuleset();
+	type: string = WIKI_FOLDER;
 }

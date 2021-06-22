@@ -1,4 +1,6 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { UserAuthorizationRuleset } from "../security/user-authorization-ruleset";
+import { USER } from "../../../common/src/type-constants";
 
 export class User implements DomainEntity {
 	public _id: string;
@@ -29,4 +31,10 @@ export class User implements DomainEntity {
 		this.roles = roleIds;
 		this.permissions = permissionIds;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<
+		User,
+		DomainEntity
+	> = new UserAuthorizationRuleset();
+	type: string = USER;
 }

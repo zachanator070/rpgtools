@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { SERVER_CONFIG, USER } from "../../../../../common/src/type-constants";
-import { SERVER_ADMIN, SERVER_RW } from "../../../../../common/src/permission-constants";
 import { MongoDBEntity } from "../../../types";
 
 export class ServerConfigDocument extends MongoDBEntity {

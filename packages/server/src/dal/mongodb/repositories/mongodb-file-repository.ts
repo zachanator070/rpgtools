@@ -7,6 +7,7 @@ import {
 	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
 } from "../../filter-condition";
+import { PaginatedResult } from "../../paginated-result";
 
 export class MongodbFileRepository implements FileRepository {
 	create = async (entity: File): Promise<void> => {
@@ -87,6 +88,14 @@ export class MongodbFileRepository implements FileRepository {
 	};
 
 	update(entity: File): Promise<void> {
-		return Promise.resolve(undefined);
+		throw new Error("Files are immutable");
 	}
+
+	findPaginated = async (
+		conditions: FilterCondition[],
+		page: number,
+		sort?: string
+	): Promise<PaginatedResult<File>> => {
+		throw new Error("Files cannot be paginated in mongodb");
+	};
 }

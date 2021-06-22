@@ -13,10 +13,19 @@ import { Person } from "../domain-entities/person";
 import { Place } from "../domain-entities/place";
 import { Item } from "../domain-entities/item";
 import { Monster } from "../domain-entities/monster";
-import { FilterCondition } from "../dal/filter-condition";
-import { AuthorizationService, WikiPageService } from "../types";
+import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
+import {
+	AuthorizationService,
+	WikiFolderRepository,
+	WikiPageRepository,
+	WikiPageService,
+} from "../types";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { ModeledPage } from "../domain-entities/modeled-page";
+import { WikiPage } from "../domain-entities/wiki-page";
+import { WikiPageRepositoryMapper } from "../dal/wiki-page-repository-mapper";
+import { WikiPageModel } from "../dal/mongodb/models/wiki-page";
+import { PaginatedResult } from "../dal/paginated-result";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {
@@ -25,6 +34,11 @@ export class WikiPageApplicationService implements WikiPageService {
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
+
+	@inject(INJECTABLE_TYPES.WikiPageRepository)
+	wikiPageRepository: WikiPageRepository;
+	@inject(INJECTABLE_TYPES.WikiFolderRepository)
+	wikiFolderRepository: WikiFolderRepository;
 
 	createWiki = async (context: SecurityContext, name: string, folderId: string) => {
 		const unitOfWork = new DbUnitOfWork();
@@ -286,5 +300,44 @@ export class WikiPageApplicationService implements WikiPageService {
 		await unitOfWork.wikiFolderRepository.update(oldFolder);
 		await unitOfWork.commit();
 		return wikiPage.world;
+	};
+
+	getWiki = async (context: SecurityContext, wikiId: string): Promise<WikiPage> => {
+		let foundWiki = await this.wikiPageRepository.findById(wikiId);
+		if (foundWiki && !(await this.wikiPageAuthorizationRuleset.canRead(context, foundWiki))) {
+			throw new Error(`You do not have permission to read wiki ${wikiId}`);
+		}
+
+		const mapper = new WikiPageRepositoryMapper();
+		foundWiki = await mapper.map(foundWiki).findById(foundWiki._id);
+
+		return foundWiki;
+	};
+
+	getWikisInFolder = async (
+		context: SecurityContext,
+		folderId: string,
+		page: number
+	): Promise<PaginatedResult<WikiPage>> => {
+		const folder = await this.wikiFolderRepository.findById(folderId);
+		if (!folder) {
+			throw new Error("Folder does not exist");
+		}
+		if (!(await folder.authorizationRuleset.canRead(context, folder))) {
+			throw new Error("You do not have permission to read this folder");
+		}
+		const results = await this.wikiPageRepository.findPaginated(
+			[new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN)],
+			page,
+			"name"
+		);
+		const docs = [];
+		for (let doc of results.docs) {
+			if (await this.wikiPageAuthorizationRuleset.canRead(context, doc)) {
+				docs.push(doc);
+			}
+		}
+		results.docs = docs;
+		return results;
 	};
 }

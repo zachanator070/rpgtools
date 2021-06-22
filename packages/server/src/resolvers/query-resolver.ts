@@ -1,275 +1,97 @@
-import { World } from "../dal/mongodb/models/world";
-import { User } from "../dal/mongodb/models/user";
-import { ANON_USERNAME } from "../../../common/src/permission-constants";
-import { WikiPageModel } from "../dal/mongodb/models/wiki-page";
-import { Place } from "../dal/mongodb/models/place";
 import {
-	ALL_WIKI_TYPES,
-	GAME,
-	ITEM,
-	MONSTER,
-	PERSON,
-	PLACE,
-	ROLE,
-	SERVER_CONFIG,
-	WIKI_FOLDER,
-	WORLD,
-} from "../../../common/src/type-constants";
-import { ServerConfig } from "../dal/mongodb/models/server-config";
-import { GameModel } from "../dal/mongodb/models/game";
-import { Model } from "../dal/mongodb/models/model";
-import { WikiFolder } from "../dal/mongodb/models/wiki-folder";
-import { Role } from "../dal/mongodb/models/role";
-import { Person } from "../dal/mongodb/models/person";
-import { Monster } from "../dal/mongodb/models/monster";
-import { ItemModel } from "../dal/mongodb/models/item";
+	GameService,
+	ModelService,
+	RoleService,
+	ServerConfigService,
+	SessionContext,
+	UserService,
+	WikiFolderService,
+	WikiPageService,
+	WorldService,
+} from "../types";
+import { container } from "../inversify.config";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 export default {
-	currentUser: (parent, args, context) => context.currentUser,
+	currentUser: (_: any, __: any, { securityContext }: SessionContext) => securityContext.user,
 	serverConfig: async () => {
-		return ServerConfig.findOne();
+		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+		return service.getServerConfig;
 	},
-	world: async (parent, { worldId }, { currentUser }) => {
-		const world = await World.findOne({ _id: worldId });
-
-		if (!world) {
-			return null;
-		}
-		if (!(await world.userCanRead(currentUser))) {
-			return null;
-		}
-
-		return world;
+	world: async (_: any, { worldId }: { worldId: string }, { securityContext }: SessionContext) => {
+		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
+		return service.getWorld(securityContext, worldId);
 	},
-	worlds: async (_, { canAdmin, page }, { currentUser }) => {
-		const results = await World.paginate();
-		const docs = [];
-		for (let world of results.docs) {
-			if (canAdmin !== undefined && !(await world.userCanAdmin(currentUser))) {
-				continue;
-			}
-			if (await world.userCanRead(currentUser)) {
-				docs.push(world);
-			}
-		}
-		results.docs = docs;
-		return results;
+	worlds: async (_: any, { page }: { page: number }, { securityContext }: SessionContext) => {
+		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
+		return service.getWorlds(securityContext, page);
 	},
-	wiki: async (_, { wikiId }, { currentUser }) => {
-		let foundWiki = await WikiPageModel.findOne({ _id: wikiId });
-		if (foundWiki && !(await foundWiki.userCanRead(currentUser))) {
-			throw new Error(`You do not have permission to read wiki ${wikiId}`);
-		}
-		switch (foundWiki.type) {
-			case PLACE:
-				foundWiki = await Place.findById(wikiId).populate("mapImage coverImage");
-				break;
-			case PERSON:
-				foundWiki = await Person.findById(wikiId).populate("model");
-				break;
-			case ITEM:
-				foundWiki = await ItemModel.findById(wikiId).populate("model");
-				break;
-			case MONSTER:
-				foundWiki = await Monster.findById(wikiId).populate("model");
-				break;
-		}
-		return foundWiki;
+	wiki: async (_: any, { wikiId }: { wikiId: string }, { securityContext }: SessionContext) => {
+		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
+		return service.getWiki(securityContext, wikiId);
 	},
-	users: async (_, { username }) => {
-		return User.paginate({
-			username: { $regex: `^${username}.*`, $options: "i" },
-		});
+	users: async (
+		_: any,
+		{ username }: { username: string },
+		{ securityContext }: SessionContext
+	) => {
+		const service = container.get<UserService>(INJECTABLE_TYPES.UserService);
+		return service.getUsers(securityContext, username);
 	},
-	game: async (_, { gameId }, { currentUser }) => {
-		const foundGame = await GameModel.findById(gameId);
-		if (foundGame && !(await foundGame.userCanRead(currentUser))) {
-			throw new Error("You do not have permission to read this game");
-		}
-		return foundGame;
+	game: async (_: any, { gameId }: { gameId: string }, { securityContext }: SessionContext) => {
+		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
+		return service.getGame(securityContext, gameId);
 	},
-	myGames: async (_, __, { currentUser }) => {
-		if (currentUser.username === ANON_USERNAME) {
-			return [];
-		}
-		return GameModel.find({ "characters.player": currentUser._id });
+	myGames: async (_: any, __: any, { securityContext }: SessionContext) => {
+		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
+		return service.getMyGames(securityContext);
 	},
-	models: async (_, { worldId }, { currentUser }) => {
-		const models = await Model.find({ world: worldId });
-		const returnModels = [];
-		for (let model of models) {
-			if (await model.userCanRead(currentUser)) {
-				returnModels.push(model);
-			}
-		}
-		return returnModels;
+	models: async (_: any, { worldId }: { worldId: string }, { securityContext }: SessionContext) => {
+		const service = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
+		return service.getModels(securityContext, worldId);
 	},
-	myPermissions: async (_, { worldId }, { currentUser }) => {
-		const world = await World.findById(worldId);
-		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
-		}
-
-		if (!(await world.userCanRead(currentUser))) {
-			throw new Error("You do not have permission to read this world");
-		}
-
-		const permissions = [];
-		const folders = await WikiFolder.find({ world }).populate("pages");
-		const roles = await Role.find({ world });
-		for (let permission of currentUser.allPermissions) {
-			const subjectId = permission.subject._id;
-			const subjectType = permission.subjectType;
-			let keepPermission = false;
-			if (subjectType === WORLD && subjectId.equals(world._id)) {
-				keepPermission = true;
-			} else if (subjectType === WIKI_FOLDER) {
-				for (let folder of folders) {
-					if (folder._id.equals(subjectId)) {
-						keepPermission = true;
-						break;
-					}
-				}
-			} else if (ALL_WIKI_TYPES.includes(subjectType)) {
-				for (let folder of folders) {
-					for (let page of folder.pages) {
-						if (page.equals(subjectId)) {
-							keepPermission = true;
-							break;
-						}
-					}
-				}
-			} else if (subjectType === ROLE) {
-				for (let role of roles) {
-					if (role._id.equals(subjectId)) {
-						keepPermission = true;
-						break;
-					}
-				}
-			} else if (subjectType === SERVER_CONFIG) {
-				keepPermission = true;
-			} else if (subjectType === GAME) {
-				keepPermission = true;
-			}
-			if (keepPermission) {
-				permissions.push(permission);
-			}
-		}
-		return permissions;
+	myPermissions: async (
+		_: any,
+		{ worldId }: { worldId: string },
+		{ securityContext }: SessionContext
+	) => {
+		return securityContext.permissions;
 	},
-	wikisInFolder: async (_, { folderId, page = 1 }, { currentUser }) => {
-		const folder = await WikiFolder.findById(folderId);
-		if (!folder) {
-			throw new Error("Folder does not exist");
-		}
-		if (!(await folder.userCanRead(currentUser))) {
-			throw new Error("You do not have permission to read this folder");
-		}
-		const results = await WikiPageModel.paginate(
-			{ _id: { $in: folder.pages } },
-			{ sort: { name: 1 }, page }
-		);
-		const docs = [];
-		for (let doc of results.docs) {
-			if (await doc.userCanRead(currentUser)) {
-				docs.push(doc);
-			}
-		}
-		results.docs = docs;
-		return results;
+	wikisInFolder: async (
+		_: any,
+		{ folderId, page = 1 }: { folderId: string; page: number },
+		{ securityContext }: SessionContext
+	) => {
+		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
+		return service.getWikisInFolder(securityContext, folderId, page);
 	},
-	wikis: async (_, { worldId, name, types, canAdmin }, { currentUser }) => {
-		const world = await World.findById(worldId);
-		if (!world) {
-			throw new Error("World does not exist");
-		}
-		if (!(await world.userCanRead(currentUser))) {
-			throw new Error("You do not have permission to read this World");
-		}
-
-		const conditions = { world: world._id };
-		if (name) {
-			conditions.name = { $regex: name, $options: "i" };
-		}
-		if (types && types.length > 0) {
-			conditions.type = { $in: types };
-		}
-		const results = await WikiPageModel.paginate(conditions);
-
-		const docs = [];
-		for (let doc of results.docs) {
-			if (canAdmin !== undefined && !(await doc.userCanAdmin(currentUser))) {
-				continue;
-			}
-			if (await doc.userCanRead(currentUser)) {
-				docs.push(doc);
-			}
-		}
-		results.docs = docs;
-		return results;
+	folders: async (
+		_: any,
+		{ worldId, name, canAdmin }: { worldId: string; name: string; canAdmin: boolean },
+		{ securityContext }: SessionContext
+	) => {
+		const service = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
+		return service.getFolders(securityContext, worldId, name, canAdmin);
 	},
-	folders: async (_, { worldId, name, canAdmin }, { currentUser }) => {
-		const world = await World.findById(worldId);
-		if (!world) {
-			throw new Error("World does not exist");
-		}
-		if (!(await world.userCanRead(currentUser))) {
-			throw new Error("You do not have permission to read this World");
-		}
-
-		const conditions = { world: world._id };
-		if (name) {
-			conditions.name = { $regex: name, $options: "i" };
-		}
-
-		const results = await WikiFolder.find(conditions);
-
-		const docs = [];
-		for (let doc of results) {
-			if (canAdmin !== undefined && !(await doc.userCanAdmin(currentUser))) {
-				continue;
-			}
-			if (await doc.userCanRead(currentUser)) {
-				docs.push(doc);
-			}
-		}
-		return docs;
+	roles: async (
+		_: any,
+		{
+			worldId,
+			name,
+			canAdmin,
+			page = 1,
+		}: { worldId: string; name: string; canAdmin: boolean; page: number },
+		{ securityContext }: SessionContext
+	) => {
+		const service = container.get<RoleService>(INJECTABLE_TYPES.RoleService);
+		return service.getRoles(securityContext, worldId, name, canAdmin, page);
 	},
-	roles: async (_, { worldId, name, canAdmin }, { currentUser }) => {
-		const world = await World.findById(worldId);
-		if (!world) {
-			throw new Error("World does not exist");
-		}
-		if (!(await world.userCanRead(currentUser))) {
-			throw new Error("You do not have permission to read this World");
-		}
-
-		const conditions = { world: world._id };
-		if (name) {
-			conditions.name = { $regex: name, $options: "i" };
-		}
-
-		const results = await Role.paginate(conditions);
-
-		const docs = [];
-		for (let doc of results.docs) {
-			if (canAdmin !== undefined && !(await doc.userCanAdmin(currentUser))) {
-				continue;
-			}
-			if (await doc.userCanRead(currentUser)) {
-				docs.push(doc);
-			}
-		}
-		results.docs = docs;
-		return results;
-	},
-	getFolderPath: async (_, { wikiId }, { currentUser }) => {
-		const path = [];
-		let folder = await WikiFolder.findOne({ pages: wikiId });
-		while (folder) {
-			path.push(folder);
-			folder = await WikiFolder.findOne({ children: folder._id });
-		}
-		return path;
+	getFolderPath: async (
+		_: any,
+		{ wikiId }: { wikiId: string },
+		{ securityContext }: SessionContext
+	) => {
+		const service = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
+		return service.getFolderPath(securityContext, wikiId);
 	},
 };

@@ -1,5 +1,8 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
 import { Readable } from "stream";
+import { FILE } from "../../../common/src/type-constants";
+import { World } from "./world";
+import { FileAuthorizationRuleset } from "../security/file-authorization-ruleset";
 
 export class File implements DomainEntity {
 	_id: string;
@@ -13,4 +16,7 @@ export class File implements DomainEntity {
 		this.readStream = readStream;
 		this.mimeType = mimeType;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<File, World> = new FileAuthorizationRuleset();
+	type: string = FILE;
 }

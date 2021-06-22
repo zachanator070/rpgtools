@@ -1,4 +1,6 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { PermissionAssignmentAuthorizationRuleset } from "../security/permission-assignment-authorization-ruleset";
+import { PERMISSION_ASSIGNMENT } from "../../../common/src/type-constants";
 
 export class PermissionAssignment implements DomainEntity {
 	public _id: string;
@@ -12,4 +14,10 @@ export class PermissionAssignment implements DomainEntity {
 		this.subjectId = subjectId;
 		this.subjectType = subjectType;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<
+		PermissionAssignment,
+		DomainEntity
+	> = new PermissionAssignmentAuthorizationRuleset();
+	type: string = PERMISSION_ASSIGNMENT;
 }

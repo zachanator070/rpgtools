@@ -1,6 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { Place } from "./place";
-import { WikiPageModel } from "./wiki-page";
 import { PIN, PLACE, WIKI_PAGE } from "../../../../../common/src/type-constants";
 import { MongoDBEntity } from "../../../types";
 

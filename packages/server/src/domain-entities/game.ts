@@ -1,4 +1,6 @@
-import { DomainEntity } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
+import { GAME } from "../../../common/src/type-constants";
 
 export class Game implements DomainEntity {
 	public _id: string;
@@ -35,6 +37,9 @@ export class Game implements DomainEntity {
 		this.models = models;
 		this.host = hostId;
 	}
+
+	authorizationRuleset: GameAuthorizationRuleset = new GameAuthorizationRuleset();
+	type: string = GAME;
 }
 
 export class Character implements DomainEntity {
@@ -72,9 +77,13 @@ export class Character implements DomainEntity {
 		this.wisdom = wisdom;
 		this.charisma = charisma;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 }
 
 export class Stroke implements DomainEntity {
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 	public _id: string;
 	public path: PathNode[];
 	public color: string;
@@ -111,6 +120,8 @@ export class FogStroke implements DomainEntity {
 		this.size = size;
 		this.type = type;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 }
 
 export class PathNode implements DomainEntity {
@@ -123,6 +134,9 @@ export class PathNode implements DomainEntity {
 		this.x = x;
 		this.y = y;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 }
 
 export class Message implements DomainEntity {
@@ -139,6 +153,9 @@ export class Message implements DomainEntity {
 		this.timestamp = timestamp;
 		this._id = id;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 }
 
 export class InGameModel implements DomainEntity {
@@ -170,4 +187,7 @@ export class InGameModel implements DomainEntity {
 		this.color = color;
 		this.wiki = wikiId;
 	}
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 }

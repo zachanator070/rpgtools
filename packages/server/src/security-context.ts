@@ -33,4 +33,10 @@ export class SecurityContext {
 		}
 		return false;
 	};
+
+	getEntityPermissions = (id: string, type: string) => {
+		return this.permissions.filter(
+			(permission) => permission.subjectId === id && permission.subjectType === type
+		);
+	};
 }

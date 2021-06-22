@@ -13,22 +13,12 @@ export const typeDefs = gql`
 		"""
 		Get all worlds
 		"""
-		worlds(canAdmin: Boolean, page: Int): WorldPaginatedResult
+		worlds(page: Int): WorldPaginatedResult
 
 		"""
 		Get a wiki by id
 		"""
 		wiki(wikiId: ID!): WikiPage
-		"""
-		Search for a wiki page by name
-		"""
-		wikis(
-			worldId: ID!
-			name: String
-			types: [String!]
-			canAdmin: Boolean
-			page: Int
-		): WikiPagePaginatedResult!
 		"""
 		Get all wikis that are in a set of folders
 		"""

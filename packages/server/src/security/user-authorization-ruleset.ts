@@ -2,7 +2,7 @@ import { DomainEntity, EntityAuthorizationRuleset } from "../types";
 import { User } from "../domain-entities/user";
 import { SecurityContext } from "../security-context";
 
-export class UserAuthorizationRuleset implements EntityAuthorizationRuleset<User> {
+export class UserAuthorizationRuleset implements EntityAuthorizationRuleset<User, DomainEntity> {
 	canAdmin = async (context: SecurityContext, entity: User): Promise<boolean> => {
 		return context.user._id === entity._id;
 	};

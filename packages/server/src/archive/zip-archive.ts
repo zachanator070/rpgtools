@@ -40,7 +40,7 @@ import {
 	WORLD,
 } from "../../../common/src/type-constants";
 import { Model } from "../domain-entities/model";
-import { Chunk } from "../domain-entities/chunk.";
+import { Chunk } from "../domain-entities/chunk";
 import { World } from "../domain-entities/world";
 import { Article } from "../domain-entities/article";
 import { Image } from "../domain-entities/image";

@@ -1,8 +1,8 @@
-import { ExpressRpgToolsServerFactory } from "./express-rpgtools-server-factory";
+import { container } from "./inversify.config";
+import { INJECTABLE_TYPES } from "./injectable-types";
+import { ApiServer } from "./types";
 
-const serverFactory: ExpressRpgToolsServerFactory = new ExpressRpgToolsServerFactory();
-
-const server = serverFactory.create();
+const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
 
 (async () => {
 	await server.start();

@@ -1,4 +1,10 @@
-import { AuthorizationService, Cache, EventPublisher, ModelService } from "../types";
+import {
+	AuthorizationService,
+	Cache,
+	EventPublisher,
+	ModelRepository,
+	ModelService,
+} from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "../../../common/src/permission-constants";
 import { MODEL } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -23,6 +29,9 @@ export class ModelApplicationService implements ModelService {
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
+
+	@inject(INJECTABLE_TYPES.ModelRepository)
+	modelRepository: ModelRepository;
 
 	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
 
@@ -157,5 +166,16 @@ export class ModelApplicationService implements ModelService {
 		await this.authorizationService.cleanUpPermissions(modelId, unitOfWork);
 		await unitOfWork.commit();
 		return model;
+	};
+
+	getModels = async (context: SecurityContext, worldId: string): Promise<Model[]> => {
+		const models = await this.modelRepository.find([new FilterCondition("world", worldId)]);
+		const returnModels = [];
+		for (let model of models) {
+			if (await this.modelAuthorizationRuleset.canRead(context, model)) {
+				returnModels.push(model);
+			}
+		}
+		return returnModels;
 	};
 }

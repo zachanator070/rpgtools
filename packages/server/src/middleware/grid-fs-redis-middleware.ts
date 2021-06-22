@@ -5,7 +5,7 @@ import { INJECTABLE_TYPES } from "../injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
 import { Cache } from "../types";
 
-export const gridFsRedisMiddleware = async (key: string) => async (
+export const gridFsRedisMiddleware = (key: string) => async (
 	req: e.Request,
 	res: e.Response,
 	next: e.NextFunction
