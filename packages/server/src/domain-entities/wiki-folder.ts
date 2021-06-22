@@ -9,6 +9,12 @@ export class WikiFolder implements DomainEntity {
 	public pages: string[];
 	public children: string[];
 
+	authorizationRuleset: EntityAuthorizationRuleset<
+		WikiFolder,
+		WikiFolder
+	> = new WikiFolderAuthorizationRuleset();
+	type: string = WIKI_FOLDER;
+
 	constructor(id: string, name: string, worldId: string, pageIds: string[], childrenIds: string[]) {
 		this._id = id;
 		this.name = name;
@@ -16,10 +22,4 @@ export class WikiFolder implements DomainEntity {
 		this.pages = pageIds;
 		this.children = childrenIds;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<
-		WikiFolder,
-		WikiFolder
-	> = new WikiFolderAuthorizationRuleset();
-	type: string = WIKI_FOLDER;
 }

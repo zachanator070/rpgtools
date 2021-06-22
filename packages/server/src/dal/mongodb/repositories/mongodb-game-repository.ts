@@ -28,6 +28,25 @@ export class MongodbGameRepository
 	implements GameRepository {
 	model: Model<any> = GameModel;
 
+	build(entity: GameDocument): Game {
+		return new Game(
+			entity._id.toString(),
+			entity.passwordHash,
+			entity.world.toString(),
+			entity.map.toString(),
+			this.buildCharacters(entity.characters),
+			this.buildStrokes(entity.strokes),
+			this.buildFogStrokes(entity.fog),
+			this.buildMessages(entity.messages),
+			this.buildModels(entity.models),
+			entity.host.toString()
+		);
+	}
+
+	buildEntity(document: GameDocument): Game {
+		return undefined;
+	}
+
 	private buildNodePath(path: PathNodeDocument[]): PathNode[] {
 		const nodes: PathNode[] = [];
 		for (let document of path) {
@@ -122,24 +141,5 @@ export class MongodbGameRepository
 			);
 		}
 		return models;
-	}
-
-	build(entity: GameDocument): Game {
-		return new Game(
-			entity._id.toString(),
-			entity.passwordHash,
-			entity.world.toString(),
-			entity.map.toString(),
-			this.buildCharacters(entity.characters),
-			this.buildStrokes(entity.strokes),
-			this.buildFogStrokes(entity.fog),
-			this.buildMessages(entity.messages),
-			this.buildModels(entity.models),
-			entity.host.toString()
-		);
-	}
-
-	buildEntity(document: GameDocument): Game {
-		return undefined;
 	}
 }

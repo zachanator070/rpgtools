@@ -14,6 +14,9 @@ export class Game implements DomainEntity {
 	public models: InGameModel[];
 	public host: string;
 
+	authorizationRuleset: GameAuthorizationRuleset = new GameAuthorizationRuleset();
+	type: string = GAME;
+
 	constructor(
 		id: string,
 		passwordHash: string,
@@ -37,9 +40,6 @@ export class Game implements DomainEntity {
 		this.models = models;
 		this.host = hostId;
 	}
-
-	authorizationRuleset: GameAuthorizationRuleset = new GameAuthorizationRuleset();
-	type: string = GAME;
 }
 
 export class Character implements DomainEntity {
@@ -53,6 +53,9 @@ export class Character implements DomainEntity {
 	public intelligence: number;
 	public wisdom: number;
 	public charisma: number;
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 
 	constructor(
 		id: string,
@@ -77,9 +80,6 @@ export class Character implements DomainEntity {
 		this.wisdom = wisdom;
 		this.charisma = charisma;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
-	type: string;
 }
 
 export class Stroke implements DomainEntity {
@@ -114,14 +114,14 @@ export class FogStroke implements DomainEntity {
 	public size: number;
 	public type: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+
 	constructor(id: string, path: PathNode[], size: number, type: string) {
 		this._id = id;
 		this.path = path;
 		this.size = size;
 		this.type = type;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 }
 
 export class PathNode implements DomainEntity {
@@ -129,14 +129,14 @@ export class PathNode implements DomainEntity {
 	public x: number;
 	public y: number;
 
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
+
 	constructor(id: string, x: number, y: number) {
 		this._id = id;
 		this.x = x;
 		this.y = y;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
-	type: string;
 }
 
 export class Message implements DomainEntity {
@@ -146,6 +146,9 @@ export class Message implements DomainEntity {
 	public timestamp: number;
 	public _id: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
+
 	constructor(sender: string, receiver: string, message: string, timestamp: number, id: string) {
 		this.sender = sender;
 		this.receiver = receiver;
@@ -153,9 +156,6 @@ export class Message implements DomainEntity {
 		this.timestamp = timestamp;
 		this._id = id;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
-	type: string;
 }
 
 export class InGameModel implements DomainEntity {
@@ -167,6 +167,9 @@ export class InGameModel implements DomainEntity {
 	public lookAtZ: number;
 	public color?: string;
 	public wiki?: string;
+
+	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	type: string;
 
 	constructor(
 		id: string,
@@ -187,7 +190,4 @@ export class InGameModel implements DomainEntity {
 		this.color = color;
 		this.wiki = wikiId;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
-	type: string;
 }

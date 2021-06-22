@@ -4,17 +4,17 @@ import { container } from "../../inversify.config";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 export const SALT_ROUNDS = 10;
 
-type LoginArgs = {
+interface LoginArgs {
 	username: string;
 	password: string;
-};
+}
 
-type RegisterArgs = {
+interface RegisterArgs {
 	registerCode: string;
 	email: string;
 	username: string;
 	password: string;
-};
+}
 
 export const authenticationMutations: IResolverObject<any, SessionContext> = {
 	login: async (
@@ -36,7 +36,7 @@ export const authenticationMutations: IResolverObject<any, SessionContext> = {
 	register: async (
 		parent: any,
 		{ registerCode, email, username, password }: RegisterArgs,
-		{}: SessionContext
+		_: SessionContext
 	) => {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService

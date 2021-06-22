@@ -14,6 +14,9 @@ export class Image implements DomainEntity {
 	public chunks: string[];
 	public icon?: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<Image, World> = new ImageAuthorizationRuleset();
+	type: string = IMAGE;
+
 	constructor(
 		id: string,
 		name: string,
@@ -35,7 +38,4 @@ export class Image implements DomainEntity {
 		this.chunks = chunkIds;
 		this.icon = iconId;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<Image, World> = new ImageAuthorizationRuleset();
-	type: string = IMAGE;
 }

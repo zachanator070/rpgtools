@@ -17,12 +17,6 @@ export class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<
 		this.ruleset = ruleset;
 	}
 
-	private getDataLoader = () => {
-		return new DataLoader((ids: string[]) =>
-			this.repository.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)])
-		);
-	};
-
 	getDocument = async (id: string): Promise<T> => {
 		return this.getDataLoader().load(id);
 	};
@@ -58,5 +52,11 @@ export class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<
 			}
 		}
 		return readableDocuments;
+	};
+
+	private getDataLoader = () => {
+		return new DataLoader((ids: string[]) =>
+			this.repository.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)])
+		);
 	};
 }

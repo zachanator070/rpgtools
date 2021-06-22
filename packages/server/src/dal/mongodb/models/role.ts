@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import mongoosePaginate from "mongoose-paginate-v2";
 import { PERMISSION_ASSIGNMENT, WORLD } from "../../../../../common/src/type-constants";
 import { MongoDBEntity } from "../../../types";
 
@@ -27,7 +26,5 @@ const roleSchema = new Schema({
 		},
 	],
 });
-
-roleSchema.plugin(mongoosePaginate);
 
 export const RoleModel = mongoose.model<RoleDocument>("Role", roleSchema);

@@ -35,7 +35,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			new FilterCondition("subjectId", subjectId),
 			new FilterCondition("subjectType", subjectType),
 		]);
-		let needsCreation: boolean = false;
+		let needsCreation = false;
 		if (!assignment) {
 			assignment = new PermissionAssignment("", permission, subjectId, subjectType);
 			needsCreation = true;
@@ -113,7 +113,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			new FilterCondition("subjectId", subjectId),
 			new FilterCondition("subjectType", subjectType),
 		]);
-		let needsCreation: boolean = false;
+		let needsCreation = false;
 		if (!assignment) {
 			assignment = new PermissionAssignment("", permission, subjectId, subjectType);
 			needsCreation = true;

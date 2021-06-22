@@ -60,10 +60,6 @@ export class DbUnitOfWork implements UnitOfWork {
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;
 
-	constructor() {
-		// here you would create a generic db context and share with all the repos, the generic db context will share
-		// a type of context for each type of db being used
-	}
 	commit = async (): Promise<void> => {
 		return;
 	};

@@ -92,10 +92,9 @@ install-deps:
 	cd packages/common && npm install
 
 lint:
-	npx eslint packages/server/src
+	npx eslint packages/server/src packages/common/src --ext .ts
 	# TODO: fix linting problems in frontend
 	# npx eslint packages/frontend/src
-	npx eslint packages/common/src
 
 test: test-integration down
 

@@ -20,30 +20,6 @@ export class DeltaFactory {
 	@inject(INJECTABLE_TYPES.ArticleRepository)
 	articleRepository: ArticleRepository;
 
-	private getHeading = (title: string, newLine: boolean = false) => {
-		const ops = [
-			{ insert: "\n" },
-			{ insert: "\n" },
-			{ insert: title, attributes: { size: "large" } },
-		];
-		if (newLine) {
-			ops.push({ insert: "\n" }, { insert: "\n" });
-		}
-		return ops;
-	};
-
-	private getSubHeading = (title: string, newLine: boolean = false) => {
-		const ops = [
-			{ insert: "\n" },
-			{ insert: "\n" },
-			{ insert: title + ": ", attributes: { bold: true, italic: true } },
-		];
-		if (newLine) {
-			ops.push({ insert: "\n" }, { insert: "\n" });
-		}
-		return ops;
-	};
-
 	fromCharacterClass = async (characterClass: Open5eClass, worldId: string) => {
 		const ops = [];
 
@@ -245,154 +221,6 @@ export class DeltaFactory {
 
 	fromSection = (section: Open5eSection) => {
 		return { ops: markdownToDelta(section.desc) };
-	};
-
-	private getModifier = (score: number) => {
-		return Math.floor((score - 10) / 2);
-	};
-
-	private getSpecialAbilitiesDelta = (monster: Open5eMonster) => {
-		const ops = [];
-		if (monster.special_abilities.length > 0) {
-			ops.push(
-				{
-					insert: "\n",
-				},
-				{
-					attributes: {
-						background: "transparent",
-						color: "#111111",
-						bold: true,
-					},
-					insert: "Special Abilities",
-				},
-				{
-					attributes: {
-						header: 2,
-					},
-					insert: "\n",
-				}
-			);
-		}
-		for (let ability of monster.special_abilities) {
-			ops.push(
-				{
-					attributes: {
-						background: "transparent",
-						color: "#111111",
-						bold: true,
-					},
-					insert: ability.name,
-				},
-				{
-					attributes: {
-						background: "transparent",
-						color: "#000000",
-					},
-					insert: " " + ability.desc,
-				},
-				{
-					insert: "\n",
-				}
-			);
-		}
-		return ops;
-	};
-
-	private getActionsDelta = (monster: Open5eMonster) => {
-		const ops = [];
-		if (monster.actions.length > 0) {
-			ops.push(
-				{
-					insert: "\n",
-				},
-				{
-					attributes: {
-						background: "transparent",
-						color: "#111111",
-						bold: true,
-					},
-					insert: "Actions",
-				},
-				{
-					attributes: {
-						header: 2,
-					},
-					insert: "\n",
-				}
-			);
-		}
-		for (let action of monster.actions) {
-			ops.push(
-				{
-					attributes: {
-						background: "transparent",
-						color: "#111111",
-						bold: true,
-					},
-					insert: action.name,
-				},
-				{
-					attributes: {
-						background: "transparent",
-						color: "#000000",
-					},
-					insert: " " + action.desc,
-				},
-				{
-					insert: "\n",
-				}
-			);
-		}
-		return ops;
-	};
-
-	private getLegendaryActionsDelta = (monster: Open5eMonster) => {
-		const ops = [];
-		if (monster.legendary_actions.length > 0) {
-			ops.push(
-				{
-					insert: "\n",
-				},
-				{
-					attributes: {
-						background: "transparent",
-						color: "#111111",
-						bold: true,
-					},
-					insert: "Legendary Actions",
-				},
-				{
-					attributes: {
-						header: 2,
-					},
-					insert: "\n",
-				}
-			);
-		}
-		for (let action of monster.legendary_actions) {
-			ops.push(
-				{
-					attributes: {
-						background: "transparent",
-						color: "#111111",
-						bold: true,
-					},
-					insert: action.name,
-				},
-				{
-					attributes: {
-						background: "transparent",
-						color: "#000000",
-					},
-					insert: " " + action.desc,
-				},
-				{
-					insert: "\n",
-				}
-			);
-		}
-		return ops;
 	};
 
 	fromMonster = (monster: Open5eMonster) => {
@@ -702,5 +530,177 @@ export class DeltaFactory {
 			...this.getLegendaryActionsDelta(monster)
 		);
 		return { ops };
+	};
+
+	private getLegendaryActionsDelta = (monster: Open5eMonster) => {
+		const ops = [];
+		if (monster.legendary_actions.length > 0) {
+			ops.push(
+				{
+					insert: "\n",
+				},
+				{
+					attributes: {
+						background: "transparent",
+						color: "#111111",
+						bold: true,
+					},
+					insert: "Legendary Actions",
+				},
+				{
+					attributes: {
+						header: 2,
+					},
+					insert: "\n",
+				}
+			);
+		}
+		for (let action of monster.legendary_actions) {
+			ops.push(
+				{
+					attributes: {
+						background: "transparent",
+						color: "#111111",
+						bold: true,
+					},
+					insert: action.name,
+				},
+				{
+					attributes: {
+						background: "transparent",
+						color: "#000000",
+					},
+					insert: " " + action.desc,
+				},
+				{
+					insert: "\n",
+				}
+			);
+		}
+		return ops;
+	};
+
+	private getModifier = (score: number) => {
+		return Math.floor((score - 10) / 2);
+	};
+
+	private getSpecialAbilitiesDelta = (monster: Open5eMonster) => {
+		const ops = [];
+		if (monster.special_abilities.length > 0) {
+			ops.push(
+				{
+					insert: "\n",
+				},
+				{
+					attributes: {
+						background: "transparent",
+						color: "#111111",
+						bold: true,
+					},
+					insert: "Special Abilities",
+				},
+				{
+					attributes: {
+						header: 2,
+					},
+					insert: "\n",
+				}
+			);
+		}
+		for (let ability of monster.special_abilities) {
+			ops.push(
+				{
+					attributes: {
+						background: "transparent",
+						color: "#111111",
+						bold: true,
+					},
+					insert: ability.name,
+				},
+				{
+					attributes: {
+						background: "transparent",
+						color: "#000000",
+					},
+					insert: " " + ability.desc,
+				},
+				{
+					insert: "\n",
+				}
+			);
+		}
+		return ops;
+	};
+
+	private getActionsDelta = (monster: Open5eMonster) => {
+		const ops = [];
+		if (monster.actions.length > 0) {
+			ops.push(
+				{
+					insert: "\n",
+				},
+				{
+					attributes: {
+						background: "transparent",
+						color: "#111111",
+						bold: true,
+					},
+					insert: "Actions",
+				},
+				{
+					attributes: {
+						header: 2,
+					},
+					insert: "\n",
+				}
+			);
+		}
+		for (let action of monster.actions) {
+			ops.push(
+				{
+					attributes: {
+						background: "transparent",
+						color: "#111111",
+						bold: true,
+					},
+					insert: action.name,
+				},
+				{
+					attributes: {
+						background: "transparent",
+						color: "#000000",
+					},
+					insert: " " + action.desc,
+				},
+				{
+					insert: "\n",
+				}
+			);
+		}
+		return ops;
+	};
+
+	private getHeading = (title: string, newLine = false) => {
+		const ops = [
+			{ insert: "\n" },
+			{ insert: "\n" },
+			{ insert: title, attributes: { size: "large" } },
+		];
+		if (newLine) {
+			ops.push({ insert: "\n" }, { insert: "\n" });
+		}
+		return ops;
+	};
+
+	private getSubHeading = (title: string, newLine = false) => {
+		const ops = [
+			{ insert: "\n" },
+			{ insert: "\n" },
+			{ insert: title + ": ", attributes: { bold: true, italic: true } },
+		];
+		if (newLine) {
+			ops.push({ insert: "\n" }, { insert: "\n" });
+		}
+		return ops;
 	};
 }

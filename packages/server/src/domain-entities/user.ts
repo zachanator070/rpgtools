@@ -12,6 +12,12 @@ export class User implements DomainEntity {
 	public roles: string[];
 	public permissions: string[];
 
+	authorizationRuleset: EntityAuthorizationRuleset<
+		User,
+		DomainEntity
+	> = new UserAuthorizationRuleset();
+	type: string = USER;
+
 	constructor(
 		_id: string,
 		email: string,
@@ -31,10 +37,4 @@ export class User implements DomainEntity {
 		this.roles = roleIds;
 		this.permissions = permissionIds;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<
-		User,
-		DomainEntity
-	> = new UserAuthorizationRuleset();
-	type: string = USER;
 }

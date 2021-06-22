@@ -1,35 +1,34 @@
 import { Character, Message } from "../game";
 import { v4 as uuidv4 } from "uuid";
 
-export type GameCommandArgDefinition = {
+export interface GameCommandArgDefinition {
 	name: string;
 	description: string;
 	multiple: boolean;
 	optional: boolean;
-};
-export type GameCommandArg = {
+}
+
+export interface GameCommandArg {
 	name: string;
 	value: string;
-};
-export type GameCommandOptionDefinition = {
+}
+
+export interface GameCommandOptionDefinition {
 	name: string;
 	description: string;
 	args: GameCommandArgDefinition[];
-};
-export type GameCommandOption = {
+}
+
+export interface GameCommandOption {
 	name: string;
-};
+}
+
 export abstract class AbstractGameCommand {
 	abstract command: string;
 	abstract description: string;
 	abstract echoCommand: boolean;
 	abstract args: GameCommandArgDefinition[];
 	abstract options: GameCommandOptionDefinition[];
-	abstract exec(
-		executor: Character,
-		args: GameCommandArg[],
-		options: GameCommandOption[]
-	): Message[];
 	getDefaultResponse = (executor: Character): Message => {
 		return new Message(
 			"Server",
@@ -74,4 +73,10 @@ export abstract class AbstractGameCommand {
 		}
 		return message;
 	};
+
+	abstract exec(
+		executor: Character,
+		args: GameCommandArg[],
+		options: GameCommandOption[]
+	): Message[];
 }

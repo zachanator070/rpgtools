@@ -82,7 +82,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		context: SecurityContext,
 		docId: string,
 		archive: Archive,
-		errorOut: boolean = true
+		errorOut = true
 	) => {
 		const unitOfWork = new DbUnitOfWork();
 		const folder = await unitOfWork.wikiFolderRepository.findById(docId);
@@ -137,7 +137,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		context: SecurityContext,
 		folder: WikiFolder,
 		archive: Archive,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (!(await this.wikiFolderAuthorizationRuleset.canRead(context, folder))) {
 			if (errorOut) {
@@ -173,7 +173,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		page: Model,
 		archive: Archive,
 		unitOfWork: UnitOfWork,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (!(await this.modelAuthorizationRuleset.canRead(context, page))) {
 			if (errorOut) {
@@ -197,7 +197,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		page: Place,
 		archive: Archive,
 		unitOfWork: UnitOfWork,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (await this.canReadWikiPage(context, page, errorOut)) {
 			if (page.mapImage) {
@@ -214,7 +214,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		page: Item,
 		archive: Archive,
 		unitOfWork: UnitOfWork,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (await this.canReadWikiPage(context, page, errorOut)) {
 			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
@@ -228,7 +228,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		page: Monster,
 		archive: Archive,
 		unitOfWork: UnitOfWork,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (await this.canReadWikiPage(context, page, errorOut)) {
 			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
@@ -242,7 +242,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		page: Person,
 		archive: Archive,
 		unitOfWork: UnitOfWork,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (await this.canReadWikiPage(context, page, errorOut)) {
 			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
@@ -268,7 +268,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		page: Article,
 		archive: Archive,
 		unitOfWork: UnitOfWork,
-		errorOut: boolean = false
+		errorOut = false
 	) => {
 		if (await this.canReadWikiPage(context, page, errorOut)) {
 			await archive.articleRepository.create(page);

@@ -35,14 +35,6 @@ export class ModelApplicationService implements ModelService {
 
 	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
 
-	private filenameExists = async (filename: string) => {
-		const unitOfWork = new DbUnitOfWork();
-		const models = await unitOfWork.modelRepository.find([
-			new FilterCondition("filename", filename),
-		]);
-		return models.length > 1;
-	};
-
 	createModel = async (
 		context: SecurityContext,
 		worldId: string,
@@ -177,5 +169,13 @@ export class ModelApplicationService implements ModelService {
 			}
 		}
 		return returnModels;
+	};
+
+	private filenameExists = async (filename: string) => {
+		const unitOfWork = new DbUnitOfWork();
+		const models = await unitOfWork.modelRepository.find([
+			new FilterCondition("filename", filename),
+		]);
+		return models.length > 1;
 	};
 }

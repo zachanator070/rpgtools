@@ -12,10 +12,9 @@ export abstract class AbstractMongodbRepository<
 	EntityType extends DomainEntity,
 	DocumentType extends DatabaseEntity
 > implements Repository<EntityType> {
-	abstract model: Model<any>;
-	abstract buildEntity(document: DocumentType): EntityType;
-
 	PAGE_LIMIT = 10;
+
+	abstract model: Model<any>;
 
 	create = async (entity: EntityType): Promise<void> => {
 		const result = await this.model.create(entity);
@@ -34,22 +33,6 @@ export abstract class AbstractMongodbRepository<
 			results.push(this.buildEntity(doc));
 		}
 		return results;
-	};
-
-	private getFilter = (conditions: FilterCondition[]) => {
-		const filter: any = {};
-		for (let condition of conditions) {
-			if (condition.operator === FILTER_CONDITION_OPERATOR_IN) {
-				filter[condition.field] = { $in: condition.value };
-			} else if (condition.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
-				filter[condition.field] = condition.value;
-			} else if (condition.operator === FILTER_CONDITION_REGEX) {
-				filter[condition.field] = { $regex: condition.value, $options: "i" };
-			} else {
-				throw new Error(`Unsupported filter operator: ${condition.operator}`);
-			}
-		}
-		return filter;
 	};
 
 	findOne = async (conditions: FilterCondition[]): Promise<EntityType> => {
@@ -109,4 +92,22 @@ export abstract class AbstractMongodbRepository<
 			nextPage
 		);
 	};
+
+	private getFilter = (conditions: FilterCondition[]) => {
+		const filter: any = {};
+		for (let condition of conditions) {
+			if (condition.operator === FILTER_CONDITION_OPERATOR_IN) {
+				filter[condition.field] = { $in: condition.value };
+			} else if (condition.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
+				filter[condition.field] = condition.value;
+			} else if (condition.operator === FILTER_CONDITION_REGEX) {
+				filter[condition.field] = { $regex: condition.value, $options: "i" };
+			} else {
+				throw new Error(`Unsupported filter operator: ${condition.operator}`);
+			}
+		}
+		return filter;
+	};
+
+	abstract buildEntity(document: DocumentType): EntityType;
 }

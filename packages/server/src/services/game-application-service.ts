@@ -56,86 +56,6 @@ export class GameApplicationService implements GameService {
 
 	gameAuthorizationRuleSet: GameAuthorizationRuleset = new GameAuthorizationRuleset();
 
-	private gameCommands = (game: Game, message: string, currentUser: User): Message[] => {
-		const commands: AbstractGameCommand[] = [];
-		commands.push(
-			new HelpGameCommand(commands),
-			new RollGameCommand(),
-			new WhisperGameCommand(game.characters)
-		);
-		const parts = message.split(" ");
-		const commandString = parts.shift();
-		const command = commands.find((command) => command.command === commandString);
-		const executor = game.characters.find((character) => character.player === currentUser._id);
-		let serverResponse = command.getDefaultResponse(executor);
-		const messages: Message[] = [];
-		if (command.echoCommand) {
-			messages.push(new Message(executor.name, "Server", message, Date.now(), uuidv4()));
-		}
-		if (!command) {
-			serverResponse.message = `${command} is not a recognized server command. Try using /help for command usage help.`;
-			messages.push(serverResponse);
-			return messages;
-		}
-		const options = [];
-		const args = [];
-		for (let option of command.options) {
-			const currentArg = parts.shift();
-			if (currentArg) {
-				if (currentArg === option.name) {
-					options.push({ name: option.name });
-				} else {
-					parts.unshift(currentArg);
-				}
-			} else {
-				// no more parts
-				break;
-			}
-		}
-		for (let arg of command.args) {
-			const currentArg = parts.shift();
-			if (currentArg) {
-				if (currentArg.substr(0, 1) === "-") {
-					serverResponse.message = `Unrecognized option: ${currentArg}\n${command.formatHelpMessage()}`;
-					messages.push(serverResponse);
-					return messages;
-				}
-				let value = currentArg;
-				if (arg.multiple) {
-					let nextArg = parts.shift();
-					while (nextArg) {
-						value += " " + nextArg;
-						nextArg = parts.shift();
-					}
-				}
-				args.push({
-					name: arg.name,
-					value: value,
-				});
-			} else if (!arg.optional) {
-				serverResponse.message = `Required argument ${
-					arg.name
-				} not given.\n${command.formatHelpMessage()}`;
-				messages.push(serverResponse);
-				return messages;
-			} else {
-				// no more parts
-				break;
-			}
-		}
-		if (parts.length !== 0) {
-			serverResponse.message = `Too many arguments given: ${parts.join(
-				", "
-			)}\n${command.formatHelpMessage()}`;
-			messages.push(serverResponse);
-			return messages;
-		}
-		messages.push(...command.exec(executor, args, options));
-		return messages;
-	};
-
-	private genColor = () => "#" + Math.floor(Math.random() * 16777215).toString(16);
-
 	createGame = async (
 		context: SecurityContext,
 		worldId: string,
@@ -675,5 +595,85 @@ export class GameApplicationService implements GameService {
 			return [];
 		}
 		return this.gameRepository.find([new FilterCondition("characters.player", context.user._id)]);
+	};
+
+	private genColor = () => "#" + Math.floor(Math.random() * 16777215).toString(16);
+
+	private gameCommands = (game: Game, message: string, currentUser: User): Message[] => {
+		const commands: AbstractGameCommand[] = [];
+		commands.push(
+			new HelpGameCommand(commands),
+			new RollGameCommand(),
+			new WhisperGameCommand(game.characters)
+		);
+		const parts = message.split(" ");
+		const commandString = parts.shift();
+		const command = commands.find((command) => command.command === commandString);
+		const executor = game.characters.find((character) => character.player === currentUser._id);
+		let serverResponse = command.getDefaultResponse(executor);
+		const messages: Message[] = [];
+		if (command.echoCommand) {
+			messages.push(new Message(executor.name, "Server", message, Date.now(), uuidv4()));
+		}
+		if (!command) {
+			serverResponse.message = `${command} is not a recognized server command. Try using /help for command usage help.`;
+			messages.push(serverResponse);
+			return messages;
+		}
+		const options = [];
+		const args = [];
+		for (let option of command.options) {
+			const currentArg = parts.shift();
+			if (currentArg) {
+				if (currentArg === option.name) {
+					options.push({ name: option.name });
+				} else {
+					parts.unshift(currentArg);
+				}
+			} else {
+				// no more parts
+				break;
+			}
+		}
+		for (let arg of command.args) {
+			const currentArg = parts.shift();
+			if (currentArg) {
+				if (currentArg.substr(0, 1) === "-") {
+					serverResponse.message = `Unrecognized option: ${currentArg}\n${command.formatHelpMessage()}`;
+					messages.push(serverResponse);
+					return messages;
+				}
+				let value = currentArg;
+				if (arg.multiple) {
+					let nextArg = parts.shift();
+					while (nextArg) {
+						value += " " + nextArg;
+						nextArg = parts.shift();
+					}
+				}
+				args.push({
+					name: arg.name,
+					value: value,
+				});
+			} else if (!arg.optional) {
+				serverResponse.message = `Required argument ${
+					arg.name
+				} not given.\n${command.formatHelpMessage()}`;
+				messages.push(serverResponse);
+				return messages;
+			} else {
+				// no more parts
+				break;
+			}
+		}
+		if (parts.length !== 0) {
+			serverResponse.message = `Too many arguments given: ${parts.join(
+				", "
+			)}\n${command.formatHelpMessage()}`;
+			messages.push(serverResponse);
+			return messages;
+		}
+		messages.push(...command.exec(executor, args, options));
+		return messages;
 	};
 }

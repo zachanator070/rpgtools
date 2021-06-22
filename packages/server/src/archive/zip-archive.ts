@@ -104,6 +104,25 @@ export class ZipArchive implements Archive {
 		});
 	}
 
+	pipe = async (output: Writable): Promise<void> => {
+		this.archive.pipe(output);
+		await this.dumpRepo<Article>(this.articleRepository, ARTICLE, this.getWikiPagePath);
+		await this.dumpRepo(this.chunkRepository, CHUNK, async (entity: Chunk) => "chunks");
+		for (let file of await this.fileRepository.find([])) {
+			await this.addArchiveEntry(file.readStream, `files/${FILE}.${file._id}.json`);
+		}
+		await this.dumpRepo(this.itemRepository, ITEM, this.getWikiPagePath);
+		await this.dumpRepo<Image>(this.imageRepository, IMAGE, async (entity: Image) => "images");
+		await this.dumpRepo(this.modelRepository, MODEL, async (entity: Model) => "models");
+		await this.dumpRepo(this.monsterRepository, MONSTER, this.getWikiPagePath);
+		await this.dumpRepo(this.personRepository, PERSON, this.getWikiPagePath);
+		await this.dumpRepo(this.placeRepository, PLACE, this.getWikiPagePath);
+		await this.dumpRepo(this.wikiFolderRepository, WIKI_FOLDER, this.getWikiPagePath);
+		await this.dumpRepo(this.worldRepository, WORLD, async (entity: World) => "worlds");
+
+		await this.archive.finalize();
+	};
+
 	private getWikiPagePath = async (page: WikiPage): Promise<string> => {
 		let path = "wikis/";
 		let parent = await this.wikiFolderRepository.findOne([new FilterCondition("pages", page._id)]);
@@ -133,24 +152,5 @@ export class ZipArchive implements Archive {
 				`${path}/${entityType}.${page._id}.json`
 			);
 		}
-	};
-
-	pipe = async (output: Writable): Promise<void> => {
-		this.archive.pipe(output);
-		await this.dumpRepo<Article>(this.articleRepository, ARTICLE, this.getWikiPagePath);
-		await this.dumpRepo(this.chunkRepository, CHUNK, async (entity: Chunk) => "chunks");
-		for (let file of await this.fileRepository.find([])) {
-			await this.addArchiveEntry(file.readStream, `files/${FILE}.${file._id}.json`);
-		}
-		await this.dumpRepo(this.itemRepository, ITEM, this.getWikiPagePath);
-		await this.dumpRepo<Image>(this.imageRepository, IMAGE, async (entity: Image) => "images");
-		await this.dumpRepo(this.modelRepository, MODEL, async (entity: Model) => "models");
-		await this.dumpRepo(this.monsterRepository, MONSTER, this.getWikiPagePath);
-		await this.dumpRepo(this.personRepository, PERSON, this.getWikiPagePath);
-		await this.dumpRepo(this.placeRepository, PLACE, this.getWikiPagePath);
-		await this.dumpRepo(this.wikiFolderRepository, WIKI_FOLDER, this.getWikiPagePath);
-		await this.dumpRepo(this.worldRepository, WORLD, async (entity: World) => "worlds");
-
-		await this.archive.finalize();
 	};
 }

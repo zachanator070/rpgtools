@@ -14,6 +14,9 @@ export class Model implements DomainEntity {
 	public fileId?: string;
 	public notes?: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<Model, World> = new ModelAuthorizationRuleset();
+	type: string = MODEL;
+
 	constructor(
 		id: string,
 		worldId: string,
@@ -35,7 +38,4 @@ export class Model implements DomainEntity {
 		this.fileId = fileId;
 		this.notes = notes;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<Model, World> = new ModelAuthorizationRuleset();
-	type: string = MODEL;
 }

@@ -9,6 +9,12 @@ export class ServerConfig implements DomainEntity {
 	public adminUsers: string[];
 	public unlockCode: string;
 
+	authorizationRuleset: EntityAuthorizationRuleset<
+		ServerConfig,
+		DomainEntity
+	> = new ServerConfigAuthorizationRuleset();
+	type: string = SERVER_CONFIG;
+
 	constructor(
 		id: string,
 		version: string,
@@ -22,10 +28,4 @@ export class ServerConfig implements DomainEntity {
 		this.adminUsers = adminUserIds;
 		this.unlockCode = unlockCode;
 	}
-
-	authorizationRuleset: EntityAuthorizationRuleset<
-		ServerConfig,
-		DomainEntity
-	> = new ServerConfigAuthorizationRuleset();
-	type: string = SERVER_CONFIG;
 }

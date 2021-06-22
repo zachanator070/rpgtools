@@ -17,9 +17,9 @@ export class RollGameCommand extends AbstractGameCommand {
 			optional: false,
 		},
 	];
-	command: string = "/roll";
-	description: string = "Rolls dice for you. Displays results to all players.";
-	echoCommand: boolean = true;
+	command = "/roll";
+	description = "Rolls dice for you. Displays results to all players.";
+	echoCommand = true;
 	options: GameCommandOptionDefinition[] = [
 		{
 			name: "-q",

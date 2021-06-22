@@ -1,16 +1,11 @@
-import { User } from "../../src/dal/mongodb/models/user";
-import { SALT_ROUNDS } from "../../src/resolvers/mutations/authentication-mutations";
-import { ServerConfig } from "../../src/dal/mongodb/models/server-config";
-import { Role } from "../../src/dal/mongodb/models/role";
-import { ALL_USERS } from "../../../common/src/role-constants";
-import { PermissionAssignment } from "../../src/dal/mongodb/models/permission-assignment";
-import { WORLD_CREATE } from "../../../common/src/permission-constants";
-import { SERVER_CONFIG } from "../../../common/src/type-constants";
+import { container } from "../../src/inversify.config";
+import { INJECTABLE_TYPES } from "../../src/injectable-types";
+import "jest";
+import { ServerConfigService } from "../../src/types";
+import { ExpressApiServer } from "../../src/express-api-server";
 
 const mongoose = require("mongoose");
 mongoose.set("useFindAndModify", false);
-
-const bcrypt = require("bcrypt");
 
 mongoose.set("useCreateIndex", true);
 
@@ -55,24 +50,11 @@ beforeEach(async function (done) {
 });
 
 beforeEach(async () => {
-	await User.ensureIndexes({ loc: "2d" });
-	await User.create({
-		username: "tester",
-		password: bcrypt.hashSync("tester", SALT_ROUNDS),
-	});
-	const server = await ServerConfig.create({
-		version: "1.0",
-		unlockCode: "asdf",
-		registerCodes: [],
-	});
-	const allUsersRole = await Role.create({ name: ALL_USERS });
-	const createWorldPermissions = await PermissionAssignment.create({
-		permission: WORLD_CREATE,
-		subject: server._id,
-		subjectType: SERVER_CONFIG,
-	});
-	allUsersRole.permissions.push(createWorldPermissions._id);
-	await allUsersRole.save();
+	const server = new ExpressApiServer();
+	await server.initDb();
+	const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+	const serverConfig = await service.getServerConfig();
+	await service.unlockServer(serverConfig.unlockCode, "tester@gmail.com", "tester", "tester");
 });
 
 afterEach(async function (done) {

@@ -16,9 +16,9 @@ export class HelpGameCommand extends AbstractGameCommand {
 			multiple: false,
 		},
 	];
-	command: string = "/help";
-	description: string = "Displays help message for a command, displays all if none specified";
-	echoCommand: boolean = true;
+	command = "/help";
+	description = "Displays help message for a command, displays all if none specified";
+	echoCommand = true;
 	options: GameCommandOptionDefinition[] = [
 		{
 			name: "-g",
