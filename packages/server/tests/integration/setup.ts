@@ -1,8 +1,6 @@
 import { container } from "../../src/inversify.config";
 import { INJECTABLE_TYPES } from "../../src/injectable-types";
-import "jest";
-import { ServerConfigService } from "../../src/types";
-import { ExpressApiServer } from "../../src/express-api-server";
+import { ApiServer, ServerConfigService } from "../../src/types";
 
 const mongoose = require("mongoose");
 mongoose.set("useFindAndModify", false);
@@ -36,21 +34,23 @@ beforeEach(async function (done) {
 	  start it up using the test url and database name
 	  provided by the node runtime ENV
 	*/
-	if (mongoose.connection.readyState === 0) {
-		await mongoose.connect(`mongodb://localhost:27017/${process.env.TEST_SUITE}`, {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-			autoIndex: false,
-		});
-	}
+	// if (mongoose.connection.readyState === 0) {
+	// 	await mongoose.connect(`mongodb://localhost:27017/${process.env.TEST_SUITE}`, {
+	// 		useNewUrlParser: true,
+	// 		useUnifiedTopology: true,
+	// 		autoIndex: false,
+	// 	});
+	// }
 
-	await clearDB();
+	// await clearDB();
 
 	return done();
 });
 
 beforeEach(async () => {
-	const server = new ExpressApiServer();
+	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
+	server.setDbHost("localhost:27017");
+	server.setDbName(process.env.TEST_SUITE);
 	await server.initDb();
 	const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
 	const serverConfig = await service.getServerConfig();
@@ -58,6 +58,8 @@ beforeEach(async () => {
 });
 
 afterEach(async function (done) {
+	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
+	await server.clearDb();
 	await mongoose.disconnect();
 	return done();
 });

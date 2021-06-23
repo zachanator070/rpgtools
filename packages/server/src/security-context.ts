@@ -17,7 +17,7 @@ export class SecurityContext {
 		for (let assignment of this.permissions) {
 			if (assignment.permission === permission) {
 				if (subjectId) {
-					return assignment.subjectId === subjectId;
+					return assignment.subject === subjectId;
 				} else {
 					return true;
 				}
@@ -36,7 +36,7 @@ export class SecurityContext {
 
 	getEntityPermissions = (id: string, type: string) => {
 		return this.permissions.filter(
-			(permission) => permission.subjectId === id && permission.subjectType === type
+			(permission) => permission.subject === id && permission.subjectType === type
 		);
 	};
 }

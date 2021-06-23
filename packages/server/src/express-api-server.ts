@@ -16,12 +16,14 @@ import { MongodbServerConfigRepository } from "./dal/mongodb/repositories/mongod
 import { FilterCondition } from "./dal/filter-condition";
 import { RoleSeeder } from "./seeders/role-seeder";
 import { ServerConfigSeeder } from "./seeders/server-config-seeder";
-import { ApiServer, Seeder } from "./types";
-import { GraphqlServerFactory } from "./graphql-server-factory";
+import { ApiServer, Seeder, SessionContextFactory } from "./types";
+import { GraphqlConnectionContextFactory } from "./graphql-connection-context-factory";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ModelRouter } from "./routers/model-router";
 import ExportRouter from "./routers/export-router";
 import { ImageRouter } from "./routers/image-router";
+import { typeDefs } from "./gql-server-schema";
+import { allResolvers } from "./resolvers/all-resolvers";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -43,11 +45,44 @@ export class ExpressApiServer implements ApiServer {
 	@inject(INJECTABLE_TYPES.ServerConfigRepository)
 	serverConfigRepository: MongodbServerConfigRepository;
 
-	gqlServerFactory = new GraphqlServerFactory();
+	@inject(INJECTABLE_TYPES.RoleSeeder)
+	roleSeeder: RoleSeeder;
+	@inject(INJECTABLE_TYPES.ServerConfigSeeder)
+	serverConfigSeeder: ServerConfigSeeder;
 
-	constructor() {
-		this.gqlServer = this.gqlServerFactory.create();
+	connectionContextFactory: GraphqlConnectionContextFactory = new GraphqlConnectionContextFactory();
 
+	constructor(
+		@inject(INJECTABLE_TYPES.SessionContextFactory) sessionContextFactory: SessionContextFactory
+	) {
+		this.gqlServer = new ApolloServer({
+			typeDefs,
+			resolvers: allResolvers,
+			playground: {
+				settings: {
+					"editor.cursorShape": "line",
+					"editor.fontFamily":
+						"'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace",
+					"editor.fontSize": 14,
+					"editor.reuseHeaders": true,
+					"editor.theme": "dark",
+					"general.betaUpdates": false,
+					"schema.polling.enable": false,
+					"schema.polling.endpointFilter": "*localhost*",
+					"schema.polling.interval": 2000,
+					"tracing.hideTracingResponse": true,
+					"queryPlan.hideQueryPlanResponse": true,
+					"request.credentials": "same-origin",
+				},
+			},
+			context: sessionContextFactory.create,
+			uploads: false,
+			subscriptions: {
+				onConnect: this.connectionContextFactory.create,
+				keepAlive: 1000,
+			},
+			tracing: process.env.NODE_ENV === "development",
+		});
 		this.expressServer = express();
 		this.httpServer = http.createServer(this.expressServer);
 		this.gqlServer.installSubscriptionHandlers(this.httpServer);
@@ -130,7 +165,7 @@ export class ExpressApiServer implements ApiServer {
 	};
 
 	seedDB = async () => {
-		const seeders: Seeder[] = [new RoleSeeder(), new ServerConfigSeeder()];
+		const seeders: Seeder[] = [this.serverConfigSeeder, this.roleSeeder];
 
 		for (let seeder of seeders) {
 			await seeder.seed();
@@ -194,4 +229,23 @@ export class ExpressApiServer implements ApiServer {
 		await this.initDb();
 		await this.startListen();
 	};
+
+	setDbHost(host: string): void {
+		this.mongodb_host = host;
+	}
+
+	setDbName(name: string): void {
+		this.mongodb_db_name = name;
+	}
+
+	async clearDb(): Promise<void> {
+		const collections = await mongoose.connection.db.listCollections().toArray();
+		for (let collection of collections) {
+			try {
+				await mongoose.connection.db.dropCollection(collection.name);
+			} catch (e) {
+				console.log(`error while clearing collections: ${e.message}`);
+			}
+		}
+	}
 }

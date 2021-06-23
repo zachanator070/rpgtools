@@ -82,4 +82,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderDataLoader: Symbol.for("WikiFolderDataLoader"),
 	WikiPageDataLoader: Symbol.for("WikiPageDataLoader"),
 	WorldDataLoader: Symbol.for("WorldDataLoader"),
+
+	RoleSeeder: Symbol.for("RoleSeeder"),
+	ServerConfigSeeder: Symbol.for("ServerConfigSeeder"),
 };

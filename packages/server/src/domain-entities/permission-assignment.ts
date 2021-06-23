@@ -5,19 +5,17 @@ import { PERMISSION_ASSIGNMENT } from "../../../common/src/type-constants";
 export class PermissionAssignment implements DomainEntity {
 	public _id: string;
 	public permission: string;
-	public subjectId: string;
+	public subject: string;
 	public subjectType: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<
-		PermissionAssignment,
-		DomainEntity
-	> = new PermissionAssignmentAuthorizationRuleset();
+	authorizationRuleset: EntityAuthorizationRuleset<PermissionAssignment, DomainEntity> =
+		new PermissionAssignmentAuthorizationRuleset();
 	type: string = PERMISSION_ASSIGNMENT;
 
-	constructor(id: string, permission: string, subjectId: string, subjectType: string) {
+	constructor(id: string, permission: string, subject: string, subjectType: string) {
 		this._id = id;
 		this.permission = permission;
-		this.subjectId = subjectId;
+		this.subject = subject;
 		this.subjectType = subjectType;
 	}
 }
