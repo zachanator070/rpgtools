@@ -102,7 +102,7 @@ JEST_OPTIONS=
 
 test-integration:
 	- docker-compose up -d mongodb
-	export JEST_SETUP_FILES=./packages/server/tests/integration/setup.js && npx jest ${JEST_OPTIONS} packages/server/tests/integration
+	npx jest ${JEST_OPTIONS} -c ./packages/server/jest.config.integration.js
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration

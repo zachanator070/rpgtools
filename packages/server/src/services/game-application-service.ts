@@ -166,7 +166,7 @@ export class GameApplicationService implements GameService {
 		} else {
 			for (let permission of GAME_PERMISSIONS) {
 				const foundPermission = context.permissions.find(
-					(assignment) => assignment.permission === permission && assignment.subjectId === game._id
+					(assignment) => assignment.permission === permission && assignment.subject === game._id
 				);
 				if (foundPermission) {
 					context.permissions = context.permissions.filter(

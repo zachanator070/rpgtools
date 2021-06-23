@@ -7,16 +7,20 @@ import {
 } from "../../filter-condition";
 import { Model } from "mongoose";
 import { PaginatedResult } from "../../paginated-result";
+import { injectable } from "inversify";
 
+@injectable()
 export abstract class AbstractMongodbRepository<
 	EntityType extends DomainEntity,
 	DocumentType extends DatabaseEntity
-> implements Repository<EntityType> {
+> implements Repository<EntityType>
+{
 	PAGE_LIMIT = 10;
 
 	abstract model: Model<any>;
 
 	create = async (entity: EntityType): Promise<void> => {
+		delete entity._id;
 		const result = await this.model.create(entity);
 		entity._id = result._id.toString();
 	};
@@ -37,7 +41,7 @@ export abstract class AbstractMongodbRepository<
 
 	findOne = async (conditions: FilterCondition[]): Promise<EntityType> => {
 		const results = await this.find(conditions);
-		if (results.length > 1) {
+		if (results.length === 1) {
 			return results[0];
 		}
 		return null;

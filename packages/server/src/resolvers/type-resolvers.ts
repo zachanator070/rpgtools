@@ -271,7 +271,7 @@ export const TypeResolvers = {
 		subject: async (assignment: PermissionAssignment, _: any, __: SessionContext) => {
 			const mapper = new RepositoryMapper();
 			const repository = mapper.map<DomainEntity>(assignment.subjectType);
-			return repository.findById(assignment.subjectId);
+			return repository.findById(assignment.subject);
 		},
 		canWrite: async (
 			assignment: PermissionAssignment,

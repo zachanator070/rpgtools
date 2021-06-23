@@ -131,6 +131,8 @@ import { RoleDataLoader } from "./dal/dataloaders/role-data-loader";
 import { WikiPageDataLoader } from "./dal/dataloaders/wiki-page-data-loader";
 import { WorldDataLoader } from "./dal/dataloaders/world-data-loader";
 import { UserDataLoader } from "./dal/dataloaders/user-data-loader";
+import { RoleSeeder } from "./seeders/role-seeder";
+import { ServerConfigSeeder } from "./seeders/server-config-seeder";
 
 const container = new Container();
 container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
@@ -270,5 +272,8 @@ container
 	.to(WikiFolderDataLoader);
 container.bind<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader).to(WikiPageDataLoader);
 container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldDataLoader);
+
+container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);
+container.bind<ServerConfigSeeder>(INJECTABLE_TYPES.ServerConfigSeeder).to(ServerConfigSeeder);
 
 export { container };

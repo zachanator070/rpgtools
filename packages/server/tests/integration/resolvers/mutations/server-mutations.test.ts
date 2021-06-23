@@ -9,23 +9,28 @@ import {
 	ServerConfigRepository,
 	SessionContext,
 	SessionContextFactory,
+	UserRepository,
 } from "../../../../src/types";
 import { SecurityContext } from "../../../../src/security-context";
 import { User } from "../../../../src/domain-entities/user";
 import { ExpressApiServer } from "../../../../src/express-api-server";
+import { FilterCondition } from "../../../../src/dal/filter-condition";
+import { injectable } from "inversify";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
+	@injectable()
+	class MockSessionContextFactory implements SessionContextFactory {
+		create = async (parameters: any): Promise<SessionContext> => ({
+			securityContext: new SecurityContext(currentUser, [], []),
+			cookieManager: new (class extends CookieManager {})(),
+		});
+	}
 	let currentUser = new User("", "", ANON_USERNAME, "", "", "", [], []);
-	container.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory).to(
-		class implements SessionContextFactory {
-			create = async (parameters: any): Promise<SessionContext> => ({
-				securityContext: new SecurityContext(currentUser, [], []),
-				cookieManager: new (class extends CookieManager {})(),
-			});
-		}
-	);
+	container
+		.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
+		.to(MockSessionContextFactory);
 
 	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
 
@@ -41,7 +46,7 @@ describe("server mutations", () => {
 			await serverConfigRepository.update(server);
 		});
 
-		test("unlock", async () => {
+		it("unlock", async (done) => {
 			const result = await mutate({
 				mutation: UNLOCK_SERVER,
 				variables: {
@@ -52,6 +57,7 @@ describe("server mutations", () => {
 				},
 			});
 			expect(result).toMatchSnapshot();
+			done();
 		});
 
 		test("unlock twice", async () => {
@@ -79,10 +85,14 @@ describe("server mutations", () => {
 
 	describe("with unlocked server", () => {
 		beforeEach(async () => {
-			const user = await User.findOne({ username: "tester" });
-			const server = await ServerConfig.findOne();
-			server.adminUsers.push(user);
-			await server.save();
+			const userRepository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
+			const user = await userRepository.findOne([new FilterCondition("username", "tester")]);
+			const serverConfigRepository = container.get<ServerConfigRepository>(
+				INJECTABLE_TYPES.ServerConfigRepository
+			);
+			const serverConfig = await serverConfigRepository.findOne([]);
+			serverConfig.adminUsers.push(user._id);
+			await serverConfigRepository.update(serverConfig);
 		});
 
 		test("generate register codes no permission", async () => {
@@ -95,7 +105,8 @@ describe("server mutations", () => {
 
 		describe("with authenticated user", () => {
 			beforeEach(async () => {
-				currentUser = await User.findOne({ username: "tester" });
+				const userRepository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
+				currentUser = await userRepository.findOne([new FilterCondition("username", "tester")]);
 			});
 
 			test("generate register codes", async () => {

@@ -479,10 +479,11 @@ export interface DataLoader<T extends DomainEntity> {
 
 export interface ApiServer {
 	start: () => Promise<void>;
-
 	checkConfig: () => Promise<void>;
-
 	initDb: () => Promise<void>;
+	setDbHost: (host: string) => void;
+	setDbName: (name: string) => void;
+	clearDb: () => Promise<void>;
 }
 export interface RoleService {
 	getRoles: (

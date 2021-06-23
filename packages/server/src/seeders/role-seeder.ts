@@ -2,7 +2,7 @@ import { Seeder } from "../types";
 import { ALL_USERS } from "../../../common/src/role-constants";
 import { WORLD_CREATE } from "../../../common/src/permission-constants";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { MongodbUserRepository } from "../dal/mongodb/repositories/mongodb-user-repository";
 import { FilterCondition } from "../dal/filter-condition";
@@ -12,6 +12,7 @@ import { MongodbPermissionAssignmentRepository } from "../dal/mongodb/repositori
 import { Role } from "../domain-entities/role";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 
+@injectable()
 export class RoleSeeder implements Seeder {
 	@inject(INJECTABLE_TYPES.UserRepository)
 	userRepository: MongodbUserRepository;

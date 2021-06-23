@@ -3,7 +3,8 @@ import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { SecurityContext } from "../security-context";
 
 export class PermissionAssignmentAuthorizationRuleset
-	implements EntityAuthorizationRuleset<PermissionAssignment, DomainEntity> {
+	implements EntityAuthorizationRuleset<PermissionAssignment, DomainEntity>
+{
 	canAdmin = async (context: SecurityContext, entity: PermissionAssignment): Promise<boolean> => {
 		// this doesn't make sense to implement
 		return false;
@@ -16,12 +17,12 @@ export class PermissionAssignmentAuthorizationRuleset
 
 	canRead = async (context: SecurityContext, entity: PermissionAssignment): Promise<boolean> => {
 		return (
-			context.hasPermission(entity.permission, entity.subjectId) ||
+			context.hasPermission(entity.permission, entity.subject) ||
 			(await this.canWrite(context, entity))
 		);
 	};
 
 	canWrite = async (context: SecurityContext, entity: PermissionAssignment): Promise<boolean> => {
-		return context.hasPermission(entity.permission, entity.subjectId);
+		return context.hasPermission(entity.permission, entity.subject);
 	};
 }
