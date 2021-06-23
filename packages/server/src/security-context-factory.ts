@@ -1,6 +1,6 @@
 import { ALL_USERS, EVERYONE } from "../../common/src/role-constants";
 import { User } from "./domain-entities/user";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { Repository } from "./types";
 import { PermissionAssignment } from "./domain-entities/permission-assignment";
@@ -8,6 +8,7 @@ import { FilterCondition } from "./dal/filter-condition";
 import { Role } from "./domain-entities/role";
 import { SecurityContext } from "./security-context";
 
+@injectable()
 export class SecurityContextFactory {
 	@inject(INJECTABLE_TYPES.PermissionAssignmentRepository)
 	permissionAssignmentRepository: Repository<PermissionAssignment>;

@@ -6,6 +6,7 @@ import { INJECTABLE_TYPES } from "../injectable-types";
 import {
 	ApiServer,
 	AuthenticationService,
+	Factory,
 	ServerConfigRepository,
 	ServerConfigService,
 } from "../types";
@@ -23,16 +24,23 @@ export class ServerConfigApplicationService implements ServerConfigService {
 	@inject(INJECTABLE_TYPES.ApiServer)
 	server: ApiServer;
 
-	serverConfigAuthorizationRuleset: ServerConfigAuthorizationRuleset = new ServerConfigAuthorizationRuleset();
+	serverConfigAuthorizationRuleset: ServerConfigAuthorizationRuleset =
+		new ServerConfigAuthorizationRuleset();
 
 	@inject(INJECTABLE_TYPES.ServerConfigRepository)
 	serverConfigRepository: ServerConfigRepository;
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	unlockServer = async (unlockCode: string, email: string, username: string, password: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const server = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
+		}
+		if (!this.server.serverNeedsSetup()) {
+			throw new Error("Server already unlocked!");
 		}
 		if (server.unlockCode !== unlockCode) {
 			throw new Error("Unlock code is incorrect");
@@ -46,7 +54,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 			password,
 			unitOfWork
 		);
-		const adminRole = new Role("", SERVER_ADMIN_ROLE, "", []);
+		const adminRole = new Role("", SERVER_ADMIN_ROLE, null, []);
 		for (let permission of SERVER_PERMISSIONS) {
 			const permissionAssignment = new PermissionAssignment(
 				"",
@@ -67,21 +75,21 @@ export class ServerConfigApplicationService implements ServerConfigService {
 	};
 
 	generateRegisterCodes = async (context: SecurityContext, amount: number) => {
-		const unitOfWork = new DbUnitOfWork();
-		const server = await unitOfWork.serverConfigRepository.findOne([]);
-		if (!server) {
+		const unitOfWork = this.dbUnitOfWorkFactory();
+		const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		if (!serverConfig) {
 			throw new Error("Server config doesnt exist!");
 		}
-		if (!(await this.serverConfigAuthorizationRuleset.canWrite(context, server))) {
+		if (!(await this.serverConfigAuthorizationRuleset.canWrite(context, serverConfig))) {
 			throw new Error("You do not have permission to call this method");
 		}
 		const newCodes = Array(amount)
 			.fill("")
 			.map(() => uuidv4());
-		server.registerCodes = server.registerCodes.concat(newCodes);
-		await unitOfWork.serverConfigRepository.update(server);
+		serverConfig.registerCodes = serverConfig.registerCodes.concat(newCodes);
+		await unitOfWork.serverConfigRepository.update(serverConfig);
 		await unitOfWork.commit();
-		return server;
+		return serverConfig;
 	};
 
 	getServerConfig = async () => {

@@ -8,7 +8,8 @@ import { injectable } from "inversify";
 @injectable()
 export class MongodbMonsterRepository
 	extends AbstractMongodbRepository<Monster, MonsterDocument>
-	implements MonsterRepository {
+	implements MonsterRepository
+{
 	model: Model<any> = MonsterModel;
 
 	buildEntity(document: MonsterDocument): Monster {
@@ -16,9 +17,9 @@ export class MongodbMonsterRepository
 			document._id.toString(),
 			document.name,
 			document.world.toString(),
-			document.coverImage.toString(),
-			document.contentId.toString(),
-			document.pageModel.toString(),
+			document.coverImage ? document.coverImage.toString() : null,
+			document.contentId ? document.contentId.toString() : null,
+			document.pageModel ? document.pageModel.toString() : null,
 			document.modelColor
 		);
 	}

@@ -8,7 +8,8 @@ import { PinDocument, PinModel } from "../models/pin";
 @injectable()
 export class MongodbPinRepository
 	extends AbstractMongodbRepository<Pin, PinDocument>
-	implements PinRepository {
+	implements PinRepository
+{
 	model: Model<any> = PinModel;
 
 	buildEntity(document: PinDocument): Pin {
@@ -17,7 +18,7 @@ export class MongodbPinRepository
 			document.x,
 			document.y,
 			document.map.toString(),
-			document.page.toString()
+			document.page ? document.page.toString() : null
 		);
 	}
 }

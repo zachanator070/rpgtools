@@ -8,7 +8,9 @@ import {
 	FilterCondition,
 } from "../../filter-condition";
 import { PaginatedResult } from "../../paginated-result";
+import { injectable } from "inversify";
 
+@injectable()
 export class MongodbFileRepository implements FileRepository {
 	create = async (entity: File): Promise<void> => {
 		entity._id = await new Promise((resolve, reject) => {

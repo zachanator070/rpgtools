@@ -8,7 +8,8 @@ import { injectable } from "inversify";
 @injectable()
 export class MongodbImageRepository
 	extends AbstractMongodbRepository<Image, ImageDocument>
-	implements ImageRepository {
+	implements ImageRepository
+{
 	model: Model<any> = ImageModel;
 
 	buildEntity(document: ImageDocument): Image {
@@ -21,7 +22,7 @@ export class MongodbImageRepository
 			document.chunkWidth,
 			document.chunkHeight,
 			document.chunks.map((id) => id.toString()),
-			document.icon.toString()
+			document.icon ? document.icon.toString() : null
 		);
 	}
 }

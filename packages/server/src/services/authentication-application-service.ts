@@ -1,11 +1,18 @@
-import { AuthenticationService, AuthenticationTokens, CookieManager, UnitOfWork } from "../types";
+import {
+	AuthenticationService,
+	AuthenticationTokens,
+	CookieManager,
+	Factory,
+	UnitOfWork,
+} from "../types";
 import { User } from "../domain-entities/user";
 import bcrypt from "bcrypt";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { FilterCondition } from "../dal/filter-condition";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 export interface CookieConstants {
 	string: string;
@@ -19,6 +26,9 @@ export const REFRESH_TOKEN_MAX_AGE: CookieConstants = { string: "1d", ms: 1000 *
 @injectable()
 export class AuthenticationApplicationService implements AuthenticationService {
 	SALT_ROUNDS = 10;
+
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	createTokens = async (
 		user: User,
@@ -78,7 +88,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		password: string,
 		cookieManager: CookieManager
 	): Promise<User> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([
 			new FilterCondition("username", username),
 		]);
@@ -93,7 +103,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 	};
 
 	logout = async (currentUser: User, cookieManager: CookieManager): Promise<string> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		cookieManager.clearCookie(ACCESS_TOKEN);
 		cookieManager.clearCookie(REFRESH_TOKEN);
 		currentUser.tokenVersion = uuidv4();
@@ -107,7 +117,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		username: string,
 		password: string
 	): Promise<User> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const config = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!config.registerCodes.includes(registerCode)) {
 			throw new Error("Register code not valid");
@@ -136,7 +146,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
-		const newUser = new User("", email, username, password, "", "", [], []);
+		const newUser = new User("", email, username, password, null, null, [], []);
 		await unitOfWork.userRepository.create(newUser);
 		return newUser;
 	};

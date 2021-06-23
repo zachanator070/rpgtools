@@ -1,15 +1,19 @@
-import { ImageService, UnitOfWork } from "../types";
+import { Factory, ImageService, UnitOfWork } from "../types";
 import { Image } from "../domain-entities/image";
 import { File } from "../domain-entities/file";
 import { Chunk } from "../domain-entities/chunk";
 import Jimp from "jimp";
 import { Readable } from "stream";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class ImageApplicationService implements ImageService {
 	chunkSize = 250;
+
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	createImage = async (
 		worldId: string,
@@ -18,7 +22,7 @@ export class ImageApplicationService implements ImageService {
 		readStream: Readable,
 		givenUnitOfWork?: UnitOfWork
 	) => {
-		const unitOfWork = givenUnitOfWork ?? new DbUnitOfWork();
+		const unitOfWork = givenUnitOfWork ?? this.dbUnitOfWorkFactory();
 		// @TODO need to check a permission here
 		if (chunkify === null) {
 			chunkify = true;
@@ -77,7 +81,7 @@ export class ImageApplicationService implements ImageService {
 	};
 
 	public deleteImage = async (image: Image): Promise<void> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		console.log(`deleting image ${image._id}`);
 		for (let chunkId of image.chunks) {
 			const chunk: Chunk = await unitOfWork.chunkRepository.findById(chunkId);

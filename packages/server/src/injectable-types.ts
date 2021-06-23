@@ -53,6 +53,7 @@ export const INJECTABLE_TYPES = {
 	WorldService: Symbol.for("WorldService"),
 
 	SessionContextFactory: Symbol.for("SessionContextFactory"),
+	SecurityContextFactory: Symbol.for("SecurityContextFactory"),
 
 	Open5eApiClient: Symbol.for("Open5eApiClient"),
 
@@ -85,4 +86,7 @@ export const INJECTABLE_TYPES = {
 
 	RoleSeeder: Symbol.for("RoleSeeder"),
 	ServerConfigSeeder: Symbol.for("ServerConfigSeeder"),
+
+	DbUnitOfWork: Symbol.for("DbUnitOfWork"),
+	DbUnitOfWorkFactory: Symbol.for("DbUnitOfWorkFactory"),
 };

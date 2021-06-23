@@ -1,11 +1,12 @@
 import { Role } from "../domain-entities/role";
 import { inject } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
-import { RoleRepository, RoleService, WorldRepository } from "../types";
+import { Factory, RoleRepository, RoleService, WorldRepository } from "../types";
 import { SecurityContext } from "../security-context";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
 import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
 import { PaginatedResult } from "../dal/paginated-result";
+import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 export class RoleApplicationService implements RoleService {
 	@inject(INJECTABLE_TYPES.WorldRepository)
@@ -14,6 +15,9 @@ export class RoleApplicationService implements RoleService {
 	roleRepository: RoleRepository;
 
 	roleAuthorizationRuleset: RoleAuthorizationRuleset = new RoleAuthorizationRuleset();
+
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	getRoles = async (
 		context: SecurityContext,

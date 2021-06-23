@@ -38,6 +38,7 @@ import {
 	AbstractArchiveFactory,
 	ApiServer,
 	DataLoader,
+	Factory,
 } from "./types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "./dal/mongodb/repositories/mongodb-article-repository";
@@ -133,6 +134,8 @@ import { WorldDataLoader } from "./dal/dataloaders/world-data-loader";
 import { UserDataLoader } from "./dal/dataloaders/user-data-loader";
 import { RoleSeeder } from "./seeders/role-seeder";
 import { ServerConfigSeeder } from "./seeders/server-config-seeder";
+import { DbUnitOfWork } from "./dal/db-unit-of-work";
+import { SecurityContextFactory } from "./security-context-factory";
 
 const container = new Container();
 container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
@@ -234,6 +237,9 @@ container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldApplicationS
 container
 	.bind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
 	.to(ExpressSessionContextFactory);
+container
+	.bind<SecurityContextFactory>(INJECTABLE_TYPES.SecurityContextFactory)
+	.to(SecurityContextFactory);
 
 container.bind<Open5eApiClient>(INJECTABLE_TYPES.Open5eApiClient).to(Open5eApiClient);
 
@@ -275,5 +281,10 @@ container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldData
 
 container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);
 container.bind<ServerConfigSeeder>(INJECTABLE_TYPES.ServerConfigSeeder).to(ServerConfigSeeder);
+
+container.bind<DbUnitOfWork>(INJECTABLE_TYPES.DbUnitOfWork).to(DbUnitOfWork);
+container
+	.bind<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	.toFactory((context) => () => context.container.get<DbUnitOfWork>(INJECTABLE_TYPES.DbUnitOfWork));
 
 export { container };

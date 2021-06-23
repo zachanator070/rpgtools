@@ -8,7 +8,7 @@ import {
 import { Request, Response } from "express";
 import { ExpressContext } from "apollo-server-express/src/ApolloServer";
 import { ExecutionParams } from "subscriptions-transport-ws";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { v4 as uuidv4 } from "uuid";
 import { User } from "./domain-entities/user";
@@ -33,7 +33,8 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.AuthenticationService)
 	authenticationService: AuthenticationService;
 
-	securityContextFactory: SecurityContextFactory = new SecurityContextFactory();
+	@inject(INJECTABLE_TYPES.SecurityContextFactory)
+	securityContextFactory: SecurityContextFactory;
 
 	create = async ({
 		req,

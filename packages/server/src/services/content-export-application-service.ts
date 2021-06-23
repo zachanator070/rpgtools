@@ -1,4 +1,4 @@
-import { Archive, ContentExportService, UnitOfWork } from "../types";
+import { Archive, ContentExportService, Factory, UnitOfWork } from "../types";
 import {
 	ARTICLE,
 	ITEM,
@@ -28,13 +28,18 @@ import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Model } from "../domain-entities/model";
 import { File } from "../domain-entities/file";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class ContentExportApplicationService implements ContentExportService {
 	wikiPageAuthorizationRuleSet: WikiPageAuthorizationRuleset = new WikiPageAuthorizationRuleset();
 	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset = new WikiFolderAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
+		new WikiFolderAuthorizationRuleset();
+
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	public exportWikiPage = async (
 		context: SecurityContext,
@@ -42,7 +47,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		wikiType: string,
 		archive: Archive
 	): Promise<void> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		let page = await unitOfWork.wikiPageRepository.findById(docId);
 		if (!page) {
 			throw new EntityNotFoundError(docId, WIKI_PAGE);
@@ -69,7 +74,7 @@ export class ContentExportApplicationService implements ContentExportService {
 	};
 
 	public exportModel = async (context: SecurityContext, docId: string, archive: Archive) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const model = await unitOfWork.modelRepository.findById(docId);
 		if (!model) {
 			throw new EntityNotFoundError(docId, MODEL);
@@ -84,7 +89,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		archive: Archive,
 		errorOut = true
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(docId);
 		if (!folder) {
 			throw new EntityNotFoundError(docId, WIKI_FOLDER);

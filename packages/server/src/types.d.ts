@@ -128,6 +128,8 @@ export interface UnitOfWork {
 	commit: () => Promise<void>;
 }
 
+export type Factory<T> = () => T;
+
 export interface Archive {
 	articleRepository: ArticleRepository;
 	chunkRepository: ChunkRepository;
@@ -484,6 +486,7 @@ export interface ApiServer {
 	setDbHost: (host: string) => void;
 	setDbName: (name: string) => void;
 	clearDb: () => Promise<void>;
+	serverNeedsSetup: () => boolean;
 }
 export interface RoleService {
 	getRoles: (
