@@ -2,6 +2,7 @@ import {
 	AuthorizationService,
 	Cache,
 	EventPublisher,
+	Factory,
 	ModelRepository,
 	ModelService,
 } from "../types";
@@ -35,6 +36,9 @@ export class ModelApplicationService implements ModelService {
 
 	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	createModel = async (
 		context: SecurityContext,
 		worldId: string,
@@ -45,7 +49,7 @@ export class ModelApplicationService implements ModelService {
 		height: number,
 		notes: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} does not exist`);
@@ -95,7 +99,7 @@ export class ModelApplicationService implements ModelService {
 		notes: string,
 		file?: FileUpload
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const model = await unitOfWork.modelRepository.findById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
@@ -133,7 +137,7 @@ export class ModelApplicationService implements ModelService {
 	};
 
 	deleteModel = async (context: SecurityContext, modelId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const model = await unitOfWork.modelRepository.findById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
@@ -172,7 +176,7 @@ export class ModelApplicationService implements ModelService {
 	};
 
 	private filenameExists = async (filename: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const models = await unitOfWork.modelRepository.find([
 			new FilterCondition("filename", filename),
 		]);

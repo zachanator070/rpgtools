@@ -7,7 +7,8 @@ import { injectable } from "inversify";
 @injectable()
 export class MongodbUserRepository
 	extends AbstractMongodbRepository<User, UserDocument>
-	implements UserRepository {
+	implements UserRepository
+{
 	model = UserModel;
 
 	buildEntity(document: UserDocument): User {
@@ -17,7 +18,7 @@ export class MongodbUserRepository
 			document.username,
 			document.password,
 			document.tokenVersion,
-			document.currentWorld.toString(),
+			document.currentWorld ? document.currentWorld.toString() : null,
 			document.roles.map((roleId) => roleId.toString()),
 			document.permissions.map((permissionId) => permissionId.toString())
 		);

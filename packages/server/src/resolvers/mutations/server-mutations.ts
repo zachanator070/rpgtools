@@ -21,6 +21,7 @@ export const serverMutations = {
 		{ securityContext }: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await service.generateRegisterCodes(securityContext, amount);
+		const serverConfig = await service.generateRegisterCodes(securityContext, amount);
+		return serverConfig;
 	},
 };

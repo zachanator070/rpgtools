@@ -155,9 +155,13 @@ export class ExpressApiServer implements ApiServer {
 			this.needsSetup = true;
 			return;
 		}
-		const users = await this.userRepository.find([new FilterCondition("roles", adminRole._id)]);
 
-		this.needsSetup = users.length === 0;
+		const serverConfig = await this.serverConfigRepository.findOne([]);
+		if (!serverConfig) {
+			throw new Error("No server config exists! Did the seeders run correctly?");
+		}
+
+		this.needsSetup = serverConfig.adminUsers.length === 0;
 	};
 
 	serverNeedsSetup = () => {

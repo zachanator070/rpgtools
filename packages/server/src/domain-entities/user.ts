@@ -7,15 +7,13 @@ export class User implements DomainEntity {
 	public email: string;
 	public username: string;
 	public password: string;
-	public tokenVersion: string;
-	public currentWorld: string;
+	public tokenVersion?: string;
+	public currentWorld?: string;
 	public roles: string[];
 	public permissions: string[];
 
-	authorizationRuleset: EntityAuthorizationRuleset<
-		User,
-		DomainEntity
-	> = new UserAuthorizationRuleset();
+	authorizationRuleset: EntityAuthorizationRuleset<User, DomainEntity> =
+		new UserAuthorizationRuleset();
 	type: string = USER;
 
 	constructor(

@@ -8,7 +8,8 @@ import { ItemDocument, ItemModel } from "../models/item";
 @injectable()
 export class MongodbItemRepository
 	extends AbstractMongodbRepository<Item, ItemDocument>
-	implements ItemRepository {
+	implements ItemRepository
+{
 	model: Model<any> = ItemModel;
 
 	buildEntity(document: ItemDocument): Item {
@@ -16,10 +17,10 @@ export class MongodbItemRepository
 			document._id.toString(),
 			document.name,
 			document.world.toString(),
-			document.coverImage.toString(),
-			document.contentId.toString(),
-			document.pageModel.toString(),
-			document.modelColor.toString()
+			document.coverImage ? document.coverImage.toString() : null,
+			document.contentId ? document.contentId.toString() : null,
+			document.pageModel ? document.pageModel.toString() : null,
+			document.modelColor
 		);
 	}
 }

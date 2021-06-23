@@ -9,6 +9,7 @@ import {
 	EntityAuthorizationRuleset,
 	Repository,
 	UnitOfWork,
+	Factory,
 } from "../types";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { Model } from "../domain-entities/model";
@@ -36,19 +37,23 @@ class DeferredPromise {
 
 @injectable()
 export class ContentImportApplicationService implements ContentImportService {
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset = new WikiFolderAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
+		new WikiFolderAuthorizationRuleset();
 
 	processedDocs: Map<string, DeferredPromise> = new Map<string, DeferredPromise>();
 
 	@inject(INJECTABLE_TYPES.ArchiveFactory)
 	archiveFactory: AbstractArchiveFactory;
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	public importContent = async (
 		context: SecurityContext,
 		folderId: string,
 		zipFile: FileUpload
 	): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");

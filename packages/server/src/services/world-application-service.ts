@@ -1,4 +1,4 @@
-import { UnitOfWork, WorldRepository, WorldService } from "../types";
+import { Factory, UnitOfWork, WorldRepository, WorldService } from "../types";
 import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
@@ -28,12 +28,15 @@ export class WorldApplicationService implements WorldService {
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	createWorld = async (
 		name: string,
 		isPublic: boolean,
 		securityContext: SecurityContext
 	): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const server = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
@@ -47,7 +50,7 @@ export class WorldApplicationService implements WorldService {
 	};
 
 	renameWorld = async (context: SecurityContext, worldId: string, newName: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
@@ -68,7 +71,7 @@ export class WorldApplicationService implements WorldService {
 		x: number,
 		y: number
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const map = await unitOfWork.placeRepository.findById(mapId);
 		if (!map) {
 			throw new Error(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
@@ -93,7 +96,7 @@ export class WorldApplicationService implements WorldService {
 	};
 
 	updatePin = async (context: SecurityContext, pinId: string, pageId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const pin = await unitOfWork.pinRepository.findById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);
@@ -120,7 +123,7 @@ export class WorldApplicationService implements WorldService {
 	};
 
 	deletePin = async (context: SecurityContext, pinId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const pin = await unitOfWork.pinRepository.findById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);

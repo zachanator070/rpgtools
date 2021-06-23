@@ -5,7 +5,7 @@ import { MODEL } from "../../../common/src/type-constants";
 
 export class Model implements DomainEntity {
 	public _id: string;
-	public world?: string;
+	public world: string;
 	public name: string;
 	public depth: number;
 	public width: number;

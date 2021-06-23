@@ -19,9 +19,10 @@ import {
 	WikiPageRepository,
 	WorldRepository,
 } from "../types";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class DbUnitOfWork implements UnitOfWork {
 	@inject(INJECTABLE_TYPES.ArticleRepository)
 	articleRepository: ArticleRepository;

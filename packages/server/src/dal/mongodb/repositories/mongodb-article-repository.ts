@@ -8,7 +8,8 @@ import { injectable } from "inversify";
 @injectable()
 export class MongodbArticleRepository
 	extends AbstractMongodbRepository<Article, ArticleDocument>
-	implements ArticleRepository {
+	implements ArticleRepository
+{
 	model: Model<any> = ArticleModel;
 
 	buildEntity(document: ArticleDocument): Article {
@@ -16,8 +17,8 @@ export class MongodbArticleRepository
 			document._id.toString(),
 			document.name,
 			document.world.toString(),
-			document.coverImage.toString(),
-			document.contentId.toString()
+			document.coverImage ? document.coverImage.toString() : null,
+			document.contentId ? document.contentId.toString() : null
 		);
 	}
 }

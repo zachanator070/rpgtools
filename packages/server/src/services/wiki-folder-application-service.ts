@@ -1,6 +1,7 @@
 import {
 	AuthorizationService,
 	EntityAuthorizationRuleset,
+	Factory,
 	UnitOfWork,
 	WikiFolderRepository,
 	WikiFolderService,
@@ -27,14 +28,10 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 @injectable()
 export class WikiFolderApplicationService implements WikiFolderService {
-	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<
-		WikiFolder,
-		WikiFolder
-	> = new WikiFolderAuthorizationRuleset();
-	wikiPageAuthorizationRuleset: EntityAuthorizationRuleset<
-		WikiPage,
-		WikiFolder
-	> = new WikiPageAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<WikiFolder, WikiFolder> =
+		new WikiFolderAuthorizationRuleset();
+	wikiPageAuthorizationRuleset: EntityAuthorizationRuleset<WikiPage, WikiFolder> =
+		new WikiPageAuthorizationRuleset();
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
@@ -44,12 +41,15 @@ export class WikiFolderApplicationService implements WikiFolderService {
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: WikiFolderRepository;
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	createFolder = async (
 		context: SecurityContext,
 		name: string,
 		parentFolderId: string
 	): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const parentFolder = await unitOfWork.wikiFolderRepository.findById(parentFolderId);
 		if (!parentFolder) {
 			throw new Error("Parent folder does not exist");
@@ -79,7 +79,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		folderId: string,
 		name: string
 	): Promise<WikiFolder> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -95,7 +95,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 	};
 
 	deleteFolder = async (context: SecurityContext, folderId: string): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -130,7 +130,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		folderId: string,
 		parentFolderId: string
 	): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error(`Folder with id ${folderId} does not exist`);

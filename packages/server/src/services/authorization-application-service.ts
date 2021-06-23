@@ -1,4 +1,4 @@
-import { AuthorizationService, EntityAuthorizationRuleset, UnitOfWork } from "../types";
+import { AuthorizationService, EntityAuthorizationRuleset, Factory, UnitOfWork } from "../types";
 import { User } from "../domain-entities/user";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { SecurityContext } from "../security-context";
@@ -11,12 +11,17 @@ import { ROLE } from "../../../common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
 import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class AuthorizationApplicationService implements AuthorizationService {
-	permissionAssignmentAuthorizationRuleset: PermissionAssignmentAuthorizationRuleset = new PermissionAssignmentAuthorizationRuleset();
+	permissionAssignmentAuthorizationRuleset: PermissionAssignmentAuthorizationRuleset =
+		new PermissionAssignmentAuthorizationRuleset();
 	roleAuthorizationRuleset: RoleAuthorizationRuleset = new RoleAuthorizationRuleset();
+
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	grantUserPermission = async (
 		context: SecurityContext,
@@ -25,7 +30,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectType: string,
 		userId: string
 	): Promise<User> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error(`User with id ${userId} does not exist`);
@@ -66,7 +71,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectId: string,
 		userId: string
 	): Promise<User> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error("User does not exist");
@@ -103,7 +108,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectType: string,
 		userId: string
 	): Promise<Role> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!role) {
 			throw new Error(`Role with id ${userId} does not exist`);
@@ -144,7 +149,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		permission: string,
 		subjectId: string
 	): Promise<Role> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
 		if (!role) {
 			throw new Error("Role does not exist");
@@ -175,7 +180,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 	};
 
 	createRole = async (context: SecurityContext, worldId: string, name: string): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
@@ -198,7 +203,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 	};
 
 	deleteRole = async (context: SecurityContext, roleId: string): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -253,7 +258,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		userId: string,
 		roleId: string
 	): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -280,7 +285,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		userId: string,
 		roleId: string
 	): Promise<World> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);

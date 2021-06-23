@@ -8,7 +8,8 @@ import { PersonDocument, PersonModel } from "../models/person";
 @injectable()
 export class MongodbPersonRepository
 	extends AbstractMongodbRepository<Person, PersonDocument>
-	implements PersonRepository {
+	implements PersonRepository
+{
 	model: Model<any> = PersonModel;
 
 	buildEntity(document: PersonDocument): Person {
@@ -16,9 +17,9 @@ export class MongodbPersonRepository
 			document._id.toString(),
 			document.name,
 			document.world.toString(),
-			document.coverImage.toString(),
-			document.contentId.toString(),
-			document.model.toString(),
+			document.coverImage ? document.coverImage.toString() : null,
+			document.contentId ? document.contentId.toString() : null,
+			document.pageModel ? document.pageModel.toString() : null,
 			document.modelColor
 		);
 	}

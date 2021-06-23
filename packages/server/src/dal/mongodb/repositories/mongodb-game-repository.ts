@@ -25,7 +25,8 @@ import { injectable } from "inversify";
 @injectable()
 export class MongodbGameRepository
 	extends AbstractMongodbRepository<Game, GameDocument>
-	implements GameRepository {
+	implements GameRepository
+{
 	model: Model<any> = GameModel;
 
 	build(entity: GameDocument): Game {
@@ -33,7 +34,7 @@ export class MongodbGameRepository
 			entity._id.toString(),
 			entity.passwordHash,
 			entity.world.toString(),
-			entity.map.toString(),
+			entity.map ? entity.map.toString() : null,
 			this.buildCharacters(entity.characters),
 			this.buildStrokes(entity.strokes),
 			this.buildFogStrokes(entity.fog),

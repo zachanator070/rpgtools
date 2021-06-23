@@ -1,4 +1,10 @@
-import { AuthorizationService, EventPublisher, GameRepository, GameService } from "../types";
+import {
+	AuthorizationService,
+	EventPublisher,
+	Factory,
+	GameRepository,
+	GameService,
+} from "../types";
 import {
 	ANON_USERNAME,
 	GAME_HOST,
@@ -56,6 +62,9 @@ export class GameApplicationService implements GameService {
 
 	gameAuthorizationRuleSet: GameAuthorizationRuleset = new GameAuthorizationRuleset();
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	createGame = async (
 		context: SecurityContext,
 		worldId: string,
@@ -65,7 +74,7 @@ export class GameApplicationService implements GameService {
 		if (!(await context.hasPermission(GAME_HOST, worldId))) {
 			throw new Error("You do not have permission to host games on this world");
 		}
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = new Game(
 			"",
 			password && bcrypt.hashSync(password, SALT_ROUNDS),
@@ -110,7 +119,7 @@ export class GameApplicationService implements GameService {
 		password: string,
 		characterName: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -148,7 +157,7 @@ export class GameApplicationService implements GameService {
 		return game;
 	};
 	leaveGame = async (context: SecurityContext, gameId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -185,7 +194,7 @@ export class GameApplicationService implements GameService {
 		return true;
 	};
 	gameChat = async (context: SecurityContext, gameId: string, message: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -218,7 +227,7 @@ export class GameApplicationService implements GameService {
 		clearPaint: boolean,
 		setFog: boolean
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -293,7 +302,7 @@ export class GameApplicationService implements GameService {
 		fill: boolean,
 		strokeId: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -319,7 +328,7 @@ export class GameApplicationService implements GameService {
 		size: number,
 		strokeId: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -344,7 +353,7 @@ export class GameApplicationService implements GameService {
 		wikiId: string,
 		color: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -379,7 +388,7 @@ export class GameApplicationService implements GameService {
 		lookAtX: number,
 		lookAtZ: number
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -416,7 +425,7 @@ export class GameApplicationService implements GameService {
 		positionedModelId: string,
 		color: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -448,7 +457,7 @@ export class GameApplicationService implements GameService {
 		gameId: string,
 		positionedModelId: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -480,7 +489,7 @@ export class GameApplicationService implements GameService {
 		positionedModelId: string,
 		wikiId: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -511,7 +520,7 @@ export class GameApplicationService implements GameService {
 		return positionedModel;
 	};
 	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[]) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -544,7 +553,7 @@ export class GameApplicationService implements GameService {
 		wis: number,
 		cha: number
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");

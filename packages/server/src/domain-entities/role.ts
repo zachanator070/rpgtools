@@ -6,7 +6,8 @@ import { ROLE } from "../../../common/src/type-constants";
 export class Role implements DomainEntity {
 	public _id: string;
 	public name: string;
-	public world: string;
+	// world will be null for server only roles
+	public world?: string;
 	public permissions: string[];
 
 	authorizationRuleset: EntityAuthorizationRuleset<Role, World> = new RoleAuthorizationRuleset();

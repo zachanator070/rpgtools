@@ -1,4 +1,4 @@
-import { ImageService, SrdImportService, UnitOfWork } from "../types";
+import { Factory, ImageService, SrdImportService, UnitOfWork } from "../types";
 import { World } from "../domain-entities/world";
 import { Readable } from "stream";
 import {
@@ -26,9 +26,13 @@ export class SrdImportApplicationService implements SrdImportService {
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	open5eApiClient: Open5eApiClient;
 
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset = new WikiFolderAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
+		new WikiFolderAuthorizationRuleset();
 
 	deltaFactory: DeltaFactory = new DeltaFactory();
+
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	import5eSrd = async (
 		context: SecurityContext,
@@ -36,7 +40,7 @@ export class SrdImportApplicationService implements SrdImportService {
 		importCreatureCodex: boolean,
 		importTomeOfBeasts: boolean
 	): Promise<void> => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");

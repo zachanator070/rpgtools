@@ -16,6 +16,7 @@ import { Monster } from "../domain-entities/monster";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import {
 	AuthorizationService,
+	Factory,
 	WikiFolderRepository,
 	WikiPageRepository,
 	WikiPageService,
@@ -29,7 +30,8 @@ import { PaginatedResult } from "../dal/paginated-result";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset = new WikiFolderAuthorizationRuleset();
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
+		new WikiFolderAuthorizationRuleset();
 	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset = new WikiPageAuthorizationRuleset();
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
@@ -40,8 +42,11 @@ export class WikiPageApplicationService implements WikiPageService {
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: WikiFolderRepository;
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	createWiki = async (context: SecurityContext, name: string, folderId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -78,7 +83,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		coverImageId?: string,
 		type?: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		let wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
@@ -182,7 +187,7 @@ export class WikiPageApplicationService implements WikiPageService {
 	};
 
 	deleteWiki = async (context: SecurityContext, wikiId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
 			throw new Error("Page does not exist");
@@ -220,7 +225,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		pixelsPerFoot: number,
 		mapImageId?: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const place = await unitOfWork.placeRepository.findById(placeId);
 		if (!place) {
 			throw new Error(`Place ${placeId} does not exist`);
@@ -250,7 +255,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		model: string,
 		color: string
 	) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		let wikiPage: ModeledPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
@@ -270,7 +275,7 @@ export class WikiPageApplicationService implements WikiPageService {
 	};
 
 	moveWiki = async (context: SecurityContext, wikiId: string, folderId: string) => {
-		const unitOfWork = new DbUnitOfWork();
+		const unitOfWork = this.dbUnitOfWorkFactory();
 		const wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);

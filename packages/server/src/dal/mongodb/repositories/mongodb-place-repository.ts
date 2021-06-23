@@ -8,7 +8,8 @@ import { PlaceDocument, PlaceModel } from "../models/place";
 @injectable()
 export class MongodbPlaceRepository
 	extends AbstractMongodbRepository<Place, PlaceDocument>
-	implements PlaceRepository {
+	implements PlaceRepository
+{
 	model: Model<any> = PlaceModel;
 
 	buildEntity(document: PlaceDocument): Place {
@@ -18,7 +19,7 @@ export class MongodbPlaceRepository
 			document.world.toString(),
 			document.coverImage.toString(),
 			document.contentId.toString(),
-			document.mapImage.toString(),
+			document.mapImage ? document.mapImage.toString() : null,
 			document.pixelsPerFoot
 		);
 	}
