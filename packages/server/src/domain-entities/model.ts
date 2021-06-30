@@ -1,8 +1,10 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
-import { World } from "./world";
+import { DomainEntity } from "../types";
 import { ModelAuthorizationRuleset } from "../security/model-authorization-ruleset";
 import { MODEL } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class Model implements DomainEntity {
 	public _id: string;
 	public world: string;
@@ -14,28 +16,7 @@ export class Model implements DomainEntity {
 	public fileId?: string;
 	public notes?: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<Model, World> = new ModelAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
+	authorizationRuleset: ModelAuthorizationRuleset;
 	type: string = MODEL;
-
-	constructor(
-		id: string,
-		worldId: string,
-		name: string,
-		depth: number,
-		width: number,
-		height: number,
-		fileName: string,
-		fileId: string,
-		notes: string
-	) {
-		this._id = id;
-		this.world = worldId;
-		this.name = name;
-		this.depth = depth;
-		this.width = width;
-		this.height = height;
-		this.fileName = fileName;
-		this.fileId = fileId;
-		this.notes = notes;
-	}
 }

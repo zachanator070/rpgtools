@@ -1,4 +1,4 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { EntityAuthorizationRuleset } from "../types";
 import { Model } from "../domain-entities/model";
 import { SecurityContext } from "../security-context";
 import {
@@ -11,7 +11,9 @@ import {
 	MODEL_RW_ALL,
 } from "../../../common/src/permission-constants";
 import { World } from "../domain-entities/world";
+import { injectable } from "inversify";
 
+@injectable()
 export class ModelAuthorizationRuleset implements EntityAuthorizationRuleset<Model, World> {
 	canAdmin = async (context: SecurityContext, entity: Model): Promise<boolean> => {
 		return (

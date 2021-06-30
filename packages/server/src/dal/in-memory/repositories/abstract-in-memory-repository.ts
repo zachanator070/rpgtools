@@ -7,7 +7,8 @@ import {
 import { PaginatedResult } from "../../paginated-result";
 
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
-	implements Repository<Type> {
+	implements Repository<Type>
+{
 	items = new Map<string, Type>();
 
 	PAGE_LIMIT = 100;
@@ -36,7 +37,7 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 		return this.items.get(id) ?? null;
 	};
 
-	findOne = async (conditions: FilterCondition[]): Promise<Type> => {
+	findOne = async (conditions: FilterCondition[] = []): Promise<Type> => {
 		const results = await this.find(conditions);
 
 		if (results.length !== 1) {

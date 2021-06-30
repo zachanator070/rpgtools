@@ -1,4 +1,4 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { EntityAuthorizationRuleset } from "../types";
 import { Game } from "../domain-entities/game";
 import { SecurityContext } from "../security-context";
 import {
@@ -11,7 +11,9 @@ import {
 	GAME_RW,
 } from "../../../common/src/permission-constants";
 import { World } from "../domain-entities/world";
+import { injectable } from "inversify";
 
+@injectable()
 export class GameAuthorizationRuleset implements EntityAuthorizationRuleset<Game, World> {
 	canAdmin = async (context: SecurityContext, entity: Game): Promise<boolean> => {
 		return (

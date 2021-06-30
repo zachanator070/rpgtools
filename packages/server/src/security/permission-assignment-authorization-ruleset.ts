@@ -1,10 +1,15 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity, EntityAuthorizationRuleset, Repository } from "../types";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { SecurityContext } from "../security-context";
+import { RepositoryMapper } from "../repository-mapper";
+import { injectable } from "inversify";
 
+@injectable()
 export class PermissionAssignmentAuthorizationRuleset
 	implements EntityAuthorizationRuleset<PermissionAssignment, DomainEntity>
 {
+	repoMapper = new RepositoryMapper();
+
 	canAdmin = async (context: SecurityContext, entity: PermissionAssignment): Promise<boolean> => {
 		// this doesn't make sense to implement
 		return false;
@@ -23,6 +28,8 @@ export class PermissionAssignmentAuthorizationRuleset
 	};
 
 	canWrite = async (context: SecurityContext, entity: PermissionAssignment): Promise<boolean> => {
-		return context.hasPermission(entity.permission, entity.subject);
+		const repo = this.repoMapper.map<DomainEntity>(entity.subjectType);
+		const subject = await repo.findById(entity.subject);
+		return subject.authorizationRuleset.canAdmin(context, subject);
 	};
 }

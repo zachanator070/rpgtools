@@ -1,7 +1,5 @@
-import { DomainEntity, EntityAuthorizationRuleset, WikiFolderRepository } from "../types";
-import { WikiPage } from "../domain-entities/wiki-page";
+import { EntityAuthorizationRuleset, WikiFolderRepository } from "../types";
 import { SecurityContext } from "../security-context";
-import { World } from "../domain-entities/world";
 import {
 	FOLDER_ADMIN,
 	FOLDER_ADMIN_ALL,
@@ -19,7 +17,8 @@ import { FilterCondition } from "../dal/filter-condition";
 
 @injectable()
 export class WikiFolderAuthorizationRuleset
-	implements EntityAuthorizationRuleset<WikiFolder, WikiFolder> {
+	implements EntityAuthorizationRuleset<WikiFolder, WikiFolder>
+{
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: WikiFolderRepository;
 

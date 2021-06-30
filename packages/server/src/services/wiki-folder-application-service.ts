@@ -1,19 +1,20 @@
 import {
+	ArticleFactory,
 	AuthorizationService,
 	EntityAuthorizationRuleset,
 	Factory,
+	PermissionAssignmentFactory,
 	UnitOfWork,
+	WikiFolderFactory,
 	WikiFolderRepository,
 	WikiFolderService,
 	WorldRepository,
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
 import { SecurityContext } from "../security-context";
-import { Article } from "../domain-entities/article";
 import {
 	FILTER_CONDITION_OPERATOR_IN,
 	FILTER_CONDITION_REGEX,
@@ -28,10 +29,10 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 @injectable()
 export class WikiFolderApplicationService implements WikiFolderService {
-	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<WikiFolder, WikiFolder> =
-		new WikiFolderAuthorizationRuleset();
-	wikiPageAuthorizationRuleset: EntityAuthorizationRuleset<WikiPage, WikiFolder> =
-		new WikiPageAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
+	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
@@ -40,6 +41,13 @@ export class WikiFolderApplicationService implements WikiFolderService {
 	worldRepository: WorldRepository;
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: WikiFolderRepository;
+
+	@inject(INJECTABLE_TYPES.WikiFolderFactory)
+	wikiFolderFactory: WikiFolderFactory;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
+	@inject(INJECTABLE_TYPES.ArticleFactory)
+	articleFactory: ArticleFactory;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
@@ -58,13 +66,18 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, parentFolder))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
-		const newFolder = new WikiFolder("", name, parentFolder.world, [], []);
+		const newFolder = this.wikiFolderFactory(null, name, parentFolder.world, [], []);
 		await unitOfWork.wikiFolderRepository.create(newFolder);
 		parentFolder.children.push(newFolder._id);
 		await unitOfWork.wikiFolderRepository.update(parentFolder);
 
 		for (let permission of [FOLDER_RW, FOLDER_ADMIN]) {
-			const newPermission = new PermissionAssignment("", permission, newFolder._id, WIKI_FOLDER);
+			const newPermission = this.permissionAssignmentFactory(
+				null,
+				permission,
+				newFolder._id,
+				WIKI_FOLDER
+			);
 			await unitOfWork.permissionAssignmentRepository.create(newPermission);
 			context.user.permissions.push(newPermission._id);
 		}
@@ -244,7 +257,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 			if (
 				!(await this.wikiPageAuthorizationRuleset.canWrite(
 					context,
-					new Article(childPage, "", "", "", "")
+					this.articleFactory(childPage, null, null, null, null)
 				))
 			) {
 				throw new Error(`You do not have write permission for the page ${childPage}`);

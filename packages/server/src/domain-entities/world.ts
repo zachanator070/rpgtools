@@ -1,7 +1,10 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { WorldAuthorizationRuleset } from "../security/world-authorization-ruleset";
 import { WORLD } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class World implements DomainEntity {
 	public _id: string;
 	public name: string;
@@ -11,24 +14,6 @@ export class World implements DomainEntity {
 	public pins: string[];
 	public type: string = WORLD;
 
-	public authorizationRuleset: EntityAuthorizationRuleset<
-		this,
-		DomainEntity
-	> = new WorldAuthorizationRuleset();
-
-	constructor(
-		id: string,
-		name: string,
-		wikiPageId: string,
-		rootFolderId: string,
-		roleIds: string[],
-		pinIds: string[]
-	) {
-		this._id = id;
-		this.name = name;
-		this.wikiPage = wikiPageId;
-		this.rootFolder = rootFolderId;
-		this.roles = roleIds;
-		this.pins = pinIds;
-	}
+	@inject(INJECTABLE_TYPES.WorldAuthorizationRuleset)
+	public authorizationRuleset: WorldAuthorizationRuleset;
 }

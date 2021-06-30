@@ -45,10 +45,16 @@ const wikiPageInterfaceAttributes = {
 		return dataLoader.getDocument(page.coverImage);
 	},
 	canWrite: async (page: WikiPage, _: any, { securityContext }: SessionContext) => {
-		return new WikiPageAuthorizationRuleset().canWrite(securityContext, page);
+		const ruleset = container.get<WikiPageAuthorizationRuleset>(
+			INJECTABLE_TYPES.WikiPageAuthorizationRuleset
+		);
+		return ruleset.canWrite(securityContext, page);
 	},
 	canAdmin: async (page: WikiPage, _: any, { securityContext }: SessionContext) => {
-		return new WikiPageAuthorizationRuleset().canAdmin(securityContext, page);
+		const ruleset = container.get<WikiPageAuthorizationRuleset>(
+			INJECTABLE_TYPES.WikiPageAuthorizationRuleset
+		);
+		return ruleset.canAdmin(securityContext, page);
 	},
 };
 
@@ -92,15 +98,21 @@ export const TypeResolvers = {
 			return dataLoader.getDocument(world.wikiPage);
 		},
 		canAddRoles: async (world: World, _: any, { securityContext }: SessionContext) => {
-			const ruleset = new RoleAuthorizationRuleset();
+			const ruleset = container.get<RoleAuthorizationRuleset>(
+				INJECTABLE_TYPES.RoleAuthorizationRuleset
+			);
 			return ruleset.canCreate(securityContext, world);
 		},
 		canHostGame: async (world: World, _: any, { securityContext }: SessionContext) => {
-			const ruleset = new GameAuthorizationRuleset();
+			const ruleset = container.get<GameAuthorizationRuleset>(
+				INJECTABLE_TYPES.GameAuthorizationRuleset
+			);
 			return ruleset.canCreate(securityContext, world);
 		},
 		canAddModels: async (world: World, _: any, { securityContext }: SessionContext) => {
-			const ruleset = new ModelAuthorizationRuleset();
+			const ruleset = container.get<ModelAuthorizationRuleset>(
+				INJECTABLE_TYPES.ModelAuthorizationRuleset
+			);
 			return ruleset.canCreate(securityContext, world);
 		},
 		pins: async (world: World, _: any, { securityContext }: SessionContext) => {
@@ -140,8 +152,14 @@ export const TypeResolvers = {
 		},
 	},
 	Role: {
+		world: async (folder: WikiFolder) => {
+			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
+			return dataLoader.getDocument(folder.world);
+		},
 		permissions: async (role: Role, _: any, { securityContext }: SessionContext) => {
-			const ruleset = new RoleAuthorizationRuleset();
+			const ruleset = container.get<RoleAuthorizationRuleset>(
+				INJECTABLE_TYPES.RoleAuthorizationRuleset
+			);
 			const dataLoader = container.get<DataLoader<PermissionAssignment>>(
 				INJECTABLE_TYPES.PermissionAssignmentDataLoader
 			);
@@ -157,7 +175,9 @@ export const TypeResolvers = {
 			}
 		},
 		members: async (role: Role, _: any, { securityContext }: SessionContext) => {
-			const ruleset = new RoleAuthorizationRuleset();
+			const ruleset = container.get<RoleAuthorizationRuleset>(
+				INJECTABLE_TYPES.RoleAuthorizationRuleset
+			);
 			if (
 				!(await ruleset.canWrite(securityContext, role)) &&
 				!(await securityContext.hasRole(role.name))

@@ -1,9 +1,10 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
-import { World } from "./world";
-import { Place } from "./place";
 import { PIN } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class Pin implements DomainEntity {
 	public _id: string;
 	public x: number;
@@ -11,14 +12,7 @@ export class Pin implements DomainEntity {
 	public map: string;
 	public page?: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<Pin, Place> = new PinAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.PinAuthorizationRuleset)
+	authorizationRuleset: PinAuthorizationRuleset;
 	type: string = PIN;
-
-	constructor(id: string, x: number, y: number, mapId: string, pageId: string) {
-		this._id = id;
-		this.x = x;
-		this.y = y;
-		this.map = mapId;
-		this.page = pageId;
-	}
 }

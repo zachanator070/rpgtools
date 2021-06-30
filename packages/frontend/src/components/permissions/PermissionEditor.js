@@ -91,12 +91,14 @@ export const PermissionEditor = ({ subject, subjectType, refetch }) => {
 															if (permissionGroup === "users") {
 																await revokeUserPermission(
 																	item._id,
-																	selectedPermissionAssignment._id
+																	selectedPermissionAssignment.permission,
+																	selectedPermission.subject
 																);
 															} else {
 																await revokeRolePermission(
 																	item._id,
-																	selectedPermissionAssignment._id
+																	selectedPermissionAssignment.permission,
+																	selectedPermission.subject
 																);
 															}
 															if (refetch) {
@@ -118,55 +120,53 @@ export const PermissionEditor = ({ subject, subjectType, refetch }) => {
 			</Row>
 
 			{subject.canAdmin && (
-				<>
-					<Row className="margin-md-top">
-						<Col span={24} style={{ textAlign: "center" }}>
-							{permissionGroup === "users" ? (
-								<SelectUser
-									onChange={async (value) => {
-										await setPermissionAssigneeId(value);
-									}}
-								/>
-							) : (
-								<SelectRole
-									onChange={async (value) => {
-										await setPermissionAssigneeId(value);
-									}}
-								/>
-							)}
-							<Button
-								disabled={permissionAssigneeId === null}
-								className="margin-md-left"
-								onClick={async () => {
-									let permission = selectedPermission;
-									if (!permission) {
-										permission = possiblePermissions[0];
-									}
-									if (permissionGroup === "users") {
-										await grantUserPermission(
-											permissionAssigneeId,
-											permission,
-											subject._id,
-											subjectType
-										);
-									} else {
-										await grantRolePermission(
-											permissionAssigneeId,
-											permission,
-											subject._id,
-											subjectType
-										);
-									}
-									if (refetch) {
-										await refetch();
-									}
+				<Row className="margin-md-top">
+					<Col span={24} style={{ textAlign: "center" }}>
+						{permissionGroup === "users" ? (
+							<SelectUser
+								onChange={async (value) => {
+									await setPermissionAssigneeId(value);
 								}}
-							>
-								Add {permissionGroup === "users" ? "user" : "role"}
-							</Button>
-						</Col>
-					</Row>
-				</>
+							/>
+						) : (
+							<SelectRole
+								onChange={async (value) => {
+									await setPermissionAssigneeId(value);
+								}}
+							/>
+						)}
+						<Button
+							disabled={permissionAssigneeId === null}
+							className="margin-md-left"
+							onClick={async () => {
+								let permission = selectedPermission;
+								if (!permission) {
+									permission = possiblePermissions[0];
+								}
+								if (permissionGroup === "users") {
+									await grantUserPermission(
+										permissionAssigneeId,
+										permission,
+										subject._id,
+										subjectType
+									);
+								} else {
+									await grantRolePermission(
+										permissionAssigneeId,
+										permission,
+										subject._id,
+										subjectType
+									);
+								}
+								if (refetch) {
+									await refetch();
+								}
+							}}
+						>
+							Add {permissionGroup === "users" ? "user" : "role"}
+						</Button>
+					</Col>
+				</Row>
 			)}
 		</>
 	);

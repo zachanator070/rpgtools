@@ -4,6 +4,7 @@ import {
 	SessionContext,
 	SessionContextFactory,
 	UnitOfWork,
+	UserFactory,
 } from "./types";
 import { Request, Response } from "express";
 import { ExpressContext } from "apollo-server-express/src/ApolloServer";
@@ -35,6 +36,9 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 
 	@inject(INJECTABLE_TYPES.SecurityContextFactory)
 	securityContextFactory: SecurityContextFactory;
+
+	@inject(INJECTABLE_TYPES.UserFactory)
+	userFactory: UserFactory;
 
 	create = async ({
 		req,
@@ -77,7 +81,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					cookieManager.clearCookie(REFRESH_TOKEN);
 				}
 			} else {
-				currentUser = new User(uuidv4(), "", ANON_USERNAME, "", "", null, [], []);
+				currentUser = this.userFactory(uuidv4(), "", ANON_USERNAME, "", "", null, [], []);
 			}
 		}
 

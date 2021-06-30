@@ -1,7 +1,9 @@
 import { DomainEntity, EntityAuthorizationRuleset } from "../types";
 import { User } from "../domain-entities/user";
 import { SecurityContext } from "../security-context";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserAuthorizationRuleset implements EntityAuthorizationRuleset<User, DomainEntity> {
 	canAdmin = async (context: SecurityContext, entity: User): Promise<boolean> => {
 		return context.user._id === entity._id;

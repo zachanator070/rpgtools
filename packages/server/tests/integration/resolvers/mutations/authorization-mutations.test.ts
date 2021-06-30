@@ -1,18 +1,6 @@
-import { ApolloServer } from "apollo-server-express";
-import { typeDefs } from "../../../../src/gql-server-schema";
-import { allResolvers } from "../../../../src/resolvers/all-resolvers";
-import { User } from "../../../../src/dal/mongodb/models/user";
 import { createTestClient } from "apollo-server-testing";
-import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
-import {
-	ANON_USERNAME,
-	WIKI_READ,
-	WIKI_RW,
-	WORLD_READ,
-} from "../../../../../common/src/permission-constants";
+import { WIKI_READ, WIKI_RW, WORLD_READ } from "../../../../../common/src/permission-constants";
 import { PLACE, WORLD } from "../../../../../common/src/type-constants";
-import { PermissionAssignment } from "../../../../src/dal/mongodb/models/permission-assignment";
-import { Role } from "../../../../src/dal/mongodb/models/role";
 import { ADD_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useAddUserRole";
 import { CREATE_ROLE } from "../../../../../frontend/src/hooks/authorization/useCreateRole";
 import { DELETE_ROLE } from "../../../../../frontend/src/hooks/authorization/useDeleteRole";
@@ -21,35 +9,74 @@ import { GRANT_USER_PERMISSION } from "../../../../../frontend/src/hooks/authori
 import { REMOVE_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useRemoveUserRole";
 import { REVOKE_ROLE_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useRevokeRolePermission";
 import { REVOKE_USER_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useRevokeUserPermission";
+import { container } from "../../../../src/inversify.config";
+import {
+	AuthorizationService,
+	RoleFactory,
+	RoleRepository,
+	SessionContextFactory,
+	UserFactory,
+	UserRepository,
+	WorldService,
+} from "../../../../src/types";
+import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import { MockSessionContextFactory } from "../../MockSessionContextFactory";
+import { ExpressApiServer } from "../../../../src/express-api-server";
+import { FilterCondition } from "../../../../src/dal/filter-condition";
+import { User } from "../../../../src/domain-entities/user";
+import { World } from "../../../../src/domain-entities/world";
+import { SecurityContextFactory } from "../../../../src/security-context-factory";
+import { Role } from "../../../../src/domain-entities/role";
+import { SecurityContext } from "../../../../src/security-context";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 
+// TODO: rename to 'with session mocked'
 describe("authorization-mutations", () => {
-	let currentUser = null;
+	container
+		.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
+		.to(MockSessionContextFactory)
+		.inSingletonScope();
 
-	const server = new ApolloServer({
-		typeDefs,
-		resolvers: allResolvers,
-		context: () => {
-			return {
-				currentUser: currentUser,
-				res: {
-					cookie: () => {},
-				},
-			};
-		},
-	});
+	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
 
-	const { mutate } = createTestClient(server);
+	const { mutate } = createTestClient(server.gqlServer);
 
-	let world = null;
-	let otherUser = null;
+	const mockSessionContextFactory = container.get<MockSessionContextFactory>(
+		INJECTABLE_TYPES.SessionContextFactory
+	);
+
+	// TODO: add describe block named 'with tester logged in and world created'
+	const userRepo = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
+	const securityContextFactory = container.get<SecurityContextFactory>(
+		INJECTABLE_TYPES.SecurityContextFactory
+	);
+	const roleRepo = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
+	const authorizationService = container.get<AuthorizationService>(
+		INJECTABLE_TYPES.AuthorizationService
+	);
+	const userFactory = container.get<UserFactory>(INJECTABLE_TYPES.UserFactory);
+	const roleFactory = container.get<RoleFactory>(INJECTABLE_TYPES.RoleFactory);
+
+	let otherUser: User = null;
+	let world: World = null;
+	let testRole: Role = null;
+	let currentUser: User = null;
+	let testerSecurityContext: SecurityContext = null;
 
 	beforeEach(async () => {
-		currentUser = await User.findOne({ username: "tester" });
-		otherUser = await User.create({ username: "tester2" });
-		await currentUser.recalculateAllPermissions();
-		world = await createWorld("Earth", false, currentUser);
+		currentUser = await userRepo.findOne([new FilterCondition("username", "tester")]);
+		mockSessionContextFactory.setCurrentUser(currentUser);
+		testerSecurityContext = await securityContextFactory.create(currentUser);
+		otherUser = userFactory(null, "tester2@gmail.com", "tester2", "", "", null, [], []);
+		await userRepo.create(otherUser);
+		const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
+		world = await worldService.createWorld("Earth", false, testerSecurityContext);
+		await authorizationService.createRole(testerSecurityContext, world._id, "other role");
+		testRole = await roleRepo.findOne([
+			new FilterCondition("name", "other role"),
+			new FilterCondition("world", world._id),
+		]);
 	});
 
 	test("grantUserPermission", async () => {
@@ -64,28 +91,27 @@ describe("authorization-mutations", () => {
 		});
 		expect(result).toMatchSnapshot({
 			data: {
-				grantUserPermission: {
+				grantUserPermission: expect.objectContaining({
 					_id: expect.any(String),
-					usersWithPermissions: [
-						{
+					accessControlList: expect.arrayContaining([
+						expect.objectContaining({
 							_id: expect.any(String),
-							permissions: [
-								{
-									_id: expect.any(String),
-									subject: {
-										_id: expect.any(String),
-									},
-								},
-							],
-						},
-					],
-				},
+							permission: expect.any(String),
+							canWrite: expect.any(Boolean),
+							subject: expect.objectContaining({
+								_id: expect.any(String),
+								name: expect.any(String),
+							}),
+						}),
+					]),
+				}),
 			},
+			errors: undefined,
 		});
 	});
 
 	test("grantUserPermission permission denied", async () => {
-		currentUser = new User({ username: ANON_USERNAME });
+		mockSessionContextFactory.resetCurrentUser();
 		const result = await mutate({
 			mutation: GRANT_USER_PERMISSION,
 			variables: {
@@ -99,57 +125,51 @@ describe("authorization-mutations", () => {
 	});
 
 	test("revokeUserPermission", async () => {
-		const permission = await PermissionAssignment.create({
-			permission: WIKI_READ,
-			subjectType: PLACE,
-			subject: world.wikiPage,
-		});
-		otherUser.permissions.push(permission);
-		await otherUser.save();
+		await authorizationService.grantUserPermission(
+			testerSecurityContext,
+			WIKI_READ,
+			world.wikiPage,
+			PLACE,
+			otherUser._id
+		);
 		const result = await mutate({
 			mutation: REVOKE_USER_PERMISSION,
 			variables: {
 				userId: otherUser._id.toString(),
-				permissionAssignmentId: permission._id.toString(),
+				permission: WIKI_READ,
+				subjectId: world.wikiPage,
 			},
 		});
 		expect(result).toMatchSnapshot({
 			data: {
 				revokeUserPermission: {
 					_id: expect.any(String),
-					usersWithPermissions: [],
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("revokeUserPermission permission denied", async () => {
-		currentUser = new User({ username: ANON_USERNAME });
-		const permission = await PermissionAssignment.create({
-			permission: WIKI_READ,
-			subjectType: PLACE,
-			subject: world.wikiPage,
-		});
-		otherUser.permissions.push(permission);
-		await otherUser.save();
+		mockSessionContextFactory.resetCurrentUser();
 		const result = await mutate({
 			mutation: REVOKE_USER_PERMISSION,
 			variables: {
 				userId: otherUser._id.toString(),
-				permissionAssignmentId: permission._id.toString(),
+				permission: WORLD_READ,
+				subjectId: world._id.toString(),
 			},
 		});
 		expect(result).toMatchSnapshot();
 	});
 
 	test("grantRolePermission", async () => {
-		const role = await Role.create({ name: "other role" });
 		const result = await mutate({
 			mutation: GRANT_ROLE_PERMISSION,
 			variables: {
-				roleId: role._id.toString(),
+				roleId: testRole._id,
 				permission: WIKI_READ,
-				subjectId: world.wikiPage._id.toString(),
+				subjectId: world.wikiPage,
 				subjectType: PLACE,
 			},
 		});
@@ -167,18 +187,18 @@ describe("authorization-mutations", () => {
 					],
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("grantRolePermission permission denied", async () => {
-		currentUser = new User({ username: ANON_USERNAME });
-		const role = await Role.create({ name: "other role" });
+		mockSessionContextFactory.resetCurrentUser();
 		const result = await mutate({
 			mutation: GRANT_ROLE_PERMISSION,
 			variables: {
-				roleId: role._id.toString(),
+				roleId: testRole._id,
 				permission: WIKI_READ,
-				subjectId: world.wikiPage._id.toString(),
+				subjectId: world.wikiPage,
 				subjectType: PLACE,
 			},
 		});
@@ -186,25 +206,26 @@ describe("authorization-mutations", () => {
 	});
 
 	test("revokeRolePermission", async () => {
-		const role = await Role.create({ name: "other role" });
-		const permission = await PermissionAssignment.create({
-			permission: WIKI_READ,
-			subjectType: PLACE,
-			subject: world.wikiPage,
-		});
-		const otherPermission = await PermissionAssignment.create({
-			permission: WIKI_RW,
-			subjectType: PLACE,
-			subject: world.wikiPage,
-		});
-		role.permissions.push(permission);
-		role.permissions.push(otherPermission);
-		await role.save();
+		await authorizationService.grantRolePermission(
+			testerSecurityContext,
+			WIKI_READ,
+			world.wikiPage,
+			PLACE,
+			testRole._id
+		);
+		await authorizationService.grantRolePermission(
+			testerSecurityContext,
+			WIKI_RW,
+			world.wikiPage,
+			PLACE,
+			testRole._id
+		);
 		const result = await mutate({
 			mutation: REVOKE_ROLE_PERMISSION,
 			variables: {
-				roleId: role._id.toString(),
-				permissionAssignmentId: permission._id.toString(),
+				roleId: testRole._id.toString(),
+				permission: WIKI_READ,
+				subjectId: world.wikiPage,
 			},
 		});
 		expect(result).toMatchSnapshot({
@@ -221,24 +242,25 @@ describe("authorization-mutations", () => {
 					],
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("revokeRolePermission permission denied", async () => {
-		currentUser = new User({ username: ANON_USERNAME });
-		const role = await Role.create({ name: "other role" });
-		const permission = await PermissionAssignment.create({
-			permission: WIKI_READ,
-			subjectType: PLACE,
-			subject: world.wikiPage,
-		});
-		role.permissions.push(permission);
-		await role.save();
+		mockSessionContextFactory.resetCurrentUser();
+		await authorizationService.grantRolePermission(
+			testerSecurityContext,
+			WIKI_READ,
+			world.wikiPage,
+			PLACE,
+			testRole._id
+		);
 		const result = await mutate({
 			mutation: REVOKE_ROLE_PERMISSION,
 			variables: {
-				roleId: role._id.toString(),
-				permissionAssignmentId: permission._id.toString(),
+				roleId: testRole._id.toString(),
+				permission: WIKI_READ,
+				subjectId: world.wikiPage,
 			},
 		});
 		expect(result).toMatchSnapshot();
@@ -269,18 +291,17 @@ describe("authorization-mutations", () => {
 									}),
 								}),
 							]),
-							world: {
-								_id: expect.any(String),
-							},
 						}),
 					]),
+					accessControlList: expect.any(Array),
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("createRole permission denied", async () => {
-		currentUser = otherUser;
+		mockSessionContextFactory.setCurrentUser(otherUser);
 		const result = await mutate({
 			mutation: CREATE_ROLE,
 			variables: { worldId: world._id.toString(), name: "new role" },
@@ -289,48 +310,24 @@ describe("authorization-mutations", () => {
 	});
 
 	test("deleteRole", async () => {
-		const role = await Role.create({ name: "other role", world: world });
-		world.roles.push(role);
-		await world.save();
 		const result = await mutate({
 			mutation: DELETE_ROLE,
-			variables: { roleId: role._id.toString() },
+			variables: { roleId: testRole._id.toString() },
 		});
 		expect(result).toMatchSnapshot({
 			data: {
 				deleteRole: {
 					_id: expect.any(String),
-					roles: expect.arrayContaining([
-						expect.objectContaining({
-							_id: expect.any(String),
-							members: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-								}),
-							]),
-							permissions: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-									subject: expect.objectContaining({
-										_id: expect.any(String),
-									}),
-								}),
-							]),
-							world: {
-								_id: expect.any(String),
-							},
-						}),
-					]),
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("deleteRole permission denied", async () => {
-		currentUser = otherUser;
-		const role = await Role.create({ name: "other role", world: world });
-		world.roles.push(role);
-		await world.save();
+		mockSessionContextFactory.resetCurrentUser();
+		const role = roleFactory(null, "other role", world._id, []);
+		await roleRepo.create(role);
 		const result = await mutate({
 			mutation: DELETE_ROLE,
 			variables: { roleId: role._id.toString() },
@@ -339,14 +336,11 @@ describe("authorization-mutations", () => {
 	});
 
 	test("addUserRole", async () => {
-		const role = await Role.create({ name: "other role", world: world });
-		world.roles.push(role);
-		await world.save();
 		const result = await mutate({
 			mutation: ADD_USER_ROLE,
 			variables: {
 				userId: otherUser._id.toString(),
-				roleId: role._id.toString(),
+				roleId: testRole._id.toString(),
 			},
 		});
 		expect(result).toMatchSnapshot({
@@ -374,37 +368,31 @@ describe("authorization-mutations", () => {
 							},
 						}),
 					]),
+					accessControlList: expect.any(Array),
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("addUserRole permission denied", async () => {
-		currentUser = otherUser;
-		const role = await Role.create({ name: "other role", world: world });
-		world.roles.push(role);
-		await world.save();
+		mockSessionContextFactory.resetCurrentUser();
 		const result = await mutate({
 			mutation: ADD_USER_ROLE,
 			variables: {
 				userId: otherUser._id.toString(),
-				roleId: role._id.toString(),
+				roleId: testRole._id.toString(),
 			},
 		});
 		expect(result).toMatchSnapshot();
 	});
 
 	test("removeUserRole", async () => {
-		const role = await Role.create({ name: "other role", world: world });
-		world.roles.push(role);
-		await world.save();
-		otherUser.roles.push(role);
-		await otherUser.save();
 		const result = await mutate({
 			mutation: REMOVE_USER_ROLE,
 			variables: {
 				userId: otherUser._id.toString(),
-				roleId: role._id.toString(),
+				roleId: testRole._id.toString(),
 			},
 		});
 		expect(result).toMatchSnapshot({
@@ -434,21 +422,18 @@ describe("authorization-mutations", () => {
 					]),
 				},
 			},
+			errors: undefined,
 		});
 	});
 
 	test("removeUserRole permission denied", async () => {
-		currentUser = new User({ username: ANON_USERNAME });
-		const role = await Role.create({ name: "other role", world: world });
-		world.roles.push(role);
-		await world.save();
-		otherUser.roles.push(role);
-		await otherUser.save();
+		await authorizationService.addUserRole(testerSecurityContext, otherUser._id, testRole._id);
+		mockSessionContextFactory.resetCurrentUser();
 		const result = await mutate({
 			mutation: REMOVE_USER_ROLE,
 			variables: {
 				userId: otherUser._id.toString(),
-				roleId: role._id.toString(),
+				roleId: testRole._id.toString(),
 			},
 		});
 		expect(result).toMatchSnapshot();

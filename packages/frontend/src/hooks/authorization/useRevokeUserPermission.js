@@ -3,8 +3,8 @@ import gql from "graphql-tag";
 import { ACCESS_CONTROL_LIST } from "../../../../common/src/gql-fragments";
 
 export const REVOKE_USER_PERMISSION = gql`
-	mutation revokeUserPermission($userId: ID!, $permissionAssignmentId: ID!){
-		revokeUserPermission(userId: $userId, permissionAssignmentId: $permissionAssignmentId){
+	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!){
+		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId){
 			_id
 			${ACCESS_CONTROL_LIST}
 		}
@@ -13,9 +13,9 @@ export const REVOKE_USER_PERMISSION = gql`
 export const useRevokeUserPermission = () => {
 	const [revokeUserPermission, { data, loading, error }] = useMutation(REVOKE_USER_PERMISSION);
 	return {
-		revokeUserPermission: async (userId, permissionAssignmentId) => {
+		revokeUserPermission: async (userId, permission, subjectId) => {
 			return await revokeUserPermission({
-				variables: { userId, permissionAssignmentId },
+				variables: { userId, permission, subjectId },
 			});
 		},
 		loading,

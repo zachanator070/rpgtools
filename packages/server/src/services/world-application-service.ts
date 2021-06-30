@@ -1,4 +1,15 @@
-import { Factory, UnitOfWork, WorldRepository, WorldService } from "../types";
+import {
+	Factory,
+	PermissionAssignmentFactory,
+	PinFactory,
+	PlaceFactory,
+	RoleFactory,
+	UnitOfWork,
+	WikiFolderFactory,
+	WorldFactory,
+	WorldRepository,
+	WorldService,
+} from "../types";
 import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
@@ -8,28 +19,38 @@ import { SecurityContext } from "../security-context";
 import { PLACE, WORLD } from "../../../common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
 import { World } from "../domain-entities/world";
-import { Place } from "../domain-entities/place";
-import { WikiFolder } from "../domain-entities/wiki-folder";
 import { FilterCondition } from "../dal/filter-condition";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { Role } from "../domain-entities/role";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WorldAuthorizationRuleset } from "../security/world-authorization-ruleset";
-import { Pin } from "../domain-entities/pin";
 import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class WorldApplicationService implements WorldService {
-	worldAuthorizationRuleset = new WorldAuthorizationRuleset();
-	pinAuthorizationRuleset = new PinAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.WorldAuthorizationRuleset)
+	worldAuthorizationRuleset: WorldAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.PinAuthorizationRuleset)
+	pinAuthorizationRuleset: PinAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
+	@inject(INJECTABLE_TYPES.RoleFactory)
+	roleFactory: RoleFactory;
+	@inject(INJECTABLE_TYPES.PinFactory)
+	pinFactory: PinFactory;
+	@inject(INJECTABLE_TYPES.WorldFactory)
+	worldFactory: WorldFactory;
+	@inject(INJECTABLE_TYPES.PlaceFactory)
+	placeFactory: PlaceFactory;
+	@inject(INJECTABLE_TYPES.WikiFolderFactory)
+	wikiFolderFactory: WikiFolderFactory;
 
 	createWorld = async (
 		name: string,
@@ -86,7 +107,7 @@ export class WorldApplicationService implements WorldService {
 			throw new Error(`You do not have permission to add pins to this map`);
 		}
 
-		const newPin = new Pin("", x, y, mapId, wikiId);
+		const newPin = this.pinFactory(null, x, y, mapId, wikiId);
 		await unitOfWork.pinRepository.create(newPin);
 		const world = await unitOfWork.worldRepository.findById(map.world);
 		world.pins.push(newPin._id);
@@ -171,15 +192,15 @@ export class WorldApplicationService implements WorldService {
 		context: SecurityContext,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = new World("", name, "", "", [], []);
+		const world = this.worldFactory(null, name, null, null, [], []);
 		await unitOfWork.worldRepository.create(world);
-		const rootWiki = new Place("", name, world._id, "", "", "", 0);
+		const rootWiki = this.placeFactory(null, name, world._id, null, null, null, 0);
 		await unitOfWork.placeRepository.create(rootWiki);
-		const rootFolder = new WikiFolder("", name, world._id, [], []);
+		const rootFolder = this.wikiFolderFactory(null, name, world._id, [], []);
 		await unitOfWork.wikiFolderRepository.create(rootFolder);
-		const placeFolder = new WikiFolder("", "Places", world._id, [rootWiki._id], []);
+		const placeFolder = this.wikiFolderFactory(null, "Places", world._id, [rootWiki._id], []);
 		await unitOfWork.wikiFolderRepository.create(placeFolder);
-		const peopleFolder = new WikiFolder("", "People", world._id, [], []);
+		const peopleFolder = this.wikiFolderFactory(null, "People", world._id, [], []);
 		await unitOfWork.wikiFolderRepository.create(peopleFolder);
 		rootFolder.children.push(placeFolder._id, peopleFolder._id);
 		await unitOfWork.wikiFolderRepository.update(rootFolder);
@@ -189,12 +210,18 @@ export class WorldApplicationService implements WorldService {
 
 		const ownerPermissions = [];
 		for (const permission of WORLD_PERMISSIONS) {
-			const permissionAssignment = new PermissionAssignment("", permission, world._id, WORLD);
+			const permissionAssignment = this.permissionAssignmentFactory(
+				null,
+				permission,
+				world._id,
+				WORLD
+			);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			ownerPermissions.push(permissionAssignment._id);
 			context.permissions.push(permissionAssignment);
 		}
-		const ownerRole = new Role("", WORLD_OWNER, world._id, ownerPermissions);
+		const ownerRole = this.roleFactory(null, WORLD_OWNER, world._id, ownerPermissions);
+		await unitOfWork.roleRepository.create(ownerRole);
 		context.user.roles.push(ownerRole._id);
 		await unitOfWork.userRepository.update(context.user);
 
@@ -207,14 +234,20 @@ export class WorldApplicationService implements WorldService {
 					new FilterCondition("subjectType", WORLD),
 				]);
 				if (!permissionAssignment) {
-					permissionAssignment = new PermissionAssignment("", permission, world._id, WORLD);
+					permissionAssignment = this.permissionAssignmentFactory(
+						null,
+						permission,
+						world._id,
+						WORLD
+					);
 					await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 				}
 				everyonePerms.push(permissionAssignment._id);
 				context.permissions.push(permissionAssignment);
 			}
 		}
-		const everyoneRole = new Role("", EVERYONE, world._id, everyonePerms);
+		const everyoneRole = this.roleFactory(null, EVERYONE, world._id, everyonePerms);
+		await unitOfWork.roleRepository.create(everyoneRole);
 
 		world.roles = [ownerRole._id, everyoneRole._id];
 		await unitOfWork.worldRepository.update(world);

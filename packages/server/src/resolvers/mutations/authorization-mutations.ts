@@ -54,10 +54,10 @@ export const authorizationMutations = {
 		);
 		return await authorizationService.grantRolePermission(
 			securityContext,
-			roleId,
 			permission,
 			subjectId,
-			subjectType
+			subjectType,
+			roleId
 		);
 	},
 	revokeRolePermission: async (
@@ -93,7 +93,7 @@ export const authorizationMutations = {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
 		);
-		await authorizationService.deleteRole(securityContext, roleId);
+		return await authorizationService.deleteRole(securityContext, roleId);
 	},
 	addUserRole: async (
 		_: any,

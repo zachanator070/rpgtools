@@ -2,18 +2,22 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Monster } from "../../../domain-entities/monster";
 import { MonsterDocument, MonsterModel } from "../models/monster";
 import { Model } from "mongoose";
-import { MonsterRepository } from "../../../types";
-import { injectable } from "inversify";
+import { MonsterFactory, MonsterRepository } from "../../../types";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()
 export class MongodbMonsterRepository
 	extends AbstractMongodbRepository<Monster, MonsterDocument>
 	implements MonsterRepository
 {
+	@inject(INJECTABLE_TYPES.MonsterFactory)
+	monsterFactory: MonsterFactory;
+
 	model: Model<any> = MonsterModel;
 
 	buildEntity(document: MonsterDocument): Monster {
-		return new Monster(
+		return this.monsterFactory(
 			document._id.toString(),
 			document.name,
 			document.world.toString(),

@@ -1,8 +1,10 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { CHUNK } from "../../../common/src/type-constants";
-import { Image } from "./image";
 import { ChunkAuthorizationRuleset } from "../security/chunk-authorization-ruleset";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class Chunk implements DomainEntity {
 	public _id: string;
 	public x: number;
@@ -12,24 +14,7 @@ export class Chunk implements DomainEntity {
 	public fileId: string;
 	public image: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<Chunk, Image> = new ChunkAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.ChunkAuthorizationRuleset)
+	authorizationRuleset: ChunkAuthorizationRuleset;
 	type: string = CHUNK;
-
-	constructor(
-		id: string,
-		x: number,
-		y: number,
-		width: number,
-		height: number,
-		fileId: string,
-		imageId: string
-	) {
-		this._id = id;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.fileId = fileId;
-		this.image = imageId;
-	}
 }

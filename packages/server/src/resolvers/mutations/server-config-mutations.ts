@@ -2,7 +2,7 @@ import { container } from "../../inversify.config";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { ServerConfigService, SessionContext } from "../../types";
 
-export const serverMutations = {
+export const serverConfigMutations = {
 	unlockServer: async (
 		_: any,
 		{

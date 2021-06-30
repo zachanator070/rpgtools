@@ -7,15 +7,12 @@ import {
 import DataLoader from "dataloader";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "./filter-condition";
 import { SecurityContext } from "../security-context";
+import { injectable } from "inversify";
 
-export class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
+@injectable()
+export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
 	repository: Repository<T>;
 	ruleset: EntityAuthorizationRuleset<T, DomainEntity>;
-
-	constructor(repository: Repository<T>, ruleset: EntityAuthorizationRuleset<T, DomainEntity>) {
-		this.repository = repository;
-		this.ruleset = ruleset;
-	}
 
 	getDocument = async (id: string): Promise<T> => {
 		return this.getDataLoader().load(id);

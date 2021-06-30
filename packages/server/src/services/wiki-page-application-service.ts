@@ -5,18 +5,18 @@ import { WIKI_ADMIN, WIKI_RW } from "../../../common/src/permission-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
-import { Article } from "../domain-entities/article";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { File } from "../domain-entities/file";
 import { Readable } from "stream";
-import { Person } from "../domain-entities/person";
-import { Place } from "../domain-entities/place";
-import { Item } from "../domain-entities/item";
-import { Monster } from "../domain-entities/monster";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import {
+	ArticleFactory,
 	AuthorizationService,
 	Factory,
+	FileFactory,
+	ItemFactory,
+	MonsterFactory,
+	PermissionAssignmentFactory,
+	PersonFactory,
+	PlaceFactory,
 	WikiFolderRepository,
 	WikiPageRepository,
 	WikiPageService,
@@ -24,15 +24,15 @@ import {
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { WikiPage } from "../domain-entities/wiki-page";
-import { WikiPageRepositoryMapper } from "../dal/wiki-page-repository-mapper";
-import { WikiPageModel } from "../dal/mongodb/models/wiki-page";
 import { PaginatedResult } from "../dal/paginated-result";
+import { RepositoryMapper } from "../repository-mapper";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
-		new WikiFolderAuthorizationRuleset();
-	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset = new WikiPageAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
+	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
@@ -45,6 +45,24 @@ export class WikiPageApplicationService implements WikiPageService {
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
+	@inject(INJECTABLE_TYPES.ArticleFactory)
+	articleFactory: ArticleFactory;
+	@inject(INJECTABLE_TYPES.ItemFactory)
+	itemFactory: ItemFactory;
+	@inject(INJECTABLE_TYPES.MonsterFactory)
+	monsterFactory: MonsterFactory;
+	@inject(INJECTABLE_TYPES.PersonFactory)
+	personFactory: PersonFactory;
+	@inject(INJECTABLE_TYPES.PlaceFactory)
+	placeFactory: PlaceFactory;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
+
+	@inject(INJECTABLE_TYPES.RepositoryMapper)
+	mapper: RepositoryMapper;
+
 	createWiki = async (context: SecurityContext, name: string, folderId: string) => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
@@ -56,16 +74,21 @@ export class WikiPageApplicationService implements WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const newPage = new Article("", name, folder.world, "", "");
+		const newPage = this.articleFactory(null, name, folder.world, null, null);
 		await unitOfWork.articleRepository.create(newPage);
 		folder.pages.push(newPage._id);
 		await unitOfWork.wikiFolderRepository.update(folder);
 
-		const readPermission = new PermissionAssignment("", WIKI_RW, newPage._id, ARTICLE);
+		const readPermission = this.permissionAssignmentFactory(null, WIKI_RW, newPage._id, ARTICLE);
 		await unitOfWork.permissionAssignmentRepository.create(readPermission);
 		context.user.permissions.push(readPermission._id);
 		context.permissions.push(readPermission);
-		const adminPermission = new PermissionAssignment("", WIKI_ADMIN, newPage._id, ARTICLE);
+		const adminPermission = this.permissionAssignmentFactory(
+			null,
+			WIKI_ADMIN,
+			newPage._id,
+			ARTICLE
+		);
 		await unitOfWork.permissionAssignmentRepository.create(adminPermission);
 		context.user.permissions.push(adminPermission._id);
 		context.permissions.push(adminPermission);
@@ -98,8 +121,8 @@ export class WikiPageApplicationService implements WikiPageService {
 			if (contentFile) {
 				await unitOfWork.fileRepository.delete(contentFile);
 			} else {
-				contentFile = new File(
-					"",
+				contentFile = this.fileFactory(
+					null,
 					`wikiContent.${wikiPage._id}.json`,
 					readStream,
 					"application/json"
@@ -126,29 +149,29 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (type) {
 			switch (type) {
 				case PERSON:
-					wikiPage = new Person(
+					wikiPage = this.personFactory(
 						wikiPage._id,
 						wikiPage.name,
 						wikiPage.world,
 						wikiPage.coverImage,
 						wikiPage.contentId,
-						"",
-						""
+						null,
+						null
 					);
 					break;
 				case PLACE:
-					wikiPage = new Place(
+					wikiPage = this.placeFactory(
 						wikiPage._id,
 						wikiPage.name,
 						wikiPage.world,
 						wikiPage.coverImage,
 						wikiPage.contentId,
-						"",
+						null,
 						0
 					);
 					break;
 				case ARTICLE:
-					wikiPage = new Article(
+					wikiPage = this.articleFactory(
 						wikiPage._id,
 						wikiPage.name,
 						wikiPage.world,
@@ -157,25 +180,25 @@ export class WikiPageApplicationService implements WikiPageService {
 					);
 					break;
 				case ITEM:
-					wikiPage = new Item(
+					wikiPage = this.itemFactory(
 						wikiPage._id,
 						wikiPage.name,
 						wikiPage.world,
 						wikiPage.coverImage,
 						wikiPage.contentId,
-						"",
-						""
+						null,
+						null
 					);
 					break;
 				case MONSTER:
-					wikiPage = new Monster(
+					wikiPage = this.monsterFactory(
 						wikiPage._id,
 						wikiPage.name,
 						wikiPage.world,
 						wikiPage.coverImage,
 						wikiPage.contentId,
-						"",
-						""
+						null,
+						null
 					);
 					break;
 			}
@@ -313,8 +336,7 @@ export class WikiPageApplicationService implements WikiPageService {
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
 
-		const mapper = new WikiPageRepositoryMapper();
-		foundWiki = await mapper.map(foundWiki).findById(foundWiki._id);
+		foundWiki = (await this.mapper.map(foundWiki.type).findById(foundWiki._id)) as WikiPage;
 
 		return foundWiki;
 	};

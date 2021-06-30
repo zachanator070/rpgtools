@@ -1,21 +1,18 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { PermissionAssignmentAuthorizationRuleset } from "../security/permission-assignment-authorization-ruleset";
 import { PERMISSION_ASSIGNMENT } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class PermissionAssignment implements DomainEntity {
 	public _id: string;
 	public permission: string;
 	public subject: string;
 	public subjectType: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<PermissionAssignment, DomainEntity> =
-		new PermissionAssignmentAuthorizationRuleset();
-	type: string = PERMISSION_ASSIGNMENT;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentAuthorizationRuleset)
+	authorizationRuleset: PermissionAssignmentAuthorizationRuleset;
 
-	constructor(id: string, permission: string, subject: string, subjectType: string) {
-		this._id = id;
-		this.permission = permission;
-		this.subject = subject;
-		this.subjectType = subjectType;
-	}
+	type: string = PERMISSION_ASSIGNMENT;
 }

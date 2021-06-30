@@ -7,11 +7,11 @@ import {
 	ApiServer,
 	AuthenticationService,
 	Factory,
+	PermissionAssignmentFactory,
+	RoleFactory,
 	ServerConfigRepository,
 	ServerConfigService,
 } from "../types";
-import { Role } from "../domain-entities/role";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { v4 as uuidv4 } from "uuid";
 import { ServerConfigAuthorizationRuleset } from "../security/server-config-authorization-ruleset";
 import { SecurityContext } from "../security-context";
@@ -24,14 +24,19 @@ export class ServerConfigApplicationService implements ServerConfigService {
 	@inject(INJECTABLE_TYPES.ApiServer)
 	server: ApiServer;
 
-	serverConfigAuthorizationRuleset: ServerConfigAuthorizationRuleset =
-		new ServerConfigAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.ServerConfigAuthorizationRuleset)
+	serverConfigAuthorizationRuleset: ServerConfigAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.ServerConfigRepository)
 	serverConfigRepository: ServerConfigRepository;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
+	@inject(INJECTABLE_TYPES.RoleFactory)
+	roleFactory: RoleFactory;
 
 	unlockServer = async (unlockCode: string, email: string, username: string, password: string) => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
@@ -54,10 +59,10 @@ export class ServerConfigApplicationService implements ServerConfigService {
 			password,
 			unitOfWork
 		);
-		const adminRole = new Role("", SERVER_ADMIN_ROLE, null, []);
+		const adminRole = this.roleFactory(null, SERVER_ADMIN_ROLE, null, []);
 		for (let permission of SERVER_PERMISSIONS) {
-			const permissionAssignment = new PermissionAssignment(
-				"",
+			const permissionAssignment = this.permissionAssignmentFactory(
+				null,
 				permission,
 				server._id,
 				SERVER_CONFIG

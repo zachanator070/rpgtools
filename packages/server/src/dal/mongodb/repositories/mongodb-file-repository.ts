@@ -1,4 +1,4 @@
-import { FileRepository } from "../../../types";
+import { FileFactory, FileRepository } from "../../../types";
 import { GridFSBucket } from "mongodb";
 import mongoose, { Document } from "mongoose";
 import { File } from "../../../domain-entities/file";
@@ -8,10 +8,14 @@ import {
 	FilterCondition,
 } from "../../filter-condition";
 import { PaginatedResult } from "../../paginated-result";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
+
 	create = async (entity: File): Promise<void> => {
 		entity._id = await new Promise((resolve, reject) => {
 			const gfs = new GridFSBucket(mongoose.connection.db);
@@ -72,7 +76,7 @@ export class MongodbFileRepository implements FileRepository {
 		const results: File[] = [];
 		const gfs = new GridFSBucket(mongoose.connection.db);
 		for (let doc of docs) {
-			results.push(new File(doc._id, doc.filename, gfs.openDownloadStream(doc._id)));
+			results.push(this.fileFactory(doc._id, doc.filename, gfs.openDownloadStream(doc._id), null));
 		}
 		return results;
 	};

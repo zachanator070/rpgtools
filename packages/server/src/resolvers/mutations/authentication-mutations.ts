@@ -25,13 +25,13 @@ export const authenticationMutations: IResolverObject<any, SessionContext> = {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		await authenticationService.login(username, password, cookieManager);
+		return await authenticationService.login(username, password, cookieManager);
 	},
 	logout: async (parent: any, any: any, { cookieManager, securityContext }: SessionContext) => {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		await authenticationService.logout(securityContext.user, cookieManager);
+		return await authenticationService.logout(securityContext.user, cookieManager);
 	},
 	register: async (
 		parent: any,
@@ -41,6 +41,6 @@ export const authenticationMutations: IResolverObject<any, SessionContext> = {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		await authenticationService.register(registerCode, email, username, password);
+		return await authenticationService.register(registerCode, email, username, password);
 	},
 };

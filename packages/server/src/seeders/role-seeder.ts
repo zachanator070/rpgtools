@@ -1,4 +1,4 @@
-import { Seeder } from "../types";
+import { PermissionAssignmentFactory, RoleFactory, Seeder } from "../types";
 import { ALL_USERS } from "../../../common/src/role-constants";
 import { WORLD_CREATE } from "../../../common/src/permission-constants";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
@@ -25,6 +25,10 @@ export class RoleSeeder implements Seeder {
 
 	@inject(INJECTABLE_TYPES.PermissionAssignmentRepository)
 	permissionAssignmentRepository: MongodbPermissionAssignmentRepository;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
+	@inject(INJECTABLE_TYPES.RoleFactory)
+	roleFactory: RoleFactory;
 
 	seed = async (): Promise<void> => {
 		let allUsersRole: Role = await this.roleRepository.findOne([
@@ -35,7 +39,7 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			allUsersRole = new Role("", ALL_USERS, null, []);
+			allUsersRole = this.roleFactory(null, ALL_USERS, null, []);
 			await this.roleRepository.create(allUsersRole);
 			let createWorldPermission = await this.permissionAssignmentRepository.findOne([
 				new FilterCondition("permission", WORLD_CREATE),
@@ -43,8 +47,8 @@ export class RoleSeeder implements Seeder {
 				new FilterCondition("subjectType", SERVER_CONFIG),
 			]);
 			if (!createWorldPermission) {
-				createWorldPermission = new PermissionAssignment(
-					"",
+				createWorldPermission = this.permissionAssignmentFactory(
+					null,
 					WORLD_CREATE,
 					server._id,
 					SERVER_CONFIG
