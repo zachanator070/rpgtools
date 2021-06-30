@@ -1,4 +1,4 @@
-import { DomainEntity, EntityAuthorizationRuleset, Repository } from "../types";
+import { EntityAuthorizationRuleset, Repository } from "../types";
 import { World } from "../domain-entities/world";
 import { SecurityContext } from "../security-context";
 import { ServerConfig } from "../domain-entities/server-config";
@@ -10,10 +10,10 @@ import {
 	WORLD_READ_ALL,
 	WORLD_RW,
 } from "../../../common/src/permission-constants";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
-import { ServerConfigAuthorizationRuleset } from "./server-config-authorization-ruleset";
 
+@injectable()
 export class WorldAuthorizationRuleset implements EntityAuthorizationRuleset<World, ServerConfig> {
 	@inject(INJECTABLE_TYPES.ServerConfigRepository)
 	serverConfigRepository: Repository<ServerConfig>;

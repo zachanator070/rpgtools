@@ -33,11 +33,12 @@ import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class ContentExportApplicationService implements ContentExportService {
-	wikiPageAuthorizationRuleSet: WikiPageAuthorizationRuleset = new WikiPageAuthorizationRuleset();
-	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
-		new WikiFolderAuthorizationRuleset();
-
+	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
+	wikiPageAuthorizationRuleSet: WikiPageAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
+	modelAuthorizationRuleset: ModelAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 

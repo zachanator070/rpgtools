@@ -1,19 +1,23 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Item } from "../../../domain-entities/item";
-import { injectable } from "inversify";
-import { ItemRepository } from "../../../types";
+import { inject, injectable } from "inversify";
+import { ItemFactory, ItemRepository } from "../../../types";
 import { Model } from "mongoose";
 import { ItemDocument, ItemModel } from "../models/item";
+import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()
 export class MongodbItemRepository
 	extends AbstractMongodbRepository<Item, ItemDocument>
 	implements ItemRepository
 {
+	@inject(INJECTABLE_TYPES.ItemFactory)
+	itemFactory: ItemFactory;
+
 	model: Model<any> = ItemModel;
 
 	buildEntity(document: ItemDocument): Item {
-		return new Item(
+		return this.itemFactory(
 			document._id.toString(),
 			document.name,
 			document.world.toString(),

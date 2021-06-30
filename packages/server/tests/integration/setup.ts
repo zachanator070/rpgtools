@@ -10,10 +10,12 @@ mongoose.set("useCreateIndex", true);
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";
 process.env.REFRESH_TOKEN_SECRET = "asdf1234";
 
+process.env.NODE_ENV = "test";
+
 // 5 minutes
 jest.setTimeout(1000 * 60 * 5);
 
-beforeEach(async () => {
+beforeAll(async () => {
 	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
 	server.setDbHost("localhost:27017");
 	server.setDbName(process.env.TEST_SUITE);
@@ -24,7 +26,7 @@ beforeEach(async () => {
 	await service.unlockServer(serverConfig.unlockCode, "tester@gmail.com", "tester", "tester");
 });
 
-afterEach(async function (done) {
+afterAll(async function (done) {
 	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
 	await server.clearDb();
 	await mongoose.disconnect();

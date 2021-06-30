@@ -10,6 +10,7 @@ import {
 	Repository,
 	UnitOfWork,
 	Factory,
+	WikiFolderFactory,
 } from "../types";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { Model } from "../domain-entities/model";
@@ -37,8 +38,8 @@ class DeferredPromise {
 
 @injectable()
 export class ContentImportApplicationService implements ContentImportService {
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
-		new WikiFolderAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
 
 	processedDocs: Map<string, DeferredPromise> = new Map<string, DeferredPromise>();
 
@@ -47,6 +48,8 @@ export class ContentImportApplicationService implements ContentImportService {
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+	@inject(INJECTABLE_TYPES.WikiFolderFactory)
+	wikiFolderFactory: WikiFolderFactory;
 
 	public importContent = async (
 		context: SecurityContext,
@@ -184,7 +187,13 @@ export class ContentImportApplicationService implements ContentImportService {
 				}
 			}
 			if (!foundChild) {
-				const newFolder = new WikiFolder("", path[0].name, destinationRootFolder.world, [], []);
+				const newFolder = this.wikiFolderFactory(
+					null,
+					path[0].name,
+					destinationRootFolder.world,
+					[],
+					[]
+				);
 				await unitOfWork.wikiFolderRepository.create(newFolder);
 				destinationRootFolder.children.push(newFolder._id);
 				await unitOfWork.wikiFolderRepository.update(destinationRootFolder);

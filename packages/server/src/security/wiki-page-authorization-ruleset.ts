@@ -1,7 +1,7 @@
 import { EntityAuthorizationRuleset, Repository } from "../types";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { SecurityContext } from "../security-context";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { World } from "../domain-entities/world";
 import { FilterCondition } from "../dal/filter-condition";
@@ -16,19 +16,20 @@ import {
 	WIKI_RW_ALL,
 } from "../../../common/src/permission-constants";
 import { WikiFolder } from "../domain-entities/wiki-folder";
+import { WikiFolderAuthorizationRuleset } from "./wiki-folder-authorization-ruleset";
 
+@injectable()
 export class WikiPageAuthorizationRuleset
-	implements EntityAuthorizationRuleset<WikiPage, WikiFolder> {
+	implements EntityAuthorizationRuleset<WikiPage, WikiFolder>
+{
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: Repository<World>;
 
 	@inject(INJECTABLE_TYPES.WikiFolderRepository)
 	wikiFolderRepository: Repository<WikiFolder>;
 
-	wikiFolderAuthorizationRuleset: EntityAuthorizationRuleset<
-		WikiPage,
-		WikiFolder
-	> = new WikiPageAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
 
 	canAdmin = async (context: SecurityContext, entity: WikiPage): Promise<boolean> => {
 		return (

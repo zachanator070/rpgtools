@@ -8,11 +8,11 @@ import { Pin } from "../domain-entities/pin";
 import { SecurityContext } from "../security-context";
 import { WikiPageAuthorizationRuleset } from "./wiki-page-authorization-ruleset";
 import { PlaceAuthorizationRuleset } from "./place-authorization-ruleset";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { Place } from "../domain-entities/place";
-import { World } from "../domain-entities/world";
 
+@injectable()
 export class PinAuthorizationRuleset implements EntityAuthorizationRuleset<Pin, Place> {
 	@inject(INJECTABLE_TYPES.WikiPageRepository)
 	wikiPageRepository: WikiPageRepository;
@@ -21,11 +21,13 @@ export class PinAuthorizationRuleset implements EntityAuthorizationRuleset<Pin, 
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;
 
-	wikiPageAuthorizationRuleset = new WikiPageAuthorizationRuleset();
-	placeAuthorizationRuleset = new PlaceAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
+	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.PlaceAuthorizationRuleset)
+	placeAuthorizationRuleset: PlaceAuthorizationRuleset;
 
 	canAdmin(context: SecurityContext, entity: Pin): Promise<boolean> {
-		// pins are permission controlled yet
+		// pins are not permission controlled yet
 		return Promise.resolve(false);
 	}
 

@@ -1,41 +1,28 @@
 import { createTestClient } from "apollo-server-testing";
-import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { GENERATE_REGISTER_CODES } from "../../../../../frontend/src/hooks/server/useGenerateRegisterCodes";
 import { UNLOCK_SERVER } from "../../../../../frontend/src/hooks/server/useUnlockServer";
 import { container } from "../../../../src/inversify.config";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import {
-	CookieManager,
 	ServerConfigRepository,
-	SessionContext,
 	SessionContextFactory,
 	UserRepository,
 } from "../../../../src/types";
-import { User } from "../../../../src/domain-entities/user";
 import { ExpressApiServer } from "../../../../src/express-api-server";
 import { FilterCondition } from "../../../../src/dal/filter-condition";
-import { inject, injectable } from "inversify";
-import { SecurityContextFactory } from "../../../../src/security-context-factory";
+import { MockSessionContextFactory } from "../../MockSessionContextFactory";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
-	const createContext = async (securityContextFactory: SecurityContextFactory) => {
-		return await securityContextFactory.create(currentUser);
-	};
-	@injectable()
-	class MockSessionContextFactory implements SessionContextFactory {
-		@inject(INJECTABLE_TYPES.SecurityContextFactory)
-		securityContextFactory: SecurityContextFactory;
-		create = async (parameters: any): Promise<SessionContext> => ({
-			securityContext: await createContext(this.securityContextFactory),
-			cookieManager: new (class extends CookieManager {})(),
-		});
-	}
-	let currentUser = new User("", "", ANON_USERNAME, "", "", "", [], []);
 	container
 		.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
-		.to(MockSessionContextFactory);
+		.to(MockSessionContextFactory)
+		.inSingletonScope();
+
+	const mockSessionContextFactory = container.get<MockSessionContextFactory>(
+		INJECTABLE_TYPES.SessionContextFactory
+	);
 
 	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
 
@@ -60,7 +47,7 @@ describe("server mutations", () => {
 			await resetConfig();
 		});
 
-		it("unlock", async (done) => {
+		test("unlock", async (done) => {
 			const result = await mutate({
 				mutation: UNLOCK_SERVER,
 				variables: {
@@ -70,7 +57,12 @@ describe("server mutations", () => {
 					password: "zach",
 				},
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				data: {
+					unlockServer: true,
+				},
+				errors: undefined,
+			});
 			done();
 		});
 
@@ -108,7 +100,9 @@ describe("server mutations", () => {
 	describe("with authenticated user", () => {
 		beforeEach(async () => {
 			const userRepository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
-			currentUser = await userRepository.findOne([new FilterCondition("username", "tester")]);
+			mockSessionContextFactory.setCurrentUser(
+				await userRepository.findOne([new FilterCondition("username", "tester")])
+			);
 		});
 
 		test("generate register codes", async () => {
@@ -123,6 +117,7 @@ describe("server mutations", () => {
 						registerCodes: expect.arrayContaining([expect.any(String)]),
 					},
 				},
+				errors: undefined,
 			});
 		});
 	});

@@ -17,12 +17,15 @@ export class SecurityContext {
 		for (let assignment of this.permissions) {
 			if (assignment.permission === permission) {
 				if (subjectId) {
-					return assignment.subject === subjectId;
+					if (subjectId === assignment.subject) {
+						return true;
+					}
 				} else {
 					return true;
 				}
 			}
 		}
+		return false;
 	};
 
 	hasRole = (name: string) => {

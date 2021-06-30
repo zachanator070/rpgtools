@@ -4,6 +4,7 @@ import {
 	CookieManager,
 	Factory,
 	UnitOfWork,
+	UserFactory,
 } from "../types";
 import { User } from "../domain-entities/user";
 import bcrypt from "bcrypt";
@@ -29,6 +30,9 @@ export class AuthenticationApplicationService implements AuthenticationService {
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.UserFactory)
+	userFactory: UserFactory;
 
 	createTokens = async (
 		user: User,
@@ -146,7 +150,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
-		const newUser = new User("", email, username, password, null, null, [], []);
+		const newUser = this.userFactory("", email, username, password, null, null, [], []);
 		await unitOfWork.userRepository.create(newUser);
 		return newUser;
 	};

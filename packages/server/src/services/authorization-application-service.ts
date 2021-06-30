@@ -1,5 +1,12 @@
-import { AuthorizationService, EntityAuthorizationRuleset, Factory, UnitOfWork } from "../types";
-import { User } from "../domain-entities/user";
+import {
+	AuthorizationService,
+	DomainEntity,
+	Factory,
+	PermissionAssignmentFactory,
+	Repository,
+	RoleFactory,
+	UnitOfWork,
+} from "../types";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { SecurityContext } from "../security-context";
 import { FilterCondition } from "../dal/filter-condition";
@@ -13,15 +20,26 @@ import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
+import { RepositoryMapper } from "../repository-mapper";
+import { User } from "../domain-entities/user";
 
 @injectable()
 export class AuthorizationApplicationService implements AuthorizationService {
-	permissionAssignmentAuthorizationRuleset: PermissionAssignmentAuthorizationRuleset =
-		new PermissionAssignmentAuthorizationRuleset();
-	roleAuthorizationRuleset: RoleAuthorizationRuleset = new RoleAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.PermissionAssignmentAuthorizationRuleset)
+	permissionAssignmentAuthorizationRuleset: PermissionAssignmentAuthorizationRuleset;
+	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)
+	roleAuthorizationRuleset: RoleAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.RoleFactory)
+	roleFactory: RoleFactory;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
+
+	@inject(INJECTABLE_TYPES.RepositoryMapper)
+	mapper: RepositoryMapper;
 
 	grantUserPermission = async (
 		context: SecurityContext,
@@ -29,40 +47,24 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		subjectId: string,
 		subjectType: string,
 		userId: string
-	): Promise<User> => {
+	): Promise<DomainEntity> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error(`User with id ${userId} does not exist`);
 		}
-		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", permission),
-			new FilterCondition("subjectId", subjectId),
-			new FilterCondition("subjectType", subjectType),
-		]);
-		let needsCreation = false;
-		if (!assignment) {
-			assignment = new PermissionAssignment("", permission, subjectId, subjectType);
-			needsCreation = true;
-		}
-		if (!(await this.permissionAssignmentAuthorizationRuleset.canWrite(context, assignment))) {
-			throw new Error(
-				`You do not have permission to assign the permission "${permission}" for this subject`
-			);
-		}
-		if (needsCreation) {
-			await unitOfWork.permissionAssignmentRepository.create(assignment);
-		}
-		// check if user already has that permission
-		for (let userPermission of user.permissions) {
-			if (userPermission === assignment._id) {
-				return user;
-			}
-		}
-		user.permissions.push(assignment._id);
-		await unitOfWork.userRepository.update(user);
+		await this.grantEntityPermission(
+			unitOfWork,
+			context,
+			permission,
+			subjectId,
+			subjectType,
+			user,
+			unitOfWork.userRepository
+		);
+		const subject = this.mapper.map(subjectType).findById(subjectId);
 		await unitOfWork.commit();
-		return user;
+		return subject;
 	};
 
 	revokeUserPermission = async (
@@ -70,35 +72,23 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		permission: string,
 		subjectId: string,
 		userId: string
-	): Promise<User> => {
+	): Promise<DomainEntity> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error("User does not exist");
 		}
-
-		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", permission),
-			new FilterCondition("subjectId", subjectId),
-		]);
-		if (permissionAssignment) {
-			if (
-				!(await this.permissionAssignmentAuthorizationRuleset.canWrite(
-					context,
-					permissionAssignment
-				))
-			) {
-				throw new Error(
-					`You do not have permission to revoke the permission "${permissionAssignment.permission}"`
-				);
-			}
-			user.permissions = user.permissions.filter(
-				(userPermission) => userPermission !== permissionAssignment._id
-			);
-			await unitOfWork.userRepository.update(user);
-		}
+		const permissionAssignment = await this.revokeEntityPermission(
+			unitOfWork,
+			context,
+			permission,
+			subjectId,
+			user,
+			unitOfWork.userRepository
+		);
+		const subject = this.mapper.map(permissionAssignment.subjectType).findById(subjectId);
 		await unitOfWork.commit();
-		return user;
+		return subject;
 	};
 
 	grantRolePermission = async (
@@ -106,39 +96,22 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		permission: string,
 		subjectId: string,
 		subjectType: string,
-		userId: string
+		roleId: string
 	): Promise<Role> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
-		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", userId)]);
+		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
 		if (!role) {
-			throw new Error(`Role with id ${userId} does not exist`);
+			throw new Error(`Role with id ${roleId} does not exist`);
 		}
-		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", permission),
-			new FilterCondition("subjectId", subjectId),
-			new FilterCondition("subjectType", subjectType),
-		]);
-		let needsCreation = false;
-		if (!assignment) {
-			assignment = new PermissionAssignment("", permission, subjectId, subjectType);
-			needsCreation = true;
-		}
-		if (!(await this.permissionAssignmentAuthorizationRuleset.canWrite(context, assignment))) {
-			throw new Error(
-				`You do not have permission to assign the permission "${permission}" for this subject`
-			);
-		}
-		if (needsCreation) {
-			await unitOfWork.permissionAssignmentRepository.create(assignment);
-		}
-		// check if user already has that permission
-		for (let userPermission of role.permissions) {
-			if (userPermission === assignment._id) {
-				return role;
-			}
-		}
-		role.permissions.push(assignment._id);
-		await unitOfWork.roleRepository.update(role);
+		await this.grantEntityPermission(
+			unitOfWork,
+			context,
+			permission,
+			subjectId,
+			subjectType,
+			role,
+			unitOfWork.roleRepository
+		);
 		await unitOfWork.commit();
 		return role;
 	};
@@ -155,26 +128,14 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			throw new Error("Role does not exist");
 		}
 
-		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", permission),
-			new FilterCondition("subjectId", subjectId),
-		]);
-		if (permissionAssignment) {
-			if (
-				!(await this.permissionAssignmentAuthorizationRuleset.canWrite(
-					context,
-					permissionAssignment
-				))
-			) {
-				throw new Error(
-					`You do not have permission to revoke the permission "${permissionAssignment.permission}"`
-				);
-			}
-			role.permissions = role.permissions.filter(
-				(userPermission) => userPermission !== permissionAssignment._id
-			);
-			await unitOfWork.roleRepository.update(role);
-		}
+		await this.revokeEntityPermission(
+			unitOfWork,
+			context,
+			permission,
+			subjectId,
+			role,
+			unitOfWork.roleRepository
+		);
 		await unitOfWork.commit();
 		return role;
 	};
@@ -188,12 +149,17 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		if (!(await context.hasPermission(ROLE_ADD, worldId))) {
 			throw new Error(`You do not have permission to add roles to this world`);
 		}
-		const newRole = new Role("", name, worldId, []);
+		const newRole = this.roleFactory(null, name, worldId, []);
 		await unitOfWork.roleRepository.create(newRole);
 		world.roles.push(newRole._id);
 		await unitOfWork.worldRepository.update(world);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
-			const permissionAssignment = new PermissionAssignment("", permission, newRole._id, ROLE);
+			const permissionAssignment = this.permissionAssignmentFactory(
+				null,
+				permission,
+				newRole._id,
+				ROLE
+			);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
 		}
@@ -314,5 +280,73 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		const world = await unitOfWork.worldRepository.findById(role.world);
 		await unitOfWork.commit();
 		return world;
+	};
+
+	private grantEntityPermission = async (
+		unitOfWork: UnitOfWork,
+		context: SecurityContext,
+		permission: string,
+		subjectId: string,
+		subjectType: string,
+		entity: User | Role,
+		entityRepository: Repository<any>
+	) => {
+		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
+			new FilterCondition("permission", permission),
+			new FilterCondition("subjectId", subjectId),
+			new FilterCondition("subjectType", subjectType),
+		]);
+		let needsCreation = false;
+		if (!assignment) {
+			assignment = this.permissionAssignmentFactory(null, permission, subjectId, subjectType);
+			needsCreation = true;
+		}
+		if (!(await this.permissionAssignmentAuthorizationRuleset.canWrite(context, assignment))) {
+			throw new Error(
+				`You do not have permission to assign the permission "${permission}" for this subject`
+			);
+		}
+		if (needsCreation) {
+			await unitOfWork.permissionAssignmentRepository.create(assignment);
+		}
+		// check if entity already has that permission
+		for (let entityPermission of entity.permissions) {
+			if (entityPermission === assignment._id) {
+				return;
+			}
+		}
+		entity.permissions.push(assignment._id);
+		await entityRepository.update(entity);
+	};
+
+	private revokeEntityPermission = async (
+		unitOfWork: UnitOfWork,
+		context: SecurityContext,
+		permission: string,
+		subjectId: string,
+		entity: User | Role,
+		entityRepository: Repository<any>
+	) => {
+		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
+			new FilterCondition("permission", permission),
+			new FilterCondition("subject", subjectId),
+		]);
+		if (!permissionAssignment) {
+			throw new Error(
+				`Permission assignment does not exist for permission '${permission}' and subject id ${subjectId}`
+			);
+		}
+		if (
+			!(await this.permissionAssignmentAuthorizationRuleset.canWrite(context, permissionAssignment))
+		) {
+			throw new Error(
+				`You do not have permission to revoke the permission "${permissionAssignment.permission}"`
+			);
+		}
+		entity.permissions = entity.permissions.filter(
+			(entityPermission) => entityPermission !== permissionAssignment._id
+		);
+		await entityRepository.update(entity);
+		return permissionAssignment;
 	};
 }

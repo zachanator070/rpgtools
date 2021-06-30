@@ -1,4 +1,11 @@
-import { Factory, ImageService, UnitOfWork } from "../types";
+import {
+	ChunkFactory,
+	Factory,
+	FileFactory,
+	ImageFactory,
+	ImageService,
+	UnitOfWork,
+} from "../types";
 import { Image } from "../domain-entities/image";
 import { File } from "../domain-entities/file";
 import { Chunk } from "../domain-entities/chunk";
@@ -14,6 +21,13 @@ export class ImageApplicationService implements ImageService {
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.ImageFactory)
+	imageFactory: ImageFactory;
+	@inject(INJECTABLE_TYPES.ChunkFactory)
+	chunkFactory: ChunkFactory;
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
 
 	createImage = async (
 		worldId: string,
@@ -42,8 +56,8 @@ export class ImageApplicationService implements ImageService {
 		});
 
 		const image = await Jimp.read(Buffer.concat(rawData));
-		const newImage = new Image(
-			"",
+		const newImage = this.imageFactory(
+			null,
 			filename,
 			worldId,
 			image.bitmap.width,
@@ -51,7 +65,7 @@ export class ImageApplicationService implements ImageService {
 			0,
 			0,
 			[],
-			""
+			null
 		);
 
 		if (!chunkify) {
@@ -101,8 +115,8 @@ export class ImageApplicationService implements ImageService {
 		return new Promise((resolve, reject) => {
 			Jimp.read(jimpImage)
 				.then(async (image) => {
-					const iconImage = new Image(
-						"",
+					const iconImage = this.imageFactory(
+						null,
 						"icon." + newImage.name,
 						newImage.world,
 						this.chunkSize,
@@ -110,7 +124,7 @@ export class ImageApplicationService implements ImageService {
 						1,
 						1,
 						[],
-						""
+						null
 					);
 					image.scaleToFit(this.chunkSize, this.chunkSize, (err, scaledImage) => {
 						(async () => {
@@ -174,15 +188,15 @@ export class ImageApplicationService implements ImageService {
 		parentImage: Image,
 		unitOfWork: UnitOfWork
 	): Promise<Chunk> => {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			Jimp.read(jimpImage).then(async (copy) => {
 				copy.crop(x * this.chunkSize, y * this.chunkSize, width, height);
 				const newFilename = `${parentImage._id}.chunk.${x}.${y}.${jimpImage.getExtension()}`;
 				const buffer: Buffer = await copy.getBufferAsync(jimpImage.getMIME());
 				const stream = Readable.from(buffer);
-				const file = new File("", newFilename, stream, jimpImage.getMIME());
+				const file = this.fileFactory(null, newFilename, stream, jimpImage.getMIME());
 				await unitOfWork.fileRepository.create(file);
-				const chunk = new Chunk("", x, y, width, height, file._id, parentImage._id);
+				const chunk = this.chunkFactory(null, x, y, width, height, file._id, parentImage._id);
 				resolve(chunk);
 			});
 		});

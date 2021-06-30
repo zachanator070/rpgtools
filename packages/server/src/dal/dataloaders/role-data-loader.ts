@@ -1,12 +1,14 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Role } from "../../domain-entities/role";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { RoleRepository } from "../../types";
 import { RoleAuthorizationRuleset } from "../../security/role-authorization-ruleset";
 
+@injectable()
 export class RoleDataLoader extends GraphqlDataloader<Role> {
-	constructor(@inject(INJECTABLE_TYPES.RoleRepository) repo: RoleRepository) {
-		super(repo, new RoleAuthorizationRuleset());
-	}
+	@inject(INJECTABLE_TYPES.RoleRepository)
+	repository: RoleRepository;
+	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)
+	ruleset: RoleAuthorizationRuleset;
 }

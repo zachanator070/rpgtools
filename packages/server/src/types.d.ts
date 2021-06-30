@@ -4,7 +4,15 @@ import { User } from "./domain-entities/user";
 import { SecurityContext } from "./security-context";
 import { Article } from "./domain-entities/article";
 import { Chunk } from "./domain-entities/chunk";
-import { Character, Game, InGameModel, PathNode } from "./domain-entities/game";
+import {
+	Character,
+	FogStroke,
+	Game,
+	InGameModel,
+	Message,
+	PathNode,
+	Stroke,
+} from "./domain-entities/game";
 import { Image } from "./domain-entities/image";
 import { Item } from "./domain-entities/item";
 import { Model } from "./domain-entities/model";
@@ -35,7 +43,7 @@ export interface Repository<Type extends DomainEntity> {
 	find: (conditions: FilterCondition[]) => Promise<Type[]>;
 	update: (entity: Type) => Promise<void>;
 	delete: (entity: Type) => Promise<void>;
-	findOne: (conditions: FilterCondition[]) => Promise<Type>;
+	findOne: (conditions?: FilterCondition[]) => Promise<Type>;
 	findById: (id: string) => Promise<Type>;
 	findPaginated: (
 		conditions: FilterCondition[],
@@ -63,6 +71,144 @@ export type WikiFolderRepository = Repository<WikiFolder>;
 export type WikiPageRepository = Repository<WikiPage>;
 export type WorldRepository = Repository<World>;
 
+export type ArticleFactory = (
+	id: string,
+	name: string,
+	worldId: string,
+	coverImageId: string,
+	contentId: string
+) => Article;
+export type ChunkFactory = (
+	id: string,
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+	fileId: string,
+	imageId: string
+) => Chunk;
+export type FileFactory = (
+	id: string,
+	filename: string,
+	readStream: Readable,
+	mimeType: string
+) => File;
+export type GameFactory = (
+	id: string,
+	passwordHash: string,
+	worldId: string,
+	mapId: string,
+	characters: Character[],
+	strokes: Stroke[],
+	fog: FogStroke[],
+	messages: Message[],
+	models: InGameModel[],
+	hostId: string
+) => Game;
+export type ImageFactory = (
+	id: string,
+	name: string,
+	worldId: string,
+	width: number,
+	height: number,
+	chunkWidth: number,
+	chunkHeight: number,
+	chunkIds: string[],
+	iconId: string
+) => Image;
+export type ItemFactory = (
+	id: string,
+	name: string,
+	world: string,
+	coverImageId: string,
+	contentId: string,
+	modelId: string,
+	modelColor: string
+) => Item;
+export type ModelFactory = (
+	id: string,
+	worldId: string,
+	name: string,
+	depth: number,
+	width: number,
+	height: number,
+	fileName: string,
+	fileId: string,
+	notes: string
+) => Model;
+export type MonsterFactory = (
+	id: string,
+	name: string,
+	world: string,
+	coverImageId: string,
+	contentId: string,
+	modelId: string,
+	modelColor: string
+) => Monster;
+export type PermissionAssignmentFactory = (
+	id: string,
+	permission: string,
+	subject: string,
+	subjectType: string
+) => PermissionAssignment;
+export type PersonFactory = (
+	id: string,
+	name: string,
+	world: string,
+	coverImageId: string,
+	contentId: string,
+	modelId: string,
+	modelColor: string
+) => Person;
+export type PinFactory = (id: string, x: number, y: number, mapId: string, pageId: string) => Pin;
+export type PlaceFactory = (
+	id: string,
+	name: string,
+	worldId: string,
+	coverImageId: string,
+	contentId: string,
+	mapImageId: string,
+	pixelsPerFoot: number
+) => Place;
+export type RoleFactory = (
+	id: string,
+	name: string,
+	worldId: string,
+	permissionIds: string[]
+) => Role;
+export type ServerConfigFactory = (
+	id: string,
+	version: string,
+	registerCodes: string[],
+	adminUserIds: string[],
+	unlockCode: string
+) => ServerConfig;
+export type UserFactory = (
+	_id: string,
+	email: string,
+	username: string,
+	password: string,
+	tokenVersion: string,
+	currentWorldId: string,
+	roleIds: string[],
+	permissionIds: string[]
+) => User;
+export type WikiFolderFactory = (
+	id: string,
+	name: string,
+	worldId: string,
+	pageIds: string[],
+	childrenIds: string[]
+) => WikiFolder;
+export type WorldFactory = (
+	id: string,
+	name: string,
+	wikiPageId: string,
+	rootFolderId: string,
+	roleIds: string[],
+	pinIds: string[]
+) => World;
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DatabaseEntity {}
 
@@ -77,7 +223,7 @@ export interface DomainEntityFactory<
 	build: (entity: DBType) => DomainType;
 }
 
-export abstract class CookieManager {
+export interface CookieManager {
 	setCookie: (cookie: string, value: string, age: number) => void;
 	clearCookie: (cookie: string) => void;
 }
@@ -203,19 +349,19 @@ export interface AuthorizationService {
 		subjectId: string,
 		subjectType: string,
 		userId: string
-	) => Promise<User>;
+	) => Promise<DomainEntity>;
 	revokeUserPermission: (
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
 		userId: string
-	) => Promise<User>;
+	) => Promise<DomainEntity>;
 	grantRolePermission: (
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
 		subjectType: string,
-		userId: string
+		roleId: string
 	) => Promise<Role>;
 	revokeRolePermission: (
 		context: SecurityContext,

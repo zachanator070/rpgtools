@@ -1,4 +1,13 @@
-import { Factory, ImageService, SrdImportService, UnitOfWork } from "../types";
+import {
+	ArticleFactory,
+	Factory,
+	FileFactory,
+	ImageService,
+	MonsterFactory,
+	SrdImportService,
+	UnitOfWork,
+	WikiFolderFactory,
+} from "../types";
 import { World } from "../domain-entities/world";
 import { Readable } from "stream";
 import {
@@ -7,7 +16,6 @@ import {
 	Open5eRuleSection,
 } from "../five-e-import/open-5e-api-client";
 import fetch from "node-fetch";
-import { Article } from "../domain-entities/article";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
@@ -16,7 +24,6 @@ import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authoriz
 import { SecurityContext } from "../security-context";
 import { File } from "../domain-entities/file";
 import { DeltaFactory } from "../five-e-import/delta-factory";
-import { Monster } from "../domain-entities/monster";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 @injectable()
@@ -26,8 +33,16 @@ export class SrdImportApplicationService implements SrdImportService {
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	open5eApiClient: Open5eApiClient;
 
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset =
-		new WikiFolderAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.ArticleFactory)
+	articleFactory: ArticleFactory;
+	@inject(INJECTABLE_TYPES.WikiFolderFactory)
+	wikiFolderFactory: WikiFolderFactory;
+	@inject(INJECTABLE_TYPES.MonsterFactory)
+	monsterFactory: MonsterFactory;
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
+
+	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
 
 	deltaFactory: DeltaFactory = new DeltaFactory();
 
@@ -49,7 +64,7 @@ export class SrdImportApplicationService implements SrdImportService {
 		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, rootFolder))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
-		const topFolder = new WikiFolder("", "5e", worldId, [], []);
+		const topFolder = this.wikiFolderFactory(null, "5e", worldId, [], []);
 		await unitOfWork.wikiFolderRepository.create(topFolder);
 		rootFolder.children.push(topFolder._id);
 		await unitOfWork.wikiFolderRepository.update(rootFolder);
@@ -89,7 +104,7 @@ export class SrdImportApplicationService implements SrdImportService {
 		world: World,
 		unitOfWork: UnitOfWork
 	) => {
-		const subFolder = new WikiFolder("", name, world._id, [], []);
+		const subFolder = this.wikiFolderFactory(null, name, world._id, [], []);
 		await unitOfWork.wikiFolderRepository.create(subFolder);
 		topFolder.children.push(subFolder._id);
 		await unitOfWork.wikiFolderRepository.update(topFolder);
@@ -103,7 +118,7 @@ export class SrdImportApplicationService implements SrdImportService {
 	): Promise<File> => {
 		const readStream = Readable.from(content);
 		const filename = `wikiContent.${wikiId}`;
-		const file = new File("", filename, readStream);
+		const file = this.fileFactory(null, filename, readStream, null);
 		await unitOfWork.fileRepository.create(file);
 		return file;
 	};
@@ -122,7 +137,15 @@ export class SrdImportApplicationService implements SrdImportService {
 			if (!filter(monster)) {
 				continue;
 			}
-			const monsterPage = new Monster("", monster.name, containingFolder.world, "", "", "", "");
+			const monsterPage = this.monsterFactory(
+				null,
+				monster.name,
+				containingFolder.world,
+				null,
+				null,
+				null,
+				null
+			);
 			if (monster.img_main) {
 				const imageResponse = await fetch(monster.img_main);
 				const coverImage = await this.imageService.createImage(
@@ -150,7 +173,7 @@ export class SrdImportApplicationService implements SrdImportService {
 	importAdventurePages = async (topFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		const folders: WikiFolder[] = [];
 		for await (let article of this.open5eApiClient.getAdventuringSections()) {
-			const page = new Article("", article.name, topFolder.world, "", "");
+			const page = this.articleFactory(null, article.name, topFolder.world, null, null);
 			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromSection(article);
 			const contentFile = await this.createWikiContentFile(
@@ -162,7 +185,13 @@ export class SrdImportApplicationService implements SrdImportService {
 			await unitOfWork.articleRepository.update(page);
 			const containingFolder = folders.find((folder) => folder.name === article.parent);
 			if (!containingFolder) {
-				const containingFolder = new WikiFolder("", article.parent, topFolder.world, [], []);
+				const containingFolder = this.wikiFolderFactory(
+					"",
+					article.parent,
+					topFolder.world,
+					[],
+					[]
+				);
 				await unitOfWork.wikiFolderRepository.create(containingFolder);
 				topFolder.children.push(containingFolder._id);
 				await unitOfWork.wikiFolderRepository.update(topFolder);
@@ -175,7 +204,7 @@ export class SrdImportApplicationService implements SrdImportService {
 
 	importRaces = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let article of this.open5eApiClient.getRaces()) {
-			const page = new Article("", article.name, containingFolder.world, "", "");
+			const page = this.articleFactory(null, article.name, containingFolder.world, null, null);
 			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromRace(article);
 			const contentFile = await this.createWikiContentFile(
@@ -192,7 +221,7 @@ export class SrdImportApplicationService implements SrdImportService {
 
 	importClasses = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let article of this.open5eApiClient.getClasses()) {
-			const page = new Article("", article.name, containingFolder.world, "", "");
+			const page = this.articleFactory(null, article.name, containingFolder.world, null, null);
 			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromCharacterClass(article, containingFolder.world);
 			const contentFile = await this.createWikiContentFile(
@@ -209,7 +238,7 @@ export class SrdImportApplicationService implements SrdImportService {
 
 	importSpells = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let article of this.open5eApiClient.getSpells()) {
-			const page = new Article("", article.name, containingFolder.world, "", "");
+			const page = this.articleFactory(null, article.name, containingFolder.world, null, null);
 			await unitOfWork.articleRepository.create(page);
 			const content = this.deltaFactory.fromSpell(article);
 			const contentFile = await this.createWikiContentFile(
@@ -226,7 +255,7 @@ export class SrdImportApplicationService implements SrdImportService {
 
 	importRules = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
 		for await (let rule of this.open5eApiClient.getRules()) {
-			const page = new Article("", rule.name, containingFolder.world, "", "");
+			const page = this.articleFactory("", rule.name, containingFolder.world, null, null);
 			await unitOfWork.articleRepository.create(page);
 			const subSections: Open5eRuleSection[] = [];
 			for (let section of rule.subsections) {

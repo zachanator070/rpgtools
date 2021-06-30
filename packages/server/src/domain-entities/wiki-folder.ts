@@ -1,7 +1,10 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { WIKI_FOLDER } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class WikiFolder implements DomainEntity {
 	public _id: string;
 	public name: string;
@@ -9,17 +12,8 @@ export class WikiFolder implements DomainEntity {
 	public pages: string[];
 	public children: string[];
 
-	authorizationRuleset: EntityAuthorizationRuleset<
-		WikiFolder,
-		WikiFolder
-	> = new WikiFolderAuthorizationRuleset();
-	type: string = WIKI_FOLDER;
+	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
+	authorizationRuleset: WikiFolderAuthorizationRuleset;
 
-	constructor(id: string, name: string, worldId: string, pageIds: string[], childrenIds: string[]) {
-		this._id = id;
-		this.name = name;
-		this.world = worldId;
-		this.pages = pageIds;
-		this.children = childrenIds;
-	}
+	type: string = WIKI_FOLDER;
 }

@@ -1,7 +1,7 @@
 import { Readable } from "stream";
 import { ZipArchive } from "./zip-archive";
 import unzipper, { Entry } from "unzipper";
-import { Archive, AbstractArchiveFactory } from "../types";
+import { Archive, AbstractArchiveFactory, FileFactory } from "../types";
 import {
 	ARTICLE,
 	CHUNK,
@@ -15,10 +15,14 @@ import {
 	WORLD,
 } from "../../../common/src/type-constants";
 import { File } from "../domain-entities/file";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
 @injectable()
 export class ArchiveFactory implements AbstractArchiveFactory {
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
+
 	public createDefault = (): Archive => new ZipArchive();
 
 	public zipFromZipStream = async (archiveReadStream: Readable): Promise<ZipArchive> => {
@@ -47,7 +51,7 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 		if (entryType === FILE) {
 			const filename: string = this.getFilenameFromPath(entry.path);
 			const id = filename.split(".")[1];
-			await archive.fileRepository.create(new File(id, filename, entry));
+			await archive.fileRepository.create(this.fileFactory(id, filename, entry, null));
 		} else {
 			const entity = await this.getEntryContent(entry);
 			switch (entryType) {

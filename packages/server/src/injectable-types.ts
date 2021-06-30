@@ -1,4 +1,43 @@
 export const INJECTABLE_TYPES = {
+	// domain entities
+	Article: Symbol.for("Article"),
+	Chunk: Symbol.for("Chunk"),
+	File: Symbol.for("File"),
+	Game: Symbol.for("Game"),
+	Image: Symbol.for("Image"),
+	Item: Symbol.for("Item"),
+	Model: Symbol.for("Model"),
+	Monster: Symbol.for("Monster"),
+	PermissionAssignment: Symbol.for("PermissionAssignment"),
+	Person: Symbol.for("Person"),
+	Pin: Symbol.for("Pin"),
+	Place: Symbol.for("Place"),
+	Role: Symbol.for("Role"),
+	ServerConfig: Symbol.for("ServerConfig"),
+	User: Symbol.for("User"),
+	WikiFolder: Symbol.for("WikiFolder"),
+	World: Symbol.for("World"),
+
+	// entity factories
+	ArticleFactory: Symbol.for("ArticleFactory"),
+	ChunkFactory: Symbol.for("ChunkFactory"),
+	FileFactory: Symbol.for("FileFactory"),
+	GameFactory: Symbol.for("GameFactory"),
+	ImageFactory: Symbol.for("ImageFactory"),
+	ItemFactory: Symbol.for("ItemFactory"),
+	ModelFactory: Symbol.for("ModelFactory"),
+	MonsterFactory: Symbol.for("MonsterFactory"),
+	PermissionAssignmentFactory: Symbol.for("PermissionAssignmentFactory"),
+	PersonFactory: Symbol.for("PersonFactory"),
+	PinFactory: Symbol.for("PinFactory"),
+	PlaceFactory: Symbol.for("PlaceFactory"),
+	RoleFactory: Symbol.for("RoleFactory"),
+	ServerConfigFactory: Symbol.for("ServerConfigFactory"),
+	UserFactory: Symbol.for("UserFactory"),
+	WikiFolderFactory: Symbol.for("WikiFolderFactory"),
+	WorldFactory: Symbol.for("WorldFactory"),
+
+	// repositories
 	ArticleRepository: Symbol.for("ArticleRepository"),
 	ChunkRepository: Symbol.for("ChunkRepository"),
 	FileRepository: Symbol.for("FileRepository"),
@@ -18,6 +57,27 @@ export const INJECTABLE_TYPES = {
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
 
+	// authorization rule sets
+	ArticleAuthorizationRuleset: Symbol.for("ArticleAuthorizationRuleset"),
+	ChunkAuthorizationRuleset: Symbol.for("ChunkAuthorizationRuleset"),
+	FileAuthorizationRuleset: Symbol.for("FileAuthorizationRuleset"),
+	GameAuthorizationRuleset: Symbol.for("GameAuthorizationRuleset"),
+	ImageAuthorizationRuleset: Symbol.for("ImageAuthorizationRuleset"),
+	ItemAuthorizationRuleset: Symbol.for("ItemAuthorizationRuleset"),
+	ModelAuthorizationRuleset: Symbol.for("ModelAuthorizationRuleset"),
+	MonsterAuthorizationRuleset: Symbol.for("MonsterAuthorizationRuleset"),
+	PermissionAssignmentAuthorizationRuleset: Symbol.for("PermissionAssignmentAuthorizationRuleset"),
+	PersonAuthorizationRuleset: Symbol.for("PersonAuthorizationRuleset"),
+	PinAuthorizationRuleset: Symbol.for("PinAuthorizationRuleset"),
+	PlaceAuthorizationRuleset: Symbol.for("PlaceAuthorizationRuleset"),
+	RoleAuthorizationRuleset: Symbol.for("RoleAuthorizationRuleset"),
+	ServerConfigAuthorizationRuleset: Symbol.for("ServerConfigAuthorizationRuleset"),
+	UserAuthorizationRuleset: Symbol.for("UserAuthorizationRuleset"),
+	WikiFolderAuthorizationRuleset: Symbol.for("WikiFolderAuthorizationRuleset"),
+	WikiPageAuthorizationRuleset: Symbol.for("WikiPageAuthorizationRuleset"),
+	WorldAuthorizationRuleset: Symbol.for("WorldAuthorizationRuleset"),
+
+	// archive repositories
 	ArchiveArticleRepository: Symbol.for("ArchiveArticleRepository"),
 	ArchiveChunkRepository: Symbol.for("ArchiveChunkRepository"),
 	ArchiveGameRepository: Symbol.for("ArchiveGameRepository"),
@@ -37,6 +97,7 @@ export const INJECTABLE_TYPES = {
 	ArchiveWorldRepository: Symbol.for("ArchiveWorldRepository"),
 	ArchiveFileRepository: Symbol.for("ArchiveFileRepository"),
 
+	// services
 	AuthenticationService: Symbol.for("AuthenticationService"),
 	AuthorizationService: Symbol.for("AuthorizationService"),
 	ContentExportService: Symbol.for("ContentExportService"),
@@ -52,19 +113,26 @@ export const INJECTABLE_TYPES = {
 	WikiPageService: Symbol.for("WikiPageService"),
 	WorldService: Symbol.for("WorldService"),
 
+	// session contexts
 	SessionContextFactory: Symbol.for("SessionContextFactory"),
 	SecurityContextFactory: Symbol.for("SecurityContextFactory"),
 
+	// open 5e
 	Open5eApiClient: Symbol.for("Open5eApiClient"),
 
+	// cache
 	Cache: Symbol.for("Cache"),
 
+	// archive
 	ArchiveFactory: Symbol.for("ArchiveFactory"),
 
+	// event publisher
 	EventPublisher: Symbol.for("EventPublisher"),
 
+	// server
 	ApiServer: Symbol.for("ApiServer"),
 
+	// data loaders
 	ArticleDataLoader: Symbol.for("ArticleDataLoader"),
 	ChunkDataLoader: Symbol.for("ChunkDataLoader"),
 	FileDataLoader: Symbol.for("FileDataLoader"),
@@ -84,9 +152,14 @@ export const INJECTABLE_TYPES = {
 	WikiPageDataLoader: Symbol.for("WikiPageDataLoader"),
 	WorldDataLoader: Symbol.for("WorldDataLoader"),
 
+	// seeders
 	RoleSeeder: Symbol.for("RoleSeeder"),
 	ServerConfigSeeder: Symbol.for("ServerConfigSeeder"),
 
+	// unit of work
 	DbUnitOfWork: Symbol.for("DbUnitOfWork"),
 	DbUnitOfWorkFactory: Symbol.for("DbUnitOfWorkFactory"),
+
+	// repo mapper
+	RepositoryMapper: Symbol.for("RepositoryMapper"),
 };

@@ -1,12 +1,14 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { File } from "../../domain-entities/file";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { FileRepository } from "../../types";
-import { AllowAllRuleset } from "../../security/allow-all-ruleset";
+import { FileAuthorizationRuleset } from "../../security/file-authorization-ruleset";
 
+@injectable()
 export class FileDataLoader extends GraphqlDataloader<File> {
-	constructor(@inject(INJECTABLE_TYPES.FileRepository) repo: FileRepository) {
-		super(repo, new AllowAllRuleset());
-	}
+	@inject(INJECTABLE_TYPES.FileRepository)
+	repository: FileRepository;
+	@inject(INJECTABLE_TYPES.FileAuthorizationRuleset)
+	ruleset: FileAuthorizationRuleset;
 }

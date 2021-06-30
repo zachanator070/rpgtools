@@ -1,12 +1,14 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Image } from "../../domain-entities/image";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { ImageRepository } from "../../types";
-import { AllowAllRuleset } from "../../security/allow-all-ruleset";
+import { ImageAuthorizationRuleset } from "../../security/image-authorization-ruleset";
 
+@injectable()
 export class ImageDataLoader extends GraphqlDataloader<Image> {
-	constructor(@inject(INJECTABLE_TYPES.ImageRepository) repo: ImageRepository) {
-		super(repo, new AllowAllRuleset());
-	}
+	@inject(INJECTABLE_TYPES.ImageRepository)
+	repository: ImageRepository;
+	@inject(INJECTABLE_TYPES.ImageAuthorizationRuleset)
+	ruleset: ImageAuthorizationRuleset;
 }

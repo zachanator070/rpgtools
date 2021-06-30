@@ -21,7 +21,9 @@ import {
 } from "../../common/src/type-constants";
 import { container } from "./inversify.config";
 import { INJECTABLE_TYPES } from "./injectable-types";
+import { injectable } from "inversify";
 
+@injectable()
 export class RepositoryMapper {
 	public map<T extends DomainEntity>(type: string): Repository<T> {
 		switch (type) {
@@ -61,6 +63,8 @@ export class RepositoryMapper {
 				return container.get<Repository<T>>(INJECTABLE_TYPES.WikiPageRepository);
 			case MODEL:
 				return container.get<Repository<T>>(INJECTABLE_TYPES.ModelRepository);
+			default:
+				throw new Error(`Entity type ${type} does not map to a repository`);
 		}
 	}
 }

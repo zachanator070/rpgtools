@@ -1,6 +1,9 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export abstract class WikiPage implements DomainEntity {
 	public _id: string;
 	public name: string;
@@ -9,17 +12,8 @@ export abstract class WikiPage implements DomainEntity {
 	public contentId?: string;
 	public content?: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<
-		this,
-		DomainEntity
-	> = new WikiPageAuthorizationRuleset();
-	abstract type: string;
+	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
+	authorizationRuleset: WikiPageAuthorizationRuleset;
 
-	constructor(id: string, name: string, worldId: string, coverImageId: string, contentId: string) {
-		this._id = id;
-		this.name = name;
-		this.world = worldId;
-		this.coverImage = coverImageId;
-		this.contentId = contentId;
-	}
+	abstract type: string;
 }

@@ -1,12 +1,14 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Item } from "../../domain-entities/item";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { ItemRepository } from "../../types";
 import { ItemAuthorizationRuleset } from "../../security/item-authorization-ruleset";
 
+@injectable()
 export class ItemDataLoader extends GraphqlDataloader<Item> {
-	constructor(@inject(INJECTABLE_TYPES.ItemRepository) repo: ItemRepository) {
-		super(repo, new ItemAuthorizationRuleset());
-	}
+	@inject(INJECTABLE_TYPES.ItemRepository)
+	repository: ItemRepository;
+	@inject(INJECTABLE_TYPES.ItemAuthorizationRuleset)
+	ruleset: ItemAuthorizationRuleset;
 }

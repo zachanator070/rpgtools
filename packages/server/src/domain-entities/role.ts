@@ -1,8 +1,10 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
+import { DomainEntity } from "../types";
 import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
-import { World } from "./world";
 import { ROLE } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class Role implements DomainEntity {
 	public _id: string;
 	public name: string;
@@ -10,13 +12,8 @@ export class Role implements DomainEntity {
 	public world?: string;
 	public permissions: string[];
 
-	authorizationRuleset: EntityAuthorizationRuleset<Role, World> = new RoleAuthorizationRuleset();
-	type: string = ROLE;
+	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)
+	authorizationRuleset: RoleAuthorizationRuleset;
 
-	constructor(id: string, name: string, worldId: string, permissionIds: string[]) {
-		this._id = id;
-		this.name = name;
-		this.world = worldId;
-		this.permissions = permissionIds;
-	}
+	type: string = ROLE;
 }

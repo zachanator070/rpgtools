@@ -1,7 +1,10 @@
 import { DomainEntity, EntityAuthorizationRuleset } from "../types";
 import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
 import { GAME } from "../../../common/src/type-constants";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../injectable-types";
 
+@injectable()
 export class Game implements DomainEntity {
 	public _id: string;
 	public passwordHash: string;
@@ -14,32 +17,10 @@ export class Game implements DomainEntity {
 	public models: InGameModel[];
 	public host: string;
 
-	authorizationRuleset: GameAuthorizationRuleset = new GameAuthorizationRuleset();
-	type: string = GAME;
+	@inject(INJECTABLE_TYPES.GameAuthorizationRuleset)
+	authorizationRuleset: GameAuthorizationRuleset;
 
-	constructor(
-		id: string,
-		passwordHash: string,
-		worldId: string,
-		mapId: string,
-		characters: Character[],
-		strokes: Stroke[],
-		fog: FogStroke[],
-		messages: Message[],
-		models: InGameModel[],
-		hostId: string
-	) {
-		this._id = id;
-		this.passwordHash = passwordHash;
-		this.world = worldId;
-		this.map = mapId;
-		this.characters = characters;
-		this.strokes = strokes;
-		this.fog = fog;
-		this.messages = messages;
-		this.models = models;
-		this.host = hostId;
-	}
+	type: string = GAME;
 }
 
 export class Character implements DomainEntity {

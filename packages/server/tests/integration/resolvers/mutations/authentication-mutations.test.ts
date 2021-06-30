@@ -1,28 +1,23 @@
 import { createTestClient } from "apollo-server-testing";
-import { ApolloServer } from "apollo-server-express";
-import { allResolvers } from "../../../../src/resolvers/all-resolvers";
-import { typeDefs } from "../../../../src/gql-server-schema";
-import { User } from "../../../../src/dal/mongodb/models/user";
-import { ServerConfig } from "../../../../src/dal/mongodb/models/server-config";
-import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { LOGIN_QUERY } from "../../../../../frontend/src/hooks/authentication/useLogin";
 import { REGISTER_MUTATION } from "../../../../../frontend/src/hooks/authentication/useRegister";
+import { container } from "../../../../src/inversify.config";
+import { ServerConfigRepository, SessionContextFactory } from "../../../../src/types";
+import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import { MockSessionContextFactory } from "../../MockSessionContextFactory";
+import { ExpressApiServer } from "../../../../src/express-api-server";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 
 describe("authentication-mutations", () => {
-	const server = new ApolloServer({
-		typeDefs,
-		resolvers: allResolvers,
-		context: () => {
-			return {
-				currentUser: new User({ username: ANON_USERNAME }),
-				res: { cookie: () => {} },
-			};
-		},
-	});
+	container
+		.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
+		.to(MockSessionContextFactory)
+		.inSingletonScope();
 
-	const { mutate } = createTestClient(server);
+	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
+
+	const { mutate } = createTestClient(server.gqlServer);
 
 	test("login", async () => {
 		const result = await mutate({
@@ -35,6 +30,7 @@ describe("authentication-mutations", () => {
 					_id: expect.any(String),
 				},
 			},
+			errors: undefined,
 		});
 	});
 
@@ -56,9 +52,10 @@ describe("authentication-mutations", () => {
 
 	describe("with good register code available", () => {
 		beforeEach(async () => {
-			const serverConfig = await ServerConfig.findOne();
+			const repo = container.get<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository);
+			const serverConfig = await repo.findOne();
 			serverConfig.registerCodes.push("asdf");
-			await serverConfig.save();
+			await repo.update(serverConfig);
 		});
 
 		test("register good", async () => {
@@ -77,6 +74,7 @@ describe("authentication-mutations", () => {
 						_id: expect.any(String),
 					},
 				},
+				errors: undefined,
 			});
 		});
 

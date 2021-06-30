@@ -8,7 +8,7 @@ import {
 	PathNode,
 	Stroke,
 } from "../../../domain-entities/game";
-import { GameRepository } from "../../../types";
+import { GameFactory, GameRepository } from "../../../types";
 import { Model } from "mongoose";
 import {
 	CharacterDocument,
@@ -20,17 +20,21 @@ import {
 	PathNodeDocument,
 	StrokeDocument,
 } from "../models/game";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()
 export class MongodbGameRepository
 	extends AbstractMongodbRepository<Game, GameDocument>
 	implements GameRepository
 {
+	@inject(INJECTABLE_TYPES.GameFactory)
+	gameFactory: GameFactory;
+
 	model: Model<any> = GameModel;
 
 	build(entity: GameDocument): Game {
-		return new Game(
+		return this.gameFactory(
 			entity._id.toString(),
 			entity.passwordHash,
 			entity.world.toString(),

@@ -39,7 +39,7 @@ export abstract class AbstractMongodbRepository<
 		return results;
 	};
 
-	findOne = async (conditions: FilterCondition[]): Promise<EntityType> => {
+	findOne = async (conditions: FilterCondition[] = []): Promise<EntityType> => {
 		const results = await this.find(conditions);
 		if (results.length >= 1) {
 			return results[0];

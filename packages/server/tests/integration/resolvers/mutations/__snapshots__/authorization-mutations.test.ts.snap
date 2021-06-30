@@ -5,6 +5,9 @@ Object {
   "data": Object {
     "addUserRole": Object {
       "_id": Any<String>,
+      "accessControlList": Any<Array>,
+      "canAdmin": true,
+      "canWrite": true,
       "roles": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
@@ -26,7 +29,6 @@ Object {
           },
         },
       ],
-      "usersWithPermissions": Array [],
     },
   },
   "errors": undefined,
@@ -59,6 +61,9 @@ Object {
   "data": Object {
     "createRole": Object {
       "_id": Any<String>,
+      "accessControlList": Any<Array>,
+      "canAdmin": true,
+      "canWrite": true,
       "roles": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
@@ -75,12 +80,8 @@ Object {
               },
             },
           ],
-          "world": Object {
-            "_id": Any<String>,
-          },
         },
       ],
-      "usersWithPermissions": Array [],
     },
   },
   "errors": undefined,
@@ -113,28 +114,6 @@ Object {
   "data": Object {
     "deleteRole": Object {
       "_id": Any<String>,
-      "roles": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "members": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-            },
-          ],
-          "permissions": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-              "subject": ObjectContaining {
-                "_id": Any<String>,
-              },
-            },
-          ],
-          "world": Object {
-            "_id": Any<String>,
-          },
-        },
-      ],
-      "usersWithPermissions": Array [],
     },
   },
   "errors": undefined,
@@ -209,24 +188,17 @@ Object {
 exports[`authorization-mutations grantUserPermission 1`] = `
 Object {
   "data": Object {
-    "grantUserPermission": Object {
+    "grantUserPermission": ObjectContaining {
       "_id": Any<String>,
-      "usersWithPermissions": Array [
-        Object {
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
           "_id": Any<String>,
-          "permissions": Array [
-            Object {
-              "_id": Any<String>,
-              "canWrite": true,
-              "permission": "See this world in search results",
-              "subject": Object {
-                "_id": Any<String>,
-                "name": "Earth",
-              },
-              "subjectType": "World",
-            },
-          ],
-          "username": "tester2",
+          "canWrite": Any<Boolean>,
+          "permission": Any<String>,
+          "subject": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
         },
       ],
     },
@@ -282,7 +254,6 @@ Object {
           },
         },
       ],
-      "usersWithPermissions": Array [],
     },
   },
   "errors": undefined,
@@ -359,7 +330,9 @@ Object {
   "data": Object {
     "revokeUserPermission": Object {
       "_id": Any<String>,
-      "usersWithPermissions": Array [],
+      "accessControlList": Array [],
+      "canAdmin": true,
+      "canWrite": true,
     },
   },
   "errors": undefined,
@@ -376,7 +349,7 @@ exports[`authorization-mutations revokeUserPermission permission denied 1`] = `
 Object {
   "data": null,
   "errors": Array [
-    [GraphQLError: You do not have permission to revoke the permission "Read access to a single wiki page"],
+    [GraphQLError: You do not have permission to revoke the permission "See this world in search results"],
   ],
   "extensions": undefined,
   "http": Object {

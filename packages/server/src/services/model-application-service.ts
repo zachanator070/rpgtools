@@ -3,8 +3,11 @@ import {
 	Cache,
 	EventPublisher,
 	Factory,
+	FileFactory,
+	ModelFactory,
 	ModelRepository,
 	ModelService,
+	PermissionAssignmentFactory,
 } from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "../../../common/src/permission-constants";
 import { MODEL } from "../../../common/src/type-constants";
@@ -13,9 +16,7 @@ import { INJECTABLE_TYPES } from "../injectable-types";
 import { ModelAuthorizationRuleset } from "../security/model-authorization-ruleset";
 import { SecurityContext } from "../security-context";
 import { FileUpload } from "graphql-upload";
-import { File } from "../domain-entities/file";
 import { Model } from "../domain-entities/model";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { FilterCondition } from "../dal/filter-condition";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
@@ -34,10 +35,18 @@ export class ModelApplicationService implements ModelService {
 	@inject(INJECTABLE_TYPES.ModelRepository)
 	modelRepository: ModelRepository;
 
-	modelAuthorizationRuleset: ModelAuthorizationRuleset = new ModelAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
+	modelAuthorizationRuleset: ModelAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
+	@inject(INJECTABLE_TYPES.ModelFactory)
+	modelFactory: ModelFactory;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
 
 	createModel = async (
 		context: SecurityContext,
@@ -65,10 +74,10 @@ export class ModelApplicationService implements ModelService {
 			throw new Error(`Filename ${fileUpload.filename} already exists, filenames must be unique`);
 		}
 
-		const file = new File("", fileUpload.filename, fileUpload.createReadStream());
+		const file = this.fileFactory(null, fileUpload.filename, fileUpload.createReadStream(), null);
 		await unitOfWork.fileRepository.create(file);
-		const model = new Model(
-			"",
+		const model = this.modelFactory(
+			null,
 			worldId,
 			name,
 			depth,
@@ -79,7 +88,12 @@ export class ModelApplicationService implements ModelService {
 			notes
 		);
 		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
-			const permissionAssignment = new PermissionAssignment("", permission, model._id, MODEL);
+			const permissionAssignment = this.permissionAssignmentFactory(
+				null,
+				permission,
+				model._id,
+				MODEL
+			);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
 			context.permissions.push(permissionAssignment);
@@ -121,7 +135,7 @@ export class ModelApplicationService implements ModelService {
 			if (await this.filenameExists(file.filename)) {
 				throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
 			}
-			const newFile = new File("", file.filename, file.createReadStream());
+			const newFile = this.fileFactory(null, file.filename, file.createReadStream(), null);
 			await unitOfWork.fileRepository.create(newFile);
 			model.fileId = newFile._id;
 			model.fileName = file.filename;

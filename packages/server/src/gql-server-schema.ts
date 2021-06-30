@@ -88,14 +88,14 @@ export const typeDefs = gql`
 			subjectId: ID!
 			subjectType: String!
 		): PermissionControlled!
-		revokeUserPermission(userId: ID!, permissionAssignmentId: ID!): PermissionControlled!
+		revokeUserPermission(userId: ID!, permission: String!, subjectId: ID!): PermissionControlled!
 		grantRolePermission(
 			roleId: ID!
 			permission: String!
 			subjectId: ID!
 			subjectType: String!
 		): Role!
-		revokeRolePermission(roleId: ID!, permissionAssignmentId: ID!): Role!
+		revokeRolePermission(roleId: ID!, permission: String!, subjectId: ID!): Role!
 
 		createFolder(name: String!, parentFolderId: ID!): World!
 		renameFolder(folderId: ID!, name: String!): WikiFolder!

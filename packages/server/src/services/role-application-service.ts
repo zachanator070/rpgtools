@@ -14,7 +14,8 @@ export class RoleApplicationService implements RoleService {
 	@inject(INJECTABLE_TYPES.RoleRepository)
 	roleRepository: RoleRepository;
 
-	roleAuthorizationRuleset: RoleAuthorizationRuleset = new RoleAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)
+	roleAuthorizationRuleset: RoleAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;

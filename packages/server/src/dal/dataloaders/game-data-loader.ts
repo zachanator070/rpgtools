@@ -1,12 +1,14 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Game } from "../../domain-entities/game";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { GameRepository } from "../../types";
 import { GameAuthorizationRuleset } from "../../security/game-authorization-ruleset";
 
+@injectable()
 export class GameDataLoader extends GraphqlDataloader<Game> {
-	constructor(@inject(INJECTABLE_TYPES.GameRepository) repo: GameRepository) {
-		super(repo, new GameAuthorizationRuleset());
-	}
+	@inject(INJECTABLE_TYPES.GameRepository)
+	repository: GameRepository;
+	@inject(INJECTABLE_TYPES.GameAuthorizationRuleset)
+	ruleset: GameAuthorizationRuleset;
 }

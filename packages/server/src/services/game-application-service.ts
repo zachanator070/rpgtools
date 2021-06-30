@@ -2,8 +2,10 @@ import {
 	AuthorizationService,
 	EventPublisher,
 	Factory,
+	GameFactory,
 	GameRepository,
 	GameService,
+	PermissionAssignmentFactory,
 } from "../types";
 import {
 	ANON_USERNAME,
@@ -42,12 +44,10 @@ import { RollGameCommand } from "../domain-entities/game-commands/roll-game-comm
 import { WhisperGameCommand } from "../domain-entities/game-commands/whisper-game-command";
 import { AbstractGameCommand } from "../domain-entities/game-commands/abstract-game-command";
 import { User } from "../domain-entities/user";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
 import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
-import { GameModel } from "../dal/mongodb/models/game";
 
 @injectable()
 export class GameApplicationService implements GameService {
@@ -60,10 +60,16 @@ export class GameApplicationService implements GameService {
 	@inject(INJECTABLE_TYPES.EventPublisher)
 	eventPublisher: EventPublisher;
 
-	gameAuthorizationRuleSet: GameAuthorizationRuleset = new GameAuthorizationRuleset();
+	@inject(INJECTABLE_TYPES.GameAuthorizationRuleset)
+	gameAuthorizationRuleSet: GameAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
+	@inject(INJECTABLE_TYPES.GameFactory)
+	gameFactory: GameFactory;
+	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	permissionAssignmentFactory: PermissionAssignmentFactory;
 
 	createGame = async (
 		context: SecurityContext,
@@ -75,11 +81,11 @@ export class GameApplicationService implements GameService {
 			throw new Error("You do not have permission to host games on this world");
 		}
 		const unitOfWork = this.dbUnitOfWorkFactory();
-		const game = new Game(
-			"",
+		const game = this.gameFactory(
+			null,
 			password && bcrypt.hashSync(password, SALT_ROUNDS),
 			worldId,
-			"",
+			null,
 			[
 				new Character(
 					"",
@@ -102,7 +108,12 @@ export class GameApplicationService implements GameService {
 		);
 
 		for (let permission of GAME_PERMISSIONS) {
-			const permissionAssignment = new PermissionAssignment("", permission, game._id, GAME);
+			const permissionAssignment = this.permissionAssignmentFactory(
+				null,
+				permission,
+				game._id,
+				GAME
+			);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
 			context.permissions.push(permissionAssignment);
@@ -133,7 +144,7 @@ export class GameApplicationService implements GameService {
 			new FilterCondition("subjectType", GAME),
 		]);
 		if (!permissionAssignment) {
-			permissionAssignment = new PermissionAssignment("", GAME_READ, game._id, GAME);
+			permissionAssignment = this.permissionAssignmentFactory(null, GAME_READ, game._id, GAME);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 		}
 		context.user.permissions.push(permissionAssignment._id);
