@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`image-mutations with existing world and logged in user create image no permission 1`] = `
+Object {
+  "data": Object {
+    "createImage": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`image-mutations with existing world and logged in user with unauthenticated user create image no permission 1`] = `
+Object {
+  "data": Object {
+    "createImage": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

@@ -1,32 +1,27 @@
-import { createTestClient } from "apollo-server-testing";
 import { GENERATE_REGISTER_CODES } from "../../../../../frontend/src/hooks/server/useGenerateRegisterCodes";
 import { UNLOCK_SERVER } from "../../../../../frontend/src/hooks/server/useUnlockServer";
 import { container } from "../../../../src/inversify.config";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
-import {
-	ServerConfigRepository,
-	SessionContextFactory,
-	UserRepository,
-} from "../../../../src/types";
-import { ExpressApiServer } from "../../../../src/express-api-server";
+import { ServerConfigRepository, UserRepository } from "../../../../src/types";
 import { FilterCondition } from "../../../../src/dal/filter-condition";
-import { MockSessionContextFactory } from "../../MockSessionContextFactory";
+import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
-	container
-		.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
-		.to(MockSessionContextFactory)
-		.inSingletonScope();
-
-	const mockSessionContextFactory = container.get<MockSessionContextFactory>(
-		INJECTABLE_TYPES.SessionContextFactory
-	);
-
-	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
-
-	const { mutate } = createTestClient(server.gqlServer);
+	let {
+		mutate,
+		server,
+		mockSessionContextFactory,
+		otherUser,
+		otherUserSecurityContext,
+		world,
+		testRole,
+		currentUser,
+		testerSecurityContext,
+		newFolder,
+		...testingContext
+	} = defaultTestingContextFactory();
 
 	describe("with locked server", () => {
 		const resetConfig = async () => {
