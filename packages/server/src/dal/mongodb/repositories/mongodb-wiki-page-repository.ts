@@ -1,26 +1,14 @@
 import { inject, injectable } from "inversify";
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
-import {
-	ArticleRepository,
-	ItemRepository,
-	MonsterRepository,
-	PersonRepository,
-	PlaceRepository,
-	WikiPageRepository,
-} from "../../../types";
+import { WikiPageRepository } from "../../../types";
 import { Model } from "mongoose";
 import { WikiPage } from "../../../domain-entities/wiki-page";
 import { WikiPageDocument, WikiPageModel } from "../models/wiki-page";
 import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "../../../../../common/src/type-constants";
-import { Article } from "../../../domain-entities/article";
-import { Place } from "../../../domain-entities/place";
 import { PlaceDocument } from "../models/place";
 import { PersonDocument } from "../models/person";
 import { ItemDocument } from "../models/item";
 import { MonsterDocument } from "../models/monster";
-import { Person } from "../../../domain-entities/person";
-import { Item } from "../../../domain-entities/item";
-import { Monster } from "../../../domain-entities/monster";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 import { MongodbArticleRepository } from "./mongodb-article-repository";
 import { ArticleDocument } from "../models/article";
@@ -48,7 +36,7 @@ export class MongodbWikiPageRepository
 	monsterRepository: MongodbMonsterRepository;
 
 	buildEntity(document: WikiPageDocument): WikiPage {
-		const name = document.modelName;
+		const name = document.type;
 		switch (name) {
 			case ARTICLE:
 				const articleDocument = document as ArticleDocument;

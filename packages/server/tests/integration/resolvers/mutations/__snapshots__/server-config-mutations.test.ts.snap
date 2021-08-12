@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`server mutations generate register codes no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission to call this method],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`server mutations with authenticated user generate register codes 1`] = `
+Object {
+  "data": Object {
+    "generateRegisterCodes": Object {
+      "_id": Any<String>,
+      "registerCodes": ArrayContaining [
+        Any<String>,
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`server mutations with locked server unlock 1`] = `
+Object {
+  "data": Object {
+    "unlockServer": true,
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`server mutations with locked server unlock twice 1`] = `
+Object {
+  "data": Object {
+    "unlockServer": null,
+  },
+  "errors": Array [
+    [GraphQLError: Registration Error: Email already used],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

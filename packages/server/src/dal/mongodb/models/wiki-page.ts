@@ -4,6 +4,7 @@ import { IMAGE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constant
 import { MongoDBEntity } from "../../../types";
 
 export class WikiPageDocument extends MongoDBEntity {
+	public type: string;
 	public name: string;
 	public world: Schema.Types.ObjectId;
 	public coverImage?: Schema.Types.ObjectId;

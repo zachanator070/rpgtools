@@ -54,7 +54,7 @@
 	"devDependencies": {
 		"@types/archiver": "^5.1.0",
 		"@types/bcrypt": "^5.0.0",
-		"@types/graphql-upload": "^8.0.4",
+		"@types/graphql-upload": "^8.0.6",
 		"@types/type-is": "^1.6.3",
 		"@types/unzipper": "^0.10.3",
 		"@types/cookie-parser": "^1.4.2",

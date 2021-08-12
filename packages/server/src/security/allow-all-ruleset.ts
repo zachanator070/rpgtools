@@ -1,6 +1,8 @@
 import { DomainEntity, EntityAuthorizationRuleset } from "../types";
 import { SecurityContext } from "../security-context";
+import { injectable } from "inversify";
 
+@injectable()
 export abstract class AllowAllRuleset<T extends DomainEntity, Parent extends DomainEntity>
 	implements EntityAuthorizationRuleset<T, Parent>
 {

@@ -1,23 +1,25 @@
-import { createTestClient } from "apollo-server-testing";
 import { LOGIN_QUERY } from "../../../../../frontend/src/hooks/authentication/useLogin";
 import { REGISTER_MUTATION } from "../../../../../frontend/src/hooks/authentication/useRegister";
 import { container } from "../../../../src/inversify.config";
-import { ServerConfigRepository, SessionContextFactory } from "../../../../src/types";
+import { ServerConfigRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
-import { MockSessionContextFactory } from "../../MockSessionContextFactory";
-import { ExpressApiServer } from "../../../../src/express-api-server";
+import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 
 describe("authentication-mutations", () => {
-	container
-		.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
-		.to(MockSessionContextFactory)
-		.inSingletonScope();
-
-	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
-
-	const { mutate } = createTestClient(server.gqlServer);
+	let {
+		mutate,
+		mockSessionContextFactory,
+		otherUser,
+		otherUserSecurityContext,
+		world,
+		testRole,
+		currentUser,
+		testerSecurityContext,
+		newFolder,
+		...testingContext
+	} = defaultTestingContextFactory();
 
 	test("login", async () => {
 		const result = await mutate({
