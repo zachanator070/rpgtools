@@ -44,9 +44,11 @@ export class WikiPageAuthorizationRuleset
 
 	canRead = async (context: SecurityContext, entity: WikiPage): Promise<boolean> => {
 		// if this wiki page is the main page of a world
-		const world = await this.worldRepository.findOne([new FilterCondition("wikiPage", entity._id)]);
+		let world = await this.worldRepository.findOne([new FilterCondition("wikiPage", entity._id)]);
 		if (world) {
 			return true;
+		} else {
+			world = await this.worldRepository.findById(entity.world);
 		}
 		const parentFolder = await this.wikiFolderRepository.findOne([
 			new FilterCondition("pages", entity._id),

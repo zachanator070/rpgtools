@@ -6,6 +6,8 @@ import { WikiFolder } from "../../src/domain-entities/wiki-folder";
 import { ApolloServerTestClient } from "apollo-server-testing";
 import { MockSessionContextFactory } from "./MockSessionContextFactory";
 import { ApiServer } from "../../src/types";
+import { WikiPage } from "../../src/domain-entities/wiki-page";
+import { Pin } from "../../src/domain-entities/pin";
 
 export interface TestingContext extends ApolloServerTestClient {
 	mockSessionContextFactory: MockSessionContextFactory;
@@ -17,5 +19,7 @@ export interface TestingContext extends ApolloServerTestClient {
 	currentUser: User;
 	testerSecurityContext: SecurityContext;
 	newFolder: WikiFolder;
+	otherPage: WikiPage;
+	pin: Pin;
 	reset: () => Promise<TestingContext>;
 }
