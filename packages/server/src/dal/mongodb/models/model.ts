@@ -1,17 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { MODEL, WORLD } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class ModelDocument extends MongoDBEntity {
-	public world: Schema.Types.ObjectId;
-	public name: string;
-	public depth: number;
-	public width: number;
-	public height: number;
-	public fileName: string;
-	public fileId: string;
-	public notes: string;
-}
+import { ModelDocument } from "../../../types";
 
 const modelSchema = new Schema({
 	world: {

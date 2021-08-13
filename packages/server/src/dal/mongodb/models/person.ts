@@ -1,8 +1,7 @@
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 import { MODEL, PERSON } from "../../../../../common/src/type-constants";
-import {ModeledWikiDocument, WikiPageModel} from "./wiki-page";
-
-export class PersonDocument extends ModeledWikiDocument{}
+import { WikiPageModel } from "./wiki-page";
+import { PersonDocument } from "../../../types";
 
 const personSchema = new Schema<PersonDocument>({
 	model: {

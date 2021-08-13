@@ -1,9 +1,9 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Place } from "../../../domain-entities/place";
 import { inject, injectable } from "inversify";
-import { PlaceFactory, PlaceRepository } from "../../../types";
+import { PlaceDocument, PlaceFactory, PlaceRepository } from "../../../types";
 import { Model } from "mongoose";
-import { PlaceDocument, PlaceModel } from "../models/place";
+import { PlaceModel } from "../models/place";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()

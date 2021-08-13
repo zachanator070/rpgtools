@@ -16,7 +16,6 @@ import {
 	Repository,
 	RoleRepository,
 	ServerConfigRepository,
-	UnitOfWork,
 	UserRepository,
 	WikiFolderRepository,
 	WikiPageRepository,
@@ -36,7 +35,6 @@ import {
 	MONSTER,
 	PERSON,
 	PLACE,
-	WIKI_FOLDER,
 	WORLD,
 } from "../../../common/src/type-constants";
 import { Model } from "../domain-entities/model";
@@ -117,7 +115,6 @@ export class ZipArchive implements Archive {
 		await this.dumpRepo(this.monsterRepository, MONSTER, this.getWikiPagePath);
 		await this.dumpRepo(this.personRepository, PERSON, this.getWikiPagePath);
 		await this.dumpRepo(this.placeRepository, PLACE, this.getWikiPagePath);
-		await this.dumpRepo(this.wikiFolderRepository, WIKI_FOLDER, this.getWikiPagePath);
 		await this.dumpRepo(this.worldRepository, WORLD, async (entity: World) => "worlds");
 
 		await this.archive.finalize();

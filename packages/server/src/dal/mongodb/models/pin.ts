@@ -1,13 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { PIN, PLACE, WIKI_PAGE } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class PinDocument extends MongoDBEntity {
-	public x: number;
-	public y: number;
-	public map: Schema.Types.ObjectId;
-	public page: Schema.Types.ObjectId;
-}
+import { PinDocument } from "../../../types";
 
 const pinSchema = new Schema({
 	x: {

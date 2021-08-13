@@ -1,8 +1,8 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Monster } from "../../../domain-entities/monster";
-import { MonsterDocument, MonsterModel } from "../models/monster";
+import { MonsterModel } from "../models/monster";
 import { Model } from "mongoose";
-import { MonsterFactory, MonsterRepository } from "../../../types";
+import { MonsterDocument, MonsterFactory, MonsterRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 

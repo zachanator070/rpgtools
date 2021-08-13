@@ -1,8 +1,7 @@
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 import { ITEM, MODEL } from "../../../../../common/src/type-constants";
-import {ModeledWikiDocument, WikiPageModel} from "./wiki-page";
-
-export class ItemDocument extends ModeledWikiDocument{}
+import { WikiPageModel } from "./wiki-page";
+import { ItemDocument } from "../../../types";
 
 const itemSchema = new Schema<ItemDocument>({
 	model: {

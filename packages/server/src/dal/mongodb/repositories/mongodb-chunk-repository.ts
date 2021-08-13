@@ -1,7 +1,7 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Chunk } from "../../../domain-entities/chunk";
-import { ChunkFactory, ChunkRepository, DomainEntityFactory } from "../../../types";
-import { ChunkDocument, ChunkModel } from "../models/chunk";
+import { ChunkDocument, ChunkFactory, ChunkRepository, DomainEntityFactory } from "../../../types";
+import { ChunkModel } from "../models/chunk";
 import { Model } from "mongoose";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";

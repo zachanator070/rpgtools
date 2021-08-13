@@ -1,8 +1,8 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Image } from "../../../domain-entities/image";
-import { ImageDocument, ImageModel } from "../models/image";
+import { ImageModel } from "../models/image";
 import { Model } from "mongoose";
-import { ImageFactory, ImageRepository } from "../../../types";
+import { ImageDocument, ImageFactory, ImageRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 

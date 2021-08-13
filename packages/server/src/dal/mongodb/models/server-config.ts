@@ -1,13 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { SERVER_CONFIG, USER } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class ServerConfigDocument extends MongoDBEntity {
-	public version: string;
-	public registerCodes: string[];
-	public adminUsers: Schema.Types.ObjectId[];
-	public unlockCode: string;
-}
+import { ServerConfigDocument } from "../../../types";
 
 const serverSchema = new Schema({
 	version: {

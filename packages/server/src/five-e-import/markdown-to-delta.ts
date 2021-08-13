@@ -4,8 +4,8 @@ import unified from "unified";
 import markdown from "remark-parse";
 import AsciiTable from "ascii-table";
 
-export const markdownToDelta = (md) => {
-	const fixGhettoTable = (text) => {
+export const markdownToDelta = (md: string) => {
+	const fixGhettoTable = (text: string) => {
 		let fixedText = "";
 		let lastLineWasTable = false;
 		let lastLine = null;
@@ -27,15 +27,15 @@ export const markdownToDelta = (md) => {
 	md = fixGhettoTable(md);
 
 	const processor = unified().use(markdown);
-	const tree = processor.parse(md);
+	const tree: any = processor.parse(md);
 	const ops = [];
 
 	const visitChildren = (
-		node,
+		node: any,
 		nextNode = {},
 		inheritedAttributes = {},
 		inheritedProperties = {}
-	) => {
+	): any[] => {
 		const ops = [];
 		for (let childIndex = 0; childIndex < node.children.length; childIndex++) {
 			const child = node.children[childIndex];
@@ -51,7 +51,12 @@ export const markdownToDelta = (md) => {
 	const SPACED_ELEMENTS = ["paragraph", "table"];
 
 	// eslint-disable-next-line complexity
-	const visitNode = (node, nextNode = {}, inheritedAttributes = {}, inheritedProperties = {}) => {
+	const visitNode = (
+		node: any,
+		nextNode: any = {},
+		inheritedAttributes = {},
+		inheritedProperties = {}
+	) => {
 		switch (node.type) {
 			case "paragraph":
 				const paragraphOps = [
@@ -92,7 +97,7 @@ export const markdownToDelta = (md) => {
 					inheritedProperties
 				);
 			case "image":
-				const imageOp = { insert: { image: node.url } };
+				const imageOp: any = { insert: { image: node.url } };
 				if (node.alt) {
 					imageOp.attributes = { alt: node.alt };
 				}
@@ -109,7 +114,7 @@ export const markdownToDelta = (md) => {
 					},
 				];
 			case "heading":
-				const getHeadingSize = (depth) => {
+				const getHeadingSize = (depth: number) => {
 					switch (depth) {
 						case 1:
 							return "huge";
@@ -191,7 +196,7 @@ export const markdownToDelta = (md) => {
 				const table = new AsciiTable();
 				table.removeBorder();
 				for (let child of node.children) {
-					const cells = child.children.map((cell) =>
+					const cells = child.children.map((cell: any) =>
 						visitChildren(cell, {}, inheritedAttributes, inheritedProperties)
 							.map((childOp) => childOp.insert)
 							.join()
@@ -199,7 +204,7 @@ export const markdownToDelta = (md) => {
 					table.addRow(...cells);
 				}
 
-				const tableOp = {
+				const tableOp: any = {
 					attributes: { ...inheritedAttributes, font: "monospace" },
 					insert: table.toString(),
 				};
@@ -207,7 +212,7 @@ export const markdownToDelta = (md) => {
 					tableOp.attributes.size = "small";
 				}
 
-				const tableOps = [tableOp, { insert: "\n" }];
+				const tableOps: any[] = [tableOp, { insert: "\n" }];
 				if (SPACED_ELEMENTS.includes(nextNode.type)) {
 					tableOps.push({ insert: "\n" });
 				}
