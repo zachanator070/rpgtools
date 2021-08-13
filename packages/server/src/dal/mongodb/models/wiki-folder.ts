@@ -1,13 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { WIKI_FOLDER, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
+import { WikiFolderDocument } from "../../../types";
 
-export class WikiFolderDocument extends MongoDBEntity {
-	public name: string;
-	public world: Schema.Types.ObjectId;
-	public pages: Schema.Types.ObjectId[];
-	public children: Schema.Types.ObjectId[];
-}
 const wikiFolderSchema = new Schema({
 	name: {
 		type: String,

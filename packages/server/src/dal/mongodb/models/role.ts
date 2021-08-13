@@ -1,12 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { PERMISSION_ASSIGNMENT, WORLD } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class RoleDocument extends MongoDBEntity {
-	public name: string;
-	public world: Schema.Types.ObjectId;
-	public permissions: Schema.Types.ObjectId[];
-}
+import { RoleDocument } from "../../../types";
 
 const roleSchema = new Schema({
 	name: {

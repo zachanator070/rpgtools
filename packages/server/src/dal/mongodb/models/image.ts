@@ -1,17 +1,6 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { CHUNK, IMAGE, WORLD } from "../../../../../common/src/type-constants";
-import {MongoDBEntity} from "../../../types";
-
-export class ImageDocument extends MongoDBEntity{
-	public world: Schema.Types.ObjectId;
-	public width: number;
-	public height: number;
-	public chunkWidth: number;
-	public chunkHeight: number;
-	public chunks: Schema.Types.ObjectId[];
-	public icon: Schema.Types.ObjectId;
-	public name: string;
-}
+import { ImageDocument } from "../../../types";
 
 const imageSchema = new Schema({
 	world: {

@@ -1,11 +1,7 @@
 import { Schema } from "mongoose";
-import { WikiPageModel, WikiPageDocument } from "./wiki-page";
+import { WikiPageModel } from "./wiki-page";
 import { PLACE } from "../../../../../common/src/type-constants";
-
-export class PlaceDocument extends WikiPageDocument {
-	public mapImage: Schema.Types.ObjectId;
-	public pixelsPerFoot: number;
-}
+import { PlaceDocument } from "../../../types";
 
 const placeSchema = new Schema<PlaceDocument>({
 	mapImage: {

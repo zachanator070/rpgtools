@@ -1,9 +1,9 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Person } from "../../../domain-entities/person";
 import { inject, injectable } from "inversify";
-import { PersonFactory, PersonRepository } from "../../../types";
+import { PersonDocument, PersonFactory, PersonRepository } from "../../../types";
 import { Model } from "mongoose";
-import { PersonDocument, PersonModel } from "../models/person";
+import { PersonModel } from "../models/person";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()

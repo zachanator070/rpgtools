@@ -1,20 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { IMAGE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class WikiPageDocument extends MongoDBEntity {
-	public type: string;
-	public name: string;
-	public world: Schema.Types.ObjectId;
-	public coverImage?: Schema.Types.ObjectId;
-	public contentId?: Schema.Types.ObjectId;
-}
-
-export class ModeledWikiDocument extends WikiPageDocument {
-	public pageModel: Schema.Types.ObjectId;
-	public modelColor: string;
-}
+import { ModeledWikiDocument } from "../../../types";
 
 const wikiPageSchema = new Schema(
 	{

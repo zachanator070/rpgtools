@@ -1,9 +1,9 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { ServerConfig } from "../../../domain-entities/server-config";
 import { inject, injectable } from "inversify";
-import { ServerConfigFactory, ServerConfigRepository } from "../../../types";
+import { ServerConfigDocument, ServerConfigFactory, ServerConfigRepository } from "../../../types";
 import { Model } from "mongoose";
-import { ServerConfigDocument, ServerConfigModel } from "../models/server-config";
+import { ServerConfigModel } from "../models/server-config";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()

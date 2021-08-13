@@ -4,13 +4,7 @@ import {
 	PERMISSION_ASSIGNMENT,
 	PERMISSION_CONTROLLED_TYPES,
 } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class PermissionAssignmentDocument extends MongoDBEntity {
-	public permission: string;
-	public subject: Schema.Types.ObjectId;
-	public subjectType: string;
-}
+import { PermissionAssignmentDocument } from "../../../types";
 
 const permissionAssignmentSchema = new Schema({
 	permission: {

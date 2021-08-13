@@ -1,9 +1,9 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { WikiFolder } from "../../../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
-import { WikiFolderFactory, WikiFolderRepository } from "../../../types";
+import { WikiFolderDocument, WikiFolderFactory, WikiFolderRepository } from "../../../types";
 import { Model } from "mongoose";
-import { WikiFolderDocument, WikiFolderModel } from "../models/wiki-folder";
+import { WikiFolderModel } from "../models/wiki-folder";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()

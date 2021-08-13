@@ -643,3 +643,103 @@ export interface RoleService {
 		page: number
 	) => Promise<PaginatedResult<Role>>;
 }
+
+export class WikiPageDocument extends MongoDBEntity {
+	public type: string;
+	public name: string;
+	public world: Schema.Types.ObjectId;
+	public coverImage?: Schema.Types.ObjectId;
+	public contentId?: Schema.Types.ObjectId;
+}
+
+export class ModeledWikiDocument extends WikiPageDocument {
+	public pageModel: Schema.Types.ObjectId;
+	public modelColor: string;
+}
+
+export class ArticleDocument extends WikiPageDocument {}
+
+export class ChunkDocument extends MongoDBEntity {
+	public image: Schema.Types.ObjectId;
+	public x: number;
+	public y: number;
+	public width: number;
+	public height: number;
+	public fileId: string;
+}
+
+export class ItemDocument extends ModeledWikiDocument {}
+
+export class PersonDocument extends ModeledWikiDocument {}
+
+export class PlaceDocument extends WikiPageDocument {
+	public mapImage: Schema.Types.ObjectId;
+	public pixelsPerFoot: number;
+}
+
+export class MonsterDocument extends ModeledWikiDocument {}
+
+export class WikiFolderDocument extends MongoDBEntity {
+	public name: string;
+	public world: Schema.Types.ObjectId;
+	public pages: Schema.Types.ObjectId[];
+	public children: Schema.Types.ObjectId[];
+}
+
+export class UserDocument extends MongoDBEntity {
+	public email: string;
+	public username: string;
+	public password: string;
+	public tokenVersion: string;
+	public currentWorld: Schema.Types.ObjectId;
+	public roles: Schema.Types.ObjectId[];
+	public permissions: Schema.Types.ObjectId[];
+}
+
+export class ServerConfigDocument extends MongoDBEntity {
+	public version: string;
+	public registerCodes: string[];
+	public adminUsers: Schema.Types.ObjectId[];
+	public unlockCode: string;
+}
+
+export class RoleDocument extends MongoDBEntity {
+	public name: string;
+	public world: Schema.Types.ObjectId;
+	public permissions: Schema.Types.ObjectId[];
+}
+
+export class PinDocument extends MongoDBEntity {
+	public x: number;
+	public y: number;
+	public map: Schema.Types.ObjectId;
+	public page: Schema.Types.ObjectId;
+}
+
+export class PermissionAssignmentDocument extends MongoDBEntity {
+	public permission: string;
+	public subject: Schema.Types.ObjectId;
+	public subjectType: string;
+}
+
+export class ModelDocument extends MongoDBEntity {
+	public world: Schema.Types.ObjectId;
+	public name: string;
+	public depth: number;
+	public width: number;
+	public height: number;
+	public fileName: string;
+	public fileId: string;
+	public notes: string;
+}
+
+export class ImageDocument extends MongoDBEntity {
+	public world: Schema.Types.ObjectId;
+	public width: number;
+	public height: number;
+	public chunkWidth: number;
+	public chunkHeight: number;
+	public chunks: Schema.Types.ObjectId[];
+	public icon: Schema.Types.ObjectId;
+	public name: string;
+}

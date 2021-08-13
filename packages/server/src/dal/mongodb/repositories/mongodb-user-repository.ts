@@ -1,7 +1,7 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { User } from "../../../domain-entities/user";
-import { UserDocument, UserModel } from "../models/user";
-import { UserFactory, UserRepository } from "../../../types";
+import { UserModel } from "../models/user";
+import { UserDocument, UserFactory, UserRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 

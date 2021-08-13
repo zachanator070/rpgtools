@@ -1,14 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { PIN, PLACE, ROLE, WIKI_FOLDER, WORLD } from "../../../../../common/src/type-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class WorldDocument extends MongoDBEntity {
-	public name: string;
-	public wikiPage: Schema.Types.ObjectId;
-	public rootFolder: Schema.Types.ObjectId;
-	public roles: Schema.Types.ObjectId[];
-	public pins: Schema.Types.ObjectId[];
-}
+import { WorldDocument } from "../../../index";
 
 const worldSchema = new Schema({
 	name: {

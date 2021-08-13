@@ -1,17 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "../../../../../common/src/type-constants";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
-import { MongoDBEntity } from "../../../types";
-
-export class UserDocument extends MongoDBEntity {
-	public email: string;
-	public username: string;
-	public password: string;
-	public tokenVersion: string;
-	public currentWorld: Schema.Types.ObjectId;
-	public roles: Schema.Types.ObjectId[];
-	public permissions: Schema.Types.ObjectId[];
-}
+import { UserDocument } from "../../../types";
 
 const userSchema = new Schema({
 	email: {

@@ -10,18 +10,18 @@ import {
 } from "../../../domain-entities/game";
 import { GameFactory, GameRepository } from "../../../types";
 import { Model } from "mongoose";
+import { GameModel } from "../models/game";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../../../injectable-types";
 import {
 	CharacterDocument,
 	FogStrokeDocument,
 	GameDocument,
-	GameModel,
 	InGameModelDocument,
 	MessageDocument,
 	PathNodeDocument,
 	StrokeDocument,
-} from "../models/game";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+} from "../../../index";
 
 @injectable()
 export class MongodbGameRepository

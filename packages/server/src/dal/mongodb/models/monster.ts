@@ -1,8 +1,7 @@
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 import { MODEL, MONSTER } from "../../../../../common/src/type-constants";
-import {ModeledWikiDocument, WikiPageModel} from "./wiki-page";
-
-export class MonsterDocument extends ModeledWikiDocument{}
+import { WikiPageModel } from "./wiki-page";
+import { MonsterDocument } from "../../../types";
 
 const monsterSchema = new Schema<MonsterDocument>({
 	model: {

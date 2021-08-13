@@ -1,9 +1,9 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Pin } from "../../../domain-entities/pin";
 import { inject, injectable } from "inversify";
-import { PinFactory, PinRepository } from "../../../types";
+import { PinDocument, PinFactory, PinRepository } from "../../../types";
 import { Model } from "mongoose";
-import { PinDocument, PinModel } from "../models/pin";
+import { PinModel } from "../models/pin";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
 @injectable()
