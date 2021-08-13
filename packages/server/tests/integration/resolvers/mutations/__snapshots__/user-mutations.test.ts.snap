@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`user mutations with world set current world not logged in 1`] = `
+exports[`user mutations with world and not logged in set current world not logged in 1`] = `
 Object {
   "data": null,
   "errors": Array [
-    [GraphQLError: Authentication is required for this action],
+    [GraphQLError: Cannot return null for non-nullable field User._id.],
   ],
   "extensions": undefined,
   "http": Object {
@@ -15,7 +15,7 @@ Object {
 }
 `;
 
-exports[`user mutations with world with authenticated user set current world 1`] = `
+exports[`user mutations with world and not logged in with authenticated user set current world 1`] = `
 Object {
   "data": Object {
     "setCurrentWorld": Object {

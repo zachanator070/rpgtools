@@ -3,12 +3,14 @@ import { FilterCondition } from "../../src/dal/filter-condition";
 import { container } from "../../src/inversify.config";
 import {
 	AuthorizationService,
+	PinRepository,
 	RoleRepository,
 	SessionContextFactory,
 	UserFactory,
 	UserRepository,
 	WikiFolderRepository,
 	WikiFolderService,
+	WikiPageRepository,
 	WikiPageService,
 	WorldService,
 } from "../../src/types";
@@ -33,6 +35,8 @@ export const defaultTestingContextFactory = (): TestingContext => {
 	);
 	const userRepo = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
 	const wikiFolderRepo = container.get<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository);
+	const wikiPageRepo = container.get<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository);
+	const pinRepo = container.get<PinRepository>(INJECTABLE_TYPES.PinRepository);
 	const securityContextFactory = container.get<SecurityContextFactory>(
 		INJECTABLE_TYPES.SecurityContextFactory
 	);
@@ -55,6 +59,8 @@ export const defaultTestingContextFactory = (): TestingContext => {
 		currentUser: null,
 		testerSecurityContext: null,
 		newFolder: null,
+		otherPage: null,
+		pin: null,
 		async reset() {
 			this.mockSessionContextFactory = mockSessionContextFactory;
 			this.currentUser = await userRepo.findOne([new FilterCondition("username", "tester")]);
@@ -84,6 +90,26 @@ export const defaultTestingContextFactory = (): TestingContext => {
 				new FilterCondition("world", this.world._id),
 			]);
 			await wikiPageService.createWiki(this.testerSecurityContext, "new page", this.newFolder._id);
+			await wikiPageService.createWiki(
+				this.testerSecurityContext,
+				"other page",
+				this.world.rootFolder
+			);
+			this.otherPage = await wikiPageRepo.findOne([
+				new FilterCondition("name", "other page"),
+				new FilterCondition("world", this.world._id),
+			]);
+			await worldService.createPin(
+				this.testerSecurityContext,
+				this.world.wikiPage,
+				this.otherPage._id,
+				0,
+				0
+			);
+			this.pin = await pinRepo.findOne([
+				new FilterCondition("map", this.world.wikiPage),
+				new FilterCondition("page", this.otherPage._id),
+			]);
 			return this;
 		},
 	};

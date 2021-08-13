@@ -1,0 +1,226 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`world-mutations with world and logged in create pin 1`] = `
+Object {
+  "data": Object {
+    "createPin": Object {
+      "_id": Any<String>,
+      "pins": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "map": Object {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "page": Object {
+            "_id": Any<String>,
+            "name": Any<String>,
+            "type": Any<String>,
+          },
+          "x": 0,
+          "y": 0,
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in create world 1`] = `
+Object {
+  "data": Object {
+    "createWorld": Object {
+      "_id": Any<String>,
+      "wikiPage": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in not logged in create pin no permission 1`] = `
+Object {
+  "data": Object {
+    "createPin": Object {
+      "_id": Any<String>,
+      "pins": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "map": Object {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "page": Object {
+            "_id": Any<String>,
+            "name": Any<String>,
+            "type": Any<String>,
+          },
+          "x": 0,
+          "y": 0,
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in not logged in create world no permissions 1`] = `
+Object {
+  "data": Object {
+    "createWorld": Object {
+      "_id": Any<String>,
+      "wikiPage": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in not logged in delete pin no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Pin 6115ddccd4bd60fe28361c83 does not exist],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in not logged in rename world no permission 1`] = `
+Object {
+  "data": Object {
+    "renameWorld": Object {
+      "_id": Any<String>,
+      "name": "Azeroth",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in not logged in update pin no permission 1`] = `
+Object {
+  "data": Object {
+    "updatePin": Object {
+      "_id": Any<String>,
+      "pins": Array [
+        Object {
+          "_id": Any<String>,
+          "canWrite": true,
+          "map": Object {
+            "_id": Any<String>,
+            "name": "Earth",
+          },
+          "page": Object {
+            "_id": Any<String>,
+            "name": "other page",
+            "type": "Article",
+          },
+          "x": 0,
+          "y": 0,
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in rename world 1`] = `
+Object {
+  "data": Object {
+    "renameWorld": Object {
+      "_id": Any<String>,
+      "name": "Azeroth",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in update pin 1`] = `
+Object {
+  "data": Object {
+    "updatePin": Object {
+      "_id": Any<String>,
+      "pins": Array [
+        Object {
+          "_id": Any<String>,
+          "canWrite": true,
+          "map": Object {
+            "_id": Any<String>,
+            "name": "Earth",
+          },
+          "page": Object {
+            "_id": Any<String>,
+            "name": "other page",
+            "type": "Article",
+          },
+          "x": 0,
+          "y": 0,
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
