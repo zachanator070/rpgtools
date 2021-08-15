@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import { GameDocument } from "../../../index";
+import {GameDocument} from "../../../types";
 
 const pathNode = new Schema({
 	x: Number,

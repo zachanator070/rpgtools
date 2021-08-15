@@ -1,5 +1,4 @@
 import { AuthenticationService, SessionContext } from "../../types";
-import { IResolverObject } from "apollo-server-express";
 import { container } from "../../inversify.config";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 export const SALT_ROUNDS = 10;
@@ -16,7 +15,7 @@ interface RegisterArgs {
 	password: string;
 }
 
-export const authenticationMutations: IResolverObject<any, SessionContext> = {
+export const authenticationMutations: any = {
 	login: async (
 		parent: any,
 		{ username, password }: LoginArgs,

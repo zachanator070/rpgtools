@@ -1,5 +1,5 @@
 import { EventPublisher } from "./types";
-import { PubSub } from "apollo-server-express";
+import { PubSub } from "graphql-subscriptions";
 import { injectable } from "inversify";
 
 @injectable()

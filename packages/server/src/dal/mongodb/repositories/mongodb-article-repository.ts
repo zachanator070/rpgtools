@@ -1,7 +1,7 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Article } from "../../../domain-entities/article";
-import { ArticleDocument, ArticleFactory, ArticleRepository } from "../../../types";
-import { ArticleModel } from "../models/article";
+import { ArticleFactory, ArticleRepository } from "../../../types";
+import {ArticleDocument, ArticleModel} from "../models/article";
 import { Model } from "mongoose";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";

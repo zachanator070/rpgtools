@@ -24,6 +24,10 @@ import ExportRouter from "./routers/export-router";
 import { ImageRouter } from "./routers/image-router";
 import { typeDefs } from "./gql-server-schema";
 import { allResolvers } from "./resolvers/all-resolvers";
+import {DocumentNode, execute, subscribe} from 'graphql';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import {GraphQLRequest} from "apollo-server-types";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -37,6 +41,7 @@ export class ExpressApiServer implements ApiServer {
 	httpServer: Server = null;
 	expressServer: Express = null;
 	gqlServer: ApolloServer = null;
+	subscriptionServer: SubscriptionServer = null;
 
 	@inject(INJECTABLE_TYPES.RoleRepository)
 	roleRepository: MongodbRoleRepository;
@@ -55,37 +60,29 @@ export class ExpressApiServer implements ApiServer {
 	constructor(
 		@inject(INJECTABLE_TYPES.SessionContextFactory) sessionContextFactory: SessionContextFactory
 	) {
+		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
 		this.gqlServer = new ApolloServer({
-			typeDefs,
-			resolvers: allResolvers,
-			playground: {
-				settings: {
-					"editor.cursorShape": "line",
-					"editor.fontFamily":
-						"'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace",
-					"editor.fontSize": 14,
-					"editor.reuseHeaders": true,
-					"editor.theme": "dark",
-					"general.betaUpdates": false,
-					"schema.polling.enable": false,
-					"schema.polling.endpointFilter": "*localhost*",
-					"schema.polling.interval": 2000,
-					"tracing.hideTracingResponse": true,
-					"queryPlan.hideQueryPlanResponse": true,
-					"request.credentials": "same-origin",
-				},
-			},
+			schema,
 			context: sessionContextFactory.create,
-			uploads: false,
-			subscriptions: {
-				onConnect: this.connectionContextFactory.create,
-				keepAlive: 1000,
-			},
-			tracing: process.env.NODE_ENV === "development",
 		});
 		this.expressServer = express();
 		this.httpServer = http.createServer(this.expressServer);
-		this.gqlServer.installSubscriptionHandlers(this.httpServer);
+		this.subscriptionServer = SubscriptionServer.create({
+			schema,
+			execute,
+			subscribe,
+		}, {
+			// This is the `httpServer` we created in a previous step.
+			server: this.httpServer,
+			// This `server` is the instance returned from `new ApolloServer`.
+			path: this.gqlServer.graphqlPath,
+		});
+
+		// Shut down in the case of interrupt and termination signals
+		// We expect to handle this more cleanly in the future. See (#5074)[https://github.com/apollographql/apollo-server/issues/5074] for reference.
+		['SIGINT', 'SIGTERM'].forEach(signal => {
+			process.on(signal, () => this.subscriptionServer.close());
+		});
 
 		this.expressServer.use(bodyParser.json());
 		this.expressServer.use(morgan("tiny"));
@@ -143,6 +140,14 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use(express.static("src/static-assets"));
 		this.expressServer.use(graphqlUploadExpress());
 
+	}
+
+	executeGraphQLQuery = async (request: Omit<GraphQLRequest, 'query'> & {
+		query?: string | DocumentNode;
+	},) => this.gqlServer.executeOperation(request);
+
+	applyMiddleware = async () => {
+		await this.gqlServer.start();
 		this.gqlServer.applyMiddleware({ app: this.expressServer, path: "/api" });
 	}
 
@@ -230,6 +235,7 @@ export class ExpressApiServer implements ApiServer {
 	};
 
 	start = async () => {
+		await this.applyMiddleware();
 		await this.initDb();
 		await this.startListen();
 	};

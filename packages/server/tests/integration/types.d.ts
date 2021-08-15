@@ -3,13 +3,12 @@ import { SecurityContext } from "../../src/security-context";
 import { World } from "../../src/domain-entities/world";
 import { Role } from "../../src/domain-entities/role";
 import { WikiFolder } from "../../src/domain-entities/wiki-folder";
-import { ApolloServerTestClient } from "apollo-server-testing";
 import { MockSessionContextFactory } from "./MockSessionContextFactory";
 import { ApiServer } from "../../src/types";
 import { WikiPage } from "../../src/domain-entities/wiki-page";
 import { Pin } from "../../src/domain-entities/pin";
 
-export interface TestingContext extends ApolloServerTestClient {
+export interface TestingContext {
 	mockSessionContextFactory: MockSessionContextFactory;
 	server: ApiServer;
 	otherUser: User;

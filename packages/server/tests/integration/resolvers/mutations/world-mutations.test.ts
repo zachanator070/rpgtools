@@ -10,7 +10,7 @@ process.env.TEST_SUITE = "world-mutations-test";
 describe("world-mutations", () => {
 	describe("with world and logged in", () => {
 		let {
-			mutate,
+			server,
 			mockSessionContextFactory,
 			otherUser,
 			otherUserSecurityContext,
@@ -40,8 +40,8 @@ describe("world-mutations", () => {
 		});
 
 		test("create world", async () => {
-			const result = await mutate({
-				mutation: CREATE_WORLD,
+			const result = await server.executeGraphQLQuery({
+				query: CREATE_WORLD,
 				variables: { name: "Earth", public: false },
 			});
 			expect(result).toMatchSnapshot({
@@ -58,8 +58,8 @@ describe("world-mutations", () => {
 		});
 
 		test("rename world", async () => {
-			const result = await mutate({
-				mutation: RENAME_WORLD,
+			const result = await server.executeGraphQLQuery({
+				query: RENAME_WORLD,
 				variables: { worldId: world._id, newName: "Azeroth" },
 			});
 			expect(result).toMatchSnapshot({
@@ -73,8 +73,8 @@ describe("world-mutations", () => {
 		});
 
 		test("create pin", async () => {
-			const result = await mutate({
-				mutation: CREATE_PIN,
+			const result = await server.executeGraphQLQuery({
+				query: CREATE_PIN,
 				variables: {
 					mapId: world.wikiPage,
 					x: 0,
@@ -109,8 +109,8 @@ describe("world-mutations", () => {
 		});
 
 		test("update pin", async () => {
-			const result = await mutate({
-				mutation: UPDATE_PIN,
+			const result = await server.executeGraphQLQuery({
+				query: UPDATE_PIN,
 				variables: { pinId: pin._id, pageId: otherPage._id },
 			});
 			expect(result).toMatchSnapshot({
@@ -135,8 +135,8 @@ describe("world-mutations", () => {
 		});
 
 		test("delete pin", async () => {
-			const result = await mutate({
-				mutation: DELETE_PIN,
+			const result = await server.executeGraphQLQuery({
+				query: DELETE_PIN,
 				variables: { pinId: pin._id },
 			});
 			expect(result).toMatchSnapshot({
@@ -150,43 +150,32 @@ describe("world-mutations", () => {
 		});
 
 		describe("not logged in", () => {
+			beforeEach(() => {
+				mockSessionContextFactory.resetCurrentUser();
+			});
 			test("create world no permissions", async () => {
-				const result = await mutate({
-					mutation: CREATE_WORLD,
+				const result = await server.executeGraphQLQuery({
+					query: CREATE_WORLD,
 					variables: { name: "Earth", public: false },
 				});
 				expect(result).toMatchSnapshot({
-					data: {
-						createWorld: {
-							_id: expect.any(String),
-							wikiPage: {
-								_id: expect.any(String),
-							},
-						},
-					},
-					errors: undefined,
+					errors: expect.arrayContaining([expect.any(Object)]),
 				});
 			});
 
 			test("rename world no permission", async () => {
-				const result = await mutate({
-					mutation: RENAME_WORLD,
+				const result = await server.executeGraphQLQuery({
+					query: RENAME_WORLD,
 					variables: { worldId: world._id, newName: "Azeroth" },
 				});
 				expect(result).toMatchSnapshot({
-					data: {
-						renameWorld: {
-							name: "Azeroth",
-							_id: expect.any(String),
-						},
-					},
-					errors: undefined,
+					errors: expect.arrayContaining([expect.any(Object)]),
 				});
 			});
 
 			test("create pin no permission", async () => {
-				const result = await mutate({
-					mutation: CREATE_PIN,
+				const result = await server.executeGraphQLQuery({
+					query: CREATE_PIN,
 					variables: {
 						mapId: world.wikiPage,
 						x: 0,
@@ -195,69 +184,27 @@ describe("world-mutations", () => {
 					},
 				});
 				expect(result).toMatchSnapshot({
-					data: {
-						createPin: {
-							_id: expect.any(String),
-							pins: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-									map: {
-										_id: expect.any(String),
-										name: expect.any(String),
-									},
-									page: {
-										_id: expect.any(String),
-										name: expect.any(String),
-										type: expect.any(String),
-									},
-									x: 0,
-									y: 0,
-								}),
-							]),
-						},
-					},
-					errors: undefined,
+					errors: expect.arrayContaining([expect.any(Object)]),
 				});
 			});
 
 			test("update pin no permission", async () => {
-				const result = await mutate({
-					mutation: UPDATE_PIN,
+				const result = await server.executeGraphQLQuery({
+					query: UPDATE_PIN,
 					variables: { pinId: pin._id, pageId: otherPage._id },
 				});
 				expect(result).toMatchSnapshot({
-					data: {
-						updatePin: {
-							_id: expect.any(String),
-							pins: [
-								{
-									_id: expect.any(String),
-									map: {
-										_id: expect.any(String),
-									},
-									page: {
-										_id: expect.any(String),
-									},
-								},
-							],
-						},
-					},
-					errors: undefined,
+					errors: expect.arrayContaining([expect.any(Object)]),
 				});
 			});
 
 			test("delete pin no permission", async () => {
-				const result = await mutate({
-					mutation: DELETE_PIN,
+				const result = await server.executeGraphQLQuery({
+					query: DELETE_PIN,
 					variables: { pinId: pin._id },
 				});
 				expect(result).toMatchSnapshot({
-					data: {
-						deletePin: {
-							_id: expect.any(String),
-						},
-					},
-					errors: undefined,
+					errors: expect.arrayContaining([expect.any(Object)]),
 				});
 			});
 		});

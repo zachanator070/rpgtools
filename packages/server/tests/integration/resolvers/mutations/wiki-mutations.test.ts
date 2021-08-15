@@ -1,70 +1,67 @@
-import { User } from "../../../../src/dal/mongodb/models/user";
-import { ApolloServer } from "apollo-server-express";
-import { typeDefs } from "../../../../src/gql-server-schema";
-import { allResolvers } from "../../../../src/resolvers/all-resolvers";
-import { createTestClient } from "apollo-server-testing";
-import { createWorld } from "../../../../src/resolvers/mutations/world-mutations";
 import { Readable } from "stream";
 import fs from "fs";
 import { ARTICLE } from "../../../../../common/src/type-constants";
-import { Article } from "../../../../src/dal/mongodb/models/article";
-import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
-import { CREATE_IMAGE } from "../../../../../frontend/src/hooks/wiki/useCreateImage";
 import { CREATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useCreateWiki";
 import { DELETE_WIKI } from "../../../../../frontend/src/hooks/wiki/useDeleteWiki";
 import { UPDATE_PLACE } from "../../../../../frontend/src/hooks/wiki/useUpdatePlace";
 import { UPDATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useUpdateWiki";
+import {CREATE_IMAGE} from "../../../../../common/src/mutations";
+import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
-describe("user mutations", () => {
-	let currentUser = new User({ username: ANON_USERNAME });
+describe("wiki page mutations", () => {
+	let {
+		server,
+		mockSessionContextFactory,
+		otherUser,
+		otherUserSecurityContext,
+		world,
+		testRole,
+		currentUser,
+		testerSecurityContext,
+		newFolder,
+		otherPage,
+		...testingContext
+	} = defaultTestingContextFactory();
 
-	const server = new ApolloServer({
-		typeDefs,
-		resolvers: allResolvers,
-		context: () => {
-			return {
-				currentUser: currentUser,
-				res: {
-					cookie: () => {},
-				},
-			};
-		},
-	});
-
-	const { mutate } = createTestClient(server);
-
-	describe("with world", () => {
-		let world = null;
-
+	describe("with world and not logged in", () => {
 		beforeEach(async () => {
-			const user = await User.findOne({ username: "tester" });
-			await user.recalculateAllPermissions();
-			world = await createWorld("Earth", false, user);
+			({
+				mockSessionContextFactory,
+				otherUser,
+				otherUserSecurityContext,
+				world,
+				testRole,
+				currentUser,
+				testerSecurityContext,
+				newFolder,
+				otherPage,
+			} = await testingContext.reset());
+			mockSessionContextFactory.resetCurrentUser();
 		});
 
 		test("create wiki no permission", async () => {
-			const result = await mutate({
-				mutation: CREATE_WIKI,
+			const result = await server.executeGraphQLQuery({
+				query: CREATE_WIKI,
 				variables: { name: "new wiki", folderId: world.rootFolder.toString() },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("update wiki no permission", async () => {
-			const result = await mutate({
-				mutation: UPDATE_WIKI,
-				variables: { wikiId: world.wikiPage._id.toString(), name: "new name" },
+			const result = await server.executeGraphQLQuery({
+				query: UPDATE_WIKI,
+				variables: { wikiId: world.wikiPage, name: "new name" },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("update cover image no permission", async () => {
-			const result = await mutate({
-				mutation: UPDATE_WIKI,
+			const result = await server.executeGraphQLQuery({
+				query: UPDATE_WIKI,
 				variables: {
-					wikiId: world.wikiPage._id.toString(),
+					wikiId: world.wikiPage,
 					coverImageId: "12345",
 				},
 			});
@@ -72,33 +69,29 @@ describe("user mutations", () => {
 		});
 
 		test("delete wiki no permission", async () => {
-			const result = await mutate({
-				mutation: DELETE_WIKI,
-				variables: { wikiId: world.wikiPage._id.toString() },
+			const result = await server.executeGraphQLQuery({
+				query: DELETE_WIKI,
+				variables: { wikiId: world.wikiPage},
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("update place no permission", async () => {
-			const result = await mutate({
-				mutation: UPDATE_PLACE,
-				variables: { placeId: world.wikiPage._id.toString(), mapImageId: null },
+			const result = await server.executeGraphQLQuery({
+				query: UPDATE_PLACE,
+				variables: { placeId: world.wikiPage, mapImageId: null },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		describe("with authenticated user", () => {
 			beforeEach(async () => {
-				currentUser = await User.findOne({ username: "tester" }).populate({
-					path: "roles",
-					populate: { path: "permissions" },
-				});
-				await currentUser.recalculateAllPermissions();
+				mockSessionContextFactory.setCurrentUser(currentUser);
 			});
 
 			test("create wiki", async () => {
-				const result = await mutate({
-					mutation: CREATE_WIKI,
+				const result = await server.executeGraphQLQuery({
+					query: CREATE_WIKI,
 					variables: {
 						name: "new wiki",
 						folderId: world.rootFolder.toString(),
@@ -124,10 +117,10 @@ describe("user mutations", () => {
 			});
 
 			test("update wiki just name", async () => {
-				const result = await mutate({
-					mutation: UPDATE_WIKI,
+				const result = await server.executeGraphQLQuery({
+					query: UPDATE_WIKI,
 					variables: {
-						wikiId: world.wikiPage._id.toString(),
+						wikiId: world.wikiPage,
 						name: "new name",
 					},
 				});
@@ -147,10 +140,10 @@ describe("user mutations", () => {
 				const content = {
 					createReadStream: () => Readable.from("wiki content".repeat(1024)),
 				};
-				const result = await mutate({
-					mutation: UPDATE_WIKI,
+				const result = await server.executeGraphQLQuery({
+					query: UPDATE_WIKI,
 					variables: {
-						wikiId: world.wikiPage._id.toString(),
+						wikiId: world.wikiPage,
 						content: content,
 					},
 				});
@@ -173,18 +166,18 @@ describe("user mutations", () => {
 					createReadStream: () =>
 						fs.createReadStream("server/tests/integration/resolvers/mutations/testmap.png"),
 				};
-				const imageResult = await mutate({
-					mutation: CREATE_IMAGE,
+				const imageResult = await server.executeGraphQLQuery({
+					query: CREATE_IMAGE,
 					variables: {
 						file: testFile,
 						worldId: world._id.toString(),
 						chunkify: true,
 					},
 				});
-				const result = await mutate({
-					mutation: UPDATE_WIKI,
+				const result = await server.executeGraphQLQuery({
+					query: UPDATE_WIKI,
 					variables: {
-						wikiId: world.wikiPage._id.toString(),
+						wikiId: world.wikiPage,
 						coverImageId: imageResult.data.createImage._id,
 					},
 				});
@@ -219,9 +212,9 @@ describe("user mutations", () => {
 			});
 
 			test("update type", async () => {
-				const result = await mutate({
-					mutation: UPDATE_WIKI,
-					variables: { wikiId: world.wikiPage._id.toString(), type: ARTICLE },
+				const result = await server.executeGraphQLQuery({
+					query: UPDATE_WIKI,
+					variables: { wikiId: world.wikiPage, type: ARTICLE },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -236,21 +229,17 @@ describe("user mutations", () => {
 			});
 
 			test("delete wiki root wiki", async () => {
-				const result = await mutate({
-					mutation: DELETE_WIKI,
-					variables: { wikiId: world.wikiPage._id.toString() },
+				const result = await server.executeGraphQLQuery({
+					query: DELETE_WIKI,
+					variables: { wikiId: world.wikiPage },
 				});
 				expect(result).toMatchSnapshot();
 			});
 
 			test("delete wiki", async () => {
-				const wiki = await Article.create({
-					name: "some wiki",
-					world: world._id,
-				});
-				const result = await mutate({
-					mutation: DELETE_WIKI,
-					variables: { wikiId: wiki._id.toString() },
+				const result = await server.executeGraphQLQuery({
+					query: DELETE_WIKI,
+					variables: { wikiId: otherPage._id },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -287,18 +276,18 @@ describe("user mutations", () => {
 					createReadStream: () =>
 						fs.createReadStream("server/tests/integration/resolvers/mutations/testmap.png"),
 				};
-				const imageResult = await mutate({
-					mutation: CREATE_IMAGE,
+				const imageResult = await server.executeGraphQLQuery({
+					query: CREATE_IMAGE,
 					variables: {
 						file: testFile,
 						worldId: world._id.toString(),
 						chunkify: true,
 					},
 				});
-				const result = await mutate({
-					mutation: UPDATE_PLACE,
+				const result = await server.executeGraphQLQuery({
+					query: UPDATE_PLACE,
 					variables: {
-						placeId: world.wikiPage._id.toString(),
+						placeId: world.wikiPage,
 						mapImageId: imageResult.data.createImage._id,
 					},
 				});

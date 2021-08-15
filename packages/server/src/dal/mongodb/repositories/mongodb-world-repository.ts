@@ -1,11 +1,10 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { World } from "../../../domain-entities/world";
 import { inject, injectable } from "inversify";
-import { WorldFactory, WorldRepository } from "../../../types";
+import {WorldDocument, WorldFactory, WorldRepository} from "../../../types";
 import { Model } from "mongoose";
 import { WorldModel } from "../models/world";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
-import { WorldDocument } from "../../../index";
 
 @injectable()
 export class MongodbWorldRepository

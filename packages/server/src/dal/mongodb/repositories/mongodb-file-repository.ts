@@ -18,6 +18,7 @@ export class MongodbFileRepository implements FileRepository {
 
 	create = async (entity: File): Promise<void> => {
 		entity._id = await new Promise((resolve, reject) => {
+			// @ts-ignore
 			const gfs = new GridFSBucket(mongoose.connection.db);
 			const writeStream = gfs.openUploadStream(entity.filename, {
 				contentType: entity.mimeType,
@@ -32,14 +33,17 @@ export class MongodbFileRepository implements FileRepository {
 				throw err;
 			});
 
+			// @ts-ignore
 			entity.readStream.pipe(writeStream);
 		});
 	};
 
 	delete(entity: File): Promise<void> {
 		return new Promise((resolve: (value?: any) => any, reject: (error?: any) => any) => {
+			// @ts-ignore
 			const gfs = new GridFSBucket(mongoose.connection.db);
 
+			// @ts-ignore
 			gfs.delete(new mongoose.Types.ObjectId(entity._id), (error) => {
 				resolve();
 			});
@@ -59,6 +63,7 @@ export class MongodbFileRepository implements FileRepository {
 		}
 		const docs: any[] = [];
 		await new Promise((resolve, reject) => {
+			// @ts-ignore
 			const gfs = new GridFSBucket(mongoose.connection.db);
 			gfs.find(filter).forEach(
 				(doc: any) => {
@@ -74,6 +79,7 @@ export class MongodbFileRepository implements FileRepository {
 			);
 		});
 		const results: File[] = [];
+		// @ts-ignore
 		const gfs = new GridFSBucket(mongoose.connection.db);
 		for (let doc of docs) {
 			results.push(this.fileFactory(doc._id, doc.filename, gfs.openDownloadStream(doc._id), null));

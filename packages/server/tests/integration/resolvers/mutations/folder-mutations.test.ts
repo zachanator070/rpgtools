@@ -12,7 +12,7 @@ process.env.TEST_SUITE = "folder-mutations-test";
 
 describe("folder-mutations", () => {
 	let {
-		mutate,
+		server,
 		mockSessionContextFactory,
 		otherUser,
 		otherUserSecurityContext,
@@ -44,8 +44,8 @@ describe("folder-mutations", () => {
 		});
 
 		test("create folder", async () => {
-			const result = await mutate({
-				mutation: CREATE_FOLDER,
+			const result = await server.executeGraphQLQuery({
+				query: CREATE_FOLDER,
 				variables: {
 					name: "new folder",
 					parentFolderId: world.rootFolder.toString(),
@@ -61,8 +61,8 @@ describe("folder-mutations", () => {
 		});
 
 		test("rename folder", async () => {
-			const result = await mutate({
-				mutation: RENAME_FOLDER,
+			const result = await server.executeGraphQLQuery({
+				query: RENAME_FOLDER,
 				variables: {
 					name: "new folder",
 					folderId: world.rootFolder.toString(),
@@ -78,8 +78,8 @@ describe("folder-mutations", () => {
 		});
 
 		test("delete folder", async () => {
-			const result = await mutate({
-				mutation: DELETE_FOLDER,
+			const result = await server.executeGraphQLQuery({
+				query: DELETE_FOLDER,
 				variables: { folderId: newFolder._id.toString() },
 			});
 			expect(result).toMatchSnapshot({
@@ -92,8 +92,8 @@ describe("folder-mutations", () => {
 		});
 
 		test("delete root folder", async () => {
-			const result = await mutate({
-				mutation: DELETE_FOLDER,
+			const result = await server.executeGraphQLQuery({
+				query: DELETE_FOLDER,
 				variables: { folderId: world.rootFolder.toString() },
 			});
 			expect(result).toMatchSnapshot();
@@ -105,8 +105,8 @@ describe("folder-mutations", () => {
 			});
 
 			test("create folder permission denied", async () => {
-				const result = await mutate({
-					mutation: CREATE_FOLDER,
+				const result = await server.executeGraphQLQuery({
+					query: CREATE_FOLDER,
 					variables: {
 						name: "new folder",
 						parentFolderId: world.rootFolder.toString(),
@@ -116,8 +116,8 @@ describe("folder-mutations", () => {
 			});
 
 			test("rename folder permission denied", async () => {
-				const result = await mutate({
-					mutation: RENAME_FOLDER,
+				const result = await server.executeGraphQLQuery({
+					query: RENAME_FOLDER,
 					variables: {
 						name: "new folder",
 						folderId: world.rootFolder.toString(),
@@ -127,8 +127,8 @@ describe("folder-mutations", () => {
 			});
 
 			test("delete folder permission denied", async () => {
-				const result = await mutate({
-					mutation: DELETE_FOLDER,
+				const result = await server.executeGraphQLQuery({
+					query: DELETE_FOLDER,
 					variables: { folderId: newFolder._id.toString() },
 				});
 				expect(result).toMatchSnapshot({
@@ -155,8 +155,8 @@ describe("folder-mutations", () => {
 			});
 
 			test("no permission to child", async () => {
-				const result = await mutate({
-					mutation: DELETE_FOLDER,
+				const result = await server.executeGraphQLQuery({
+					query: DELETE_FOLDER,
 					variables: { folderId: newFolder._id.toString() },
 				});
 				expect(result).toMatchSnapshot({

@@ -7,6 +7,7 @@ import { PermissionAssignment } from "./domain-entities/permission-assignment";
 import { FilterCondition } from "./dal/filter-condition";
 import { Role } from "./domain-entities/role";
 import { SecurityContext } from "./security-context";
+import {ANON_USERNAME} from "../../common/src/permission-constants";
 
 @injectable()
 export class SecurityContextFactory {
@@ -76,10 +77,13 @@ export class SecurityContextFactory {
 
 	create = async (user: User): Promise<SecurityContext> => {
 		const allPermissions = [];
-		allPermissions.push(...(await this.getAllUserPermissions()));
+		// if the user is logged in, calculate permissions for their user, role, and those given to all logged in users
+		if(user.username !== ANON_USERNAME){
+			allPermissions.push(...(await this.getAllUserPermissions()));
+			allPermissions.push(...(await this.getRolePermissions(user)));
+			allPermissions.push(...(await this.getUserPermissions(user)));
+		}
 		allPermissions.push(...(await this.getEveryonePermissions()));
-		allPermissions.push(...(await this.getRolePermissions(user)));
-		allPermissions.push(...(await this.getUserPermissions(user)));
 		const roles = await this.getRoles(user);
 		return new SecurityContext(user, allPermissions, roles);
 	};

@@ -8,20 +8,18 @@ import {
 	PathNode,
 	Stroke,
 } from "../../../domain-entities/game";
-import { GameFactory, GameRepository } from "../../../types";
+import {
+	CharacterDocument, FogStrokeDocument,
+	GameDocument,
+	GameFactory,
+	GameRepository,
+	InGameModelDocument,
+	MessageDocument, PathNodeDocument, StrokeDocument
+} from "../../../types";
 import { Model } from "mongoose";
 import { GameModel } from "../models/game";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
-import {
-	CharacterDocument,
-	FogStrokeDocument,
-	GameDocument,
-	InGameModelDocument,
-	MessageDocument,
-	PathNodeDocument,
-	StrokeDocument,
-} from "../../../index";
 
 @injectable()
 export class MongodbGameRepository

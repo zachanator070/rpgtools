@@ -18,7 +18,6 @@ import { INJECTABLE_TYPES } from "../../src/injectable-types";
 import { SecurityContextFactory } from "../../src/security-context-factory";
 import { MockSessionContextFactory } from "./MockSessionContextFactory";
 import { ExpressApiServer } from "../../src/express-api-server";
-import { createTestClient } from "apollo-server-testing";
 
 export const defaultTestingContextFactory = (): TestingContext => {
 	container
@@ -27,8 +26,6 @@ export const defaultTestingContextFactory = (): TestingContext => {
 		.inSingletonScope();
 
 	const server: ExpressApiServer = container.get<ExpressApiServer>(INJECTABLE_TYPES.ApiServer);
-
-	const { mutate, query } = createTestClient(server.gqlServer);
 
 	const mockSessionContextFactory = container.get<MockSessionContextFactory>(
 		INJECTABLE_TYPES.SessionContextFactory
@@ -49,8 +46,6 @@ export const defaultTestingContextFactory = (): TestingContext => {
 	const userFactory = container.get<UserFactory>(INJECTABLE_TYPES.UserFactory);
 	return {
 		mockSessionContextFactory,
-		mutate,
-		query,
 		server,
 		otherUser: null,
 		otherUserSecurityContext: null,

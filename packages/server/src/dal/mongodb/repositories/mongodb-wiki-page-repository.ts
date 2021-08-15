@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import {
-	ArticleDocument,
 	ItemDocument,
 	MonsterDocument,
 	PersonDocument,
@@ -19,6 +18,7 @@ import { MongodbPersonRepository } from "./mongodb-person-repository";
 import { MongodbPlaceRepository } from "./mongodb-place-repository";
 import { MongodbMonsterRepository } from "./mongodb-monster-repository";
 import { MongodbItemRepository } from "./mongodb-item-repository";
+import {ArticleDocument} from "../models/article";
 
 @injectable()
 export class MongodbWikiPageRepository

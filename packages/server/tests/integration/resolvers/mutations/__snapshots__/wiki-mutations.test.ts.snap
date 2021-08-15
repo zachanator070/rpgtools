@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`wiki page mutations with world and not logged in create wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission to write to the folder 6118afcd8ba4a42d70993651],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world and not logged in delete wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission to write to this page],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world and not logged in update cover image no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Cannot read property 'createReadStream' of undefined],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world and not logged in update place no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission to write to this page],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world and not logged in update wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: Cannot read property 'createReadStream' of undefined],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world and not logged in with authenticated user delete wiki root wiki 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You cannot delete the main page of a world],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

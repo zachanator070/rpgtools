@@ -1,8 +1,17 @@
-import { Schema } from "mongoose";
-import { WikiPageModel } from "./wiki-page";
-import { ARTICLE } from "../../../../../common/src/type-constants";
-import { ArticleDocument } from "../../../types";
+import {Model, Schema} from "mongoose";
+import {WikiPageModel} from "./wiki-page";
+import {ARTICLE} from "@rpgtools/common/src/type-constants";
+import {WikiPageDocument} from "../../../types";
 
-const articleSchema = new Schema<ArticleDocument>();
+export interface ArticleDocument extends WikiPageDocument {
 
-export const ArticleModel = WikiPageModel.discriminator<ArticleDocument>(ARTICLE, articleSchema);
+    type: string;
+    name: string;
+    world: Schema.Types.ObjectId;
+    coverImage?: Schema.Types.ObjectId;
+    contentId?: Schema.Types.ObjectId;
+}
+
+const articleSchema = new Schema<ArticleDocument, Model<ArticleDocument>>();
+
+export const ArticleModel = WikiPageModel.discriminator<ArticleDocument, Model<ArticleDocument>>(ARTICLE, articleSchema);
