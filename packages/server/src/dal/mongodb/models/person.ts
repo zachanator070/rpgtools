@@ -1,9 +1,9 @@
-import { Schema } from "mongoose";
+import {Model, Schema} from "mongoose";
 import { MODEL, PERSON } from "../../../../../common/src/type-constants";
 import { WikiPageModel } from "./wiki-page";
 import { PersonDocument } from "../../../types";
 
-const personSchema = new Schema<PersonDocument>({
+const personSchema = new Schema<PersonDocument, Model<PersonDocument>>({
 	model: {
 		type: Schema.Types.ObjectId,
 		ref: MODEL,
@@ -13,4 +13,4 @@ const personSchema = new Schema<PersonDocument>({
 	},
 });
 
-export const PersonModel = WikiPageModel.discriminator<PersonDocument>(PERSON, personSchema);
+export const PersonModel = WikiPageModel.discriminator<PersonDocument, Model<PersonDocument>>(PERSON, personSchema);

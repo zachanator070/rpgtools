@@ -1,4 +1,4 @@
-import { withFilter } from "apollo-server";
+import { withFilter } from "graphql-subscriptions";
 import { container } from "../inversify.config";
 import { EventPublisher } from "../types";
 import { INJECTABLE_TYPES } from "../injectable-types";

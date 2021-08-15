@@ -26,6 +26,7 @@ export const markdownToDelta = (md: string) => {
 
 	md = fixGhettoTable(md);
 
+	// @ts-ignore
 	const processor = unified().use(markdown);
 	const tree: any = processor.parse(md);
 	const ops = [];

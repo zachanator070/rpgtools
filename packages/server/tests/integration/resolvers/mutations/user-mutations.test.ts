@@ -5,7 +5,7 @@ process.env.TEST_SUITE = "user-mutations-test";
 
 describe("user mutations", () => {
 	let {
-		mutate,
+		server,
 		mockSessionContextFactory,
 		otherUser,
 		otherUserSecurityContext,
@@ -33,8 +33,8 @@ describe("user mutations", () => {
 		});
 
 		test("set current world not logged in", async () => {
-			const result = await mutate({
-				mutation: SET_CURRENT_WORLD,
+			const result = await server.executeGraphQLQuery({
+				query: SET_CURRENT_WORLD,
 				variables: { worldId: world._id.toString() },
 			});
 			expect(result).toMatchSnapshot();
@@ -46,8 +46,8 @@ describe("user mutations", () => {
 			});
 
 			test("set current world", async () => {
-				const result = await mutate({
-					mutation: SET_CURRENT_WORLD,
+				const result = await server.executeGraphQLQuery({
+					query: SET_CURRENT_WORLD,
 					variables: { worldId: world._id.toString() },
 				});
 				expect(result).toMatchSnapshot({

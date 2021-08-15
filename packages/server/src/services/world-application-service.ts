@@ -157,6 +157,8 @@ export class WorldApplicationService implements WorldService {
 		await unitOfWork.pinRepository.delete(pin);
 		const map = await unitOfWork.placeRepository.findById(pin.map);
 		const world = await unitOfWork.worldRepository.findById(map.world);
+		world.pins = world.pins.filter(worldPinId => worldPinId !== pinId);
+		await unitOfWork.worldRepository.update(world);
 		await unitOfWork.commit();
 		return world;
 	};

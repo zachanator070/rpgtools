@@ -1,13 +1,6 @@
-import { useApolloClient, useMutation } from "@apollo/client";
-import gql from "graphql-tag";
+import {useApolloClient, useMutation} from "@apollo/client";
+import {LOGIN_QUERY} from "@rpgtools/common/src/mutations";
 
-export const LOGIN_QUERY = gql`
-	mutation login($username: String!, $password: String!) {
-		login(username: $username, password: $password) {
-			_id
-		}
-	}
-`;
 export default (callback) => {
 	const client = useApolloClient();
 	const [login, { loading, error }] = useMutation(LOGIN_QUERY, {

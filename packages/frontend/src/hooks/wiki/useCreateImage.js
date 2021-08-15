@@ -1,13 +1,6 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
+import {useMutation} from "@apollo/client";
+import {CREATE_IMAGE} from "../../../../common/src/mutations";
 
-export const CREATE_IMAGE = gql`
-	mutation createImage($file: Upload!, $worldId: ID!, $chunkify: Boolean) {
-		createImage(file: $file, worldId: $worldId, chunkify: $chunkify) {
-			_id
-		}
-	}
-`;
 export const useCreateImage = () => {
 	const [createImage, { data, loading, error }] = useMutation(CREATE_IMAGE);
 	return {

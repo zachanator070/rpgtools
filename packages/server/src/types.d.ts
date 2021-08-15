@@ -1,37 +1,30 @@
-import { FilterCondition } from "./dal/filter-condition";
-import { Document, Schema } from "mongoose";
-import { User } from "./domain-entities/user";
-import { SecurityContext } from "./security-context";
-import { Article } from "./domain-entities/article";
-import { Chunk } from "./domain-entities/chunk";
-import {
-	Character,
-	FogStroke,
-	Game,
-	InGameModel,
-	Message,
-	PathNode,
-	Stroke,
-} from "./domain-entities/game";
-import { Image } from "./domain-entities/image";
-import { Item } from "./domain-entities/item";
-import { Model } from "./domain-entities/model";
-import { Monster } from "./domain-entities/monster";
-import { PermissionAssignment } from "./domain-entities/permission-assignment";
-import { Person } from "./domain-entities/person";
-import { Pin } from "./domain-entities/pin";
-import { Place } from "./domain-entities/place";
-import { Role } from "./domain-entities/role";
-import { ServerConfig } from "./domain-entities/server-config";
-import { WikiFolder } from "./domain-entities/wiki-folder";
-import { WikiPage } from "./domain-entities/wiki-page";
-import { World } from "./domain-entities/world";
-import { File } from "./domain-entities/file";
-import { Readable, Writable } from "stream";
-import { FileUpload } from "graphql-upload";
-import { ModeledPage } from "./domain-entities/modeled-page";
-import { PaginatedResult } from "./dal/paginated-result";
-
+import {FilterCondition} from "./dal/filter-condition";
+import {Document, Schema} from "mongoose";
+import {User} from "./domain-entities/user";
+import {SecurityContext} from "./security-context";
+import {Article} from "./domain-entities/article";
+import {Chunk} from "./domain-entities/chunk";
+import {Character, FogStroke, Game, InGameModel, Message, PathNode, Stroke,} from "./domain-entities/game";
+import {Image} from "./domain-entities/image";
+import {Item} from "./domain-entities/item";
+import {Model} from "./domain-entities/model";
+import {Monster} from "./domain-entities/monster";
+import {PermissionAssignment} from "./domain-entities/permission-assignment";
+import {Person} from "./domain-entities/person";
+import {Pin} from "./domain-entities/pin";
+import {Place} from "./domain-entities/place";
+import {Role} from "./domain-entities/role";
+import {ServerConfig} from "./domain-entities/server-config";
+import {WikiFolder} from "./domain-entities/wiki-folder";
+import {WikiPage} from "./domain-entities/wiki-page";
+import {World} from "./domain-entities/world";
+import {File} from "./domain-entities/file";
+import {Readable, Writable} from "stream";
+import {FileUpload, GraphQLOperation} from "graphql-upload";
+import {ModeledPage} from "./domain-entities/modeled-page";
+import {PaginatedResult} from "./dal/paginated-result";
+import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
+import {DocumentNode} from "graphql";
 export interface DomainEntity {
 	_id: string;
 	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
@@ -212,12 +205,12 @@ export type WorldFactory = (
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DatabaseEntity {}
 
-export abstract class MongoDBEntity extends Document implements DatabaseEntity {
-	public _id: Schema.Types.ObjectId;
+export interface MongoDBEntity extends DatabaseEntity, Document {
+	_id: Schema.Types.ObjectId;
 }
 
 export interface DomainEntityFactory<
-	DBType extends DatabaseEntity,
+	DBType extends Document,
 	DomainType extends DomainEntity
 > {
 	build: (entity: DBType) => DomainType;
@@ -633,6 +626,11 @@ export interface ApiServer {
 	setDbName: (name: string) => void;
 	clearDb: () => Promise<void>;
 	serverNeedsSetup: () => boolean;
+	executeGraphQLQuery: (
+		request: Omit<GraphQLRequest, 'query'> & {
+			query?: string | DocumentNode;
+		},
+	) => Promise<GraphQLResponse>;
 }
 export interface RoleService {
 	getRoles: (
@@ -644,102 +642,168 @@ export interface RoleService {
 	) => Promise<PaginatedResult<Role>>;
 }
 
-export class WikiPageDocument extends MongoDBEntity {
-	public type: string;
-	public name: string;
-	public world: Schema.Types.ObjectId;
-	public coverImage?: Schema.Types.ObjectId;
-	public contentId?: Schema.Types.ObjectId;
+export interface WikiPageDocument extends MongoDBEntity {
+	type: string;
+	name: string;
+	world: Schema.Types.ObjectId;
+	coverImage?: Schema.Types.ObjectId;
+	contentId?: Schema.Types.ObjectId;
 }
 
-export class ModeledWikiDocument extends WikiPageDocument {
-	public pageModel: Schema.Types.ObjectId;
-	public modelColor: string;
+export interface ModeledWikiDocument extends WikiPageDocument {
+	pageModel: Schema.Types.ObjectId;
+	modelColor: string;
 }
 
-export class ArticleDocument extends WikiPageDocument {}
-
-export class ChunkDocument extends MongoDBEntity {
-	public image: Schema.Types.ObjectId;
-	public x: number;
-	public y: number;
-	public width: number;
-	public height: number;
-	public fileId: string;
+export interface ChunkDocument extends MongoDBEntity {
+	image: Schema.Types.ObjectId;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	fileId: string;
 }
 
-export class ItemDocument extends ModeledWikiDocument {}
+export interface ItemDocument extends ModeledWikiDocument {}
 
-export class PersonDocument extends ModeledWikiDocument {}
+export interface PersonDocument extends ModeledWikiDocument {}
 
-export class PlaceDocument extends WikiPageDocument {
-	public mapImage: Schema.Types.ObjectId;
-	public pixelsPerFoot: number;
+export interface PlaceDocument extends WikiPageDocument {
+	mapImage: Schema.Types.ObjectId;
+	pixelsPerFoot: number;
 }
 
-export class MonsterDocument extends ModeledWikiDocument {}
+export interface MonsterDocument extends ModeledWikiDocument {}
 
-export class WikiFolderDocument extends MongoDBEntity {
-	public name: string;
-	public world: Schema.Types.ObjectId;
-	public pages: Schema.Types.ObjectId[];
-	public children: Schema.Types.ObjectId[];
+export interface WikiFolderDocument extends MongoDBEntity {
+	name: string;
+	world: Schema.Types.ObjectId;
+	pages: Schema.Types.ObjectId[];
+	children: Schema.Types.ObjectId[];
 }
 
-export class UserDocument extends MongoDBEntity {
-	public email: string;
-	public username: string;
-	public password: string;
-	public tokenVersion: string;
-	public currentWorld: Schema.Types.ObjectId;
-	public roles: Schema.Types.ObjectId[];
-	public permissions: Schema.Types.ObjectId[];
+export interface UserDocument extends MongoDBEntity {
+	email: string;
+	username: string;
+	password: string;
+	tokenVersion: string;
+	currentWorld: Schema.Types.ObjectId;
+	roles: Schema.Types.ObjectId[];
+	permissions: Schema.Types.ObjectId[];
 }
 
-export class ServerConfigDocument extends MongoDBEntity {
-	public version: string;
-	public registerCodes: string[];
-	public adminUsers: Schema.Types.ObjectId[];
-	public unlockCode: string;
+export interface ServerConfigDocument extends MongoDBEntity {
+	version: string;
+	registerCodes: string[];
+	adminUsers: Schema.Types.ObjectId[];
+	unlockCode: string;
 }
 
-export class RoleDocument extends MongoDBEntity {
-	public name: string;
-	public world: Schema.Types.ObjectId;
-	public permissions: Schema.Types.ObjectId[];
+export interface RoleDocument extends MongoDBEntity {
+	name: string;
+	world: Schema.Types.ObjectId;
+	permissions: Schema.Types.ObjectId[];
 }
 
-export class PinDocument extends MongoDBEntity {
-	public x: number;
-	public y: number;
-	public map: Schema.Types.ObjectId;
-	public page: Schema.Types.ObjectId;
+export interface PinDocument extends MongoDBEntity {
+	x: number;
+	y: number;
+	map: Schema.Types.ObjectId;
+	page: Schema.Types.ObjectId;
 }
 
-export class PermissionAssignmentDocument extends MongoDBEntity {
-	public permission: string;
-	public subject: Schema.Types.ObjectId;
-	public subjectType: string;
+export interface PermissionAssignmentDocument extends MongoDBEntity {
+	permission: string;
+	subject: Schema.Types.ObjectId;
+	subjectType: string;
 }
 
-export class ModelDocument extends MongoDBEntity {
-	public world: Schema.Types.ObjectId;
-	public name: string;
-	public depth: number;
-	public width: number;
-	public height: number;
-	public fileName: string;
-	public fileId: string;
-	public notes: string;
+export interface ModelDocument extends MongoDBEntity {
+	world: Schema.Types.ObjectId;
+	name: string;
+	depth: number;
+	width: number;
+	height: number;
+	fileName: string;
+	fileId: string;
+	notes: string;
 }
 
-export class ImageDocument extends MongoDBEntity {
-	public world: Schema.Types.ObjectId;
-	public width: number;
-	public height: number;
-	public chunkWidth: number;
-	public chunkHeight: number;
-	public chunks: Schema.Types.ObjectId[];
-	public icon: Schema.Types.ObjectId;
-	public name: string;
+export interface ImageDocument extends MongoDBEntity {
+	world: Schema.Types.ObjectId;
+	width: number;
+	height: number;
+	chunkWidth: number;
+	chunkHeight: number;
+	chunks: Schema.Types.ObjectId[];
+	icon: Schema.Types.ObjectId;
+	name: string;
+}
+
+export interface PathNodeDocument extends MongoDBEntity {
+	x: number;
+	y: number;
+}
+
+export interface StrokeDocument extends MongoDBEntity {
+	path: PathNodeDocument[];
+	color: string;
+	size: number;
+	fill: boolean;
+	type: string;
+}
+
+export interface FogStrokeDocument extends MongoDBEntity {
+	path: PathNodeDocument[];
+	size: number;
+	type: string;
+}
+
+export interface GameDocument extends MongoDBEntity {
+	passwordHash: string;
+	world: Schema.Types.ObjectId;
+	map: Schema.Types.ObjectId;
+	characters: CharacterDocument[];
+	host: Schema.Types.ObjectId;
+	strokes: StrokeDocument[];
+	fog: FogStrokeDocument[];
+	models: InGameModelDocument[];
+	messages: MessageDocument[];
+}
+
+export interface CharacterDocument extends MongoDBEntity {
+	name: string;
+	player: Schema.Types.ObjectId;
+	color: string;
+	str: number;
+	dex: number;
+	con: number;
+	int: number;
+	wis: number;
+	cha: number;
+}
+
+export interface MessageDocument extends MongoDBEntity {
+	sender: string;
+	receiver: string;
+	message: string;
+	timestamp: number;
+}
+
+export interface InGameModelDocument extends MongoDBEntity {
+	gameModel: Schema.Types.ObjectId;
+	x: number;
+	z: number;
+	lookAtX: number;
+	lookAtZ: number;
+	color: string;
+	wiki: Schema.Types.ObjectId;
+}
+
+export interface WorldDocument extends MongoDBEntity {
+	name: string;
+	wikiPage: Schema.Types.ObjectId;
+	rootFolder: Schema.Types.ObjectId;
+	roles: Schema.Types.ObjectId[];
+	pins: Schema.Types.ObjectId[];
 }

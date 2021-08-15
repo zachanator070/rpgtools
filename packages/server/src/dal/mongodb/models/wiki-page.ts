@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { GridFSBucket } from "mongodb";
-import { IMAGE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import { ModeledWikiDocument } from "../../../types";
+import { IMAGE, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
+import {WikiPageDocument} from "../../../types";
 
 const wikiPageSchema = new Schema(
 	{
@@ -24,6 +24,7 @@ const wikiPageSchema = new Schema(
 		content: {
 			type: String,
 			get: async function () {
+				// @ts-ignore
 				const gfs = new GridFSBucket(mongoose.connection.db);
 				const file = await gfs.find({ _id: this.contentId }).next();
 				if (file) {
@@ -51,4 +52,4 @@ const wikiPageSchema = new Schema(
 	}
 );
 
-export const WikiPageModel = mongoose.model<ModeledWikiDocument>(WIKI_PAGE, wikiPageSchema);
+export const WikiPageModel = mongoose.model<WikiPageDocument>(WIKI_PAGE, wikiPageSchema);

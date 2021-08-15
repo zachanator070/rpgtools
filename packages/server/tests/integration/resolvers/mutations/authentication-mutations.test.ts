@@ -1,15 +1,15 @@
-import { LOGIN_QUERY } from "../../../../../frontend/src/hooks/authentication/useLogin";
 import { REGISTER_MUTATION } from "../../../../../frontend/src/hooks/authentication/useRegister";
 import { container } from "../../../../src/inversify.config";
 import { ServerConfigRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
+import {LOGIN_QUERY} from "../../../../../common/src/mutations";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 
 describe("authentication-mutations", () => {
 	let {
-		mutate,
+		server,
 		mockSessionContextFactory,
 		otherUser,
 		otherUserSecurityContext,
@@ -22,8 +22,8 @@ describe("authentication-mutations", () => {
 	} = defaultTestingContextFactory();
 
 	test("login", async () => {
-		const result = await mutate({
-			mutation: LOGIN_QUERY,
+		const result = await server.executeGraphQLQuery({
+			query: LOGIN_QUERY,
 			variables: { username: "tester", password: "tester" },
 		});
 		expect(result).toMatchSnapshot({
@@ -37,16 +37,16 @@ describe("authentication-mutations", () => {
 	});
 
 	test("login bad password", async () => {
-		const result = await mutate({
-			mutation: LOGIN_QUERY,
+		const result = await server.executeGraphQLQuery({
+			query: LOGIN_QUERY,
 			variables: { username: "tester", password: "asdf" },
 		});
 		expect(result).toMatchSnapshot();
 	});
 
 	test("login bad username", async () => {
-		const result = await mutate({
-			mutation: LOGIN_QUERY,
+		const result = await server.executeGraphQLQuery({
+			query: LOGIN_QUERY,
 			variables: { username: "tester", password: "asdf" },
 		});
 		expect(result).toMatchSnapshot();
@@ -61,8 +61,8 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register good", async () => {
-			const result = await mutate({
-				mutation: REGISTER_MUTATION,
+			const result = await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
 					email: "asdf@gmail.com",
@@ -81,8 +81,8 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register use code twice", async () => {
-			await mutate({
-				mutation: REGISTER_MUTATION,
+			await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
 					email: "asdf@gmail.com",
@@ -90,8 +90,8 @@ describe("authentication-mutations", () => {
 					password: "tester",
 				},
 			});
-			const result = await mutate({
-				mutation: REGISTER_MUTATION,
+			const result = await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
 					email: "asdf@gmail.com",
@@ -103,8 +103,8 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register use email twice", async () => {
-			await mutate({
-				mutation: REGISTER_MUTATION,
+			await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
 					email: "asdf@gmail.com",
@@ -112,8 +112,8 @@ describe("authentication-mutations", () => {
 					password: "tester",
 				},
 			});
-			const result = await mutate({
-				mutation: REGISTER_MUTATION,
+			const result = await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "qwerty",
 					email: "asdf@gmail.com",
@@ -125,8 +125,8 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register use username twice", async () => {
-			await mutate({
-				mutation: REGISTER_MUTATION,
+			await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
 					email: "tester2@gmail.com",
@@ -134,8 +134,8 @@ describe("authentication-mutations", () => {
 					password: "tester",
 				},
 			});
-			const result = await mutate({
-				mutation: REGISTER_MUTATION,
+			const result = await server.executeGraphQLQuery({
+				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "qwerty",
 					email: "tester3@gmail.com",
@@ -148,8 +148,8 @@ describe("authentication-mutations", () => {
 	});
 
 	test("register bad code", async () => {
-		const result = await mutate({
-			mutation: REGISTER_MUTATION,
+		const result = await server.executeGraphQLQuery({
+			query: REGISTER_MUTATION,
 			variables: {
 				registerCode: "1234",
 				email: "asdf@gmail.com",

@@ -1,13 +1,13 @@
 import fs from "fs";
-import { CREATE_IMAGE } from "../../../../../frontend/src/hooks/wiki/useCreateImage";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import { FileUpload, Upload } from "graphql-upload";
+import {CREATE_IMAGE} from "@rpgtools/common/src/mutations";
 
 process.env.TEST_SUITE = "image-mutations-test";
 
 describe("image-mutations", () => {
 	let {
-		mutate,
+		server,
 		mockSessionContextFactory,
 		otherUser,
 		otherUserSecurityContext,
@@ -20,7 +20,7 @@ describe("image-mutations", () => {
 	} = defaultTestingContextFactory();
 
 	describe("with existing world and logged in user", () => {
-		const filename = "packages/server/tests/integration/resolvers/mutations/testmap.png";
+		const filename = "tests/integration/resolvers/mutations/testmap.png";
 		let testFile: FileUpload = {
 			encoding: "base64",
 			mimetype: "image/png",
@@ -44,8 +44,8 @@ describe("image-mutations", () => {
 		});
 
 		test("create image no permission", async () => {
-			const result = await mutate({
-				mutation: CREATE_IMAGE,
+			const result = await server.executeGraphQLQuery({
+				query: CREATE_IMAGE,
 				variables: {
 					file: testUpload,
 					worldId: world._id.toString(),
@@ -64,8 +64,8 @@ describe("image-mutations", () => {
 
 		describe("with unauthenticated user", () => {
 			test("create image no permission", async () => {
-				const result = await mutate({
-					mutation: CREATE_IMAGE,
+				const result = await server.executeGraphQLQuery({
+					query: CREATE_IMAGE,
 					variables: {
 						file: testUpload,
 						worldId: world._id.toString(),

@@ -10,7 +10,6 @@ process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
 	let {
-		mutate,
 		server,
 		mockSessionContextFactory,
 		otherUser,
@@ -42,9 +41,9 @@ describe("server mutations", () => {
 			await resetConfig();
 		});
 
-		test("unlock", async (done) => {
-			const result = await mutate({
-				mutation: UNLOCK_SERVER,
+		test("unlock", async () => {
+			const result = await server.executeGraphQLQuery({
+				query: UNLOCK_SERVER,
 				variables: {
 					unlockCode: "asdf",
 					email: "zach@thezachcave.com",
@@ -58,12 +57,11 @@ describe("server mutations", () => {
 				},
 				errors: undefined,
 			});
-			done();
 		});
 
 		test("unlock twice", async () => {
-			await mutate({
-				mutation: UNLOCK_SERVER,
+			await server.executeGraphQLQuery({
+				query: UNLOCK_SERVER,
 				variables: {
 					unlockCode: "asdf",
 					email: "zach@thezachcave.com",
@@ -71,8 +69,8 @@ describe("server mutations", () => {
 					password: "zach",
 				},
 			});
-			const result = await mutate({
-				mutation: UNLOCK_SERVER,
+			const result = await server.executeGraphQLQuery({
+				query: UNLOCK_SERVER,
 				variables: {
 					unlockCode: "asdf",
 					email: "zach@thezachcave.com",
@@ -85,8 +83,8 @@ describe("server mutations", () => {
 	});
 
 	test("generate register codes no permission", async () => {
-		const result = await mutate({
-			mutation: GENERATE_REGISTER_CODES,
+		const result = await server.executeGraphQLQuery({
+			query: GENERATE_REGISTER_CODES,
 			variables: { amount: 10 },
 		});
 		expect(result).toMatchSnapshot();
@@ -101,8 +99,8 @@ describe("server mutations", () => {
 		});
 
 		test("generate register codes", async () => {
-			const result = await mutate({
-				mutation: GENERATE_REGISTER_CODES,
+			const result = await server.executeGraphQLQuery({
+				query: GENERATE_REGISTER_CODES,
 				variables: { amount: 10 },
 			});
 			expect(result).toMatchSnapshot({
