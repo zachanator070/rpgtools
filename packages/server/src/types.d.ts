@@ -589,7 +589,7 @@ export interface WikiPageService {
 		coverImageId?: string,
 		type?: string
 	) => Promise<WikiPage>;
-	deleteWiki: (context: SecurityContext, wikiId: string) => Promise<string>;
+	deleteWiki: (context: SecurityContext, wikiId: string) => Promise<World>;
 	updatePlace: (
 		context: SecurityContext,
 		placeId: string,

@@ -7,10 +7,16 @@ import { UPDATE_PLACE } from "../../../../../frontend/src/hooks/wiki/useUpdatePl
 import { UPDATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useUpdateWiki";
 import {CREATE_IMAGE} from "../../../../../common/src/mutations";
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
+import {container} from "../../../../src/inversify.config";
+import {INJECTABLE_TYPES} from "../../../../src/injectable-types";
+import {ImageService} from "../../../../src/types";
+import {Image} from "../../../../src/domain-entities/image";
+import {FileUpload, Upload} from "graphql-upload";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
 describe("wiki page mutations", () => {
+	const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
 	let {
 		server,
 		mockSessionContextFactory,
@@ -25,7 +31,7 @@ describe("wiki page mutations", () => {
 		...testingContext
 	} = defaultTestingContextFactory();
 
-	describe("with world and not logged in", () => {
+	describe("with world", () => {
 		beforeEach(async () => {
 			({
 				mockSessionContextFactory,
@@ -46,7 +52,9 @@ describe("wiki page mutations", () => {
 				query: CREATE_WIKI,
 				variables: { name: "new wiki", folderId: world.rootFolder.toString() },
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				errors: expect.arrayContaining([expect.any(Object)]),
+			});
 		});
 
 		test("update wiki no permission", async () => {
@@ -54,7 +62,9 @@ describe("wiki page mutations", () => {
 				query: UPDATE_WIKI,
 				variables: { wikiId: world.wikiPage, name: "new name" },
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				errors: expect.arrayContaining([expect.any(Object)]),
+			});
 		});
 
 		test("update cover image no permission", async () => {
@@ -65,7 +75,9 @@ describe("wiki page mutations", () => {
 					coverImageId: "12345",
 				},
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				errors: expect.arrayContaining([expect.any(Object)]),
+			});
 		});
 
 		test("delete wiki no permission", async () => {
@@ -73,7 +85,9 @@ describe("wiki page mutations", () => {
 				query: DELETE_WIKI,
 				variables: { wikiId: world.wikiPage},
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				errors: expect.arrayContaining([expect.any(Object)]),
+			});
 		});
 
 		test("update place no permission", async () => {
@@ -81,7 +95,9 @@ describe("wiki page mutations", () => {
 				query: UPDATE_PLACE,
 				variables: { placeId: world.wikiPage, mapImageId: null },
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				errors: expect.arrayContaining([expect.any(Object)]),
+			});
 		});
 
 		describe("with authenticated user", () => {
@@ -101,18 +117,17 @@ describe("wiki page mutations", () => {
 					data: {
 						createWiki: {
 							_id: expect.any(String),
-							folders: expect.arrayContaining([
+							name: expect.any(String),
+							canWrite: true,
+							canAdmin: true,
+							children: expect.arrayContaining([
 								expect.objectContaining({
 									_id: expect.any(String),
-									pages: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									]),
-								}),
+								})
 							]),
 						},
 					},
+					errors: undefined
 				});
 			});
 
@@ -128,23 +143,33 @@ describe("wiki page mutations", () => {
 					data: {
 						updateWiki: {
 							_id: expect.any(String),
+							folder: {
+								_id: expect.any(String)
+							},
 							world: {
 								_id: expect.any(String),
 							},
 						},
 					},
+					errors: undefined
 				});
 			});
 
 			test("update wiki just content", async () => {
-				const content = {
-					createReadStream: () => Readable.from("wiki content".repeat(1024)),
+				const content: FileUpload = {
+					mimetype: "text",
+					encoding: "utf8",
+					filename: "content.txt",
+					createReadStream: () => fs.createReadStream("tests/integration/resolvers/mutations/testcontent.txt")
 				};
+
+				const testUpload = new Upload();
+				testUpload.resolve(content);
 				const result = await server.executeGraphQLQuery({
 					query: UPDATE_WIKI,
 					variables: {
 						wikiId: world.wikiPage,
-						content: content,
+						content: testUpload,
 					},
 				});
 				expect(result).toMatchSnapshot({
@@ -157,59 +182,10 @@ describe("wiki page mutations", () => {
 							content: expect.any(String),
 						},
 					},
+					errors: undefined
 				});
 			});
 
-			test("update cover image", async () => {
-				let testFile = {
-					filename: "server/tests/integration/resolvers/mutations/testmap.png",
-					createReadStream: () =>
-						fs.createReadStream("server/tests/integration/resolvers/mutations/testmap.png"),
-				};
-				const imageResult = await server.executeGraphQLQuery({
-					query: CREATE_IMAGE,
-					variables: {
-						file: testFile,
-						worldId: world._id.toString(),
-						chunkify: true,
-					},
-				});
-				const result = await server.executeGraphQLQuery({
-					query: UPDATE_WIKI,
-					variables: {
-						wikiId: world.wikiPage,
-						coverImageId: imageResult.data.createImage._id,
-					},
-				});
-				expect(result).toMatchSnapshot({
-					data: {
-						updateWiki: {
-							_id: expect.any(String),
-							world: {
-								_id: expect.any(String),
-							},
-							coverImage: {
-								_id: expect.any(String),
-								chunks: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-										fileId: expect.any(String),
-									}),
-								]),
-								icon: {
-									_id: expect.any(String),
-									chunks: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-											fileId: expect.any(String),
-										}),
-									]),
-								},
-							},
-						},
-					},
-				});
-			});
 
 			test("update type", async () => {
 				const result = await server.executeGraphQLQuery({
@@ -223,8 +199,12 @@ describe("wiki page mutations", () => {
 							world: {
 								_id: expect.any(String),
 							},
+							folder: {
+								_id: expect.any(String)
+							},
 						},
 					},
+					errors: undefined
 				});
 			});
 
@@ -245,65 +225,37 @@ describe("wiki page mutations", () => {
 					data: {
 						deleteWiki: {
 							_id: expect.any(String),
-							folders: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-									children: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									]),
-									pages: [],
-								}),
-								expect.objectContaining({
-									_id: expect.any(String),
-									children: [],
-									pages: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									]),
-								}),
-							]),
 						},
 					},
+					errors: undefined
 				});
 			});
 
-			test("update place", async () => {
+			describe("with image", () => {
+				const filename = "tests/integration/resolvers/mutations/testmap.png";
 				let testFile = {
-					filename: "server/tests/integration/resolvers/mutations/testmap.png",
+					filename,
 					createReadStream: () =>
-						fs.createReadStream("server/tests/integration/resolvers/mutations/testmap.png"),
+						fs.createReadStream(filename),
 				};
-				const imageResult = await server.executeGraphQLQuery({
-					query: CREATE_IMAGE,
-					variables: {
-						file: testFile,
-						worldId: world._id.toString(),
-						chunkify: true,
-					},
+				let image: Image = null;
+				beforeEach(async () => {
+					image = await imageService.createImage(world._id, false, testFile.filename, testFile.createReadStream());
 				});
-				const result = await server.executeGraphQLQuery({
-					query: UPDATE_PLACE,
-					variables: {
-						placeId: world.wikiPage,
-						mapImageId: imageResult.data.createImage._id,
-					},
-				});
-				expect(result).toMatchSnapshot({
-					data: {
-						updatePlace: {
-							_id: expect.any(String),
-							mapImage: {
+
+				test("update place", async () => {
+					const result = await server.executeGraphQLQuery({
+						query: UPDATE_PLACE,
+						variables: {
+							placeId: world.wikiPage,
+							mapImageId: image._id,
+						},
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							updatePlace: {
 								_id: expect.any(String),
-								chunks: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-										fileId: expect.any(String),
-									}),
-								]),
-								icon: {
+								mapImage: {
 									_id: expect.any(String),
 									chunks: expect.arrayContaining([
 										expect.objectContaining({
@@ -311,10 +263,63 @@ describe("wiki page mutations", () => {
 											fileId: expect.any(String),
 										}),
 									]),
+									icon: {
+										_id: expect.any(String),
+										chunks: expect.arrayContaining([
+											expect.objectContaining({
+												_id: expect.any(String),
+												fileId: expect.any(String),
+											}),
+										]),
+									},
 								},
 							},
 						},
-					},
+						errors: undefined
+					});
+				});
+
+
+				test("update cover image", async () => {
+					const result = await server.executeGraphQLQuery({
+						query: UPDATE_WIKI,
+						variables: {
+							wikiId: world.wikiPage,
+							coverImageId: image._id
+						},
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							updateWiki: {
+								_id: expect.any(String),
+								world: {
+									_id: expect.any(String),
+								},
+								folder: {
+									_id: expect.any(String)
+								},
+								coverImage: {
+									_id: expect.any(String),
+									chunks: expect.arrayContaining([
+										expect.objectContaining({
+											_id: expect.any(String),
+											fileId: expect.any(String),
+										}),
+									]),
+									icon: {
+										_id: expect.any(String),
+										chunks: expect.arrayContaining([
+											expect.objectContaining({
+												_id: expect.any(String),
+												fileId: expect.any(String),
+											}),
+										]),
+									},
+								},
+							},
+						},
+						errors: undefined
+					});
 				});
 			});
 		});

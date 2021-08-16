@@ -5,7 +5,7 @@ import { INJECTABLE_TYPES } from "../injectable-types";
 import { World } from "../domain-entities/world";
 import {
 	DataLoader,
-	DomainEntity,
+	DomainEntity, FileRepository,
 	RoleRepository,
 	SessionContext,
 	UserRepository,
@@ -30,6 +30,7 @@ import { Chunk } from "../domain-entities/chunk";
 import { ServerConfig } from "../domain-entities/server-config";
 import { RepositoryMapper } from "../repository-mapper";
 import { Game, InGameModel } from "../domain-entities/game";
+import {File} from "../domain-entities/file";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage) => {
@@ -42,7 +43,9 @@ const wikiPageInterfaceAttributes = {
 	},
 	coverImage: async (page: WikiPage) => {
 		const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
-		return dataLoader.getDocument(page.coverImage);
+		if(page.coverImage){
+			return dataLoader.getDocument(page.coverImage);
+		}
 	},
 	canWrite: async (page: WikiPage, _: any, { securityContext }: SessionContext) => {
 		const ruleset = container.get<WikiPageAuthorizationRuleset>(
@@ -56,6 +59,21 @@ const wikiPageInterfaceAttributes = {
 		);
 		return ruleset.canAdmin(securityContext, page);
 	},
+	content: async (page: WikiPage, _: any, {securityContext}: SessionContext) => {
+		const dataLoader = container.get<DataLoader<File>>(INJECTABLE_TYPES.FileDataLoader);
+		if(page.contentId){
+			// const contentFile = await dataLoader.getDocument(page.contentId);
+			const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
+			const contentFile = await fileRepository.findById(page.contentId);
+			const buffer: string[] = []
+			const contents = new Promise((resolve, reject) => {
+				contentFile.readStream.on('data', (chunk) => { buffer.push(chunk.toString())});
+				contentFile.readStream.on('error', (err) => reject(err));
+				contentFile.readStream.on('end', () => { resolve(buffer.join()) });
+			});
+			return await contents;
+		}
+	}
 };
 
 const permissionControlledInterfaceAttributes = {
@@ -208,7 +226,9 @@ export const TypeResolvers = {
 		...permissionControlledInterfaceAttributes,
 		mapImage: async (page: Place) => {
 			const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
-			return dataLoader.getDocument(page.mapImage);
+			if(page.mapImage){
+				return dataLoader.getDocument(page.mapImage);
+			}
 		},
 	},
 	ModeledWiki: {
@@ -232,7 +252,7 @@ export const TypeResolvers = {
 			return dataLoader.getDocument(folder.world);
 		},
 		children: async (folder: WikiFolder, _: any, { securityContext }: SessionContext) => {
-			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
+			const dataLoader = container.get<DataLoader<WikiFolder>>(INJECTABLE_TYPES.WikiFolderDataLoader);
 			return dataLoader.getPermissionControlledDocuments(securityContext, folder.children);
 		},
 		...permissionControlledInterfaceAttributes,
