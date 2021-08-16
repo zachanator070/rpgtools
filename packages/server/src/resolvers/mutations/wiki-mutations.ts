@@ -24,11 +24,11 @@ export const wikiMutations = {
 		{ securityContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		await content;
+		content = await content;
 		return await service.updateWiki(
 			securityContext,
 			wikiId,
-			content.createReadStream(),
+			content && content.createReadStream(),
 			name,
 			coverImageId,
 			type

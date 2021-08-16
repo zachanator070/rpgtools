@@ -61,26 +61,9 @@ export class MongodbFileRepository implements FileRepository {
 				throw new Error(`Unsupported filter operator: ${condition.operator}`);
 			}
 		}
-		const docs: any[] = [];
-		await new Promise((resolve, reject) => {
-			// @ts-ignore
-			const gfs = new GridFSBucket(mongoose.connection.db);
-			gfs.find(filter).forEach(
-				(doc: any) => {
-					docs.push(doc);
-				},
-				(err) => {
-					if (err) {
-						reject(err);
-						return;
-					}
-					resolve(null);
-				}
-			);
-		});
-		const results: File[] = [];
-		// @ts-ignore
 		const gfs = new GridFSBucket(mongoose.connection.db);
+		const docs: any[] = await gfs.find(filter).toArray();
+		const results: File[] = [];
 		for (let doc of docs) {
 			results.push(this.fileFactory(doc._id, doc.filename, gfs.openDownloadStream(doc._id), null));
 		}
@@ -88,12 +71,12 @@ export class MongodbFileRepository implements FileRepository {
 	};
 
 	findById = async (id: string): Promise<File> => {
-		return this.findOne([new FilterCondition("_id", id)]);
+		return this.findOne([new FilterCondition("_id", mongoose.Types.ObjectId(id))]);
 	};
 
 	findOne = async (conditions: FilterCondition[]): Promise<File> => {
 		const results: File[] = await this.find(conditions);
-		if (results.length > 1) {
+		if (results.length == 1) {
 			return results[0];
 		}
 		return null;

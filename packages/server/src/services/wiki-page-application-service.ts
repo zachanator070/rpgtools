@@ -120,15 +120,17 @@ export class WikiPageApplicationService implements WikiPageService {
 
 			if (contentFile) {
 				await unitOfWork.fileRepository.delete(contentFile);
-			} else {
-				contentFile = this.fileFactory(
-					null,
-					`wikiContent.${wikiPage._id}.json`,
-					readStream,
-					"application/json"
-				);
-				await unitOfWork.fileRepository.create(contentFile);
 			}
+
+			contentFile = this.fileFactory(
+				null,
+				`wikiContent.${wikiPage._id}.json`,
+				readStream,
+				"application/json"
+			);
+			await unitOfWork.fileRepository.create(contentFile);
+			wikiPage.contentId = contentFile._id.toString();
+
 		}
 
 		if (name) {
@@ -239,7 +241,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		await this.authorizationService.cleanUpPermissions(wikiPage._id, unitOfWork);
 		await unitOfWork.wikiPageRepository.delete(wikiPage);
 		await unitOfWork.commit();
-		return wikiPage.world;
+		return await unitOfWork.worldRepository.findById(wikiPage.world);
 	};
 
 	updatePlace = async (

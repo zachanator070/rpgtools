@@ -1,5 +1,5 @@
 import {
-	ChunkFactory,
+	ChunkFactory, ChunkRepository,
 	Factory,
 	FileFactory,
 	ImageFactory,
@@ -68,6 +68,7 @@ export class ImageApplicationService implements ImageService {
 			null
 		);
 
+		await unitOfWork.imageRepository.create(newImage);
 		if (!chunkify) {
 			const chunk = await this.createChunk(
 				0,
@@ -87,7 +88,7 @@ export class ImageApplicationService implements ImageService {
 			newImage.chunkWidth = Math.ceil(image.bitmap.width / this.chunkSize);
 		}
 		await this.makeIcon(image, newImage, unitOfWork);
-		await unitOfWork.imageRepository.create(newImage);
+		await unitOfWork.imageRepository.update(newImage);
 		if (!givenUnitOfWork) {
 			await unitOfWork.commit();
 		}
@@ -128,6 +129,7 @@ export class ImageApplicationService implements ImageService {
 					);
 					image.scaleToFit(this.chunkSize, this.chunkSize, (err, scaledImage) => {
 						(async () => {
+							await unitOfWork.imageRepository.create(iconImage);
 							const iconChunk = await this.createChunk(
 								0,
 								0,
@@ -138,8 +140,8 @@ export class ImageApplicationService implements ImageService {
 								unitOfWork
 							);
 							iconImage.chunks = [iconChunk._id];
-							await unitOfWork.imageRepository.create(iconImage);
 							newImage.icon = iconImage._id;
+							await unitOfWork.imageRepository.update(iconImage);
 							resolve(iconImage);
 						})();
 					});
@@ -197,6 +199,7 @@ export class ImageApplicationService implements ImageService {
 				const file = this.fileFactory(null, newFilename, stream, jimpImage.getMIME());
 				await unitOfWork.fileRepository.create(file);
 				const chunk = this.chunkFactory(null, x, y, width, height, file._id, parentImage._id);
+				await unitOfWork.chunkRepository.create(chunk);
 				resolve(chunk);
 			});
 		});
