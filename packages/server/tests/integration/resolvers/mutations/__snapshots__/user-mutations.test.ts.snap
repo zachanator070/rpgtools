@@ -2,10 +2,12 @@
 
 exports[`user mutations with world and not logged in set current world not logged in 1`] = `
 Object {
-  "data": null,
-  "errors": Array [
-    [GraphQLError: Cannot return null for non-nullable field User._id.],
-  ],
+  "data": Object {
+    "setCurrentWorld": Object {
+      "_id": null,
+    },
+  },
+  "errors": undefined,
   "extensions": undefined,
   "http": Object {
     "headers": Headers {

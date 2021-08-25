@@ -1,5 +1,5 @@
 import { PermissionAssignmentFactory, RoleFactory, Seeder } from "../types";
-import { EVERYONE } from "../../../common/src/role-constants";
+import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
 import { WORLD_CREATE } from "../../../common/src/permission-constants";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -10,7 +10,6 @@ import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongo
 import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-repository";
 import { MongodbPermissionAssignmentRepository } from "../dal/mongodb/repositories/mongodb-permission-assignment-repository";
 import { Role } from "../domain-entities/role";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 
 @injectable()
 export class RoleSeeder implements Seeder {
@@ -41,6 +40,18 @@ export class RoleSeeder implements Seeder {
 			}
 			allUsersRole = this.roleFactory(null, EVERYONE, null, []);
 			await this.roleRepository.create(allUsersRole);
+			console.log(`Created default role "${EVERYONE}"`);
+		}
+		let loggedInRole: Role = await this.roleRepository.findOne([
+			new FilterCondition("name", LOGGED_IN),
+		]);
+		if (!loggedInRole) {
+			const server = await this.serverConfigRepository.findOne([]);
+			if (!server) {
+				throw new Error("Server needs to exist!");
+			}
+			loggedInRole = this.roleFactory(null, LOGGED_IN, null, []);
+			await this.roleRepository.create(loggedInRole);
 			let createWorldPermission = await this.permissionAssignmentRepository.findOne([
 				new FilterCondition("permission", WORLD_CREATE),
 				new FilterCondition("subject", server._id),
@@ -55,9 +66,9 @@ export class RoleSeeder implements Seeder {
 				);
 				await this.permissionAssignmentRepository.create(createWorldPermission);
 			}
-			allUsersRole.permissions.push(createWorldPermission._id);
-			await this.roleRepository.update(allUsersRole);
-			console.log(`Created default role "${EVERYONE}"`);
+			loggedInRole.permissions.push(createWorldPermission._id);
+			await this.roleRepository.update(loggedInRole);
+			console.log(`Created default role "${LOGGED_IN}"`);
 		}
 	};
 }

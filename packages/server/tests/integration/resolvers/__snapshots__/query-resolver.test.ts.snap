@@ -1,0 +1,281 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`query resolver with world no current user 1`] = `
+Object {
+  "data": Object {
+    "currentUser": Object {
+      "_id": null,
+      "currentWorld": null,
+      "email": null,
+      "roles": Array [],
+      "username": "Anonymous",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world users 1`] = `
+Object {
+  "data": Object {
+    "users": Object {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "page": 1,
+      "totalPages": 1,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world wiki no permission 1`] = `
+Object {
+  "data": Object {
+    "wiki": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": Any<String>,
+      "path": Array [
+        "wiki",
+      ],
+    },
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user current user 1`] = `
+Object {
+  "data": Object {
+    "currentUser": Object {
+      "_id": Any<String>,
+      "currentWorld": null,
+      "email": "tester@gmail.com",
+      "roles": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "username": "tester",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user wiki 1`] = `
+Object {
+  "data": Object {
+    "wiki": Object {
+      "_id": Any<String>,
+      "accessControlList": Array [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": Object {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "Earth",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user world 1`] = `
+Object {
+  "data": Object {
+    "world": Object {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "roles": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+            },
+          ],
+          "subject": ObjectContaining {
+            "_id": Any<String>,
+          },
+        },
+      ],
+      "canAddModels": true,
+      "canAddRoles": true,
+      "canAdmin": true,
+      "canHostGame": false,
+      "canWrite": true,
+      "name": "Earth",
+      "pins": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "map": ObjectContaining {
+            "_id": Any<String>,
+          },
+          "page": ObjectContaining {
+            "_id": Any<String>,
+          },
+        },
+      ],
+      "roles": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "members": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "username": Any<String>,
+            },
+          ],
+          "permissions": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "subject": ObjectContaining {
+                "_id": Any<String>,
+              },
+            },
+          ],
+        },
+      ],
+      "rootFolder": Object {
+        "_id": Any<String>,
+        "accessControlList": Array [],
+        "canAdmin": true,
+        "canWrite": true,
+        "children": ArrayContaining [
+          ObjectContaining {
+            "_id": Any<String>,
+          },
+        ],
+        "name": "Earth",
+      },
+      "wikiPage": Object {
+        "_id": Any<String>,
+        "mapImage": null,
+        "name": "Earth",
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user worlds with one private and one public world 1`] = `
+Object {
+  "data": Object {
+    "worlds": Object {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "wikiPage": ObjectContaining {
+            "_id": Any<String>,
+          },
+        },
+      ],
+      "totalPages": 1,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world world 1`] = `
+Object {
+  "data": Object {
+    "world": null,
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world worlds with one private and one public world 1`] = `
+Object {
+  "data": Object {
+    "worlds": Object {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "wikiPage": ObjectContaining {
+            "_id": Any<String>,
+          },
+        },
+      ],
+      "totalPages": 1,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
