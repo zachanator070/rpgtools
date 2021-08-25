@@ -10,7 +10,7 @@ import {
 	ROLE_RW,
 	ROLE_RW_ALL,
 } from "../../../common/src/permission-constants";
-import { EVERYONE } from "../../../common/src/role-constants";
+import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
 import { World } from "../domain-entities/world";
 import { injectable } from "inversify";
 
@@ -33,7 +33,8 @@ export class RoleAuthorizationRuleset implements EntityAuthorizationRuleset<Role
 			context.hasPermission(ROLE_READ, entity._id) ||
 			context.hasPermission(ROLE_READ_ALL, entity.world) ||
 			context.hasRole(entity.name) ||
-			entity.name === EVERYONE
+			entity.name === EVERYONE ||
+			entity.name === LOGGED_IN
 		);
 	};
 

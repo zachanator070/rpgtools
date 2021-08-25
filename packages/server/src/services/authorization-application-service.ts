@@ -15,7 +15,7 @@ import { Role } from "../domain-entities/role";
 import { World } from "../domain-entities/world";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "../../../common/src/permission-constants";
 import { ROLE } from "../../../common/src/type-constants";
-import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
+import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "../../../common/src/role-constants";
 import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
@@ -177,7 +177,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		if (!(await this.roleAuthorizationRuleset.canWrite(context, role))) {
 			throw new Error(`You do not have write permissions for this role`);
 		}
-		if (role.name === WORLD_OWNER || role.name === EVERYONE) {
+		if (role.name === WORLD_OWNER || role.name === EVERYONE || role.name === LOGGED_IN) {
 			throw new Error("You cannot delete this role");
 		}
 		const world = await unitOfWork.worldRepository.findById(role.world);

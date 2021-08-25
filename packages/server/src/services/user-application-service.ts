@@ -6,6 +6,7 @@ import { User } from "../domain-entities/user";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
 import {PaginatedResult} from "../dal/paginated-result";
+import {ANON_USERNAME} from "../../../common/src/permission-constants";
 
 @injectable()
 export class UserApplicationService implements UserService {
@@ -16,10 +17,12 @@ export class UserApplicationService implements UserService {
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	setCurrentWorld = async (context: SecurityContext, worldId: string) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
-		context.user.currentWorld = worldId;
-		await unitOfWork.userRepository.update(context.user);
-		await unitOfWork.commit();
+		if(context.user.username !== ANON_USERNAME){
+			const unitOfWork = this.dbUnitOfWorkFactory();
+			context.user.currentWorld = worldId;
+			await unitOfWork.userRepository.update(context.user);
+			await unitOfWork.commit();
+		}
 		return context.user;
 	};
 

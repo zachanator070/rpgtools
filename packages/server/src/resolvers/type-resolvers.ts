@@ -1,4 +1,4 @@
-import { EVERYONE } from "../../../common/src/role-constants";
+import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
 import { GraphQLUpload } from "graphql-upload";
 import { container } from "../inversify.config";
 import { INJECTABLE_TYPES } from "../injectable-types";
@@ -29,8 +29,7 @@ import { Place } from "../domain-entities/place";
 import { Chunk } from "../domain-entities/chunk";
 import { ServerConfig } from "../domain-entities/server-config";
 import { RepositoryMapper } from "../repository-mapper";
-import {Character, Game, InGameModel, Message} from "../domain-entities/game";
-import {File} from "../domain-entities/file";
+import {Game, InGameModel, Message} from "../domain-entities/game";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage): Promise<World> => {
@@ -184,6 +183,7 @@ export const TypeResolvers = {
 			);
 			if (
 				role.name === EVERYONE ||
+				role.name === LOGGED_IN ||
 				(await ruleset.canWrite(securityContext, role)) ||
 				(await securityContext.hasRole(role.name))
 			) {
