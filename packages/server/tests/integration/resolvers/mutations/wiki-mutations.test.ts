@@ -179,6 +179,9 @@ describe("wiki page mutations", () => {
 							world: {
 								_id: expect.any(String),
 							},
+							folder: {
+								_id: expect.any(String)
+							},
 							content: expect.any(String),
 						},
 					},

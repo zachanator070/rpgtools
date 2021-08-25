@@ -1,5 +1,5 @@
 import { PermissionAssignmentFactory, RoleFactory, Seeder } from "../types";
-import { ALL_USERS } from "../../../common/src/role-constants";
+import { EVERYONE } from "../../../common/src/role-constants";
 import { WORLD_CREATE } from "../../../common/src/permission-constants";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -32,14 +32,14 @@ export class RoleSeeder implements Seeder {
 
 	seed = async (): Promise<void> => {
 		let allUsersRole: Role = await this.roleRepository.findOne([
-			new FilterCondition("name", ALL_USERS),
+			new FilterCondition("name", EVERYONE),
 		]);
 		if (!allUsersRole) {
 			const server = await this.serverConfigRepository.findOne([]);
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			allUsersRole = this.roleFactory(null, ALL_USERS, null, []);
+			allUsersRole = this.roleFactory(null, EVERYONE, null, []);
 			await this.roleRepository.create(allUsersRole);
 			let createWorldPermission = await this.permissionAssignmentRepository.findOne([
 				new FilterCondition("permission", WORLD_CREATE),
@@ -57,7 +57,7 @@ export class RoleSeeder implements Seeder {
 			}
 			allUsersRole.permissions.push(createWorldPermission._id);
 			await this.roleRepository.update(allUsersRole);
-			console.log(`Created default role "${ALL_USERS}"`);
+			console.log(`Created default role "${EVERYONE}"`);
 		}
 	};
 }

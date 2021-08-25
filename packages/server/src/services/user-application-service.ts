@@ -5,6 +5,7 @@ import { inject, injectable } from "inversify";
 import { User } from "../domain-entities/user";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
+import {PaginatedResult} from "../dal/paginated-result";
 
 @injectable()
 export class UserApplicationService implements UserService {
@@ -22,9 +23,9 @@ export class UserApplicationService implements UserService {
 		return context.user;
 	};
 
-	getUsers = async (context: SecurityContext, username: string): Promise<User[]> => {
-		return this.userRepository.find([
+	getUsers = async (context: SecurityContext, username: string, page: number): Promise<PaginatedResult<User>> => {
+		return this.userRepository.findPaginated([
 			new FilterCondition("username", `^${username}*`, FILTER_CONDITION_REGEX),
-		]);
+		], page || 1);
 	};
 }

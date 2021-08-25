@@ -201,7 +201,7 @@ Object {
       "content": Any<String>,
       "coverImage": null,
       "folder": Object {
-        "_id": "611a0ec6b8f7ee398a88d52d",
+        "_id": Any<String>,
       },
       "mapImage": null,
       "name": "Earth",

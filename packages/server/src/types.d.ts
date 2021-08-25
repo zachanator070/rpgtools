@@ -560,7 +560,7 @@ export interface ServerConfigService {
 }
 export interface UserService {
 	setCurrentWorld: (context: SecurityContext, worldId: string) => Promise<User>;
-	getUsers: (context: SecurityContext, username: string) => Promise<User[]>;
+	getUsers: (context: SecurityContext, username: string, page: number) => Promise<PaginatedResult<User>>;
 }
 export interface WikiFolderService {
 	createFolder: (context: SecurityContext, name: string, parentFolderId: string) => Promise<World>;

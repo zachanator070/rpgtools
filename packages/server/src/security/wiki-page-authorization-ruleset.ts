@@ -17,6 +17,7 @@ import {
 } from "../../../common/src/permission-constants";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { WikiFolderAuthorizationRuleset } from "./wiki-folder-authorization-ruleset";
+import {WorldAuthorizationRuleset} from "./world-authorization-ruleset";
 
 @injectable()
 export class WikiPageAuthorizationRuleset
@@ -30,6 +31,9 @@ export class WikiPageAuthorizationRuleset
 
 	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
 	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
+
+	@inject(INJECTABLE_TYPES.WorldAuthorizationRuleset)
+	worldAuthorizationRuleset: WorldAuthorizationRuleset;
 
 	canAdmin = async (context: SecurityContext, entity: WikiPage): Promise<boolean> => {
 		return (
@@ -46,7 +50,7 @@ export class WikiPageAuthorizationRuleset
 		// if this wiki page is the main page of a world
 		let world = await this.worldRepository.findOne([new FilterCondition("wikiPage", entity._id)]);
 		if (world) {
-			return true;
+			return this.worldAuthorizationRuleset.canRead(context, world);
 		} else {
 			world = await this.worldRepository.findById(entity.world);
 		}

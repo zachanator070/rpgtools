@@ -32,11 +32,11 @@ export default {
 	},
 	users: async (
 		_: any,
-		{ username }: { username: string },
+		{ username, page }: { username: string, page: number },
 		{ securityContext }: SessionContext
 	) => {
 		const service = container.get<UserService>(INJECTABLE_TYPES.UserService);
-		return service.getUsers(securityContext, username);
+		return service.getUsers(securityContext, username, page);
 	},
 	game: async (_: any, { gameId }: { gameId: string }, { securityContext }: SessionContext) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
