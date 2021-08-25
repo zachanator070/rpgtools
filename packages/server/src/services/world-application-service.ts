@@ -227,7 +227,7 @@ export class WorldApplicationService implements WorldService {
 		context.user.roles.push(ownerRole._id);
 		await unitOfWork.userRepository.update(context.user);
 
-		const everyonePerms = [];
+		const everyoneRole = await unitOfWork.roleRepository.findOne([new FilterCondition("name", EVERYONE)]);
 		if (isPublic) {
 			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
 				let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
@@ -244,14 +244,13 @@ export class WorldApplicationService implements WorldService {
 					);
 					await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 				}
-				everyonePerms.push(permissionAssignment._id);
+				everyoneRole.permissions.push(permissionAssignment._id);
 				context.permissions.push(permissionAssignment);
 			}
 		}
-		const everyoneRole = this.roleFactory(null, EVERYONE, world._id, everyonePerms);
-		await unitOfWork.roleRepository.create(everyoneRole);
+		await unitOfWork.roleRepository.update(everyoneRole);
 
-		world.roles = [ownerRole._id, everyoneRole._id];
+		world.roles = [ownerRole._id];
 		await unitOfWork.worldRepository.update(world);
 
 		return world;

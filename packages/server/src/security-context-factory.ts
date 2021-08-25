@@ -1,4 +1,4 @@
-import { ALL_USERS, EVERYONE } from "../../common/src/role-constants";
+import { EVERYONE } from "../../common/src/role-constants";
 import { User } from "./domain-entities/user";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "./injectable-types";
@@ -55,18 +55,6 @@ export class SecurityContextFactory {
 		return allPermissions;
 	};
 
-	getAllUserPermissions = async (): Promise<PermissionAssignment[]> => {
-		const allPermissions: PermissionAssignment[] = [];
-		const role: Role = await this.roleRepository.findOne([new FilterCondition("name", ALL_USERS)]);
-		for (let permissionId of role.permissions) {
-			const permission = await this.permissionAssignmentRepository.findOne([
-				new FilterCondition("_id", permissionId),
-			]);
-			allPermissions.push(permission);
-		}
-		return allPermissions;
-	};
-
 	getRoles = async (user: User): Promise<Role[]> => {
 		const roles: Role[] = [];
 		for (let roleId of user.roles) {
@@ -79,7 +67,6 @@ export class SecurityContextFactory {
 		const allPermissions = [];
 		// if the user is logged in, calculate permissions for their user, role, and those given to all logged in users
 		if(user.username !== ANON_USERNAME){
-			allPermissions.push(...(await this.getAllUserPermissions()));
 			allPermissions.push(...(await this.getRolePermissions(user)));
 			allPermissions.push(...(await this.getUserPermissions(user)));
 		}

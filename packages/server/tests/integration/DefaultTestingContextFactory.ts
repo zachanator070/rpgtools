@@ -60,10 +60,10 @@ export const defaultTestingContextFactory = (): TestingContext => {
 			this.mockSessionContextFactory = mockSessionContextFactory;
 			this.currentUser = await userRepo.findOne([new FilterCondition("username", "tester")]);
 			this.otherUser = userFactory(null, "tester2@gmail.com", "tester2", "", "", null, [], []);
+			await userRepo.create(this.otherUser);
 			this.testerSecurityContext = await securityContextFactory.create(this.currentUser);
 			this.otherUserSecurityContext = await securityContextFactory.create(this.otherUser);
 			this.mockSessionContextFactory.setCurrentUser(this.currentUser);
-			await userRepo.create(this.otherUser);
 			const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 			this.world = await worldService.createWorld("Earth", false, this.testerSecurityContext);
 			await authorizationService.createRole(
