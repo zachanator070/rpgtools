@@ -3,7 +3,7 @@ import { WIKI_RW } from "../../../../../common/src/permission-constants";
 import { CREATE_FOLDER } from "../../../../../frontend/src/hooks/wiki/useCreateFolder";
 import { DELETE_FOLDER } from "../../../../../frontend/src/hooks/wiki/useDeleteFolder";
 import { RENAME_FOLDER } from "../../../../../frontend/src/hooks/wiki/useRenameFolder";
-import { container } from "../../../../src/inversify.config";
+import { container } from "../../../../src/inversify";
 import { AuthorizationService, WikiPageService } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";

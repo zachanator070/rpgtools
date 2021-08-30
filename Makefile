@@ -35,7 +35,7 @@ prod: init-env
 	docker-compose up --build prod-server
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-dev: init-env dev-up logs
+dev: init-env dev-up dev-logs
 
 # initializes environment file
 init-env:
@@ -54,8 +54,8 @@ down:
 	docker-compose down
 
 # watch logs of running docker containers
-logs:
-	docker-compose logs -f
+dev-logs:
+	docker-compose logs -f dev-server dev-frontend-builder redis mongodb
 
 # restart any running containers
 restart:

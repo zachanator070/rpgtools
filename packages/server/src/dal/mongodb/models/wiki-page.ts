@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { GridFSBucket } from "mongodb";
-import { IMAGE, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
+import { IMAGE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
 import {WikiPageDocument} from "../../../types";
 
 const wikiPageSchema = new Schema(

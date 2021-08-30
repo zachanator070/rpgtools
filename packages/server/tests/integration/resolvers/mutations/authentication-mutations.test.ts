@@ -1,5 +1,5 @@
 import { REGISTER_MUTATION } from "../../../../../frontend/src/hooks/authentication/useRegister";
-import { container } from "../../../../src/inversify.config";
+import { container } from "../../../../src/inversify";
 import { ServerConfigRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";

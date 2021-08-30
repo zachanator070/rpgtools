@@ -19,7 +19,7 @@ import {
 	WIKI_PAGE,
 	WORLD,
 } from "../../common/src/type-constants";
-import { container } from "./inversify.config";
+import { container } from "./inversify";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { injectable } from "inversify";
 

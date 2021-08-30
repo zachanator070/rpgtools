@@ -9,7 +9,7 @@ import {
 	WikiPageService,
 	WorldService,
 } from "../types";
-import { container } from "../inversify.config";
+import { container } from "../inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 
 export default {

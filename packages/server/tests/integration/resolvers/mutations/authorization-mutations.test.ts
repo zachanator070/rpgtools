@@ -8,7 +8,7 @@ import { GRANT_USER_PERMISSION } from "../../../../../frontend/src/hooks/authori
 import { REMOVE_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useRemoveUserRole";
 import { REVOKE_ROLE_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useRevokeRolePermission";
 import { REVOKE_USER_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useRevokeUserPermission";
-import { container } from "../../../../src/inversify.config";
+import { container } from "../../../../src/inversify";
 import { AuthorizationService, RoleFactory, RoleRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";

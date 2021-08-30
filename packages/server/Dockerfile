@@ -14,6 +14,7 @@ ADD packages/server/package.json package.json
 ADD packages/server/package-lock.json package-lock.json
 RUN npm install -g kill-port
 RUN npm install
+ADD packages/server/tsconfig.json tsconfig.json
 
 ADD packages/common/src ../common/src
 ADD packages/server/src src

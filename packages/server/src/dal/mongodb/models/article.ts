@@ -1,6 +1,6 @@
 import {Model, Schema} from "mongoose";
 import {WikiPageModel} from "./wiki-page";
-import {ARTICLE} from "@rpgtools/common/src/type-constants";
+import {ARTICLE} from "../../../../../common/src/type-constants";
 import {WikiPageDocument} from "../../../types";
 
 export interface ArticleDocument extends WikiPageDocument {

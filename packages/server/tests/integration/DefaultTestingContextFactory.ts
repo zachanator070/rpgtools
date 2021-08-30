@@ -1,6 +1,6 @@
 import { TestingContext } from "./types";
 import { FilterCondition } from "../../src/dal/filter-condition";
-import { container } from "../../src/inversify.config";
+import { container } from "../../src/inversify";
 import {
 	AuthorizationService,
 	PinRepository,
