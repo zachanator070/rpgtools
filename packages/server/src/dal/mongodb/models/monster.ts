@@ -4,7 +4,7 @@ import { WikiPageModel } from "./wiki-page";
 import { MonsterDocument } from "../../../types";
 
 const monsterSchema = new Schema<MonsterDocument, Model<MonsterDocument>>({
-	model: {
+	pageModel: {
 		type: Schema.Types.ObjectId,
 		ref: MODEL,
 	},

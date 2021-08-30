@@ -1,5 +1,5 @@
 import { withFilter } from "graphql-subscriptions";
-import { container } from "../inversify.config";
+import { container } from "../inversify";
 import { EventPublisher } from "../types";
 import { INJECTABLE_TYPES } from "../injectable-types";
 

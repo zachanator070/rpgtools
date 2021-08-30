@@ -71,7 +71,7 @@ export class MongodbFileRepository implements FileRepository {
 	};
 
 	findById = async (id: string): Promise<File> => {
-		return this.findOne([new FilterCondition("_id", mongoose.Types.ObjectId(id))]);
+		return this.findOne([new FilterCondition("_id", new mongoose.Types.ObjectId(id))]);
 	};
 
 	findOne = async (conditions: FilterCondition[]): Promise<File> => {

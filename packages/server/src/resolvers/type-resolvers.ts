@@ -1,6 +1,6 @@
 import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
 import { GraphQLUpload } from "graphql-upload";
-import { container } from "../inversify.config";
+import { container } from "../inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { World } from "../domain-entities/world";
 import {

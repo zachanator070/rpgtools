@@ -4,7 +4,7 @@ import { WikiPageModel } from "./wiki-page";
 import { ItemDocument } from "../../../types";
 
 const itemSchema = new Schema<ItemDocument, Model<ItemDocument>>({
-	model: {
+	pageModel: {
 		type: Schema.Types.ObjectId,
 		ref: MODEL,
 	},

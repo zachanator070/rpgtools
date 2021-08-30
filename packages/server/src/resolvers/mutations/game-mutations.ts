@@ -10,7 +10,7 @@ import {
 } from "../subscription-resolvers";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 import { GameService, SessionContext } from "../../types";
-import { container } from "../../inversify.config";
+import { container } from "../../inversify";
 import { Character, PathNode } from "../../domain-entities/game";
 
 export const gameMutations = {

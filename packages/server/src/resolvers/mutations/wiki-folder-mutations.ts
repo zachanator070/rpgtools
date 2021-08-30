@@ -1,6 +1,6 @@
 import { ContentImportService, SessionContext, WikiFolderService } from "../../types";
 import { FileUpload } from "graphql-upload";
-import { container } from "../../inversify.config";
+import { container } from "../../inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 
 export const wikiFolderMutations = {

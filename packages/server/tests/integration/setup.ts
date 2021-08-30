@@ -1,4 +1,4 @@
-import { container } from "../../src/inversify.config";
+import { container } from "../../src/inversify";
 import { INJECTABLE_TYPES } from "../../src/injectable-types";
 import { ApiServer, ServerConfigService } from "../../src/types";
 

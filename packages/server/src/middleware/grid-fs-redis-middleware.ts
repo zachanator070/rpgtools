@@ -1,6 +1,6 @@
 import e from "express";
 import { FileRepository, Cache } from "../types";
-import { container } from "../inversify.config";
+import { container } from "../inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
 

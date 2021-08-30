@@ -4,7 +4,7 @@ import { GET_WORLDS } from "../../../../frontend/src/hooks/world/useWorlds";
 import { GET_CURRENT_WIKI } from "../../../../frontend/src/hooks/wiki/useCurrentWiki";
 import {GET_CURRENT_USER} from "@rpgtools/common/src/queries";
 import {defaultTestingContextFactory} from "../DefaultTestingContextFactory";
-import {container} from "../../../src/inversify.config";
+import {container} from "../../../src/inversify";
 import {INJECTABLE_TYPES} from "../../../src/injectable-types";
 import {WorldService} from "../../../src/types";
 import {ANON_USERNAME} from "../../../../common/src/permission-constants";

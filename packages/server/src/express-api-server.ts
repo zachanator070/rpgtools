@@ -182,16 +182,10 @@ export class ExpressApiServer implements ApiServer {
 	};
 
 	initDb = async () => {
-		mongoose.set("useNewUrlParser", true);
-		mongoose.set("useFindAndModify", false);
-		mongoose.set("useCreateIndex", true);
-		mongoose.set("useUnifiedTopology", true);
 
 		return new Promise<void>((resolve, reject) => {
 			mongoose
-				.connect(`mongodb://${this.mongodb_host}/${this.mongodb_db_name}`, {
-					useNewUrlParser: true,
-				})
+				.connect(`mongodb://${this.mongodb_host}/${this.mongodb_db_name}`)
 				.then(async () => {
 					console.log(
 						`Connected to mongodb at mongodb://${this.mongodb_host}/${this.mongodb_db_name}`

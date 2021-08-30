@@ -7,7 +7,7 @@ import { UPDATE_PLACE } from "../../../../../frontend/src/hooks/wiki/useUpdatePl
 import { UPDATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useUpdateWiki";
 import {CREATE_IMAGE} from "../../../../../common/src/mutations";
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
-import {container} from "../../../../src/inversify.config";
+import {container} from "../../../../src/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/injectable-types";
 import {ImageService} from "../../../../src/types";
 import {Image} from "../../../../src/domain-entities/image";

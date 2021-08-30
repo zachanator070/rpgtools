@@ -1,5 +1,5 @@
 import { AuthenticationService, SessionContext } from "../../types";
-import { container } from "../../inversify.config";
+import { container } from "../../inversify";
 import { INJECTABLE_TYPES } from "../../injectable-types";
 export const SALT_ROUNDS = 10;
 
