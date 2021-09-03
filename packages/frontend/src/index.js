@@ -3,10 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import { BrowserRouter } from "react-router-dom";
 import { getIntrospectionData } from "./components/get-introspection-data";
-import {
-	InMemoryCache,
-	IntrospectionFragmentMatcher,
-} from "apollo-cache-inmemory";
+import { InMemoryCache, IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { createUploadLink } from "apollo-upload-client";
 import { clientTypeDefs } from "./clientTypeDefs";
@@ -16,7 +13,7 @@ import { ApolloProvider, split, HttpLink, ApolloLink } from "@apollo/client";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
-import "./favicon.ico";
+// import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 
 getIntrospectionData().then((introspectionData) => {
@@ -77,10 +74,7 @@ getIntrospectionData().then((introspectionData) => {
 	const splitLink = split(
 		({ query }) => {
 			const definition = getMainDefinition(query);
-			return (
-				definition.kind === "OperationDefinition" &&
-				definition.operation === "subscription"
-			);
+			return definition.kind === "OperationDefinition" && definition.operation === "subscription";
 		},
 		wsLink,
 		httpLink

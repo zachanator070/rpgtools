@@ -61,15 +61,19 @@ export class AuthenticationApplicationService implements AuthenticationService {
 	};
 
 	decodeRefreshToken = async (refreshToken: string): Promise<any> => {
-		return jwt.verify(refreshToken, process.env["REFRESH_TOKEN_SECRET"], {
-			maxAge: REFRESH_TOKEN_MAX_AGE.string,
-		});
+		try {
+			return jwt.verify(refreshToken, process.env["REFRESH_TOKEN_SECRET"], {
+				maxAge: REFRESH_TOKEN_MAX_AGE.string,
+			});
+		} catch (e) {}
 	};
 
 	decodeAccessToken = async (accessToken: string): Promise<any> => {
-		return jwt.verify(accessToken, process.env["ACCESS_TOKEN_SECRET"], {
-			maxAge: ACCESS_TOKEN_MAX_AGE.string,
-		});
+		try {
+			return jwt.verify(accessToken, process.env["ACCESS_TOKEN_SECRET"], {
+				maxAge: ACCESS_TOKEN_MAX_AGE.string,
+			});
+		} catch (e) {}
 	};
 
 	getRefreshTokenVersion = async (refreshToken: string): Promise<string> => {

@@ -9,7 +9,9 @@ services:
       - .env
     volumes:
       - ./packages/server/src:/home/node/app/packages/server/src
+      - ./packages/server/dist:/home/node/app/packages/server/dist
       - ./packages/common/src:/home/node/app/packages/common/src
+      - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
       - "9229:9229"

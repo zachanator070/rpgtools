@@ -23,4 +23,7 @@ RUN chmod o+w dist
 ADD packages/common/src ../common/src
 ADD packages/frontend/src src
 
+ADD packages/common/tsconfig.json ../common/tsconfig.json
+ADD packages/frontend/tsconfig.json .
+
 CMD ["npm", "run", "start"]

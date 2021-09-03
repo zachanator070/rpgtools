@@ -16,7 +16,7 @@ export default {
 	currentUser: (_: any, __: any, { securityContext }: SessionContext) => securityContext.user,
 	serverConfig: async () => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return service.getServerConfig;
+		return service.getServerConfig();
 	},
 	world: async (_: any, { worldId }: { worldId: string }, { securityContext }: SessionContext) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
