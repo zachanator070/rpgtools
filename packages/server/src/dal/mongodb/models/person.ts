@@ -1,11 +1,11 @@
-import {Model, Schema} from "mongoose";
+import mongoose from "mongoose";
 import { MODEL, PERSON } from "../../../../../common/src/type-constants";
 import { WikiPageModel } from "./wiki-page";
 import { PersonDocument } from "../../../types";
 
-const personSchema = new Schema<PersonDocument, Model<PersonDocument>>({
+const personSchema = new mongoose.Schema<PersonDocument, mongoose.Model<PersonDocument>>({
 	pageModel: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: MODEL,
 	},
 	modelColor: {
@@ -13,4 +13,7 @@ const personSchema = new Schema<PersonDocument, Model<PersonDocument>>({
 	},
 });
 
-export const PersonModel = WikiPageModel.discriminator<PersonDocument, Model<PersonDocument>>(PERSON, personSchema);
+export const PersonModel = WikiPageModel.discriminator<
+	PersonDocument,
+	mongoose.Model<PersonDocument>
+>(PERSON, personSchema);

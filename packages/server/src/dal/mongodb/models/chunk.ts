@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { CHUNK, IMAGE } from "../../../../../common/src/type-constants";
 import { ChunkDocument } from "../../../types";
 
-const chunkSchema = new Schema({
+const chunkSchema = new mongoose.Schema({
 	image: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: IMAGE,
 		required: [true, "image id required"],
 	},

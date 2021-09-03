@@ -5,7 +5,7 @@
     "emitDecoratorMetadata": true,
     "types": ["reflect-metadata", "jest"],
     "lib": ["es6", "dom"],
-    "module": "commonjs",
+    "module": "es6",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,

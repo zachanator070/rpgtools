@@ -1,5 +1,5 @@
-import {useApolloClient, useMutation} from "@apollo/client";
-import {LOGIN_QUERY} from "@rpgtools/common/src/mutations";
+import { useApolloClient, useMutation } from "@apollo/client";
+import { LOGIN_QUERY } from "../../../../common/src/mutations";
 
 export default (callback) => {
 	const client = useApolloClient();
@@ -10,8 +10,7 @@ export default (callback) => {
 		onCompleted: callback,
 	});
 	return {
-		login: async (username, password) =>
-			await login({ variables: { username, password } }),
+		login: async (username, password) => await login({ variables: { username, password } }),
 		loading,
 		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
 	};

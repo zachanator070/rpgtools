@@ -1,7 +1,7 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Image } from "../../../domain-entities/image";
 import { ImageModel } from "../models/image";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { ImageDocument, ImageFactory, ImageRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
@@ -14,7 +14,7 @@ export class MongodbImageRepository
 	@inject(INJECTABLE_TYPES.ImageFactory)
 	imageFactory: ImageFactory;
 
-	model: Model<any> = ImageModel;
+	model: mongoose.Model<any> = ImageModel;
 
 	buildEntity(document: ImageDocument): Image {
 		return this.imageFactory(

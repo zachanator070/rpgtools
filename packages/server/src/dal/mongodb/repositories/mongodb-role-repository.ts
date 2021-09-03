@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Role } from "../../../domain-entities/role";
 import { inject, injectable } from "inversify";
 import { RoleDocument, RoleFactory, RoleRepository } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { RoleModel } from "../models/role";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbRoleRepository
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
 
-	model: Model<any> = RoleModel;
+	model: mongoose.Model<any> = RoleModel;
 
 	buildEntity(document: RoleDocument): Role {
 		return this.roleFactory(

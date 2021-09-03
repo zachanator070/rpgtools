@@ -1,6 +1,6 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Model } from "../../../domain-entities/model";
-import { Model as MongoDBModel } from "mongoose";
+import mongoose from "mongoose";
 import { ModelModel } from "../models/model";
 import { ModelDocument, ModelFactory, ModelRepository } from "../../../types";
 import { inject, injectable } from "inversify";
@@ -14,7 +14,7 @@ export class MongodbModelRepository
 	@inject(INJECTABLE_TYPES.ModelFactory)
 	modelFactory: ModelFactory;
 
-	model: MongoDBModel<any> = ModelModel;
+	model: mongoose.Model<any> = ModelModel;
 
 	buildEntity(document: ModelDocument): Model {
 		return this.modelFactory(

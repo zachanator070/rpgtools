@@ -1,14 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import {GameDocument} from "../../../types";
+import { GameDocument } from "../../../types";
 
-const pathNode = new Schema({
+const pathNode = new mongoose.Schema({
 	x: Number,
 	y: Number,
 	_id: String,
 });
 
-const strokeSchema = new Schema({
+const strokeSchema = new mongoose.Schema({
 	path: [pathNode],
 	color: {
 		type: String,
@@ -22,7 +22,7 @@ const strokeSchema = new Schema({
 	_id: String,
 });
 
-const fogStrokeSchema = new Schema({
+const fogStrokeSchema = new mongoose.Schema({
 	path: [pathNode],
 	size: Number,
 	type: {
@@ -32,26 +32,26 @@ const fogStrokeSchema = new Schema({
 	_id: String,
 });
 
-const gameSchema = new Schema({
+const gameSchema = new mongoose.Schema({
 	passwordHash: {
 		type: String,
 	},
 	world: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: WORLD,
 		required: [true, "worldId required"],
 	},
 	map: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: PLACE,
 	},
 	characters: [
-		new Schema({
+		new mongoose.Schema({
 			name: {
 				type: String,
 			},
 			player: {
-				type: Schema.Types.ObjectId,
+				type: mongoose.Schema.Types.ObjectId,
 				ref: "User",
 				required: [true, "player id required"],
 			},
@@ -86,14 +86,14 @@ const gameSchema = new Schema({
 		}),
 	],
 	host: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: [true, "host id required"],
 	},
 	strokes: [strokeSchema],
 	fog: [fogStrokeSchema],
 	messages: [
-		new Schema({
+		new mongoose.Schema({
 			_id: {
 				type: String,
 				required: [true, "_id required"],
@@ -117,13 +117,13 @@ const gameSchema = new Schema({
 		}),
 	],
 	models: [
-		new Schema({
+		new mongoose.Schema({
 			_id: {
 				type: String,
 				required: [true, "_id required"],
 			},
 			model: {
-				type: Schema.Types.ObjectId,
+				type: mongoose.Schema.Types.ObjectId,
 				ref: MODEL,
 				required: [true, "model required"],
 			},
@@ -147,7 +147,7 @@ const gameSchema = new Schema({
 				type: String,
 			},
 			wiki: {
-				type: Schema.Types.ObjectId,
+				type: mongoose.Schema.Types.ObjectId,
 				ref: WIKI_PAGE,
 			},
 		}),

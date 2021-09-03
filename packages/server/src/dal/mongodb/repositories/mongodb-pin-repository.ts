@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Pin } from "../../../domain-entities/pin";
 import { inject, injectable } from "inversify";
 import { PinDocument, PinFactory, PinRepository } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { PinModel } from "../models/pin";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbPinRepository
 	@inject(INJECTABLE_TYPES.PinFactory)
 	pinFactory: PinFactory;
 
-	model: Model<any> = PinModel;
+	model: mongoose.Model<any> = PinModel;
 
 	buildEntity(document: PinDocument): Pin {
 		return this.pinFactory(

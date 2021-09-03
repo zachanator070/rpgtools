@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { ALL_PERMISSIONS } from "../../../../../common/src/permission-constants";
 import {
 	PERMISSION_ASSIGNMENT,
@@ -6,7 +6,7 @@ import {
 } from "../../../../../common/src/type-constants";
 import { PermissionAssignmentDocument } from "../../../types";
 
-const permissionAssignmentSchema = new Schema({
+const permissionAssignmentSchema = new mongoose.Schema({
 	permission: {
 		type: String,
 		required: true,
@@ -14,7 +14,7 @@ const permissionAssignmentSchema = new Schema({
 		index: true,
 	},
 	subject: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		required: true,
 		refPath: "subjectType",
 		index: true,

@@ -1,25 +1,25 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { IMAGE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
-import {WikiPageDocument} from "../../../types";
+import { WikiPageDocument } from "../../../types";
 
-const wikiPageSchema = new Schema(
+const wikiPageSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
 			required: [true, "name field required"],
 		},
 		world: {
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			required: [true, "world field required"],
 			ref: WORLD,
 		},
 		coverImage: {
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: IMAGE,
 		},
 		contentId: {
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 		},
 		content: {
 			type: String,

@@ -8,7 +8,7 @@ import {
 	WikiPageDocument,
 	WikiPageRepository,
 } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { WikiPage } from "../../../domain-entities/wiki-page";
 import { WikiPageModel } from "../models/wiki-page";
 import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "../../../../../common/src/type-constants";
@@ -18,14 +18,14 @@ import { MongodbPersonRepository } from "./mongodb-person-repository";
 import { MongodbPlaceRepository } from "./mongodb-place-repository";
 import { MongodbMonsterRepository } from "./mongodb-monster-repository";
 import { MongodbItemRepository } from "./mongodb-item-repository";
-import {ArticleDocument} from "../models/article";
+import { ArticleDocument } from "../models/article";
 
 @injectable()
 export class MongodbWikiPageRepository
 	extends AbstractMongodbRepository<WikiPage, WikiPageDocument>
 	implements WikiPageRepository
 {
-	model: Model<any> = WikiPageModel;
+	model: mongoose.Model<any> = WikiPageModel;
 
 	@inject(INJECTABLE_TYPES.ArticleRepository)
 	articleRepository: MongodbArticleRepository;

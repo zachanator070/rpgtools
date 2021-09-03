@@ -1,6 +1,6 @@
 import { FileFactory, FileRepository } from "../../../types";
 import { GridFSBucket } from "mongodb";
-import mongoose, { Document } from "mongoose";
+import mongoose from "mongoose";
 import { File } from "../../../domain-entities/file";
 import {
 	FILTER_CONDITION_OPERATOR_EQUALS,
@@ -24,7 +24,7 @@ export class MongodbFileRepository implements FileRepository {
 				contentType: entity.mimeType,
 			});
 
-			writeStream.on("finish", (file: Document) => {
+			writeStream.on("finish", (file: mongoose.Document) => {
 				resolve(file._id);
 			});
 

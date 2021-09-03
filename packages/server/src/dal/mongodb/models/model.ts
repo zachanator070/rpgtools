@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { MODEL, WORLD } from "../../../../../common/src/type-constants";
 import { ModelDocument } from "../../../types";
 
-const modelSchema = new Schema({
+const modelSchema = new mongoose.Schema({
 	world: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: WORLD,
