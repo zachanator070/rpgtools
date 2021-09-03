@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SubdivisionModifier } from "three/examples/jsm/modifiers/SubdivisionModifier";
+// import { SubdivisionModifier } from "three/examples/jsm/modifiers/SubdivisionModifier";
 import { MeshBasicMaterial, Vector3 } from "three";
 import EventEmitter from "events";
 
@@ -31,9 +31,9 @@ export class SelectModelControls extends EventEmitter {
 			2
 		);
 
-		const modifier = new SubdivisionModifier(2);
+		// const modifier = new SubdivisionModifier(2);
+		// boxGeometry = modifier.modify(boxGeometry);
 		const boxHeight = boxGeometry.parameters.height;
-		boxGeometry = modifier.modify(boxGeometry);
 
 		const basicMaterial = new MeshBasicMaterial({
 			color: new THREE.Color(0xffff00),

@@ -73,6 +73,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 		await unitOfWork.roleRepository.create(adminRole);
 		admin.roles.push(adminRole._id);
 		await unitOfWork.userRepository.update(admin);
+		server.adminUsers.push(admin._id);
 		await unitOfWork.serverConfigRepository.update(server);
 		await this.server.checkConfig();
 		await unitOfWork.commit();

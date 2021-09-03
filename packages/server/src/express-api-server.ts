@@ -136,11 +136,11 @@ export class ExpressApiServer implements ApiServer {
 		});
 
 		this.expressServer.get("/ui*", (req, res) => {
-			return res.sendFile(path.resolve("./dist", "index.html"));
+			return res.sendFile(path.resolve("../frontend/dist", "index.html"));
 		});
 
-		this.expressServer.use(express.static("dist"));
-		this.expressServer.use(express.static("src/static-assets"));
+		this.expressServer.use(express.static("../frontend/dist"));
+		// this.expressServer.use(express.static("src/static-assets"));
 		this.expressServer.use(graphqlUploadExpress());
 	}
 

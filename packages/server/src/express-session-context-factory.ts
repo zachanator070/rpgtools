@@ -1,6 +1,7 @@
 import {
 	AuthenticationService,
 	CookieManager,
+	Factory,
 	SessionContext,
 	SessionContextFactory,
 	UnitOfWork,
@@ -40,12 +41,15 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory;
 
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+
 	create = async ({
 		req,
 		res,
 		connection,
 	}: ExpressSessionContextParameters): Promise<SessionContext> => {
-		const unitOfWork: UnitOfWork = new DbUnitOfWork();
+		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory();
 		const cookieManager: CookieManager = new ExpressCookieManager(res);
 		let currentUser = null;
 		if (connection) {
@@ -56,6 +60,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 		const accessToken: string = req.cookies["accessToken"];
 
 		currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, unitOfWork);
+
 		if (!currentUser) {
 			cookieManager.clearCookie(ACCESS_TOKEN);
 			currentUser = await this.authenticationService.getUserFromRefreshToken(
