@@ -6,7 +6,7 @@ import {
 	PermissionAssignmentFactory,
 	PermissionAssignmentRepository,
 } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { PermissionAssignmentModel } from "../models/permission-assignment";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -18,7 +18,7 @@ export class MongodbPermissionAssignmentRepository
 	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
 	permissionAssignmentFactory: PermissionAssignmentFactory;
 
-	model: Model<any> = PermissionAssignmentModel;
+	model: mongoose.Model<any> = PermissionAssignmentModel;
 
 	buildEntity(document: PermissionAssignmentDocument): PermissionAssignment {
 		return this.permissionAssignmentFactory(

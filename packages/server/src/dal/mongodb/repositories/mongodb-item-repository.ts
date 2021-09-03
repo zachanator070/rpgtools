@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Item } from "../../../domain-entities/item";
 import { inject, injectable } from "inversify";
 import { ItemDocument, ItemFactory, ItemRepository } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { ItemModel } from "../models/item";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbItemRepository
 	@inject(INJECTABLE_TYPES.ItemFactory)
 	itemFactory: ItemFactory;
 
-	model: Model<any> = ItemModel;
+	model: mongoose.Model<any> = ItemModel;
 
 	buildEntity(document: ItemDocument): Item {
 		return this.itemFactory(

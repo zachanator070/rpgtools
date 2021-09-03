@@ -1,8 +1,8 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Article } from "../../../domain-entities/article";
 import { ArticleFactory, ArticleRepository } from "../../../types";
-import {ArticleDocument, ArticleModel} from "../models/article";
-import { Model } from "mongoose";
+import { ArticleDocument, ArticleModel } from "../models/article";
+import mongoose from "mongoose";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbArticleRepository
 	@inject(INJECTABLE_TYPES.ArticleFactory)
 	articleFactory: ArticleFactory;
 
-	model: Model<any> = ArticleModel;
+	model: mongoose.Model<any> = ArticleModel;
 
 	buildEntity(document: ArticleDocument): Article {
 		return this.articleFactory(

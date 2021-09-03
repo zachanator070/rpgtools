@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { PIN, PLACE, WIKI_PAGE } from "../../../../../common/src/type-constants";
 import { PinDocument } from "../../../types";
 
-const pinSchema = new Schema({
+const pinSchema = new mongoose.Schema({
 	x: {
 		type: Number,
 		required: [true, "x position required"],
@@ -12,12 +12,12 @@ const pinSchema = new Schema({
 		required: [true, "y position required"],
 	},
 	map: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: PLACE,
 		required: [true, "map required"],
 	},
 	page: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: WIKI_PAGE,
 	},
 });

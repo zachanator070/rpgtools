@@ -5,6 +5,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/zachanator070/rpgtools",
 	"main": "dist/server/src/index.js",
+	"type": "module",
 	"scripts": {
 		"start": "node .",
 		"dev:start": "node --experimental-specifier-resolution=node --inspect .",

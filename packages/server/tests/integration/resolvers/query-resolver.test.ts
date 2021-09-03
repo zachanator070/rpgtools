@@ -2,12 +2,12 @@ import { GET_CURRENT_WORLD } from "../../../../frontend/src/hooks/world/useCurre
 import { SEARCH_USERS } from "../../../../frontend/src/hooks/authentication/useSearchUsers";
 import { GET_WORLDS } from "../../../../frontend/src/hooks/world/useWorlds";
 import { GET_CURRENT_WIKI } from "../../../../frontend/src/hooks/wiki/useCurrentWiki";
-import {GET_CURRENT_USER} from "@rpgtools/common/src/queries";
-import {defaultTestingContextFactory} from "../DefaultTestingContextFactory";
-import {container} from "../../../src/inversify";
-import {INJECTABLE_TYPES} from "../../../src/injectable-types";
-import {WorldService} from "../../../src/types";
-import {ANON_USERNAME} from "../../../../common/src/permission-constants";
+import { GET_CURRENT_USER } from "../../../../common/src/queries";
+import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
+import { container } from "../../../src/inversify";
+import { INJECTABLE_TYPES } from "../../../src/injectable-types";
+import { WorldService } from "../../../src/types";
+import { ANON_USERNAME } from "../../../../common/src/permission-constants";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
@@ -44,21 +44,21 @@ describe("query resolver", () => {
 		});
 
 		test("no current user", async () => {
-			const result = await server.executeGraphQLQuery({query: GET_CURRENT_USER});
+			const result = await server.executeGraphQLQuery({ query: GET_CURRENT_USER });
 			expect(result).toMatchSnapshot({
 				data: {
 					currentUser: {
-						username: ANON_USERNAME
+						username: ANON_USERNAME,
 					},
 				},
-				errors: undefined
+				errors: undefined,
 			});
 		});
 
 		test("users", async () => {
 			const result = await server.executeGraphQLQuery({
 				query: SEARCH_USERS,
-				variables: {username: "tester2"},
+				variables: { username: "tester2" },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
@@ -70,21 +70,24 @@ describe("query resolver", () => {
 						]),
 					},
 				},
-				errors: undefined
+				errors: undefined,
 			});
 		});
 
 		test("world", async () => {
 			const result = await server.executeGraphQLQuery({
 				query: GET_CURRENT_WORLD,
-				variables: {worldId: world._id.toString()},
+				variables: { worldId: world._id.toString() },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("worlds with one private and one public world", async () => {
 			await worldService.createWorld("Azeroth", true, testerSecurityContext);
-			const result = await server.executeGraphQLQuery({query: GET_WORLDS, variables: {page: 1}});
+			const result = await server.executeGraphQLQuery({
+				query: GET_WORLDS,
+				variables: { page: 1 },
+			});
 			expect(result).toMatchSnapshot({
 				data: {
 					worlds: {
@@ -98,14 +101,14 @@ describe("query resolver", () => {
 						]),
 					},
 				},
-				errors: undefined
+				errors: undefined,
 			});
 		});
 
 		test("wiki no permission", async () => {
 			const result = await server.executeGraphQLQuery({
 				query: GET_CURRENT_WIKI,
-				variables: {wikiId: world.wikiPage},
+				variables: { wikiId: world.wikiPage },
 			});
 			expect(result).toMatchSnapshot({
 				errors: [
@@ -122,26 +125,26 @@ describe("query resolver", () => {
 			});
 
 			test("current user", async () => {
-				const result = await server.executeGraphQLQuery({query: GET_CURRENT_USER});
+				const result = await server.executeGraphQLQuery({ query: GET_CURRENT_USER });
 				expect(result).toMatchSnapshot({
 					data: {
 						currentUser: {
 							_id: expect.any(String),
 							roles: expect.arrayContaining([
 								expect.objectContaining({
-									_id: expect.any(String)
-								})
-							])
+									_id: expect.any(String),
+								}),
+							]),
 						},
 					},
-					errors: undefined
+					errors: undefined,
 				});
 			});
 
 			test("world", async () => {
 				const result = await server.executeGraphQLQuery({
 					query: GET_CURRENT_WORLD,
-					variables: {worldId: world._id.toString()},
+					variables: { worldId: world._id.toString() },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -153,7 +156,7 @@ describe("query resolver", () => {
 									members: expect.arrayContaining([
 										expect.objectContaining({
 											_id: expect.any(String),
-											username: expect.any(String)
+											username: expect.any(String),
 										}),
 									]),
 									permissions: expect.arrayContaining([
@@ -181,29 +184,29 @@ describe("query resolver", () => {
 								expect.objectContaining({
 									_id: expect.any(String),
 									subject: expect.objectContaining({
-										_id: expect.any(String)
+										_id: expect.any(String),
 									}),
 									roles: expect.arrayContaining([
 										expect.objectContaining({
-											_id: expect.any(String)
-										})
-									])
-								})
+											_id: expect.any(String),
+										}),
+									]),
+								}),
 							]),
 							pins: expect.arrayContaining([
 								expect.objectContaining({
 									_id: expect.any(String),
 									map: expect.objectContaining({
-										_id: expect.any(String)
+										_id: expect.any(String),
 									}),
 									page: expect.objectContaining({
-										_id: expect.any(String)
+										_id: expect.any(String),
 									}),
-								})
-							])
-						}
+								}),
+							]),
+						},
 					},
-					errors: undefined
+					errors: undefined,
 				});
 			});
 
@@ -211,7 +214,7 @@ describe("query resolver", () => {
 				await worldService.createWorld("Azeroth", false, testerSecurityContext);
 				const result = await server.executeGraphQLQuery({
 					query: GET_WORLDS,
-					variables: {page: 1},
+					variables: { page: 1 },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -226,14 +229,14 @@ describe("query resolver", () => {
 							]),
 						},
 					},
-					errors: undefined
+					errors: undefined,
 				});
 			});
 
 			test("wiki", async () => {
 				const result = await server.executeGraphQLQuery({
 					query: GET_CURRENT_WIKI,
-					variables: {wikiId: world.wikiPage},
+					variables: { wikiId: world.wikiPage },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -243,11 +246,11 @@ describe("query resolver", () => {
 								_id: expect.any(String),
 							},
 							folder: {
-								_id: expect.any(String)
-							}
+								_id: expect.any(String),
+							},
 						},
 					},
-					errors: undefined
+					errors: undefined,
 				});
 			});
 		});

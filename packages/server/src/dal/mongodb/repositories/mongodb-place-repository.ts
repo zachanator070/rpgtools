@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Place } from "../../../domain-entities/place";
 import { inject, injectable } from "inversify";
 import { PlaceDocument, PlaceFactory, PlaceRepository } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { PlaceModel } from "../models/place";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbPlaceRepository
 	@inject(INJECTABLE_TYPES.PlaceFactory)
 	placeFactory: PlaceFactory;
 
-	model: Model<any> = PlaceModel;
+	model: mongoose.Model<any> = PlaceModel;
 
 	buildEntity(document: PlaceDocument): Place {
 		return this.placeFactory(

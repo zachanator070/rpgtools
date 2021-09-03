@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { SERVER_CONFIG, USER } from "../../../../../common/src/type-constants";
 import { ServerConfigDocument } from "../../../types";
 
-const serverSchema = new Schema({
+const serverSchema = new mongoose.Schema({
 	version: {
 		type: String,
 		required: true,
@@ -14,7 +14,7 @@ const serverSchema = new Schema({
 	],
 	adminUsers: [
 		{
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: USER,
 		},
 	],

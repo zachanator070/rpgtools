@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { ServerConfig } from "../../../domain-entities/server-config";
 import { inject, injectable } from "inversify";
 import { ServerConfigDocument, ServerConfigFactory, ServerConfigRepository } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { ServerConfigModel } from "../models/server-config";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbServerConfigRepository
 	@inject(INJECTABLE_TYPES.ServerConfigFactory)
 	serverConfigFactory: ServerConfigFactory;
 
-	model: Model<any> = ServerConfigModel;
+	model: mongoose.Model<any> = ServerConfigModel;
 
 	buildEntity(document: ServerConfigDocument): ServerConfig {
 		return this.serverConfigFactory(

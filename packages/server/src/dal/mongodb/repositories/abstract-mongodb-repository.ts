@@ -5,7 +5,7 @@ import {
 	FILTER_CONDITION_REGEX,
 	FilterCondition,
 } from "../../filter-condition";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { PaginatedResult } from "../../paginated-result";
 import { injectable } from "inversify";
 
@@ -17,7 +17,7 @@ export abstract class AbstractMongodbRepository<
 {
 	PAGE_LIMIT = 10;
 
-	abstract model: Model<any>;
+	abstract model: mongoose.Model<any>;
 
 	create = async (entity: EntityType): Promise<void> => {
 		delete entity._id;

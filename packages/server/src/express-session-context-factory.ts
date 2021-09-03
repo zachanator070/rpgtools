@@ -12,7 +12,6 @@ import { ExecutionParams } from "subscriptions-transport-ws";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { v4 as uuidv4 } from "uuid";
-import { User } from "./domain-entities/user";
 import { ANON_USERNAME } from "../../common/src/permission-constants";
 import { ExpressCookieManager } from "./express-cookie-manager";
 import { SecurityContextFactory } from "./security-context-factory";
@@ -30,6 +29,7 @@ export class ExpressSessionContextParameters implements ExpressContext {
 	connection?: ExecutionParams;
 }
 
+@injectable()
 export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.AuthenticationService)
 	authenticationService: AuthenticationService;

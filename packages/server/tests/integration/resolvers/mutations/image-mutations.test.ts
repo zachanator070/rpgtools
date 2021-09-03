@@ -1,7 +1,7 @@
 import fs from "fs";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import { FileUpload, Upload } from "graphql-upload";
-import {CREATE_IMAGE} from "@rpgtools/common/src/mutations";
+import { CREATE_IMAGE } from "../../../../../common/src/mutations";
 
 process.env.TEST_SUITE = "image-mutations-test";
 

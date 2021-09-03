@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Chunk } from "../../../domain-entities/chunk";
 import { ChunkDocument, ChunkFactory, ChunkRepository, DomainEntityFactory } from "../../../types";
 import { ChunkModel } from "../models/chunk";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbChunkRepository
 	@inject(INJECTABLE_TYPES.ChunkFactory)
 	chunkFactory: ChunkFactory;
 
-	model: Model<any> = ChunkModel;
+	model: mongoose.Model<any> = ChunkModel;
 
 	buildEntity(document: ChunkDocument): Chunk {
 		return this.chunkFactory(

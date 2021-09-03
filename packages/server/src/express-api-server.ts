@@ -24,10 +24,10 @@ import ExportRouter from "./routers/export-router";
 import { ImageRouter } from "./routers/image-router";
 import { typeDefs } from "./gql-server-schema";
 import { allResolvers } from "./resolvers/all-resolvers";
-import {DocumentNode, execute, subscribe} from 'graphql';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import {GraphQLRequest} from "apollo-server-types";
+import { DocumentNode, execute, subscribe } from "graphql";
+import { SubscriptionServer } from "subscriptions-transport-ws";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { GraphQLRequest } from "apollo-server-types";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -67,20 +67,23 @@ export class ExpressApiServer implements ApiServer {
 		});
 		this.expressServer = express();
 		this.httpServer = http.createServer(this.expressServer);
-		this.subscriptionServer = SubscriptionServer.create({
-			schema,
-			execute,
-			subscribe,
-		}, {
-			// This is the `httpServer` we created in a previous step.
-			server: this.httpServer,
-			// This `server` is the instance returned from `new ApolloServer`.
-			path: this.gqlServer.graphqlPath,
-		});
+		this.subscriptionServer = SubscriptionServer.create(
+			{
+				schema,
+				execute,
+				subscribe,
+			},
+			{
+				// This is the `httpServer` we created in a previous step.
+				server: this.httpServer,
+				// This `server` is the instance returned from `new ApolloServer`.
+				path: this.gqlServer.graphqlPath,
+			}
+		);
 
 		// Shut down in the case of interrupt and termination signals
 		// We expect to handle this more cleanly in the future. See (#5074)[https://github.com/apollographql/apollo-server/issues/5074] for reference.
-		['SIGINT', 'SIGTERM'].forEach(signal => {
+		["SIGINT", "SIGTERM"].forEach((signal) => {
 			process.on(signal, () => this.subscriptionServer.close());
 		});
 
@@ -133,23 +136,24 @@ export class ExpressApiServer implements ApiServer {
 		});
 
 		this.expressServer.get("/ui*", (req, res) => {
-			return res.sendFile(path.resolve(__dirname, "../dist", "index.html"));
+			return res.sendFile(path.resolve("./dist", "index.html"));
 		});
 
 		this.expressServer.use(express.static("dist"));
 		this.expressServer.use(express.static("src/static-assets"));
 		this.expressServer.use(graphqlUploadExpress());
-
 	}
 
-	executeGraphQLQuery = async (request: Omit<GraphQLRequest, 'query'> & {
-		query?: string | DocumentNode;
-	},) => this.gqlServer.executeOperation(request);
+	executeGraphQLQuery = async (
+		request: Omit<GraphQLRequest, "query"> & {
+			query?: string | DocumentNode;
+		}
+	) => this.gqlServer.executeOperation(request);
 
 	applyMiddleware = async () => {
 		await this.gqlServer.start();
 		this.gqlServer.applyMiddleware({ app: this.expressServer, path: "/api" });
-	}
+	};
 
 	checkConfig = async () => {
 		let adminRole = await this.roleRepository.findOne([
@@ -182,7 +186,6 @@ export class ExpressApiServer implements ApiServer {
 	};
 
 	initDb = async () => {
-
 		return new Promise<void>((resolve, reject) => {
 			mongoose
 				.connect(`mongodb://${this.mongodb_host}/${this.mongodb_db_name}`)

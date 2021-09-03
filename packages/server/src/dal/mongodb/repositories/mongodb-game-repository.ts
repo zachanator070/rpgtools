@@ -9,14 +9,17 @@ import {
 	Stroke,
 } from "../../../domain-entities/game";
 import {
-	CharacterDocument, FogStrokeDocument,
+	CharacterDocument,
+	FogStrokeDocument,
 	GameDocument,
 	GameFactory,
 	GameRepository,
 	InGameModelDocument,
-	MessageDocument, PathNodeDocument, StrokeDocument
+	MessageDocument,
+	PathNodeDocument,
+	StrokeDocument,
 } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { GameModel } from "../models/game";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
@@ -29,7 +32,7 @@ export class MongodbGameRepository
 	@inject(INJECTABLE_TYPES.GameFactory)
 	gameFactory: GameFactory;
 
-	model: Model<any> = GameModel;
+	model: mongoose.Model<any> = GameModel;
 
 	build(entity: GameDocument): Game {
 		return this.gameFactory(

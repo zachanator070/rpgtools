@@ -1,10 +1,8 @@
-import {useQuery} from "@apollo/client";
-import {GET_CURRENT_USER} from "@rpgtools/common/src/queries";
+import { useQuery } from "@apollo/client";
+import { GET_CURRENT_USER } from "../../../../common/src/queries";
 
 export default () => {
-	const { data: currentUserData, loading, error, refetch } = useQuery(
-		GET_CURRENT_USER
-	);
+	const { data: currentUserData, loading, error, refetch } = useQuery(GET_CURRENT_USER);
 	return {
 		currentUser: currentUserData ? currentUserData.currentUser : null,
 		loading,

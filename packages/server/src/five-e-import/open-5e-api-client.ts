@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 export class Open5eMonster {
 	name: string;

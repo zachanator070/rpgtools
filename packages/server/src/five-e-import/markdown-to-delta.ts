@@ -1,6 +1,6 @@
 // Modified version of markdown-to-quill-delta package, default one was giving me trouble
 
-import unified from "unified";
+import { unified } from "unified";
 import markdown from "remark-parse";
 import AsciiTable from "ascii-table";
 

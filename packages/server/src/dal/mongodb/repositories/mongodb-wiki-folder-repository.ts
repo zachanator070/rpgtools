@@ -2,7 +2,7 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { WikiFolder } from "../../../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
 import { WikiFolderDocument, WikiFolderFactory, WikiFolderRepository } from "../../../types";
-import { Model } from "mongoose";
+import mongoose from "mongoose";
 import { WikiFolderModel } from "../models/wiki-folder";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
 
@@ -14,7 +14,7 @@ export class MongodbWikiFolderRepository
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
 
-	model: Model<any> = WikiFolderModel;
+	model: mongoose.Model<any> = WikiFolderModel;
 
 	buildEntity(document: WikiFolderDocument): WikiFolder {
 		return this.wikiFolderFactory(

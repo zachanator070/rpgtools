@@ -1,9 +1,9 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "../../../../../common/src/type-constants";
 import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
 import { UserDocument } from "../../../types";
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
 	email: {
 		type: String,
 	},
@@ -24,18 +24,18 @@ const userSchema = new Schema({
 		type: String,
 	},
 	currentWorld: {
-		type: Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		ref: WORLD,
 	},
 	roles: [
 		{
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: ROLE,
 		},
 	],
 	permissions: [
 		{
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: PERMISSION_ASSIGNMENT,
 			index: true,
 		},
