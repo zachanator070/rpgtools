@@ -131,6 +131,7 @@ export const INJECTABLE_TYPES = {
 
 	// server
 	ApiServer: Symbol.for("ApiServer"),
+	ServerProperties: Symbol.for("ServerProperties"),
 
 	// data loaders
 	ArticleDataLoader: Symbol.for("ArticleDataLoader"),

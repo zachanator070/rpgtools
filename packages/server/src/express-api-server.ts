@@ -205,20 +205,6 @@ export class ExpressApiServer implements ApiServer {
 	startListen = async () => {
 		await this.checkConfig();
 
-		if (!process.env.ACCESS_TOKEN_SECRET) {
-			console.warn(
-				"environment variable ACCESS_TOKEN_SECRET is not set, restarting server will log out all users"
-			);
-			process.env.ACCESS_TOKEN_SECRET = crypto.randomBytes(2048).toString();
-		}
-
-		if (!process.env.REFRESH_TOKEN_SECRET) {
-			console.log(
-				"environment variable REFRESH_TOKEN_SECRET is not set, restarting server will log out all users"
-			);
-			process.env.REFRESH_TOKEN_SECRET = crypto.randomBytes(2048).toString();
-		}
-
 		const serverConfig = await this.serverConfigRepository.findOne([]);
 		if (this.serverNeedsSetup()) {
 			console.warn(

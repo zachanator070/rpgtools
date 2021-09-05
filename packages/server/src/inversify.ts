@@ -156,6 +156,7 @@ import { WikiPageAuthorizationRuleset } from "./security/wiki-page-authorization
 import { WorldAuthorizationRuleset } from "./security/world-authorization-ruleset";
 import { Readable } from "stream";
 import { RepositoryMapper } from "./repository-mapper";
+import {ServerProperties} from "./server-properties";
 
 const container = new Container();
 
@@ -712,6 +713,7 @@ container
 
 // server
 container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer).inSingletonScope();
+container.bind<ServerProperties>(INJECTABLE_TYPES.ServerProperties).to(ServerProperties).inSingletonScope();
 
 // data loaders
 container.bind<DataLoader<Article>>(INJECTABLE_TYPES.ArticleDataLoader).to(ArticleDataLoader);

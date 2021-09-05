@@ -5,7 +5,9 @@ import {
 	FilterCondition,
 } from "../../filter-condition";
 import { PaginatedResult } from "../../paginated-result";
+import {injectable} from "inversify";
 
+@injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	implements Repository<Type>
 {
