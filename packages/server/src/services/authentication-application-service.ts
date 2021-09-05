@@ -14,6 +14,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
+import {ServerProperties} from "../server-properties";
 
 export interface CookieConstants {
 	string: string;
@@ -21,7 +22,7 @@ export interface CookieConstants {
 }
 export const ACCESS_TOKEN = "accessToken";
 export const REFRESH_TOKEN = "refreshToken";
-export const ACCESS_TOKEN_MAX_AGE: CookieConstants = { string: "1m", ms: 1000 * 60 };
+export const ACCESS_TOKEN_MAX_AGE: CookieConstants = { string: "30m", ms: 1000 * 60 * 30 };
 export const REFRESH_TOKEN_MAX_AGE: CookieConstants = { string: "1d", ms: 1000 * 60 * 60 * 24 };
 
 @injectable()
@@ -34,12 +35,15 @@ export class AuthenticationApplicationService implements AuthenticationService {
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory;
 
+	@inject(INJECTABLE_TYPES.ServerProperties)
+	serverProperties: ServerProperties;
+
 	createTokens = async (
 		user: User,
 		version: string,
 		unitOfWork: UnitOfWork
 	): Promise<AuthenticationTokens> => {
-		const accessToken = jwt.sign({ userId: user._id }, process.env["ACCESS_TOKEN_SECRET"], {
+		const accessToken = jwt.sign({ userId: user._id }, this.serverProperties.accessTokenSecret, {
 			expiresIn: ACCESS_TOKEN_MAX_AGE.string,
 		});
 		if (!version) {
@@ -50,7 +54,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 				version: version,
 				userId: user._id,
 			},
-			process.env["REFRESH_TOKEN_SECRET"],
+			this.serverProperties.refreshTokenSecret,
 			{ expiresIn: REFRESH_TOKEN_MAX_AGE.string }
 		);
 		if (version !== user.tokenVersion) {
@@ -62,33 +66,43 @@ export class AuthenticationApplicationService implements AuthenticationService {
 
 	decodeRefreshToken = async (refreshToken: string): Promise<any> => {
 		try {
-			return jwt.verify(refreshToken, process.env["REFRESH_TOKEN_SECRET"], {
+			return jwt.verify(refreshToken, this.serverProperties.refreshTokenSecret, {
 				maxAge: REFRESH_TOKEN_MAX_AGE.string,
 			});
-		} catch (e) {}
+		} catch (e) {
+			console.error(e);
+		}
 	};
 
 	decodeAccessToken = async (accessToken: string): Promise<any> => {
 		try {
-			return jwt.verify(accessToken, process.env["ACCESS_TOKEN_SECRET"], {
+			return jwt.verify(accessToken, this.serverProperties.accessTokenSecret, {
 				maxAge: ACCESS_TOKEN_MAX_AGE.string,
 			});
-		} catch (e) {}
+		} catch (e) {
+			console.error(e);
+		}
 	};
 
 	getRefreshTokenVersion = async (refreshToken: string): Promise<string> => {
-		let data: any = this.decodeRefreshToken(refreshToken);
-		return data.version;
+		if(refreshToken) {
+			let data: any = await this.decodeRefreshToken(refreshToken);
+			return data.version;
+		}
 	};
 
 	getUserFromAccessToken = async (accessToken: string, unitOfWork: UnitOfWork): Promise<User> => {
-		let data: any = this.decodeAccessToken(accessToken);
-		return await unitOfWork.userRepository.findById(data.userId);
+		if(accessToken){
+			let data: any = await this.decodeAccessToken(accessToken);
+			return await unitOfWork.userRepository.findById(data.userId);
+		}
 	};
 
 	getUserFromRefreshToken = async (refreshToken: string, unitOfWork: UnitOfWork): Promise<User> => {
-		let data: any = this.decodeRefreshToken(refreshToken);
-		return await unitOfWork.userRepository.findById(data.userId);
+		if(refreshToken){
+			let data: any = await this.decodeRefreshToken(refreshToken);
+			return await unitOfWork.userRepository.findById(data.userId);
+		}
 	};
 
 	login = async (
