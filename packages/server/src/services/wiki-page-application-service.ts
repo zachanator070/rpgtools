@@ -6,7 +6,7 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
 import { Readable } from "stream";
-import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
+import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import {
 	ArticleFactory,
 	AuthorizationService,
@@ -19,7 +19,7 @@ import {
 	PlaceFactory,
 	WikiFolderRepository,
 	WikiPageRepository,
-	WikiPageService,
+	WikiPageService, WorldRepository,
 } from "../types";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { ModeledPage } from "../domain-entities/modeled-page";
@@ -59,6 +59,8 @@ export class WikiPageApplicationService implements WikiPageService {
 	permissionAssignmentFactory: PermissionAssignmentFactory;
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
+	@inject(INJECTABLE_TYPES.WorldRepository)
+	worldRepository: WorldRepository;
 
 	@inject(INJECTABLE_TYPES.RepositoryMapper)
 	mapper: RepositoryMapper;
@@ -342,6 +344,37 @@ export class WikiPageApplicationService implements WikiPageService {
 
 		return foundWiki;
 	};
+
+	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean): Promise<PaginatedResult<WikiPage>>  => {
+		const world = await this.worldRepository.findById(worldId);
+		if (!world) {
+			throw new Error("World does not exist");
+		}
+		if (!(await world.authorizationRuleset.canRead(context, world))) {
+			throw new Error("You do not have permission to read this World");
+		}
+
+		const conditions = [];
+		if(name ) {
+			conditions.push(new FilterCondition('name', name, FILTER_CONDITION_REGEX));
+		}
+		if(types && types.length > 0){
+			conditions.push(new FilterCondition('type', types, FILTER_CONDITION_OPERATOR_IN));
+		}
+		const results = await this.wikiPageRepository.findPaginated(conditions, 1);
+
+		const docs = [];
+		for (let doc of results.docs) {
+			if (canAdmin !== undefined && !(await doc.authorizationRuleset.canAdmin(context, doc))) {
+				continue;
+			}
+			if (await doc.authorizationRuleset.canRead(context, doc)) {
+				docs.push(doc);
+			}
+		}
+		results.docs = docs;
+		return results;
+	}
 
 	getWikisInFolder = async (
 		context: SecurityContext,

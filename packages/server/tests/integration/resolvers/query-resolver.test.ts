@@ -6,13 +6,15 @@ import { GET_CURRENT_USER } from "../../../../common/src/queries";
 import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
 import { container } from "../../../src/inversify";
 import { INJECTABLE_TYPES } from "../../../src/injectable-types";
-import { WorldService } from "../../../src/types";
+import {WikiFolderService, WikiPageService, WorldService} from "../../../src/types";
 import { ANON_USERNAME } from "../../../../common/src/permission-constants";
+import {WIKIS_IN_FOLDER} from "../../../../frontend/src/hooks/wiki/useWikisInFolder";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
 describe("query resolver", () => {
 	const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
+	const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
 	let {
 		server,
 		mockSessionContextFactory,
@@ -253,6 +255,26 @@ describe("query resolver", () => {
 					errors: undefined,
 				});
 			});
+
+			test("wikis in folder", async () => {
+				const placesFolder = (await wikiFolderService.getFolders(testerSecurityContext, world._id, "Places", undefined)).filter(folder => folder.name === "Places");
+				const result = await server.executeGraphQLQuery({
+					query: WIKIS_IN_FOLDER,
+					variables: { folderId: placesFolder[0]._id},
+				});
+				expect(result).toMatchSnapshot({
+					data: {
+						wikisInFolder: {
+							docs: expect.arrayContaining([
+								expect.objectContaining({
+									_id: expect.any(String)
+								})
+							])
+						}
+					},
+					errors: undefined
+				})
+			})
 		});
 	});
 });

@@ -170,9 +170,11 @@ export const TypeResolvers = {
 		},
 	},
 	Role: {
-		world: async (folder: WikiFolder): Promise<World> => {
-			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-			return dataLoader.getDocument(folder.world);
+		world: async (role: WikiFolder): Promise<World> => {
+			if(role.world){
+				const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
+				return dataLoader.getDocument(role.world);
+			}
 		},
 		permissions: async (role: Role, _: any, { securityContext }: SessionContext): Promise<PermissionAssignment[]> => {
 			const ruleset = container.get<RoleAuthorizationRuleset>(

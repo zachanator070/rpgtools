@@ -94,14 +94,18 @@ export class AuthenticationApplicationService implements AuthenticationService {
 	getUserFromAccessToken = async (accessToken: string, unitOfWork: UnitOfWork): Promise<User> => {
 		if(accessToken){
 			let data: any = await this.decodeAccessToken(accessToken);
-			return await unitOfWork.userRepository.findById(data.userId);
+			if(data) {
+				return await unitOfWork.userRepository.findById(data.userId);
+			}
 		}
 	};
 
 	getUserFromRefreshToken = async (refreshToken: string, unitOfWork: UnitOfWork): Promise<User> => {
 		if(refreshToken){
 			let data: any = await this.decodeRefreshToken(refreshToken);
-			return await unitOfWork.userRepository.findById(data.userId);
+			if(data) {
+				return await unitOfWork.userRepository.findById(data.userId);
+			}
 		}
 	};
 

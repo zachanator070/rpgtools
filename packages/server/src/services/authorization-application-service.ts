@@ -333,7 +333,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		]);
 		if (!permissionAssignment) {
 			throw new Error(
-				`Permission assignment does not exist for permission '${permission}' and subject id ${subjectId}`
+				`Permission assignment does not exist for permission '${permission}'`
 			);
 		}
 		if (
