@@ -293,7 +293,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 	) => {
 		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
 			new FilterCondition("permission", permission),
-			new FilterCondition("subjectId", subjectId),
+			new FilterCondition("subject", subjectId),
 			new FilterCondition("subjectType", subjectType),
 		]);
 		let needsCreation = false;

@@ -454,6 +454,44 @@ Object {
 }
 `;
 
+exports[`authorization-mutations with tester logged in and world created createRole 2`] = `
+Object {
+  "data": Object {
+    "createRole": Object {
+      "_id": Any<String>,
+      "accessControlList": Any<Array>,
+      "canAdmin": true,
+      "canWrite": true,
+      "roles": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "members": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+            },
+          ],
+          "permissions": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "subject": ObjectContaining {
+                "_id": Any<String>,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
 exports[`authorization-mutations with tester logged in and world created createRole permission denied 1`] = `
 Object {
   "data": null,
