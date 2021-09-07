@@ -3,9 +3,6 @@ import { INJECTABLE_TYPES } from "../../src/injectable-types";
 import { ApiServer, ServerConfigService } from "../../src/types";
 
 const mongoose = require("mongoose");
-mongoose.set("useFindAndModify", false);
-
-mongoose.set("useCreateIndex", true);
 
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";
 process.env.REFRESH_TOKEN_SECRET = "asdf1234";
