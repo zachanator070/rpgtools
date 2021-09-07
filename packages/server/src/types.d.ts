@@ -609,6 +609,7 @@ export interface WikiPageService {
 		folderId: string,
 		page: number
 	) => Promise<PaginatedResult<WikiPage>>;
+	searchWikis: (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean) => Promise<PaginatedResult<WikiPage>>;
 }
 
 export interface DataLoader<T extends DomainEntity> {

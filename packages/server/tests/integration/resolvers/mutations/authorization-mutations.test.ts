@@ -183,13 +183,6 @@ describe("authorization-mutations", () => {
 				PLACE,
 				testRole._id
 			);
-			await authorizationService.grantRolePermission(
-				testerSecurityContext,
-				WIKI_RW,
-				world.wikiPage,
-				PLACE,
-				testRole._id
-			);
 			const result = await server.executeGraphQLQuery({
 				query: REVOKE_ROLE_PERMISSION,
 				variables: {
@@ -203,12 +196,6 @@ describe("authorization-mutations", () => {
 					revokeRolePermission: {
 						_id: expect.any(String),
 						permissions: [
-							{
-								_id: expect.any(String),
-								subject: {
-									_id: expect.any(String),
-								},
-							},
 						],
 					},
 				},
@@ -280,9 +267,11 @@ describe("authorization-mutations", () => {
 		});
 
 		test("deleteRole", async () => {
+			const role = roleFactory(null, "other delete role", world._id, []);
+			await roleRepo.create(role);
 			const result = await server.executeGraphQLQuery({
 				query: DELETE_ROLE,
-				variables: { roleId: testRole._id.toString() },
+				variables: { roleId: role._id.toString() },
 			});
 			expect(result).toMatchSnapshot({
 				data: {

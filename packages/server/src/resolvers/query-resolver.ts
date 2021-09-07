@@ -73,6 +73,13 @@ export default {
 		const service = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
 		return service.getFolders(securityContext, worldId, name, canAdmin);
 	},
+	wikis: async (
+		_: any,
+		{worldId, name, types, canAdmin}: {worldId: string, name: string, types: string[], canAdmin: boolean},
+		{ securityContext }: SessionContext) => {
+		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
+		return service.searchWikis(securityContext, worldId, name, types, canAdmin);
+	},
 	roles: async (
 		_: any,
 		{

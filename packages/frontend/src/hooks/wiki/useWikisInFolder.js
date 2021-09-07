@@ -3,7 +3,7 @@ import { CURRENT_WORLD_WIKIS } from "../../../../common/src/gql-fragments";
 import { useGQLLazyQuery } from "../useGQLLazyQuery";
 import { useEffect } from "react";
 
-const WIKIS_IN_FOLDER = gql`
+export const WIKIS_IN_FOLDER = gql`
     query wikisInFolder($folderId: ID!, $page: Int){
         wikisInFolder(folderId: $folderId, page: $page){
             docs{
