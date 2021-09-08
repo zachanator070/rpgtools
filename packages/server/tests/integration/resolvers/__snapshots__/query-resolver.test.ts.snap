@@ -132,6 +132,28 @@ Object {
 }
 `;
 
+exports[`query resolver with world with authenticated user wikis in folder 1`] = `
+Object {
+  "data": Object {
+    "wikisInFolder": Object {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": 1,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
 exports[`query resolver with world with authenticated user world 1`] = `
 Object {
   "data": Object {
