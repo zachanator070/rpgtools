@@ -86,7 +86,7 @@ export abstract class AbstractMongodbRepository<
 		const count = await this.model.find(filter).count();
 		const totalPages = Math.ceil(count / this.PAGE_LIMIT);
 		const prevPage = page - 1 >= 1 ? page - 1 : 1;
-		const nextPage = page + 1 <= totalPages ? page + 1 : totalPages;
+		const nextPage = page + 1 <= totalPages ? page + 1 : null;
 		return new PaginatedResult(
 			results,
 			count,

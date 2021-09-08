@@ -141,7 +141,7 @@ Object {
           "_id": Any<String>,
         },
       ],
-      "nextPage": 1,
+      "nextPage": null,
     },
   },
   "errors": undefined,
