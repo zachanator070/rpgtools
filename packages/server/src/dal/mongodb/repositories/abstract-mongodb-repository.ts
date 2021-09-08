@@ -75,7 +75,7 @@ export abstract class AbstractMongodbRepository<
 			sortOptions[sort] = 1;
 		}
 		const docs: DocumentType[] = await this.model
-			.find(filter, sortOptions)
+			.find(filter, null, {sort: sortOptions})
 			.skip((page - 1) * this.PAGE_LIMIT)
 			.limit(this.PAGE_LIMIT)
 			.exec();
