@@ -269,7 +269,8 @@ describe("query resolver", () => {
 								expect.objectContaining({
 									_id: expect.any(String)
 								})
-							])
+							]),
+							nextPage: null
 						}
 					},
 					errors: undefined
