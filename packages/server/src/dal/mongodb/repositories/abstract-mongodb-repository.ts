@@ -7,7 +7,9 @@ import {
 } from "../../filter-condition";
 import mongoose from "mongoose";
 import { PaginatedResult } from "../../paginated-result";
-import { injectable } from "inversify";
+import {inject, injectable} from "inversify";
+import {INJECTABLE_TYPES} from "../../../injectable-types";
+import FilterFactory from "../FilterFactory";
 
 @injectable()
 export abstract class AbstractMongodbRepository<
@@ -18,6 +20,9 @@ export abstract class AbstractMongodbRepository<
 	PAGE_LIMIT = 10;
 
 	abstract model: mongoose.Model<any>;
+
+	@inject(INJECTABLE_TYPES.FilterFactory)
+	filterFactory: FilterFactory;
 
 	create = async (entity: EntityType): Promise<void> => {
 		delete entity._id;
@@ -30,7 +35,7 @@ export abstract class AbstractMongodbRepository<
 	};
 
 	find = async (conditions: FilterCondition[]): Promise<EntityType[]> => {
-		const filter = this.getFilter(conditions);
+		const filter = this.filterFactory.build(conditions);
 		try {
 			const docs: DocumentType[] = await this.model.find(filter).exec();
 			const results: EntityType[] = [];
@@ -69,7 +74,7 @@ export abstract class AbstractMongodbRepository<
 		 * collections. See https://www.mongodb.com/blog/post/paging-with-the-bucket-pattern--part-1 This
 		 * will require to change the page param to a nextId param. The PaginatedResult will have less info as a result.
 		 */
-		const filter = this.getFilter(conditions);
+		const filter = this.filterFactory.build(conditions);
 		const sortOptions: any = {};
 		if (sort) {
 			sortOptions[sort] = 1;
@@ -99,22 +104,6 @@ export abstract class AbstractMongodbRepository<
 			prevPage,
 			nextPage
 		);
-	};
-
-	private getFilter = (conditions: FilterCondition[]) => {
-		const filter: any = {};
-		for (let condition of conditions) {
-			if (condition.operator === FILTER_CONDITION_OPERATOR_IN) {
-				filter[condition.field] = { $in: condition.value };
-			} else if (condition.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
-				filter[condition.field] = condition.value;
-			} else if (condition.operator === FILTER_CONDITION_REGEX) {
-				filter[condition.field] = { $regex: condition.value, $options: "i" };
-			} else {
-				throw new Error(`Unsupported filter operator: ${condition.operator}`);
-			}
-		}
-		return filter;
 	};
 
 	abstract buildEntity(document: DocumentType): EntityType;

@@ -1,6 +1,6 @@
 import redis from "redis";
 import { promisify } from "util";
-import { Cache } from "./types";
+import { Cache } from "../../types";
 import { Readable, Writable } from "stream";
 import * as redisRStream from "redis-rstream";
 import * as redisWStream from "redis-wstream";

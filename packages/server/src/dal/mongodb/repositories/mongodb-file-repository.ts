@@ -3,18 +3,20 @@ import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { File } from "../../../domain-entities/file";
 import {
-	FILTER_CONDITION_OPERATOR_EQUALS,
-	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
 } from "../../filter-condition";
 import { PaginatedResult } from "../../paginated-result";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../injectable-types";
+import FilterFactory from "../FilterFactory";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
+
+	@inject(INJECTABLE_TYPES.FilterFactory)
+	filterFactory: FilterFactory;
 
 	create = async (entity: File): Promise<void> => {
 		entity._id = await new Promise((resolve, reject) => {
@@ -51,16 +53,7 @@ export class MongodbFileRepository implements FileRepository {
 	}
 
 	find = async (conditions: FilterCondition[]): Promise<File[]> => {
-		const filter: any = {};
-		for (let condition of conditions) {
-			if (condition.operator === FILTER_CONDITION_OPERATOR_IN) {
-				filter[condition.field] = { $in: condition.value };
-			} else if (condition.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
-				filter[condition.field] = condition.value;
-			} else {
-				throw new Error(`Unsupported filter operator: ${condition.operator}`);
-			}
-		}
+		const filter: any = this.filterFactory.build(conditions, true);
 		const gfs = new GridFSBucket(mongoose.connection.db);
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];

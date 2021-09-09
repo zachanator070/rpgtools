@@ -163,4 +163,7 @@ export const INJECTABLE_TYPES = {
 
 	// repo mapper
 	RepositoryMapper: Symbol.for("RepositoryMapper"),
+
+	// mongodb
+	FilterFactory: Symbol.for("FilterFactory"),
 };

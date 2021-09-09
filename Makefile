@@ -31,15 +31,15 @@ build-with-stats: BUILD_WITH_STATS=true
 build-with-stats: prod-frontend-builder
 
 # runs production version of docker image with minimal depending services
-prod: init-env
+prod: .env
 	docker-compose up --build prod-server
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-dev: init-env dev-up
+dev: .env dev-up
 
 # initializes environment file
-init-env:
-	touch .env
+.env:
+	cp .env.example .env
 
 # runs development docker images
 dev-up:
