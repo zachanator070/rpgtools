@@ -93,7 +93,7 @@ import { WikiPageApplicationService } from "./services/wiki-page-application-ser
 import { WorldApplicationService } from "./services/world-application-service";
 import { ExpressSessionContextFactory } from "./express-session-context-factory";
 import { Open5eApiClient } from "./five-e-import/open-5e-api-client";
-import { RedisClient } from "./redis-client";
+import { RedisClient } from "./dal/cache/redis-client";
 import { ArchiveFactory } from "./archive/archive-factory";
 import { ExpressApiServer } from "./express-api-server";
 import { Article } from "./domain-entities/article";
@@ -157,6 +157,8 @@ import { WorldAuthorizationRuleset } from "./security/world-authorization-rulese
 import { Readable } from "stream";
 import { RepositoryMapper } from "./repository-mapper";
 import {ServerProperties} from "./server-properties";
+import FilterFactory from "./dal/mongodb/FilterFactory";
+import {NoCacheClient} from "./dal/cache/no-cache-client";
 
 const container = new Container();
 
@@ -700,7 +702,10 @@ container
 container.bind<Open5eApiClient>(INJECTABLE_TYPES.Open5eApiClient).to(Open5eApiClient);
 
 // cache
-container.bind<Cache>(INJECTABLE_TYPES.Cache).to(RedisClient);
+if(process.env.REDIS_URL)
+	container.bind<Cache>(INJECTABLE_TYPES.Cache).to(RedisClient);
+else
+	container.bind<Cache>(INJECTABLE_TYPES.Cache).to(NoCacheClient);
 
 // archive factory
 container.bind<AbstractArchiveFactory>(INJECTABLE_TYPES.ArchiveFactory).to(ArchiveFactory);
@@ -753,5 +758,7 @@ container
 
 // repo mapper
 container.bind<RepositoryMapper>(INJECTABLE_TYPES.RepositoryMapper).to(RepositoryMapper);
+
+container.bind<FilterFactory>(INJECTABLE_TYPES.FilterFactory).to(FilterFactory);
 
 export { container };
