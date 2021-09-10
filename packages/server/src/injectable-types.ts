@@ -117,8 +117,12 @@ export const INJECTABLE_TYPES = {
 	SessionContextFactory: Symbol.for("SessionContextFactory"),
 	SecurityContextFactory: Symbol.for("SecurityContextFactory"),
 
-	// open 5e
+	// 5e
 	Open5eApiClient: Symbol.for("Open5eApiClient"),
+	Dnd5eApiClient: Symbol.for("Dnd5eApiClient"),
+
+	// delta
+	DeltaFactory: Symbol.for("DeltaFactory"),
 
 	// cache
 	Cache: Symbol.for("Cache"),

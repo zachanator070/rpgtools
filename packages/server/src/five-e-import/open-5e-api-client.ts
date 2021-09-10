@@ -87,17 +87,6 @@ export class Open5eSection {
 	parent: string;
 }
 
-export class Open5eRule {
-	name: string;
-	desc: string;
-	subsections: { name: string; index: string }[];
-}
-
-export class Open5eRuleSection {
-	name: string;
-	desc: string;
-}
-
 const BASE_URL = "https://api.open5e.com";
 
 @injectable()
@@ -166,11 +155,4 @@ export class Open5eApiClient {
 		return this.getPages(`/spells/?search=${term}`);
 	};
 
-	public getRules = (): AsyncGenerator<Open5eRule> => {
-		return this.getPages("/rules/");
-	};
-
-	public getRuleSubSection = async (index: string): Promise<Open5eRuleSection> => {
-		return this.getPage(`/rule-sections/${index}`);
-	};
 }

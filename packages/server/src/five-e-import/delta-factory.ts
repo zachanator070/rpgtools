@@ -1,5 +1,5 @@
 import { markdownToDelta } from "./markdown-to-delta";
-import { inject } from "inversify";
+import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { ArticleRepository } from "../types";
 import { FilterCondition } from "../dal/filter-condition";
@@ -8,12 +8,12 @@ import {
 	Open5eClass,
 	Open5eMonster,
 	Open5eRace,
-	Open5eRule,
-	Open5eRuleSection,
 	Open5eSection,
 	Open5eSpell,
 } from "./open-5e-api-client";
+import {Dnd5eApiClient, Dnd5eRule, Dnd5eSubSection} from "./dnd-5e-api-client";
 
+@injectable()
 export class DeltaFactory {
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	apiClient: Open5eApiClient;
@@ -203,16 +203,16 @@ export class DeltaFactory {
 		return ops;
 	};
 
-	fromRule = (rule: Open5eRule, subSections: Open5eRuleSection[]) => {
+	fromRule = (rule: Dnd5eRule) => {
 		const ops = [];
 		const ruleDescription = [...markdownToDelta(rule.desc), { insert: "\n" }];
-		for (let subsection of subSections) {
+		for (let subsection of rule.subsections) {
 			ruleDescription.push(...markdownToDelta(subsection.desc), { insert: "\n" });
 		}
 		if (ruleDescription.filter((op) => op.insert.replace(/\s/g, "") !== "").length > 1) {
 			ops.push(...ruleDescription.slice(4, ruleDescription.length - 1));
 		}
-		for (let section of subSections) {
+		for (let section of rule.subsections) {
 			ops.push(...markdownToDelta(section.desc));
 			ops.push({ insert: "\n" });
 		}
