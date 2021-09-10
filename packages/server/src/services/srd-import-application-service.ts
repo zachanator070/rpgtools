@@ -13,18 +13,17 @@ import { Readable } from "stream";
 import {
 	Open5eApiClient,
 	Open5eMonster,
-	Open5eRuleSection,
 } from "../five-e-import/open-5e-api-client";
 import fetch from "node-fetch";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
-import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
 import { SecurityContext } from "../security-context";
 import { File } from "../domain-entities/file";
 import { DeltaFactory } from "../five-e-import/delta-factory";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
+import {Dnd5eApiClient } from "../five-e-import/dnd-5e-api-client";
 
 @injectable()
 export class SrdImportApplicationService implements SrdImportService {
@@ -32,6 +31,8 @@ export class SrdImportApplicationService implements SrdImportService {
 	imageService: ImageService;
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	open5eApiClient: Open5eApiClient;
+	@inject(INJECTABLE_TYPES.Dnd5eApiClient)
+	dnd5eApiClient: Dnd5eApiClient;
 
 	@inject(INJECTABLE_TYPES.ArticleFactory)
 	articleFactory: ArticleFactory;
@@ -42,9 +43,8 @@ export class SrdImportApplicationService implements SrdImportService {
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
 
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
-
-	deltaFactory: DeltaFactory = new DeltaFactory();
+	@inject(INJECTABLE_TYPES.DeltaFactory)
+	deltaFactory: DeltaFactory;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
@@ -61,7 +61,7 @@ export class SrdImportApplicationService implements SrdImportService {
 			throw new Error("World does not exist");
 		}
 		const rootFolder = await unitOfWork.wikiFolderRepository.findById(world.rootFolder);
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, rootFolder))) {
+		if (!(await rootFolder.authorizationRuleset.canWrite(context, rootFolder))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
 		const topFolder = this.wikiFolderFactory(null, "5e", worldId, [], []);
@@ -183,9 +183,9 @@ export class SrdImportApplicationService implements SrdImportService {
 			);
 			page.contentId = contentFile._id;
 			await unitOfWork.articleRepository.update(page);
-			const containingFolder = folders.find((folder) => folder.name === article.parent);
+			let containingFolder = folders.find((folder) => folder.name === article.parent);
 			if (!containingFolder) {
-				const containingFolder = this.wikiFolderFactory(
+				containingFolder = this.wikiFolderFactory(
 					"",
 					article.parent,
 					topFolder.world,
@@ -254,14 +254,10 @@ export class SrdImportApplicationService implements SrdImportService {
 	};
 
 	importRules = async (containingFolder: WikiFolder, unitOfWork: UnitOfWork) => {
-		for await (let rule of this.open5eApiClient.getRules()) {
+		for (let rule of await this.dnd5eApiClient.getRules()) {
 			const page = this.articleFactory("", rule.name, containingFolder.world, null, null);
 			await unitOfWork.articleRepository.create(page);
-			const subSections: Open5eRuleSection[] = [];
-			for (let section of rule.subsections) {
-				subSections.push(await this.open5eApiClient.getRuleSubSection(section.index));
-			}
-			const content = this.deltaFactory.fromRule(rule, subSections);
+			const content = this.deltaFactory.fromRule(rule);
 			const contentFile = await this.createWikiContentFile(
 				page._id,
 				JSON.stringify(content),

@@ -159,6 +159,8 @@ import { RepositoryMapper } from "./repository-mapper";
 import {ServerProperties} from "./server-properties";
 import FilterFactory from "./dal/mongodb/FilterFactory";
 import {NoCacheClient} from "./dal/cache/no-cache-client";
+import {DeltaFactory} from "./five-e-import/delta-factory";
+import {Dnd5eApiClient} from "./five-e-import/dnd-5e-api-client";
 
 const container = new Container();
 
@@ -700,6 +702,10 @@ container
 
 // open 5e
 container.bind<Open5eApiClient>(INJECTABLE_TYPES.Open5eApiClient).to(Open5eApiClient);
+container.bind<Dnd5eApiClient>(INJECTABLE_TYPES.Dnd5eApiClient).to(Dnd5eApiClient);
+
+// delta
+container.bind<DeltaFactory>(INJECTABLE_TYPES.DeltaFactory).to(DeltaFactory);
 
 // cache
 if(process.env.REDIS_URL)

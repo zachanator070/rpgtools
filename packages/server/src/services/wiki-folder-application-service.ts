@@ -127,7 +127,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 			new FilterCondition("children", folder._id),
 		]);
 		for (let parent of parents) {
-			parent.children = parent.children.filter((child) => child === folder._id);
+			parent.children = parent.children.filter((child) => child !== folder._id);
 			await unitOfWork.wikiFolderRepository.update(parent);
 		}
 
