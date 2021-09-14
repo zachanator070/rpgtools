@@ -93,7 +93,9 @@ const permissionControlledInterfaceAttributes = {
 const modeledWikiAttributes = {
 	model: async (document: ModeledPage, _: any, __: SessionContext): Promise<Model> => {
 		const dataLoader = container.get<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader);
-		return dataLoader.getDocument(document.model);
+		if(document.model){
+			return dataLoader.getDocument(document.model);
+		}
 	},
 };
 

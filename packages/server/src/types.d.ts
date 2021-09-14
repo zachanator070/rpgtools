@@ -546,7 +546,7 @@ export interface SrdImportService {
 		worldId: string,
 		importCreatureCodex: boolean,
 		importTomeOfBeasts: boolean
-	) => Promise<void>;
+	) => Promise<World>;
 }
 export interface ServerConfigService {
 	unlockServer: (

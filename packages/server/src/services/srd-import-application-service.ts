@@ -54,7 +54,7 @@ export class SrdImportApplicationService implements SrdImportService {
 		worldId: string,
 		importCreatureCodex: boolean,
 		importTomeOfBeasts: boolean
-	): Promise<void> => {
+	): Promise<World> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
@@ -96,6 +96,8 @@ export class SrdImportApplicationService implements SrdImportService {
 		]).catch((err) => {
 			console.warn(err);
 		});
+
+		return world;
 	};
 
 	createSubFolder = async (
