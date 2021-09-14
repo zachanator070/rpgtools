@@ -14,7 +14,7 @@ export class Image implements DomainEntity {
 	public chunkWidth: number;
 	public chunkHeight: number;
 	public chunks: string[];
-	public icon?: string;
+	public icon: string | null;
 
 	@inject(INJECTABLE_TYPES.ImageAuthorizationRuleset)
 	authorizationRuleset: ImageAuthorizationRuleset;

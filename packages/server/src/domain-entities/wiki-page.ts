@@ -8,9 +8,9 @@ export abstract class WikiPage implements DomainEntity {
 	public _id: string;
 	public name: string;
 	public world: string;
-	public coverImage?: string;
-	public contentId?: string;
-	public content?: string;
+	public coverImage: string | null;
+	public contentId: string | null;
+	public content: string | null;
 
 	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
 	authorizationRuleset: WikiPageAuthorizationRuleset;

@@ -13,8 +13,8 @@ export class Model implements DomainEntity {
 	public width: number;
 	public height: number;
 	public fileName: string;
-	public fileId?: string;
-	public notes?: string;
+	public fileId: string | null;
+	public notes: string | null;
 
 	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
 	authorizationRuleset: ModelAuthorizationRuleset;
