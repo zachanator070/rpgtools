@@ -8,8 +8,8 @@ import { INJECTABLE_TYPES } from "../injectable-types";
 export class World implements DomainEntity {
 	public _id: string;
 	public name: string;
-	public wikiPage?: string;
-	public rootFolder?: string;
+	public wikiPage: string | null;
+	public rootFolder: string | null;
 	public roles: string[];
 	public pins: string[];
 	public type: string = WORLD;

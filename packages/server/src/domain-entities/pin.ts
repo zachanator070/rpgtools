@@ -10,7 +10,7 @@ export class Pin implements DomainEntity {
 	public x: number;
 	public y: number;
 	public map: string;
-	public page?: string;
+	public page: string | null;
 
 	@inject(INJECTABLE_TYPES.PinAuthorizationRuleset)
 	authorizationRuleset: PinAuthorizationRuleset;

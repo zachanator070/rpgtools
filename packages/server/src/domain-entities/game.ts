@@ -146,8 +146,8 @@ export class InGameModel implements DomainEntity {
 	public z: number;
 	public lookAtX: number;
 	public lookAtZ: number;
-	public color?: string;
-	public wiki?: string;
+	public color: string | null;
+	public wiki: string | null;
 
 	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 	type: string;

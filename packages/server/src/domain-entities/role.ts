@@ -9,7 +9,7 @@ export class Role implements DomainEntity {
 	public _id: string;
 	public name: string;
 	// world will be null for server only roles
-	public world?: string;
+	public world: string | null;
 	public permissions: string[];
 
 	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)

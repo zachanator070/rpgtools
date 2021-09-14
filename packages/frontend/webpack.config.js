@@ -26,6 +26,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			title: "rpgtools",
 			template: __dirname + "/src/index.html",
+			favicon: __dirname + "/src/favicon.ico",
 		}),
 		new MiniCssExtractPlugin(),
 	].concat(

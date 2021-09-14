@@ -10,8 +10,8 @@ export class User implements DomainEntity {
 	public email: string;
 	public username: string;
 	public password: string;
-	public tokenVersion?: string;
-	public currentWorld?: string;
+	public tokenVersion: string | null;
+	public currentWorld: string | null;
 	public roles: string[];
 	public permissions: string[];
 

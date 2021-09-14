@@ -58,16 +58,16 @@ export class ContentExportApplicationService implements ContentExportService {
 			await this.addArticle(context, page, archive, unitOfWork, true);
 		} else if (wikiType === PLACE) {
 			page = await unitOfWork.placeRepository.findById(docId);
-			await this.addPlace(context, page, archive, unitOfWork, true);
+			await this.addPlace(context, page as Place, archive, unitOfWork, true);
 		} else if (wikiType === ITEM) {
 			page = await unitOfWork.itemRepository.findById(docId);
-			await this.addItem(context, page, archive, unitOfWork, true);
+			await this.addItem(context, page as Item, archive, unitOfWork, true);
 		} else if (wikiType === MONSTER) {
 			page = await unitOfWork.monsterRepository.findById(docId);
-			await this.addMonster(context, page, archive, unitOfWork, true);
+			await this.addMonster(context, page as Monster, archive, unitOfWork, true);
 		} else if (wikiType === PERSON) {
 			page = await unitOfWork.personRepository.findById(docId);
-			await this.addPerson(context, page, archive, unitOfWork, true);
+			await this.addPerson(context, page as Person, archive, unitOfWork, true);
 		} else {
 			throw new TypeNotSupportedError(wikiType);
 		}

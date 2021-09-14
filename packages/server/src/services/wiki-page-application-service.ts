@@ -283,7 +283,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		color: string
 	) => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
-		let wikiPage: ModeledPage = await unitOfWork.wikiPageRepository.findById(wikiId);
+		let wikiPage: ModeledPage = await unitOfWork.wikiPageRepository.findById(wikiId) as ModeledPage;
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
