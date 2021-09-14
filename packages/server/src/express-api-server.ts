@@ -28,6 +28,7 @@ import { DocumentNode, execute, subscribe } from "graphql";
 import { SubscriptionServer } from "subscriptions-transport-ws";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { GraphQLRequest } from "apollo-server-types";
+import cors from "cors";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -63,7 +64,7 @@ export class ExpressApiServer implements ApiServer {
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
 		this.gqlServer = new ApolloServer({
 			schema,
-			context: sessionContextFactory.create,
+			context: sessionContextFactory.create
 		});
 		this.expressServer = express();
 		this.httpServer = http.createServer(this.expressServer);
@@ -140,8 +141,12 @@ export class ExpressApiServer implements ApiServer {
 		});
 
 		this.expressServer.use(express.static("../frontend/dist"));
-		// this.expressServer.use(express.static("src/static-assets"));
 		this.expressServer.use(graphqlUploadExpress());
+
+		this.expressServer.use(cors({
+			origin: ["https://studio.apollographql.com"],
+			credentials: true
+		}));
 	}
 
 	executeGraphQLQuery = async (
@@ -152,7 +157,7 @@ export class ExpressApiServer implements ApiServer {
 
 	applyMiddleware = async () => {
 		await this.gqlServer.start();
-		this.gqlServer.applyMiddleware({ app: this.expressServer, path: "/api" });
+		this.gqlServer.applyMiddleware({ app: this.expressServer, path: "/api", cors: false });
 	};
 
 	checkConfig = async () => {
