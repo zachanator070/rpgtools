@@ -40,7 +40,7 @@ export const ModelViewer = ({
 			renderer.modelDepth = model.depth;
 			renderer.modelWidth = model.width;
 			renderer.modelHeight = model.height;
-			renderer.setModel(`/models/${model.fileName}`);
+			renderer.setModel(model);
 		}
 	}, [renderer, model]);
 

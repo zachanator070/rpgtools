@@ -1,11 +1,9 @@
-import { Readable } from "stream";
 import fs from "fs";
 import { ARTICLE } from "../../../../../common/src/type-constants";
 import { CREATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useCreateWiki";
 import { DELETE_WIKI } from "../../../../../frontend/src/hooks/wiki/useDeleteWiki";
 import { UPDATE_PLACE } from "../../../../../frontend/src/hooks/wiki/useUpdatePlace";
 import { UPDATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useUpdateWiki";
-import {CREATE_IMAGE} from "../../../../../common/src/mutations";
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
 import {container} from "../../../../src/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/injectable-types";

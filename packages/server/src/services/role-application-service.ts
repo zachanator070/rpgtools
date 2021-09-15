@@ -1,5 +1,5 @@
 import { Role } from "../domain-entities/role";
-import { inject } from "inversify";
+import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../injectable-types";
 import { Factory, RoleRepository, RoleService, WorldRepository } from "../types";
 import { SecurityContext } from "../security-context";
@@ -8,6 +8,7 @@ import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset
 import { PaginatedResult } from "../dal/paginated-result";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
+@injectable()
 export class RoleApplicationService implements RoleService {
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;

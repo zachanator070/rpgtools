@@ -87,6 +87,7 @@ export class ModelApplicationService implements ModelService {
 			file._id,
 			notes
 		);
+		await unitOfWork.modelRepository.create(model);
 		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
 			const permissionAssignment = this.permissionAssignmentFactory(
 				null,
