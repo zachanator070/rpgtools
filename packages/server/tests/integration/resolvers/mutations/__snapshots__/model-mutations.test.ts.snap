@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`model mutations with world create model no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world delete model no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world update model no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world with authenticated user create model 1`] = `
+Object {
+  "data": Object {
+    "createModel": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world with authenticated user create two models with same filename 1`] = `
+Object {
+  "data": Object {
+    "createModel": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world with authenticated user create two models with same filename 2`] = `
+Object {
+  "data": Object {
+    "createModel": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world with authenticated user delete model 1`] = `
+Object {
+  "data": Object {
+    "deleteModel": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`model mutations with world with authenticated user update model 1`] = `
+Object {
+  "data": Object {
+    "updateModel": Object {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "subject": Object {
+            "_id": Any<String>,
+          },
+          "users": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+            },
+          ],
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "depth": 2,
+      "fileId": Any<String>,
+      "fileName": "tests/integration/resolvers/mutations/pikachu.glb",
+      "height": 1,
+      "name": "new wiki",
+      "notes": "pika pika",
+      "width": 1,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;

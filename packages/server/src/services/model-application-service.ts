@@ -69,10 +69,6 @@ export class ModelApplicationService implements ModelService {
 		}
 
 		fileUpload = await fileUpload;
-		if (await this.filenameExists(fileUpload.filename)) {
-			// this seems silly, why is this??
-			throw new Error(`Filename ${fileUpload.filename} already exists, filenames must be unique`);
-		}
 
 		const file = this.fileFactory(null, fileUpload.filename, fileUpload.createReadStream(), null);
 		await unitOfWork.fileRepository.create(file);
@@ -133,9 +129,6 @@ export class ModelApplicationService implements ModelService {
 			}
 			file = await file;
 
-			if (await this.filenameExists(file.filename)) {
-				throw new Error(`Filename ${file.filename} already exists, filenames must be unique`);
-			}
 			const newFile = this.fileFactory(null, file.filename, file.createReadStream(), null);
 			await unitOfWork.fileRepository.create(newFile);
 			model.fileId = newFile._id;
@@ -160,7 +153,7 @@ export class ModelApplicationService implements ModelService {
 		if (!(await this.modelAuthorizationRuleset.canWrite(context, model))) {
 			throw new Error("You do not have permission to delete this model");
 		}
-		const games = await unitOfWork.gameRepository.find([new FilterCondition("models", modelId)]);
+		const games = await unitOfWork.gameRepository.find([new FilterCondition("models", {_id: modelId})]);
 		for (let game of games) {
 			const positionedModel = game.models.find((otherModel) => otherModel.model === model._id);
 			game.models = game.models.filter((positionedModel) => positionedModel.model !== model._id);
