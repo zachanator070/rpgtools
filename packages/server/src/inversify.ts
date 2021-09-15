@@ -38,7 +38,7 @@ import {
 	AbstractArchiveFactory,
 	ApiServer,
 	DataLoader,
-	Factory,
+	Factory, RoleService,
 } from "./types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "./dal/mongodb/repositories/mongodb-article-repository";
@@ -161,6 +161,7 @@ import FilterFactory from "./dal/mongodb/FilterFactory";
 import {NoCacheClient} from "./dal/cache/no-cache-client";
 import {DeltaFactory} from "./five-e-import/delta-factory";
 import {Dnd5eApiClient} from "./five-e-import/dnd-5e-api-client";
+import {RoleApplicationService} from "./services/role-application-service";
 
 const container = new Container();
 
@@ -691,6 +692,7 @@ container
 	.to(WikiFolderApplicationService);
 container.bind<WikiPageService>(INJECTABLE_TYPES.WikiPageService).to(WikiPageApplicationService);
 container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldApplicationService);
+container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleApplicationService);
 
 // session contexts
 container

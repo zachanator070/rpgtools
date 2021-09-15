@@ -3,6 +3,6 @@ import { gridFsRedisMiddleware } from "../middleware/grid-fs-redis-middleware";
 
 let ModelRouter = express.Router();
 
-ModelRouter.use("/:filename", gridFsRedisMiddleware("filename"));
+ModelRouter.use("/:id", gridFsRedisMiddleware("id"));
 
 export { ModelRouter };

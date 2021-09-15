@@ -131,21 +131,21 @@ export class ModelRenderer {
 		this.scene.add(groundMesh);
 	}
 
-	setModel(modelUrl) {
+	setModel(modelEntity) {
 		if (this.modelMesh) {
 			this.scene.remove(this.modelMesh);
 			this.modelMesh = null;
 		}
 		this.positionCamera();
 
-		const extension = modelUrl.split(".").pop();
+		const extension = modelEntity.fileName.split(".").pop();
 
 		const loader =
 			extension === "glb"
 				? new GLTFLoader(this.loader)
 				: new OBJLoader(this.loader);
 		loader.load(
-			modelUrl,
+			`/models/${modelEntity.fileId}`,
 			(model) => {
 				// we have switched pages and the load from the last page has finished
 				if (this.modelMesh) {
