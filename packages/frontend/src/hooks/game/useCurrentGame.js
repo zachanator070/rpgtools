@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { GAME_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const GET_GAME = gql`
+	${GAME_ATTRIBUTES}
 	query getGame($gameId: ID!){
 		game(gameId: $gameId){
-			${GAME_ATTRIBUTES}
+			...gameAttributes
 		}
 	}
 `;

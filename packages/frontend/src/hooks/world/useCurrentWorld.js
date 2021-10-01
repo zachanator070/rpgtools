@@ -9,8 +9,12 @@ import {
 } from "../../../../common/src/gql-fragments";
 
 export const GET_CURRENT_WORLD = gql`
-    query getCurrentWorld($worldId: ID){
-        world(worldId: $worldId){
+	${CURRENT_WORLD_FOLDERS}
+	${ACCESS_CONTROL_LIST}
+	${CURRENT_WORLD_ROLES}
+	${CURRENT_WORLD_PINS}
+	query getCurrentWorld($worldId: ID){
+		world(worldId: $worldId){
 			_id
 			name
 			canWrite
@@ -37,15 +41,13 @@ export const GET_CURRENT_WORLD = gql`
 				}
 			}
 			rootFolder{
-				${CURRENT_WORLD_FOLDERS}
+				...currentWorldFolders
 			}
-			${ACCESS_CONTROL_LIST}
-			${CURRENT_WORLD_ROLES}
-			${CURRENT_WORLD_PINS}
-		        
-	    }
-    }
-    
+			...accessControlList
+			...currentWorldRoles
+			...currentWorldPins
+		}
+	}
 `;
 export default () => {
 	const { world_id } = useParams();

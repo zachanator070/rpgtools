@@ -3,10 +3,11 @@ import gql from "graphql-tag";
 import { PERMISSIONS_GRANTED } from "../../../../common/src/gql-fragments";
 
 export const GRANT_ROLE_PERMISSION = gql`
+	${PERMISSIONS_GRANTED}
 	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
 		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
-			${PERMISSIONS_GRANTED}
+			...permissionsGranted
 		}
 	}
 `;

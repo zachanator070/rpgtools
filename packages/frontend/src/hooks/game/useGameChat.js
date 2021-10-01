@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
 export const GAME_CHAT = gql`
-	mutation gameChat($gameId: ID!, $message: String!) {
+	mutation gameChatMutation($gameId: ID!, $message: String!) {
 		gameChat(gameId: $gameId, message: $message) {
 			_id
 		}

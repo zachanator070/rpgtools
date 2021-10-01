@@ -3,20 +3,21 @@ import { useGQLQuery } from "../useGQLQuery";
 import { MODEL_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 const SEARCH_WIKIS = gql`
+	${MODEL_ATTRIBUTES}
 	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean){
 		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin){
 			docs{
 				_id
 				name
 				... on ModeledWiki {
-			        model{
-			            ${MODEL_ATTRIBUTES}
-			        }
-			        modelColor
-			    }
-			    ... on PermissionControlled{
-			        canAdmin
-		        }
+					model{
+						...modelAttributes
+					}
+					modelColor
+				}
+				... on PermissionControlled{
+					canAdmin
+				}
 			}
 			nextPage
 		}

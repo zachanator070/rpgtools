@@ -8,5 +8,7 @@
 		"lint": "npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/**",
 		"lint-fix": "npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/** --fix"
 	},
-	"workspaces": ["packages/*"]
+	"workspaces": [
+		"packages/*"
+	]
 }

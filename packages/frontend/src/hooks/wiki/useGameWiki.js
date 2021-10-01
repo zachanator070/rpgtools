@@ -3,11 +3,12 @@ import gql from "graphql-tag";
 import { useGQLLazyQuery } from "../useGQLLazyQuery";
 
 export const GAME_WIKI = gql`
+	${CURRENT_WIKI_ATTRIBUTES}
 	query wiki($wikiId: ID!){
-        wiki(wikiId: $wikiId) {
-            ${CURRENT_WIKI_ATTRIBUTES}
-        }
-    }
+		wiki(wikiId: $wikiId) {
+			...currentWikiAttributes
+		}
+	}
 `;
 
 export default () => {

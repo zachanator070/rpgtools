@@ -8,16 +8,19 @@ import {
 } from "../../../../common/src/gql-fragments";
 
 export const GET_CURRENT_WIKI = gql`
-    query currentWiki($wikiId: ID!){
-        wiki(wikiId: $wikiId) {
-            ${CURRENT_WIKI_ATTRIBUTES}
-            ${ACCESS_CONTROL_LIST}
-            ... on Place {
-                ${CURRENT_WIKI_PLACE_ATTRIBUTES}
-            }
-            
-        }
-    }
+	${CURRENT_WIKI_ATTRIBUTES}
+	${ACCESS_CONTROL_LIST}
+	${CURRENT_WIKI_PLACE_ATTRIBUTES}
+	query currentWiki($wikiId: ID!){
+		wiki(wikiId: $wikiId) {
+			...currentWikiAttributes
+			...accessControlList
+			... on Place {
+					...currentWikiPlaceAttributes
+			}
+				
+		}
+	}
 `;
 export default () => {
 	const { wiki_id } = useParams();

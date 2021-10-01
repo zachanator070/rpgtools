@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { GAME_MESSAGE } from "../../../../common/src/gql-fragments";
 
 export const GAME_CHAT_SUBSCRIPTION = gql`
-	subscription gameChat($gameId: ID!){
+	${GAME_MESSAGE}
+	subscription gameChatSubscription($gameId: ID!){
 		gameChat(gameId: $gameId){
-			${GAME_MESSAGE}
+			...gameMessage
 		}
 	}
 `;

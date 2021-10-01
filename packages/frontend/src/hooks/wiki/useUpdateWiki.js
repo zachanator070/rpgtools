@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { CURRENT_WIKI_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const UPDATE_WIKI = gql`
+	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updateWiki($wikiId: ID!, $name: String, $content: Upload, $coverImageId: ID, $type: String){
 		updateWiki(wikiId: $wikiId, name: $name, content: $content, coverImageId: $coverImageId, type: $type){
-			${CURRENT_WIKI_ATTRIBUTES}
+			...currentWikiAttributes
 		}
 	}
 `;

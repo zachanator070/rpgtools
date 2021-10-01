@@ -3,9 +3,10 @@ import gql from "graphql-tag";
 import { MODEL_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const UPDATE_MODEL = gql`
+	${MODEL_ATTRIBUTES}
 	mutation updateModel($modelId: ID!, $name: String!, $file: Upload, $depth: Float!, $width: Float!, $height: Float!, $notes: String){
 		updateModel(modelId: $modelId, name: $name, file: $file, depth: $depth, width: $width, height: $height, notes: $notes){
-			${MODEL_ATTRIBUTES}
+			...modelAttributes
 		}
 	}
 `;
