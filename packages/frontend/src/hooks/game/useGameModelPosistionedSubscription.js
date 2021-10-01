@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { GAME_MODEL } from "../../../../common/src/gql-fragments";
 
 export const GAME_MODEL_POSITIONED_SUBSCRIPTION = gql`
+	${GAME_MODEL}
 	subscription gameModelPositioned($gameId: ID!){
 		gameModelPositioned(gameId: $gameId){
-			${GAME_MODEL}
+			...gameModel		
 		}
 	} 
 `;

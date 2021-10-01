@@ -4,21 +4,22 @@ import { useGQLLazyQuery } from "../useGQLLazyQuery";
 import { useEffect } from "react";
 
 export const WIKIS_IN_FOLDER = gql`
-    query wikisInFolder($folderId: ID!, $page: Int){
-        wikisInFolder(folderId: $folderId, page: $page){
-            docs{
-                ${CURRENT_WORLD_WIKIS}
-                folder{
-                    _id
-                    name
-                }
-                world{
-                    _id
-                }
-            }
-            nextPage
-        }
-    }
+	${CURRENT_WORLD_WIKIS}
+	query wikisInFolder($folderId: ID!, $page: Int){
+		wikisInFolder(folderId: $folderId, page: $page){
+			docs{
+				...currentWorldWikis
+				folder{
+					_id
+					name
+				}
+				world{
+					_id
+				}
+			}
+			nextPage
+		}
+	}
 `;
 
 export const useWikisInFolder = (variables) => {

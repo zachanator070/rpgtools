@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { GAME_MODEL } from "../../../../common/src/gql-fragments";
 
 export const SET_MODEL_COLOR = gql`
+	${GAME_MODEL}
 	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
 		setModelColor(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
-			${GAME_MODEL}
+			...gameModel
 		}
 	}
 `;

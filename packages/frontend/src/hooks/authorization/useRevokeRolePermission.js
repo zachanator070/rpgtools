@@ -3,10 +3,11 @@ import gql from "graphql-tag";
 import { PERMISSIONS_GRANTED } from "../../../../common/src/gql-fragments";
 
 export const REVOKE_ROLE_PERMISSION = gql`
+	${PERMISSIONS_GRANTED}
 	mutation revokeRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!){
 		revokeRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId){
 			_id
-			${PERMISSIONS_GRANTED}
+			...permissionsGranted		
 		}
 	}
 `;

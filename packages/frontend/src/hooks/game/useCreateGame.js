@@ -4,12 +4,13 @@ import { ACCESS_CONTROL_LIST } from "../../../../common/src/gql-fragments";
 import { useGQLMutation } from "../useGQLMutation";
 
 export const CREATE_GAME = gql`
-    mutation createGame($worldId: ID!, $password: String, $characterName: String){
-        createGame(worldId: $worldId, password: $password, characterName: $characterName){
-            _id
-            ${ACCESS_CONTROL_LIST}
-        }
-    }
+	${ACCESS_CONTROL_LIST}
+	mutation createGame($worldId: ID!, $password: String, $characterName: String){
+		createGame(worldId: $worldId, password: $password, characterName: $characterName){
+			_id
+			...accessControlList
+		}
+	}
 `;
 export default (callback) => {
 	const { currentWorld } = useCurrentWorld();

@@ -5,9 +5,10 @@ import gql from "graphql-tag";
 import { MODEL_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const GET_MODELS = gql`
+	${MODEL_ATTRIBUTES}
 	query getModels($worldId: ID!){
 		models(worldId: $worldId){
-			${MODEL_ATTRIBUTES}
+			...modelAttributes
 		}
 	}
 `;

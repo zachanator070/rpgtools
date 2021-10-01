@@ -3,10 +3,11 @@ import gql from "graphql-tag";
 import { CURRENT_WIKI_PLACE_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 
 export const UPDATE_PLACE = gql`
+	${CURRENT_WIKI_PLACE_ATTRIBUTES}
 	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
 		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
 			_id
-            ${CURRENT_WIKI_PLACE_ATTRIBUTES}
+      ...currentWikiPlaceAttributes
 		}
 	}
 `;

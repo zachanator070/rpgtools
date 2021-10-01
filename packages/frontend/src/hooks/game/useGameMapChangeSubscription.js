@@ -4,12 +4,15 @@ import gql from "graphql-tag";
 import { GAME_FOG_STROKES, GAME_MAP, GAME_STROKES } from "../../../../common/src/gql-fragments";
 
 export const GAME_MAP_SUBSCRIPTION = gql`
+	${GAME_MAP}
+	${GAME_STROKES}
+	${GAME_FOG_STROKES}
 	subscription gameMapChange($gameId: ID!,){
 		gameMapChange(gameId: $gameId){
 			_id
-			${GAME_MAP}
-			${GAME_STROKES}
-			${GAME_FOG_STROKES}
+			...gameMap
+			...gameStrokes
+			...gameFogStrokes		
 		}
 	}
 `;

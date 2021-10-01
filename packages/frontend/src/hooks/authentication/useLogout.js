@@ -2,7 +2,7 @@ import { useApolloClient, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
 export const LOGOUT_QUERY = gql`
-	mutation {
+	mutation logout{
 		logout
 	}
 `;

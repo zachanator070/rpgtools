@@ -3,10 +3,11 @@ import gql from "graphql-tag";
 import { ACCESS_CONTROL_LIST } from "../../../../common/src/gql-fragments";
 
 export const REVOKE_USER_PERMISSION = gql`
+	${ACCESS_CONTROL_LIST}
 	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!){
 		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId){
 			_id
-			${ACCESS_CONTROL_LIST}
+			...accessControlList
 		}
 	}
 `;

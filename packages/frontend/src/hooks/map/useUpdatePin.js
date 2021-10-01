@@ -3,10 +3,11 @@ import gql from "graphql-tag";
 import { CURRENT_WORLD_PINS } from "../../../../common/src/gql-fragments";
 
 export const UPDATE_PIN = gql`
+	${CURRENT_WORLD_PINS}
 	mutation updatePin($pinId: ID!, $pageId: ID){
 		updatePin(pinId: $pinId, pageId: $pageId){
 			_id
-			${CURRENT_WORLD_PINS}
+			...currentWorldPins
 		}
 	}
 `;

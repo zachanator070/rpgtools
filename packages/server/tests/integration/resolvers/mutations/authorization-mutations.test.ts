@@ -1,6 +1,5 @@
 import { WIKI_READ, WIKI_RW, WORLD_READ } from "../../../../../common/src/permission-constants";
 import { PLACE, WORLD } from "../../../../../common/src/type-constants";
-import { ADD_USER_ROLE } from "../../../../../frontend/src/hooks/authorization/useAddUserRole";
 import { CREATE_ROLE } from "../../../../../frontend/src/hooks/authorization/useCreateRole";
 import { DELETE_ROLE } from "../../../../../frontend/src/hooks/authorization/useDeleteRole";
 import { GRANT_ROLE_PERMISSION } from "../../../../../frontend/src/hooks/authorization/useGrantRolePermission";
@@ -12,6 +11,7 @@ import { container } from "../../../../src/inversify";
 import { AuthorizationService, RoleFactory, RoleRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
+import {ADD_USER_ROLE} from "../../../../../common/src/queries";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 

@@ -4,11 +4,12 @@ import useCurrentGame from "./useCurrentGame";
 import { useGQLMutation } from "../useGQLMutation";
 
 const SET_POSITIONED_MODEL_WIKI = gql`
-    mutation setPositionedModelWiki($gameId: ID!, $positionedModelId: ID!, $wikiId: ID){
-        setPositionedModelWiki(gameId: $gameId, positionedModelId: $positionedModelId, wikiId: $wikiId){
-            ${GAME_MODEL}
-        }
-    }
+	${GAME_MODEL}
+	mutation setPositionedModelWiki($gameId: ID!, $positionedModelId: ID!, $wikiId: ID){
+		setPositionedModelWiki(gameId: $gameId, positionedModelId: $positionedModelId, wikiId: $wikiId){
+			...gameModel
+		}
+	}
 `;
 
 export const useSetPositionedModelWiki = () => {

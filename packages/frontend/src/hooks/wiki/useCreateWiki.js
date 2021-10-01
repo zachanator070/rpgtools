@@ -3,9 +3,10 @@ import gql from "graphql-tag";
 import { CURRENT_WORLD_FOLDERS } from "../../../../common/src/gql-fragments";
 
 export const CREATE_WIKI = gql`
+	${CURRENT_WORLD_FOLDERS}
 	mutation createWiki($name: String!, $folderId: ID!){
 		createWiki(name: $name, folderId: $folderId){
-			${CURRENT_WORLD_FOLDERS}
+			...currentWorldFolders
 		}
 	}
 `;

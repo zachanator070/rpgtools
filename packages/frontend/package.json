@@ -7,7 +7,9 @@
 	"scripts": {
 		"start": "webpack --optimize-minimize --optimize-dedupe",
 		"start-dev": "webpack --config webpack-dev.config.js -w",
-		"test": "jest"
+		"test": "jest",
+		"download-schema": "npx apollo service:download --endpoint=http://localhost:3000/api graphql-schema.json",
+		"generate-types": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=lgq"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",

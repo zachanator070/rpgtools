@@ -4,12 +4,13 @@ import useCurrentGame from "./useCurrentGame";
 import { useGQLMutation } from "../useGQLMutation";
 
 const SET_CHARACTER_ORDER = gql`
-    mutation setCharacterOrder($gameId: ID!, $characters: [CharacterInput!]!){
-        setCharacterOrder(gameId: $gameId, characters: $characters){
-            _id
-            ${GAME_CHARACTERS}
-        }
-    }
+	${GAME_CHARACTERS}
+	mutation setCharacterOrder($gameId: ID!, $characters: [CharacterInput!]!){
+		setCharacterOrder(gameId: $gameId, characters: $characters){
+			_id
+			...gameCharacters
+		}
+	}
 `;
 
 export const useSetCharacterOrder = () => {

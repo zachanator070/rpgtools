@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { GAME_FOG } from "../../../../common/src/gql-fragments";
 
 export const GAME_FOG_SUBSCRIPTION = gql`
+	${GAME_FOG}
 	subscription gameFogStrokeAdded($gameId: ID!){
 		gameFogStrokeAdded(gameId: $gameId){
-			${GAME_FOG}
+			...gameFog		
 		}
 	}
 `;

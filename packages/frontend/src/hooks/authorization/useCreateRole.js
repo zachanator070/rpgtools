@@ -4,11 +4,13 @@ import gql from "graphql-tag";
 import { ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES } from "../../../../common/src/gql-fragments";
 
 export const CREATE_ROLE = gql`
+	${ACCESS_CONTROL_LIST}
+	${CURRENT_WORLD_ROLES}
 	mutation createRole($worldId: ID!, $name: String!){
 		createRole(worldId: $worldId, name: $name){
 			_id
-			${ACCESS_CONTROL_LIST}
-			${CURRENT_WORLD_ROLES}
+			...accessControlList
+			...currentWorldRoles
 		}
 	}
 `;

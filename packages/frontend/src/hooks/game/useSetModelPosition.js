@@ -4,9 +4,10 @@ import gql from "graphql-tag";
 import { GAME_MODEL } from "../../../../common/src/gql-fragments";
 
 export const SET_MODEL_POSITION = gql`
+	${GAME_MODEL}
 	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float!, $lookAtX: Float!, $lookAtZ: Float!){
 		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, x: $x, z: $z, lookAtX: $lookAtX, lookAtZ: $lookAtZ){
-			${GAME_MODEL}
+			...gameModel
 		}
 	}
 `;

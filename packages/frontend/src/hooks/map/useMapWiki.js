@@ -3,14 +3,15 @@ import { CURRENT_WIKI_ATTRIBUTES } from "../../../../common/src/gql-fragments";
 import gql from "graphql-tag";
 
 export const MAP_WIKI = gql`
-	query currentWiki($wikiId: ID!){
-        wiki(wikiId: $wikiId) {
-            ${CURRENT_WIKI_ATTRIBUTES}
-        }
-    }
+	${CURRENT_WIKI_ATTRIBUTES}
+	query mapWiki($wikiId: ID!){
+		wiki(wikiId: $wikiId) {
+			...currentWikiAttributes
+		}
+	}
 `;
 export const MAP_WIKI_ID = gql`
-	query {
+	query mapWIki{
 		mapWiki @client
 	}
 `;
