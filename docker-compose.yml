@@ -1,9 +1,10 @@
-version: "3"
+version: "3.4"
 services:
   dev-server:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
+      target: server
     command: "npm run dev"
     env_file:
       - .env
@@ -38,6 +39,7 @@ services:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
+      target: builder
     env_file:
       - .env
     volumes:
@@ -52,6 +54,7 @@ services:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
+      target: builder
     user: ${CURRENT_UID}
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}

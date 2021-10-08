@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Tool set for playing an RPG game",
 	"license": "MIT",
+	"private": true,
 	"repository": "https://github.com/zachanator070/rpgtools",
 	"scripts": {
 		"lint": "npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/**",

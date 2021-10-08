@@ -7,9 +7,7 @@
 	"scripts": {
 		"start": "webpack --optimize-minimize --optimize-dedupe",
 		"start-dev": "webpack --config webpack-dev.config.js -w",
-		"test": "jest",
-		"download-schema": "npx apollo service:download --endpoint=http://localhost:3000/api graphql-schema.json",
-		"generate-types": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=lgq"
+		"test": "jest"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
@@ -33,7 +31,6 @@
 		"compression-webpack-plugin": "^5.0.2",
 		"css-loader": "^3.6.0",
 		"file-loader": "^5.0.2",
-		"graphql": "^15.5.1",
 		"graphql-tag": "latest",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^5.3.2",

@@ -1,7 +1,7 @@
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
-import {CREATE_MODEL} from "../../../../../frontend/src/hooks/model/useCreateModel";
-import {UPDATE_MODEL} from "../../../../../frontend/src/hooks/model/useUpdateModel";
-import {DELETE_MODEL} from "../../../../../frontend/src/hooks/model/useDeleteModel";
+import {CREATE_MODEL} from "@rpgtools/frontend/src/hooks/model/useCreateModel";
+import {UPDATE_MODEL} from "@rpgtools/frontend/src/hooks/model/useUpdateModel";
+import {DELETE_MODEL} from "@rpgtools/frontend/src/hooks/model/useDeleteModel";
 import {FileUpload, Upload} from "graphql-upload";
 import fs from "fs";
 import {ModelApplicationService} from "../../../../src/services/model-application-service";

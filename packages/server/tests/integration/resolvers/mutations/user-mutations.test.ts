@@ -1,4 +1,4 @@
-import { SET_CURRENT_WORLD } from "../../../../../frontend/src/hooks/world/useSetCurrentWorld";
+import { SET_CURRENT_WORLD } from "@rpgtools/frontend/src/hooks/world/useSetCurrentWorld";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 
 process.env.TEST_SUITE = "user-mutations-test";

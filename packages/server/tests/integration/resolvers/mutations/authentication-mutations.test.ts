@@ -1,9 +1,9 @@
-import { REGISTER_MUTATION } from "../../../../../frontend/src/hooks/authentication/useRegister";
+import { REGISTER_MUTATION } from "@rpgtools/frontend/src/hooks/authentication/useRegister";
 import { container } from "../../../../src/inversify";
 import { ServerConfigRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
-import {LOGIN_QUERY} from "../../../../../common/src/mutations";
+import {LOGIN_QUERY} from "@rpgtools/frontend/src/hooks/authentication/useLogin";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 

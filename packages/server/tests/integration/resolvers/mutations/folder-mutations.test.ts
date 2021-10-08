@@ -1,8 +1,8 @@
-import { WIKI_FOLDER } from "../../../../../common/src/type-constants";
-import { WIKI_RW } from "../../../../../common/src/permission-constants";
-import { CREATE_FOLDER } from "../../../../../frontend/src/hooks/wiki/useCreateFolder";
-import { DELETE_FOLDER } from "../../../../../frontend/src/hooks/wiki/useDeleteFolder";
-import { RENAME_FOLDER } from "../../../../../frontend/src/hooks/wiki/useRenameFolder";
+import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import { WIKI_RW } from "@rpgtools/common/src/permission-constants";
+import { CREATE_FOLDER } from "@rpgtools/frontend/src/hooks/wiki/useCreateFolder";
+import { DELETE_FOLDER } from "@rpgtools/frontend/src/hooks/wiki/useDeleteFolder";
+import { RENAME_FOLDER } from "@rpgtools/frontend/src/hooks/wiki/useRenameFolder";
 import { container } from "../../../../src/inversify";
 import { AuthorizationService, WikiPageService } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/injectable-types";

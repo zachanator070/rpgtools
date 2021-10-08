@@ -1,9 +1,9 @@
-import { CREATE_WORLD } from "../../../../../frontend/src/hooks/world/useCreateWorld";
-import { DELETE_PIN } from "../../../../../frontend/src/hooks/map/useDeletePin";
-import { RENAME_WORLD } from "../../../../../frontend/src/hooks/world/useRenameWorld";
-import { UPDATE_PIN } from "../../../../../frontend/src/hooks/map/useUpdatePin";
+import { CREATE_WORLD } from "@rpgtools/frontend/src/hooks/world/useCreateWorld";
+import { DELETE_PIN } from "@rpgtools/frontend/src/hooks/map/useDeletePin";
+import { RENAME_WORLD } from "@rpgtools/frontend/src/hooks/world/useRenameWorld";
+import { UPDATE_PIN } from "@rpgtools/frontend/src/hooks/map/useUpdatePin";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
-import { CREATE_PIN } from "../../../../../frontend/src/hooks/map/useCreatePin";
+import { CREATE_PIN } from "@rpgtools/frontend/src/hooks/map/useCreatePin";
 
 process.env.TEST_SUITE = "world-mutations-test";
 
