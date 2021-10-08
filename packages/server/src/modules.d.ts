@@ -5,6 +5,4 @@ declare module "mongoose-paginate-v2";
 declare module "redis-rstream";
 declare module "redis-wstream";
 declare module "ascii-table";
-declare module "@rpgtools/common/src/mutations";
-declare module "@rpgtools/common/src/queries";
 declare module "node-fetch";

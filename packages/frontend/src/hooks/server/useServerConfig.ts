@@ -1,0 +1,28 @@
+import { useQuery } from "@apollo/client";
+import { useParams } from "react-router-dom";
+import gql from "graphql-tag";
+import {ACCESS_CONTROL_LIST, SERVER_CONFIG_ROLES} from "../gql-fragments";
+
+export const GET_SERVER_CONFIG = gql`
+	${ACCESS_CONTROL_LIST}
+	${SERVER_CONFIG_ROLES}
+	query serverConfig{
+		serverConfig{
+			_id
+			version
+			registerCodes
+			...accessControlList
+			...serverConfigRoles
+		}
+	}
+`;
+export default () => {
+	const { map_id } = useParams();
+	const { data, loading, error, refetch } = useQuery(GET_SERVER_CONFIG);
+	return {
+		serverConfig: data ? data.serverConfig : null,
+		loading,
+		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+		refetch,
+	};
+};

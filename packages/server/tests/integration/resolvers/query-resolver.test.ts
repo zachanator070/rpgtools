@@ -2,13 +2,13 @@ import { GET_CURRENT_WORLD } from "../../../../frontend/src/hooks/world/useCurre
 import { SEARCH_USERS } from "../../../../frontend/src/hooks/authentication/useSearchUsers";
 import { GET_WORLDS } from "../../../../frontend/src/hooks/world/useWorlds";
 import { GET_CURRENT_WIKI } from "../../../../frontend/src/hooks/wiki/useCurrentWiki";
-import { GET_CURRENT_USER } from "../../../../common/src/queries";
 import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
 import { container } from "../../../src/inversify";
 import { INJECTABLE_TYPES } from "../../../src/injectable-types";
 import {WikiFolderService, WikiPageService, WorldService} from "../../../src/types";
 import { ANON_USERNAME } from "../../../../common/src/permission-constants";
 import {WIKIS_IN_FOLDER} from "../../../../frontend/src/hooks/wiki/useWikisInFolder";
+import {GET_CURRENT_USER} from "@rpgtools/frontend/src/hooks/authentication/useCurrentUser";
 
 process.env.TEST_SUITE = "query-resolver-test";
 

@@ -1,9 +1,9 @@
 import fs from "fs";
-import { ARTICLE } from "../../../../../common/src/type-constants";
-import { CREATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useCreateWiki";
-import { DELETE_WIKI } from "../../../../../frontend/src/hooks/wiki/useDeleteWiki";
-import { UPDATE_PLACE } from "../../../../../frontend/src/hooks/wiki/useUpdatePlace";
-import { UPDATE_WIKI } from "../../../../../frontend/src/hooks/wiki/useUpdateWiki";
+import { ARTICLE } from "@rpgtools/common/src/type-constants";
+import { CREATE_WIKI } from "@rpgtools/frontend/src/hooks/wiki/useCreateWiki";
+import { DELETE_WIKI } from "@rpgtools/frontend/src/hooks/wiki/useDeleteWiki";
+import { UPDATE_PLACE } from "@rpgtools/frontend/src/hooks/wiki/useUpdatePlace";
+import { UPDATE_WIKI } from "@rpgtools/frontend/src/hooks/wiki/useUpdateWiki";
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
 import {container} from "../../../../src/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/injectable-types";
