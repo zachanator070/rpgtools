@@ -1,5 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const DELETE_WIKI = gql`
 	mutation deleteWiki($wikiId: ID!) {
@@ -8,14 +10,19 @@ export const DELETE_WIKI = gql`
 		}
 	}
 `;
-export const useDeleteWiki = () => {
-	const [deleteWiki, { data, loading, error }] = useMutation(DELETE_WIKI);
+
+interface DeleteWikiVariables {
+	wikiId: string;
+}
+
+interface DeleteWikiResult {
+	deleteWiki: MutationMethod<World, DeleteWikiVariables>
+}
+
+export const useDeleteWiki = (): DeleteWikiResult => {
+	const result = useGQLMutation<World, DeleteWikiVariables>(DELETE_WIKI);
 	return {
-		deleteWiki: async (wikiId) => {
-			return deleteWiki({ variables: { wikiId } });
-		},
-		wikiPage: data ? data.deleteWiki : null,
-		loading: loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+		...result,
+		deleteWiki: result.mutate
 	};
 };

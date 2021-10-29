@@ -1,5 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {WikiFolder} from "../../types";
 
 export const RENAME_FOLDER = gql`
 	mutation renameFolder($folderId: ID!, $name: String!) {
@@ -9,14 +11,20 @@ export const RENAME_FOLDER = gql`
 		}
 	}
 `;
-export const useRenameFolder = () => {
-	const [renameFolder, { data, loading, error }] = useMutation(RENAME_FOLDER);
+
+interface RenameFolderVariables {
+	folderId: string;
+	name: string;
+}
+
+interface RenameFolderResult {
+	renameFolder: MutationMethod<WikiFolder, RenameFolderVariables>;
+}
+
+export const useRenameFolder = (): RenameFolderResult => {
+	const result = useGQLMutation<WikiFolder, RenameFolderVariables>(RENAME_FOLDER);
 	return {
-		renameFolder: async (folderId, name) => {
-			await renameFolder({ variables: { folderId, name } });
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		folder: data ? data.renameFolder : null,
+		...result,
+		renameFolder: result.mutate
 	};
 };

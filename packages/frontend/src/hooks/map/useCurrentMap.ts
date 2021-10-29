@@ -1,7 +1,5 @@
-import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import gql from "graphql-tag";
-import {GqlMutationResult} from "../useGQLMutation";
 import {WikiPage} from "../../types";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 

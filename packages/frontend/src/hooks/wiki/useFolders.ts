@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
-import { useGQLQuery } from "../useGQLQuery";
+import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import {WikiFolder} from "../../types";
 
 const FOLDERS = gql`
 	query folders($worldId: ID!, $name: String, $canAdmin: Boolean) {
@@ -16,6 +17,20 @@ const FOLDERS = gql`
 	}
 `;
 
-export const useFolders = (variables) => {
-	return useGQLQuery(FOLDERS, variables);
+interface FoldersVariables {
+	worldId: string;
+	name?: string;
+	canAdmin?: string;
+}
+
+interface FoldersResult extends GqlQueryResult<WikiFolder[], FoldersVariables>{
+	folders: WikiFolder[]
+}
+
+export const useFolders = (variables: FoldersVariables): FoldersResult => {
+	const result = useGQLQuery<WikiFolder[], FoldersVariables>(FOLDERS, variables);
+	return {
+		...result,
+		folders: result.data
+	};
 };

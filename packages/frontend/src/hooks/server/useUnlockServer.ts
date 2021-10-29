@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 
 export const UNLOCK_SERVER = gql`
 	mutation unlockServer(
@@ -16,18 +17,28 @@ export const UNLOCK_SERVER = gql`
 		)
 	}
 `;
-export default (callback) => {
-	const [unlockServer, { data, loading, error }] = useMutation(UNLOCK_SERVER, {
-		onCompleted: callback,
-	});
+interface UnlockServerVariables {
+	unlockCode: string;
+	email: string;
+	username: string;
+	password: string;
+}
+
+interface UnlockServerResult {
+	unlockServer: MutationMethod<boolean, UnlockServerVariables>
+}
+
+export default (callback: (data: boolean) => Promise<void>): UnlockServerResult => {
+	const result = useGQLMutation<boolean, UnlockServerVariables>(
+		UNLOCK_SERVER,
+		{},
+		{
+			onCompleted: callback
+		}
+	);
+
 	return {
-		unlockServer: async (unlockCode, email, username, password) => {
-			await unlockServer({
-				variables: { unlockCode, email, username, password },
-			});
-		},
-		loading,
-		user: data ? data.register : null,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
+		...result,
+		unlockServer: result.mutate
 	};
 };

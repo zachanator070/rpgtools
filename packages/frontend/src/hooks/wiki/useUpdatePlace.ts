@@ -1,24 +1,33 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { CURRENT_WIKI_PLACE_ATTRIBUTES } from "../gql-fragments";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {Place} from "../../types";
 
 export const UPDATE_PLACE = gql`
 	${CURRENT_WIKI_PLACE_ATTRIBUTES}
 	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
 		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
 			_id
-      ...currentWikiPlaceAttributes
+      		...currentWikiPlaceAttributes
 		}
 	}
 `;
-export default () => {
-	const [updatePlace, { data, loading, error }] = useMutation(UPDATE_PLACE);
+
+interface UpdatePlaceVariables {
+	placeId: string;
+	mapImageId?: string;
+	pixelsPerFoot?: number;
+}
+
+interface UpdatePlaceResult {
+	updatePlace: MutationMethod<Place, UpdatePlaceVariables>;
+}
+
+export default (): UpdatePlaceResult => {
+	const result = useGQLMutation<Place, UpdatePlaceVariables>(UPDATE_PLACE);
 	return {
-		updatePlace: async (placeId, mapImageId, pixelsPerFoot) => {
-			await updatePlace({ variables: { placeId, mapImageId, pixelsPerFoot } });
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		wiki: data ? data.updatePlace : null,
+		...result,
+		updatePlace: result.mutate
 	};
 };

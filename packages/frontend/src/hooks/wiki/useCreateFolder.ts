@@ -1,5 +1,6 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const CREATE_FOLDER = gql`
 	mutation createFolder($parentFolderId: ID!, $name: String!) {
@@ -8,14 +9,20 @@ export const CREATE_FOLDER = gql`
 		}
 	}
 `;
-export default () => {
-	const [createFolder, { loading, error, data }] = useMutation(CREATE_FOLDER);
+
+interface CreateFolderVariables {
+	parentFolderId: string;
+	name: string;
+}
+
+interface CreateFolderResult {
+	createFolder: MutationMethod<World, CreateFolderVariables>
+}
+
+export default (): CreateFolderResult => {
+	const result = useGQLMutation<World, CreateFolderVariables>(CREATE_FOLDER);
 	return {
-		createFolder: async (parentFolderId, name) => {
-			await createFolder({ variables: { parentFolderId, name } });
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		world: data ? data.createFolder : null,
+		...result,
+		createFolder: result.mutate
 	};
 };

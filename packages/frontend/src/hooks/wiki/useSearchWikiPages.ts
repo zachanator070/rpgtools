@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
-import { useGQLQuery } from "../useGQLQuery";
+import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 import { MODEL_ATTRIBUTES } from "../gql-fragments";
+import {WikiPagePaginatedResult} from "../../types";
 
 const SEARCH_WIKIS = gql`
 	${MODEL_ATTRIBUTES}
@@ -23,7 +24,21 @@ const SEARCH_WIKIS = gql`
 		}
 	}
 `;
+interface SearchWikiPagesVariables {
+	worldId: string;
+	name: string;
+	types: string[];
+	canAdmin: boolean;
+}
 
-export const useSearchWikiPages = (variables) => {
-	return useGQLQuery(SEARCH_WIKIS, variables);
+interface SearchWikiPagesResult extends GqlQueryResult<WikiPagePaginatedResult, SearchWikiPagesVariables>{
+	wikis: WikiPagePaginatedResult;
+}
+
+export const useSearchWikiPages = (variables: SearchWikiPagesVariables): SearchWikiPagesResult => {
+	const result = useGQLQuery<WikiPagePaginatedResult, SearchWikiPagesVariables>(SEARCH_WIKIS, variables);
+	return {
+		...result,
+		wikis: result.data
+	};
 };

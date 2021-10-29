@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { useGetModels } from "./useGetModels";
+import {Model} from "../../types";
 
-export const useSearchModels = () => {
+interface SearchModelsResult {
+	searchModels: (name: string) => Promise<void>;
+	models: Model[];
+	loading: boolean;
+}
+
+export const useSearchModels = (): SearchModelsResult => {
 	const { models, loading } = useGetModels();
 	const [filter, setFilter] = useState({ name: "" });
 
