@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
 import { useGQLQuery } from "../useGQLQuery";
+import {WikiFolder} from "../../types";
 
 const GET_FOLDER_PATH = gql`
 	query getFolderPath($wikiId: ID!) {
@@ -9,7 +10,18 @@ const GET_FOLDER_PATH = gql`
 		}
 	}
 `;
+interface GetFolderPathVariables {
+	wikiId: string;
+}
 
-export const useGetFolderPath = (variables) => {
-	return useGQLQuery(GET_FOLDER_PATH, variables);
+interface GetFolderPathResult {
+	getFolderPath: WikiFolder[]
+}
+
+export const useGetFolderPath = (variables: GetFolderPathVariables): GetFolderPathResult => {
+	const result = useGQLQuery<WikiFolder[], GetFolderPathVariables>(GET_FOLDER_PATH, variables);
+	return {
+		...result,
+		getFolderPath: result.data
+	};
 };

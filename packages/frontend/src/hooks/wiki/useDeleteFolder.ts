@@ -1,5 +1,6 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const DELETE_FOLDER = gql`
 	mutation deleteFolder($folderId: ID!) {
@@ -8,14 +9,19 @@ export const DELETE_FOLDER = gql`
 		}
 	}
 `;
-export const useDeleteFolder = () => {
-	const [deleteFolder, { data, loading, error }] = useMutation(DELETE_FOLDER);
+
+interface DeleteFolderVariables {
+	folderId: string;
+}
+
+interface DeleteFolderResult {
+	deleteFolder: MutationMethod<World, DeleteFolderVariables>
+}
+
+export const useDeleteFolder = (): DeleteFolderResult => {
+	const result = useGQLMutation<World, DeleteFolderVariables>(DELETE_FOLDER);
 	return {
-		deleteFolder: async (folderId) => {
-			await deleteFolder({ variables: { folderId } });
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		world: data ? data.deleteFolder : null,
+		...result,
+		deleteFolder: result.mutate
 	};
 };

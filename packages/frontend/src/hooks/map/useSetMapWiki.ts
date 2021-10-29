@@ -1,4 +1,3 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 

@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import { CURRENT_WIKI_ATTRIBUTES } from "../gql-fragments";
 import gql from "graphql-tag";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";

@@ -1,8 +1,10 @@
 import useCurrentWorld from "../world/useCurrentWorld";
-import { useLazyQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import gql from "graphql-tag";
 import { MODEL_ATTRIBUTES } from "../gql-fragments";
+import {Model} from "../../types";
+import {GqlQueryResult} from "../useGQLQuery";
+import {useGQLLazyQuery} from "../useGQLLazyQuery";
 
 export const GET_MODELS = gql`
 	${MODEL_ATTRIBUTES}
@@ -12,22 +14,29 @@ export const GET_MODELS = gql`
 		}
 	}
 `;
-export const useGetModels = () => {
-	const { currentWorld, loading } = useCurrentWorld();
-	const [getModels, { data, loading: modelLoading, error, refetch }] = useLazyQuery(GET_MODELS);
+
+interface GetModelsVariables {
+	worldId: string;
+}
+
+interface GetModelsResult extends GqlQueryResult<Model[], GetModelsVariables> {
+	models: Model[];
+}
+
+export const useGetModels = (): GetModelsResult => {
+	const { currentWorld } = useCurrentWorld();
+	const result = useGQLLazyQuery<Model[], GetModelsVariables>(GET_MODELS);
 
 	useEffect(() => {
 		(async () => {
 			if (currentWorld) {
-				await getModels({ variables: { worldId: currentWorld._id } });
+				await result.fetch({ worldId: currentWorld._id });
 			}
 		})();
 	}, [currentWorld]);
 
 	return {
-		loading: loading || modelLoading,
-		models: data ? data.models : null,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		refetch,
+		...result,
+		models: result.data
 	};
 };

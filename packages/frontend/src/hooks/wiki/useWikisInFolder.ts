@@ -1,7 +1,8 @@
 import gql from "graphql-tag";
 import { CURRENT_WORLD_WIKIS } from "../gql-fragments";
-import { useGQLLazyQuery } from "../useGQLLazyQuery";
+import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
 import { useEffect } from "react";
+import {WikiPagePaginatedResult} from "../../types";
 
 export const WIKIS_IN_FOLDER = gql`
 	${CURRENT_WORLD_WIKIS}
@@ -22,41 +23,52 @@ export const WIKIS_IN_FOLDER = gql`
 	}
 `;
 
-export const useWikisInFolder = (variables) => {
-	const result = useGQLLazyQuery(WIKIS_IN_FOLDER, variables);
+interface WikisInFolderVariables {
+	folderId: string;
+	page: number;
+}
+
+interface WikisInFolderResult extends GqlLazyHookResult<WikiPagePaginatedResult, WikisInFolderVariables>{
+	wikisInFolder: WikiPagePaginatedResult;
+}
+
+export const useWikisInFolder = (variables: WikisInFolderVariables): WikisInFolderResult => {
+	const updateQuery =
+		(prev, { fetchMoreResult }) => {
+		if (!fetchMoreResult) return prev;
+
+		return {
+			wikisInFolder: {
+				docs: [...prev.wikisInFolder.docs, ...fetchMoreResult.wikisInFolder.docs],
+				nextPage: fetchMoreResult.wikisInFolder.nextPage,
+				__typename: "WikiPagePaginatedResult",
+			},
+		};
+	};
+	const result = useGQLLazyQuery<WikiPagePaginatedResult, WikisInFolderVariables>(WIKIS_IN_FOLDER, variables, {updateQuery});
 	useEffect(() => {
 		if (variables) {
 			(async () => {
-				await result.fetch();
+				await result.fetch(variables);
 			})();
 		}
 	}, []);
-	const fetchMore = result.fetchMore;
-	result.fetchMore = async (variables) => {
-		await fetchMore({
-			variables,
-			updateQuery: (prev, { fetchMoreResult }) => {
-				if (!fetchMoreResult) return prev;
-
-				return {
-					wikisInFolder: {
-						docs: [...prev.wikisInFolder.docs, ...fetchMoreResult.wikisInFolder.docs],
-						nextPage: fetchMoreResult.wikisInFolder.nextPage,
-						__typename: "WikiPagePaginatedResult",
-					},
-				};
-			},
-		});
-	};
 	useEffect(() => {
-		if (result.wikisInFolder && result.wikisInFolder.nextPage) {
+		if (result.data && result.data.nextPage) {
 			(async () => {
-				await result.fetchMore({
-					...variables,
-					page: result.wikisInFolder.nextPage,
-				});
+				await result.fetchMore(
+					{
+						...variables,
+						page: result.data.nextPage,
+					},
+				);
 			})();
 		}
-	}, [result.wikisInFolder]);
-	return result;
+	}, [result.data]);
+	return {
+		...result,
+		wikisInFolder: result.data,
+		fetchMore: async (variables: WikisInFolderVariables) =>
+			await result.fetchMore(variables)
+	};
 };

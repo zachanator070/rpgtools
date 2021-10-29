@@ -1,4 +1,3 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { CURRENT_WORLD_PINS } from "../gql-fragments";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";

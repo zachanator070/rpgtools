@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
-import { useGQLMutation } from "../useGQLMutation";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const MOVE_WIKI = gql`
 	mutation moveWiki($wikiId: ID!, $folderId: ID!) {
@@ -9,6 +10,19 @@ export const MOVE_WIKI = gql`
 	}
 `;
 
-export const useMoveWiki = () => {
-	return useGQLMutation(MOVE_WIKI);
+interface MoveWikiVariables {
+	wikiId: string;
+	folderId: string;
+}
+
+interface MoveWikiResult {
+	moveWiki: MutationMethod<World, MoveWikiVariables>;
+}
+
+export const useMoveWiki = (): MoveWikiResult => {
+	const result = useGQLMutation<World, MoveWikiVariables>(MOVE_WIKI);
+	return {
+		...result,
+		moveWiki: result.mutate
+	};
 };

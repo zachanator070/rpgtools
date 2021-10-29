@@ -1,18 +1,26 @@
-import {DocumentNode, useLazyQuery, useQuery} from "@apollo/client";
+import {DocumentNode, useLazyQuery} from "@apollo/client";
 import { useGQLResponse } from "./useGQLResponse";
-import {ApiHookResponse} from "./types";
 import {GqlQueryResult} from "./useGQLQuery";
-
-export interface GqlLazyHookResult<TData, TVariables=void> extends GqlQueryResult<TData, TVariables>{
+// extends GqlQueryResult<TData, TVariables>
+export interface GqlLazyHookResult<TData, TVariables=void>  {
+	loading: boolean;
+	refetch: LazyHookFetch<TVariables>;
 	fetch: LazyHookFetch<TVariables>;
+	fetchMore: LazyHookFetch<TVariables>;
+	data: TData;
 }
 
 export type LazyHookFetch<TVariables> = (variables: TVariables) => Promise<void>;
-
+type UpdateQuery = (prev, {fetchMoreResult}) => any;
+type LazyQueryOptions = {
+	onCompleted?: () => void;
+	displayErrors?: boolean;
+	updateQuery?: UpdateQuery;
+}
 export const useGQLLazyQuery = <TData, TVariables=void>(
 	query: DocumentNode,
 	variables: any = null,
-	options = { onCompleted: () => {}, displayErrors: true }
+	options: LazyQueryOptions = { displayErrors: true }
 ): GqlLazyHookResult<TData, TVariables> => {
 	const [
 		fetch,
@@ -22,8 +30,8 @@ export const useGQLLazyQuery = <TData, TVariables=void>(
 	return {
 		...response,
 		loading,
-		refetch,
-		fetchMore,
+		refetch: async (variables: TVariables) => { await refetch({variables}) },
+		fetchMore: async (variables: TVariables) => { await fetchMore({variables, updateQuery: options.updateQuery}) },
 		fetch: async (variables) => fetch({ variables })
 	};
 };

@@ -1,6 +1,7 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { CURRENT_WORLD_FOLDERS } from "../gql-fragments";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const CREATE_WIKI = gql`
 	${CURRENT_WORLD_FOLDERS}
@@ -10,15 +11,20 @@ export const CREATE_WIKI = gql`
 		}
 	}
 `;
-export const useCreateWiki = () => {
-	const [createWiki, { data, loading, error }] = useMutation(CREATE_WIKI);
+
+interface CreateWikiVariables {
+	name: string;
+	folderId: string;
+}
+
+interface CreateWikiResult {
+	createWiki: MutationMethod<World, CreateWikiVariables>;
+}
+
+export const useCreateWiki = (): CreateWikiResult => {
+	const result = useGQLMutation<World, CreateWikiVariables>(CREATE_WIKI);
 	return {
-		createWiki: async (name, folderId) => {
-			const result = await createWiki({ variables: { name, folderId } });
-			return result.data.createWiki;
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		wiki: data ? data.createWiki : null,
+		...result,
+		createWiki: result.mutate
 	};
 };
