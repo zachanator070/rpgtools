@@ -1,6 +1,8 @@
 import { useMutation } from "@apollo/client";
 import useCurrentUser from "../authentication/useCurrentUser";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const SET_CURRENT_WORLD = gql`
 	mutation setCurrentWorld($worldId: ID!) {
@@ -9,14 +11,24 @@ export const SET_CURRENT_WORLD = gql`
 		}
 	}
 `;
-export const useSetCurrentWorld = () => {
-	const [setCurrentWorld, { loading }] = useMutation(SET_CURRENT_WORLD);
+
+interface SetCurrentWorldVariables {
+	worldId: string;
+}
+
+interface SetCurrentWorldResult {
+	setCurrentWorld: MutationMethod<World, SetCurrentWorldVariables>;
+}
+
+export const useSetCurrentWorld = (): SetCurrentWorldResult => {
 	const { refetch } = useCurrentUser();
-	return {
-		setCurrentWorld: async (world_id) => {
-			await setCurrentWorld({ variables: { worldId: world_id } });
+	const result = useGQLMutation<World, SetCurrentWorldVariables>(SET_CURRENT_WORLD, {}, {
+		onCompleted: async () => {
 			await refetch();
-		},
-		loading,
+		}
+	});
+	return {
+		...result,
+		setCurrentWorld: result.mutate
 	};
 };

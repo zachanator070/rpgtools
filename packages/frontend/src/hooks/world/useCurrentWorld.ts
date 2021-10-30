@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import gql from "graphql-tag";
 import {
@@ -7,6 +6,8 @@ import {
 	CURRENT_WORLD_PINS,
 	CURRENT_WORLD_ROLES,
 } from "../gql-fragments";
+import {World} from "../../types";
+import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 
 export const GET_CURRENT_WORLD = gql`
 	${CURRENT_WORLD_FOLDERS}
@@ -49,15 +50,20 @@ export const GET_CURRENT_WORLD = gql`
 		}
 	}
 `;
-export default () => {
+
+interface CurrentWorldVariables {
+	worldId: string;
+}
+
+interface CurrentWorldResult extends GqlQueryResult<World, CurrentWorldVariables>{
+	currentWorld: World;
+}
+
+export default (): CurrentWorldResult => {
 	const { world_id } = useParams();
-	const { data, loading, error, refetch } = useQuery(GET_CURRENT_WORLD, {
-		variables: { worldId: world_id },
-	});
+	const result = useGQLQuery<World, CurrentWorldVariables>(GET_CURRENT_WORLD, {worldId: world_id});
 	return {
-		currentWorld: data ? data.world : null,
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		refetch,
+		...result,
+		currentWorld: result.data
 	};
 };
