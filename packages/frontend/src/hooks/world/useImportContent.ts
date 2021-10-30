@@ -1,6 +1,7 @@
-import { useGQLMutation } from "../useGQLMutation";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
 import { CURRENT_WORLD_FOLDERS } from "../gql-fragments";
+import {World} from "../../types";
 
 export const IMPORT_CONTENT = gql`
 	${CURRENT_WORLD_FOLDERS}
@@ -13,6 +14,20 @@ export const IMPORT_CONTENT = gql`
 		}
 	}
 `;
-export const useImportContent = () => {
-	return useGQLMutation(IMPORT_CONTENT);
+
+interface ImportContentVariables {
+	folderId: string;
+	zipFile: any;
+}
+
+interface ImportContentResult {
+	importContent: MutationMethod<World, ImportContentVariables>;
+}
+
+export const useImportContent = (): ImportContentResult => {
+	const result = useGQLMutation<World, ImportContentVariables>(IMPORT_CONTENT);
+	return {
+		...result,
+		importContent: result.mutate
+	};
 };

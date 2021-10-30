@@ -1,5 +1,6 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const RENAME_WORLD = gql`
 	mutation renameWorld($worldId: ID!, $newName: String!) {
@@ -9,14 +10,20 @@ export const RENAME_WORLD = gql`
 		}
 	}
 `;
-export const useRenameWorld = () => {
-	const [renameWorld, { data, loading, error }] = useMutation(RENAME_WORLD);
+
+interface RenameWorldVariables {
+	worldId: string;
+	newName: string;
+}
+
+interface RenameWorldResult {
+	renameWorld: MutationMethod<World, RenameWorldVariables>;
+}
+
+export const useRenameWorld = (): RenameWorldResult => {
+	const result = useGQLMutation<World, RenameWorldVariables>(RENAME_WORLD);
 	return {
-		renameWorld: async (worldId, newName) => {
-			await renameWorld({ variables: { worldId, newName } });
-		},
-		loading,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		world: data ? data.renameWorld : null,
+		...result,
+		renameWorld: result.mutate
 	};
 };

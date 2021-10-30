@@ -1,5 +1,6 @@
-import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
+import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
 
 export const CREATE_WORLD = gql`
 	mutation createWorld($name: String!, $public: Boolean!) {
@@ -11,19 +12,20 @@ export const CREATE_WORLD = gql`
 		}
 	}
 `;
-export default (callback) => {
-	const [createWorld, { data, loading, error }] = useMutation(CREATE_WORLD, {
-		onCompleted: callback,
-	});
+
+interface CreateWorldVariables {
+	name: string;
+	public: string;
+}
+
+interface CreateWorldResult {
+	createWorld: MutationMethod<World, CreateWorldVariables>
+}
+
+export default (callback): CreateWorldResult => {
+	const result = useGQLMutation<World, CreateWorldVariables>(CREATE_WORLD, {}, {onCompleted: callback});
 	return {
-		createWorld: async (name, isPublic) => {
-			const response = await createWorld({
-				variables: { name, public: isPublic },
-			});
-			return response.data.createWorld;
-		},
-		world: data ? data.createWorld : null,
-		errors: error ? error.graphQLErrors.map((error) => error.message) : [],
-		loading,
+		...result,
+		createWorld: result.mutate
 	};
 };
