@@ -92,7 +92,7 @@ export interface WikiPage {
     folder: WikiFolder;
 }
 
-export interface ModeledWiki {
+export interface ModeledWiki extends WikiPage {
     model: Model;
     modelColor: string;
 }

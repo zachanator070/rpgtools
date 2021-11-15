@@ -1,6 +1,7 @@
 import * as THREE from "three";
+import {GameControls} from "./GameControls";
 
-export class MoveControls {
+export class MoveControls implements GameControls {
 	constructor(renderRoot, raycaster, mapMesh, selectControls, moveCallback) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;

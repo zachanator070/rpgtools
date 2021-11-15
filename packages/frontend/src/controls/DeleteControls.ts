@@ -1,6 +1,14 @@
 import React from "react";
+import {SelectControls} from "./SelectControls";
+import {PositionedModel} from "../types";
+import {GameControls} from "./GameControls";
 
-export class DeleteControls {
+export class DeleteControls implements GameControls {
+
+	private renderRoot: any
+	private selectControls: SelectControls;
+	private deleteModel: (positionedModel: PositionedModel) => void;
+
 	constructor(renderRoot, selectControls, deleteModel) {
 		this.renderRoot = renderRoot;
 		this.selectControls = selectControls;

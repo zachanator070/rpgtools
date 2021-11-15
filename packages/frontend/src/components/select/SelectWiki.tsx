@@ -3,21 +3,29 @@ import { Button, Select, Spin } from "antd";
 import { useSearchWikiPages } from "../../hooks/wiki/useSearchWikiPages";
 import { SearchOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
+import {WikiPage} from "../../types";
 
-export const SelectWiki = ({
+interface SelectWikiProps <T extends WikiPage>{
+	types: string[];
+	onChange?: (wiki: T) => Promise<void>;
+	style?: any;
+	showClear?: boolean;
+	canAdmin?: boolean;
+}
+export const SelectWiki = <T extends WikiPage>({
 	types,
 	onChange,
 	style,
 	showClear = false,
 	canAdmin,
-}) => {
+}: SelectWikiProps<T>) => {
 	const params = useParams();
 	const { refetch, wikis, loading } = useSearchWikiPages({
 		worldId: params.world_id,
 		types,
 		canAdmin,
 	});
-	const [value, setValue] = useState();
+	const [value, setValue] = useState<string>();
 
 	const options =
 		wikis &&
@@ -34,7 +42,7 @@ export const SelectWiki = ({
 		if (onChange) {
 			for (let wiki of wikis.docs) {
 				if (wiki._id === newValue) {
-					await onChange(wiki);
+					await onChange(wiki as T);
 				}
 			}
 		}

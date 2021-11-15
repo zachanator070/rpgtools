@@ -5,6 +5,10 @@ import { Button, Input, Form, Modal } from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { useSetCharacterAttributes } from "../../hooks/game/useSetCharacterAttributes";
 
+interface DiceAttributeProps {
+	attribute: string;
+	value: string;
+}
 export const DiceAttribute = ({ attribute, value }) => {
 	const { gameChat } = useGameChat();
 	const { currentGame } = useCurrentGame();

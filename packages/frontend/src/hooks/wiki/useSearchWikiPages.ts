@@ -26,7 +26,7 @@ const SEARCH_WIKIS = gql`
 `;
 interface SearchWikiPagesVariables {
 	worldId: string;
-	name: string;
+	name?: string;
 	types: string[];
 	canAdmin: boolean;
 }

@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
 import { CURRENT_WORLD_FOLDERS } from "../gql-fragments";
 import {World} from "../../types";
@@ -17,9 +17,11 @@ export const LOAD_5E_CONTENT = gql`
 
 interface Load5eContentVariables {
 	worldId: string;
+	creatureCodex: boolean;
+	tomeOfBeasts: boolean;
 }
 
-interface Load5eContentResult {
+interface Load5eContentResult extends GqlMutationResult<World,  Load5eContentVariables>{
 	load5eContent: MutationMethod<World, Load5eContentVariables>;
 }
 

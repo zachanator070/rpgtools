@@ -1,4 +1,4 @@
-import { ObjectLoader, Vector3 } from "three";
+import { Vector3 } from "three";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -7,20 +7,32 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 const CAMERA_FOV = 50;
 
 export class ModelRenderer {
+
+	private renderRoot: any;
+	private orbitControls = null;
+	private renderer = null;
+	private camera = null;
+	private scene = null;
+
+	private modelDepth: number;
+	private modelWidth: number;
+	private modelHeight: number;
+
+	private loader = null;
+	private modelMesh = null;
+	private originalModelMesh = null;
+	private modelColor: string = null;
+
+	private aspect: number = 1;
+
 	constructor(
-		renderRoot,
-		modelDepth,
-		modelWidth,
-		modelHeight,
-		onProgress = () => {}
+		renderRoot: any,
+		modelDepth: number,
+		modelWidth: number,
+		modelHeight: number,
+		onProgress = (started: boolean) => {}
 	) {
 		this.renderRoot = renderRoot;
-
-		this.orbitControls = null;
-
-		this.renderer = null;
-		this.camera = null;
-		this.scene = null;
 
 		this.modelDepth = modelDepth;
 		this.modelWidth = modelWidth;
@@ -28,10 +40,6 @@ export class ModelRenderer {
 
 		this.loader = new THREE.LoadingManager(() => onProgress(false));
 		this.loader.onStart = () => onProgress(true);
-
-		this.modelMesh = null;
-		this.originalModelMesh = null;
-		this.modelColor = null;
 
 		this.setupScene();
 
@@ -216,5 +224,29 @@ export class ModelRenderer {
 			});
 			this.scene.add(this.modelMesh);
 		}
+	}
+
+	getModelDepth(): number {
+		return this.modelDepth;
+	}
+
+	getModelHeight(): number {
+		return this.modelHeight;
+	}
+
+	getModelWidth(): number {
+		return this.modelWidth;
+	}
+
+	setModelDepth(depth: number) {
+		this.modelDepth = depth;
+	}
+
+	setModelHeight(height: number) {
+		this.modelHeight = height;
+	}
+
+	setModelWidth(width: number) {
+		this.modelWidth = width;
 	}
 }
