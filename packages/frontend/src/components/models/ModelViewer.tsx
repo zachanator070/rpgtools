@@ -2,6 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer";
 import { Button, Input } from "antd";
 import { LoadingView } from "../LoadingView";
+import {Model} from "../../types";
+
+interface ModelViewerProps {
+	model: Model;
+	width?: number;
+	height?: number;
+	defaultColor: string;
+	showColorControls: boolean;
+	onChangeColor: (color: string) => Promise<any>;
+}
 
 export const ModelViewer = ({
 	model,
@@ -10,8 +20,8 @@ export const ModelViewer = ({
 	defaultColor,
 	showColorControls,
 	onChangeColor,
-}) => {
-	const [renderer, setRenderer] = useState();
+}: ModelViewerProps) => {
+	const [renderer, setRenderer] = useState<ModelRenderer>();
 	const [modelColor, setModelColor] = useState(defaultColor);
 	const renderCanvas = useRef();
 	const [modelLoading, setModelLoading] = useState(true);
@@ -37,9 +47,9 @@ export const ModelViewer = ({
 
 	useEffect(() => {
 		if (renderer && model) {
-			renderer.modelDepth = model.depth;
-			renderer.modelWidth = model.width;
-			renderer.modelHeight = model.height;
+			renderer.setModelDepth(model.depth);
+			renderer.setModelWidth(model.width);
+			renderer.setModelHeight(model.height);
 			renderer.setModel(model);
 		}
 	}, [renderer, model]);

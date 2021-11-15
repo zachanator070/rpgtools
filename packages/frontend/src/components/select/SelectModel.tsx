@@ -1,16 +1,24 @@
-import React, { useState } from "react";
+import React, {CSSProperties, useState} from "react";
 import { Button, Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSearchModels } from "../../hooks/model/useSearchModels";
+import {Model} from "../../types";
+
+interface SelectModelProps {
+	onChange?: (model: Model) => Promise<any>;
+	style?: CSSProperties;
+	defaultModel?: Model;
+	showClear?: boolean;
+}
 
 export const SelectModel = ({
 	onChange,
 	style,
 	defaultModel,
 	showClear = true,
-}) => {
+}: SelectModelProps) => {
 	const { searchModels, models, loading } = useSearchModels();
-	const [value, setValue] = useState();
+	const [value, setValue] = useState<string>();
 
 	const options = models.map((model) => {
 		return (
@@ -56,7 +64,7 @@ export const SelectModel = ({
 						await setValue(null);
 						await onChange(null);
 					}}
-					type={"danger"}
+					danger={true}
 				>
 					Clear
 				</Button>

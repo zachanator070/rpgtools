@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import { PermissionEditor } from "./permissions/PermissionEditor";
-import { Form, Upload, Button, Col, Input, Row, Modal, Checkbox } from "antd";
+import { Button, Col, Input, Row, Modal, Checkbox } from "antd";
 import { useRenameWorld } from "../hooks/world/useRenameWorld";
 import { WORLD } from "../../../common/src/type-constants";
 import { LoadingView } from "./LoadingView";
@@ -10,11 +10,11 @@ import { useHistory } from "react-router-dom";
 
 export default () => {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
-	const [newName, setNewName] = useState();
+	const [newName, setNewName] = useState<string>();
 	const { renameWorld, loading } = useRenameWorld();
 	const { load5eContent, loading: contentLoading } = useLoad5eContent();
-	const [getCC, setGetCC] = useState();
-	const [getTob, setGetTob] = useState();
+	const [getCC, setGetCC] = useState<boolean>();
+	const [getTob, setGetTob] = useState<boolean>();
 	const history = useHistory();
 
 	if (currentWorldLoading) {
@@ -60,7 +60,7 @@ export default () => {
 							<Button
 								className={"margin-md-top"}
 								onClick={async () => {
-									await renameWorld(currentWorld._id, newName);
+									await renameWorld({worldId: currentWorld._id, newName});
 								}}
 								disabled={loading}
 							>

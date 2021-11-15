@@ -1,6 +1,13 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import {GameControls} from "./GameControls";
 
-export class CameraControls {
+export class CameraControls implements GameControls {
+
+	private enabled: boolean;
+	private controls: any;
+	private renderRoot: any
+	private camera: any;
+
 	constructor(renderRoot, camera) {
 		this.renderRoot = renderRoot;
 		this.camera = camera;

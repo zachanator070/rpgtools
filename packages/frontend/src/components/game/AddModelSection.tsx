@@ -6,14 +6,20 @@ import { useAddModel } from "../../hooks/game/useAddModel";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { SelectWiki } from "../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
+import {ModeledWiki} from "../../types";
+
+interface SelectedModel {
+	model: any;
+	wiki?: any;
+}
 
 export const AddModelSection = () => {
-	const [selectedModel, setSelectedModel] = useState();
+	const [selectedModel, setSelectedModel] = useState<SelectedModel>();
 	const { currentGame } = useCurrentGame();
 	const { addModel } = useAddModel();
-	const [modelColor, setModelColor] = useState();
+	const [modelColor, setModelColor] = useState<string>();
 
-	const [wikiSearch, setWikiSearch] = useState(true);
+	const [wikiSearch, setWikiSearch] = useState<boolean>(true);
 
 	useEffect(() => {
 		(async () => {
@@ -38,14 +44,16 @@ export const AddModelSection = () => {
 			{wikiSearch ? (
 				<SelectWiki
 					types={MODELED_WIKI_TYPES}
-					onChange={async (wiki) => {
-						await setSelectedModel({ model: wiki.model, wiki });
+					onChange={async (wiki: ModeledWiki) => {
+						setSelectedModel({model: wiki.model, wiki});
 						await setModelColor(wiki.modelColor);
 					}}
 				/>
 			) : (
 				<SelectModel
-					onChange={async (model) => await setSelectedModel({ model })}
+					onChange={async (model) => {
+						await setSelectedModel({ model })
+					}}
 					showClear={false}
 				/>
 			)}
@@ -71,7 +79,7 @@ export const AddModelSection = () => {
 						model={selectedModel.model}
 						defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor}
 						showColorControls={true}
-						onChangeColor={setModelColor}
+						onChangeColor={async (color) => setModelColor(color)}
 					/>
 				</div>
 			)}

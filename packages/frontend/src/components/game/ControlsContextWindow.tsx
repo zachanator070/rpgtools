@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CloseOutlined, MenuOutlined } from "@ant-design/icons";
 import {
 	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS,
+	FOG_CONTROLS, GameRenderer,
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
@@ -13,12 +13,17 @@ import { ModelInfo } from "./ModelInfo";
 import { GameLocationSettings } from "./GameLocationSettings";
 import { AddModelSection } from "./AddModelSection";
 
+interface ControlsContextWindowProps {
+	renderer: GameRenderer;
+	controlsMode: string;
+	setGameWikiId: (id: string) => void
+}
 export const ControlsContextWindow = ({
 	renderer,
 	controlsMode,
 	setGameWikiId,
 }) => {
-	const [visible, setVisible] = useState();
+	const [visible, setVisible] = useState<boolean>();
 
 	useEffect(() => {
 		(async () => {

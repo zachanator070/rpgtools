@@ -15,6 +15,7 @@ import { DeleteControls } from "../controls/DeleteControls";
 import { SelectModelControls } from "../controls/SelectModelControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import EventEmitter from "events";
+import {Image, Model, PathNode, Place, PositionedModel} from "../types";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -34,14 +35,50 @@ export const FOG_Y_POSITION = 0.1;
 export const GROUND_Y_POSITION = -0.01;
 
 export class GameRenderer extends EventEmitter {
+
+	private renderer;
+	private camera;
+	private scene;
+	private light;
+	private raycaster;
+	private selectControls;
+	private selectModelControls;
+	private moveControls;
+	private rotateControls;
+	private paintControls;
+	private deleteControls;
+	private fogControls;
+	private meshedModels = [];
+	private originalMeshedModels = [];
+	private mapMesh;
+	private groundMesh;
+	private mapCanvas;
+	private mapTexture;
+	private cameraControls: CameraControls;
+
+	private renderRoot: any;
+	private mapImage: Image;
+	private addStroke: (stroke: PathNode) => void;
+	private setModelPosition: (model: PositionedModel) => void;
+	private deleteModel: (model: PositionedModel) => void;
+	private addFogStroke: (stroke: PathNode) => void;
+
+	private mouseCoords: Vector2;
+
+	private currentControls = CAMERA_CONTROLS;
+
+	private loader: THREE.LoadingManager;
+	private pixelsPerFoot: number;
+
 	constructor(
-		renderRoot,
-		mapImage,
-		addStroke,
-		onProgress = () => {},
-		setModelPosition,
-		deleteModel,
-		addFogStroke
+		renderRoot: any,
+		mapImage: Image,
+		addStroke: (stroke: PathNode) => void,
+		onProgress = (message: string, current: number, max: number) => {},
+		setModelPosition: (model: PositionedModel) => void,
+		deleteModel: (model: PositionedModel) => void,
+		addFogStroke: (stroke: PathNode) => void,
+		pixelsPerFoot: number
 	) {
 		super();
 		this.renderRoot = renderRoot;
@@ -51,23 +88,7 @@ export class GameRenderer extends EventEmitter {
 		this.deleteModel = deleteModel;
 		this.addFogStroke = addFogStroke;
 
-		this.renderer = null;
-		this.camera = null;
-		this.scene = null;
-
-		this.light = null;
-
-		this.raycaster = null;
 		this.mouseCoords = new Vector2();
-
-		this.selectControls = null;
-		this.selectModelControls = null;
-		this.moveControls = null;
-		this.rotateControls = null;
-		this.paintControls = null;
-		this.deleteControls = null;
-		this.fogControls = null;
-
 		this.currentControls = CAMERA_CONTROLS;
 
 		this.loader = new THREE.LoadingManager();
@@ -76,10 +97,9 @@ export class GameRenderer extends EventEmitter {
 			await onProgress("", 0, 1);
 		};
 
-		this.pixelsPerFoot = mapImage ? mapImage.pixelsPerFoot : 1;
-
-		this.meshedModels = [];
-		this.originalMeshedModels = [];
+		if(pixelsPerFoot) {
+			this.pixelsPerFoot = pixelsPerFoot;
+		}
 
 		this.setupScene();
 		this.setupRaycaster();
@@ -401,7 +421,7 @@ export class GameRenderer extends EventEmitter {
 		this.emit(CONTROLS_SETUP_EVENT);
 	}
 
-	addModel(positionedModel) {
+	addModel(positionedModel: PositionedModel) {
 		for (let model of this.meshedModels) {
 			if (model.positionedModel._id === positionedModel._id) {
 				return;

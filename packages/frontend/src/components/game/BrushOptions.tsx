@@ -10,8 +10,13 @@ import {
 	DEFAULT_BRUSH_SIZE,
 	DEFAULT_BRUSH_TYPE,
 } from "../../controls/PaintControls";
+import {GameRenderer} from "../../rendering/GameRenderer";
 
-export const BrushOptions = ({ renderer }) => {
+interface BrushOptionsProps {
+	renderer: GameRenderer
+}
+
+export const BrushOptions = ({ renderer }: BrushOptionsProps) => {
 	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
 	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);

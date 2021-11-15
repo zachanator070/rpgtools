@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
 
 export const RENAME_WORLD = gql`
@@ -16,7 +16,7 @@ interface RenameWorldVariables {
 	newName: string;
 }
 
-interface RenameWorldResult {
+interface RenameWorldResult extends GqlMutationResult<World, RenameWorldVariables>{
 	renameWorld: MutationMethod<World, RenameWorldVariables>;
 }
 

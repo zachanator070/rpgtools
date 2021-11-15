@@ -9,7 +9,12 @@ import { useRevokeRolePermission } from "../../hooks/authorization/useRevokeRole
 import { SelectUser } from "../select/SelectUser";
 import { SelectRole } from "../select/SelectRole";
 
-export const PermissionEditor = ({ subject, subjectType, refetch }) => {
+interface PermissionEditorProps {
+	subject: any;
+	subjectType: string;
+	refetch?: () => Promise<void>
+}
+export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEditorProps) => {
 	const [permissionGroup, setPermissionGroup] = useState("users");
 	const { grantUserPermission } = useGrantUserPermission();
 	const { grantRolePermission } = useGrantRolePermission();
