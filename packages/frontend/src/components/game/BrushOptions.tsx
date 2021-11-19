@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Checkbox, Input, Select, Slider } from "antd";
 import {
 	BRUSH_CIRCLE,
@@ -33,7 +33,7 @@ export const BrushOptions = ({ renderer }: BrushOptionsProps) => {
 					onChange={async (e) => {
 						const value = e.target.value;
 						await setBrushColor(value);
-						renderer.paintControls.setBrushColor(value);
+						renderer.getPaintControls().setBrushColor(value);
 					}}
 				/>
 			</div>
@@ -44,7 +44,7 @@ export const BrushOptions = ({ renderer }: BrushOptionsProps) => {
 					style={{ width: 120 }}
 					onChange={async (value) => {
 						await setBrushType(value);
-						renderer.paintControls.setBrushType(value);
+						renderer.getPaintControls().setBrushType(value);
 					}}
 				>
 					<Select.Option value={BRUSH_LINE} default>
@@ -63,7 +63,7 @@ export const BrushOptions = ({ renderer }: BrushOptionsProps) => {
 					value={brushSize}
 					onChange={async (value) => {
 						await setBrushSize(value);
-						renderer.paintControls.setBrushSize(value);
+						renderer.getPaintControls().setBrushSize(value);
 					}}
 				/>
 			</div>
@@ -73,7 +73,7 @@ export const BrushOptions = ({ renderer }: BrushOptionsProps) => {
 					checked={fillBrush}
 					onChange={async (e) => {
 						await setFillBrush(e.target.checked);
-						renderer.paintControls.setBrushFill(e.target.checked);
+						renderer.getPaintControls().setBrushFill(e.target.checked);
 					}}
 				/>
 			</div>

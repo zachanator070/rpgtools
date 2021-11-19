@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import useCurrentGame from "./useCurrentGame";
-import {GqlMutationResult, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import { GAME_CHARACTERS } from "../gql-fragments";
 import {Game} from "../../types";
 import {GqlQueryResult} from "../useGQLQuery";
@@ -26,13 +26,13 @@ interface SetCharacterAttributesVariables {
 }
 
 interface SetCharacterAttributesResult extends GqlMutationResult<Game, SetCharacterAttributesVariables>{
-	setCharacterAttributes: Game
+	setCharacterAttributes: MutationMethod<Game, SetCharacterAttributesVariables>
 }
 export const useSetCharacterAttributes = (): SetCharacterAttributesResult => {
 	const { currentGame } = useCurrentGame();
 	const result = useGQLMutation<Game, SetCharacterAttributesVariables>(SET_CHARACTER_ATTRIBUTES, { gameId: currentGame._id });
 	return {
 		...result,
-		setCharacterAttributes: result.data
+		setCharacterAttributes: result.mutate
 	};
 };

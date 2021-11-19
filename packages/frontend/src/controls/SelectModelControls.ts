@@ -2,10 +2,19 @@ import * as THREE from "three";
 // import { SubdivisionModifier } from "three/examples/jsm/modifiers/SubdivisionModifier";
 import { MeshBasicMaterial, Vector3 } from "three";
 import EventEmitter from "events";
+import {GameControls} from "./GameControls";
+import {PositionedModel} from "../types";
 
 export const MODEL_SELECTED_EVENT = "model selected";
 
-export class SelectModelControls extends EventEmitter {
+export class SelectModelControls extends EventEmitter implements GameControls {
+	private renderRoot: any;
+	private camera: any;
+	private scene: any;
+	private selectControls: any;
+	private selectedPositionedModel: PositionedModel;
+	private glow: any;
+
 	constructor(renderRoot, camera, scene, selectControls) {
 		super();
 		this.renderRoot = renderRoot;

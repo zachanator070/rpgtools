@@ -22,7 +22,7 @@ export const ControlsContextWindow = ({
 	renderer,
 	controlsMode,
 	setGameWikiId,
-}) => {
+}: ControlsContextWindowProps) => {
 	const [visible, setVisible] = useState<boolean>();
 
 	useEffect(() => {

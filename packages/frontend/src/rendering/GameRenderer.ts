@@ -34,6 +34,11 @@ export const DRAW_Y_POSITION = 0.05;
 export const FOG_Y_POSITION = 0.1;
 export const GROUND_Y_POSITION = -0.01;
 
+export interface MeshedModel {
+	positionedModel: PositionedModel;
+	mesh: any;
+}
+
 export class GameRenderer extends EventEmitter {
 
 	private renderer;
@@ -48,7 +53,7 @@ export class GameRenderer extends EventEmitter {
 	private paintControls;
 	private deleteControls;
 	private fogControls;
-	private meshedModels = [];
+	private meshedModels: MeshedModel[] = [];
 	private originalMeshedModels = [];
 	private mapMesh;
 	private groundMesh;
@@ -597,4 +602,13 @@ export class GameRenderer extends EventEmitter {
 			this.scene.add(meshedModel.mesh);
 		}
 	};
+
+	getPaintControls(): PaintControls {
+		return this.paintControls;
+	}
+
+	getMeshedModels(): MeshedModel[] {
+		return this.meshedModels;
+	}
+
 }
