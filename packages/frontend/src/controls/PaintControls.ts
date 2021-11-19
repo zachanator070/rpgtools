@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
+import {GameControls} from "./GameControls";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -12,7 +13,29 @@ export const DEFAULT_BRUSH_FILL = true;
 export const DEFAULT_BRUSH_SIZE = 5;
 export const DEFAULT_MAP_SIZE = 50;
 
-export class PaintControls {
+export class PaintControls implements GameControls {
+
+	private renderRoot: any;
+	private raycaster: any;
+	private scene: any;
+	private location: any;
+	private mapMesh: any;
+	private strokeCallback: any;
+	private drawCanvas: HTMLCanvasElement;
+	private drawTexture: THREE.CanvasTexture;
+	private drawMaterial: THREE.MeshPhongMaterial;
+	private drawMesh: THREE.Mesh;
+	private drawMeshOpacity: number;
+	private pathBeingPainted: any[];
+	private strokeId: any;
+	private brushType: string;
+	private brushColor: string;
+	private brushFill: boolean;
+	private brushSize: number;
+	private strokesAlreadyDrawn: any[];
+	private paintBrushMesh: any;
+	private paintBrushMaterial: any;
+
 	constructor(
 		renderRoot,
 		raycaster,
@@ -115,7 +138,7 @@ export class PaintControls {
 			});
 		}
 		this.setBrushColor(this.brushColor);
-		let geometry = null;
+		let geometry;
 		if (this.brushType === BRUSH_CIRCLE || this.brushType === BRUSH_LINE) {
 			geometry = new THREE.CylinderGeometry(
 				this.brushSize / 2,
@@ -328,7 +351,7 @@ export class PaintControls {
 		this.paintBrushMesh.visible = false;
 	};
 
-	teardown = () => {
+	tearDown = () => {
 		this.disable();
 		this.renderRoot.removeEventListener("mousemove", this.updateBrushPosition);
 		this.scene.remove(this.drawMesh);

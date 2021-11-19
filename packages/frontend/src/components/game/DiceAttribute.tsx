@@ -7,9 +7,9 @@ import { useSetCharacterAttributes } from "../../hooks/game/useSetCharacterAttri
 
 interface DiceAttributeProps {
 	attribute: string;
-	value: string;
+	value: number;
 }
-export const DiceAttribute = ({ attribute, value }) => {
+export const DiceAttribute = ({ attribute, value }: DiceAttributeProps) => {
 	const { gameChat } = useGameChat();
 	const { currentGame } = useCurrentGame();
 	const { setCharacterAttributes } = useSetCharacterAttributes();
@@ -30,11 +30,11 @@ export const DiceAttribute = ({ attribute, value }) => {
 					cursor: "pointer",
 				}}
 				onClick={async () => {
-					let parsedBonus = value;
+					let parsedBonus = value.toString();
 					if (value > 0) {
 						parsedBonus = "+" + parsedBonus;
 					}
-					await gameChat(currentGame._id, `/roll 1d20${value !== 0 ? parsedBonus : ""}`);
+					await gameChat({gameId: currentGame._id, message: `/roll 1d20${value !== 0 ? parsedBonus : ""}`});
 				}}
 			>
 				<h2>{attribute}</h2>
@@ -65,7 +65,7 @@ export const DiceAttribute = ({ attribute, value }) => {
 					onFinish={async ({ bonus }) => {
 						const variables = {};
 						variables[attribute.toLowerCase()] = parseInt(bonus);
-						await setCharacterAttributes(variables);
+						await setCharacterAttributes({...variables});
 						setEditVisibility(false);
 					}}
 				>

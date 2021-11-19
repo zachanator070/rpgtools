@@ -1,4 +1,13 @@
-export class RotateControls {
+import {GameControls} from "./GameControls";
+
+export class RotateControls implements GameControls {
+
+	private renderRoot: any;
+	private selectControls: any;
+	private raycaster: any;
+	private mapMesh: any;
+	private rotateCallback: any;
+
 	constructor(renderRoot, raycaster, mapMesh, selectControls, rotateCallback) {
 		this.renderRoot = renderRoot;
 		this.selectControls = selectControls;

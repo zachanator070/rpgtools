@@ -16,8 +16,9 @@ export class DeleteControls implements GameControls {
 	}
 
 	deleteModelEvent = () => {
-		if (this.selectControls.selectedMeshedModel) {
-			this.deleteModel(this.selectControls.selectedMeshedModel.positionedModel);
+		const meshedModel = this.selectControls.getSelectedMeshedModel();
+		if (this.selectControls && meshedModel) {
+			this.deleteModel(meshedModel.positionedModel);
 			this.selectControls.clearSelection();
 		}
 	};

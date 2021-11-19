@@ -1,7 +1,15 @@
 import * as THREE from "three";
 import {GameControls} from "./GameControls";
+import {SelectControls} from "./SelectControls";
 
 export class MoveControls implements GameControls {
+
+	private renderRoot: any;
+	private raycaster: any;
+	private mapMesh: any;
+	private selectControls: SelectControls;
+	private moveCallback: any;
+
 	constructor(renderRoot, raycaster, mapMesh, selectControls, moveCallback) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
@@ -11,7 +19,8 @@ export class MoveControls implements GameControls {
 	}
 
 	moveModel = () => {
-		if (!this.selectControls.selectedMeshedModel) {
+		const selectedMeshedModel = this.selectControls.getSelectedMeshedModel();
+		if (!selectedMeshedModel) {
 			return;
 		}
 		const mapIntersects = this.raycaster.intersectObject(this.mapMesh);
@@ -23,7 +32,7 @@ export class MoveControls implements GameControls {
 		const hypotenuse = origin.distanceTo(mapIntersect);
 		const theta = Math.asin(origin.y / hypotenuse);
 		const newHypotenuseLength =
-			this.selectControls.intersectionPoint.y / Math.sin(theta);
+			this.selectControls.getIntersectionPoint().y / Math.sin(theta);
 		const hypotenuseRatio = newHypotenuseLength / hypotenuse;
 		const newHypotenuse = new THREE.Line3(
 			mapIntersect,
@@ -34,24 +43,25 @@ export class MoveControls implements GameControls {
 		const newModelPosition = new THREE.Vector3();
 		const mapPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
 		mapPlane.projectPoint(newModelIntersection, newModelPosition);
-		this.selectControls.selectedMeshedModel.mesh.position.copy(
+		selectedMeshedModel.mesh.position.copy(
 			newModelPosition
 		);
 	};
 
 	moveDone = () => {
-		if (this.selectControls.selectedMeshedModel) {
-			this.selectControls.selectedMeshedModel.positionedModel.lookAtX +=
-				this.selectControls.selectedMeshedModel.mesh.position.x -
-				this.selectControls.selectedMeshedModel.positionedModel.x;
-			this.selectControls.selectedMeshedModel.positionedModel.lookAtZ +=
-				this.selectControls.selectedMeshedModel.mesh.position.z -
-				this.selectControls.selectedMeshedModel.positionedModel.z;
+		const selectedMeshedModel = this.selectControls.getSelectedMeshedModel();
+		if (selectedMeshedModel) {
+			selectedMeshedModel.positionedModel.lookAtX +=
+				selectedMeshedModel.mesh.position.x -
+				selectedMeshedModel.positionedModel.x;
+			selectedMeshedModel.positionedModel.lookAtZ +=
+				selectedMeshedModel.mesh.position.z -
+				selectedMeshedModel.positionedModel.z;
 
-			this.selectControls.selectedMeshedModel.positionedModel.x = this.selectControls.selectedMeshedModel.mesh.position.x;
-			this.selectControls.selectedMeshedModel.positionedModel.z = this.selectControls.selectedMeshedModel.mesh.position.z;
+			selectedMeshedModel.positionedModel.x = selectedMeshedModel.mesh.position.x;
+			selectedMeshedModel.positionedModel.z = selectedMeshedModel.mesh.position.z;
 
-			this.moveCallback(this.selectControls.selectedMeshedModel);
+			this.moveCallback(selectedMeshedModel);
 		}
 		this.selectControls.clearSelection();
 	};

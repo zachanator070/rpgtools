@@ -1,5 +1,14 @@
-export class SelectControls {
-	constructor(renderRoot, raycaster, renderer) {
+import {GameControls} from "./GameControls";
+import {GameRenderer, MeshedModel} from "../rendering/GameRenderer";
+
+export class SelectControls implements GameControls {
+	private renderRoot: any;
+	private raycaster: any;
+	private renderer: GameRenderer;
+	private selectedMeshedModel: MeshedModel;
+	private intersectionPoint: any;
+
+	constructor(renderRoot: any, raycaster: any, renderer: GameRenderer) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
 		this.renderer = renderer;
@@ -19,7 +28,7 @@ export class SelectControls {
 
 	selectModel = () => {
 		const allObjects = [];
-		for (let model of this.renderer.meshedModels) {
+		for (let model of this.renderer.getMeshedModels()) {
 			allObjects.push(...this.getAllChildren(model.mesh));
 			allObjects.push(model.mesh);
 		}
@@ -35,7 +44,7 @@ export class SelectControls {
 			}
 			selectedMesh = selectedMesh.parent;
 		}
-		for (let meshedModel of this.renderer.meshedModels) {
+		for (let meshedModel of this.renderer.getMeshedModels()) {
 			if (meshedModel.mesh.id === selectedMesh.id) {
 				this.selectedMeshedModel = meshedModel;
 				break;
@@ -60,4 +69,12 @@ export class SelectControls {
 	tearDown = () => {
 		this.renderRoot.removeEventListener("mousedown", this.selectModel);
 	};
+
+	getSelectedMeshedModel(): MeshedModel {
+		return this.selectedMeshedModel;
+	}
+
+	getIntersectionPoint() {
+		return this.intersectionPoint;
+	}
 }
