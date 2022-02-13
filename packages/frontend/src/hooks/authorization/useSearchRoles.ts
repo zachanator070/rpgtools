@@ -15,7 +15,7 @@ const SEARCH_ROLES = gql`
 `;
 
 interface SearchRolesVariables {
-	worldId: string;
+	worldId?: string;
 	name?: string;
 	canAdmin?: boolean;
 }

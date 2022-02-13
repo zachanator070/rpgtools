@@ -23,7 +23,7 @@ export const ADD_FOG_STROKE = gql`
 	}
 `;
 
-interface AddStrokeVariables {
+export interface AddStrokeVariables {
 	gameId?: string;
 	path: PathNodeInput[];
 	type: string;

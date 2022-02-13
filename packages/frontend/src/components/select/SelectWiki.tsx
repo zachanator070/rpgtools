@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import {WikiPage} from "../../types";
 
 interface SelectWikiProps <T extends WikiPage>{
-	types: string[];
+	types?: string[];
 	onChange?: (wiki: T) => Promise<void>;
 	style?: any;
 	showClear?: boolean;

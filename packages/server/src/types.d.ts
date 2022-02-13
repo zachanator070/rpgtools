@@ -513,7 +513,7 @@ export interface WorldService {
 	updatePin: (context: SecurityContext, pinId: string, pageId: string) => Promise<World>;
 	deletePin: (context: SecurityContext, pinId: string) => Promise<World>;
 	getWorld: (context: SecurityContext, worldId: string) => Promise<World>;
-	getWorlds: (context: SecurityContext, page: number) => Promise<PaginatedResult<World>>;
+	getWorlds: (context: SecurityContext, name: string, page: number) => Promise<PaginatedResult<World>>;
 }
 
 export interface ModelService {

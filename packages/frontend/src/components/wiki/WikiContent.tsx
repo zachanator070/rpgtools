@@ -8,8 +8,14 @@ import { MODELED_WIKI_TYPES, PLACE } from "../../../../common/src/type-constants
 import { Button, Tooltip } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ModelViewer } from "../models/ModelViewer";
+import {WikiPage} from "../../types";
 
-export const WikiContent = ({ currentWiki, wikiLoading }) => {
+interface WikiContentProps {
+	currentWiki: WikiPage;
+	wikiLoading: boolean;
+}
+
+export const WikiContent = ({ currentWiki, wikiLoading }: WikiContentProps) => {
 	const history = useHistory();
 
 	const { currentWorld, loading } = useCurrentWorld();

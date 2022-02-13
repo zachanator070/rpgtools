@@ -63,7 +63,7 @@ export const DiceAttribute = ({ attribute, value }: DiceAttributeProps) => {
 						bonus: value,
 					}}
 					onFinish={async ({ bonus }) => {
-						const variables = {};
+						const variables: any = {};
 						variables[attribute.toLowerCase()] = parseInt(bonus);
 						await setCharacterAttributes({...variables});
 						setEditVisibility(false);

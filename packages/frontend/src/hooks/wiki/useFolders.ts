@@ -20,7 +20,7 @@ const FOLDERS = gql`
 interface FoldersVariables {
 	worldId: string;
 	name?: string;
-	canAdmin?: string;
+	canAdmin?: boolean;
 }
 
 interface FoldersResult extends GqlQueryResult<WikiFolder[], FoldersVariables>{

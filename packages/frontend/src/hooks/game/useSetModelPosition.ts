@@ -13,7 +13,7 @@ export const SET_MODEL_POSITION = gql`
 	}
 `;
 
-interface SetModelPositionVariables {
+export interface SetModelPositionVariables {
 	gameId: string;
 	positionedModelId: string;
 	x: number;
@@ -25,6 +25,7 @@ interface SetModelPositionVariables {
 interface SetModelPositionResult extends GqlMutationResult<Game, SetModelPositionVariables>{
 	setModelPosition: MutationMethod<Game, SetModelPositionVariables>;
 }
+
 export const useSetModelPosition = (): SetModelPositionResult => {
 	const { currentGame } = useCurrentGame();
 	const returnValues = useGQLMutation<Game, SetModelPositionVariables>(SET_MODEL_POSITION, {gameId: currentGame._id});

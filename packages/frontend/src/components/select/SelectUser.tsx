@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, {CSSProperties, useState} from "react";
 import { Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSearchUsers } from "../../hooks/authentication/useSearchUsers";
 
-export const SelectUser = ({ onChange, style }) => {
-	const { searchUsers, users, loading } = useSearchUsers();
-	const [value, setValue] = useState();
+interface SelectUserProps {
+	onChange: (userId: string) => Promise<any>;
+	style?: CSSProperties;
+}
 
-	const options = users.map((user) => {
+export const SelectUser = ({ onChange, style }: SelectUserProps) => {
+	const { searchUsers, users, loading } = useSearchUsers();
+	const [value, setValue] = useState<string>();
+
+	const options = users.docs.map((user) => {
 		return (
 			<Select.Option key={user._id} value={user._id}>
 				{user.username}
@@ -23,7 +28,7 @@ export const SelectUser = ({ onChange, style }) => {
 			filterOption={false}
 			notFoundContent={loading ? <Spin size="small" /> : null}
 			onSearch={async (term) => {
-				await searchUsers(term);
+				await searchUsers({username: term});
 			}}
 			onSelect={async (newValue) => {
 				await setValue(newValue);

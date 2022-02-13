@@ -5,14 +5,13 @@ import { GameChat } from "./GameChat";
 import { ToolOptions } from "./ToolOptions";
 import {
 	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS,
+	FOG_CONTROLS, GameRenderer,
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
 import { DiceOptions } from "./DiceOptions";
 import { useGameChatSubscription } from "../../hooks/game/useGameChatSubscription";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import { useCurrentCharacter } from "../../hooks/game/useCurrentCharacter";
 
 const { TabPane } = Tabs;
@@ -25,9 +24,15 @@ const GAME_CONTROLS_WITH_CONTEXT = [
 	FOG_CONTROLS,
 ];
 
-export const GameDrawer = ({ renderer, controlsMode, setGameWikiId }) => {
-	const [visible, setVisible] = useState(true);
-	const [activeKey, setActiveKey] = useState("1");
+interface GameDrawerProps {
+	renderer: GameRenderer;
+	controlsMode: string;
+	setGameWikiId: (wikiId: string) => void;
+}
+
+export const GameDrawer = ({ renderer, controlsMode, setGameWikiId }: GameDrawerProps) => {
+	const [visible, setVisible] = useState<boolean>(true);
+	const [activeKey, setActiveKey] = useState<string>("1");
 	const { gameChat } = useGameChatSubscription();
 	const { currentCharacter } = useCurrentCharacter();
 

@@ -29,7 +29,12 @@ import { LeaveGameButton } from "./LeaveGameButton";
 import { PermissionModal } from "../modals/PermissionModal";
 import { GAME } from "../../../../common/src/type-constants";
 
-export const GameControlsToolbar = ({ controlsMode, setControlsMode }) => {
+interface GameControlsToolbarProps {
+	controlsMode: string;
+	setControlsMode: (mode: string) => void;
+}
+
+export const GameControlsToolbar = ({ controlsMode, setControlsMode }: GameControlsToolbarProps) => {
 	const { currentGame, loading, refetch: refetchCurrentGame } = useCurrentGame();
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 

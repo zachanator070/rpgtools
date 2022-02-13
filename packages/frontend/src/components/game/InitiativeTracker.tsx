@@ -4,6 +4,7 @@ import { InitiativeTrackerDummyCard } from "./InitiativeTrackerDummyCard";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { useSetCharacterOrder } from "../../hooks/game/useSetCharacterOrder";
 import { useGameRosterSubscription } from "../../hooks/game/useGameRosterSubscription";
+import {GameCharacter} from "../../types";
 
 export const InitiativeTracker = () => {
 	const { currentGame } = useCurrentGame();
@@ -12,7 +13,7 @@ export const InitiativeTracker = () => {
 		loading: setCharacterLoading,
 	} = useSetCharacterOrder();
 	const { gameRosterChange } = useGameRosterSubscription();
-	const [roster, setRoster] = useState();
+	const [roster, setRoster] = useState<GameCharacter[]>();
 
 	useEffect(() => {
 		if (currentGame) {
@@ -41,7 +42,7 @@ export const InitiativeTracker = () => {
 				position: "absolute",
 				top: 0,
 				width: "100%",
-				backgroundColo: "white",
+				backgroundColor: "white",
 				display: "flex",
 				flexDirection: "row",
 				justifyContent: "space-between",

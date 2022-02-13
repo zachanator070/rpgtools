@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from "react";
+import React, {useReducer} from "react";
 import tetrahedron from "../../icons/tetrahedron.svg";
 import cube from "../../icons/cube.svg";
 import octahedron from "../../icons/octahedron.svg";
@@ -8,7 +8,7 @@ import icosahedron from "../../icons/icosahedron.svg";
 import doubleDecahedron from "../../icons/double-decahedron.svg";
 
 import { DiceIcon } from "./DiceIcon";
-import {Button, InputNumber} from "antd";
+import {Button} from "antd";
 import { useGameChat } from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { ToolTip } from "../ToolTip";
@@ -95,7 +95,7 @@ export const DiceRoller = () => {
 					diceCommand += getDiceCommand(d20);
 					diceCommand += getDiceCommand(d100);
 					diceCommand = "/roll " + diceCommand;
-					await gameChat(currentGame._id, diceCommand);
+					await gameChat({gameId: currentGame._id, message: diceCommand});
 				}}
 			>
 				Roll

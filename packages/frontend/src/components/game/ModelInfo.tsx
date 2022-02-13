@@ -7,14 +7,20 @@ import { useSetPositionedModelWiki } from "../../hooks/game/useSetPositionedMode
 import { useGameModelPositionedSubscription } from "../../hooks/game/useGameModelPosistionedSubscription";
 import { LoadingView } from "../LoadingView";
 import { useDeletePositionedModel } from "../../hooks/game/useDeletePositionedModel";
-import { CONTROLS_SETUP_EVENT } from "../../rendering/GameRenderer";
+import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../rendering/GameRenderer";
 import { MODEL_SELECTED_EVENT } from "../../controls/SelectModelControls";
+import {PositionedModel, WikiPage} from "../../types";
 
-export const ModelInfo = ({ renderer, setGameWikiId }) => {
+interface ModelInfoProps {
+	renderer: GameRenderer,
+	setGameWikiId: (wikiId: string) => Promise<any>
+}
+
+export const ModelInfo = ({ renderer, setGameWikiId }: ModelInfoProps) => {
 	const { currentGame, loading } = useCurrentGame();
-	const [positionedModel, setPositionedModel] = useState();
-	const [newWiki, setNewWiki] = useState();
-	const [color, setColor] = useState();
+	const [positionedModel, setPositionedModel] = useState<PositionedModel>();
+	const [newWiki, setNewWiki] = useState<WikiPage>();
+	const [color, setColor] = useState<string>();
 	const { setModelColor } = useSetModelColor();
 	const { setPositionedModelWiki } = useSetPositionedModelWiki();
 	const { gameModelPositioned } = useGameModelPositionedSubscription();
@@ -84,7 +90,7 @@ export const ModelInfo = ({ renderer, setGameWikiId }) => {
 		return <LoadingView />;
 	}
 
-	let content = null;
+	let content;
 
 	let name = null;
 	if (positionedModel) {
@@ -115,7 +121,7 @@ export const ModelInfo = ({ renderer, setGameWikiId }) => {
 					<div className={"margin-md"}>
 						<span className={"margin-md-right"}>Set Wiki Page:</span>
 						<SelectWiki
-							onChange={async (wiki) => await setNewWiki(wiki)}
+							onChange={async (wiki) => setNewWiki(wiki)}
 							showClear={true}
 						/>
 						<span className={"margin-md-left"}>
@@ -174,7 +180,7 @@ export const ModelInfo = ({ renderer, setGameWikiId }) => {
 						</div>
 						<div>
 							<Button
-								type={"danger"}
+								danger={true}
 								onClick={async () => {
 									await renderer.selectModelControls.select();
 									await deletePositionedModel({

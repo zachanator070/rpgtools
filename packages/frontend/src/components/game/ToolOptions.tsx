@@ -1,7 +1,7 @@
 import React from "react";
 import {
 	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS,
+	FOG_CONTROLS, GameRenderer,
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
@@ -12,7 +12,13 @@ import { ModelInfo } from "./ModelInfo";
 import { GameLocationSettings } from "./GameLocationSettings";
 import { AddModelSection } from "./AddModelSection";
 
-export const ToolOptions = ({ renderer, controlsMode, setGameWikiId }) => {
+interface ToolOptionsProps {
+	renderer: GameRenderer;
+	controlsMode: string;
+	setGameWikiId: (wikiId: string) => Promise<any>
+}
+
+export const ToolOptions = ({ renderer, controlsMode, setGameWikiId }: ToolOptionsProps) => {
 	let content = null;
 
 	switch (controlsMode) {

@@ -4,9 +4,10 @@ import { useHistory } from "react-router-dom";
 import { useSetCurrentWorld } from "../../hooks/world/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import { SelectWorld } from "../select/SelectWorld";
+import {World} from "../../types";
 
 export const SelectWorldModal = ({ visibility, setVisibility }) => {
-	const [selectedWorld, setSelectedWorld] = useState(null);
+	const [selectedWorld, setSelectedWorld] = useState<World>(null);
 
 	const { setCurrentWorld } = useSetCurrentWorld();
 	const { currentUser } = useCurrentUser();
@@ -26,7 +27,7 @@ export const SelectWorldModal = ({ visibility, setVisibility }) => {
 					key="select button"
 					onClick={async () => {
 						if (currentUser) {
-							await setCurrentWorld(selectedWorld._id);
+							await setCurrentWorld({worldId: selectedWorld._id});
 						}
 						history.push(
 							`/ui/world/${selectedWorld._id}/map/${selectedWorld.wikiPage._id}`
@@ -39,7 +40,7 @@ export const SelectWorldModal = ({ visibility, setVisibility }) => {
 				</Button>,
 			]}
 		>
-			<SelectWorld onChange={setSelectedWorld} />
+			<SelectWorld onChange={async (world: World) => setSelectedWorld(world)} />
 		</Modal>
 	);
 };

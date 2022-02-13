@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import {Game} from "../../types";
-import {GqlMutationResult, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 
 export const LEAVE_GAME = gql`
 	mutation leaveGame($gameId: ID!) {
@@ -14,6 +14,7 @@ interface LeaveGameVariables {
 
 interface LeaveGameResult extends GqlMutationResult<Game, LeaveGameVariables> {
 	game: Game;
+	leaveGame: MutationMethod<Game, LeaveGameVariables>
 }
 
 export default (callback): LeaveGameResult => {
@@ -23,6 +24,7 @@ export default (callback): LeaveGameResult => {
 	});
 	return {
 		...result,
-		game: result.data
+		game: result.data,
+		leaveGame: result.mutate
 	};
 };
