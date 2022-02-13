@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {Ref, useEffect, useRef, useState} from "react";
 import { Button, Collapse, Comment, Form, Input, List } from "antd";
 import { useGameChatSubscription } from "../../hooks/game/useGameChatSubscription";
 import { useGameChat } from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { CloseOutlined, CommentOutlined } from "@ant-design/icons";
 import { useCurrentCharacter } from "../../hooks/game/useCurrentCharacter";
 
 export const GameChat = () => {
 	const { currentGame } = useCurrentGame();
 	const { currentCharacter } = useCurrentCharacter();
 	const [messages, setMessages] = useState([]);
-	const chatInput = useRef();
+	const chatInput: Ref<Input> = useRef();
 	const { data: gameChatMessage } = useGameChatSubscription();
 	const { gameChat, loading: chatLoading } = useGameChat();
-	const [comment, setComment] = useState();
+	const [comment, setComment] = useState<string>();
 	const [historyIndex, setHistoryIndex] = useState(-1);
 
 	const scrollChat = () => {
@@ -45,7 +44,7 @@ export const GameChat = () => {
 
 	const submitComment = async () => {
 		if (comment) {
-			await gameChat(currentGame._id, comment);
+			await gameChat({gameId: currentGame._id, message: comment});
 			await setComment(null);
 			chatInput.current.focus();
 		}

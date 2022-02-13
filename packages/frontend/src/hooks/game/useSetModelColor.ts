@@ -14,7 +14,7 @@ export const SET_MODEL_COLOR = gql`
 `;
 
 interface SetModelColorVariables {
-	gameId: string;
+	gameId?: string;
 	positionedModelId: string;
 	color: string;
 }

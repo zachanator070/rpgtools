@@ -1,6 +1,15 @@
-import React, {CSSProperties, useState} from "react";
+import React, {ReactElement, CSSProperties, useState} from "react";
 import { Button, Drawer } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+
+interface SlidingDrawerProps {
+	title?: string;
+	placement: "right" | "top" | "bottom" | "left";
+	children: ReactElement;
+	startVisible: boolean;
+	visible?: boolean;
+	setVisible?: (visible: boolean) => void;
+}
 
 export const SlidingDrawer = ({
 	title,
@@ -9,7 +18,7 @@ export const SlidingDrawer = ({
 	startVisible,
 	visible,
 	setVisible,
-}) => {
+}: SlidingDrawerProps) => {
 	if (visible === undefined || setVisible === undefined) {
 		[visible, setVisible] = useState(startVisible || false);
 	}

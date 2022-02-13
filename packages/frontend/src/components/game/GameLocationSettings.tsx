@@ -6,11 +6,15 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { useSetGameMap } from "../../hooks/game/useSetGameMap";
 import { LoadingView } from "../LoadingView";
 
-export const GameLocationSettings = ({ setGameWikiId }) => {
+ interface GameLocationSettingsProps {
+	 setGameWikiId: (wikiId: string) => Promise<any>
+ }
+
+export const GameLocationSettings = ({ setGameWikiId }: GameLocationSettingsProps) => {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
-	const [selectedLocation, setSelectedLocation] = useState();
-	const [clearPaint, setClearPaint] = useState();
-	const [setFog, setSetFog] = useState();
+	const [selectedLocation, setSelectedLocation] = useState<string>();
+	const [clearPaint, setClearPaint] = useState<boolean>();
+	const [setFog, setSetFog] = useState<boolean>();
 	const { setGameMap } = useSetGameMap();
 
 	if (gameLoading) {

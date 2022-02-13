@@ -1,30 +1,41 @@
 import React from "react";
-import { useDrag, useDrop } from "react-dnd";
+import {DragObjectWithType, useDrag, useDrop} from "react-dnd";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
+import {GameCharacter} from "../../types";
+
+export interface DraggableCharacterItem extends DragObjectWithType {
+	type: string;
+	name: string;
+}
+
+interface InitiativeTrackerCardProps {
+	name: string;
+	data: GameCharacter[];
+	setData: (roster: GameCharacter[]) => Promise<any>;
+	loading: boolean;
+}
 
 export const InitiativeTrackerCard = ({
 	name,
-	color,
 	data,
 	setData,
 	loading,
-}) => {
+}: InitiativeTrackerCardProps) => {
 	const { currentGame } = useCurrentGame();
 
-	const [props, dragRef] = useDrag({
+	const [props, dragRef] = useDrag<DraggableCharacterItem, void, void>({
 		item: {
 			type: INITIATIVE_CARD,
 			name,
-			color,
 		},
 		canDrag: () => currentGame.canWrite && !loading,
 	});
 
 	const [dropProps, dropRef] = useDrop({
 		accept: INITIATIVE_CARD,
-		canDrop: (item, monitor) => item.name !== name,
-		drop: (draggedItem, monitor) => {
+		canDrop: (item: DraggableCharacterItem, monitor) => item.name !== name,
+		drop: async (draggedItem, monitor) => {
 			const newData = [];
 			for (let oldItem of data.filter(
 				(oldItem) => oldItem.name !== draggedItem.name
@@ -34,7 +45,7 @@ export const InitiativeTrackerCard = ({
 				}
 				newData.push(oldItem);
 			}
-			setData([...newData]);
+			await setData([...newData]);
 		},
 	});
 
@@ -42,11 +53,10 @@ export const InitiativeTrackerCard = ({
 		<div
 			style={{
 				backgroundColor: "white",
-				fontWeight: "600",
+				fontWeight: 600,
 				borderRadius: "5px",
 				padding: "5px 8px",
 				margin: "5px",
-				color,
 			}}
 			ref={(element) => {
 				dropRef(element);

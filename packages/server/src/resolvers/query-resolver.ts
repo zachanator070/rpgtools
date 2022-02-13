@@ -22,9 +22,9 @@ export default {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 		return service.getWorld(securityContext, worldId);
 	},
-	worlds: async (_: any, { page }: { page: number }, { securityContext }: SessionContext) => {
+	worlds: async (_: any, { name, page }: { name: string, page: number }, { securityContext }: SessionContext) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return service.getWorlds(securityContext, page);
+		return service.getWorlds(securityContext, name, page);
 	},
 	wiki: async (_: any, { wikiId }: { wikiId: string }, { securityContext }: SessionContext) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);

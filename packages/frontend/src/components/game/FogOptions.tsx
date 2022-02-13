@@ -4,11 +4,15 @@ import {
 	BRUSH_ERASE,
 	BRUSH_FOG,
 	DEFAULT_BRUSH_SIZE,
-	DEFAULT_BRUSH_TYPE,
 } from "../../controls/PaintControls";
 import { ToolTip } from "../ToolTip";
+import {GameRenderer} from "../../rendering/GameRenderer";
 
-export const FogOptions = ({ renderer }) => {
+interface FogOptionsProps {
+	renderer: GameRenderer;
+}
+
+export const FogOptions = ({ renderer }: FogOptionsProps) => {
 	const [brushType, setBrushType] = useState(BRUSH_FOG);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
 
@@ -21,7 +25,7 @@ export const FogOptions = ({ renderer }) => {
 					style={{ width: 120 }}
 					onChange={async (value) => {
 						await setBrushType(value);
-						renderer.fogControls.setBrushType(value);
+						renderer.getFogControls().setBrushType(value);
 					}}
 				>
 					<Select.Option value={BRUSH_FOG} default>
@@ -38,7 +42,7 @@ export const FogOptions = ({ renderer }) => {
 					value={brushSize}
 					onChange={async (value) => {
 						await setBrushSize(value);
-						renderer.fogControls.setBrushSize(value);
+						renderer.getFogControls().setBrushSize(value);
 					}}
 				/>
 			</div>
@@ -54,7 +58,7 @@ export const FogOptions = ({ renderer }) => {
 					min={0}
 					max={100}
 					onChange={async (value) => {
-						renderer.fogControls.setDrawMeshOpacity(value / 100);
+						renderer.getFogControls().setDrawMeshOpacity(value / 100);
 					}}
 					defaultValue={100}
 				/>

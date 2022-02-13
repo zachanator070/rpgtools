@@ -14,7 +14,7 @@ const SET_POSITIONED_MODEL_WIKI = gql`
 `;
 
 interface SetPositionedModelWikiVariables {
-	gameId: string;
+	gameId?: string;
 	positionedModelId: string;
 	wikiId: string;
 }

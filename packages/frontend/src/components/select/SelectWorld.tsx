@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, {CSSProperties, useState} from "react";
 import { Button, Select, Spin } from "antd";
-import { useSearchWikiPages } from "../../hooks/wiki/useSearchWikiPages";
 import { SearchOutlined } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
 import useWorlds from "../../hooks/world/useWorlds";
+import {World} from "../../types";
 
-export const SelectWorld = ({ onChange, style, showClear = false }) => {
+interface SelectWorldProps {
+	onChange: (world: World) => Promise<any>;
+	style?: CSSProperties;
+	showClear?: boolean;
+}
+export const SelectWorld = ({ onChange, style, showClear = false }: SelectWorldProps) => {
 	const { refetch, worlds, loading } = useWorlds({});
 	const [value, setValue] = useState();
 
@@ -39,7 +43,7 @@ export const SelectWorld = ({ onChange, style, showClear = false }) => {
 				filterOption={false}
 				notFoundContent={loading ? <Spin size="small" /> : null}
 				onSearch={async (term) => {
-					await refetch({ name: term, canAdmin });
+					await refetch({ name: term });
 				}}
 				onSelect={onSelect}
 				placeholder="Search for a world"

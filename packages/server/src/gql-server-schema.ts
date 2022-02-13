@@ -13,7 +13,7 @@ export const typeDefs = gql`
 		"""
 		Get all worlds
 		"""
-		worlds(page: Int): WorldPaginatedResult
+		worlds(name: String, page: Int): WorldPaginatedResult
 
 		"""
 		Get a wiki by id

@@ -2,7 +2,15 @@ import React from "react";
 import {Badge, InputNumber, Tooltip} from "antd";
 import {SET_BONUS_ACTION, SET_COUNT_ACTION} from "./DiceRoller";
 
-export const DiceIcon = ({ reducer, count, bonus, icon, tooltip }) => {
+interface DiceIconProps {
+	reducer: any;
+	count: number;
+	bonus: number;
+	icon: string;
+	tooltip: string;
+}
+
+export const DiceIcon = ({ reducer, count, bonus, icon, tooltip }: DiceIconProps) => {
 	return (
 		<Tooltip title={tooltip}>
 			<div className={'margin-md'}>

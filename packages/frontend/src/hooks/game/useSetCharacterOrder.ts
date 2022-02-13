@@ -15,7 +15,7 @@ const SET_CHARACTER_ORDER = gql`
 `;
 
 interface SetCharacterOrderVariables {
-	gameId: string;
+	gameId?: string;
 	characters: CharacterInput[]
 }
 

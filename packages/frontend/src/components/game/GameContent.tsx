@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {Ref, useEffect, useRef, useState} from "react";
 import {
 	ADD_MODEL_CONTROLS,
 	CAMERA_CONTROLS,
@@ -22,32 +22,35 @@ import { useDeletePositionedModel } from "../../hooks/game/useDeletePositionedMo
 import { useGameModelDeletedSubscription } from "../../hooks/game/useGameModelDeletedSubscription";
 import { useAddFogStroke } from "../../hooks/game/useAddFogStroke";
 import { useGameFogSubscription } from "../../hooks/game/useGameFogSubscription";
-import { ControlsContextWindow } from "./ControlsContextWindow";
-import { GameChat } from "./GameChat";
 import { GameWikiDrawer } from "./GameWikiDrawer";
 import { InitiativeTracker } from "./InitiativeTracker";
 import { GameDrawer } from "./GameDrawer";
+import {Game} from "../../types";
 
-export const GameContent = ({ currentGame }) => {
-	const renderCanvas = useRef();
-	const [renderer, setRenderer] = useState();
-	const [showLoading, setShowLoading] = useState(false);
-	const [urlLoading, setUrlLoading] = useState();
-	const [loadingProgress, setLoadingProgress] = useState();
+interface GameContentProps {
+	currentGame: Game;
+}
+
+export const GameContent = ({ currentGame }: GameContentProps) => {
+	const renderCanvas: Ref<HTMLCanvasElement> = useRef();
+	const [renderer, setRenderer] = useState<GameRenderer>();
+	const [showLoading, setShowLoading] = useState<boolean>(false);
+	const [urlLoading, setUrlLoading] = useState<string>();
+	const [loadingProgress, setLoadingProgress] = useState<number>();
 	const { addStroke } = useAddStroke();
 	const { setModelPosition } = useSetModelPosition();
 	const { deletePositionedModel } = useDeletePositionedModel();
 	const { addFogStroke } = useAddFogStroke();
 
-	const [gameWikiId, setGameWikiId] = useState();
+	const [gameWikiId, setGameWikiId] = useState<string>();
 
-	const [controlsMode, setControlsMode] = useState(CAMERA_CONTROLS);
+	const [controlsMode, setControlsMode] = useState<string>(CAMERA_CONTROLS);
 	const { data: gameStrokeAdded } = useGameStrokeSubscription();
 	const { data: gameModelAdded } = useGameModelAddedSubscription();
 	const { data: modelPositioned } = useGameModelPositionedSubscription();
 	const { gameModelDeleted } = useGameModelDeletedSubscription();
 	const { gameFogStrokeAdded } = useGameFogSubscription();
-	const renderParent = useRef();
+	const renderParent: Ref<HTMLDivElement> = useRef();
 
 	useEffect(() => {
 		(async () => {
@@ -86,12 +89,13 @@ export const GameContent = ({ currentGame }) => {
 							closable: false,
 						});
 					},
-					addFogStroke
+					addFogStroke,
+					currentGame.map.pixelsPerFoot ?? 1
 				)
 			);
 		})();
 		renderCanvas.current.addEventListener("mouseover", (event) => {
-			if ((event.toElement || event.relatedTarget) !== renderCanvas.current) {
+			if ((event.relatedTarget) !== renderCanvas.current) {
 				return;
 			}
 			renderCanvas.current.focus();
@@ -183,13 +187,13 @@ export const GameContent = ({ currentGame }) => {
 
 	useEffect(() => {
 		if (gameStrokeAdded && renderer) {
-			renderer.paintControls.stroke(gameStrokeAdded);
+			renderer.getPaintControls().stroke(gameStrokeAdded);
 		}
 	}, [gameStrokeAdded]);
 
 	useEffect(() => {
 		if (gameFogStrokeAdded && renderer) {
-			renderer.fogControls.stroke(gameFogStrokeAdded);
+			renderer.getFogControls().stroke(gameFogStrokeAdded);
 		}
 	}, [gameFogStrokeAdded]);
 
@@ -201,16 +205,16 @@ export const GameContent = ({ currentGame }) => {
 
 			if (currentGame && currentGame.map && currentGame.map.mapImage) {
 				let needsSetup = false;
-				if (renderer.pixelsPerFoot !== currentGame.map.pixelsPerFoot) {
-					renderer.pixelsPerFoot = currentGame.map.pixelsPerFoot;
+				if (renderer.getPixelsPerFoot() !== currentGame.map.pixelsPerFoot) {
+					renderer.setPixelsPerFoot(currentGame.map.pixelsPerFoot);
 					needsSetup = true;
 				}
 				if (
-					(!renderer.mapImage && currentGame.map.mapImage) ||
-					(renderer.mapImage && !currentGame.map.mapImage) ||
-					renderer.mapImage._id !== currentGame.map.mapImage._id
+					(!renderer.getMapImage() && currentGame.map.mapImage) ||
+					(renderer.getMapImage() && !currentGame.map.mapImage) ||
+					renderer.getMapImage()._id !== currentGame.map.mapImage._id
 				) {
-					renderer.mapImage = currentGame.map.mapImage;
+					renderer.setMapImage(currentGame.map.mapImage);
 					needsSetup = true;
 				}
 				if (needsSetup) {
@@ -228,14 +232,14 @@ export const GameContent = ({ currentGame }) => {
 					}
 					renderer.setupMap();
 				}
-				if (renderer.paintControls) {
+				if (renderer.getPaintControls()) {
 					for (let stroke of currentGame.strokes) {
-						renderer.paintControls.stroke(stroke);
+						renderer.getPaintControls().stroke(stroke);
 					}
 				}
-				if (renderer.fogControls) {
+				if (renderer.getFogControls()) {
 					for (let fogStroke of currentGame.fog) {
-						renderer.fogControls.stroke(fogStroke);
+						renderer.getFogControls().stroke(fogStroke);
 					}
 				}
 				for (let model of currentGame.models) {

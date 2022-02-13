@@ -15,7 +15,10 @@ import { DeleteControls } from "../controls/DeleteControls";
 import { SelectModelControls } from "../controls/SelectModelControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import EventEmitter from "events";
-import {Image, Model, PathNode, Place, PositionedModel} from "../types";
+import {Game, Image, Model, PathNode, Place, PositionedModel} from "../types";
+import {MutationMethod} from "../hooks/useGQLMutation";
+import {AddStrokeVariables} from "../hooks/game/useAddFogStroke";
+import {SetModelPositionVariables} from "../hooks/game/useSetModelPosition";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -47,7 +50,7 @@ export class GameRenderer extends EventEmitter {
 	private light;
 	private raycaster;
 	private selectControls;
-	private selectModelControls;
+	selectModelControls;
 	private moveControls;
 	private rotateControls;
 	private paintControls;
@@ -61,12 +64,12 @@ export class GameRenderer extends EventEmitter {
 	private mapTexture;
 	private cameraControls: CameraControls;
 
-	private renderRoot: any;
+	private renderRoot: HTMLCanvasElement;
 	private mapImage: Image;
-	private addStroke: (stroke: PathNode) => void;
-	private setModelPosition: (model: PositionedModel) => void;
+	private addStroke: MutationMethod<Game, AddStrokeVariables>;
+	private setModelPosition: MutationMethod<Game, SetModelPositionVariables>;
 	private deleteModel: (model: PositionedModel) => void;
-	private addFogStroke: (stroke: PathNode) => void;
+	private addFogStroke: MutationMethod<Game, AddStrokeVariables>;
 
 	private mouseCoords: Vector2;
 
@@ -76,13 +79,13 @@ export class GameRenderer extends EventEmitter {
 	private pixelsPerFoot: number;
 
 	constructor(
-		renderRoot: any,
+		renderRoot: HTMLCanvasElement,
 		mapImage: Image,
-		addStroke: (stroke: PathNode) => void,
+		addStroke: MutationMethod<Game, AddStrokeVariables>,
 		onProgress = (message: string, current: number, max: number) => {},
-		setModelPosition: (model: PositionedModel) => void,
+		setModelPosition: MutationMethod<Game, SetModelPositionVariables>,
 		deleteModel: (model: PositionedModel) => void,
-		addFogStroke: (stroke: PathNode) => void,
+		addFogStroke: MutationMethod<Game, AddStrokeVariables>,
 		pixelsPerFoot: number
 	) {
 		super();
@@ -611,4 +614,23 @@ export class GameRenderer extends EventEmitter {
 		return this.meshedModels;
 	}
 
+	getFogControls(): PaintControls {
+		return this.fogControls;
+	}
+
+	getPixelsPerFoot(): number {
+		return this.pixelsPerFoot;
+	}
+
+	setPixelsPerFoot(pixelsPerFoot: number): void {
+		this.pixelsPerFoot = pixelsPerFoot;
+	}
+
+	getMapImage(): Image {
+		return this.mapImage;
+	}
+
+	setMapImage(image: Image): void {
+		this.mapImage = image;
+	}
 }

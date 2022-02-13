@@ -1,7 +1,7 @@
 import { CURRENT_WIKI_ATTRIBUTES } from "../gql-fragments";
 import gql from "graphql-tag";
-import { useGQLLazyQuery } from "../useGQLLazyQuery";
-import {WikiPage} from "../../types";
+import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
+import {Game, WikiPage} from "../../types";
 
 export const GAME_WIKI = gql`
 	${CURRENT_WIKI_ATTRIBUTES}
@@ -16,7 +16,7 @@ interface GameWikiVariables {
 	wikiId: string;
 }
 
-interface GameWikiResult {
+interface GameWikiResult extends GqlLazyHookResult<WikiPage, GameWikiVariables>{
 	wiki: WikiPage;
 }
 

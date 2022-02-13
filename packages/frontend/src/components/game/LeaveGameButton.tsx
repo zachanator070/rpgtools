@@ -20,9 +20,9 @@ export const LeaveGameButton = () => {
 
 	return (
 		<Button
-			type={"danger"}
+			danger={true}
 			onClick={async () => {
-				await leaveGame(currentGame._id);
+				await leaveGame({gameId: currentGame._id});
 			}}
 		>
 			Leave Game

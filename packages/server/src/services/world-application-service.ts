@@ -176,8 +176,12 @@ export class WorldApplicationService implements WorldService {
 		return world;
 	};
 
-	getWorlds = async (context: SecurityContext, page: number) => {
-		const results = await this.worldRepository.findPaginated([], page);
+	getWorlds = async (context: SecurityContext, name: string, page: number) => {
+		const conditions = [];
+		if (name) {
+			conditions.push(new FilterCondition('name', name));
+		}
+		const results = await this.worldRepository.findPaginated(conditions, page);
 		const docs = [];
 		for (let world of results.docs) {
 			if (await this.worldAuthorizationRuleset.canRead(context, world)) {

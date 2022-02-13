@@ -4,7 +4,11 @@ import useGameWiki from "../../hooks/wiki/useGameWiki";
 import { WikiContent } from "../wiki/WikiContent";
 import { LoadingView } from "../LoadingView";
 
-export const GameWikiDrawer = ({ wikiId }) => {
+interface GameWikiDrawerProps {
+	wikiId: string;
+}
+
+export const GameWikiDrawer = ({ wikiId }: GameWikiDrawerProps) => {
 	const { fetch, wiki, loading } = useGameWiki();
 
 	useEffect(() => {
@@ -20,7 +24,7 @@ export const GameWikiDrawer = ({ wikiId }) => {
 	}
 	return (
 		<SlidingDrawer placement={"left"} startVisible={true}>
-			{loading ? <LoadingView /> : <WikiContent currentWiki={wiki} />}
+			{loading ? <LoadingView /> : <WikiContent currentWiki={wiki} wikiLoading={loading}/>}
 		</SlidingDrawer>
 	);
 };

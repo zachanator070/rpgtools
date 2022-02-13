@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect} from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import { LoadingView } from "../LoadingView";
 import { GameContent } from "./GameContent";
-import { Modal, Button } from "antd";
+import { Modal} from "antd";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { useGameMapChangeSubscription } from "../../hooks/game/useGameMapChangeSubscription";
@@ -30,7 +30,6 @@ export const GameView = () => {
 				Modal.warning({
 					title: "Host Gone",
 					closable: false,
-					footer: null,
 					content: (
 						<>
 							<p>The host has left the game. This game has ended.</p>

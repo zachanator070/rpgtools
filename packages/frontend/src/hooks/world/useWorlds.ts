@@ -1,10 +1,11 @@
 import gql from "graphql-tag";
-import { useGQLQuery } from "../useGQLQuery";
-import {WorldPaginatedResult} from "../../types";
+import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import {UserPaginatedResult, WorldPaginatedResult} from "../../types";
+import {GqlLazyHookResult} from "../useGQLLazyQuery";
 
 export const GET_WORLDS = gql`
-	query worlds($page: Int) {
-		worlds(page: $page) {
+	query worlds($name: String, $page: Int) {
+		worlds(name: $name, page: $page) {
 			docs {
 				_id
 				name
@@ -19,10 +20,11 @@ export const GET_WORLDS = gql`
 `;
 
 interface WorldsVariables {
-	page: number;
+	name?: string;
+	page?: number;
 }
 
-interface WorldsResult {
+interface WorldsResult extends GqlQueryResult<WorldPaginatedResult, WorldsVariables>{
 	worlds: WorldPaginatedResult;
 }
 
