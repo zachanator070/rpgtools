@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
 import {World} from "../../types";
 
@@ -15,7 +15,7 @@ interface MoveFolderVariables {
 	parentFolderId: string;
 }
 
-interface MoveFolderResult {
+interface MoveFolderResult extends GqlMutationResult<World, MoveFolderVariables> {
 	moveFolder: MutationMethod<World, MoveFolderVariables>
 }
 export const useMoveFolder = (callback: (data: World) => Promise<void>): MoveFolderResult => {

@@ -1,12 +1,17 @@
 import React, { useState } from "react";
-import { Button, Modal, List, Row, Col, Divider } from "antd";
+import { Button, Modal } from "antd";
 import { useHistory } from "react-router-dom";
 import { useSetCurrentWorld } from "../../hooks/world/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import { SelectWorld } from "../select/SelectWorld";
 import {World} from "../../types";
 
-export const SelectWorldModal = ({ visibility, setVisibility }) => {
+interface SelectWorldModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+}
+
+export const SelectWorldModal = ({ visibility, setVisibility }: SelectWorldModalProps) => {
 	const [selectedWorld, setSelectedWorld] = useState<World>(null);
 
 	const { setCurrentWorld } = useSetCurrentWorld();

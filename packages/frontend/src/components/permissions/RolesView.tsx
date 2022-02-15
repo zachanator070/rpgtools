@@ -10,6 +10,11 @@ import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
 import { SelectUser } from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
 import { AddRolePermission } from "./AddRolePermission";
+import {PermissionAssignment, User} from "../../types";
+
+interface TabulatedPermissionAssignment extends PermissionAssignment {
+	key: string;
+}
 
 export const RolesView = () => {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
@@ -17,9 +22,9 @@ export const RolesView = () => {
 	const { revokeRolePermission } = useRevokeRolePermission();
 	const { deleteRole } = useDeleteRole();
 	const { removeUserRole } = useRemoveUserRole();
-	const [newRoleName, setNewRoleName] = useState();
-	const [selectedRoleId, setSelectedRoleId] = useState(null);
-	const [userIdToAdd, setUserIdToAdd] = useState(null);
+	const [newRoleName, setNewRoleName] = useState<string>();
+	const [selectedRoleId, setSelectedRoleId] = useState<string>(null);
+	const [userIdToAdd, setUserIdToAdd] = useState<string>(null);
 	const { addUserRole } = useAddUserRole();
 
 	if (currentWorldLoading) {
@@ -58,7 +63,7 @@ export const RolesView = () => {
 								className={"margin-lg-left"}
 								disabled={createRoleLoading}
 								onClick={async () => {
-									await createRole(currentWorld._id, newRoleName);
+									await createRole({worldId: currentWorld._id, name: newRoleName});
 								}}
 								type={"primary"}
 							>
@@ -81,7 +86,7 @@ export const RolesView = () => {
 						placeholder="Select a role"
 						optionFilterProp="children"
 						value={selectedRoleId}
-						onChange={setSelectedRoleId}
+						onChange={(roleId: string) => setSelectedRoleId(roleId)}
 					>
 						{currentWorld.roles.map((role) => (
 							<Select.Option key={role._id} value={role._id}>
@@ -113,16 +118,17 @@ export const RolesView = () => {
 											title: "Remove Permission",
 											dataIndex: "_id",
 											key: "_id",
-											render: (text, assignment) => {
+											render: (text: string, assignment: TabulatedPermissionAssignment) => {
 												return assignment.canWrite ? (
 													<Button
 														className={"margin-md-left"}
 														type={"primary"}
 														onClick={async () => {
-															await revokeRolePermission(
-																selectedRole._id,
-																assignment.key
-															);
+															await revokeRolePermission({
+																roleId: selectedRole._id,
+																permission: assignment.permission,
+																subjectId: assignment.subject._id
+															});
 														}}
 														danger
 													>
@@ -137,10 +143,7 @@ export const RolesView = () => {
 									dataSource={selectedRole.permissions.map((permission) => {
 										return {
 											key: permission._id,
-											permission: permission.permission,
-											subjectType: permission.subjectType,
-											subjectName: permission.subject.name,
-											canWrite: permission.canWrite,
+											...permission
 										};
 									})}
 									pagination={false}
@@ -151,7 +154,7 @@ export const RolesView = () => {
 							<Tabs.TabPane tab="Users with this role" key="2">
 								<List
 									dataSource={selectedRole.members}
-									renderItem={(item) => (
+									renderItem={(item: User) => (
 										<List.Item>
 											{item.username}
 											{selectedRole.canWrite && (
@@ -159,7 +162,7 @@ export const RolesView = () => {
 													className={"margin-md-left"}
 													type={"primary"}
 													onClick={async () => {
-														await removeUserRole(item._id, selectedRole._id);
+														await removeUserRole({userId: item._id, roleId: selectedRole._id});
 													}}
 													danger
 												>
@@ -171,12 +174,12 @@ export const RolesView = () => {
 								/>
 								{selectedRole.canWrite && (
 									<>
-										<SelectUser onChange={setUserIdToAdd} />
+										<SelectUser onChange={async (userId: string) => setUserIdToAdd(userId)} />
 										<Button
 											className={"margin-md-left"}
 											type={"primary"}
 											onClick={async () => {
-												await addUserRole(userIdToAdd, selectedRole._id);
+												await addUserRole({userId: userIdToAdd, roleId: selectedRole._id});
 											}}
 											disabled={userIdToAdd === null}
 										>

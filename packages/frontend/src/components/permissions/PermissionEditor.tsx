@@ -8,24 +8,26 @@ import { useRevokeUserPermission } from "../../hooks/authorization/useRevokeUser
 import { useRevokeRolePermission } from "../../hooks/authorization/useRevokeRolePermission";
 import { SelectUser } from "../select/SelectUser";
 import { SelectRole } from "../select/SelectRole";
+import {PermissionAssignment, Role, User} from "../../types";
 
 interface PermissionEditorProps {
 	subject: any;
 	subjectType: string;
 	refetch?: () => Promise<void>
 }
+
 export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEditorProps) => {
-	const [permissionGroup, setPermissionGroup] = useState("users");
+	const [permissionGroup, setPermissionGroup] = useState<string>("users");
 	const { grantUserPermission } = useGrantUserPermission();
 	const { grantRolePermission } = useGrantRolePermission();
 	const { revokeUserPermission } = useRevokeUserPermission();
 	const { revokeRolePermission } = useRevokeRolePermission();
-	const [permissionAssigneeId, setPermissionAssigneeId] = useState(null);
+	const [permissionAssigneeId, setPermissionAssigneeId] = useState<string>(null);
 	const possiblePermissions = getPermissionsBySubjectType(subjectType);
-	const [selectedPermission, setSelectedPermission] = useState(
+	const [selectedPermission, setSelectedPermission] = useState<string>(
 		possiblePermissions.length > 0 ? possiblePermissions[0] : null
 	);
-	const [selectedPermissionAssignment, setSelectedPermissionAssignment] = useState(null);
+	const [selectedPermissionAssignment, setSelectedPermissionAssignment] = useState<PermissionAssignment>(null);
 
 	const updateSelectedPermission = (permission) => {
 		for (let assignment of subject.accessControlList) {
@@ -83,7 +85,12 @@ export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEd
 											: []
 									}
 									locale={{ emptyText: <div>No {permissionGroup}</div> }}
-									renderItem={(item) => {
+									renderItem={(item: any) => {
+										if(permissionGroup === "users") {
+											item = item as User;
+										} else {
+											item = item as Role;
+										}
 										return (
 											<List.Item key={selectedPermissionAssignment._id + "." + item._id}>
 												{permissionGroup === "users" ? item.username : item.name}
@@ -94,17 +101,18 @@ export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEd
 														danger
 														onClick={async () => {
 															if (permissionGroup === "users") {
-																await revokeUserPermission(
-																	item._id,
-																	selectedPermissionAssignment.permission,
-																	selectedPermission.subject
-																);
+																await revokeUserPermission({
+																	userId: item._id,
+																	permission: selectedPermissionAssignment.permission,
+																	subjectId: selectedPermissionAssignment.subject._id
+
+																});
 															} else {
-																await revokeRolePermission(
-																	item._id,
-																	selectedPermissionAssignment.permission,
-																	selectedPermission.subject
-																);
+																await revokeRolePermission({
+																	roleId: item._id,
+																	permission: selectedPermissionAssignment.permission,
+																	subjectId: selectedPermissionAssignment.subject._id
+																});
 															}
 															if (refetch) {
 																await refetch();
@@ -149,19 +157,19 @@ export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEd
 									permission = possiblePermissions[0];
 								}
 								if (permissionGroup === "users") {
-									await grantUserPermission(
-										permissionAssigneeId,
+									await grantUserPermission({
+										userId: permissionAssigneeId,
 										permission,
-										subject._id,
+										subjectId: subject._id,
 										subjectType
-									);
+									});
 								} else {
-									await grantRolePermission(
-										permissionAssigneeId,
+									await grantRolePermission({
+										roleId: permissionAssigneeId,
 										permission,
-										subject._id,
+										subjectId: subject._id,
 										subjectType
-									);
+									});
 								}
 								if (refetch) {
 									await refetch();

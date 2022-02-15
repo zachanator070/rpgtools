@@ -4,7 +4,12 @@ import useRegister from "../../hooks/authentication/useRegister";
 import useLogin from "../../hooks/authentication/useLogin";
 import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 
-export const RegisterModal = ({ visibility, setVisibility }) => {
+interface RegisterModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+}
+
+export const RegisterModal = ({ visibility, setVisibility }: RegisterModalProps) => {
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -19,9 +24,6 @@ export const RegisterModal = ({ visibility, setVisibility }) => {
 	const formItemLayout = {
 		labelCol: { span: 5 },
 		wrapperCol: { span: 14 },
-	};
-	const noLabelItem = {
-		wrapperCol: { span: 10, offset: 4 },
 	};
 
 	return (
@@ -100,8 +102,8 @@ export const RegisterModal = ({ visibility, setVisibility }) => {
 					disabled={loading}
 					onClick={async () => {
 						try {
-							await register(registerCode, email, username, password);
-							await login(username, password);
+							await register({registerCode, email, username, password});
+							await login({username, password});
 							setEmail("");
 							setUsername("");
 							setPassword("");

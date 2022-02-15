@@ -126,7 +126,8 @@ export const GAME_PERMISSIONS = [
 	GAME_ADMIN,
 ];
 
-export const ALL_PERMISSIONS = [].concat(
+const allPermissions: string[] = [];
+export const ALL_PERMISSIONS = allPermissions.concat(
 	SERVER_PERMISSIONS,
 	WORLD_PERMISSIONS,
 	ROLE_PERMISSIONS,
