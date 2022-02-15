@@ -8,7 +8,7 @@ import { useMyPermissions } from "../../hooks/authorization/useMyPermissions";
 
 export const MyPermissionsView = () => {
 	const { currentWorld, loading } = useCurrentWorld();
-	const { serverConfig, serverConfigLoading } = useServerConfig();
+	const { serverConfig, loading: serverConfigLoading } = useServerConfig();
 	const { myPermissions, loading: permissionsLoading } = useMyPermissions();
 
 	if (loading || serverConfigLoading || permissionsLoading) {
@@ -61,8 +61,7 @@ export const MyPermissionsView = () => {
 			}),
 			onFilter: (value, record) => record.permission === value,
 			filterMultiple: false,
-			sorter: (a, b) => a.name < b.name,
-			sortDirections: ["descend", "ascend"],
+			sorter: (a, b) => a.name < b.name ? -1 : 1,
 		},
 		{
 			title: "Subject",
@@ -72,8 +71,7 @@ export const MyPermissionsView = () => {
 			}),
 			onFilter: (value, record) => record.subject === value,
 			filterMultiple: false,
-			sorter: (a, b) => a.subject < b.subject,
-			sortDirections: ["descend", "ascend"],
+			sorter: (a, b) => a.subject < b.subject ? -1 : 1,
 		},
 		{
 			title: "Source",
@@ -83,8 +81,7 @@ export const MyPermissionsView = () => {
 			}),
 			onFilter: (value, record) => record.source === value,
 			filterMultiple: false,
-			sorter: (a, b) => a.source < b.source,
-			sortDirections: ["descend", "ascend"],
+			sorter: (a, b) => a.source < b.source ? -1 : 1,
 		},
 	];
 

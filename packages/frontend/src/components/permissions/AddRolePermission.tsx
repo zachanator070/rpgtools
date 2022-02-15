@@ -8,18 +8,23 @@ import { SelectWiki } from "../select/SelectWiki";
 import { useGrantRolePermission } from "../../hooks/authorization/useGrantRolePermission";
 import Errors from "../Errors";
 import { SelectFolder } from "../select/SelectFolder";
+import {Role} from "../../types";
 
-export const AddRolePermission = ({ role }) => {
+interface AddRolePermissionProps {
+	role: Role;
+}
+
+export const AddRolePermission = ({ role }: AddRolePermissionProps) => {
 	const { currentWorld } = useCurrentWorld();
 	const [permissionToAdd, setPermissionToAdd] = useState(null);
-	const [permissionToAddSubjectType, setPermissionToAddSubjectType] = useState(null);
-	const [permissionToAddSubject, setPermissionToAddSubject] = useState(null);
+	const [permissionToAddSubjectType, setPermissionToAddSubjectType] = useState<string>(null);
+	const [permissionToAddSubject, setPermissionToAddSubject] = useState<string>(null);
 	const { grantRolePermission, errors } = useGrantRolePermission();
 
 	let selectSubject = null;
 	if (permissionToAddSubjectType === WORLD) {
 		selectSubject = (
-			<Select style={{ width: "200px" }} onChange={setPermissionToAddSubject}>
+			<Select style={{ width: "200px" }} onChange={async (worldId: string) => setPermissionToAddSubject(worldId)}>
 				{currentWorld.canAdmin && (
 					<Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>
 				)}
@@ -29,13 +34,13 @@ export const AddRolePermission = ({ role }) => {
 		selectSubject = (
 			<SelectWiki
 				canAdmin={true}
-				onChange={async (wiki) => await setPermissionToAddSubject(wiki._id)}
+				onChange={async (wiki) => setPermissionToAddSubject(wiki._id)}
 			/>
 		);
 	} else if (permissionToAddSubjectType === ROLE) {
-		selectSubject = <SelectRole canAdmin={true} onChange={setPermissionToAddSubject} />;
+		selectSubject = <SelectRole canAdmin={true} onChange={async (roleId: string) => setPermissionToAddSubject(roleId)} />;
 	} else if (permissionToAddSubjectType === WIKI_FOLDER) {
-		selectSubject = <SelectFolder canAdmin={true} onChange={setPermissionToAddSubject} />;
+		selectSubject = <SelectFolder canAdmin={true} onChange={async (folderId: string) => setPermissionToAddSubject(folderId)} />;
 	}
 
 	let availablePermissions = getPermissionsBySubjectType(permissionToAddSubjectType);
@@ -56,7 +61,7 @@ export const AddRolePermission = ({ role }) => {
 					value={permissionToAddSubjectType}
 				>
 					{[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map((permission) => (
-						<Select.Option key={permission}>{permission}</Select.Option>
+						<Select.Option key={permission} value={permission}>{permission}</Select.Option>
 					))}
 				</Select>
 			</div>
@@ -71,7 +76,7 @@ export const AddRolePermission = ({ role }) => {
 						value={permissionToAdd}
 					>
 						{availablePermissions.map((permission) => (
-							<Select.Option key={permission}>{permission}</Select.Option>
+							<Select.Option key={permission} value={permission}>{permission}</Select.Option>
 						))}
 					</Select>
 				</div>
@@ -86,12 +91,12 @@ export const AddRolePermission = ({ role }) => {
 					<Button
 						type={"primary"}
 						onClick={async () =>
-							await grantRolePermission(
-								role._id,
-								permissionToAdd,
-								permissionToAddSubject,
-								permissionToAddSubjectType
-							)
+							await grantRolePermission({
+								roleId: role._id,
+								permission: permissionToAdd,
+								subjectId: permissionToAddSubject,
+								subjectType: permissionToAddSubjectType
+							})
 						}
 					>
 						Add Permission

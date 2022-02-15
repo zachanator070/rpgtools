@@ -2,13 +2,21 @@ import React from "react";
 import { Modal } from "antd";
 import { PermissionEditor } from "../permissions/PermissionEditor";
 
+interface PermissionModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+	subject: any;
+	subjectType: string;
+	refetch: () => Promise<void>;
+}
+
 export const PermissionModal = ({
 	visibility,
 	setVisibility,
 	subject,
 	subjectType,
 	refetch,
-}) => {
+}: PermissionModalProps) => {
 	if (subject === null || subjectType === null) {
 		return <></>;
 	}

@@ -3,7 +3,12 @@ import { Button, Form, Input, Modal } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import useLogin from "../../hooks/authentication/useLogin";
 
-export const LoginModal = ({ visibility, setVisibility }) => {
+interface LoginModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+}
+
+export const LoginModal = ({ visibility, setVisibility }: LoginModalProps) => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -14,9 +19,6 @@ export const LoginModal = ({ visibility, setVisibility }) => {
 	const formItemLayout = {
 		labelCol: { span: 5 },
 		wrapperCol: { span: 14 },
-	};
-	const noLabelItem = {
-		wrapperCol: { span: 10, offset: 4 },
 	};
 
 	return (

@@ -3,9 +3,16 @@ import { useMoveFolder } from "../../hooks/wiki/useMoveFolder";
 import { Button, Form, Modal } from "antd";
 import { SelectFolder } from "../select/SelectFolder";
 import Errors from "../Errors";
+import {WikiFolder} from "../../types";
 
-export const MoveFolderModal = ({ folder, visibility, setVisibility }) => {
-	const [selectedParent, setSelectedParent] = useState();
+interface MoveFolderModalProps {
+	folder: WikiFolder;
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+}
+
+export const MoveFolderModal = ({ folder, visibility, setVisibility }: MoveFolderModalProps) => {
+	const [selectedParent, setSelectedParent] = useState<string>();
 	const { moveFolder, errors } = useMoveFolder(async () => {
 		await setVisibility(false);
 	});
