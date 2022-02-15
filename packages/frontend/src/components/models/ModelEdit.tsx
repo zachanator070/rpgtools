@@ -7,12 +7,17 @@ import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { LoadingView } from "../LoadingView";
 import { useDeleteModel } from "../../hooks/model/useDeleteModel";
+import {Model} from "../../types";
 
-export const ModelEdit = ({ model }) => {
+interface ModelEditProps {
+	model: Model;
+}
+
+export const ModelEdit = ({ model }: ModelEditProps) => {
 	const { updateModel, loading } = useUpdateModel();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 	const history = useHistory();
-	const { deleteModel } = useDeleteModel(() => {
+	const { deleteModel } = useDeleteModel(async (data) => {
 		history.push(`/ui/world/${currentWorld._id}/model`);
 	});
 
@@ -44,15 +49,15 @@ export const ModelEdit = ({ model }) => {
 					<div className={"margin-lg"}>
 						<ModelForm
 							callback={async (values) => {
-								await updateModel(
-									model._id,
-									values.name,
-									values.file ? values.file[0].originFileObj : null,
-									values.depth,
-									values.width,
-									values.height,
-									values.notes
-								);
+								await updateModel({
+									modelId: model._id,
+									name: values.name,
+									file: values.file ? values.file[0].originFileObj : null,
+									depth: parseFloat(values.depth),
+									width: parseFloat(values.width),
+									height: parseFloat(values.height),
+									notes: values.notes
+								});
 								history.push(
 									`/ui/world/${currentWorld._id}/model/${model._id}/view`
 								);
@@ -62,7 +67,7 @@ export const ModelEdit = ({ model }) => {
 							loading={loading}
 						/>
 						<Button
-							type={"danger"}
+							danger={true}
 							onClick={() => {
 								Modal.confirm({
 									title: "Confirm",

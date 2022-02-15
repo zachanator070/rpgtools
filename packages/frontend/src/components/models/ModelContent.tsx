@@ -5,8 +5,13 @@ import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { LoadingView } from "../LoadingView";
 import { ModelViewer } from "./ModelViewer";
+import {Model} from "../../types";
 
-export const ModelContent = ({ model }) => {
+interface ModelContentProps {
+	model: Model;
+}
+
+export const ModelContent = ({ model }: ModelContentProps) => {
 	const history = useHistory();
 	const { currentWorld, loading } = useCurrentWorld();
 
@@ -98,7 +103,7 @@ export const ModelContent = ({ model }) => {
 							<Button
 								type="primary"
 								onClick={() => {
-									window.location = `/export/Model/${model._id}`;
+									window.location.href = `/export/Model/${model._id}`;
 								}}
 							>
 								Export

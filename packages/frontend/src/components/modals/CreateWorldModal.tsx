@@ -6,7 +6,12 @@ import { useSetCurrentWorld } from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "../../../../common/src/permission-constants";
 import { ToolTip } from "../ToolTip";
 
-export const CreateWorldModal = ({ visibility, setVisibility }) => {
+interface CreateWorldModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+}
+
+export const CreateWorldModal = ({ visibility, setVisibility }: CreateWorldModalProps) => {
 	const history = useHistory();
 	const [name, setName] = useState("");
 	const [isPublic, setPublic] = useState(true);
@@ -63,7 +68,7 @@ export const CreateWorldModal = ({ visibility, setVisibility }) => {
 						type="primary"
 						disabled={loading}
 						onClick={async () => {
-							const newWorld = await createWorld(name, isPublic);
+							await createWorld({name, public: isPublic});
 							await setVisibility(false);
 						}}
 					>

@@ -98,8 +98,8 @@ export const ServerSetup = () => {
 					disabled={loading}
 					onClick={async () => {
 						try {
-							await unlockServer(unlockCode, email, username, password);
-							await login(username, password);
+							await unlockServer({unlockCode, email, username, password});
+							await login({username, password});
 						} catch {}
 					}}
 				>

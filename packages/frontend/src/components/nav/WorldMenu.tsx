@@ -23,7 +23,7 @@ export const WorldMenu = () => {
 		<Menu>
 			{currentUser.username !== ANON_USERNAME && (
 				<Menu.Item key="0">
-					<a href="#" onClick={async () => await setCreateWorldModalVisibility(true)}>
+					<a href="#" onClick={async () => setCreateWorldModalVisibility(true)}>
 						New World
 					</a>
 				</Menu.Item>
@@ -33,7 +33,7 @@ export const WorldMenu = () => {
 					visibility={selectWorldModalVisibility}
 					setVisibility={setSelectWorldModalVisibility}
 				/>
-				<a href="#" onClick={async () => await setSelectWorldModalVisibility(true)}>
+				<a href="#" onClick={async () => setSelectWorldModalVisibility(true)}>
 					Select World
 				</a>
 			</Menu.Item>

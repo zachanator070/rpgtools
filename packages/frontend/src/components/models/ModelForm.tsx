@@ -3,12 +3,28 @@ import { Button, Form, Input, Upload } from "antd";
 import { ToolTip } from "../ToolTip";
 import { UploadOutlined } from "@ant-design/icons";
 
+interface CallbackValues {
+	name: string;
+	depth: string;
+	width: string;
+	height: string;
+	notes: string;
+	file: any[];
+}
+
+interface ModelFormProps {
+	callback: (values: CallbackValues) => Promise<any>;
+	initialValues?: any;
+	loading?: boolean;
+	fileRequired?: boolean;
+}
+
 export const ModelForm = ({
 	callback,
 	initialValues,
 	loading,
 	fileRequired = true,
-}) => {
+}: ModelFormProps) => {
 	const formItemLayout = {
 		labelCol: { span: 7 },
 		wrapperCol: { span: 12 },

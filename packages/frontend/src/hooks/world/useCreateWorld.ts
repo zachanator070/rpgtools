@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
 
 export const CREATE_WORLD = gql`
@@ -15,10 +15,10 @@ export const CREATE_WORLD = gql`
 
 interface CreateWorldVariables {
 	name: string;
-	public: string;
+	public: boolean;
 }
 
-interface CreateWorldResult {
+interface CreateWorldResult extends GqlMutationResult<World,  CreateWorldVariables> {
 	createWorld: MutationMethod<World, CreateWorldVariables>
 }
 

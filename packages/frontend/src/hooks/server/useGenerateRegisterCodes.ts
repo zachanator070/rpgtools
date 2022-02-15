@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {ServerConfig} from "../../types";
 
 export const GENERATE_REGISTER_CODES = gql`
@@ -15,7 +15,7 @@ interface GenerateRegisterCodesVariables {
 	amount: number;
 }
 
-interface GenerateRegisterCodesResult {
+interface GenerateRegisterCodesResult extends GqlMutationResult<ServerConfig, GenerateRegisterCodesVariables>{
 	generateRegisterCodes: MutationMethod<ServerConfig, GenerateRegisterCodesVariables>
 }
 

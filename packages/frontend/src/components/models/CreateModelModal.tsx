@@ -5,13 +5,18 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { useCreateModel } from "../../hooks/model/useCreateModel";
 import { ModelForm } from "./ModelForm";
 
-export const CreateModelModal = ({ visibility, setVisibility }) => {
+interface CreateModelModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<any>;
+}
+
+export const CreateModelModal = ({ visibility, setVisibility }: CreateModelModalProps) => {
 	const { currentWorld } = useCurrentWorld();
 
 	const { createModel, loading } = useCreateModel(async (data) => {
 		await setVisibility(false);
 		history.push(
-			`/ui/world/${currentWorld._id}/model/${data.createModel._id}/view`
+			`/ui/world/${currentWorld._id}/model/${data._id}/view`
 		);
 	});
 	const history = useHistory();

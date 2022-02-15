@@ -14,7 +14,7 @@ export const SearchBarV2 = () => {
 		<>
 			<SelectWiki
 				style={{ width: "100%" }}
-				onChange={(wiki) => {
+				onChange={async (wiki) => {
 					history.push(`/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`);
 				}}
 			/>
