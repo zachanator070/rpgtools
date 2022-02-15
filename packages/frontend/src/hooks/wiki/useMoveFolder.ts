@@ -18,7 +18,7 @@ interface MoveFolderVariables {
 interface MoveFolderResult extends GqlMutationResult<World, MoveFolderVariables> {
 	moveFolder: MutationMethod<World, MoveFolderVariables>
 }
-export const useMoveFolder = (callback: (data: World) => Promise<void>): MoveFolderResult => {
+export const useMoveFolder = (callback?: (data: World) => Promise<void>): MoveFolderResult => {
 	const result = useGQLMutation<World, MoveFolderVariables>(
 		MOVE_FOLDER,
 		{},

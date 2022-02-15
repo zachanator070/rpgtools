@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
-import { useGQLQuery } from "../useGQLQuery";
+import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 import {WikiFolder} from "../../types";
+import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
 
 const GET_FOLDER_PATH = gql`
 	query getFolderPath($wikiId: ID!) {
@@ -14,12 +15,12 @@ interface GetFolderPathVariables {
 	wikiId: string;
 }
 
-interface GetFolderPathResult {
+interface GetFolderPathResult extends GqlLazyHookResult<WikiFolder[], GetFolderPathVariables>{
 	getFolderPath: WikiFolder[]
 }
 
-export const useGetFolderPath = (variables: GetFolderPathVariables): GetFolderPathResult => {
-	const result = useGQLQuery<WikiFolder[], GetFolderPathVariables>(GET_FOLDER_PATH, variables);
+export const useGetFolderPath = (variables?: GetFolderPathVariables): GetFolderPathResult => {
+	const result = useGQLLazyQuery<WikiFolder[], GetFolderPathVariables>(GET_FOLDER_PATH, variables);
 	return {
 		...result,
 		getFolderPath: result.data

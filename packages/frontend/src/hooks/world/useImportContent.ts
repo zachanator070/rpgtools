@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
 import { CURRENT_WORLD_FOLDERS } from "../gql-fragments";
 import {World} from "../../types";
@@ -20,7 +20,7 @@ interface ImportContentVariables {
 	zipFile: any;
 }
 
-interface ImportContentResult {
+interface ImportContentResult extends GqlMutationResult<World, ImportContentVariables>{
 	importContent: MutationMethod<World, ImportContentVariables>;
 }
 

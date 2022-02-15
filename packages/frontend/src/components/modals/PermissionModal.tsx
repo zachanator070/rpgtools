@@ -7,7 +7,7 @@ interface PermissionModalProps {
 	setVisibility: (visibility: boolean) => Promise<void>;
 	subject: any;
 	subjectType: string;
-	refetch: () => Promise<void>;
+	refetch: () => Promise<any>;
 }
 
 export const PermissionModal = ({

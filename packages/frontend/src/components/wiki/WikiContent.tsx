@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, {ReactElement, useRef} from "react";
 import { Editor } from "./Editor";
 import { ExportOutlined, EditOutlined } from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -8,7 +8,7 @@ import { MODELED_WIKI_TYPES, PLACE } from "../../../../common/src/type-constants
 import { Button, Tooltip } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ModelViewer } from "../models/ModelViewer";
-import {WikiPage} from "../../types";
+import {Model, ModeledWiki, Place, WikiPage} from "../../types";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
@@ -55,6 +55,59 @@ export const WikiContent = ({ currentWiki, wikiLoading }: WikiContentProps) => {
 		);
 	}
 
+	let typeSpecificContent: ReactElement = null;
+	if(currentWiki.type === PLACE) {
+		const currentPlace = currentWiki as Place;
+		if(currentPlace.mapImage) {
+
+			typeSpecificContent = (
+				<>
+					<div className="padding-md" style={{maxHeight: "100em", maxWidth: "100em"}}>
+						<img
+							alt={currentPlace.mapImage.name}
+							style={{objectFit: "contain"}}
+							src={`/images/${currentPlace.mapImage.icon.chunks[0].fileId}`}
+						/>
+						<span className="margin-md-left">
+							<a
+								href="#"
+								onClick={() => {
+									history.push(`/ui/world/${currentWorld._id}/map/${currentPlace._id}`);
+								}}
+							>
+								Go to Map <ExportOutlined/>
+							</a>
+						</span>
+					</div>
+					<>
+						Pixels per foot: {currentPlace.pixelsPerFoot}
+						<Tooltip
+							title={
+								"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."
+							}
+						>
+							<QuestionCircleOutlined className={"margin-lg-left"}/>
+						</Tooltip>
+					</>
+				</>
+			);
+		}
+	} else if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
+		const currentModeledWiki = currentWiki as ModeledWiki;
+		if(currentModeledWiki.model) {
+
+			typeSpecificContent = (
+				<div className={"margin-lg"}>
+					<ModelViewer
+					model={currentModeledWiki.model}
+					showColorControls={false}
+					defaultColor={currentModeledWiki.modelColor}
+					/>
+				</div>
+			);
+		}
+	}
+
 	return (
 		<div ref={wikiView} className="margin-md-top">
 			<h1>{currentWiki.name}</h1>
@@ -69,47 +122,8 @@ export const WikiContent = ({ currentWiki, wikiLoading }: WikiContentProps) => {
 					/>
 				</div>
 			)}
-			{currentWiki.type === PLACE && currentWiki.mapImage && (
-				<div className="padding-md" style={{ maxHeight: "100em", maxWidth: "100em" }}>
-					<img
-						alt={currentWiki.mapImage.name}
-						style={{ objectFit: "contain" }}
-						src={`/images/${currentWiki.mapImage.icon.chunks[0].fileId}`}
-					/>
-					<span className="margin-md-left">
-						<a
-							href="#"
-							onClick={() => {
-								history.push(`/ui/world/${currentWorld._id}/map/${currentWiki._id}`);
-							}}
-						>
-							Go to Map <ExportOutlined />
-						</a>
-					</span>
-				</div>
-			)}
-			{currentWiki.type === PLACE && currentWiki.mapImage && (
-				<>
-					Pixels per foot: {currentWiki.pixelsPerFoot}
-					<Tooltip
-						title={
-							"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."
-						}
-					>
-						<QuestionCircleOutlined className={"margin-lg-left"} />
-					</Tooltip>
-				</>
-			)}
 
-			{MODELED_WIKI_TYPES.includes(currentWiki.type) && currentWiki.model && (
-				<div className={"margin-lg"}>
-					<ModelViewer
-						model={currentWiki.model}
-						showColorControls={false}
-						defaultColor={currentWiki.modelColor}
-					/>
-				</div>
-			)}
+			{typeSpecificContent}
 
 			<div className="padding-md">
 				<Editor content={currentWiki.content} readOnly={true} />
@@ -131,7 +145,7 @@ export const WikiContent = ({ currentWiki, wikiLoading }: WikiContentProps) => {
 					<Button
 						type="primary"
 						onClick={() => {
-							window.location = `/export/${currentWiki.type}/${currentWiki._id}`;
+							window.location.href = `/export/${currentWiki.type}/${currentWiki._id}`;
 						}}
 					>
 						Export

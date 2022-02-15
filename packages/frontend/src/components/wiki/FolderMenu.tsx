@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {ReactElement, useState} from "react";
 import { Dropdown, Form, Menu, Modal, Input, Button, Upload } from "antd";
 import {
 	DeleteOutlined,
@@ -20,8 +20,16 @@ import { ToolTip } from "../ToolTip";
 import { useImportContent } from "../../hooks/world/useImportContent";
 import { PermissionEditor } from "../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "../../../../common/src/type-constants";
+import {WikiFolder} from "../../types";
 
-export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) => {
+interface FolderMenuProps {
+	folder: WikiFolder;
+	children?: ReactElement;
+	refetchFolders?: () => Promise<any>;
+	refetchWikis?: () => Promise<any>;
+}
+
+export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }: FolderMenuProps) => {
 	const { createWiki } = useCreateWiki();
 	const { createFolder } = useCreateFolder();
 	const { renameFolder } = useRenameFolder();
@@ -46,7 +54,7 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 		<Menu.Item
 			key="createWiki"
 			onClick={async () => {
-				await createWiki("New Page", folder._id);
+				await createWiki({name: "New Page", folderId: folder._id});
 				await refetchWikis();
 			}}
 		>
@@ -56,7 +64,7 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 		<Menu.Item
 			key="createFolder"
 			onClick={async () => {
-				await createFolder(folder._id, "New Folder");
+				await createFolder({parentFolderId: folder._id, name: "New Folder"});
 				await refetchFolders();
 			}}
 		>
@@ -90,7 +98,7 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 					title: "Confirm Delete",
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
 					onOk: async () => {
-						await deleteFolder(folder._id);
+						await deleteFolder({folderId: folder._id});
 						await refetchFolders();
 					},
 					onCancel: () => {},
@@ -116,7 +124,7 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 		<Menu.Item
 			key="exportFolder"
 			onClick={() => {
-				window.location = `/export/WikiFolder/${folder._id}`;
+				window.location.href = `/export/WikiFolder/${folder._id}`;
 			}}
 		>
 			<DownloadOutlined />
@@ -148,15 +156,12 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 					title={`Rename ${folder.name}`}
 					visible={renameModalVisibility}
 					onCancel={() => setRenameModalVisibility(false)}
-					onClick={(event) => {
-						event.stopPropagation();
-					}}
 				>
 					<Form
 						{...layout}
 						onFinish={async ({ newName }) => {
 							setRenameModalVisibility(false);
-							await renameFolder(folder._id, newName);
+							await renameFolder({folderId: folder._id, name: newName});
 						}}
 					>
 						<Form.Item name={"newName"} label={"New Name"}>
@@ -174,9 +179,6 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 					title={`Move ${folder.name}`}
 					visible={moveFolderModalVisibility}
 					onCancel={() => setMoveFolderModalVisibility(false)}
-					onClick={(event) => {
-						event.stopPropagation();
-					}}
 				>
 					<Form
 						{...layout}
@@ -204,9 +206,6 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 					visible={importModalVisibility}
 					footer={null}
 					onCancel={() => setImportModalVisibility(false)}
-					onClick={(event) => {
-						event.stopPropagation();
-					}}
 				>
 					<div className={"margin-lg-top"}>
 						<Form
@@ -274,9 +273,6 @@ export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }) =
 					visible={permissionModalVisibility}
 					onCancel={() => setPermissionModalVisibility(false)}
 					width={750}
-					onClick={(event) => {
-						event.stopPropagation();
-					}}
 				>
 					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={refetchFolders} />
 				</Modal>

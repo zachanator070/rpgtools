@@ -28,6 +28,7 @@ export interface World extends PermissionControlled {
     canHostGame: boolean;
     canAddModels: boolean;
     currentUserPermissions: PermissionAssignment[];
+    folders: WikiFolder[];
 }
 
 export interface WorldPaginatedResult {
@@ -82,7 +83,7 @@ export interface WikiPagePaginatedResult {
     nextPage: number;
 }
 
-export interface WikiPage {
+export interface WikiPage extends PermissionControlled {
     _id: string;
     name: string;
     content: string;
@@ -97,7 +98,7 @@ export interface ModeledWiki extends WikiPage {
     modelColor: string;
 }
 
-export interface Article extends WikiPage, PermissionControlled {
+export interface Article extends WikiPage {
     _id: string;
     name: string;
     content: string;
@@ -110,7 +111,7 @@ export interface Article extends WikiPage, PermissionControlled {
     canAdmin: boolean;
 }
 
-export interface Place extends WikiPage, PermissionControlled {
+export interface Place extends WikiPage {
     _id: string;
     name: string;
     content: string;
@@ -125,7 +126,7 @@ export interface Place extends WikiPage, PermissionControlled {
     canAdmin: boolean;
 }
 
-export interface Person extends WikiPage, PermissionControlled, ModeledWiki {
+export interface Person extends WikiPage, ModeledWiki {
     _id: string;
     name: string;
     content: string;
@@ -140,7 +141,7 @@ export interface Person extends WikiPage, PermissionControlled, ModeledWiki {
     modelColor: string;
 }
 
-export interface Item extends WikiPage, PermissionControlled, ModeledWiki {
+export interface Item extends WikiPage, ModeledWiki {
     _id: string;
     name: string;
     content: string;
@@ -155,7 +156,7 @@ export interface Item extends WikiPage, PermissionControlled, ModeledWiki {
     modelColor: string;
 }
 
-export interface Monster extends WikiPage, PermissionControlled, ModeledWiki {
+export interface Monster extends WikiPage, ModeledWiki {
     _id: string;
     name: string;
     content: string;

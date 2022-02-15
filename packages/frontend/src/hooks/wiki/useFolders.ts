@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 import {WikiFolder} from "../../types";
+import {useParams} from 'react-router-dom';
 
 const FOLDERS = gql`
 	query folders($worldId: ID!, $name: String, $canAdmin: Boolean) {
@@ -18,7 +19,7 @@ const FOLDERS = gql`
 `;
 
 interface FoldersVariables {
-	worldId: string;
+	worldId?: string;
 	name?: string;
 	canAdmin?: boolean;
 }
@@ -27,7 +28,11 @@ interface FoldersResult extends GqlQueryResult<WikiFolder[], FoldersVariables>{
 	folders: WikiFolder[]
 }
 
-export const useFolders = (variables: FoldersVariables): FoldersResult => {
+export const useFolders = (variables?: FoldersVariables): FoldersResult => {
+	const params = useParams();
+	if (variables.worldId === null) {
+		variables.worldId = params.world_id;
+	}
 	const result = useGQLQuery<WikiFolder[], FoldersVariables>(FOLDERS, variables);
 	return {
 		...result,

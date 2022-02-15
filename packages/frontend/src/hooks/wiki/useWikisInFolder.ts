@@ -24,15 +24,15 @@ export const WIKIS_IN_FOLDER = gql`
 `;
 
 interface WikisInFolderVariables {
-	folderId: string;
-	page: number;
+	folderId?: string;
+	page?: number;
 }
 
 interface WikisInFolderResult extends GqlLazyHookResult<WikiPagePaginatedResult, WikisInFolderVariables>{
 	wikisInFolder: WikiPagePaginatedResult;
 }
 
-export const useWikisInFolder = (variables: WikisInFolderVariables): WikisInFolderResult => {
+export const useWikisInFolder = (variables?: WikisInFolderVariables): WikisInFolderResult => {
 	const updateQuery =
 		(prev, { fetchMoreResult }) => {
 		if (!fetchMoreResult) return prev;

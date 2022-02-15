@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import { Modal, Button } from "antd";
 import { SelectFolder } from "../select/SelectFolder";
 import { useMoveWiki } from "../../hooks/wiki/useMoveWiki";
+import {WikiPage} from "../../types";
 
-export const MoveWikiButton = ({ wikiPage }) => {
-	const [newFolder, setNewFolder] = useState();
+interface MoveWikiButtonProps {
+	wikiPage: WikiPage;
+}
+
+export const MoveWikiButton = ({ wikiPage }: MoveWikiButtonProps) => {
+	const [newFolder, setNewFolder] = useState<string>();
 	const [moveModalVisibility, setMoveModalVisibility] = useState(false);
 	const { moveWiki } = useMoveWiki();
 
@@ -16,7 +21,7 @@ export const MoveWikiButton = ({ wikiPage }) => {
 				footer={null}
 				onCancel={() => setMoveModalVisibility(false)}
 			>
-				New Folder: <SelectFolder onChange={setNewFolder} />
+				New Folder: <SelectFolder onChange={async (folderId: string) => setNewFolder(folderId)} />
 				<div className={"margin-lg"}>
 					<Button
 						type={"primary"}
