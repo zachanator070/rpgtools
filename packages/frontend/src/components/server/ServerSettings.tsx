@@ -54,7 +54,7 @@ export default () => {
 							type={"primary"}
 							disabled={generateLoading}
 							onClick={async () => {
-								await generateRegisterCodes(amount);
+								await generateRegisterCodes({amount});
 							}}
 						>
 							Generate

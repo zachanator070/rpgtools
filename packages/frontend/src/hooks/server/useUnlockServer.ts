@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 
 export const UNLOCK_SERVER = gql`
 	mutation unlockServer(
@@ -24,11 +24,11 @@ interface UnlockServerVariables {
 	password: string;
 }
 
-interface UnlockServerResult {
+interface UnlockServerResult extends GqlMutationResult<boolean, UnlockServerVariables>{
 	unlockServer: MutationMethod<boolean, UnlockServerVariables>
 }
 
-export default (callback: (data: boolean) => Promise<void>): UnlockServerResult => {
+export default (callback?: (data: boolean) => Promise<void>): UnlockServerResult => {
 	const result = useGQLMutation<boolean, UnlockServerVariables>(
 		UNLOCK_SERVER,
 		{},

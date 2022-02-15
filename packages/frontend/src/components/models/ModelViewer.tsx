@@ -8,9 +8,9 @@ interface ModelViewerProps {
 	model: Model;
 	width?: number;
 	height?: number;
-	defaultColor: string;
-	showColorControls: boolean;
-	onChangeColor: (color: string) => Promise<any>;
+	defaultColor?: string;
+	showColorControls?: boolean;
+	onChangeColor?: (color: string) => Promise<any>;
 }
 
 export const ModelViewer = ({

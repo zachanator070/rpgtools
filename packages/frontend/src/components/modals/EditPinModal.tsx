@@ -4,8 +4,15 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { useUpdatePin } from "../../hooks/map/useUpdatePin";
 import { useDeletePin } from "../../hooks/map/useDeletePin";
 import { SelectWiki } from "../select/SelectWiki";
+import {Place} from "../../types";
 
-export const EditPinModal = ({ visibility, setVisibility, pinId }) => {
+interface EditPinModalProps {
+	visibility: boolean;
+	setVisibility: (visibility: boolean) => Promise<void>;
+	pinId: string;
+}
+
+export const EditPinModal = ({ visibility, setVisibility, pinId }: EditPinModalProps) => {
 	const [page, setPage] = useState(null);
 
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
@@ -26,7 +33,7 @@ export const EditPinModal = ({ visibility, setVisibility, pinId }) => {
 	}
 
 	const save = async () => {
-		await updatePin(pinId, page._id);
+		await updatePin({pinId, pageId: page._id});
 		await setVisibility(false);
 	};
 
@@ -51,7 +58,7 @@ export const EditPinModal = ({ visibility, setVisibility, pinId }) => {
 			>
 				<Form layout="horizontal">
 					<Form.Item label="Page" {...formItemLayout}>
-						<SelectWiki onChange={setPage} />
+						<SelectWiki<Place> onChange={async (wiki) => setPage(wiki)} />
 					</Form.Item>
 					<Form.Item {...noLabelItem}>
 						<Button
@@ -66,10 +73,10 @@ export const EditPinModal = ({ visibility, setVisibility, pinId }) => {
 						</Button>
 						<Button
 							className="margin-md-left"
-							type="danger"
+							danger={true}
 							disabled={updateLoading || deleteLoading}
 							onClick={async () => {
-								await deletePin(pinId);
+								await deletePin({pinId});
 								await setVisibility(false);
 							}}
 						>

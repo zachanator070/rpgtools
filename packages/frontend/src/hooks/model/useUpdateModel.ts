@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import { MODEL_ATTRIBUTES } from "../gql-fragments";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Model} from "../../types";
 
 export const UPDATE_MODEL = gql`
@@ -23,7 +23,7 @@ interface UpdateModelVariables {
 	notes: string;
 }
 
-interface UpdateModelResult {
+interface UpdateModelResult extends GqlMutationResult<Model,  UpdateModelVariables>{
 	updateModel: MutationMethod<Model, UpdateModelVariables>;
 	model: Model;
 }

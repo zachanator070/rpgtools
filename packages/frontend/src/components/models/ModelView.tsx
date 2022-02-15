@@ -11,12 +11,13 @@ import { CreateModelModal } from "./CreateModelModal";
 import { ModelEdit } from "./ModelEdit";
 import { ModelContent } from "./ModelContent";
 import { useParams, useHistory } from "react-router-dom";
+import {Model} from "../../types";
 
 export const ModelView = () => {
 	const { models, loading, refetch } = useGetModels();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 
-	const [selectedModel, setSelectedModel] = useState();
+	const [selectedModel, setSelectedModel] = useState<Model>();
 	const match = useRouteMatch();
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 	const [createModelModalVisibility, setCreateModelModalVisibility] = useState(false);
@@ -56,7 +57,7 @@ export const ModelView = () => {
 							</Button>
 							<CreateModelModal
 								visibility={createModelModalVisibility}
-								setVisibility={setCreateModelModalVisibility}
+								setVisibility={async (visibility) => setCreateModelModalVisibility(visibility)}
 							/>
 						</>
 					)}

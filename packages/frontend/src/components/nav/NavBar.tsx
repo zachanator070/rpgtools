@@ -42,11 +42,11 @@ export const NavBar = () => {
 		loginOptions = (
 			<div>
 				<div className="text-align-right margin-sm-top ">
-					<a href="#" onClick={async () => await setLoginModalVisibility(true)}>
+					<a href="#" onClick={async () => setLoginModalVisibility(true)}>
 						Login
 					</a>
 					<span className={"margin-md-left margin-md-right"}>or</span>
-					<a href="#" onClick={async () => await setRegisterModalVisibility(true)}>
+					<a href="#" onClick={async () => setRegisterModalVisibility(true)}>
 						Register
 					</a>
 				</div>
