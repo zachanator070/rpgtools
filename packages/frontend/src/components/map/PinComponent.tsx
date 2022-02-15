@@ -5,8 +5,14 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useSetMapWiki from "../../hooks/map/useSetMapWiki";
 import { EditPinModal } from "../modals/EditPinModal";
 import { PLACE } from "../../../../common/src/type-constants";
+import {Pin} from "../../types";
 
-export const Pin = ({ pin, translate }) => {
+interface PinComponentProps {
+	pin: Pin;
+	translate?: (x: number, y: number) => number[];
+}
+
+export const PinComponent = ({ pin, translate }: PinComponentProps) => {
 	const history = useHistory();
 	const { currentWorld } = useCurrentWorld();
 	const [editPinModalVisibility, setEditPinModalVisibility] = useState(false);
@@ -44,7 +50,7 @@ export const Pin = ({ pin, translate }) => {
 					onClick={async () => {
 						await setVisible(false);
 						await setMapWiki(null);
-						await setMapWiki(pin.page._id);
+						await setMapWiki({mapWikiId: pin.page._id});
 					}}
 				>
 					Details
@@ -71,16 +77,16 @@ export const Pin = ({ pin, translate }) => {
 		<>
 			<EditPinModal
 				visibility={editPinModalVisibility}
-				setVisibility={setEditPinModalVisibility}
+				setVisibility={async (visible) => setEditPinModalVisibility(visible)}
 				pinId={pin._id}
 			/>
 			<Popover
 				content={pinPopupContent}
 				trigger="click"
 				key={pin._id}
-				overlayStyle={{ zIndex: "10" }}
+				overlayStyle={{ zIndex: 10 }}
 				visible={visible}
-				onVisibleChange={async (newVisible) => await setVisible(newVisible)}
+				onVisibleChange={async (newVisible) => setVisible(newVisible)}
 			>
 				<div
 					style={{

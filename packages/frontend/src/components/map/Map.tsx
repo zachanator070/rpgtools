@@ -1,9 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Dropdown, Icon, Menu } from "antd";
+import React, {ReactElement, useEffect, useRef, useState} from "react";
+import { Dropdown, Menu } from "antd";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import { LoadingView } from "../LoadingView";
 
-export const Map = ({ menuItems, extras }) => {
+interface MapProps {
+	menuItems: MapMenuItem[];
+	extras: ReactElement[];
+}
+
+interface MapMenuItem {
+	name: string;
+	onClick: (mouseX: number, mouseY: number) => Promise<any>
+}
+
+export const Map = ({ menuItems, extras }: MapProps) => {
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 
@@ -14,9 +24,9 @@ export const Map = ({ menuItems, extras }) => {
 	const y = useRef(0);
 	const [coordsHash, setCoordsHash] = useState(null);
 
-	const mapContainer = useRef({ offsetWidth: 1, offsetHeight: 1 });
+	const mapContainer = useRef<HTMLDivElement>();
 	const map = useRef(null);
-	const mapCanvas = useRef();
+	const mapCanvas = useRef<HTMLCanvasElement>();
 
 	const { currentMap, loading } = useCurrentMap();
 
@@ -167,12 +177,12 @@ export const Map = ({ menuItems, extras }) => {
 			items.push(
 				<Menu.Item
 					key={item.name}
-					onClick={() => {
+					onClick={async () => {
 						const boundingBox = map.current.getBoundingClientRect();
 						const newPinX = lastMouseX.current - boundingBox.x;
 						const newPinY = lastMouseY.current - boundingBox.y;
 						const coords = reverseTranslate(newPinX, newPinY);
-						item.onClick(coords[0], coords[1]);
+						await item.onClick(coords[0], coords[1]);
 					}}
 				>
 					{item.name}

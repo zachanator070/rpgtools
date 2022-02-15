@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import gql from "graphql-tag";
-import {WikiPage} from "../../types";
+import {Place, WikiPage} from "../../types";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 
 export const GET_CURRENT_MAP = gql`
@@ -40,15 +40,15 @@ interface CurrentMapVariables {
 	wikiId: string;
 }
 
-interface CurrentMapResult extends GqlQueryResult<WikiPage, CurrentMapVariables>{
-	wiki: WikiPage
+interface CurrentMapResult extends GqlQueryResult<Place, CurrentMapVariables>{
+	currentMap: Place
 }
 
 export default (): CurrentMapResult => {
 	const { map_id } = useParams();
-	const result = useGQLQuery<WikiPage, CurrentMapVariables>(GET_CURRENT_MAP, {wikiId: map_id});
+	const result = useGQLQuery<Place, CurrentMapVariables>(GET_CURRENT_MAP, {wikiId: map_id});
 	return {
 		...result,
-		wiki: result.data
+		currentMap: result.data
 	}
 };

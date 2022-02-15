@@ -1,6 +1,6 @@
 import React from "react";
 import { Map } from "./Map";
-import { Pin } from "./Pin";
+import { PinComponent } from "./PinComponent";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import { LoadingView } from "../LoadingView";
@@ -23,7 +23,7 @@ export const MapView = () => {
 			return pin.map._id === currentMap._id;
 		});
 		for (let pin of pinsOnThisMap) {
-			pins.push(<Pin pin={pin} key={pin._id} />);
+			pins.push(<PinComponent pin={pin} key={pin._id} />);
 		}
 
 		return pins;
@@ -39,7 +39,7 @@ export const MapView = () => {
 			menuItems={[
 				{
 					onClick: async (mouseX, mouseY) => {
-						await createPin(currentMap._id, mouseX, mouseY, null);
+						await createPin({mapId: currentMap._id, x: mouseX, y: mouseY});
 					},
 					name: "New Pin",
 				},
@@ -75,7 +75,7 @@ export const MapView = () => {
 				className="overflow-hidden flex-column flex-grow-1"
 			>
 				{mapWikiData && mapWikiData.mapWiki && (
-					<div style={{ zIndex: "2" }}>
+					<div style={{ zIndex: 2 }}>
 						<MapDrawer />
 					</div>
 				)}
