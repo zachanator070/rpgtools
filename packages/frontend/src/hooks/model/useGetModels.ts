@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { MODEL_ATTRIBUTES } from "../gql-fragments";
 import {Model} from "../../types";
 import {GqlQueryResult} from "../useGQLQuery";
-import {useGQLLazyQuery} from "../useGQLLazyQuery";
+import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
 
 export const GET_MODELS = gql`
 	${MODEL_ATTRIBUTES}
@@ -16,10 +16,10 @@ export const GET_MODELS = gql`
 `;
 
 interface GetModelsVariables {
-	worldId: string;
+	worldId?: string;
 }
 
-interface GetModelsResult extends GqlQueryResult<Model[], GetModelsVariables> {
+interface GetModelsResult extends GqlLazyHookResult<Model[], GetModelsVariables> {
 	models: Model[];
 }
 

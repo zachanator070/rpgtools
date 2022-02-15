@@ -27,15 +27,21 @@ Quill.register({
 	"formats/list-item": ListItem,
 });
 
-export const Editor = ({ content, readOnly, onInit }) => {
+interface EditorProps {
+	content: string;
+	readOnly: boolean;
+	onInit?: (editor: Quill) => Promise<any>;
+}
+
+export const Editor = ({ content, readOnly, onInit }: EditorProps) => {
 	const { currentWorld, loading } = useCurrentWorld();
 	const editorCreated = useRef(false);
-	const [editor, setEditor] = useState();
+	const [editor, setEditor] = useState<Quill>();
 
-	const prevContent = useRef(content);
+	const prevContent = useRef<string>(content);
 
 	useEffect(() => {
-		if (content && editor && content !== prevContent) {
+		if (content && editor && content !== prevContent.current) {
 			editor.setContents(JSON.parse(content));
 			document.querySelectorAll(".ql-picker").forEach((tool) => {
 				tool.addEventListener("mousedown", function (event) {
@@ -83,7 +89,7 @@ export const Editor = ({ content, readOnly, onInit }) => {
 							}
 							const allWikis = [];
 							for (let folder of currentWorld.folders) {
-								allWikis.push(...folder.pages);
+								allWikis.push(...folder.children);
 							}
 							const results = allWikis.filter((wiki) =>
 								wiki.name.toLowerCase().includes(searchTerm.toLowerCase())

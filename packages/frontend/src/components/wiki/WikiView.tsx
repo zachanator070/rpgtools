@@ -28,10 +28,10 @@ export const WikView = () => {
 			{currentWiki && (
 				<PermissionModal
 					visibility={permissionModalVisibility}
-					setVisibility={setPermissionModalVisibility}
+					setVisibility={async (visible: boolean) => setPermissionModalVisibility(visible)}
 					subject={currentWiki}
 					subjectType={currentWiki.type}
-					refetch={refetch}
+					refetch={async () => await refetch({})}
 				/>
 			)}
 

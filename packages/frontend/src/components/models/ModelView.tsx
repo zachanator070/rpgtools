@@ -111,10 +111,10 @@ export const ModelView = () => {
 							</a>
 							<PermissionModal
 								visibility={permissionModalVisibility}
-								setVisibility={setPermissionModalVisibility}
+								setVisibility={async (visibility: boolean) => setPermissionModalVisibility(visibility)}
 								subject={selectedModel}
 								subjectType={MODEL}
-								refetch={refetch}
+								refetch={async () => await refetch({})}
 							/>
 						</div>
 					)}

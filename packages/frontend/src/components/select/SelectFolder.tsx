@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { useFolders } from "../../hooks/wiki/useFolders";
 
 interface SelectFolderProps {
-	onChange: (folderId: string) => Promise<any>;
+	onChange?: (folderId: string) => Promise<any>;
 	style?: CSSProperties;
 	canAdmin?: boolean;
 }

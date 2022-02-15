@@ -8,17 +8,22 @@ import {
 	FileTextOutlined,
 	FolderOpenOutlined,
 	FolderOutlined,
-	RightOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { FolderMenu } from "./FolderMenu";
 import { useParams } from "react-router-dom";
 import { useGetFolderPath } from "../../hooks/wiki/useGetFolderPath";
+import {WikiFolder} from "../../types";
 
-export const FolderTree = ({ folder, initialExpanded, indent = 0 }) => {
+interface FolderTreeProps {
+	folder: WikiFolder;
+	initialExpanded?: string[];
+	indent?: number;
+}
+
+export const FolderTree = ({ folder, initialExpanded, indent = 0 }: FolderTreeProps) => {
 	const params = useParams();
 	const {
-		fetchMore,
 		wikisInFolder,
 		loading: wikisLoading,
 		refetch: refetchWikis,
@@ -28,19 +33,18 @@ export const FolderTree = ({ folder, initialExpanded, indent = 0 }) => {
 		loading: foldersLoading,
 		refetch: refetchFolders,
 	} = useFolders({ worldId: params.world_id });
-	const { getFolderPath, loading: folderPathLoading } = useGetFolderPath({
+	const { getFolderPath } = useGetFolderPath({
 		wikiId: params.wiki_id,
 	});
 	const [expanded, setExpanded] = useState(false);
 	const [pages, setPages] = useState([]);
 	const [animateArrow, setAnimateArrow] = useState(false);
-	const isMounted = useRef(false);
 
 	useEffect(() => {
 		if (getFolderPath) {
 			setExpanded(
 				expanded ||
-					getFolderPath.find((otherFolder) => otherFolder._id === folder._id)
+					getFolderPath.find((otherFolder) => otherFolder._id === folder._id) != null
 			);
 		}
 	}, [getFolderPath]);
@@ -123,10 +127,12 @@ export const FolderTree = ({ folder, initialExpanded, indent = 0 }) => {
 			>
 				<FolderMenu
 					folder={folder}
-					refetchFolders={refetchFolders}
-					refetchWikis={refetchWikis}
+					refetchFolders={async () => await refetchFolders({})}
+					refetchWikis={async () => await refetchWikis({})}
 				>
-					{arrow} {folderIcon} {folder.name}
+					<>
+						{arrow} {folderIcon} {folder.name}
+					</>
 				</FolderMenu>
 			</div>
 			{expanded && (

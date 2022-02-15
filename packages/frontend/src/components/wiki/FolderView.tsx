@@ -1,7 +1,7 @@
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { LoadingView } from "../LoadingView";
-import React, { useEffect, useState } from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import { DownOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Tree } from "antd";
 import { Link } from "react-router-dom";
@@ -9,21 +9,30 @@ import { FolderMenu } from "./FolderMenu";
 import { useWikisInFolder } from "../../hooks/wiki/useWikisInFolder";
 import { useFolders } from "../../hooks/wiki/useFolders";
 import { useGetFolderPath } from "../../hooks/wiki/useGetFolderPath";
+import {WikiFolder} from "../../types";
+
+interface FolderTreeData {
+	title: string;
+	key: string;
+	isLeaf: boolean;
+	folder: WikiFolder;
+	children: FolderTreeData[];
+}
 
 export const FolderView = () => {
 	const { currentWiki, loading: wikiLoading } = useCurrentWiki();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
-	const [expandedKeys, setExpandedKeys] = useState();
-	const [treeData, setTreeData] = useState();
+	const [expandedKeys, setExpandedKeys] = useState<string[]>();
+	const [treeData, setTreeData] = useState<FolderTreeData[]>();
 	const { fetch: fetchWikis, fetchMore, wikisInFolder } = useWikisInFolder();
-	const { folders, foldersLoading } = useFolders();
+	const { folders, loading: foldersLoading } = useFolders();
 	const { fetch: fetchFolderPath, data: folderPath } = useGetFolderPath();
 
-	const getFolderTreeData = (folder) => {
+	const getFolderTreeData = (folder): FolderTreeData => {
 		const populatedFolder = folders.find(
 			(otherFolder) => otherFolder._id === folder._id
 		);
-		const data = {
+		const data: FolderTreeData = {
 			title: populatedFolder.name,
 			key: populatedFolder._id,
 			isLeaf: false,
@@ -114,7 +123,7 @@ export const FolderView = () => {
 				switcherIcon={<DownOutlined />}
 				showIcon={true}
 				defaultExpandedKeys={expandedKeys}
-				titleRender={(node) => {
+				titleRender={(node: FolderTreeData) => {
 					if (node.isLeaf) {
 						return (
 							<Link to={`/ui/world/${currentWorld._id}/wiki/${node.key}/view`}>

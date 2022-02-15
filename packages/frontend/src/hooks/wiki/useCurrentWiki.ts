@@ -25,7 +25,7 @@ export const GET_CURRENT_WIKI = gql`
 `;
 
 interface CurrentWikiVariables {
-	wikiId: string;
+	wikiId?: string;
 }
 
 interface CurrentWikiResult extends GqlQueryResult<WikiPage, CurrentWikiVariables>{
