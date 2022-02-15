@@ -12,7 +12,7 @@ import {WikiPage} from "../../types";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
-	wikiLoading: boolean;
+	wikiLoading?: boolean;
 }
 
 export const WikiContent = ({ currentWiki, wikiLoading }: WikiContentProps) => {
