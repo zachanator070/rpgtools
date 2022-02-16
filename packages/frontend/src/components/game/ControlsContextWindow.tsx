@@ -41,10 +41,10 @@ export const ControlsContextWindow = ({
 			content = <FogOptions renderer={renderer} />;
 			break;
 		case SELECT_MODEL_CONTROLS:
-			content = <ModelInfo renderer={renderer} setGameWikiId={setGameWikiId} />;
+			content = <ModelInfo renderer={renderer} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case SELECT_LOCATION_CONTROLS:
-			content = <GameLocationSettings setGameWikiId={setGameWikiId} />;
+			content = <GameLocationSettings setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case ADD_MODEL_CONTROLS:
 			content = <AddModelSection />;
@@ -56,7 +56,7 @@ export const ControlsContextWindow = ({
 
 	return (
 		<>
-			<a onClick={async () => await setVisible(true)}>
+			<a onClick={async () => setVisible(true)}>
 				<div
 					className={"margin-lg padding-md"}
 					style={{
@@ -88,7 +88,7 @@ export const ControlsContextWindow = ({
 				<span>
 					<a
 						className={"margin-md"}
-						onClick={async () => await setVisible(false)}
+						onClick={async () => setVisible(false)}
 					>
 						<CloseOutlined />
 					</a>
