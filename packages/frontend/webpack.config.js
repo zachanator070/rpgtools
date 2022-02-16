@@ -11,7 +11,7 @@ console.log(`building with stats=${process.env.BUILD_WITH_STATS === "true"}`);
 
 module.exports = {
 	entry: {
-		app: "./src/index.js",
+		app: "./src/index.tsx",
 	},
 	mode: "production",
 	plugins: [
@@ -48,11 +48,11 @@ module.exports = {
 		publicPath: "/",
 	},
 	resolve: {
-		alias: {
-			parchment: path.resolve(__dirname, "node_modules/parchment/src/parchment.ts"),
-			quill$: path.resolve(__dirname, "node_modules/quill/quill.js"),
-		},
-		extensions: [".js", ".ts", ".svg"],
+		// alias: {
+		// 	parchment: path.resolve(__dirname, "node_modules/parchment/src/parchment.ts"),
+		// 	quill$: path.resolve(__dirname, "node_modules/quill/quill.js"),
+		// },
+		extensions: [".js", ".ts", ".svg", ".tsx"],
 	},
 	module: {
 		rules: [
@@ -87,18 +87,10 @@ module.exports = {
 				type: "javascript/auto",
 			},
 			{
-				test: /\.ts$/,
+				test: /\.(ts|tsx)$/,
 				use: [
 					{
 						loader: "ts-loader",
-						options: {
-							compilerOptions: {
-								declaration: false,
-								target: "es5",
-								module: "commonjs",
-							},
-							transpileOnly: true,
-						},
 					},
 				],
 			},

@@ -1,10 +1,14 @@
 version: "3.4"
 services:
+
+  ##########
+  # SERVER #
+  ##########
+
   dev-server:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
-      target: server
     command: "npm run dev"
     env_file:
       - .env
@@ -35,11 +39,14 @@ services:
     networks:
       - rpgtools
 
+  ####################
+  # Frontend Builder #
+  ####################
+
   dev-frontend-builder:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
-      target: builder
     env_file:
       - .env
     volumes:
@@ -54,7 +61,6 @@ services:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
-      target: builder
     user: ${CURRENT_UID}
     environment:
       - BUILD_WITH_STATS=${BUILD_WITH_STATS}
@@ -62,6 +68,10 @@ services:
       - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
     networks:
       - rpgtools
+
+  ############
+  # Database #
+  ############
 
   mongodb:
     image: "mongo:latest"
@@ -74,23 +84,16 @@ services:
     networks:
       rpgtools:
 
+  #########
+  # Cache #
+  #########
+
   redis:
     image: "redis:latest"
     ports:
       - "6379:6379"
     networks:
       rpgtools:
-
-  test-db:
-    image: "mongo:latest"
-    environment:
-      MONGO_INITDB_DATABASE: "rpgtools"
-    ports:
-      - "27017:27017"
-    networks:
-      rpgtools:
-        aliases:
-          - "mongodb"
 
 networks:
   rpgtools:

@@ -79,7 +79,7 @@ export const GameDrawer = ({ renderer, controlsMode, setGameWikiId }: GameDrawer
 					<ToolOptions
 						renderer={renderer}
 						controlsMode={controlsMode}
-						setGameWikiId={setGameWikiId}
+						setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
 					/>
 				</TabPane>
 				<TabPane

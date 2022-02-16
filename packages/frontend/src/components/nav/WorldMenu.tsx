@@ -31,7 +31,7 @@ export const WorldMenu = () => {
 			<Menu.Item key="1">
 				<SelectWorldModal
 					visibility={selectWorldModalVisibility}
-					setVisibility={setSelectWorldModalVisibility}
+					setVisibility={async (visibility: boolean) => setSelectWorldModalVisibility(visibility)}
 				/>
 				<a href="#" onClick={async () => setSelectWorldModalVisibility(true)}>
 					Select World
@@ -44,7 +44,7 @@ export const WorldMenu = () => {
 		<span>
 			<CreateWorldModal
 				visibility={createWorldModalVisibility}
-				setVisibility={setCreateWorldModalVisibility}
+				setVisibility={async (visibility: boolean) => setCreateWorldModalVisibility(visibility)}
 			/>
 			<Dropdown overlay={menu} trigger={["click"]}>
 				<Button>

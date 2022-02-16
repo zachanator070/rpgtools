@@ -35,10 +35,14 @@ export const useGQLResponse =
 		throw new Error("Given query is empty! No definitions were supplied");
 	}
 	let queryName = null;
-	if(confirmProperty(query.definitions[0], 'name')){
-		queryName = query.definitions[0].name.value;
+	const definition = query.definitions.find(givenDefinition => givenDefinition.kind === "OperationDefinition");
+	if(!definition) {
+		throw new Error(`Could not find operation definition for query: ${query.loc.source.body}`);
+	}
+	if(confirmProperty(definition, 'name')){
+		queryName = definition.name.value;
 	} else {
-		throw new Error('Could not determine query name from definition');
+		throw new Error(`Could not find operation name definition for query: ${query.loc.source.body}`);
 	}
 
 	useEffect(() => {

@@ -165,7 +165,7 @@ export const GameControlsToolbar = ({ controlsMode, setControlsMode }: GameContr
 		>
 			<PermissionModal
 				visibility={permissionModalVisibility}
-				setVisibility={setPermissionModalVisibility}
+				setVisibility={async (visibility: boolean) => setPermissionModalVisibility(visibility)}
 				subject={currentGame}
 				subjectType={GAME}
 				refetch={refetchCurrentGame}

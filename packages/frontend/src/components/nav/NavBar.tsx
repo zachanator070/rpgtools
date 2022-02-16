@@ -56,9 +56,9 @@ export const NavBar = () => {
 
 	return (
 		<div className="shadow-sm padding-sm nav-bar">
-			<LoginModal setVisibility={setLoginModalVisibility} visibility={loginModalVisibility} />
+			<LoginModal setVisibility={async (visibility: boolean) => setLoginModalVisibility(visibility)} visibility={loginModalVisibility} />
 			<RegisterModal
-				setVisibility={setRegisterModalVisibility}
+				setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}
 				visibility={registerModalVisibility}
 			/>
 			<Row>

@@ -19,7 +19,7 @@ interface SearchUsersVariables {
 }
 
 interface SearchUsersResult extends GqlLazyHookResult<UserPaginatedResult, SearchUsersVariables>{
-	searchUsers: LazyHookFetch<SearchUsersVariables>,
+	searchUsers: LazyHookFetch<UserPaginatedResult, SearchUsersVariables>,
 	users: UserPaginatedResult
 }
 export const useSearchUsers = (): SearchUsersResult => {
