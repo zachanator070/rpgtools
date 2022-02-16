@@ -10,7 +10,7 @@ export interface GqlLazyHookResult<TData, TVariables=void>  {
 	data: TData;
 }
 
-export type LazyHookFetch<TVariables> = (variables: TVariables) => Promise<void>;
+export type LazyHookFetch<TVariables> = (variables?: TVariables) => Promise<void>;
 type UpdateQuery = (prev, {fetchMoreResult}) => any;
 type LazyQueryOptions = {
 	onCompleted?: () => void;
@@ -30,7 +30,10 @@ export const useGQLLazyQuery = <TData, TVariables=void>(
 	return {
 		...response,
 		loading,
-		refetch: async (variables: TVariables) => { await refetch({variables}) },
+		refetch: async (newVariables?: TVariables) => {
+			const originalVariables = Object.create(variables);
+			await refetch(Object.assign(originalVariables, newVariables));
+		},
 		fetchMore: async (variables: TVariables) => { await fetchMore({variables, updateQuery: options.updateQuery}) },
 		fetch: async (variables) => fetch({ variables })
 	};

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal, Select, Upload, InputNumber, Tooltip } from "antd";
+import { Button, Input, Modal, Select, Upload, InputNumber } from "antd";
 import { UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined } from "@ant-design/icons";
 import { Editor } from "./Editor";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
@@ -17,20 +17,21 @@ import { useUpdateModeledWiki } from "../../hooks/wiki/useUpdateModeledWiki";
 import { LoadingView } from "../LoadingView";
 import { MoveWikiButton } from "./MoveWikiButton";
 import { useWikisInFolder } from "../../hooks/wiki/useWikisInFolder";
+import {Model, ModeledWiki, Place} from "../../types";
 
 export const WikiEdit = () => {
 	const history = useHistory();
 	const { currentWiki } = useCurrentWiki();
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();
 
-	const [mapToUpload, setMapToUpload] = useState(false);
-	const [coverToUpload, setCoverToUpload] = useState(false);
+	const [mapToUpload, setMapToUpload] = useState<File>();
+	const [coverToUpload, setCoverToUpload] = useState<File>();
 	const [name, setName] = useState(null);
 	const [type, setType] = useState(null);
 	const [coverImageList, setCoverImageList] = useState([]);
 	const [mapImageList, setMapImageList] = useState([]);
-	const [pixelsPerFoot, setPixelsPerFoot] = useState(0);
-	const [modelColor, setModelColor] = useState();
+	const [pixelsPerFoot, setPixelsPerFoot] = useState<number>(0);
+	const [modelColor, setModelColor] = useState<string>();
 	const [saving, setSaving] = useState(false);
 	const { deleteWiki } = useDeleteWiki();
 	const { createImage } = useCreateImage();
@@ -48,7 +49,7 @@ export const WikiEdit = () => {
 		}
 	}, [currentWiki]);
 
-	const [selectedModel, setSelectedModel] = useState();
+	const [selectedModel, setSelectedModel] = useState<Model>();
 
 	const [editor, setEditor] = useState(null);
 
@@ -69,13 +70,14 @@ export const WikiEdit = () => {
 	};
 
 	const loadMapImageList = async () => {
+		const currentMap = currentWiki as Place;
 		await setMapImageList(
-			currentWiki.mapImage
+			currentMap.mapImage
 				? [
 						{
 							uid: "-1",
-							url: `/images/${currentWiki.mapImage.icon.chunks[0].fileId}`,
-							name: currentWiki.mapImage.name,
+							url: `/images/${currentMap.mapImage.icon.chunks[0].fileId}`,
+							name: currentMap.mapImage.name,
 						},
 				  ]
 				: []
@@ -91,10 +93,14 @@ export const WikiEdit = () => {
 			await loadMapImageList();
 			await setName(currentWiki.name);
 			await setType(currentWiki.type);
-			await setPixelsPerFoot(currentWiki.pixelsPerFoot);
+			if(currentWiki.type === PLACE) {
+				const currentMap = currentWiki as Place;
+				await setPixelsPerFoot(currentMap.pixelsPerFoot);
+			}
 			if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
-				await setSelectedModel(currentWiki.model);
-				await setModelColor(currentWiki.modelColor);
+				const modeledWiki = currentWiki as ModeledWiki;
+				setSelectedModel(modeledWiki.model);
+				setModelColor(modeledWiki.modelColor);
 			}
 		})();
 	}, [currentWiki]);
@@ -118,13 +124,13 @@ export const WikiEdit = () => {
 	}
 
 	let coverRevert = null;
-	if (coverToUpload !== false) {
+	if (coverToUpload) {
 		coverRevert = (
 			<Button
-				type="danger"
+				danger={true}
 				className={"margin-md"}
 				onClick={async () => {
-					await setCoverToUpload(false);
+					await setCoverToUpload(null);
 					await loadCoverImageList();
 				}}
 			>
@@ -134,13 +140,13 @@ export const WikiEdit = () => {
 	}
 
 	let mapRevert = null;
-	if (mapToUpload !== false) {
+	if (mapToUpload) {
 		mapRevert = (
 			<Button
-				type="danger"
+				danger={true}
 				className={"margin-md"}
 				onClick={async () => {
-					await setMapToUpload(false);
+					await setMapToUpload(null);
 					await loadMapImageList();
 				}}
 			>
@@ -153,29 +159,29 @@ export const WikiEdit = () => {
 		await setSaving(true);
 
 		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
-		if (coverToUpload instanceof File) {
-			const coverUploadResult = await createImage(coverToUpload, currentWorld._id, false);
-			coverImageId = coverUploadResult.data.createImage._id;
-		}
-		if (coverToUpload === null) {
+		if (coverToUpload) {
+			const coverUploadResult = await createImage({file: coverToUpload, worldId: currentWorld._id, chunkify: false});
+			coverImageId = coverUploadResult.data._id;
+		} else if (!coverToUpload) {
 			coverImageId = null;
 		}
 
 		const contents = new File([JSON.stringify(editor.getContents())], "contents.json", {
 			type: "text/plain",
 		});
-		await updateWiki(currentWiki._id, name, contents, coverImageId, type);
+		await updateWiki({wikiId: currentWiki._id, name, content: contents, coverImageId, type});
 
 		if (type === PLACE) {
-			let mapImageId = currentWiki.mapImage ? currentWiki.mapImage._id : null;
+			const currentPlace = currentWiki as Place;
+			let mapImageId = currentPlace.mapImage ? currentPlace.mapImage._id : null;
 			if (mapToUpload) {
-				const mapUploadResult = await createImage(mapToUpload, currentWorld._id, true);
-				mapImageId = mapUploadResult.data.createImage._id;
+				const mapUploadResult = await createImage({file: mapToUpload, worldId: currentWorld._id, chunkify: true});
+				mapImageId = mapUploadResult.data._id;
 			}
 			if (mapToUpload === null) {
 				mapImageId = null;
 			}
-			await updatePlace(currentWiki._id, mapImageId, pixelsPerFoot);
+			await updatePlace({placeId: currentPlace._id, mapImageId, pixelsPerFoot});
 		}
 		if (MODELED_WIKI_TYPES.includes(type)) {
 			await updateModeledWiki({
@@ -199,6 +205,29 @@ export const WikiEdit = () => {
 		);
 	}
 
+	let modeledWikiFields = null;
+
+	if(MODELED_WIKI_TYPES.includes(type)){
+		const currentModeledWiki = currentWiki as ModeledWiki;
+		modeledWikiFields = (<div className={"margin-lg"}>
+			{type} model:
+			<span className={"margin-md"}>
+						<SelectModel
+							onChange={async (newModel: Model) => setSelectedModel(newModel)}
+							defaultModel={currentModeledWiki.model}
+						/>
+					</span>
+			{selectedModel && (
+				<ModelViewer
+					model={selectedModel}
+					defaultColor={currentModeledWiki.modelColor}
+					showColorControls={true}
+					onChangeColor={async (color: string) => setModelColor(color)}
+				/>
+			)}
+		</div>);
+	}
+
 	return (
 		<div>
 			<div className="margin-lg">
@@ -207,7 +236,7 @@ export const WikiEdit = () => {
 					placeholder="Article Name"
 					style={{ width: 120 }}
 					value={name}
-					onChange={async (event) => await setName(event.target.value)}
+					onChange={async (event) => setName(event.target.value)}
 				/>
 			</div>
 			<div className="margin-lg">
@@ -272,7 +301,7 @@ export const WikiEdit = () => {
 						Pixels Per Foot:
 						<InputNumber
 							value={pixelsPerFoot}
-							onChange={async (value) => await setPixelsPerFoot(value)}
+							onChange={async (value) => setPixelsPerFoot(value)}
 						/>
 						<ToolTip>
 							{
@@ -283,23 +312,7 @@ export const WikiEdit = () => {
 				</>
 			)}
 
-			{MODELED_WIKI_TYPES.includes(type) && (
-				<div className={"margin-lg"}>
-					{type} model:
-					<span className={"margin-md"}>
-						<SelectModel onChange={setSelectedModel} defaultModel={currentWiki.model} />
-					</span>
-					{selectedModel && (
-						<ModelViewer
-							model={selectedModel}
-							defaultColor={currentWiki.modelColor}
-							showColorControls={true}
-							onChangeColor={setModelColor}
-						/>
-					)}
-				</div>
-			)}
-
+			{modeledWikiFields}
 			<div className="margin-lg">
 				<Editor
 					content={currentWiki.content}
@@ -317,7 +330,7 @@ export const WikiEdit = () => {
 				</Button>
 				<MoveWikiButton wikiPage={currentWiki} />
 				<Button
-					type="danger"
+					danger={true}
 					disabled={saving}
 					className="margin-md-left"
 					onClick={() => {
@@ -337,7 +350,7 @@ export const WikiEdit = () => {
 								title: "Confirm Delete",
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {
-									await deleteWiki(currentWiki._id);
+									await deleteWiki({wikiId: currentWiki._id});
 									await refetch({ folderId: currentWiki.folder._id });
 									history.push(
 										`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`

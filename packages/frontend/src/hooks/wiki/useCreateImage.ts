@@ -24,6 +24,6 @@ export const useCreateImage = (): CreateImageResult => {
 	const result = useGQLMutation<Image, CreateImageVariables>(CREATE_IMAGE);
 	return {
 		...result,
-		createImage: result.mutate
+		createImage: result.mutate,
 	};
 };

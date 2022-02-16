@@ -4,7 +4,7 @@ import {ApiHookResponse} from "./types";
 import {ApolloQueryResult} from "@apollo/client/core";
 
 export interface GqlQueryResult<TData, TVariables=void> extends ApiHookResponse<TData> {
-	refetch: (variables: TVariables) => Promise<ApolloQueryResult<TData>>;
+	refetch: (variables?: TVariables) => Promise<ApolloQueryResult<TData>>;
 	fetchMore: ((fetchMoreOptions: {variables: TVariables, updateQuery?: () => {}}) => Promise<ApolloQueryResult<TData>>);
 }
 
@@ -21,7 +21,10 @@ export const useGQLQuery = <TData, TVariables=void>(
 	return {
 		...response,
 		loading,
-		refetch,
+		refetch: async (newVariables?: TVariables) => {
+			const originalVariables = Object.create(variables);
+			return await refetch(Object.assign(originalVariables, newVariables));
+		},
 		fetchMore,
 	};
 };
