@@ -29,7 +29,7 @@ Quill.register({
 
 interface EditorProps {
 	content: string;
-	readOnly: boolean;
+	readOnly?: boolean;
 	onInit?: (editor: Quill) => Promise<any>;
 }
 
