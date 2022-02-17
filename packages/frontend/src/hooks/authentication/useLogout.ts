@@ -15,9 +15,8 @@ interface LogoutResult extends GqlMutationResult<boolean> {
 export default (): LogoutResult => {
 	const client = useApolloClient();
 
-	const result = useGQLMutation<boolean>(LOGOUT_QUERY, null, {
+	const result = useGQLMutation<boolean>(LOGOUT_QUERY, {}, {
 		update: async (cache, data) => {
-			// cache.writeQuery({query: LOGIN_QUERY, data: {currentUser: null}});
 			await client.resetStore();
 		},
 	})

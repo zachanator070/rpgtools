@@ -1,7 +1,6 @@
-import { useMutation } from "@apollo/client";
 import useCurrentUser from "../authentication/useCurrentUser";
 import gql from "graphql-tag";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
 
 export const SET_CURRENT_WORLD = gql`
@@ -16,7 +15,7 @@ interface SetCurrentWorldVariables {
 	worldId: string;
 }
 
-interface SetCurrentWorldResult {
+interface SetCurrentWorldResult extends GqlMutationResult<World,  SetCurrentWorldVariables>{
 	setCurrentWorld: MutationMethod<World, SetCurrentWorldVariables>;
 }
 

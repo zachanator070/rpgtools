@@ -19,7 +19,7 @@ export const CreateWorldModal = ({ visibility, setVisibility }: CreateWorldModal
 	const { setCurrentWorld } = useSetCurrentWorld();
 
 	const { createWorld, loading, errors } = useCreateWorld(async (data) => {
-		await setCurrentWorld(data.createWorld._id);
+		await setCurrentWorld({worldId: data.createWorld._id});
 		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 	});
 

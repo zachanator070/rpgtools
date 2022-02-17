@@ -14,7 +14,7 @@ export const GET_CURRENT_WORLD = gql`
 	${ACCESS_CONTROL_LIST}
 	${CURRENT_WORLD_ROLES}
 	${CURRENT_WORLD_PINS}
-	query getCurrentWorld($worldId: ID){
+	query currentWorld($worldId: ID){
 		world(worldId: $worldId){
 			_id
 			name
