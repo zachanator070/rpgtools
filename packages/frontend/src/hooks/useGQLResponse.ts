@@ -1,12 +1,7 @@
 import { useEffect } from "react";
 import { notification } from "antd";
-import {DocumentNode} from "@apollo/client";
+import {DocumentNode, OperationDefinitionNode, FieldNode} from "graphql";
 import {ApolloError} from "@apollo/client/errors";
-
-function confirmProperty<X extends {}, Y extends PropertyKey>
-(obj: X, prop: Y): obj is X & Record<Y, unknown> {
-	return obj.hasOwnProperty(prop)
-}
 
 interface GenericGqlResponse<T> {
 	data: T;
@@ -35,12 +30,12 @@ export const useGQLResponse =
 		throw new Error("Given query is empty! No definitions were supplied");
 	}
 	let queryName = null;
-	const definition = query.definitions.find(givenDefinition => givenDefinition.kind === "OperationDefinition");
+	const definition = query.definitions.find(givenDefinition => givenDefinition.kind === "OperationDefinition") as OperationDefinitionNode;
 	if(!definition) {
 		throw new Error(`Could not find operation definition for query: ${query.loc.source.body}`);
 	}
-	if(confirmProperty(definition, 'name')){
-		queryName = definition.name.value;
+	if(definition.selectionSet.selections.length >= 1){
+		queryName = (definition.selectionSet.selections[0] as FieldNode).name.value;
 	} else {
 		throw new Error(`Could not find operation name definition for query: ${query.loc.source.body}`);
 	}
