@@ -38,16 +38,7 @@ export const WikiEdit = () => {
 	const { updateWiki } = useUpdateWiki();
 	const { updatePlace } = useUpdatePlace();
 	const { updateModeledWiki } = useUpdateModeledWiki();
-	const { fetch, refetch } = useWikisInFolder();
-
-	// need to fetch query before you can use refetch, see how refetch is used
-	useEffect(() => {
-		if (currentWiki) {
-			(async () => {
-				await fetch({ folderId: currentWiki.folder._id });
-			})();
-		}
-	}, [currentWiki]);
+	const { refetch } = useWikisInFolder();
 
 	const [selectedModel, setSelectedModel] = useState<Model>();
 
@@ -351,7 +342,6 @@ export const WikiEdit = () => {
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {
 									await deleteWiki({wikiId: currentWiki._id});
-									await refetch({ folderId: currentWiki.folder._id });
 									history.push(
 										`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
 									);

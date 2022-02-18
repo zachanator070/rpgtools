@@ -21,7 +21,7 @@ interface FolderTreeProps {
 	indent?: number;
 }
 
-export const FolderTree = ({ folder, initialExpanded, indent = 0 }: FolderTreeProps) => {
+export default function FolderTree({ folder, initialExpanded, indent = 0 }: FolderTreeProps){
 	const params = useParams();
 	const {
 		wikisInFolder,
@@ -33,7 +33,7 @@ export const FolderTree = ({ folder, initialExpanded, indent = 0 }: FolderTreePr
 		loading: foldersLoading,
 		refetch: refetchFolders,
 	} = useFolders({ worldId: params.world_id });
-	const { getFolderPath } = useGetFolderPath({
+	const { getFolderPath, loading: folderPathLoading } = useGetFolderPath({
 		wikiId: params.wiki_id,
 	});
 	const [expanded, setExpanded] = useState(false);
@@ -47,26 +47,31 @@ export const FolderTree = ({ folder, initialExpanded, indent = 0 }: FolderTreePr
 					getFolderPath.find((otherFolder) => otherFolder._id === folder._id) != null
 			);
 		}
-	}, [getFolderPath]);
+	}, [folderPathLoading]);
 
-	const getWikiComponent = (wiki) => (
-		<div key={wiki._id}>
-			<Link
-				style={{
-					color: "rgba(0, 0, 0, 0.85)",
-					textDecoration: "none",
-				}}
-				to={`/ui/world/${wiki.world._id}/wiki/${wiki._id}/view`}
-			>
-				<FileTextOutlined
+	const getWikiComponent = (wiki) => {
+		if(!wiki._id) {
+			return <LoadingView/>;
+		}
+		return (
+			<div key={wiki._id}>
+				<Link
 					style={{
-						marginRight: "5px",
+						color: "rgba(0, 0, 0, 0.85)",
+						textDecoration: "none",
 					}}
-				/>
-				{wiki.name}
-			</Link>
-		</div>
-	);
+					to={`/ui/world/${wiki.world._id}/wiki/${wiki._id}/view`}
+				>
+					<FileTextOutlined
+						style={{
+							marginRight: "5px",
+						}}
+					/>
+					{wiki.name}
+				</Link>
+			</div>
+		)
+	};
 
 	useEffect(() => {
 		if (initialExpanded && initialExpanded.includes(folder._id)) {
