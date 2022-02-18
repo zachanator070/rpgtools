@@ -15,12 +15,12 @@ interface GetFolderPathVariables {
 	wikiId: string;
 }
 
-interface GetFolderPathResult extends GqlLazyHookResult<WikiFolder[], GetFolderPathVariables>{
+interface GetFolderPathResult extends GqlQueryResult<WikiFolder[], GetFolderPathVariables>{
 	getFolderPath: WikiFolder[]
 }
 
 export const useGetFolderPath = (variables?: GetFolderPathVariables): GetFolderPathResult => {
-	const result = useGQLLazyQuery<WikiFolder[], GetFolderPathVariables>(GET_FOLDER_PATH, variables);
+	const result = useGQLQuery<WikiFolder[], GetFolderPathVariables>(GET_FOLDER_PATH, variables);
 	return {
 		...result,
 		getFolderPath: result.data

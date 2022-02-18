@@ -12,86 +12,108 @@ import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
 // import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
+import {WikiPagePaginatedResult} from "./types";
+import fetchSubtypes from "./fetchSubtypes";
 
-const cache = new InMemoryCache();
-cache.writeQuery({
-	query: gql`
+fetchSubtypes().then(possibleTypes => {
+
+	const cache = new InMemoryCache({
+		possibleTypes,
+		typePolicies: {
+			Query: {
+				fields: {
+					wikisInFolder: {
+						merge(existing: WikiPagePaginatedResult, incoming: WikiPagePaginatedResult) {
+							if (existing) {
+								existing.docs = existing.docs.concat(incoming.docs);
+								return existing;
+							}
+							return incoming;
+						},
+					}
+				}
+			}
+		}
+	});
+	cache.writeQuery({
+		query: gql`
 	  query GetMapWiki {
 		mapWiki
 	  }
 	`,
-	data: {
-		mapWiki: null,
-	},
-});
-
-const loc = window.location;
-let new_uri;
-if (loc.protocol === "https:") {
-	new_uri = "wss:";
-} else {
-	new_uri = "ws:";
-}
-new_uri += "//" + loc.host;
-new_uri += "/graphql";
-
-const httpLink = ApolloLink.from([
-	new RetryLink({
-		attempts: {
-			max: 3,
+		data: {
+			mapWiki: null,
 		},
-	}),
-	createUploadLink({
-		uri: loc.protocol + "//" + window.location.host + "/api",
-		credentials: "same-origin",
-	}),
-]);
+	});
 
-function getCookie(name) {
-	const value = `; ${document.cookie}`;
-	const parts = value.split(`; ${name}=`);
-	if (parts.length === 2) return parts.pop().split(";").shift();
-}
+	const loc = window.location;
+	let new_uri;
+	if (loc.protocol === "https:") {
+		new_uri = "wss:";
+	} else {
+		new_uri = "ws:";
+	}
+	new_uri += "//" + loc.host;
+	new_uri += "/graphql";
 
-const wsLink = new WebSocketLink({
-	uri: new_uri,
-	options: {
-		reconnect: true,
-		connectionParams: {
-			accessToken: getCookie("accessToken"),
+	const httpLink = ApolloLink.from([
+		new RetryLink({
+			attempts: {
+				max: 3,
+			},
+		}),
+		createUploadLink({
+			uri: loc.protocol + "//" + window.location.host + "/api",
+			credentials: "same-origin",
+		}),
+	]);
+
+	function getCookie(name) {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) return parts.pop().split(";").shift();
+	}
+
+	const wsLink = new WebSocketLink({
+		uri: new_uri,
+		options: {
+			reconnect: true,
+			connectionParams: {
+				accessToken: getCookie("accessToken"),
+			},
 		},
-	},
-});
+	});
 
 // The split function takes three parameters:
 //
 // * A function that's called for each operation to execute
 // * The Link to use for an operation if the function returns a "truthy" value
 // * The Link to use for an operation if the function returns a "falsy" value
-const splitLink = split(
-	({ query }) => {
-		const definition = getMainDefinition(query);
-		return definition.kind === "OperationDefinition" && definition.operation === "subscription";
-	},
-	wsLink,
-	httpLink
-);
+	const splitLink = split(
+		({ query }) => {
+			const definition = getMainDefinition(query);
+			return definition.kind === "OperationDefinition" && definition.operation === "subscription";
+		},
+		wsLink,
+		httpLink
+	);
 
-const client = new ApolloClient({
-	link: splitLink,
-	cache: cache,
-	typeDefs: clientTypeDefs,
-	resolvers: clientResolvers,
-	connectToDevTools: true,
+	const client = new ApolloClient({
+		link: splitLink,
+		cache: cache,
+		typeDefs: clientTypeDefs,
+		resolvers: clientResolvers,
+		connectToDevTools: true,
+	});
+
+	ReactDOM.render(
+		<DndProvider backend={HTML5Backend}>
+			<BrowserRouter>
+				<ApolloProvider client={client}>
+					<App />
+				</ApolloProvider>
+			</BrowserRouter>
+		</DndProvider>,
+		document.getElementById("app")
+	);
 });
-
-ReactDOM.render(
-	<DndProvider backend={HTML5Backend}>
-		<BrowserRouter>
-			<ApolloProvider client={client}>
-				<App />
-			</ApolloProvider>
-		</BrowserRouter>
-	</DndProvider>,
-	document.getElementById("app")
-);
