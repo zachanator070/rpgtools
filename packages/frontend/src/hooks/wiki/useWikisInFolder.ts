@@ -4,20 +4,22 @@ import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
 import { useEffect } from "react";
 import {WikiPagePaginatedResult} from "../../types";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
-
+export const WIKIS_IN_FOLDER_ATTRIBUTES = `
+	...currentWorldWikis
+	folder{
+		_id
+		name
+	}
+	world{
+		_id
+	}
+`;
 export const WIKIS_IN_FOLDER = gql`
 	${CURRENT_WORLD_WIKIS}
 	query wikisInFolder($folderId: ID!, $page: Int){
 		wikisInFolder(folderId: $folderId, page: $page){
-			docs{
-				...currentWorldWikis
-				folder{
-					_id
-					name
-				}
-				world{
-					_id
-				}
+			docs {
+				${WIKIS_IN_FOLDER_ATTRIBUTES}
 			}
 			nextPage
 		}

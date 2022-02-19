@@ -602,7 +602,7 @@ export interface WikiPageService {
 		model: string,
 		color: string
 	) => Promise<ModeledPage>;
-	moveWiki: (context: SecurityContext, wikiId: string, folderId: string) => Promise<string>;
+	moveWiki: (context: SecurityContext, wikiId: string, folderId: string) => Promise<WikiPage>;
 	getWiki: (context: SecurityContext, wikiId: string) => Promise<WikiPage>;
 	getWikisInFolder: (
 		context: SecurityContext,

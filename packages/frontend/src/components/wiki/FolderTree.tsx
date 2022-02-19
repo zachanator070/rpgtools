@@ -47,7 +47,7 @@ export default function FolderTree({ folder, initialExpanded, indent = 0 }: Fold
 					getFolderPath.find((otherFolder) => otherFolder._id === folder._id) != null
 			);
 		}
-	}, [folderPathLoading]);
+	}, [getFolderPath]);
 
 	const getWikiComponent = (wiki) => {
 		if(!wiki._id) {
@@ -81,7 +81,7 @@ export default function FolderTree({ folder, initialExpanded, indent = 0 }: Fold
 
 	useEffect(() => {
 		if (wikisInFolder) {
-			setPages(wikisInFolder.docs.map(getWikiComponent));
+			setPages([...wikisInFolder.docs].map(getWikiComponent));
 		}
 	}, [wikisInFolder]);
 

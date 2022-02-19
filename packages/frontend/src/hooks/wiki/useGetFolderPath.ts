@@ -3,7 +3,7 @@ import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 import {WikiFolder} from "../../types";
 import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
 
-const GET_FOLDER_PATH = gql`
+export const GET_FOLDER_PATH = gql`
 	query getFolderPath($wikiId: ID!) {
 		getFolderPath(wikiId: $wikiId) {
 			_id

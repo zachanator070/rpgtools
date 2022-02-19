@@ -10,7 +10,7 @@ import { gql, ApolloClient, ApolloProvider, split, ApolloLink, InMemoryCache  } 
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
-// import "./favicon.ico";
+import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 import {WikiPagePaginatedResult} from "./types";
 import fetchSubtypes from "./fetchSubtypes";
@@ -19,21 +19,22 @@ fetchSubtypes().then(possibleTypes => {
 
 	const cache = new InMemoryCache({
 		possibleTypes,
-		typePolicies: {
-			Query: {
-				fields: {
-					wikisInFolder: {
-						merge(existing: WikiPagePaginatedResult, incoming: WikiPagePaginatedResult) {
-							if (existing) {
-								existing.docs = existing.docs.concat(incoming.docs);
-								return existing;
-							}
-							return incoming;
-						},
-					}
-				}
-			}
-		}
+		// need to test getting multiple pages of results to see if this is needed
+		// typePolicies: {
+		// 	Query: {
+		// 		fields: {
+		// 			wikisInFolder: {
+		// 				merge(existing: WikiPagePaginatedResult, incoming: WikiPagePaginatedResult) {
+		// 					if (existing) {
+		// 						existing.docs = [...existing.docs, ...incoming.docs];
+		// 						return existing;
+		// 					}
+		// 					return incoming;
+		// 				},
+		// 			}
+		// 		}
+		// 	}
+		// }
 	});
 	cache.writeQuery({
 		query: gql`
