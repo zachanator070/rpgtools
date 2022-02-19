@@ -114,7 +114,7 @@ export const typeDefs = gql`
 		): WikiPage!
 		updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
 		updateModeledWiki(wikiId: ID!, model: ID, color: String): WikiPage!
-		moveWiki(wikiId: ID!, folderId: ID!): World!
+		moveWiki(wikiId: ID!, folderId: ID!): WikiPage!
 
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
 

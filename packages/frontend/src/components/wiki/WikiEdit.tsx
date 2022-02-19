@@ -38,7 +38,6 @@ export const WikiEdit = () => {
 	const { updateWiki } = useUpdateWiki();
 	const { updatePlace } = useUpdatePlace();
 	const { updateModeledWiki } = useUpdateModeledWiki();
-	const { refetch } = useWikisInFolder();
 
 	const [selectedModel, setSelectedModel] = useState<Model>();
 

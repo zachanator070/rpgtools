@@ -26,6 +26,7 @@ import { ModeledPage } from "../domain-entities/modeled-page";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { PaginatedResult } from "../dal/paginated-result";
 import { RepositoryMapper } from "../repository-mapper";
+import {World} from "../domain-entities/world";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {
@@ -301,7 +302,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		return wikiPage;
 	};
 
-	moveWiki = async (context: SecurityContext, wikiId: string, folderId: string) => {
+	moveWiki = async (context: SecurityContext, wikiId: string, folderId: string): Promise<WikiPage> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
@@ -331,7 +332,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		oldFolder.pages = oldFolder.pages.filter((pageId) => pageId !== wikiPage._id);
 		await unitOfWork.wikiFolderRepository.update(oldFolder);
 		await unitOfWork.commit();
-		return wikiPage.world;
+		return wikiPage;
 	};
 
 	getWiki = async (context: SecurityContext, wikiId: string): Promise<WikiPage> => {
