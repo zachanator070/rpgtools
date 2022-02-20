@@ -5,7 +5,7 @@ import "../css/index.css";
 import "antd/dist/antd.css";
 import { NavBar } from "./nav/NavBar";
 import { DefaultView } from "./DefaultView";
-import { AppContent } from "./AppContent";
+import AppContent from "./AppContent";
 import { ServerSetup } from "./server/ServerSetup";
 import ServerSettings from "./server/ServerSettings";
 

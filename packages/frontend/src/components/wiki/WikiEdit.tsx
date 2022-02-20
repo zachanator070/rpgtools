@@ -16,12 +16,11 @@ import { ModelViewer } from "../models/ModelViewer";
 import { useUpdateModeledWiki } from "../../hooks/wiki/useUpdateModeledWiki";
 import { LoadingView } from "../LoadingView";
 import { MoveWikiButton } from "./MoveWikiButton";
-import { useWikisInFolder } from "../../hooks/wiki/useWikisInFolder";
 import {Model, ModeledWiki, Place} from "../../types";
 
 export const WikiEdit = () => {
 	const history = useHistory();
-	const { currentWiki } = useCurrentWiki();
+	const { currentWiki, loading } = useCurrentWiki();
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();
 
 	const [mapToUpload, setMapToUpload] = useState<File>();
@@ -95,6 +94,10 @@ export const WikiEdit = () => {
 		})();
 	}, [currentWiki]);
 
+	if (loading) {
+		return <LoadingView/>;
+	}
+
 	if (!currentWiki) {
 		return <div>{`404 - wiki ${wiki_id} not found`}</div>;
 	}
@@ -151,7 +154,7 @@ export const WikiEdit = () => {
 		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
 		if (coverToUpload) {
 			const coverUploadResult = await createImage({file: coverToUpload, worldId: currentWorld._id, chunkify: false});
-			coverImageId = coverUploadResult.data._id;
+			coverImageId = coverUploadResult._id;
 		} else if (!coverToUpload) {
 			coverImageId = null;
 		}
@@ -166,7 +169,7 @@ export const WikiEdit = () => {
 			let mapImageId = currentPlace.mapImage ? currentPlace.mapImage._id : null;
 			if (mapToUpload) {
 				const mapUploadResult = await createImage({file: mapToUpload, worldId: currentWorld._id, chunkify: true});
-				mapImageId = mapUploadResult.data._id;
+				mapImageId = mapUploadResult._id;
 			}
 			if (mapToUpload === null) {
 				mapImageId = null;

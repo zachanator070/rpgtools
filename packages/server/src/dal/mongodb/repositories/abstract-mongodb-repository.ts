@@ -61,7 +61,13 @@ export abstract class AbstractMongodbRepository<
 	}
 
 	update = async (entity: EntityType): Promise<void> => {
-		await this.model.updateOne({ _id: entity._id }, entity);
+		// construct document and hydrate to handle converting from a different document model
+		const document = this.model.hydrate({_id: entity._id});
+		// copy over all other attributes besides the id because the id is a string and not an ObjectID
+		const clone = {...entity};
+		delete clone._id;
+		Object.assign(document, clone);
+		await document.save();
 	};
 
 	findPaginated = async (

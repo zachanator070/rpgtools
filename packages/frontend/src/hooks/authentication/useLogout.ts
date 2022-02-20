@@ -1,6 +1,6 @@
 import {FetchResult, useApolloClient} from "@apollo/client";
 import gql from "graphql-tag";
-import {GqlMutationResult, useGQLMutation} from "../useGQLMutation";
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 
 export const LOGOUT_QUERY = gql`
 	mutation logout{
@@ -9,7 +9,7 @@ export const LOGOUT_QUERY = gql`
 `;
 
 interface LogoutResult extends GqlMutationResult<boolean> {
-	logout: () => Promise<FetchResult<boolean>>
+	logout: MutationMethod<boolean, undefined>
 }
 
 export default (): LogoutResult => {

@@ -1,9 +1,9 @@
-import { useMutation } from "@apollo/client";
-import useCurrentWiki from "./useCurrentWiki";
+import {GET_CURRENT_WIKI} from "./useCurrentWiki";
 import gql from "graphql-tag";
 import { CURRENT_WIKI_ATTRIBUTES } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {WikiPage} from "../../types";
+import {WIKIS_IN_FOLDER } from "./useWikisInFolder";
 
 export const UPDATE_WIKI = gql`
 	${CURRENT_WIKI_ATTRIBUTES}
@@ -27,10 +27,29 @@ interface UpdateWikiResult {
 }
 
 export default (): UpdateWikiResult => {
-	const { currentWiki, refetch } = useCurrentWiki();
 	const result = useGQLMutation<WikiPage, UpdateWikiVariables>(UPDATE_WIKI, {}, {
-		onCompleted: async () => {
-			await refetch({wikiId: currentWiki._id});
+		refetchQueries: [GET_CURRENT_WIKI],
+		async update(cache, { data} , {variables}) {
+			const newWiki = (data as any).updateWiki;
+			// update name of wiki in folder tree
+			cache.updateQuery(
+				{query: WIKIS_IN_FOLDER, variables: {folderId: newWiki.folder._id}},
+				(oldData) => ({
+					...oldData,
+					wikisInFolder: {
+						...oldData.wikisInFolder,
+						docs: [...oldData.wikisInFolder.docs].map((wikiPage: WikiPage) => {
+							if(wikiPage._id == newWiki._id){
+								return {
+									...wikiPage,
+									name: newWiki.name
+								};
+							}
+							return wikiPage
+						})
+					}
+				})
+			);
 		}
 	});
 	return {

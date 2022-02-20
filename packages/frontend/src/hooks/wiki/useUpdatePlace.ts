@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import { CURRENT_WIKI_PLACE_ATTRIBUTES } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Place} from "../../types";
+import {GET_CURRENT_WIKI} from "./useCurrentWiki";
 
 export const UPDATE_PLACE = gql`
 	${CURRENT_WIKI_PLACE_ATTRIBUTES}
@@ -25,7 +26,9 @@ interface UpdatePlaceResult {
 }
 
 export default (): UpdatePlaceResult => {
-	const result = useGQLMutation<Place, UpdatePlaceVariables>(UPDATE_PLACE);
+	const result = useGQLMutation<Place, UpdatePlaceVariables>(UPDATE_PLACE, null, {
+		refetchQueries: [GET_CURRENT_WIKI]
+	});
 	return {
 		...result,
 		updatePlace: result.mutate

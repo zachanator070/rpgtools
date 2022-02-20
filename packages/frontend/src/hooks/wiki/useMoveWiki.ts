@@ -4,8 +4,7 @@ import {WikiPage} from "../../types";
 import {WIKIS_IN_FOLDER, WIKIS_IN_FOLDER_ATTRIBUTES} from "./useWikisInFolder";
 import useCurrentWiki from "./useCurrentWiki";
 import {CURRENT_WORLD_WIKIS} from "../gql-fragments";
-import {GET_FOLDER_PATH, useGetFolderPath} from "./useGetFolderPath";
-import {useCurrentWikiId} from "./useCurrentWikiId";
+import {GET_FOLDER_PATH} from "./useGetFolderPath";
 
 export const MOVE_WIKI = gql`
 	${CURRENT_WORLD_WIKIS}
@@ -26,7 +25,6 @@ interface MoveWikiResult {
 }
 
 export const useMoveWiki = (): MoveWikiResult => {
-	const {currentWikiId} = useCurrentWikiId();
 	const {currentWiki} = useCurrentWiki();
 	const result = useGQLMutation<WikiPage, MoveWikiVariables>(MOVE_WIKI, null, {
 		async update(cache, { data} , {variables}) {

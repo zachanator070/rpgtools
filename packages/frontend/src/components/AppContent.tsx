@@ -8,10 +8,10 @@ import { RolesView } from "./permissions/RolesView";
 import { MyPermissionsView } from "./permissions/MyPermissionsView";
 import { GameView } from "./game/GameView";
 import { GameLoginView } from "./game/GameLoginView";
-import { WikView } from "./wiki/WikiView";
+import WikView from "./wiki/WikiView";
 import { ModelView } from "./models/ModelView";
 
-export const AppContent = () => {
+export default function AppContent(){
 	const match = useRouteMatch();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 
