@@ -6,7 +6,7 @@ export interface GqlMutationResult<TData, TVariables=void> extends ApiHookRespon
 	mutate: MutationMethod<TData, TVariables>
 }
 
-export type MutationMethod<TData, TVariables> = (variables?: TVariables) => Promise<FetchResult<TData>>
+export type MutationMethod<TData, TVariables> = (variables?: TVariables) => Promise<TData>
 
 interface GqlMutationOptions<TData, TVariables> extends MutationHookOptions<TData, TVariables> {
 	displayErrors?: boolean;

@@ -15,7 +15,7 @@ interface WikiContentProps {
 	wikiLoading?: boolean;
 }
 
-export const WikiContent = ({ currentWiki, wikiLoading }: WikiContentProps) => {
+export default function WikiContent({ currentWiki, wikiLoading }: WikiContentProps){
 	const history = useHistory();
 
 	const { currentWorld, loading } = useCurrentWorld();

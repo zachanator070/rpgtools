@@ -2,6 +2,7 @@ import { CURRENT_WIKI_ATTRIBUTES } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import gql from "graphql-tag";
 import {ModeledWiki} from "../../types";
+import {GET_CURRENT_WIKI} from "./useCurrentWiki";
 
 const UPDATE_MODELED_WIKI = gql`
 	${CURRENT_WIKI_ATTRIBUTES}
@@ -22,7 +23,9 @@ interface UpdateModeledWikiResult {
 	updateModeledWiki: MutationMethod<ModeledWiki, UpdateModeledWikiVariables>;
 }
 export const useUpdateModeledWiki = (): UpdateModeledWikiResult => {
-	const result = useGQLMutation<ModeledWiki, UpdateModeledWikiVariables>(UPDATE_MODELED_WIKI);
+	const result = useGQLMutation<ModeledWiki, UpdateModeledWikiVariables>(UPDATE_MODELED_WIKI, null, {
+		refetchQueries: [GET_CURRENT_WIKI]
+	});
 	return {
 		...result,
 		updateModeledWiki: result.mutate

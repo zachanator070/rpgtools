@@ -38,10 +38,8 @@ export const Editor = ({ content, readOnly, onInit }: EditorProps) => {
 	const editorCreated = useRef(false);
 	const [editor, setEditor] = useState<Quill>();
 
-	const prevContent = useRef<string>(content);
-
 	useEffect(() => {
-		if (content && editor && content !== prevContent.current) {
+		if (content && editor) {
 			editor.setContents(JSON.parse(content));
 			document.querySelectorAll(".ql-picker").forEach((tool) => {
 				tool.addEventListener("mousedown", function (event) {

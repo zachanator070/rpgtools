@@ -6,11 +6,11 @@ import { PermissionModal } from "../modals/PermissionModal";
 import { Col, Row } from "antd";
 import { TeamOutlined } from "@ant-design/icons";
 import { WikiEdit } from "./WikiEdit";
-import { WikiContent } from "./WikiContent";
+import WikiContent from "./WikiContent";
 import FolderTree from "./FolderTree";
 import { LoadingView } from "../LoadingView";
 
-export const WikView = () => {
+export default function WikView(){
 	const { currentWiki, loading: wikiLoading, refetch } = useCurrentWiki();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 	const match = useRouteMatch();
