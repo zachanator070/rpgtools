@@ -26,7 +26,6 @@ import { ModeledPage } from "../domain-entities/modeled-page";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { PaginatedResult } from "../dal/paginated-result";
 import { RepositoryMapper } from "../repository-mapper";
-import {World} from "../domain-entities/world";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {

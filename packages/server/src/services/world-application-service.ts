@@ -98,11 +98,14 @@ export class WorldApplicationService implements WorldService {
 			throw new Error(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
 		}
 
-		const wiki = await unitOfWork.wikiPageRepository.findById(wikiId);
+		if (wikiId) {
+			const wiki = await unitOfWork.wikiPageRepository.findById(wikiId);
 
-		if (!wiki) {
-			throw new Error(`Wiki with id ${wikiId} does not exist`);
+			if (!wiki) {
+				throw new Error(`Wiki with id ${wikiId} does not exist`);
+			}
 		}
+
 		if (!(await this.pinAuthorizationRuleset.canCreate(context, map))) {
 			throw new Error(`You do not have permission to add pins to this map`);
 		}

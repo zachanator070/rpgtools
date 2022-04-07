@@ -15,7 +15,10 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 	ruleset: EntityAuthorizationRuleset<T, DomainEntity>;
 
 	getDocument = async (id: string): Promise<T> => {
-		return this.getDataLoader().load(id);
+		if (id) {
+			return this.getDataLoader().load(id);
+		}
+		return null;
 	};
 
 	getDocuments = async (ids: string[]): Promise<T[]> => {
