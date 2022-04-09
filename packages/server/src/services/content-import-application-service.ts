@@ -1,4 +1,4 @@
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { FileUpload } from "graphql-upload";
 import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
@@ -12,7 +12,7 @@ import {
 	Factory,
 	WikiFolderFactory,
 } from "../types";
-import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
+import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
 import { Model } from "../domain-entities/model";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Image } from "../domain-entities/image";
@@ -21,7 +21,7 @@ import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-con
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Place } from "../domain-entities/place";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 class DeferredPromise {
 	promise: Promise<any>;

@@ -1,7 +1,7 @@
 import { DomainEntity } from "../types";
-import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
+import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export abstract class WikiPage implements DomainEntity {

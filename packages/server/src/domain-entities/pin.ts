@@ -1,8 +1,8 @@
 import { DomainEntity } from "../types";
-import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
+import { PinAuthorizationRuleset } from "../security/ruleset/pin-authorization-ruleset";
 import { PIN } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class Pin implements DomainEntity {

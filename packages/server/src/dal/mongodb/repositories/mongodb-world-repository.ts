@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { WorldDocument, WorldFactory, WorldRepository } from "../../../types";
 import mongoose from "mongoose";
 import { WorldModel } from "../models/world";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbWorldRepository

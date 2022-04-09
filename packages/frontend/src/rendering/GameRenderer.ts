@@ -30,7 +30,7 @@ export const SELECT_MODEL_CONTROLS = "Select Model Controls";
 export const SELECT_LOCATION_CONTROLS = "Game Location";
 export const ADD_MODEL_CONTROLS = "Add Model";
 
-export const CONTROLS_SETUP_EVENT = "controls setup";
+export const CONTROLS_SETUP_EVENT = "controls 1-setup";
 
 export const MAP_Y_POSITION = 0;
 export const DRAW_Y_POSITION = 0.05;
@@ -137,7 +137,7 @@ export class GameRenderer extends EventEmitter {
 
 		this.scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-		// setup camera
+		// 1-setup camera
 		this.camera = new THREE.PerspectiveCamera(
 			75,
 			renderWidth / renderHeight,
@@ -154,7 +154,7 @@ export class GameRenderer extends EventEmitter {
 
 		this.setupMap();
 
-		// setup renderer
+		// 1-setup renderer
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: this.renderRoot,
 			antialias: true,

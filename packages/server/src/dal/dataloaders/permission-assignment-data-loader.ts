@@ -1,8 +1,8 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../injectable-types";
+import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { PermissionAssignmentRepository } from "../../types";
-import { PermissionAssignmentAuthorizationRuleset } from "../../security/permission-assignment-authorization-ruleset";
+import { PermissionAssignmentAuthorizationRuleset } from "../../security/ruleset/permission-assignment-authorization-ruleset";
 import { PermissionAssignment } from "../../domain-entities/permission-assignment";
 
 @injectable()

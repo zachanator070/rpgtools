@@ -1,5 +1,5 @@
-import {container} from "./inversify";
-import {INJECTABLE_TYPES} from "./injectable-types";
+import {container} from "./di/inversify";
+import {INJECTABLE_TYPES} from "./di/injectable-types";
 import {ApiServer} from "./types";
 
 const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);

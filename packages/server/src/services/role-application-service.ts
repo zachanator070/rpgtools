@@ -1,10 +1,10 @@
 import { Role } from "../domain-entities/role";
 import {inject, injectable} from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { Factory, RoleRepository, RoleService, WorldRepository } from "../types";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
-import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
+import { RoleAuthorizationRuleset } from "../security/ruleset/role-authorization-ruleset";
 import { PaginatedResult } from "../dal/paginated-result";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 

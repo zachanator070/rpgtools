@@ -8,19 +8,19 @@ import {
 	UnitOfWork,
 } from "../types";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { FilterCondition } from "../dal/filter-condition";
-import { PermissionAssignmentAuthorizationRuleset } from "../security/permission-assignment-authorization-ruleset";
+import { PermissionAssignmentAuthorizationRuleset } from "../security/ruleset/permission-assignment-authorization-ruleset";
 import { Role } from "../domain-entities/role";
 import { World } from "../domain-entities/world";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "../../../common/src/permission-constants";
 import { ROLE } from "../../../common/src/type-constants";
 import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "../../../common/src/role-constants";
-import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
+import { RoleAuthorizationRuleset } from "../security/ruleset/role-authorization-ruleset";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
-import { RepositoryMapper } from "../repository-mapper";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { RepositoryMapper } from "../dal/repository-mapper";
 import { User } from "../domain-entities/user";
 
 @injectable()

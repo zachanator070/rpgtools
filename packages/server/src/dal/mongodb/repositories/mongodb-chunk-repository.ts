@@ -4,7 +4,7 @@ import { ChunkDocument, ChunkFactory, ChunkRepository, DomainEntityFactory } fro
 import { ChunkModel } from "../models/chunk";
 import mongoose from "mongoose";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbChunkRepository

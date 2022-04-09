@@ -3,7 +3,7 @@ import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
 import { WORLD_CREATE } from "../../../common/src/permission-constants";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { MongodbUserRepository } from "../dal/mongodb/repositories/mongodb-user-repository";
 import { FilterCondition } from "../dal/filter-condition";
 import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongodb-server-config-repository";

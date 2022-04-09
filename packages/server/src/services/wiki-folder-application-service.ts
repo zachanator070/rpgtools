@@ -11,10 +11,10 @@ import {
 	WorldRepository,
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
-import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
+import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
 import { WikiPage } from "../domain-entities/wiki-page";
-import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
-import { SecurityContext } from "../security-context";
+import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
+import { SecurityContext } from "../security/security-context";
 import {
 	FILTER_CONDITION_OPERATOR_IN,
 	FILTER_CONDITION_REGEX,
@@ -24,7 +24,7 @@ import { FOLDER_ADMIN, FOLDER_RW } from "../../../common/src/permission-constant
 import { WIKI_FOLDER } from "../../../common/src/type-constants";
 import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 @injectable()

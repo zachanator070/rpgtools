@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { ServerConfigDocument, ServerConfigFactory, ServerConfigRepository } from "../../../types";
 import mongoose from "mongoose";
 import { ServerConfigModel } from "../models/server-config";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbServerConfigRepository

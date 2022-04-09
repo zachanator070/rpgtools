@@ -1,7 +1,7 @@
 import {FilterCondition} from "./dal/filter-condition";
 import {Document, Schema} from "mongoose";
 import {User} from "./domain-entities/user";
-import {SecurityContext} from "./security-context";
+import {SecurityContext} from "./security/security-context";
 import {Article} from "./domain-entities/article";
 import {Chunk} from "./domain-entities/chunk";
 import {Character, FogStroke, Game, InGameModel, Message, PathNode, Stroke,} from "./domain-entities/game";
@@ -621,12 +621,12 @@ export interface DataLoader<T extends DomainEntity> {
 
 export interface ApiServer {
 	start: () => Promise<void>;
-	checkConfig: () => Promise<void>;
+	checkConfig: () => Promise<boolean>;
 	initDb: () => Promise<void>;
 	setDbHost: (host: string) => void;
 	setDbName: (name: string) => void;
 	clearDb: () => Promise<void>;
-	serverNeedsSetup: () => boolean;
+	serverNeedsSetup: () => Promise<boolean>;
 	executeGraphQLQuery: (
 		request: Omit<GraphQLRequest, 'query'> & {
 			query?: string | DocumentNode;

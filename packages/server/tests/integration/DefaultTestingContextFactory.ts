@@ -1,6 +1,6 @@
 import { TestingContext } from "./types";
 import { FilterCondition } from "../../src/dal/filter-condition";
-import { container } from "../../src/inversify";
+import { container } from "../../src/di/inversify";
 import {
 	AuthorizationService,
 	PinRepository,
@@ -14,10 +14,10 @@ import {
 	WikiPageService,
 	WorldService,
 } from "../../src/types";
-import { INJECTABLE_TYPES } from "../../src/injectable-types";
-import { SecurityContextFactory } from "../../src/security-context-factory";
+import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
+import { SecurityContextFactory } from "../../src/security/security-context-factory";
 import { MockSessionContextFactory } from "./MockSessionContextFactory";
-import { ExpressApiServer } from "../../src/express-api-server";
+import { ExpressApiServer } from "../../src/server/express-api-server";
 
 export const defaultTestingContextFactory = (): TestingContext => {
 	container

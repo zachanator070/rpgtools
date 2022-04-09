@@ -8,7 +8,7 @@ import {
 } from "../../../types";
 import mongoose from "mongoose";
 import { PermissionAssignmentModel } from "../models/permission-assignment";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbPermissionAssignmentRepository

@@ -1,8 +1,8 @@
 import { DomainEntity } from "../types";
 import { IMAGE } from "../../../common/src/type-constants";
-import { ImageAuthorizationRuleset } from "../security/image-authorization-ruleset";
+import { ImageAuthorizationRuleset } from "../security/ruleset/image-authorization-ruleset";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class Image implements DomainEntity {

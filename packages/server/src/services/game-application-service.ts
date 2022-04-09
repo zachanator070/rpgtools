@@ -16,7 +16,7 @@ import {
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
 import { GAME } from "../../../common/src/type-constants";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import {
 	Character,
@@ -45,9 +45,9 @@ import { WhisperGameCommand } from "../domain-entities/game-commands/whisper-gam
 import { AbstractGameCommand } from "../domain-entities/game-commands/abstract-game-command";
 import { User } from "../domain-entities/user";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
-import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
+import { GameAuthorizationRuleset } from "../security/ruleset/game-authorization-ruleset";
 
 @injectable()
 export class GameApplicationService implements GameService {

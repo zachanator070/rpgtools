@@ -1,9 +1,9 @@
 import { DomainEntity } from "../types";
 import { Readable } from "stream";
 import { FILE } from "../../../common/src/type-constants";
-import { FileAuthorizationRuleset } from "../security/file-authorization-ruleset";
+import { FileAuthorizationRuleset } from "../security/ruleset/file-authorization-ruleset";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class File implements DomainEntity {

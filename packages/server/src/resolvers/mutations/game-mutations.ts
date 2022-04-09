@@ -8,9 +8,9 @@ import {
 	GAME_MODEL_POSITIONED,
 	ROSTER_CHANGE_EVENT,
 } from "../subscription-resolvers";
-import { INJECTABLE_TYPES } from "../../injectable-types";
+import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { GameService, SessionContext } from "../../types";
-import { container } from "../../inversify";
+import { container } from "../../di/inversify";
 import { Character, PathNode } from "../../domain-entities/game";
 
 export const gameMutations = {

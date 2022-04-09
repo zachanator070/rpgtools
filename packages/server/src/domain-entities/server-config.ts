@@ -1,8 +1,8 @@
 import { DomainEntity } from "../types";
-import { ServerConfigAuthorizationRuleset } from "../security/server-config-authorization-ruleset";
+import { ServerConfigAuthorizationRuleset } from "../security/ruleset/server-config-authorization-ruleset";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class ServerConfig implements DomainEntity {

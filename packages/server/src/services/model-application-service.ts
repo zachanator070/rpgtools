@@ -12,9 +12,9 @@ import {
 import { MODEL_ADMIN, MODEL_RW } from "../../../common/src/permission-constants";
 import { MODEL } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
-import { ModelAuthorizationRuleset } from "../security/model-authorization-ruleset";
-import { SecurityContext } from "../security-context";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
+import { SecurityContext } from "../security/security-context";
 import { FileUpload } from "graphql-upload";
 import { Model } from "../domain-entities/model";
 import { FilterCondition } from "../dal/filter-condition";

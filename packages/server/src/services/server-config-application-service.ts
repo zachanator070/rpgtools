@@ -2,7 +2,7 @@ import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "../../../common/src/permi
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {
 	ApiServer,
 	AuthenticationService,
@@ -13,8 +13,8 @@ import {
 	ServerConfigService,
 } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import { ServerConfigAuthorizationRuleset } from "../security/server-config-authorization-ruleset";
-import { SecurityContext } from "../security-context";
+import { ServerConfigAuthorizationRuleset } from "../security/ruleset/server-config-authorization-ruleset";
+import { SecurityContext } from "../security/security-context";
 
 @injectable()
 export class ServerConfigApplicationService implements ServerConfigService {
@@ -35,6 +35,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 
 	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
 	permissionAssignmentFactory: PermissionAssignmentFactory;
+
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
 
@@ -44,7 +45,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
 		}
-		if (!this.server.serverNeedsSetup()) {
+		if (!await this.server.serverNeedsSetup()) {
 			throw new Error("Server already unlocked!");
 		}
 		if (server.unlockCode !== unlockCode) {

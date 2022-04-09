@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { PlaceDocument, PlaceFactory, PlaceRepository } from "../../../types";
 import mongoose from "mongoose";
 import { PlaceModel } from "../models/place";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbPlaceRepository

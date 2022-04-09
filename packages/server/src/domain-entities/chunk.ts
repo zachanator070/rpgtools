@@ -1,8 +1,8 @@
 import { DomainEntity } from "../types";
 import { CHUNK } from "../../../common/src/type-constants";
-import { ChunkAuthorizationRuleset } from "../security/chunk-authorization-ruleset";
+import { ChunkAuthorizationRuleset } from "../security/ruleset/chunk-authorization-ruleset";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class Chunk implements DomainEntity {

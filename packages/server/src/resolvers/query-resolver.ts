@@ -9,8 +9,8 @@ import {
 	WikiPageService,
 	WorldService,
 } from "../types";
-import { container } from "../inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { container } from "../di/inversify";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 export default {
 	currentUser: (_: any, __: any, { securityContext }: SessionContext) => securityContext.user,

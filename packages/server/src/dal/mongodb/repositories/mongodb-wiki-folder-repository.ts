@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { WikiFolderDocument, WikiFolderFactory, WikiFolderRepository } from "../../../types";
 import mongoose from "mongoose";
 import { WikiFolderModel } from "../models/wiki-folder";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbWikiFolderRepository

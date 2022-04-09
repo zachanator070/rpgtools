@@ -17,9 +17,9 @@ import {
 import fetch from "node-fetch";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { File } from "../domain-entities/file";
 import { DeltaFactory } from "../five-e-import/delta-factory";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";

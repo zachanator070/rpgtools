@@ -3,9 +3,9 @@ import { WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { CREATE_FOLDER } from "@rpgtools/frontend/src/hooks/wiki/useCreateFolder";
 import { DELETE_FOLDER } from "@rpgtools/frontend/src/hooks/wiki/useDeleteFolder";
 import { RENAME_FOLDER } from "@rpgtools/frontend/src/hooks/wiki/useRenameFolder";
-import { container } from "../../../../src/inversify";
+import { container } from "../../../../src/di/inversify";
 import { AuthorizationService, WikiPageService } from "../../../../src/types";
-import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 
 process.env.TEST_SUITE = "folder-mutations-test";

@@ -4,7 +4,7 @@ import { MonsterModel } from "../models/monster";
 import mongoose from "mongoose";
 import { MonsterDocument, MonsterFactory, MonsterRepository } from "../../../types";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbMonsterRepository

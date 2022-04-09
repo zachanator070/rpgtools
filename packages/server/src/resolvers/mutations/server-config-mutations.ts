@@ -1,5 +1,5 @@
-import { container } from "../../inversify";
-import { INJECTABLE_TYPES } from "../../injectable-types";
+import { container } from "../../di/inversify";
+import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { ServerConfigService, SessionContext } from "../../types";
 
 export const serverConfigMutations = {
