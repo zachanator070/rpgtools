@@ -1,5 +1,5 @@
 import { User } from "../../src/domain-entities/user";
-import { SecurityContext } from "../../src/security-context";
+import { SecurityContext } from "../../src/security/security-context";
 import { World } from "../../src/domain-entities/world";
 import { Role } from "../../src/domain-entities/role";
 import { WikiFolder } from "../../src/domain-entities/wiki-folder";

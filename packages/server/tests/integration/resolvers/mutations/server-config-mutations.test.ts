@@ -1,7 +1,7 @@
 import { GENERATE_REGISTER_CODES } from "@rpgtools/frontend/src/hooks/server/useGenerateRegisterCodes";
 import { UNLOCK_SERVER } from "@rpgtools/frontend/src/hooks/server/useUnlockServer";
-import { container } from "../../../../src/inversify";
-import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import { container } from "../../../../src/di/inversify";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { ServerConfigRepository, UserRepository } from "../../../../src/types";
 import { FilterCondition } from "../../../../src/dal/filter-condition";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";

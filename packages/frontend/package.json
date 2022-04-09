@@ -7,7 +7,10 @@
 	"scripts": {
 		"start": "webpack --optimize-minimize --optimize-dedupe",
 		"start-dev": "webpack --config webpack-dev.config.js -w",
-		"test": "jest"
+		"test": "cypress run",
+		"cypress:open": "cypress open",
+		"seed:new": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh new_server",
+		"seed:middle_earth": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh middle_earth"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
@@ -51,5 +54,9 @@
 		"webpack": "^5.40.0",
 		"webpack-cli": "^4.8.0",
 		"webpack-visualizer-plugin": "^0.1.11"
+	},
+	"devDependencies": {
+		"cypress": "^9.5.3",
+		"cypress-xpath": "^1.6.2"
 	}
 }

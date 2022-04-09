@@ -13,8 +13,8 @@ import { FilterCondition } from "../dal/filter-condition";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
-import {ServerProperties} from "../server-properties";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {ServerProperties} from "../server/server-properties";
 
 export interface CookieConstants {
 	string: string;

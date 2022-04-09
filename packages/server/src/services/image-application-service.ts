@@ -13,7 +13,7 @@ import Jimp from "jimp";
 import { Readable } from "stream";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class ImageApplicationService implements ImageService {

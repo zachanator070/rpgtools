@@ -3,8 +3,8 @@ import { SEARCH_USERS } from "../../../../frontend/src/hooks/authentication/useS
 import { GET_WORLDS } from "../../../../frontend/src/hooks/world/useWorlds";
 import { GET_CURRENT_WIKI } from "../../../../frontend/src/hooks/wiki/useCurrentWiki";
 import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
-import { container } from "../../../src/inversify";
-import { INJECTABLE_TYPES } from "../../../src/injectable-types";
+import { container } from "../../../src/di/inversify";
+import { INJECTABLE_TYPES } from "../../../src/di/injectable-types";
 import {WikiFolderService, WikiPageService, WorldService} from "../../../src/types";
 import { ANON_USERNAME } from "../../../../common/src/permission-constants";
 import {WIKIS_IN_FOLDER} from "../../../../frontend/src/hooks/wiki/useWikisInFolder";

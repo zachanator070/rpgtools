@@ -2,8 +2,8 @@ import { GameModel } from "../../dal/mongodb/models/game";
 import { GAME_MODEL_DELETED } from "../subscription-resolvers";
 import { ModelService, SessionContext } from "../../types";
 import { FileUpload } from "graphql-upload";
-import { container } from "../../inversify";
-import { INJECTABLE_TYPES } from "../../injectable-types";
+import { container } from "../../di/inversify";
+import { INJECTABLE_TYPES } from "../../di/injectable-types";
 
 export const modelMutations = {
 	createModel: async (

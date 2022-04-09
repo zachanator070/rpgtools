@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Col, Form, Input, Modal, Row } from "antd";
+import React, {useEffect, useState} from "react";
+import { Button, Col, Form, Input, notification, Row } from "antd";
 import useUnlockServer from "../../hooks/server/useUnlockServer";
 import { useHistory } from "react-router-dom";
 import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
@@ -11,15 +11,28 @@ export const ServerSetup = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [repeatPassword, setRepeatPassword] = useState("");
+	const [unlockError, setUnlockError] = useState("");
 	const { unlockServer, loading } = useUnlockServer();
 	const history = useHistory();
+
 	const { login } = useLogin(() => {
 		history.push("/");
 	});
+
+	useEffect(() => {
+		if (unlockError) {
+			notification.error({
+				message: unlockError,
+				placement: 'topLeft'
+			})
+		}
+	}, [unlockError]);
+
 	const formItemLayout = {
 		labelCol: { span: 5 },
 		wrapperCol: { span: 14 },
 	};
+
 	return (
 		<Row>
 			<Col span={4}></Col>
@@ -100,7 +113,9 @@ export const ServerSetup = () => {
 						try {
 							await unlockServer({unlockCode, email, username, password});
 							await login({username, password});
-						} catch {}
+						} catch (e) {
+							setUnlockError(e.message);
+						}
 					}}
 				>
 					Unlock

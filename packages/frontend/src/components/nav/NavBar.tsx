@@ -32,7 +32,7 @@ export const NavBar = () => {
 			<span>
 				<span className="margin-md-right">Hello {currentUser.username}</span>
 				<span>
-					<Button type="primary" onClick={async () => logout()}>
+					<Button id="logoutButton" type="primary" onClick={async () => logout()}>
 						Logout
 					</Button>
 				</span>

@@ -1,9 +1,9 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { User } from "../../domain-entities/user";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../injectable-types";
+import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { UserRepository } from "../../types";
-import { UserAuthorizationRuleset } from "../../security/user-authorization-ruleset";
+import { UserAuthorizationRuleset } from "../../security/ruleset/user-authorization-ruleset";
 
 @injectable()
 export class UserDataLoader extends GraphqlDataloader<User> {

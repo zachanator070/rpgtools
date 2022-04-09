@@ -1,7 +1,7 @@
 import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
 import { GraphQLUpload } from "graphql-upload";
-import { container } from "../inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { container } from "../di/inversify";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { World } from "../domain-entities/world";
 import {
 	DataLoader,
@@ -15,20 +15,20 @@ import { WikiFolder } from "../domain-entities/wiki-folder";
 import { FilterCondition } from "../dal/filter-condition";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { Image } from "../domain-entities/image";
-import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
+import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
 import { Model } from "../domain-entities/model";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Role } from "../domain-entities/role";
-import { RoleAuthorizationRuleset } from "../security/role-authorization-ruleset";
-import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
-import { ModelAuthorizationRuleset } from "../security/model-authorization-ruleset";
+import { RoleAuthorizationRuleset } from "../security/ruleset/role-authorization-ruleset";
+import { GameAuthorizationRuleset } from "../security/ruleset/game-authorization-ruleset";
+import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
 import { User } from "../domain-entities/user";
 import { Pin } from "../domain-entities/pin";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { Place } from "../domain-entities/place";
 import { Chunk } from "../domain-entities/chunk";
 import { ServerConfig } from "../domain-entities/server-config";
-import { RepositoryMapper } from "../repository-mapper";
+import { RepositoryMapper } from "../dal/repository-mapper";
 import {Game, InGameModel, Message} from "../domain-entities/game";
 
 const wikiPageInterfaceAttributes = {

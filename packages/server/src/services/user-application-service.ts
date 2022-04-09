@@ -1,9 +1,9 @@
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { Factory, UserRepository, UserService } from "../types";
 import { inject, injectable } from "inversify";
 import { User } from "../domain-entities/user";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
 import {PaginatedResult} from "../dal/paginated-result";
 import {ANON_USERNAME} from "../../../common/src/permission-constants";

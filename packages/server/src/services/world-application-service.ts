@@ -15,16 +15,16 @@ import {
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
 } from "../../../common/src/permission-constants";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { PLACE, WORLD } from "../../../common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
 import { World } from "../domain-entities/world";
 import { FilterCondition } from "../dal/filter-condition";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { WorldAuthorizationRuleset } from "../security/world-authorization-ruleset";
-import { PinAuthorizationRuleset } from "../security/pin-authorization-ruleset";
+import { WorldAuthorizationRuleset } from "../security/ruleset/world-authorization-ruleset";
+import { PinAuthorizationRuleset } from "../security/ruleset/pin-authorization-ruleset";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class WorldApplicationService implements WorldService {

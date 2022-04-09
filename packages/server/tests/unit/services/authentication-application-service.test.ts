@@ -1,6 +1,6 @@
-import {container} from "../../../src/inversify";
+import {container} from "../../../src/di/inversify";
 import {AuthenticationService, UnitOfWork, UserFactory, UserRepository} from "../../../src/types";
-import {INJECTABLE_TYPES} from "../../../src/injectable-types";
+import {INJECTABLE_TYPES} from "../../../src/di/injectable-types";
 import {InMemoryUserRepository} from "../../../src/dal/in-memory/repositories/in-memory-user-repository";
 import {Factory} from "../../../src/types";
 

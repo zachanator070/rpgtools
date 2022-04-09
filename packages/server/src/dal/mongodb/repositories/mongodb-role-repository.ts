@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { RoleDocument, RoleFactory, RoleRepository } from "../../../types";
 import mongoose from "mongoose";
 import { RoleModel } from "../models/role";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbRoleRepository

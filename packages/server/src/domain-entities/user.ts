@@ -1,8 +1,8 @@
 import { DomainEntity } from "../types";
-import { UserAuthorizationRuleset } from "../security/user-authorization-ruleset";
+import { UserAuthorizationRuleset } from "../security/ruleset/user-authorization-ruleset";
 import { USER } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class User implements DomainEntity {

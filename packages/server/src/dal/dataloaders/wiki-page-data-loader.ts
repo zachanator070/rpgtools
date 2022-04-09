@@ -1,9 +1,9 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { WikiPage } from "../../domain-entities/wiki-page";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../injectable-types";
+import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { WikiPageRepository } from "../../types";
-import { WikiPageAuthorizationRuleset } from "../../security/wiki-page-authorization-ruleset";
+import { WikiPageAuthorizationRuleset } from "../../security/ruleset/wiki-page-authorization-ruleset";
 
 @injectable()
 export class WikiPageDataLoader extends GraphqlDataloader<WikiPage> {

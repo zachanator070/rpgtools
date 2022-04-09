@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "../../../common/src/type-constants";
 import { WIKI_ADMIN, WIKI_RW } from "../../../common/src/permission-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
-import { WikiPageAuthorizationRuleset } from "../security/wiki-page-authorization-ruleset";
+import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
+import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
 import { Readable } from "stream";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import {
@@ -21,11 +21,11 @@ import {
 	WikiPageRepository,
 	WikiPageService, WorldRepository,
 } from "../types";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { PaginatedResult } from "../dal/paginated-result";
-import { RepositoryMapper } from "../repository-mapper";
+import { RepositoryMapper } from "../dal/repository-mapper";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {

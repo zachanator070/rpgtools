@@ -5,3 +5,5 @@ node_modules/
 dist/
 dev/mongodb-init/dump/
 coverage/
+packages/frontend/cypress/screenshots
+packages/frontend/cypress/videos

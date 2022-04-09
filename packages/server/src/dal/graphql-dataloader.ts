@@ -6,7 +6,7 @@ import {
 } from "../types";
 import DataLoader from "dataloader";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "./filter-condition";
-import { SecurityContext } from "../security-context";
+import { SecurityContext } from "../security/security-context";
 import { injectable } from "inversify";
 
 @injectable()

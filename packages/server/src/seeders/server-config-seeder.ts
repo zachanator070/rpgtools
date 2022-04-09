@@ -1,9 +1,8 @@
 import { Seeder, ServerConfigFactory } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongodb-server-config-repository";
-import { ServerConfig } from "../domain-entities/server-config";
 
 @injectable()
 export class ServerConfigSeeder implements Seeder {
@@ -15,7 +14,12 @@ export class ServerConfigSeeder implements Seeder {
 	seed = async (): Promise<void> => {
 		let server = await this.serverConfigRepository.findOne([]);
 		if (!server) {
-			server = this.serverConfigFactory(null, "1.0", [], [], uuidv4());
+			const unlockCode: string = process.env.UNLOCK_CODE || uuidv4();
+			let registerCodes: string[] = [];
+			if (process.env.REGISTER_CODES) {
+				registerCodes = process.env.REGISTER_CODES.split(',');
+			}
+			server = this.serverConfigFactory(null, "1.0", registerCodes, [], unlockCode);
 			await this.serverConfigRepository.create(server);
 		}
 	};

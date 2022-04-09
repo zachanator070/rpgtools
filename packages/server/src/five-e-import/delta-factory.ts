@@ -1,6 +1,6 @@
 import { markdownToDelta } from "./markdown-to-delta";
 import {inject, injectable} from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { ArticleRepository } from "../types";
 import { FilterCondition } from "../dal/filter-condition";
 import {

@@ -1,8 +1,8 @@
 import express from "express";
 import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "../../../common/src/type-constants";
-import { ExpressSessionContextFactory } from "../express-session-context-factory";
-import { container } from "../inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { ExpressSessionContextFactory } from "../server/express-session-context-factory";
+import { container } from "../di/inversify";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { AbstractArchiveFactory, ContentExportService } from "../types";
 
 let ExportRouter = express.Router();

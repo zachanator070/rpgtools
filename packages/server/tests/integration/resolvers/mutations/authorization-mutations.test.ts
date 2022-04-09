@@ -7,9 +7,9 @@ import { GRANT_USER_PERMISSION } from "@rpgtools/frontend/src/hooks/authorizatio
 import { REMOVE_USER_ROLE } from "@rpgtools/frontend/src/hooks/authorization/useRemoveUserRole";
 import { REVOKE_ROLE_PERMISSION } from "@rpgtools/frontend/src/hooks/authorization/useRevokeRolePermission";
 import { REVOKE_USER_PERMISSION } from "@rpgtools/frontend/src/hooks/authorization/useRevokeUserPermission";
-import { container } from "../../../../src/inversify";
+import { container } from "../../../../src/di/inversify";
 import { AuthorizationService, RoleFactory, RoleRepository } from "../../../../src/types";
-import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {ADD_USER_ROLE} from "@rpgtools/frontend/src/hooks/authorization/useAddUserRole";
 

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { CookieManager, SessionContext, SessionContextFactory, UserFactory } from "../../src/types";
-import { INJECTABLE_TYPES } from "../../src/injectable-types";
-import { SecurityContextFactory } from "../../src/security-context-factory";
+import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
+import { SecurityContextFactory } from "../../src/security/security-context-factory";
 import { User } from "../../src/domain-entities/user";
 import { ANON_USERNAME } from "../../../common/src/permission-constants";
 

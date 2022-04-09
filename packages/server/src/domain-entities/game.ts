@@ -1,8 +1,8 @@
 import { DomainEntity, EntityAuthorizationRuleset } from "../types";
-import { GameAuthorizationRuleset } from "../security/game-authorization-ruleset";
+import { GameAuthorizationRuleset } from "../security/ruleset/game-authorization-ruleset";
 import { GAME } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class Game implements DomainEntity {

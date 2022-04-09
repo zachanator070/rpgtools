@@ -90,7 +90,7 @@ export class ModelRenderer {
 
 		this.scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-		// setup camera
+		// 1-setup camera
 		this.aspect = renderWidth / renderHeight;
 		this.camera = new THREE.PerspectiveCamera(
 			CAMERA_FOV,
@@ -99,7 +99,7 @@ export class ModelRenderer {
 			10000
 		);
 
-		// setup renderer
+		// 1-setup renderer
 		this.renderer = new THREE.WebGLRenderer({
 			canvas: this.renderRoot,
 			antialias: true,
@@ -108,14 +108,14 @@ export class ModelRenderer {
 		this.renderer.setPixelRatio(window.devicePixelRatio);
 		this.renderer.shadowMap.enabled = true;
 
-		// setup controls
+		// 1-setup controls
 		this.orbitControls = new OrbitControls(this.camera, this.renderRoot);
 		this.orbitControls.target = new Vector3(0, this.modelHeight / 2, 0);
 		this.orbitControls.update();
 
 		this.positionCamera();
 
-		// setup light
+		// 1-setup light
 		const directionalLight = new THREE.DirectionalLight(0xffffff, 0.25);
 		directionalLight.position.set(100, 100, 100);
 		directionalLight.castShadow = true;
@@ -128,7 +128,7 @@ export class ModelRenderer {
 		this.scene.add(directionalLight);
 		this.scene.add(directionalLight.target);
 
-		// setup ground
+		// 1-setup ground
 		const groundGeometry = new THREE.PlaneGeometry(5, 5);
 		const groundMaterial = new THREE.MeshPhongMaterial({ color: 0x386636 });
 		const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);

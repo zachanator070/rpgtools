@@ -1,7 +1,7 @@
 import { withFilter } from "graphql-subscriptions";
-import { container } from "../inversify";
+import { container } from "../di/inversify";
 import { EventPublisher } from "../types";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 export const GAME_CHAT_EVENT = "GAME_CHAT_EVENT";
 export const ROSTER_CHANGE_EVENT = "PLAYER_JOINED_EVENT";

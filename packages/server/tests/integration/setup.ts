@@ -1,5 +1,5 @@
-import { container } from "../../src/inversify";
-import { INJECTABLE_TYPES } from "../../src/injectable-types";
+import { container } from "../../src/di/inversify";
+import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { ApiServer, ServerConfigService } from "../../src/types";
 
 const mongoose = require("mongoose");

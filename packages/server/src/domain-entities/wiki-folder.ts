@@ -1,8 +1,8 @@
 import { DomainEntity } from "../types";
-import { WikiFolderAuthorizationRuleset } from "../security/wiki-folder-authorization-ruleset";
+import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
 import { WIKI_FOLDER } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class WikiFolder implements DomainEntity {

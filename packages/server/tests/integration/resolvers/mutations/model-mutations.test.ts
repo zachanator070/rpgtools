@@ -5,8 +5,8 @@ import {DELETE_MODEL} from "@rpgtools/frontend/src/hooks/model/useDeleteModel";
 import {FileUpload, Upload} from "graphql-upload";
 import fs from "fs";
 import {ModelApplicationService} from "../../../../src/services/model-application-service";
-import {container} from "../../../../src/inversify";
-import {INJECTABLE_TYPES} from "../../../../src/injectable-types";
+import {container} from "../../../../src/di/inversify";
+import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
 
 process.env.TEST_SUITE = "model-mutations-test";
 

@@ -43,7 +43,7 @@ import { World } from "../domain-entities/world";
 import { Article } from "../domain-entities/article";
 import { Image } from "../domain-entities/image";
 import { inject } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 export class ZipArchive implements Archive {
 	@inject(INJECTABLE_TYPES.ArchiveArticleRepository)

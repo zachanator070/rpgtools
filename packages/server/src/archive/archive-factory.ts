@@ -16,7 +16,7 @@ import {
 } from "../../../common/src/type-constants";
 import { File } from "../domain-entities/file";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class ArchiveFactory implements AbstractArchiveFactory {

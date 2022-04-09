@@ -1,7 +1,7 @@
 import { REGISTER_MUTATION } from "@rpgtools/frontend/src/hooks/authentication/useRegister";
-import { container } from "../../../../src/inversify";
+import { container } from "../../../../src/di/inversify";
 import { ServerConfigRepository } from "../../../../src/types";
-import { INJECTABLE_TYPES } from "../../../../src/injectable-types";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {LOGIN_QUERY} from "@rpgtools/frontend/src/hooks/authentication/useLogin";
 

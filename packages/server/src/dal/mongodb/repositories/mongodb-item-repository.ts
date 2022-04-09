@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { ItemDocument, ItemFactory, ItemRepository } from "../../../types";
 import mongoose from "mongoose";
 import { ItemModel } from "../models/item";
-import { INJECTABLE_TYPES } from "../../../injectable-types";
+import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
 @injectable()
 export class MongodbItemRepository
