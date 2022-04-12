@@ -109,4 +109,4 @@ test-integration-update-snapshots: test-integration
 
 dump:
 	sudo rm -rf ./dev/mongodb-init/dump/*
-	docker-compose exec mongodb mongodump --out /docker-entrypoint-initdb.d/dump
+	docker-compose exec mongodb mongodump --archive=/docker-entrypoint-initdb.d/dump.archive -d rpgtools

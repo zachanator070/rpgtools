@@ -1,4 +1,4 @@
-import {ADMIN_PASSWORD, ADMIN_USERNAME, TEST_USER_PASSWORD, TEST_USER_USERNAME} from "./constants";
+import {ADMIN_PASSWORD, ADMIN_USERNAME, MIDDLE_EARTH_MAP, MIDDLE_EARTH_WIKI} from "./constants";
 
 export function seedNewServer() {
     cy.exec("npm run seed:new");
@@ -29,9 +29,9 @@ export function adminLogin() {
 }
 
 export function goToMap() {
-    cy.visit("http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/map/6250f18b8f489b1a4cf78362");
+    cy.visit(MIDDLE_EARTH_MAP);
 }
 
 export function goToWiki() {
-    cy.visit('http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/wiki/6250f18b8f489b1a4cf78362/view');
+    cy.visit(MIDDLE_EARTH_WIKI);
 }

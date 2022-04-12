@@ -1,3 +1,3 @@
 
-db = db.getSiblingDB('rpgtools')
+db = db.getSiblingDB('rpgtools');
 db.dropDatabase();
