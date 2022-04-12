@@ -67,6 +67,7 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 							alt={currentPlace.mapImage.name}
 							style={{objectFit: "contain"}}
 							src={`/images/${currentPlace.mapImage.icon.chunks[0].fileId}`}
+							id={'mapImage'}
 						/>
 						<span className="margin-md-left">
 							<a
@@ -119,6 +120,7 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 						alt={currentWiki.coverImage.name}
 						style={{ objectFit: "contain" }}
 						src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}
+						id={'coverImage'}
 					/>
 				</div>
 			)}

@@ -70,7 +70,7 @@
 		"babel-jest": "^27.0.6",
 		"eslint": "^7.32.0",
 		"is-typedarray": "^1.0.0",
-		"ts-jest": "^27.0.5",
+		"ts-jest": "^27.1.4",
 		"typedarray-to-buffer": "^4.0.0"
 	}
 }

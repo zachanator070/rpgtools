@@ -120,7 +120,7 @@ export class ExpressApiServer implements ApiServer {
 				if (
 					[
 						"/api",
-						"/ui/1-setup",
+						"/ui/setup",
 						"/app.bundle.js",
 						"/app.css",
 						"/app.bundle.js.gz",

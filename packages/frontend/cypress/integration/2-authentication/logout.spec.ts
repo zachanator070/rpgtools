@@ -1,10 +1,10 @@
-import {goHome, login, seedMiddleEarth} from "../../util/helper";
+import {goHome, adminLogin, seedMiddleEarth} from "../../util/helper";
 
 describe("logout", () => {
 
     beforeEach(() => {
         seedMiddleEarth();
-        login();
+        adminLogin();
         goHome();
     });
 

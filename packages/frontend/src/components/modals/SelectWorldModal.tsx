@@ -40,6 +40,7 @@ export const SelectWorldModal = ({ visibility, setVisibility }: SelectWorldModal
 						await setVisibility(false);
 					}}
 					disabled={selectedWorld === null}
+					id={'selectWorld'}
 				>
 					Select
 				</Button>,

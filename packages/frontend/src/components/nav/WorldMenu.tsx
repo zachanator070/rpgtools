@@ -41,7 +41,7 @@ export const WorldMenu = () => {
 	);
 
 	return (
-		<span>
+		<span id={'worldMenu'}>
 			<CreateWorldModal
 				visibility={createWorldModalVisibility}
 				setVisibility={async (visibility: boolean) => setCreateWorldModalVisibility(visibility)}

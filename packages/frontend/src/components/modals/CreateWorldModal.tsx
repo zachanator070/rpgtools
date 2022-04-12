@@ -42,7 +42,7 @@ export const CreateWorldModal = ({ visibility, setVisibility }: CreateWorldModal
 			{errors && errors.join("/n")}
 			<Form layout="horizontal">
 				<Form.Item label="Name" required={true} {...formItemLayout}>
-					<Input onChange={(e) => setName(e.target.value)} />
+					<Input onChange={(e) => setName(e.target.value)} id={'newWorldName'}/>
 				</Form.Item>
 				<Form.Item {...noLabelItem}>
 					<Checkbox onChange={() => setPublic(!isPublic)} checked={isPublic}>
@@ -71,6 +71,7 @@ export const CreateWorldModal = ({ visibility, setVisibility }: CreateWorldModal
 							await createWorld({name, public: isPublic});
 							await setVisibility(false);
 						}}
+						id={'submit'}
 					>
 						Submit
 					</Button>

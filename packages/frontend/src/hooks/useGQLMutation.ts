@@ -1,4 +1,4 @@
-import {FetchResult, MutationHookOptions, useMutation} from "@apollo/client";
+import {DocumentNode, MutationHookOptions, useMutation} from "@apollo/client";
 import {useGQLResponse} from "./useGQLResponse";
 import {ApiHookResponse} from "./types";
 
@@ -12,7 +12,7 @@ interface GqlMutationOptions<TData, TVariables> extends MutationHookOptions<TDat
 	displayErrors?: boolean;
 }
 export const useGQLMutation = <TData, TVariables=void>(
-	query,
+	query: DocumentNode,
 	variables={},
 	options: GqlMutationOptions<TData, TVariables> = { displayErrors: true }
 ): GqlMutationResult<TData, TVariables> => {
@@ -30,7 +30,7 @@ export const useGQLMutation = <TData, TVariables=void>(
 			const originalVariables = Object.create(variables);
 			Object.assign(originalVariables, givenVariables);
 			const result = await mutation({ variables: originalVariables });
-			return result.data[response.queryName];
+			return (result.data as any)[response.queryName];
 		}
 	};
 };

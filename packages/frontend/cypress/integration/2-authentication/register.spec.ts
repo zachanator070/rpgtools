@@ -28,6 +28,6 @@ describe("register", () => {
         cy.get('#registerRepeatPassword').type('password');
         cy.get('button').contains('Register').click();
         cy.get('.ant-modal-body').contains('Register code not valid');
-    })
+    });
 
 });
