@@ -49,6 +49,7 @@ export const SelectWorld = ({ onChange, style, showClear = false }: SelectWorldP
 				placeholder="Search for a world"
 				style={style ? style : { width: 200 }}
 				suffixIcon={<SearchOutlined />}
+				id={'searchWorld'}
 			>
 				{options}
 			</Select>

@@ -26,7 +26,7 @@ describe("model mutations", () => {
         ...testingContext
     } = defaultTestingContextFactory();
 
-    describe("with world", () => {
+    describe("with world", async () => {
         beforeEach(async () => {
             ({
                 mockSessionContextFactory,
@@ -51,7 +51,8 @@ describe("model mutations", () => {
         };
 
         const testUpload = new Upload();
-        testUpload.resolve(testFile);
+        testUpload.file = testFile;
+        await testUpload.promise;
 
         test("create model no permission", async () => {
             const result = await server.executeGraphQLQuery({

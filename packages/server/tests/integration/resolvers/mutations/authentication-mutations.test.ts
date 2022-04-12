@@ -1,11 +1,36 @@
-import { REGISTER_MUTATION } from "@rpgtools/frontend/src/hooks/authentication/useRegister";
 import { container } from "../../../../src/di/inversify";
 import { ServerConfigRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
-import {LOGIN_QUERY} from "@rpgtools/frontend/src/hooks/authentication/useLogin";
+import {gql} from "graphql-tag";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
+
+export const REGISTER_MUTATION = gql`
+	mutation register(
+		$registerCode: String!
+		$email: String!
+		$username: String!
+		$password: String!
+	) {
+		register(
+			registerCode: $registerCode
+			email: $email
+			username: $username
+			password: $password
+		) {
+			_id
+		}
+	}
+`;
+
+export const LOGIN_QUERY = gql`
+	mutation login($username: String!, $password: String!) {
+		login(username: $username, password: $password) {
+			_id
+		}
+	}
+`;
 
 describe("authentication-mutations", () => {
 	let {

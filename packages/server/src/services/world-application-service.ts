@@ -19,7 +19,7 @@ import { SecurityContext } from "../security/security-context";
 import { PLACE, WORLD } from "../../../common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
 import { World } from "../domain-entities/world";
-import { FilterCondition } from "../dal/filter-condition";
+import {FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WorldAuthorizationRuleset } from "../security/ruleset/world-authorization-ruleset";
 import { PinAuthorizationRuleset } from "../security/ruleset/pin-authorization-ruleset";
@@ -182,7 +182,7 @@ export class WorldApplicationService implements WorldService {
 	getWorlds = async (context: SecurityContext, name: string, page: number) => {
 		const conditions = [];
 		if (name) {
-			conditions.push(new FilterCondition('name', name));
+			conditions.push(new FilterCondition('name', name, FILTER_CONDITION_REGEX));
 		}
 		const results = await this.worldRepository.findPaginated(conditions, page);
 		const docs = [];

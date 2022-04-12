@@ -5,7 +5,7 @@ import {
     FilterCondition
 } from "../filter-condition";
 import {injectable} from "inversify";
-import mongoose from "mongoose";
+import {ObjectId} from 'bson';
 
 @injectable()
 export default class FilterFactory {
@@ -39,7 +39,7 @@ export default class FilterFactory {
             if (typeof condition.value === "string") {
                 this.checkIdLength(condition.value)
                 if (useIdObjects) {
-                    return new mongoose.Types.ObjectId(condition.value);
+                    return new ObjectId(condition.value);
                 }
             } else if (Array.isArray(condition.value)) {
                 for(let id of condition.value) {

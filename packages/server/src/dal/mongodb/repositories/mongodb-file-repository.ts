@@ -9,6 +9,7 @@ import { PaginatedResult } from "../../paginated-result";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
+import {ObjectId} from 'bson';
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
@@ -64,7 +65,7 @@ export class MongodbFileRepository implements FileRepository {
 	};
 
 	findById = async (id: string): Promise<File> => {
-		return this.findOne([new FilterCondition("_id", new mongoose.Types.ObjectId(id))]);
+		return this.findOne([new FilterCondition("_id", new ObjectId(id))]);
 	};
 
 	findOne = async (conditions: FilterCondition[]): Promise<File> => {
