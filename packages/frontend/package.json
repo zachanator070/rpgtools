@@ -57,6 +57,7 @@
 	},
 	"devDependencies": {
 		"cypress": "^9.5.3",
+		"cypress-file-upload": "^5.0.8",
 		"cypress-xpath": "^1.6.2"
 	}
 }
