@@ -24,7 +24,7 @@ export const WikiEdit = () => {
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();
 
 	const [mapToUpload, setMapToUpload] = useState<File>();
-	const [coverToUpload, setCoverToUpload] = useState<File>();
+	const [coverToUpload, setCoverToUpload] = useState<File>(undefined);
 	const [name, setName] = useState(null);
 	const [type, setType] = useState(null);
 	const [coverImageList, setCoverImageList] = useState([]);
@@ -123,9 +123,10 @@ export const WikiEdit = () => {
 				danger={true}
 				className={"margin-md"}
 				onClick={async () => {
-					await setCoverToUpload(null);
+					await setCoverToUpload(undefined);
 					await loadCoverImageList();
 				}}
+				id={'revertCover'}
 			>
 				Revert
 			</Button>
@@ -139,9 +140,10 @@ export const WikiEdit = () => {
 				danger={true}
 				className={"margin-md"}
 				onClick={async () => {
-					await setMapToUpload(null);
+					await setMapToUpload(undefined);
 					await loadMapImageList();
 				}}
+				id={'revertMap'}
 			>
 				Revert
 			</Button>
@@ -151,27 +153,26 @@ export const WikiEdit = () => {
 	const save = async () => {
 		await setSaving(true);
 
-		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : null;
+		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : undefined;
 		if (coverToUpload) {
 			const coverUploadResult = await createImage({file: coverToUpload, worldId: currentWorld._id, chunkify: false});
 			coverImageId = coverUploadResult._id;
-		} else if (!coverToUpload) {
+		} else if (coverToUpload === null) {
 			coverImageId = null;
 		}
 
-		const contents = new File([JSON.stringify(editor.getContents())], "contents.json", {
+		const contents = editor != null ? new File([JSON.stringify(editor.getContents())], "contents.json", {
 			type: "text/plain",
-		});
+		}) : null;
 		await updateWiki({wikiId: currentWiki._id, name, content: contents, coverImageId, type});
 
 		if (type === PLACE) {
 			const currentPlace = currentWiki as Place;
-			let mapImageId = currentPlace.mapImage ? currentPlace.mapImage._id : null;
+			let mapImageId = currentPlace.mapImage ? currentPlace.mapImage._id : undefined;
 			if (mapToUpload) {
 				const mapUploadResult = await createImage({file: mapToUpload, worldId: currentWorld._id, chunkify: true});
 				mapImageId = mapUploadResult._id;
-			}
-			if (mapToUpload === null) {
+			} else if (mapToUpload === null) {
 				mapImageId = null;
 			}
 			await updatePlace({placeId: currentPlace._id, mapImageId, pixelsPerFoot});
@@ -256,6 +257,7 @@ export const WikiEdit = () => {
 							await setCoverToUpload(null);
 						}
 					}}
+					id={'coverImageUpload'}
 				>
 					<Button>
 						<UploadOutlined /> Select Cover Image
@@ -283,6 +285,7 @@ export const WikiEdit = () => {
 									await setMapToUpload(null);
 								}
 							}}
+							id={'mapImageUpload'}
 						>
 							<Button>
 								<UploadOutlined /> Select Map Image

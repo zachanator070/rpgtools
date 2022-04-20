@@ -44,7 +44,7 @@ dev: .env dev-up
 # runs development docker images
 dev-up:
 	mkdir -p packages/frontend/dist
-	docker-compose up dev-server dev-frontend-builder
+	docker-compose up dev-server dev-frontend-builder mongodb
 
 build-dev:
 	docker-compose build dev-server dev-frontend-builder
