@@ -10,6 +10,6 @@ describe("logout", () => {
 
     it("logout", () => {
         cy.get('#logoutButton').click();
-        cy.get('a').contains('Login');
+        cy.get('a').should('contain.text', 'Login');
     });
 })
