@@ -1,5 +1,5 @@
 import {adminLogin, goToEditWiki, seedMiddleEarth} from "../../util/helper";
-import {MIDDLE_EARTH_WIKI, TEST_IMAGE} from "../../util/constants";
+import {MIDDLE_EARTH_WIKI_URL, TEST_IMAGE} from "../../util/constants";
 
 describe('view wiki', () => {
 
@@ -13,7 +13,7 @@ describe('view wiki', () => {
         cy.get('#editor').type('testing a change');
         cy.get('button').contains('Save').click();
         cy.location().should(location => {
-            expect(location.href).contains(MIDDLE_EARTH_WIKI);
+            expect(location.href).contains(MIDDLE_EARTH_WIKI_URL);
         });
         cy.get('p').should('contain.text', 'testing a change');
     });
@@ -23,7 +23,7 @@ describe('view wiki', () => {
         cy.get('#mapImageUpload').attachFile(TEST_IMAGE);
         cy.get('button').contains('Save').click();
         cy.location().should(location => {
-            expect(location.href).contains(MIDDLE_EARTH_WIKI);
+            expect(location.href).contains(MIDDLE_EARTH_WIKI_URL);
         });
         cy.get('img').should('have.length.at.least', 2);
     });
@@ -35,7 +35,7 @@ describe('view wiki', () => {
         cy.get('#revertCover').click();
         cy.get('button').contains('Save').click();
         cy.location().should(location => {
-            expect(location.href).contains(MIDDLE_EARTH_WIKI);
+            expect(location.href).contains(MIDDLE_EARTH_WIKI_URL);
         });
         cy.get('img').should('have.length.at.least', 2);
     });

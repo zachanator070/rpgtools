@@ -9,7 +9,7 @@
 		"start-dev": "webpack --config webpack-dev.config.js -w",
 		"test": "cypress run",
 		"cypress:open": "cypress open",
-		"seed:new": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh new_server",
+		"seed:new": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh new_server.archive",
 		"seed:middle_earth": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh middle_earth.archive"
 	},
 	"dependencies": {

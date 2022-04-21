@@ -28,15 +28,20 @@ export class RoleApplicationService implements RoleService {
 		canAdmin: boolean,
 		page: number
 	): Promise<PaginatedResult<Role>> => {
-		const world = await this.worldRepository.findById(worldId);
-		if (!world) {
-			throw new Error("World does not exist");
-		}
-		if (!(await world.authorizationRuleset.canRead(context, world))) {
-			throw new Error("You do not have permission to read this World");
+
+		const conditions: FilterCondition[] = [];
+
+		if (worldId) {
+			const world = await this.worldRepository.findById(worldId);
+			if (!world) {
+				throw new Error("World does not exist");
+			}
+			if (!(await world.authorizationRuleset.canRead(context, world))) {
+				throw new Error("You do not have permission to read this World");
+			}
+			conditions.push(new FilterCondition("world", worldId));
 		}
 
-		const conditions: FilterCondition[] = [new FilterCondition("world", worldId)];
 		if (name) {
 			conditions.push(new FilterCondition("name", name, FILTER_CONDITION_REGEX));
 		}

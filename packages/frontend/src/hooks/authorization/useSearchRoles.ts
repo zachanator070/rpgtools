@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import {RolePaginatedResult} from "../../types";
 
 const SEARCH_ROLES = gql`
-	query roles($worldId: ID!, $name: String, $canAdmin: Boolean) {
+	query roles($worldId: ID, $name: String, $canAdmin: Boolean) {
 		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
 			docs {
 				_id

@@ -42,6 +42,7 @@ export const SelectRole = ({ onChange, style, canAdmin }: SelectRoleProps) => {
 			placeholder="Search for a role"
 			style={style ? style : { width: 200 }}
 			suffixIcon={<SearchOutlined />}
+			id={'selectRole'}
 		>
 			{options}
 		</Select>
