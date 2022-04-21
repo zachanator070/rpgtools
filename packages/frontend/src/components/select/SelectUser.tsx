@@ -12,13 +12,16 @@ export const SelectUser = ({ onChange, style }: SelectUserProps) => {
 	const { searchUsers, users, loading } = useSearchUsers();
 	const [value, setValue] = useState<string>();
 
-	const options = users.docs.map((user) => {
-		return (
-			<Select.Option key={user._id} value={user._id}>
-				{user.username}
-			</Select.Option>
-		);
-	});
+	let options = [];
+	if(users){
+		options = users.docs.map((user) => {
+			return (
+				<Select.Option key={user._id} value={user._id}>
+					{user.username}
+				</Select.Option>
+			);
+		});
+	} 
 
 	return (
 		<Select

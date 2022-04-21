@@ -41,7 +41,7 @@ export const typeDefs = gql`
 		"""
 		Search for roles by name
 		"""
-		roles(worldId: ID!, name: String, canAdmin: Boolean, page: Int): RolePaginatedResult!
+		roles(worldId: ID, name: String, canAdmin: Boolean, page: Int): RolePaginatedResult!
 
 		"""
 		Get a game by id

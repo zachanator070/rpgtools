@@ -15,6 +15,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { ServerConfigAuthorizationRuleset } from "../security/ruleset/server-config-authorization-ruleset";
 import { SecurityContext } from "../security/security-context";
+import {FilterCondition} from "../dal/filter-condition";
 
 @injectable()
 export class ServerConfigApplicationService implements ServerConfigService {
@@ -62,13 +63,21 @@ export class ServerConfigApplicationService implements ServerConfigService {
 		);
 		const adminRole = this.roleFactory(null, SERVER_ADMIN_ROLE, null, []);
 		for (let permission of SERVER_PERMISSIONS) {
-			const permissionAssignment = this.permissionAssignmentFactory(
-				null,
-				permission,
-				server._id,
-				SERVER_CONFIG
-			);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
+			let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
+				new FilterCondition('permission', permission),
+				new FilterCondition('subject', server._id),
+				new FilterCondition('subjectType', SERVER_CONFIG),
+			]);
+			if (!permissionAssignment) {
+				permissionAssignment = this.permissionAssignmentFactory(
+					null,
+					permission,
+					server._id,
+					SERVER_CONFIG
+				);
+				await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
+			}
+
 			adminRole.permissions.push(permissionAssignment._id);
 		}
 		await unitOfWork.roleRepository.create(adminRole);

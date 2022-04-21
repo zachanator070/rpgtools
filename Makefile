@@ -46,6 +46,7 @@ dev-up:
 	mkdir -p packages/frontend/dist
 	docker-compose up dev-server dev-frontend-builder mongodb
 
+
 build-dev:
 	docker-compose build dev-server dev-frontend-builder
 
@@ -108,5 +109,6 @@ test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
 
 dump:
-	sudo rm -rf ./dev/mongodb-init/dump/*
+	sudo rm -rf ./dev/mongodb-init/dump.archive
 	docker-compose exec mongodb mongodump --archive=/docker-entrypoint-initdb.d/dump.archive -d rpgtools
+	sudo chown ${USER}:${USER} ./dev/mongodb-init/dump.archive

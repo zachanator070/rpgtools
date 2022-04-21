@@ -34,19 +34,16 @@ export default class FilterFactory {
         }
     }
 
-    private getConditionValue(condition: FilterCondition, useIdObjects: boolean): any{
-        if (condition.field === "_id") {
-            if (typeof condition.value === "string") {
-                this.checkIdLength(condition.value)
-                if (useIdObjects) {
-                    return new ObjectId(condition.value);
-                }
-            } else if (Array.isArray(condition.value)) {
-                for(let id of condition.value) {
-                    this.checkIdLength(id)
-                }
-            }
+    private getConditionValue(condition: FilterCondition, useIdObjects: boolean): any {
+
+        const idRegex = /[0-9a-f]{24}/;
+
+        if (typeof condition.value === "string" && condition.value.match(idRegex)) {
+            return new ObjectId(condition.value);
+        } else if (Array.isArray(condition.value)) {
+            return condition.value.map(value => new ObjectId(value));
         }
+
         return condition.value
     }
 }

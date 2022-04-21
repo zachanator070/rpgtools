@@ -9,7 +9,7 @@ import { PermissionEditor } from "../permissions/PermissionEditor";
 import { SERVER_CONFIG } from "../../../../common/src/type-constants";
 
 export default () => {
-	const { serverConfig, loading } = useServerConfig();
+	const { serverConfig, loading, refetch } = useServerConfig();
 	const [amount, setAmount] = useState(0);
 	const { generateRegisterCodes, loading: generateLoading } = useGenerateRegisterCodes();
 
@@ -38,6 +38,7 @@ export default () => {
 						bordered
 						dataSource={serverConfig.registerCodes}
 						renderItem={(item) => <List.Item>{item}</List.Item>}
+						id={"registerCodeList"}
 					/>
 				</Col>
 				<Col span={4} />
@@ -48,7 +49,7 @@ export default () => {
 					<Col span={16}>
 						<span className={"margin-lg-right"}>Number of codes to generate:</span>
 						<span className={"margin-lg-right"}>
-							<InputNumber value={amount} onChange={async (value) => await setAmount(value)} />
+							<InputNumber value={amount} onChange={async (value) => await setAmount(value)} id={"numberCodesToGenerate"}/>
 						</span>
 						<Button
 							type={"primary"}
@@ -67,7 +68,10 @@ export default () => {
 				<Col span={4} />
 				<Col span={16}>
 					<h2>Server Permissions</h2>
-					<PermissionEditor subject={serverConfig} subjectType={SERVER_CONFIG} />
+					<PermissionEditor
+						subject={serverConfig}
+						subjectType={SERVER_CONFIG}
+						refetch={async () => {await refetch()}}/>
 				</Col>
 				<Col span={4} />
 			</Row>

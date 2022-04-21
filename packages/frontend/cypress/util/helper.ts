@@ -1,4 +1,11 @@
-import {ADMIN_PASSWORD, ADMIN_USERNAME, MIDDLE_EARTH_MAP, MIDDLE_EARTH_WIKI, MIDDLE_EARTH_WIKI_EDIT} from "./constants";
+import {
+    ADMIN_PASSWORD,
+    ADMIN_USERNAME,
+    MIDDLE_EARTH_MAP_URL,
+    MIDDLE_EARTH_WIKI_URL,
+    MIDDLE_EARTH_WIKI_EDIT_URL,
+    SERVER_SETTINGS_URL
+} from "./constants";
 
 export function seedNewServer() {
     cy.exec("npm run seed:new");
@@ -29,13 +36,17 @@ export function adminLogin() {
 }
 
 export function goToMap() {
-    cy.visit(MIDDLE_EARTH_MAP);
+    cy.visit(MIDDLE_EARTH_MAP_URL);
 }
 
 export function goToWiki() {
-    cy.visit(MIDDLE_EARTH_WIKI);
+    cy.visit(MIDDLE_EARTH_WIKI_URL);
 }
 
 export function goToEditWiki() {
-    cy.visit(MIDDLE_EARTH_WIKI_EDIT);
+    cy.visit(MIDDLE_EARTH_WIKI_EDIT_URL);
+}
+
+export function goToServerSettings() {
+    cy.visit(SERVER_SETTINGS_URL);
 }
