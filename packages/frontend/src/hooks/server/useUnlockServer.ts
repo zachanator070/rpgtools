@@ -1,22 +1,6 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
 
-export const UNLOCK_SERVER = gql`
-	mutation unlockServer(
-		$unlockCode: String!
-		$email: String!
-		$username: String!
-		$password: String!
-	) {
-		unlockServer(
-			unlockCode: $unlockCode
-			email: $email
-			username: $username
-			password: $password
-		)
-	}
-`;
 interface UnlockServerVariables {
 	unlockCode: string;
 	email: string;

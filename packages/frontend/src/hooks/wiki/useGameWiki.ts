@@ -1,16 +1,6 @@
-import { CURRENT_WIKI_ATTRIBUTES } from "../gql-fragments";
-import gql from "graphql-tag";
 import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
-import {Game, WikiPage} from "../../types";
-
-export const GAME_WIKI = gql`
-	${CURRENT_WIKI_ATTRIBUTES}
-	query wiki($wikiId: ID!){
-		wiki(wikiId: $wikiId) {
-			...currentWikiAttributes
-		}
-	}
-`;
+import {WikiPage} from "../../types";
+import {GAME_WIKI} from "@rpgtools/common/src/gql-queries";
 
 interface GameWikiVariables {
 	wikiId: string;

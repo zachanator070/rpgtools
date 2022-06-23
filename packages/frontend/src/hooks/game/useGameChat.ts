@@ -1,15 +1,6 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Game} from "../../types";
-
-export const GAME_CHAT = gql`
-	mutation gameChatMutation($gameId: ID!, $message: String!) {
-		gameChat(gameId: $gameId, message: $message) {
-			_id
-		}
-	}
-`;
+import {GAME_CHAT} from "@rpgtools/common/src/gql-mutations";
 
 interface GameChatVariables {
 	gameId: string;

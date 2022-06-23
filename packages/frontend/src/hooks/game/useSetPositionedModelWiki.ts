@@ -1,17 +1,7 @@
-import gql from "graphql-tag";
-import { GAME_MODEL } from "../gql-fragments";
 import useCurrentGame from "./useCurrentGame";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Game} from "../../types";
-
-const SET_POSITIONED_MODEL_WIKI = gql`
-	${GAME_MODEL}
-	mutation setPositionedModelWiki($gameId: ID!, $positionedModelId: ID!, $wikiId: ID){
-		setPositionedModelWiki(gameId: $gameId, positionedModelId: $positionedModelId, wikiId: $wikiId){
-			...gameModel
-		}
-	}
-`;
+import {SET_POSITIONED_MODEL_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface SetPositionedModelWikiVariables {
 	gameId?: string;

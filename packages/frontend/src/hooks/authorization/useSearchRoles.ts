@@ -1,18 +1,7 @@
-import gql from "graphql-tag";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {RolePaginatedResult} from "../../types";
-
-const SEARCH_ROLES = gql`
-	query roles($worldId: ID, $name: String, $canAdmin: Boolean) {
-		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
-			docs {
-				_id
-				name
-			}
-		}
-	}
-`;
+import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 
 interface SearchRolesVariables {
 	worldId?: string;

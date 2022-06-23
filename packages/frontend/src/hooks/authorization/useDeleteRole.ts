@@ -1,15 +1,7 @@
 import useCurrentUser from "../authentication/useCurrentUser";
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const DELETE_ROLE = gql`
-	mutation deleteRole($roleId: ID!) {
-		deleteRole(roleId: $roleId) {
-			_id
-		}
-	}
-`;
+import {DELETE_ROLE} from "@rpgtools/common/src/gql-mutations";
 
 interface DeleteRoleVariables {
 	roleId: string;

@@ -1,7 +1,7 @@
 import fs from "fs";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import { FileUpload, Upload } from "graphql-upload";
-import {CREATE_IMAGE} from "@rpgtools/frontend/src/hooks/wiki/useCreateImage";
+import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
 
 process.env.TEST_SUITE = "image-mutations-test";
 
@@ -20,6 +20,7 @@ describe("image-mutations", () => {
 	} = defaultTestingContextFactory();
 
 	describe("with existing world and logged in user", () => {
+
 		const filename = "tests/integration/resolvers/mutations/testmap.png";
 		let testFile: FileUpload = {
 			encoding: "base64",
@@ -28,7 +29,10 @@ describe("image-mutations", () => {
 			createReadStream: () => fs.createReadStream(filename),
 		};
 		const testUpload = new Upload();
-		testUpload.resolve(testFile);
+		testUpload.file = testFile;
+		testUpload.promise = new Promise<FileUpload>((resolve, reject) => {
+			resolve(testFile);
+		});
 
 		beforeEach(async () => {
 			({
@@ -41,6 +45,7 @@ describe("image-mutations", () => {
 				testerSecurityContext,
 				newFolder,
 			} = await testingContext.reset());
+
 		});
 
 		test("create image no permission", async () => {

@@ -1,15 +1,6 @@
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const RENAME_WORLD = gql`
-	mutation renameWorld($worldId: ID!, $newName: String!) {
-		renameWorld(worldId: $worldId, newName: $newName) {
-			_id
-			name
-		}
-	}
-`;
+import {RENAME_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 interface RenameWorldVariables {
 	worldId: string;

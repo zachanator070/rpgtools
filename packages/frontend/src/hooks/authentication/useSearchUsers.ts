@@ -1,19 +1,7 @@
-import gql from "graphql-tag";
 import {UserPaginatedResult} from "../../types";
 import {GqlLazyHookResult, LazyHookFetch, useGQLLazyQuery} from "../useGQLLazyQuery";
+import {SEARCH_USERS} from "@rpgtools/common/src/gql-queries";
 
-export const SEARCH_USERS = gql`
-	query searchUsers($username: String!) {
-		users(username: $username) {
-			page
-			totalPages
-			docs {
-				_id
-				username
-			}
-		}
-	}
-`;
 interface SearchUsersVariables {
 	username: string;
 }

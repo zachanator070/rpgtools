@@ -23,13 +23,8 @@ beforeAll(async () => {
 	await service.unlockServer(serverConfig.unlockCode, "tester@gmail.com", "tester", "tester");
 });
 
-afterAll(async function (done) {
+afterAll(async function () {
 	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
 	await server.clearDb();
 	await mongoose.disconnect();
-	return done();
-});
-
-afterAll((done) => {
-	return done();
 });

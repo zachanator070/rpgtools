@@ -1,15 +1,7 @@
-import gql from "graphql-tag";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-import {FOLDERS} from "./useFolders";
-
-export const DELETE_FOLDER = gql`
-	mutation deleteFolder($folderId: ID!) {
-		deleteFolder(folderId: $folderId) {
-			_id
-		}
-	}
-`;
+import {FOLDERS} from "@rpgtools/common/src/gql-queries";
+import {DELETE_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
 interface DeleteFolderVariables {
 	folderId: string;

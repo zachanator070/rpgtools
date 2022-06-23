@@ -1,12 +1,10 @@
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
-import {CREATE_MODEL} from "@rpgtools/frontend/src/hooks/model/useCreateModel";
-import {UPDATE_MODEL} from "@rpgtools/frontend/src/hooks/model/useUpdateModel";
-import {DELETE_MODEL} from "@rpgtools/frontend/src/hooks/model/useDeleteModel";
 import {FileUpload, Upload} from "graphql-upload";
 import fs from "fs";
 import {ModelApplicationService} from "../../../../src/services/model-application-service";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
+import {CREATE_MODEL, DELETE_MODEL, UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
 process.env.TEST_SUITE = "model-mutations-test";
 
@@ -26,7 +24,22 @@ describe("model mutations", () => {
         ...testingContext
     } = defaultTestingContextFactory();
 
-    describe("with world", async () => {
+    describe("with world", () => {
+
+        const filename = "tests/integration/resolvers/mutations/pikachu.glb";
+        const testFile: FileUpload = {
+            encoding: "binary",
+            mimetype: "application/gltf",
+            filename: filename,
+            createReadStream: () => fs.createReadStream(filename),
+        };
+
+        const testUpload = new Upload();
+        testUpload.file = testFile;
+        testUpload.promise = new Promise<FileUpload>((resolve) => {
+            resolve(testFile);
+        });
+
         beforeEach(async () => {
             ({
                 mockSessionContextFactory,
@@ -41,18 +54,6 @@ describe("model mutations", () => {
             } = await testingContext.reset());
             mockSessionContextFactory.resetCurrentUser();
         });
-
-        const filename = "tests/integration/resolvers/mutations/pikachu.glb";
-        let testFile: FileUpload = {
-            encoding: "binary",
-            mimetype: "application/gltf",
-            filename: filename,
-            createReadStream: () => fs.createReadStream(filename),
-        };
-
-        const testUpload = new Upload();
-        testUpload.file = testFile;
-        await testUpload.promise;
 
         test("create model no permission", async () => {
             const result = await server.executeGraphQLQuery({

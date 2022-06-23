@@ -1,9 +1,5 @@
-import { CREATE_WORLD } from "@rpgtools/frontend/src/hooks/world/useCreateWorld";
-import { DELETE_PIN } from "@rpgtools/frontend/src/hooks/map/useDeletePin";
-import { RENAME_WORLD } from "@rpgtools/frontend/src/hooks/world/useRenameWorld";
-import { UPDATE_PIN } from "@rpgtools/frontend/src/hooks/map/useUpdatePin";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
-import { CREATE_PIN } from "@rpgtools/frontend/src/hooks/map/useCreatePin";
+import {CREATE_PIN, CREATE_WORLD, DELETE_PIN, RENAME_WORLD, UPDATE_PIN} from "@rpgtools/common/src/gql-mutations";
 
 process.env.TEST_SUITE = "world-mutations-test";
 

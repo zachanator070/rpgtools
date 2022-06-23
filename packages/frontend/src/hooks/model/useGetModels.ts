@@ -1,19 +1,8 @@
 import useCurrentWorld from "../world/useCurrentWorld";
-import React, { useEffect } from "react";
-import gql from "graphql-tag";
-import { MODEL_ATTRIBUTES } from "../gql-fragments";
+import {useEffect} from "react";
 import {Model} from "../../types";
-import {GqlQueryResult} from "../useGQLQuery";
 import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
-
-export const GET_MODELS = gql`
-	${MODEL_ATTRIBUTES}
-	query getModels($worldId: ID!){
-		models(worldId: $worldId){
-			...modelAttributes
-		}
-	}
-`;
+import {GET_MODELS} from "@rpgtools/common/src/gql-queries";
 
 interface GetModelsVariables {
 	worldId?: string;

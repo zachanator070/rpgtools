@@ -1,15 +1,12 @@
 import fs from "fs";
 import { ARTICLE } from "@rpgtools/common/src/type-constants";
-import { CREATE_WIKI } from "@rpgtools/frontend/src/hooks/wiki/useCreateWiki";
-import { DELETE_WIKI } from "@rpgtools/frontend/src/hooks/wiki/useDeleteWiki";
-import { UPDATE_PLACE } from "@rpgtools/frontend/src/hooks/wiki/useUpdatePlace";
-import { UPDATE_WIKI } from "@rpgtools/frontend/src/hooks/wiki/useUpdateWiki";
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
 import {ImageService} from "../../../../src/types";
 import {Image} from "../../../../src/domain-entities/image";
 import {FileUpload, Upload} from "graphql-upload";
+import {CREATE_WIKI, DELETE_WIKI, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
@@ -162,7 +159,10 @@ describe("wiki page mutations", () => {
 				};
 
 				const testUpload = new Upload();
-				testUpload.resolve(content);
+				testUpload.file = content;
+				testUpload.promise = new Promise<FileUpload>((resolve) => {
+					resolve(content);
+				});
 				const result = await server.executeGraphQLQuery({
 					query: UPDATE_WIKI,
 					variables: {

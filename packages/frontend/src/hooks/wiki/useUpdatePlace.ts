@@ -1,19 +1,7 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
-import { CURRENT_WIKI_PLACE_ATTRIBUTES } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Place} from "../../types";
-import {GET_CURRENT_WIKI} from "./useCurrentWiki";
-
-export const UPDATE_PLACE = gql`
-	${CURRENT_WIKI_PLACE_ATTRIBUTES}
-	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
-		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
-			_id
-      		...currentWikiPlaceAttributes
-		}
-	}
-`;
+import {GET_CURRENT_WIKI} from "@rpgtools/common/src/gql-queries";
+import {UPDATE_PLACE} from "@rpgtools/common/src/gql-mutations";
 
 interface UpdatePlaceVariables {
 	placeId: string;

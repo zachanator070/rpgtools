@@ -1,27 +1,7 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import useCurrentGame from "./useCurrentGame";
-import gql from "graphql-tag";
 import {Game, PathNodeInput} from "../../types";
-
-export const ADD_FOG_STROKE = gql`
-	mutation addFogStroke(
-		$gameId: ID!
-		$path: [PathNodeInput!]!
-		$type: String!
-		$size: Int!
-		$strokeId: ID!
-	) {
-		addFogStroke(
-			gameId: $gameId
-			path: $path
-			type: $type
-			size: $size
-			strokeId: $strokeId
-		) {
-			_id
-		}
-	}
-`;
+import {ADD_FOG_STROKE} from "@rpgtools/common/src/gql-mutations";
 
 export interface AddStrokeVariables {
 	gameId?: string;

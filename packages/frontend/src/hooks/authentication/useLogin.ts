@@ -1,16 +1,7 @@
-import {FetchResult, useApolloClient} from "@apollo/client";
-import gql from "graphql-tag";
+import {useApolloClient} from "@apollo/client";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {User} from "../../types";
-import {ApiHookResponse} from "../types";
-
-export const LOGIN_QUERY = gql`
-	mutation login($username: String!, $password: String!) {
-		login(username: $username, password: $password) {
-			_id
-		}
-	}
-`;
+import {LOGIN_QUERY} from "@rpgtools/common/src/gql-mutations";
 
 interface LoginVariables {
 	username: string;

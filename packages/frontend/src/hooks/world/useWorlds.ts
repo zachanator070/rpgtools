@@ -1,23 +1,6 @@
-import gql from "graphql-tag";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
-import {UserPaginatedResult, WorldPaginatedResult} from "../../types";
-import {GqlLazyHookResult} from "../useGQLLazyQuery";
-
-export const GET_WORLDS = gql`
-	query worlds($name: String, $page: Int) {
-		worlds(name: $name, page: $page) {
-			docs {
-				_id
-				name
-				wikiPage {
-					_id
-					type
-				}
-			}
-			totalPages
-		}
-	}
-`;
+import {WorldPaginatedResult} from "../../types";
+import {GET_WORLDS} from "@rpgtools/common/src/gql-queries";
 
 interface WorldsVariables {
 	name?: string;

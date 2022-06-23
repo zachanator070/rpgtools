@@ -1,17 +1,7 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import useCurrentGame from "./useCurrentGame";
-import gql from "graphql-tag";
-import { GAME_MODEL } from "../gql-fragments";
 import {Game} from "../../types";
-
-export const SET_MODEL_COLOR = gql`
-	${GAME_MODEL}
-	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
-		setModelColor(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
-			...gameModel
-		}
-	}
-`;
+import {SET_MODEL_COLOR} from "@rpgtools/common/src/gql-mutations";
 
 interface SetModelColorVariables {
 	gameId?: string;

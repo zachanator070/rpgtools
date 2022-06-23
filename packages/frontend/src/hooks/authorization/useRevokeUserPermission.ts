@@ -1,17 +1,6 @@
-import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST } from "../gql-fragments";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const REVOKE_USER_PERMISSION = gql`
-	${ACCESS_CONTROL_LIST}
-	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!){
-		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId){
-			_id
-			...accessControlList
-		}
-	}
-`;
+import {REVOKE_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations";
 
 interface RevokeUserPermissionVariables {
 	userId: string;

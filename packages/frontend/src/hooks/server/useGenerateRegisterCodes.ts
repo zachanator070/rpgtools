@@ -1,15 +1,6 @@
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {ServerConfig} from "../../types";
-
-export const GENERATE_REGISTER_CODES = gql`
-	mutation generateRegisterCodes($amount: Int!) {
-		generateRegisterCodes(amount: $amount) {
-			_id
-			registerCodes
-		}
-	}
-`;
+import {GENERATE_REGISTER_CODES} from "@rpgtools/common/src/gql-mutations";
 
 interface GenerateRegisterCodesVariables {
 	amount: number;

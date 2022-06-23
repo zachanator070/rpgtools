@@ -1,5 +1,15 @@
 import gql from "graphql-tag";
 
+export const WIKIS_IN_FOLDER_ATTRIBUTES = `
+	...currentWorldWikis
+	folder{
+		_id
+		name
+	}
+	world{
+		_id
+	}
+`;
 export const PERMISSIONS_GRANTED = gql`
     fragment permissionsGranted on Role {
         permissions{
@@ -25,7 +35,6 @@ export const PERMISSIONS_GRANTED = gql`
         }
     }
 `;
-
 export const ACCESS_CONTROL_LIST = gql`
     fragment accessControlList on PermissionControlled {
         ... on PermissionControlled {
@@ -63,7 +72,6 @@ export const ACCESS_CONTROL_LIST = gql`
         }
     }
 `;
-
 export const CURRENT_WORLD_WIKIS = gql`
     fragment currentWorldWikis on WikiPage {
         _id
@@ -86,7 +94,6 @@ export const CURRENT_WORLD_WIKIS = gql`
         }
     }
 `;
-
 export const CURRENT_WORLD_FOLDERS = gql`
     ${ACCESS_CONTROL_LIST}
     fragment currentWorldFolders on WikiFolder {
@@ -100,7 +107,6 @@ export const CURRENT_WORLD_FOLDERS = gql`
         ...accessControlList
 	}
 `;
-
 export const CURRENT_WORLD_PINS = gql`
     fragment currentWorldPins on World {
         pins{
@@ -120,7 +126,6 @@ export const CURRENT_WORLD_PINS = gql`
         }
     }
 `;
-
 export const CURRENT_WORLD_ROLES = gql`
     ${PERMISSIONS_GRANTED}
     ${ACCESS_CONTROL_LIST}
@@ -142,7 +147,6 @@ export const CURRENT_WORLD_ROLES = gql`
         }
     }
 `;
-
 export const SERVER_CONFIG_ROLES = gql`
     ${PERMISSIONS_GRANTED}
     ${ACCESS_CONTROL_LIST}
@@ -164,7 +168,6 @@ export const SERVER_CONFIG_ROLES = gql`
         }
     }
 `;
-
 export const CURRENT_WIKI_PLACE_ATTRIBUTES = gql`
     fragment currentWikiPlaceAttributes on Place {
         mapImage {
@@ -187,7 +190,6 @@ export const CURRENT_WIKI_PLACE_ATTRIBUTES = gql`
         pixelsPerFoot
     }
 `;
-
 export const MODEL_ATTRIBUTES = gql`
     ${ACCESS_CONTROL_LIST}
     fragment modelAttributes on Model {
@@ -202,7 +204,6 @@ export const MODEL_ATTRIBUTES = gql`
         ...accessControlList
     }
 `;
-
 export const CURRENT_WIKI_ATTRIBUTES = gql`
     ${CURRENT_WIKI_PLACE_ATTRIBUTES}
     ${MODEL_ATTRIBUTES}
@@ -249,7 +250,6 @@ export const CURRENT_WIKI_ATTRIBUTES = gql`
         }
     }
 `;
-
 export const GAME_MESSAGE = gql`
     fragment gameMessage on GameMessage {
         sender
@@ -258,7 +258,6 @@ export const GAME_MESSAGE = gql`
         timestamp
     }
 `;
-
 export const GAME_CHARACTERS = gql`
     fragment gameCharacters on Game {
         characters {
@@ -276,7 +275,6 @@ export const GAME_CHARACTERS = gql`
         }
     }
 `;
-
 export const GAME_MAP = gql`
     fragment gameMap on Game {
         map {
@@ -297,7 +295,6 @@ export const GAME_MAP = gql`
         }
     }
 `;
-
 export const GAME_STROKE = gql`
     fragment gameStroke on Stroke {
         _id
@@ -312,7 +309,6 @@ export const GAME_STROKE = gql`
         fill
     }
 `;
-
 export const GAME_STROKES = gql`
     ${GAME_STROKE}
     fragment gameStrokes on Game {

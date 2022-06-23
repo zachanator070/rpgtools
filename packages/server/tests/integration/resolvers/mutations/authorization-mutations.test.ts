@@ -1,17 +1,16 @@
 import { WIKI_READ, WIKI_RW, WORLD_READ } from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
-import { CREATE_ROLE } from "@rpgtools/frontend/src/hooks/authorization/useCreateRole";
-import { DELETE_ROLE } from "@rpgtools/frontend/src/hooks/authorization/useDeleteRole";
-import { GRANT_ROLE_PERMISSION } from "@rpgtools/frontend/src/hooks/authorization/useGrantRolePermission";
-import { GRANT_USER_PERMISSION } from "@rpgtools/frontend/src/hooks/authorization/useGrantUserPermisison";
-import { REMOVE_USER_ROLE } from "@rpgtools/frontend/src/hooks/authorization/useRemoveUserRole";
-import { REVOKE_ROLE_PERMISSION } from "@rpgtools/frontend/src/hooks/authorization/useRevokeRolePermission";
-import { REVOKE_USER_PERMISSION } from "@rpgtools/frontend/src/hooks/authorization/useRevokeUserPermission";
 import { container } from "../../../../src/di/inversify";
 import { AuthorizationService, RoleFactory, RoleRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
-import {ADD_USER_ROLE} from "@rpgtools/frontend/src/hooks/authorization/useAddUserRole";
+import {
+	ADD_USER_ROLE,
+	CREATE_ROLE,
+	DELETE_ROLE,
+	GRANT_ROLE_PERMISSION,
+	GRANT_USER_PERMISSION, REMOVE_USER_ROLE, REVOKE_ROLE_PERMISSION, REVOKE_USER_PERMISSION
+} from "@rpgtools/common/src/gql-mutations";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 

@@ -1,18 +1,7 @@
-import {GET_CURRENT_WIKI} from "./useCurrentWiki";
-import gql from "graphql-tag";
-import { CURRENT_WIKI_ATTRIBUTES } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {WikiPage} from "../../types";
-import {WIKIS_IN_FOLDER } from "./useWikisInFolder";
-
-export const UPDATE_WIKI = gql`
-	${CURRENT_WIKI_ATTRIBUTES}
-	mutation updateWiki($wikiId: ID!, $name: String, $content: Upload, $coverImageId: ID, $type: String){
-		updateWiki(wikiId: $wikiId, name: $name, content: $content, coverImageId: $coverImageId, type: $type){
-			...currentWikiAttributes
-		}
-	}
-`;
+import {GET_CURRENT_WIKI, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface UpdateWikiVariables {
 	wikiId: string;

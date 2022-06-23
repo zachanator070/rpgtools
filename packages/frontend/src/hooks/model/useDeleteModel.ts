@@ -1,18 +1,11 @@
-import { useGetModels } from "./useGetModels";
-import { useMyPermissions } from "../authorization/useMyPermissions";
+import {useGetModels} from "./useGetModels";
+import {useMyPermissions} from "../authorization/useMyPermissions";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
-import { useParams } from "react-router-dom";
-import gql from "graphql-tag";
+import {useParams} from "react-router-dom";
 import useCurrentWorld from "../world/useCurrentWorld";
 import {Model} from "../../types";
+import {DELETE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
-export const DELETE_MODEL = gql`
-	mutation deleteModel($modelId: ID!) {
-		deleteModel(modelId: $modelId) {
-			_id
-		}
-	}
-`;
 interface DeleteModelVariables {
 	modelId: string;
 }

@@ -1,16 +1,6 @@
-import gql from "graphql-tag";
-import { CURRENT_WORLD_FOLDERS } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const CREATE_WIKI = gql`
-	${CURRENT_WORLD_FOLDERS}
-	mutation createWiki($name: String!, $folderId: ID!){
-		createWiki(name: $name, folderId: $folderId){
-			...currentWorldFolders
-		}
-	}
-`;
+import {CREATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateWikiVariables {
 	name: string;

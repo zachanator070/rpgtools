@@ -1,14 +1,6 @@
-import gql from "graphql-tag";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Image} from "../../types";
-
-export const CREATE_IMAGE = gql`
-	mutation createImage($file: Upload!, $worldId: ID!, $chunkify: Boolean) {
-		createImage(file: $file, worldId: $worldId, chunkify: $chunkify) {
-			_id
-		}
-	}
-`;
+import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateImageVariables {
 	file: any;

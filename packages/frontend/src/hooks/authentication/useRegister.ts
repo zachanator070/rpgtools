@@ -1,24 +1,6 @@
-import gql from "graphql-tag";
 import {User} from "../../types";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-
-export const REGISTER_MUTATION = gql`
-	mutation register(
-		$registerCode: String!
-		$email: String!
-		$username: String!
-		$password: String!
-	) {
-		register(
-			registerCode: $registerCode
-			email: $email
-			username: $username
-			password: $password
-		) {
-			_id
-		}
-	}
-`;
+import {REGISTER_MUTATION} from "@rpgtools/common/src/gql-mutations";
 
 interface RegisterVariables {
 	registerCode: string;

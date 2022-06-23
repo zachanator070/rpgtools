@@ -1,19 +1,6 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-import gql from "graphql-tag";
-import { CURRENT_WORLD_FOLDERS } from "../gql-fragments";
 import {World} from "../../types";
-
-export const IMPORT_CONTENT = gql`
-	${CURRENT_WORLD_FOLDERS}
-	mutation importContent($folderId: ID!, $zipFile: Upload!){
-		importContent(folderId: $folderId, zipFile: $zipFile){
-			_id
-			rootFolder{
-				...currentWorldFolders
-			}
-		}
-	}
-`;
+import {IMPORT_CONTENT} from "@rpgtools/common/src/gql-mutations";
 
 interface ImportContentVariables {
 	folderId: string;
