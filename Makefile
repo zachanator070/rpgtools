@@ -97,7 +97,7 @@ lint:
 	# TODO: fix linting problems in frontend
 	# npx eslint packages/frontend/src
 
-test: test-integration down
+test: test-unit test-integration down
 
 JEST_OPTIONS=
 
@@ -106,7 +106,7 @@ test-integration:
 	npm run test:integration --workspace=packages/server
 
 test-unit:
-	npx jest -c ./packages/server/jest.config.unit.cjs
+	npm run test:unit --workspace=packages/server
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
