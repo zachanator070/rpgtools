@@ -103,7 +103,7 @@ JEST_OPTIONS=
 
 test-integration:
 	- docker-compose up -d mongodb
-	npx jest ${JEST_OPTIONS} --config ./packages/server/jest.config.integration.cjs
+	npm run test:integration --workspace=packages/server
 
 test-unit:
 	npx jest -c ./packages/server/jest.config.unit.cjs
