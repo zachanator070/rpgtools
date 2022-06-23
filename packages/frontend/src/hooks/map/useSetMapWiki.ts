@@ -1,11 +1,5 @@
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-
-const SET_MAP_WIKI = gql`
-	mutation setMapWiki($mapWikiId: ID!) {
-		setMapWiki(mapWikiId: $mapWikiId) @client
-	}
-`;
+import {SET_MAP_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface SetMapWikiVariables {
 	mapWikiId: string;

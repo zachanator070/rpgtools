@@ -1,33 +1,9 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-import { useGetModels } from "./useGetModels";
-import { useMyPermissions } from "../authorization/useMyPermissions";
-import gql from "graphql-tag";
-import {Model, World} from "../../types";
+import {useGetModels} from "./useGetModels";
+import {useMyPermissions} from "../authorization/useMyPermissions";
+import {Model} from "../../types";
 import useCurrentWorld from "../world/useCurrentWorld";
-
-export const CREATE_MODEL = gql`
-	mutation createModel(
-		$name: String!
-		$file: Upload!
-		$worldId: ID!
-		$depth: Float!
-		$width: Float!
-		$height: Float!
-		$notes: String
-	) {
-		createModel(
-			name: $name
-			file: $file
-			worldId: $worldId
-			depth: $depth
-			width: $width
-			height: $height
-			notes: $notes
-		) {
-			_id
-		}
-	}
-`;
+import {CREATE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateModelVariables {
 	name: string;

@@ -1,16 +1,6 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {WikiFolder} from "../../types";
-
-export const RENAME_FOLDER = gql`
-	mutation renameFolder($folderId: ID!, $name: String!) {
-		renameFolder(folderId: $folderId, name: $name) {
-			_id
-			name
-		}
-	}
-`;
+import {RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
 interface RenameFolderVariables {
 	folderId: string;

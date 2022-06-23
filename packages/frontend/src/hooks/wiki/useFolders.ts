@@ -1,22 +1,7 @@
-import gql from "graphql-tag";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 import {WikiFolder} from "../../types";
 import {useParams} from 'react-router-dom';
-
-export const FOLDERS = gql`
-	query folders($worldId: ID!, $name: String, $canAdmin: Boolean) {
-		folders(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
-			_id
-			name
-			children {
-				_id
-				name
-			}
-			canWrite
-			canAdmin
-		}
-	}
-`;
+import {FOLDERS} from "@rpgtools/common/src/gql-queries";
 
 interface FoldersVariables {
 	worldId?: string;

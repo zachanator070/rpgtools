@@ -1,14 +1,6 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-import gql from "graphql-tag";
 import {World} from "../../types";
-
-export const MOVE_FOLDER = gql`
-	mutation moveFolder($folderId: ID!, $parentFolderId: ID!) {
-		moveFolder(folderId: $folderId, parentFolderId: $parentFolderId) {
-			_id
-		}
-	}
-`;
+import {MOVE_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
 interface MoveFolderVariables {
 	folderId: string;

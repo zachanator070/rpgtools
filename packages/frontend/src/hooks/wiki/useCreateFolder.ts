@@ -1,14 +1,6 @@
-import gql from "graphql-tag";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const CREATE_FOLDER = gql`
-	mutation createFolder($parentFolderId: ID!, $name: String!) {
-		createFolder(parentFolderId: $parentFolderId, name: $name) {
-			_id
-		}
-	}
-`;
+import {CREATE_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateFolderVariables {
 	parentFolderId: string;

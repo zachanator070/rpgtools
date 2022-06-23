@@ -1,27 +1,6 @@
-import gql from "graphql-tag";
-import {ApiHookResponse} from "../types";
 import {User} from "../../types";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
-
-export const GET_CURRENT_USER = gql`
-	query currentUser{
-		currentUser {
-			_id
-			username
-			email
-			currentWorld {
-				_id
-				wikiPage {
-					_id
-				}
-			}
-			roles {
-				_id
-				name
-			}
-		}
-	}
-`;
+import {GET_CURRENT_USER} from "@rpgtools/common/src/gql-queries";
 
 interface CurrentUserResult extends GqlQueryResult<User> {
 	currentUser: User;

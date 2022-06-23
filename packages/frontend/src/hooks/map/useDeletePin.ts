@@ -1,17 +1,7 @@
-import gql from "graphql-tag";
-import { CURRENT_WORLD_PINS } from "../gql-fragments";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
+import {DELETE_PIN} from "@rpgtools/common/src/gql-mutations";
 
-export const DELETE_PIN = gql`
-	${CURRENT_WORLD_PINS}
-	mutation deletePin($pinId: ID!){
-		deletePin(pinId: $pinId){
-			_id
-			...currentWorldPins
-		}
-	}
-`;
 interface DeletePinVariables {
 	pinId: string;
 }

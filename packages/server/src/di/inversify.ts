@@ -725,7 +725,8 @@ container
 	.inSingletonScope();
 
 // server
-container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer).inSingletonScope();
+// not a singleton so tests can run concurrently and have multiple server instances
+container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer);
 container.bind<ServerProperties>(INJECTABLE_TYPES.ServerProperties).to(ServerProperties).inSingletonScope();
 
 // data loaders

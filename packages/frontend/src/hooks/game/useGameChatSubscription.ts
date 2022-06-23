@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import {GqlSubscriptionResult, useGQLSubscription} from "../useGQLSubscription";
 import gql from "graphql-tag";
-import { GAME_MESSAGE } from "../gql-fragments";
 import {Game, GameMessage} from "../../types";
+import {GAME_MESSAGE} from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_CHAT_SUBSCRIPTION = gql`
 	${GAME_MESSAGE}

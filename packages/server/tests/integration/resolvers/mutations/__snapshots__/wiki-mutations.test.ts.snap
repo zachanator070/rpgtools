@@ -162,35 +162,6 @@ Object {
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user update type 2`] = `
-Object {
-  "data": Object {
-    "updateWiki": Object {
-      "_id": Any<String>,
-      "canAdmin": true,
-      "canWrite": true,
-      "content": null,
-      "coverImage": null,
-      "folder": Object {
-        "_id": Any<String>,
-      },
-      "name": "Earth",
-      "type": "Article",
-      "world": Object {
-        "_id": Any<String>,
-      },
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
-    },
-  },
-}
-`;
-
 exports[`wiki page mutations with world with authenticated user update wiki just content 1`] = `
 Object {
   "data": Object {

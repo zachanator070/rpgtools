@@ -9,8 +9,8 @@ import {
 	ROLE_READ_ALL,
 	ROLE_RW,
 	ROLE_RW_ALL,
-} from "../../../../common/src/permission-constants";
-import {EVERYONE, LOGGED_IN} from "../../../../common/src/role-constants";
+} from "@rpgtools/common/src/permission-constants";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { World } from "../../domain-entities/world";
 import { injectable } from "inversify";
 

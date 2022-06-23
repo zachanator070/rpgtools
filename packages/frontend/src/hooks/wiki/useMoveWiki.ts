@@ -1,19 +1,8 @@
-import gql from "graphql-tag";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {WikiPage} from "../../types";
-import {WIKIS_IN_FOLDER, WIKIS_IN_FOLDER_ATTRIBUTES} from "./useWikisInFolder";
 import useCurrentWiki from "./useCurrentWiki";
-import {CURRENT_WORLD_WIKIS} from "../gql-fragments";
-import {GET_FOLDER_PATH} from "./useGetFolderPath";
-
-export const MOVE_WIKI = gql`
-	${CURRENT_WORLD_WIKIS}
-	mutation moveWiki($wikiId: ID!, $folderId: ID!) {
-		moveWiki(wikiId: $wikiId, folderId: $folderId) {
-			${WIKIS_IN_FOLDER_ATTRIBUTES}
-		}
-	}
-`;
+import {GET_FOLDER_PATH, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {MOVE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface MoveWikiVariables {
 	wikiId: string;

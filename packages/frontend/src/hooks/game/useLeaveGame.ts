@@ -1,12 +1,6 @@
-import gql from "graphql-tag";
 import {Game} from "../../types";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-
-export const LEAVE_GAME = gql`
-	mutation leaveGame($gameId: ID!) {
-		leaveGame(gameId: $gameId)
-	}
-`;
+import {LEAVE_GAME} from "@rpgtools/common/src/gql-mutations";
 
 interface LeaveGameVariables {
 	gameId: string;

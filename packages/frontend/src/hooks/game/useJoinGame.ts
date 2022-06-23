@@ -1,16 +1,6 @@
-import gql from "graphql-tag";
-import { GAME_ATTRIBUTES } from "../gql-fragments";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {Game} from "../../types";
-
-export const JOIN_GAME = gql`
-	${GAME_ATTRIBUTES}
-	mutation joinGame($gameId: ID!, $password: String, $characterName: String){
-		joinGame(gameId: $gameId, password: $password, characterName: $characterName){
-			...gameAttributes
-		}
-	}
-`;
+import {JOIN_GAME} from "@rpgtools/common/src/gql-mutations";
 
 interface JoinGameVariables {
 	gameId: string;

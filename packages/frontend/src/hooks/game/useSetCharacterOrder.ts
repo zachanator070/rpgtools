@@ -1,18 +1,7 @@
-import gql from "graphql-tag";
-import { GAME_CHARACTERS } from "../gql-fragments";
 import useCurrentGame from "./useCurrentGame";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {CharacterInput, Game} from "../../types";
-
-const SET_CHARACTER_ORDER = gql`
-	${GAME_CHARACTERS}
-	mutation setCharacterOrder($gameId: ID!, $characters: [CharacterInput!]!){
-		setCharacterOrder(gameId: $gameId, characters: $characters){
-			_id
-			...gameCharacters
-		}
-	}
-`;
+import {SET_CHARACTER_ORDER} from "@rpgtools/common/src/gql-mutations";
 
 interface SetCharacterOrderVariables {
 	gameId?: string;

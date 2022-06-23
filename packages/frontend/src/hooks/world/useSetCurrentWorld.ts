@@ -1,15 +1,7 @@
 import useCurrentUser from "../authentication/useCurrentUser";
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const SET_CURRENT_WORLD = gql`
-	mutation setCurrentWorld($worldId: ID!) {
-		setCurrentWorld(worldId: $worldId) {
-			_id
-		}
-	}
-`;
+import {SET_CURRENT_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 interface SetCurrentWorldVariables {
 	worldId: string;

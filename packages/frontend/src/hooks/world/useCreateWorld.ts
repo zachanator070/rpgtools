@@ -1,17 +1,6 @@
-import gql from "graphql-tag";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const CREATE_WORLD = gql`
-	mutation createWorld($name: String!, $public: Boolean!) {
-		createWorld(name: $name, public: $public) {
-			_id
-			wikiPage {
-				_id
-			}
-		}
-	}
-`;
+import {CREATE_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateWorldVariables {
 	name: string;

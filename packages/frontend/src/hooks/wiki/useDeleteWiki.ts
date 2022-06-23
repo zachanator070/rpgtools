@@ -1,16 +1,7 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-import {WIKIS_IN_FOLDER} from "./useWikisInFolder";
-
-export const DELETE_WIKI = gql`
-	mutation deleteWiki($wikiId: ID!) {
-		deleteWiki(wikiId: $wikiId) {
-			_id
-		}
-	}
-`;
+import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {DELETE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface DeleteWikiVariables {
 	wikiId: string;

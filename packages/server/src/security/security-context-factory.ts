@@ -1,4 +1,4 @@
-import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { User } from "../domain-entities/user";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";

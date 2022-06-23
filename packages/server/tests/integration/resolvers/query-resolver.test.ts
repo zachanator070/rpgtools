@@ -1,14 +1,16 @@
-import { GET_CURRENT_WORLD } from "../../../../frontend/src/hooks/world/useCurrentWorld";
-import { SEARCH_USERS } from "../../../../frontend/src/hooks/authentication/useSearchUsers";
-import { GET_WORLDS } from "../../../../frontend/src/hooks/world/useWorlds";
-import { GET_CURRENT_WIKI } from "../../../../frontend/src/hooks/wiki/useCurrentWiki";
 import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
 import { container } from "../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../src/di/injectable-types";
-import {WikiFolderService, WikiPageService, WorldService} from "../../../src/types";
-import { ANON_USERNAME } from "../../../../common/src/permission-constants";
-import {WIKIS_IN_FOLDER} from "../../../../frontend/src/hooks/wiki/useWikisInFolder";
-import {GET_CURRENT_USER} from "@rpgtools/frontend/src/hooks/authentication/useCurrentUser";
+import {WikiFolderService, WorldService} from "../../../src/types";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import {
+	GET_CURRENT_USER,
+	GET_CURRENT_WIKI,
+	GET_CURRENT_WORLD,
+	GET_WORLDS,
+	SEARCH_USERS,
+	WIKIS_IN_FOLDER
+} from "@rpgtools/common/src/gql-queries";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
@@ -113,11 +115,11 @@ describe("query resolver", () => {
 				variables: { wikiId: world.wikiPage },
 			});
 			expect(result).toMatchSnapshot({
-				errors: [
-					{
+				errors: expect.arrayContaining([
+					expect.objectContaining({
 						message: expect.any(String),
-					},
-				],
+					}),
+				]),
 			});
 		});
 

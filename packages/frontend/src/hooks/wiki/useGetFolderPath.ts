@@ -1,16 +1,7 @@
-import gql from "graphql-tag";
 import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
 import {WikiFolder} from "../../types";
-import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
+import {GET_FOLDER_PATH} from "@rpgtools/common/src/gql-queries";
 
-export const GET_FOLDER_PATH = gql`
-	query getFolderPath($wikiId: ID!) {
-		getFolderPath(wikiId: $wikiId) {
-			_id
-			name
-		}
-	}
-`;
 interface GetFolderPathVariables {
 	wikiId: string;
 }

@@ -1,20 +1,7 @@
-import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WORLD_ROLES } from "../gql-fragments";
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
 import {ApiHookResponse} from "../types";
-
-export const ADD_USER_ROLE = gql`
-	${ACCESS_CONTROL_LIST}
-	${CURRENT_WORLD_ROLES}
-	mutation addUserRole($userId: ID!, $roleId: ID!){
-		addUserRole(userId: $userId, roleId: $roleId){
-			_id
-			...accessControlList
-			...currentWorldRoles		
-		}
-	}
-`;
+import {ADD_USER_ROLE} from "@rpgtools/common/src/gql-mutations";
 
 interface AddUserRoleVariables {
 	userId: string;

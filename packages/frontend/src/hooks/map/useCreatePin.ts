@@ -1,17 +1,6 @@
-import gql from "graphql-tag";
-import { CURRENT_WORLD_PINS } from "../gql-fragments";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const CREATE_PIN = gql`
-	${CURRENT_WORLD_PINS}
-	mutation createPin($mapId: ID!, $x: Float!, $y: Float!, $wikiId: ID){
-		createPin(mapId: $mapId, x: $x, y: $y, wikiId: $wikiId){
-			_id
-			...currentWorldPins	
-		}
-	}
-`;
+import {CREATE_PIN} from "@rpgtools/common/src/gql-mutations";
 
 interface CreatePinVariables {
 	mapId: string;

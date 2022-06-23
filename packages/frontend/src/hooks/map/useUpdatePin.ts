@@ -1,17 +1,6 @@
-import gql from "graphql-tag";
-import { CURRENT_WORLD_PINS } from "../gql-fragments";
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
-
-export const UPDATE_PIN = gql`
-	${CURRENT_WORLD_PINS}
-	mutation updatePin($pinId: ID!, $pageId: ID){
-		updatePin(pinId: $pinId, pageId: $pageId){
-			_id
-			...currentWorldPins
-		}
-	}
-`;
+import {UPDATE_PIN} from "@rpgtools/common/src/gql-mutations";
 
 interface UpdatePinVariables {
 	pinId: string;

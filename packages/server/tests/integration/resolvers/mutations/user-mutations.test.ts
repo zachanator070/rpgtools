@@ -1,5 +1,5 @@
-import { SET_CURRENT_WORLD } from "@rpgtools/frontend/src/hooks/world/useSetCurrentWorld";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
+import {SET_CURRENT_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 process.env.TEST_SUITE = "user-mutations-test";
 
