@@ -7,4 +7,3 @@ declare module "redis-wstream";
 declare module "ascii-table";
 declare module "node-fetch";
 
-declare module 'bson';
