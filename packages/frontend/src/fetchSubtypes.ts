@@ -1,7 +1,7 @@
 
 export default async function fetchSubtypes(){
 
-    const result = await fetch(`/api`, {
+    const result = await fetch(`/graphql`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -14,7 +14,7 @@ import {
 	WIKI_READ_ALL,
 	WIKI_RW,
 	WIKI_RW_ALL,
-} from "../../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import { WikiFolder } from "../../domain-entities/wiki-folder";
 import { WikiFolderAuthorizationRuleset } from "./wiki-folder-authorization-ruleset";
 import {WorldAuthorizationRuleset} from "./world-authorization-ruleset";

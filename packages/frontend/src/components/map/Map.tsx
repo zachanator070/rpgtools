@@ -81,10 +81,10 @@ export const Map = ({ menuItems, extras }: MapProps) => {
 	useEffect(() => {
 		map.current.addEventListener("mousedown", startMoving);
 		map.current.addEventListener("mouseup", stopMoving);
-		return () => {
-			map.current.removeEventListener("mousedown", startMoving);
-			map.current.removeEventListener("mouseup", stopMoving);
-		};
+		// return () => {
+		// 	map.current.removeEventListener("mousedown", startMoving);
+		// 	map.current.removeEventListener("mouseup", stopMoving);
+		// };
 	}, []);
 
 	useEffect(() => {

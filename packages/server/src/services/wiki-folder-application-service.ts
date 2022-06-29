@@ -20,8 +20,8 @@ import {
 	FILTER_CONDITION_REGEX,
 	FilterCondition,
 } from "../dal/filter-condition";
-import { FOLDER_ADMIN, FOLDER_RW } from "../../../common/src/permission-constants";
-import { WIKI_FOLDER } from "../../../common/src/type-constants";
+import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
+import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";

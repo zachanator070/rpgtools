@@ -9,7 +9,7 @@ import {
 	WORLD_READ,
 	WORLD_READ_ALL,
 	WORLD_RW,
-} from "../../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
 

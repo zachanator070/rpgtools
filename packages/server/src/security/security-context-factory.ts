@@ -7,7 +7,7 @@ import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { FilterCondition } from "../dal/filter-condition";
 import { Role } from "../domain-entities/role";
 import { SecurityContext } from "./security-context";
-import {ANON_USERNAME} from "../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 
 @injectable()
 export class SecurityContextFactory {

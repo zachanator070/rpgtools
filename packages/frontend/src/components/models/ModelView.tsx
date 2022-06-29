@@ -3,7 +3,7 @@ import { useGetModels } from "../../hooks/model/useGetModels";
 import { Row, Col, List, Button } from "antd";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { PermissionModal } from "../modals/PermissionModal";
-import { MODEL } from "../../../../common/src/type-constants";
+import { MODEL } from "@rpgtools/common/src/type-constants";
 import { TeamOutlined } from "@ant-design/icons";
 import { LoadingView } from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";

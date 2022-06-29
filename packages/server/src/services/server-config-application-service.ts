@@ -1,5 +1,5 @@
-import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "../../../common/src/permission-constants";
-import { SERVER_CONFIG } from "../../../common/src/type-constants";
+import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
+import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";

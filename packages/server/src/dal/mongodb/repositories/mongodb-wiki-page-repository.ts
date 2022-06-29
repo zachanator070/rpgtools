@@ -11,7 +11,7 @@ import {
 import mongoose from "mongoose";
 import { WikiPage } from "../../../domain-entities/wiki-page";
 import { WikiPageModel } from "../models/wiki-page";
-import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "../../../../../common/src/type-constants";
+import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "@rpgtools/common/src/type-constants";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import { MongodbArticleRepository } from "./mongodb-article-repository";
 import { MongodbPersonRepository } from "./mongodb-person-repository";

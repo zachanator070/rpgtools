@@ -1,7 +1,7 @@
 import { DomainEntity, EntityAuthorizationRuleset } from "../../types";
 import { ServerConfig } from "../../domain-entities/server-config";
 import { SecurityContext } from "../security-context";
-import { SERVER_ADMIN, SERVER_RW } from "../../../../common/src/permission-constants";
+import { SERVER_ADMIN, SERVER_RW } from "@rpgtools/common/src/permission-constants";
 import { injectable } from "inversify";
 
 @injectable()

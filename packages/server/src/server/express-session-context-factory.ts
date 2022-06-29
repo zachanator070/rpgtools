@@ -9,11 +9,10 @@ import {
 } from "../types";
 import { Request, Response } from "express";
 import { ExpressContext } from "apollo-server-express/src/ApolloServer";
-import { ExecutionParams } from "subscriptions-transport-ws";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { v4 as uuidv4 } from "uuid";
-import { ANON_USERNAME } from "../../../common/src/permission-constants";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import { ExpressCookieManager } from "./express-cookie-manager";
 import { SecurityContextFactory } from "../security/security-context-factory";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
@@ -27,7 +26,6 @@ import {
 export class ExpressSessionContextParameters implements ExpressContext {
 	req: Request;
 	res: Response;
-	connection?: ExecutionParams;
 }
 
 @injectable()
@@ -46,20 +44,15 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 
 	create = async ({
 		req,
-		res,
-		connection,
+		res
 	}: ExpressSessionContextParameters): Promise<SessionContext> => {
 		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory();
 		const cookieManager: CookieManager = new ExpressCookieManager(res);
-		let currentUser = null;
-		if (connection) {
-			return connection.context;
-		}
 
 		const refreshToken: string = req.cookies["refreshToken"];
 		const accessToken: string = req.cookies["accessToken"];
 
-		currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, unitOfWork);
+		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, unitOfWork);
 
 		if (!currentUser) {
 			cookieManager.clearCookie(ACCESS_TOKEN);

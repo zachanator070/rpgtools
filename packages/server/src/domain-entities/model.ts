@@ -1,6 +1,6 @@
 import { DomainEntity } from "../types";
 import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
-import { MODEL } from "../../../common/src/type-constants";
+import { MODEL } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 

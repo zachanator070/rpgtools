@@ -1,10 +1,10 @@
 import React from "react";
-import {DragObjectWithType, useDrag, useDrop} from "react-dnd";
+import { useDrag, useDrop} from "react-dnd";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import {GameCharacter} from "../../types";
 
-export interface DraggableCharacterItem extends DragObjectWithType {
+export interface DraggableCharacterItem {
 	type: string;
 	name: string;
 }
@@ -25,6 +25,7 @@ export const InitiativeTrackerCard = ({
 	const { currentGame } = useCurrentGame();
 
 	const [props, dragRef] = useDrag<DraggableCharacterItem, void, void>({
+		type: INITIATIVE_CARD,
 		item: {
 			type: INITIATIVE_CARD,
 			name,

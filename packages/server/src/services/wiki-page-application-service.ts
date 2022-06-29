@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { SecurityContext } from "../security/security-context";
-import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "../../../common/src/type-constants";
-import { WIKI_ADMIN, WIKI_RW } from "../../../common/src/permission-constants";
+import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "@rpgtools/common/src/type-constants";
+import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
 import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";

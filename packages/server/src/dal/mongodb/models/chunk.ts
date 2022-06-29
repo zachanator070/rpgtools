@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CHUNK, IMAGE } from "../../../../../common/src/type-constants";
+import { CHUNK, IMAGE } from "@rpgtools/common/src/type-constants";
 import { ChunkDocument } from "../../../types";
 
 const chunkSchema = new mongoose.Schema({

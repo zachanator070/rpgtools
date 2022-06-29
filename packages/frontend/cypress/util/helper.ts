@@ -20,7 +20,7 @@ export function goHome() {
 }
 
 export function logout() {
-    cy.request('POST', 'http://localhost:3000/api', {
+    cy.request('POST', 'http://localhost:3000/graphql', {
         "operationName": "logout",
         "variables": {},
         "query": "mutation logout {logout}"
@@ -28,7 +28,7 @@ export function logout() {
 }
 
 export function adminLogin() {
-    cy.request('POST', 'http://localhost:3000/api', {
+    cy.request('POST', 'http://localhost:3000/graphql', {
         "operationName": "login",
         "variables": {"username": ADMIN_USERNAME, "password": ADMIN_PASSWORD},
         "query": "mutation login($username: String!, $password: String!) {\n  login(username: $username, password: $password) {\n    _id\n    __typename\n  }\n}\n"

@@ -1,5 +1,5 @@
 import { WikiPage } from "./wiki-page";
-import { PLACE } from "../../../common/src/type-constants";
+import { PLACE } from "@rpgtools/common/src/type-constants";
 import { injectable } from "inversify";
 
 @injectable()

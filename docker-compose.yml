@@ -5,11 +5,12 @@ services:
   # SERVER #
   ##########
 
-  dev-server:
+  server:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
     command: "npm run dev --workspace=packages/server"
+    user: ${CURRENT_UID}
     env_file:
       - .env
     volumes:
@@ -23,11 +24,11 @@ services:
     depends_on:
       - mongodb
       - redis
-      - dev-frontend-builder
+      - frontend-builder
     networks:
       - rpgtools
 
-  prod-server:
+  prod:
     image: zachanator070/rpgtools:latest
     env_file:
       - .env
@@ -43,29 +44,18 @@ services:
   # Frontend Builder #
   ####################
 
-  dev-frontend-builder:
+  frontend-builder:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
+    user: ${CURRENT_UID}
     env_file:
       - .env
     volumes:
       - ./packages/frontend/src:/home/node/app/packages/frontend/src
       - ./packages/common/src:/home/node/app/packages/common/src
       - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
-    command: "npm run start-dev"
-    networks:
-      - rpgtools
-
-  prod-frontend-builder:
-    build:
-      context: .
-      dockerfile: ./packages/frontend/Dockerfile
-    user: ${CURRENT_UID}
-    environment:
-      - BUILD_WITH_STATS=${BUILD_WITH_STATS}
-    volumes:
-      - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
+    command: "npm run -w packages/frontend start-dev"
     networks:
       - rpgtools
 

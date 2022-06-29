@@ -18,7 +18,7 @@ import {
 	WIKI_FOLDER,
 	WIKI_PAGE,
 	WORLD,
-} from "../../../common/src/type-constants";
+} from "@rpgtools/common/src/type-constants";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { injectable } from "inversify";

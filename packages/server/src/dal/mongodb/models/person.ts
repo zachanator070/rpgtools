@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MODEL, PERSON } from "../../../../../common/src/type-constants";
+import { MODEL, PERSON } from "@rpgtools/common/src/type-constants";
 import { WikiPageModel } from "./wiki-page";
 import { PersonDocument } from "../../../types";
 

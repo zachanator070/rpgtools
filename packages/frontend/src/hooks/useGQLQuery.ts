@@ -25,6 +25,6 @@ export const useGQLQuery = <TData, TVariables=void>(
 			const originalVariables = Object.create(variables);
 			return await refetch(Object.assign(originalVariables, newVariables));
 		},
-		fetchMore,
+		fetchMore: () => fetchMore(response.data),
 	};
 };

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ITEM, MODEL } from "../../../../../common/src/type-constants";
+import { ITEM, MODEL } from "@rpgtools/common/src/type-constants";
 import { WikiPageModel } from "./wiki-page";
 import { ItemDocument } from "../../../types";
 

@@ -23,7 +23,8 @@ clean-uncompressed:
 # runs the js transpiler docker image
 prod-frontend-builder: clean init-env
 	mkdir -p dist
-	docker-compose up --build prod-frontend-builder
+	docker-compose build frontend-builder
+	docker-compose run frontend-builder npm run -w packages/frontend start
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
@@ -32,23 +33,19 @@ build-with-stats: prod-frontend-builder
 
 # runs production version of docker image with minimal depending services
 prod: .env
-	docker-compose up --build prod-server
+	docker-compose up --build prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-dev: .env dev-up
+dev: .env
+	mkdir -p packages/frontend/dist
+	docker-compose up server frontend-builder
 
 # initializes environment file
 .env:
 	cp .env.example .env
 
-# runs development docker images
-dev-up:
-	mkdir -p packages/frontend/dist
-	docker-compose up dev-server dev-frontend-builder mongodb
-
-
 build-dev:
-	docker-compose build dev-server dev-frontend-builder
+	docker-compose build
 
 # stops and destroys any running containers
 down:
@@ -56,7 +53,7 @@ down:
 
 # watch logs of running docker containers
 dev-logs:
-	docker-compose logs -f dev-server dev-frontend-builder
+	docker-compose logs -f server frontend-builder
 
 # restart any running containers
 restart:
@@ -97,19 +94,26 @@ lint:
 	# TODO: fix linting problems in frontend
 	# npx eslint packages/frontend/src
 
-test: test-unit test-integration down
+test: down test-unit test-integration test-e2e
 
 JEST_OPTIONS=
-
-test-integration:
-	- docker-compose up -d mongodb
-	npm run test:integration --workspace=packages/server
 
 test-unit:
 	npm run test:unit --workspace=packages/server
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
+
+test-integration:
+	- docker-compose up -d mongodb
+	npm run test:integration --workspace=packages/server
+	- docker-compose down
+
+test-e2e:
+	- docker-compose up -d mongodb server
+	./wait_for_server.sh
+	npm run -w packages/frontend test
+	- docker-compose down
 
 dump:
 	sudo rm -rf ./dev/mongodb-init/dump.archive

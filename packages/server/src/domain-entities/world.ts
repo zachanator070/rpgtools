@@ -1,6 +1,6 @@
 import { DomainEntity } from "../types";
 import { WorldAuthorizationRuleset } from "../security/ruleset/world-authorization-ruleset";
-import { WORLD } from "../../../common/src/type-constants";
+import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 

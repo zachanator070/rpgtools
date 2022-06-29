@@ -9,8 +9,8 @@ import {
 	ModelService,
 	PermissionAssignmentFactory,
 } from "../types";
-import { MODEL_ADMIN, MODEL_RW } from "../../../common/src/permission-constants";
-import { MODEL } from "../../../common/src/type-constants";
+import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants";
+import { MODEL } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";

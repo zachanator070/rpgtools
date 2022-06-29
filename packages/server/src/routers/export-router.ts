@@ -1,5 +1,5 @@
 import express from "express";
-import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "../../../common/src/type-constants";
+import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { ExpressSessionContextFactory } from "../server/express-session-context-factory";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -9,7 +9,7 @@ let ExportRouter = express.Router();
 
 ExportRouter.get("/:model/:id", async (req, res) => {
 	const sessionFactory = new ExpressSessionContextFactory();
-	const sessionContext = await sessionFactory.create({ req, res, connection: null });
+	const sessionContext = await sessionFactory.create({ req, res });
 
 	const modelName = req.params.model;
 	const docId = req.params.id;

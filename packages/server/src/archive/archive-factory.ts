@@ -13,8 +13,7 @@ import {
 	PLACE,
 	WIKI_FOLDER,
 	WORLD,
-} from "../../../common/src/type-constants";
-import { File } from "../domain-entities/file";
+} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 

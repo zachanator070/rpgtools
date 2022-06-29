@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MODEL, WORLD } from "../../../../../common/src/type-constants";
+import { MODEL, WORLD } from "@rpgtools/common/src/type-constants";
 import { ModelDocument } from "../../../types";
 
 const modelSchema = new mongoose.Schema({

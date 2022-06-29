@@ -12,8 +12,9 @@ process.env.NODE_ENV = "test";
 // 5 minutes
 jest.setTimeout(1000 * 60 * 5);
 
+const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
+
 beforeAll(async () => {
-	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
 	server.setDbHost("localhost:27017");
 	server.setDbName(process.env.TEST_SUITE);
 	await server.initDb();
@@ -24,7 +25,6 @@ beforeAll(async () => {
 });
 
 afterAll(async function () {
-	const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
 	await server.clearDb();
 	await mongoose.disconnect();
 });

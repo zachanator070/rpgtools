@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Select } from "antd";
-import { ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD } from "../../../../common/src/type-constants";
-import { getPermissionsBySubjectType } from "../../../../common/src/permission-constants";
+import { ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
+import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
 import { SelectRole } from "../select/SelectRole";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { SelectWiki } from "../select/SelectWiki";

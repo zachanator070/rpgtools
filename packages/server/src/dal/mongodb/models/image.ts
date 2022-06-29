@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CHUNK, IMAGE, WORLD } from "../../../../../common/src/type-constants";
+import { CHUNK, IMAGE, WORLD } from "@rpgtools/common/src/type-constants";
 import { ImageDocument } from "../../../types";
 
 const imageSchema = new mongoose.Schema({
