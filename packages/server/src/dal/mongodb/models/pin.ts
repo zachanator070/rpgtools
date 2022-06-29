@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PIN, PLACE, WIKI_PAGE } from "../../../../../common/src/type-constants";
+import { PIN, PLACE, WIKI_PAGE } from "@rpgtools/common/src/type-constants";
 import { PinDocument } from "../../../types";
 
 const pinSchema = new mongoose.Schema({

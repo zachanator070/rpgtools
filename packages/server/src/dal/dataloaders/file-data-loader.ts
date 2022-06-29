@@ -8,7 +8,7 @@ import { FileAuthorizationRuleset } from "../../security/ruleset/file-authorizat
 @injectable()
 export class FileDataLoader extends GraphqlDataloader<File> {
 	@inject(INJECTABLE_TYPES.FileRepository)
-	repository: FileRepository;
+	declare repository: FileRepository;
 	@inject(INJECTABLE_TYPES.FileAuthorizationRuleset)
-	ruleset: FileAuthorizationRuleset;
+	declare ruleset: FileAuthorizationRuleset;
 }

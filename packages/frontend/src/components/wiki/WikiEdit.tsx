@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal, Select, Upload, InputNumber } from "antd";
+import {Modal, Upload, InputNumber, Select, Button, Input} from "antd";
 import { UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined } from "@ant-design/icons";
 import { Editor } from "./Editor";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
@@ -9,7 +9,7 @@ import { useCreateImage } from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
-import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "../../../../common/src/type-constants";
+import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
 import { ToolTip } from "../ToolTip";
 import { SelectModel } from "../select/SelectModel";
 import { ModelViewer } from "../models/ModelViewer";

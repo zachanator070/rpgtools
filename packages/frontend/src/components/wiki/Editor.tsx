@@ -1,31 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Quill from "quill";
-import Toolbar from "quill/modules/toolbar";
-import Snow from "quill/themes/snow";
-import Bold from "quill/formats/bold";
-import Italic from "quill/formats/italic";
-import Header from "quill/formats/header";
 import "quill-mention";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
 import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { LoadingView } from "../LoadingView";
-import List, { ListItem } from "quill/formats/list";
 
 Quill.debug("error");
-
-Quill.register({
-	"modules/toolbar": Toolbar,
-	"themes/snow": Snow,
-	"formats/bold": Bold,
-	"formats/italic": Italic,
-	"formats/header": Header,
-	"formats/list": List,
-	"formats/list-item": ListItem,
-});
 
 interface EditorProps {
 	content: string;

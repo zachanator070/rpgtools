@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, List, Radio, Row, Tabs } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { getPermissionsBySubjectType } from "../../../../common/src/permission-constants";
+import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
 import { useGrantUserPermission } from "../../hooks/authorization/useGrantUserPermisison";
 import { useGrantRolePermission } from "../../hooks/authorization/useGrantRolePermission";
 import { useRevokeUserPermission } from "../../hooks/authorization/useRevokeUserPermission";

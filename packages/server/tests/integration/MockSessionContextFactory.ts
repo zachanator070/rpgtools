@@ -3,7 +3,7 @@ import { CookieManager, SessionContext, SessionContextFactory, UserFactory } fro
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { SecurityContextFactory } from "../../src/security/security-context-factory";
 import { User } from "../../src/domain-entities/user";
-import { ANON_USERNAME } from "../../../common/src/permission-constants";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 
 class MockCookieManager implements CookieManager {
 	clearCookie(cookie: string): void {}

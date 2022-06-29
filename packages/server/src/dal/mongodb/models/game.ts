@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
+import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
 import { GameDocument } from "../../../types";
 
 const pathNode = new mongoose.Schema({

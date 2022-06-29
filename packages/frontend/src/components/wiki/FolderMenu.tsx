@@ -19,7 +19,7 @@ import { useDeleteFolder } from "../../hooks/wiki/useDeleteFolder";
 import { ToolTip } from "../ToolTip";
 import { useImportContent } from "../../hooks/world/useImportContent";
 import { PermissionEditor } from "../permissions/PermissionEditor";
-import { WIKI_FOLDER } from "../../../../common/src/type-constants";
+import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import {WikiFolder} from "../../types";
 
 interface FolderMenuProps {

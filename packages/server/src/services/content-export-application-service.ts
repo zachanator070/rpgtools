@@ -8,7 +8,7 @@ import {
 	PLACE,
 	WIKI_FOLDER,
 	WIKI_PAGE,
-} from "../../../common/src/type-constants";
+} from "@rpgtools/common/src/type-constants";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { SecurityContext } from "../security/security-context";
 import { EntityNotFoundError, ReadPermissionDeniedError, TypeNotSupportedError } from "../errors";

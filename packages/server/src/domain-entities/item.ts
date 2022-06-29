@@ -1,5 +1,5 @@
 import { ModeledPage } from "./modeled-page";
-import { ITEM } from "../../../common/src/type-constants";
+import { ITEM } from "@rpgtools/common/src/type-constants";
 import { injectable } from "inversify";
 
 @injectable()

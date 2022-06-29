@@ -1,5 +1,5 @@
 import { DomainEntity } from "../types";
-import { CHUNK } from "../../../common/src/type-constants";
+import { CHUNK } from "@rpgtools/common/src/type-constants";
 import { ChunkAuthorizationRuleset } from "../security/ruleset/chunk-authorization-ruleset";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";

@@ -9,7 +9,7 @@ import {
 	GAME_PAINT,
 	GAME_READ,
 	GAME_RW,
-} from "../../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import { World } from "../../domain-entities/world";
 import { injectable } from "inversify";
 

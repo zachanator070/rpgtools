@@ -1,4 +1,4 @@
-import {EVERYONE, LOGGED_IN} from "../../../common/src/role-constants";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { GraphQLUpload } from "graphql-upload";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";

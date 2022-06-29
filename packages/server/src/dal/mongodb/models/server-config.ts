@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { SERVER_CONFIG, USER } from "../../../../../common/src/type-constants";
+import { SERVER_CONFIG, USER } from "@rpgtools/common/src/type-constants";
 import { ServerConfigDocument } from "../../../types";
 
 const serverSchema = new mongoose.Schema({

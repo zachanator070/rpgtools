@@ -2,9 +2,10 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
-import { SERVER_ADMIN_ROLE } from "../../../common/src/permission-constants";
+import { SERVER_ADMIN_ROLE } from "@rpgtools/common/src/permission-constants";
 import http, { Server } from "http";
 import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import express, { Express } from "express";
 import mongoose from "mongoose";
 import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-repository";
@@ -22,9 +23,10 @@ import ExportRouter from "../routers/export-router";
 import { ImageRouter } from "../routers/image-router";
 import { typeDefs } from "../gql-server-schema";
 import { allResolvers } from "../resolvers/all-resolvers";
-import { DocumentNode, execute, subscribe } from "graphql";
-import { SubscriptionServer } from "subscriptions-transport-ws";
+import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { GraphQLRequest } from "apollo-server-types";
 import cors from "cors";
 
@@ -40,7 +42,7 @@ export class ExpressApiServer implements ApiServer {
 	httpServer: Server = null;
 	expressServer: Express = null;
 	gqlServer: ApolloServer = null;
-	subscriptionServer: SubscriptionServer = null;
+	webSocketServer: WebSocketServer = null;
 
 	@inject(INJECTABLE_TYPES.RoleRepository)
 	roleRepository: MongodbRoleRepository;
@@ -58,30 +60,34 @@ export class ExpressApiServer implements ApiServer {
 		@inject(INJECTABLE_TYPES.SessionContextFactory) sessionContextFactory: SessionContextFactory
 	) {
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
-		this.gqlServer = new ApolloServer({
-			schema,
-			context: sessionContextFactory.create
-		});
+
 		this.expressServer = express();
 		this.httpServer = http.createServer(this.expressServer);
-		this.subscriptionServer = SubscriptionServer.create(
-			{
-				schema,
-				execute,
-				subscribe,
-			},
+		this.webSocketServer = new WebSocketServer(
 			{
 				// This is the `httpServer` we created in a previous step.
 				server: this.httpServer,
-				// This `server` is the instance returned from `new ApolloServer`.
-				path: this.gqlServer.graphqlPath,
+				path: '/graphql',
 			}
 		);
 
-		// Shut down in the case of interrupt and termination signals
-		// We expect to handle this more cleanly in the future. See (#5074)[https://github.com/apollographql/apollo-server/issues/5074] for reference.
-		["SIGINT", "SIGTERM"].forEach((signal) => {
-			process.on(signal, () => this.subscriptionServer.close());
+		const serverCleanup = useServer({ schema }, this.webSocketServer);
+		this.gqlServer = new ApolloServer({
+			schema,
+			context: sessionContextFactory.create,
+			csrfPrevention: true,
+			plugins: [
+				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
+				{
+					async serverWillStart() {
+						return {
+							async drainServer() {
+								await serverCleanup.dispose();
+							},
+						};
+					},
+				},
+			]
 		});
 
 		this.expressServer.use(bodyParser.json());
@@ -119,7 +125,7 @@ export class ExpressApiServer implements ApiServer {
 			if (needsSetup) {
 				if (
 					[
-						"/api",
+						"/graphql",
 						"/ui/setup",
 						"/app.bundle.js",
 						"/app.css",
@@ -153,7 +159,7 @@ export class ExpressApiServer implements ApiServer {
 
 	applyMiddleware = async () => {
 		await this.gqlServer.start();
-		this.gqlServer.applyMiddleware({ app: this.expressServer, path: "/api", cors: false });
+		this.gqlServer.applyMiddleware({ app: this.expressServer, path: "/graphql", cors: false });
 	};
 
 	checkConfig = async (): Promise<boolean> => {

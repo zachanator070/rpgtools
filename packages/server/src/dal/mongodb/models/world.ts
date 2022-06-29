@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PIN, PLACE, ROLE, WIKI_FOLDER, WORLD } from "../../../../../common/src/type-constants";
+import { PIN, PLACE, ROLE, WIKI_FOLDER, WORLD } from "@rpgtools/common/src/type-constants";
 import { WorldDocument } from "../../../types";
 
 const worldSchema = new mongoose.Schema({

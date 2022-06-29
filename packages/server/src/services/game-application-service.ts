@@ -12,10 +12,10 @@ import {
 	GAME_HOST,
 	GAME_PERMISSIONS,
 	GAME_READ,
-} from "../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
-import { GAME } from "../../../common/src/type-constants";
+import { GAME } from "@rpgtools/common/src/type-constants";
 import { SecurityContext } from "../security/security-context";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import {

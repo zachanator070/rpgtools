@@ -1,5 +1,5 @@
 import { DomainEntity } from "../types";
-import { IMAGE } from "../../../common/src/type-constants";
+import { IMAGE } from "@rpgtools/common/src/type-constants";
 import { ImageAuthorizationRuleset } from "../security/ruleset/image-authorization-ruleset";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "../../../../../common/src/type-constants";
-import { ANON_USERNAME } from "../../../../../common/src/permission-constants";
+import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "@rpgtools/common/src/type-constants";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import { UserDocument } from "../../../types";
 
 const userSchema = new mongoose.Schema({

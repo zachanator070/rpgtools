@@ -1,6 +1,6 @@
 import { DomainEntity } from "../types";
 import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
-import { WIKI_FOLDER } from "../../../common/src/type-constants";
+import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 

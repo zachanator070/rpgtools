@@ -6,7 +6,7 @@ import { User } from "../domain-entities/user";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
 import {PaginatedResult} from "../dal/paginated-result";
-import {ANON_USERNAME} from "../../../common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 
 @injectable()
 export class UserApplicationService implements UserService {

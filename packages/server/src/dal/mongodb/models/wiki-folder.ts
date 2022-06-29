@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { WIKI_FOLDER, WIKI_PAGE, WORLD } from "../../../../../common/src/type-constants";
+import { WIKI_FOLDER, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
 import { WikiFolderDocument } from "../../../types";
 
 const wikiFolderSchema = new mongoose.Schema({

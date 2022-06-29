@@ -1,19 +1,19 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import App from "./components/App";
 import { BrowserRouter } from "react-router-dom";
 import { createUploadLink } from "apollo-upload-client";
 import { clientTypeDefs } from "./clientTypeDefs";
 import { clientResolvers } from "./clientResolvers";
-import { WebSocketLink } from "@apollo/client/link/ws";
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
 import { gql, ApolloClient, ApolloProvider, split, ApolloLink, InMemoryCache  } from "@apollo/client";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
 import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
-import {WikiPagePaginatedResult} from "./types";
 import fetchSubtypes from "./fetchSubtypes";
+import {createRoot} from "react-dom/client";
 
 fetchSubtypes().then(possibleTypes => {
 
@@ -48,14 +48,14 @@ fetchSubtypes().then(possibleTypes => {
 	});
 
 	const loc = window.location;
-	let new_uri;
+	let ws_url;
 	if (loc.protocol === "https:") {
-		new_uri = "wss:";
+		ws_url = "wss:";
 	} else {
-		new_uri = "ws:";
+		ws_url = "ws:";
 	}
-	new_uri += "//" + loc.host;
-	new_uri += "/graphql";
+	ws_url += "//" + loc.host;
+	ws_url += "/subscriptions";
 
 	const httpLink = ApolloLink.from([
 		new RetryLink({
@@ -64,8 +64,11 @@ fetchSubtypes().then(possibleTypes => {
 			},
 		}),
 		createUploadLink({
-			uri: loc.protocol + "//" + window.location.host + "/api",
+			uri: loc.protocol + "//" + window.location.host + "/graphql",
 			credentials: "same-origin",
+			headers: {
+				'Apollo-Require-Preflight': 'yes'
+			}
 		}),
 	]);
 
@@ -75,15 +78,12 @@ fetchSubtypes().then(possibleTypes => {
 		if (parts.length === 2) return parts.pop().split(";").shift();
 	}
 
-	const wsLink = new WebSocketLink({
-		uri: new_uri,
-		options: {
-			reconnect: true,
-			connectionParams: {
-				accessToken: getCookie("accessToken"),
-			},
+	const wsLink = new GraphQLWsLink(createClient({
+		url: ws_url,
+		connectionParams: {
+			accessToken: getCookie("accessToken"),
 		},
-	});
+	}));
 
 // The split function takes three parameters:
 //
@@ -107,14 +107,14 @@ fetchSubtypes().then(possibleTypes => {
 		connectToDevTools: true,
 	});
 
-	ReactDOM.render(
+	const root = createRoot(document.getElementById("app"));
+	root.render(
 		<DndProvider backend={HTML5Backend}>
 			<BrowserRouter>
 				<ApolloProvider client={client}>
 					<App />
 				</ApolloProvider>
 			</BrowserRouter>
-		</DndProvider>,
-		document.getElementById("app")
+		</DndProvider>
 	);
 });

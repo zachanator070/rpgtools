@@ -1,5 +1,5 @@
 export const getIntrospectionData = async () => {
-	let response = await fetch(`/api`, {
+	let response = await fetch(`/graphql`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({

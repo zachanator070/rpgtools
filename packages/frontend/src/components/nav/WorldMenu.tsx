@@ -4,7 +4,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import { LoadingView } from "../LoadingView";
 import { DownOutlined } from "@ant-design/icons";
-import { ANON_USERNAME } from "../../../../common/src/permission-constants";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import { CreateWorldModal } from "../modals/CreateWorldModal";
 import { SelectWorldModal } from "../modals/SelectWorldModal";
 

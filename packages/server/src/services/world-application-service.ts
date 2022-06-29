@@ -14,10 +14,10 @@ import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
-} from "../../../common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants";
 import { SecurityContext } from "../security/security-context";
-import { PLACE, WORLD } from "../../../common/src/type-constants";
-import { EVERYONE, WORLD_OWNER } from "../../../common/src/role-constants";
+import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
+import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import { World } from "../domain-entities/world";
 import {FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";

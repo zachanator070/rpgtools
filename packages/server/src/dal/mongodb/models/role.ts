@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { PERMISSION_ASSIGNMENT, WORLD } from "../../../../../common/src/type-constants";
+import { PERMISSION_ASSIGNMENT, WORLD } from "@rpgtools/common/src/type-constants";
 import { RoleDocument } from "../../../types";
 
 const roleSchema = new mongoose.Schema({

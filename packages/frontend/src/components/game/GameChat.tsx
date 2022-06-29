@@ -9,7 +9,7 @@ export const GameChat = () => {
 	const { currentGame } = useCurrentGame();
 	const { currentCharacter } = useCurrentCharacter();
 	const [messages, setMessages] = useState([]);
-	const chatInput: Ref<Input> = useRef();
+	const chatInput: Ref<HTMLInputElement> = useRef();
 	const { data: gameChatMessage } = useGameChatSubscription();
 	const { gameChat, loading: chatLoading } = useGameChat();
 	const [comment, setComment] = useState<string>();
