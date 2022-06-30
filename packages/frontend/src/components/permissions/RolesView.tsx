@@ -53,6 +53,7 @@ export const RolesView = () => {
 							<span>Role Name:</span>
 							<div className={"margin-lg-left"}>
 								<Input
+									id={'newRoleName'}
 									value={newRoleName}
 									onChange={async (e) => {
 										await setNewRoleName(e.target.value);
@@ -81,6 +82,7 @@ export const RolesView = () => {
 					<h2 className={"margin-lg-bottom"}>Manage Roles</h2>
 					<span className={"margin-lg-right"}>Role:</span>
 					<Select
+						id={'selectRole'}
 						showSearch
 						style={{ width: 200 }}
 						placeholder="Select a role"
@@ -196,7 +198,7 @@ export const RolesView = () => {
 										className={"margin-md-left"}
 										type={"primary"}
 										onClick={async () => {
-											await deleteRole(selectedRole._id);
+											await deleteRole({roleId: selectedRole._id});
 											await setSelectedRoleId(null);
 										}}
 										danger

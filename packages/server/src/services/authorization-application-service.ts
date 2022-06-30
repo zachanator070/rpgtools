@@ -182,10 +182,15 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		}
 		const world = await unitOfWork.worldRepository.findById(role.world);
 		world.roles = world.roles.filter((otherRole) => {
-			return otherRole === role._id;
+			return otherRole !== role._id;
 		});
 		await unitOfWork.worldRepository.update(world);
 		await this.cleanUpPermissions(role._id, unitOfWork);
+		const usersWithRole = await unitOfWork.userRepository.find([new FilterCondition('role', role._id)]);
+		for(let user of usersWithRole) {
+			user.roles = user.roles.filter(id => id !== role._id);
+			await unitOfWork.userRepository.update(user);
+		}
 		await unitOfWork.roleRepository.delete(role);
 		await unitOfWork.commit();
 		return world;
