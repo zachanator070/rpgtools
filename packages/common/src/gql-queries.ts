@@ -201,6 +201,7 @@ export const SEARCH_WIKIS = gql`
 			docs{
 				_id
 				name
+				type
 				... on ModeledWiki {
 					model{
 						...modelAttributes

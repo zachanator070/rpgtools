@@ -1,6 +1,7 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
 import {GRANT_ROLE_PERMISSION} from "@rpgtools/common/src/gql-mutations";
+import {GET_CURRENT_WORLD} from "@rpgtools/common/src/gql-queries";
 
 interface GrantRolePermissionVariables {
 	roleId: string;
@@ -14,7 +15,9 @@ interface GrantRolePermissionResult extends GqlMutationResult<World, GrantRolePe
 }
 
 export const useGrantRolePermission = (): GrantRolePermissionResult => {
-	const result = useGQLMutation<World, GrantRolePermissionVariables>(GRANT_ROLE_PERMISSION);
+	const result = useGQLMutation<World, GrantRolePermissionVariables>(GRANT_ROLE_PERMISSION,{}, {
+		refetchQueries: [GET_CURRENT_WORLD]
+	});
 	return {
 		...result,
 		grantRolePermission: result.mutate

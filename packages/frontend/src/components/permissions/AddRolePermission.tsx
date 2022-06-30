@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Button, Select } from "antd";
-import { ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
+import {ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
 import { SelectRole } from "../select/SelectRole";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -17,33 +17,43 @@ interface AddRolePermissionProps {
 export const AddRolePermission = ({ role }: AddRolePermissionProps) => {
 	const { currentWorld } = useCurrentWorld();
 	const [permissionToAdd, setPermissionToAdd] = useState(null);
-	const [permissionToAddSubjectType, setPermissionToAddSubjectType] = useState<string>(null);
-	const [permissionToAddSubject, setPermissionToAddSubject] = useState<string>(null);
+	const [subjectTypeSelected, setSubjectTypeSelected] = useState<string>(null);
+	const [subjectTypeToSend, setSubjectTypeToSend] = useState<string>(null);
+	const [subjectId, setSubjectId] = useState<string>(null);
 	const { grantRolePermission, errors } = useGrantRolePermission();
 
+	useEffect(() => {
+		if (subjectTypeSelected !== WIKI_PAGE) {
+			setSubjectTypeToSend(subjectTypeSelected);
+		}
+	}, [subjectTypeSelected]);
+
 	let selectSubject = null;
-	if (permissionToAddSubjectType === WORLD) {
+	if (subjectTypeSelected === WORLD) {
 		selectSubject = (
-			<Select style={{ width: "200px" }} onChange={async (worldId: string) => setPermissionToAddSubject(worldId)}>
+			<Select style={{ width: "200px" }} onChange={async (worldId: string) => setSubjectId(worldId)}>
 				{currentWorld.canAdmin && (
 					<Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>
 				)}
 			</Select>
 		);
-	} else if (permissionToAddSubjectType === WIKI_PAGE) {
+	} else if (subjectTypeSelected === WIKI_PAGE) {
 		selectSubject = (
 			<SelectWiki
 				canAdmin={true}
-				onChange={async (wiki) => setPermissionToAddSubject(wiki._id)}
+				onChange={async (wiki) => {
+					setSubjectTypeToSend(wiki.type);
+					setSubjectId(wiki._id);
+				}}
 			/>
 		);
-	} else if (permissionToAddSubjectType === ROLE) {
-		selectSubject = <SelectRole canAdmin={true} onChange={async (roleId: string) => setPermissionToAddSubject(roleId)} />;
-	} else if (permissionToAddSubjectType === WIKI_FOLDER) {
-		selectSubject = <SelectFolder canAdmin={true} onChange={async (folderId: string) => setPermissionToAddSubject(folderId)} />;
+	} else if (subjectTypeSelected === ROLE) {
+		selectSubject = <SelectRole canAdmin={true} onChange={async (roleId: string) => setSubjectId(roleId)} />;
+	} else if (subjectTypeSelected === WIKI_FOLDER) {
+		selectSubject = <SelectFolder canAdmin={true} onChange={async (folderId: string) => setSubjectId(folderId)} />;
 	}
 
-	let availablePermissions = getPermissionsBySubjectType(permissionToAddSubjectType);
+	let availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
 
 	return (
 		<div className={"margin-lg-top"}>
@@ -55,17 +65,17 @@ export const AddRolePermission = ({ role }: AddRolePermissionProps) => {
 					style={{ width: "200px" }}
 					onChange={async (value) => {
 						await setPermissionToAdd(null);
-						await setPermissionToAddSubjectType(value);
-						await setPermissionToAddSubject(null);
+						await setSubjectTypeSelected(value);
+						await setSubjectId(null);
 					}}
-					value={permissionToAddSubjectType}
+					value={subjectTypeSelected}
 				>
 					{[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map((permission) => (
 						<Select.Option key={permission} value={permission}>{permission}</Select.Option>
 					))}
 				</Select>
 			</div>
-			{permissionToAddSubjectType && (
+			{subjectTypeSelected && (
 				<div className={"margin-lg-top"}>
 					<span className={"margin-lg-right"}>Permission:</span>
 					<Select
@@ -86,7 +96,7 @@ export const AddRolePermission = ({ role }: AddRolePermissionProps) => {
 					<span className={"margin-lg-right"}>Subject:</span> {selectSubject}
 				</div>
 			)}
-			{permissionToAddSubject && (
+			{subjectId && (
 				<div className={"margin-lg-top"}>
 					<Button
 						type={"primary"}
@@ -94,8 +104,8 @@ export const AddRolePermission = ({ role }: AddRolePermissionProps) => {
 							await grantRolePermission({
 								roleId: role._id,
 								permission: permissionToAdd,
-								subjectId: permissionToAddSubject,
-								subjectType: permissionToAddSubjectType
+								subjectId: subjectId,
+								subjectType: subjectTypeToSend
 							})
 						}
 					>

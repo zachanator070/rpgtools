@@ -88,6 +88,47 @@ Object {
 }
 `;
 
+exports[`query resolver with world with authenticated user get roles 1`] = `
+Object {
+  "data": Object {
+    "roles": Object {
+      "docs": Array [
+        Object {
+          "_id": "62bd12cc2b21394632c80c5c",
+          "name": "World Owner",
+        },
+        Object {
+          "_id": "62bd12cc2b21394632c80c63",
+          "name": "other role",
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user get roles permission denied 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You do not have permission to read this World],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
 exports[`query resolver with world with authenticated user wiki 1`] = `
 Object {
   "data": Object {

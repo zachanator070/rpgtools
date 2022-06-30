@@ -50,6 +50,7 @@ export default () => {
 								<div className="margin-md-right">New Name:</div>
 								<div>
 									<Input
+										id={'newWorldNameInput'}
 										value={newName}
 										onChange={async (e) => {
 											await setNewName(e.target.value);

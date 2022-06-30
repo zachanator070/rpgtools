@@ -143,6 +143,7 @@ export const RolesView = () => {
 									dataSource={selectedRole.permissions.map((permission) => {
 										return {
 											key: permission._id,
+											subjectName: permission.subject.name,
 											...permission
 										};
 									})}
