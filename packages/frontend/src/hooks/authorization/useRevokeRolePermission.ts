@@ -1,6 +1,7 @@
 import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {World} from "../../types";
 import {REVOKE_ROLE_PERMISSION} from "@rpgtools/common/src/gql-mutations";
+import {GET_CURRENT_WORLD} from "@rpgtools/common/src/gql-queries";
 
 interface RevokeRolePermissionVariables {
 	roleId: string;
@@ -13,7 +14,9 @@ interface RevokeRolePermissionResult extends GqlMutationResult<World, RevokeRole
 }
 
 export const useRevokeRolePermission = (): RevokeRolePermissionResult => {
-	const result = useGQLMutation<World, RevokeRolePermissionVariables>(REVOKE_ROLE_PERMISSION);
+	const result = useGQLMutation<World, RevokeRolePermissionVariables>(REVOKE_ROLE_PERMISSION, {}, {
+		refetchQueries: [GET_CURRENT_WORLD]
+	});
 	return {
 		...result,
 		revokeRolePermission: result.mutate

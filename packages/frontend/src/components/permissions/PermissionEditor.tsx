@@ -58,7 +58,7 @@ export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEd
 						defaultValue="users"
 					>
 						<Radio.Button value="users">Users</Radio.Button>
-						<Radio.Button value="roles">Roles</Radio.Button>
+						<Radio.Button id="rolesPermissionTab" value="roles">Roles</Radio.Button>
 					</Radio.Group>
 				</Col>
 			</Row>

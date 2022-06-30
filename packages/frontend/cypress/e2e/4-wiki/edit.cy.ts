@@ -1,7 +1,7 @@
 import {adminLogin, goToEditWiki, seedMiddleEarth} from "../../util/helper";
 import {MIDDLE_EARTH_WIKI_URL, TEST_IMAGE} from "../../util/constants";
 
-describe('view wiki', () => {
+describe('edit wiki', () => {
 
     beforeEach(() => {
         seedMiddleEarth();

@@ -7,7 +7,7 @@ import {
 	GET_CURRENT_USER,
 	GET_CURRENT_WIKI,
 	GET_CURRENT_WORLD,
-	GET_WORLDS,
+	GET_WORLDS, SEARCH_ROLES,
 	SEARCH_USERS,
 	WIKIS_IN_FOLDER
 } from "@rpgtools/common/src/gql-queries";
@@ -277,7 +277,28 @@ describe("query resolver", () => {
 					},
 					errors: undefined
 				})
-			})
+			});
+
+			it("get roles", async () => {
+				const result = await server.executeGraphQLQuery({
+					query: SEARCH_ROLES,
+					variables: {
+						worldId: world._id,
+					},
+				});
+				expect(result).toMatchSnapshot();
+			});
+
+			it("get roles permission denied", async () => {
+				mockSessionContextFactory.resetCurrentUser();
+				const result = await server.executeGraphQLQuery({
+					query: SEARCH_ROLES,
+					variables: {
+						worldId: world._id,
+					},
+				});
+				expect(result).toMatchSnapshot();
+			});
 		});
 	});
 });

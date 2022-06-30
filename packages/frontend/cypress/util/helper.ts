@@ -4,7 +4,7 @@ import {
     MIDDLE_EARTH_MAP_URL,
     MIDDLE_EARTH_WIKI_URL,
     MIDDLE_EARTH_WIKI_EDIT_URL,
-    SERVER_SETTINGS_URL
+    SERVER_SETTINGS_URL, WORLD_SETTINGS_URL
 } from "./constants";
 
 export function seedNewServer() {
@@ -49,4 +49,8 @@ export function goToEditWiki() {
 
 export function goToServerSettings() {
     cy.visit(SERVER_SETTINGS_URL);
+}
+
+export function goToWorldSettings() {
+    cy.visit(WORLD_SETTINGS_URL);
 }
