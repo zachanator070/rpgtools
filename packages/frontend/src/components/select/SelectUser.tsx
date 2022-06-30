@@ -25,6 +25,7 @@ export const SelectUser = ({ onChange, style }: SelectUserProps) => {
 
 	return (
 		<Select
+			id={'selectUserInput'}
 			showSearch
 			value={value}
 			showArrow={false}

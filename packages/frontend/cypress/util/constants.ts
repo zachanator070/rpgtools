@@ -23,3 +23,5 @@ export const SERVER_SETTINGS_URL = "http://localhost:3000/ui/serverSettings";
 export const TEST_ROLE_NAME = "test role";
 
 export const WORLD_SETTINGS_URL = 'http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/settings';
+
+export const ROLES_URL = 'http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/roles';
