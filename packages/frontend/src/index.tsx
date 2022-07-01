@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import App from "./components/App";
 import { BrowserRouter } from "react-router-dom";
 import { createUploadLink } from "apollo-upload-client";
@@ -14,6 +14,7 @@ import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchSubtypes from "./fetchSubtypes";
 import {createRoot} from "react-dom/client";
+import MapWikiContext from "./MapWikiContext";
 
 fetchSubtypes().then(possibleTypes => {
 

@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import {GqlQueryResult} from "../useGQLQuery";
 import {WikiPage} from "../../types";
-import {GET_CURRENT_WIKI} from "@rpgtools/common/src/gql-queries";
+import useGetWiki from "./useGetWiki";
 
 interface CurrentWikiVariables {
 	wikiId?: string;
@@ -13,9 +13,9 @@ interface CurrentWikiResult extends GqlQueryResult<WikiPage, CurrentWikiVariable
 
 export default (): CurrentWikiResult => {
 	const { wiki_id } = useParams();
-	const result = useGQLQuery<WikiPage, CurrentWikiVariables>(GET_CURRENT_WIKI, {wikiId: wiki_id});
+	const result = useGetWiki(wiki_id);
 	return {
 		...result,
-		currentWiki: result.data
-	};
+		currentWiki: result.wiki
+	}
 };

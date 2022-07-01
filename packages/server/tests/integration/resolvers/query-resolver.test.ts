@@ -5,7 +5,7 @@ import {WikiFolderService, WorldService} from "../../../src/types";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import {
 	GET_CURRENT_USER,
-	GET_CURRENT_WIKI,
+	GET_WIKI,
 	GET_CURRENT_WORLD,
 	GET_WORLDS, SEARCH_ROLES,
 	SEARCH_USERS,
@@ -111,7 +111,7 @@ describe("query resolver", () => {
 
 		test("wiki no permission", async () => {
 			const result = await server.executeGraphQLQuery({
-				query: GET_CURRENT_WIKI,
+				query: GET_WIKI,
 				variables: { wikiId: world.wikiPage },
 			});
 			expect(result).toMatchSnapshot({
@@ -239,7 +239,7 @@ describe("query resolver", () => {
 
 			test("wiki", async () => {
 				const result = await server.executeGraphQLQuery({
-					query: GET_CURRENT_WIKI,
+					query: GET_WIKI,
 					variables: { wikiId: world.wikiPage },
 				});
 				expect(result).toMatchSnapshot({
