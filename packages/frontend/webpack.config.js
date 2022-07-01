@@ -1,22 +1,25 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const webpack = require("webpack");
-const StatsPlugin = require("stats-webpack-plugin");
-const Visualizer = require("webpack-visualizer-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import webpack from "webpack";
+import StatsPlugin from "stats-webpack-plugin";
+import Visualizer from "webpack-visualizer-plugin";
+import CompressionPlugin from "compression-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import * as url from 'url';
 
 console.log(`building with stats=${process.env.BUILD_WITH_STATS === "true"}`);
 
-module.exports = {
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+export default {
 	entry: {
-		app: "./src/index.js",
+		app: "./src/index.tsx",
 	},
 	mode: "production",
 	plugins: [
 		new CompressionPlugin({
-			filename: "[path].gz[query]",
+			filename: "[file].gz",
 			algorithm: "gzip",
 			test: /\.js$|\.css$|\.html$/,
 			threshold: 10240,
@@ -24,8 +27,9 @@ module.exports = {
 		}),
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
-			title: "rpgtools",
+			title: "RPG Tools",
 			template: __dirname + "/src/index.html",
+			favicon: __dirname + "/src/favicon.ico",
 		}),
 		new MiniCssExtractPlugin(),
 	].concat(
@@ -47,16 +51,19 @@ module.exports = {
 		publicPath: "/",
 	},
 	resolve: {
-		alias: {
-			parchment: path.resolve(__dirname, "node_modules/parchment/src/parchment.ts"),
-			quill$: path.resolve(__dirname, "node_modules/quill/quill.js"),
-		},
-		extensions: [".js", ".ts", ".svg"],
+		// alias: {
+		// 	parchment: path.resolve(__dirname, "node_modules/parchment/src/parchment.ts"),
+		// 	quill$: path.resolve(__dirname, "node_modules/quill/quill.js"),
+		// },
+		extensions: [".js", ".ts", ".svg", ".tsx"],
 	},
 	module: {
 		rules: [
 			{
 				test: /\.m?js$/,
+				resolve: {
+					fullySpecified: false
+				},
 				exclude: /(node_modules|bower_components)/,
 				use: {
 					loader: "babel-loader",
@@ -81,18 +88,18 @@ module.exports = {
 				},
 			},
 			{
-				test: /\.ts$/,
+				test: /\.mjs$/,
+				include: /node_modules/,
+				type: "javascript/auto",
+			},
+			{
+				test: /\.(ts|tsx)$/,
+				resolve: {
+					fullySpecified: false
+				},
 				use: [
 					{
 						loader: "ts-loader",
-						options: {
-							compilerOptions: {
-								declaration: false,
-								target: "es5",
-								module: "commonjs",
-							},
-							transpileOnly: true,
-						},
 					},
 				],
 			},

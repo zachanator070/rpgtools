@@ -1,27 +1,30 @@
-FROM node:14.11.0-slim
+FROM node:16.14.0-slim
 
-WORKDIR /home/node/app/packages
+WORKDIR /home/node/app
 
-RUN npm install -g lerna
-ADD lerna.json ../lerna.json
-ADD package.json ../package.json
+ADD package.json .
+ADD package-lock.json .
 
-ADD packages/common/package.json common/package.json
-ADD packages/common/package-lock.json common/package-lock.json
+WORKDIR /home/node/app/packages/common
+ADD packages/common/package.json package.json
 
 WORKDIR /home/node/app/packages/frontend
-
 ADD packages/frontend/package.json package.json
-ADD packages/frontend/package-lock.json package-lock.json
-RUN lerna bootstrap
 
+WORKDIR /home/node/app
+RUN npm install
+
+ADD packages/common/tsconfig.json packages/common/tsconfig.json
+ADD packages/frontend/tsconfig.json packages/frontend/tsconfig.json
+
+WORKDIR /home/node/app/packages/frontend
 ADD packages/frontend/webpack.config.js webpack.config.js
 ADD packages/frontend/webpack-dev.config.js webpack-dev.config.js
-
 RUN mkdir -p dist
 RUN chmod o+w dist
 
-ADD packages/common/src ../common/src
-ADD packages/frontend/src src
+WORKDIR /home/node/app
+ADD packages/common/src common/src
+ADD packages/frontend/src frontend/src
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "-w", "packages/frontend", "start"]

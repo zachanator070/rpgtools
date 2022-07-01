@@ -1,0 +1,11 @@
+
+.mapPin {
+    position: absolute;
+    z-index: 1;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background-color: crimson;
+    border: 3px solid powderblue;
+    cursor: pointer;
+}

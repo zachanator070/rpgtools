@@ -10,7 +10,6 @@ Tool set for playing an RPG game
 - docker-compose
 - make (optional)
 - jq (for prod build)
-- lerna (npm install -g lerna)
 
 ### Production Environment
 

@@ -5,8 +5,8 @@
   "license": "MIT",
   "repository": "https://github.com/zachanator070/rpgtools",
   "scripts": {},
+  "type": "module",
   "dependencies": {
-    "graphql-tag": "latest",
-    "graphql": "^14.6.0"
+    "graphql-tag": "^2.12.5"
   }
 }
