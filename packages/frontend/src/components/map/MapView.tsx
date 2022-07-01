@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import { Map } from "./Map";
 import { PinComponent } from "./PinComponent";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -8,14 +8,13 @@ import useCreatePin from "../../hooks/map/useCreatePin";
 import { Link } from "react-router-dom";
 import { MapBreadCrumbs } from "./MapBreadCrumbs";
 import { MapDrawer } from "./MapDrawer";
-import { useQuery } from "@apollo/client";
-import { MAP_WIKI_ID } from "../../hooks/map/useMapWiki";
+import MapWikiContext from "../../MapWikiContext";
 
 export const MapView = () => {
 	const { currentWorld, loading } = useCurrentWorld();
 	const { currentMap, loading: mapLoading } = useCurrentMap();
 	const { createPin } = useCreatePin();
-	const { data: mapWikiData } = useQuery(MAP_WIKI_ID);
+	const {mapWikiId} = useContext(MapWikiContext);
 
 	const getPins = () => {
 		let pins = [];
@@ -74,7 +73,7 @@ export const MapView = () => {
 				style={{ position: "relative", height: "100%" }}
 				className="overflow-hidden flex-column flex-grow-1"
 			>
-				{mapWikiData && mapWikiData.mapWiki && (
+				{mapWikiId && (
 					<div style={{ zIndex: 2 }}>
 						<MapDrawer />
 					</div>

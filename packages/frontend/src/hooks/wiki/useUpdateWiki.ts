@@ -1,6 +1,6 @@
 import {MutationMethod, useGQLMutation} from "../useGQLMutation";
 import {WikiPage} from "../../types";
-import {GET_CURRENT_WIKI, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {GET_WIKI, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
 import {UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface UpdateWikiVariables {
@@ -17,7 +17,7 @@ interface UpdateWikiResult {
 
 export default (): UpdateWikiResult => {
 	const result = useGQLMutation<WikiPage, UpdateWikiVariables>(UPDATE_WIKI, {}, {
-		refetchQueries: [GET_CURRENT_WIKI],
+		refetchQueries: [GET_WIKI],
 		async update(cache, { data} , {variables}) {
 			const newWiki = (data as any).updateWiki;
 			// update name of wiki in folder tree

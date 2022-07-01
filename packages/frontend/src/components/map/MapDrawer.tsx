@@ -1,14 +1,16 @@
-import React from "react";
+import React, {useContext} from "react";
 import { SlidingDrawer } from "../SlidingDrawer";
 import WikiContent from "../wiki/WikiContent";
-import useMapWiki from "../../hooks/map/useMapWiki";
+import MapWikiContext from "../../MapWikiContext";
+import useGetWiki from "../../hooks/wiki/useGetWiki";
 
 export const MapDrawer = () => {
-	const { mapWiki } = useMapWiki();
+	const { mapWikiId, showMapDrawer, setShowMapDrawer } = useContext(MapWikiContext);
+	const {wiki, loading} = useGetWiki(mapWikiId);
 
 	return (
-		<SlidingDrawer placement={"left"} startVisible={true}>
-			<WikiContent currentWiki={mapWiki} />
+		<SlidingDrawer placement={"left"} visible={showMapDrawer} setVisible={setShowMapDrawer} startVisible={false}>
+			<WikiContent currentWiki={wiki} wikiLoading={loading}/>
 		</SlidingDrawer>
 	);
 };

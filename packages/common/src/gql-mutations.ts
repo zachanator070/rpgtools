@@ -19,6 +19,8 @@ import {
 	WIKIS_IN_FOLDER_ATTRIBUTES
 } from "./gql-fragments";
 
+//region Authentication
+
 export const LOGIN_QUERY = gql`
 	mutation login($username: String!, $password: String!) {
 		login(username: $username, password: $password) {
@@ -31,34 +33,10 @@ export const LOGOUT_QUERY = gql`
 		logout
 	}
 `;
-export const REGISTER_MUTATION = gql`
-	mutation register(
-		$registerCode: String!
-		$email: String!
-		$username: String!
-		$password: String!
-	) {
-		register(
-			registerCode: $registerCode
-			email: $email
-			username: $username
-			password: $password
-		) {
-			_id
-		}
-	}
-`;
-export const ADD_USER_ROLE = gql`
-	${ACCESS_CONTROL_LIST}
-	${CURRENT_WORLD_ROLES}
-	mutation addUserRole($userId: ID!, $roleId: ID!){
-		addUserRole(userId: $userId, roleId: $roleId){
-			_id
-			...accessControlList
-			...currentWorldRoles		
-		}
-	}
-`;
+//endregion
+
+//region Role
+
 export const CREATE_ROLE = gql`
 	${ACCESS_CONTROL_LIST}
 	${CURRENT_WORLD_ROLES}
@@ -77,21 +55,14 @@ export const DELETE_ROLE = gql`
 		}
 	}
 `;
-export const GRANT_ROLE_PERMISSION = gql`
-	${PERMISSIONS_GRANTED}
-	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
-		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
-			_id
-			...permissionsGranted
-		}
-	}
-`;
-export const GRANT_USER_PERMISSION = gql`
+export const ADD_USER_ROLE = gql`
 	${ACCESS_CONTROL_LIST}
-	mutation grantUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
-		grantUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
+	${CURRENT_WORLD_ROLES}
+	mutation addUserRole($userId: ID!, $roleId: ID!){
+		addUserRole(userId: $userId, roleId: $roleId){
 			_id
-			...accessControlList		
+			...accessControlList
+			...currentWorldRoles		
 		}
 	}
 `;
@@ -104,12 +75,58 @@ export const REMOVE_USER_ROLE = gql`
 		}
 	}
 `;
+export const GRANT_ROLE_PERMISSION = gql`
+	${PERMISSIONS_GRANTED}
+	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
+			_id
+			...permissionsGranted
+		}
+	}
+`;
 export const REVOKE_ROLE_PERMISSION = gql`
 	${PERMISSIONS_GRANTED}
 	mutation revokeRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!){
 		revokeRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId){
 			_id
 			...permissionsGranted		
+		}
+	}
+`;
+//endregion
+
+//region User
+
+export const REGISTER_MUTATION = gql`
+	mutation register(
+		$registerCode: String!
+		$email: String!
+		$username: String!
+		$password: String!
+	) {
+		register(
+			registerCode: $registerCode
+			email: $email
+			username: $username
+			password: $password
+		) {
+			_id
+		}
+	}
+`;
+export const SET_CURRENT_WORLD = gql`
+	mutation setCurrentWorld($worldId: ID!) {
+		setCurrentWorld(worldId: $worldId) {
+			_id
+		}
+	}
+`;
+export const GRANT_USER_PERMISSION = gql`
+	${ACCESS_CONTROL_LIST}
+	mutation grantUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		grantUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
+			_id
+			...accessControlList		
 		}
 	}
 `;
@@ -122,6 +139,77 @@ export const REVOKE_USER_PERMISSION = gql`
 		}
 	}
 `;
+//endregion
+
+//region Game
+
+export const CREATE_GAME = gql`
+	${ACCESS_CONTROL_LIST}
+	mutation createGame($worldId: ID!, $password: String, $characterName: String){
+		createGame(worldId: $worldId, password: $password, characterName: $characterName){
+			_id
+			...accessControlList
+		}
+	}
+`;
+
+export const JOIN_GAME = gql`
+	${GAME_ATTRIBUTES}
+	mutation joinGame($gameId: ID!, $password: String, $characterName: String){
+		joinGame(gameId: $gameId, password: $password, characterName: $characterName){
+			...gameAttributes
+		}
+	}
+`;
+export const LEAVE_GAME = gql`
+	mutation leaveGame($gameId: ID!) {
+		leaveGame(gameId: $gameId)
+	}
+`;
+
+export const ADD_MODEL = gql`
+	${GAME_MODELS}
+	mutation addModel($gameId: ID!, $modelId: ID!, $wikiId: ID, $color: String){
+		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color){
+			_id
+			...gameModels
+		}
+	}	
+`;
+export const DELETE_POSITIONED_MODEL = gql`
+	${GAME_MODELS}
+	mutation deletePositionedModel($gameId: ID!, $positionedModelId: ID!){
+		deletePositionedModel(gameId: $gameId, positionedModelId: $positionedModelId){
+			_id
+			...gameModels		
+		}
+	}	
+`;
+export const SET_MODEL_COLOR = gql`
+	${GAME_MODEL}
+	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
+		setModelColor(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
+			...gameModel
+		}
+	}
+`;
+export const SET_MODEL_POSITION = gql`
+	${GAME_MODEL}
+	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float!, $lookAtX: Float!, $lookAtZ: Float!){
+		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, x: $x, z: $z, lookAtX: $lookAtX, lookAtZ: $lookAtZ){
+			...gameModel
+		}
+	}
+`;
+export const SET_POSITIONED_MODEL_WIKI = gql`
+	${GAME_MODEL}
+	mutation setPositionedModelWiki($gameId: ID!, $positionedModelId: ID!, $wikiId: ID){
+		setPositionedModelWiki(gameId: $gameId, positionedModelId: $positionedModelId, wikiId: $wikiId){
+			...gameModel
+		}
+	}
+`;
+
 export const ADD_FOG_STROKE = gql`
 	mutation addFogStroke(
 		$gameId: ID!
@@ -141,15 +229,7 @@ export const ADD_FOG_STROKE = gql`
 		}
 	}
 `;
-export const ADD_MODEL = gql`
-	${GAME_MODELS}
-	mutation addModel($gameId: ID!, $modelId: ID!, $wikiId: ID, $color: String){
-		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color){
-			_id
-			...gameModels
-		}
-	}	
-`;
+
 export const ADD_STROKE = gql`
 	mutation addStroke(
 		$gameId: ID!
@@ -173,24 +253,7 @@ export const ADD_STROKE = gql`
 		}
 	}
 `;
-export const CREATE_GAME = gql`
-	${ACCESS_CONTROL_LIST}
-	mutation createGame($worldId: ID!, $password: String, $characterName: String){
-		createGame(worldId: $worldId, password: $password, characterName: $characterName){
-			_id
-			...accessControlList
-		}
-	}
-`;
-export const DELETE_POSITIONED_MODEL = gql`
-	${GAME_MODELS}
-	mutation deletePositionedModel($gameId: ID!, $positionedModelId: ID!){
-		deletePositionedModel(gameId: $gameId, positionedModelId: $positionedModelId){
-			_id
-			...gameModels		
-		}
-	}	
-`;
+
 export const GAME_CHAT = gql`
 	mutation gameChatMutation($gameId: ID!, $message: String!) {
 		gameChat(gameId: $gameId, message: $message) {
@@ -198,19 +261,7 @@ export const GAME_CHAT = gql`
 		}
 	}
 `;
-export const JOIN_GAME = gql`
-	${GAME_ATTRIBUTES}
-	mutation joinGame($gameId: ID!, $password: String, $characterName: String){
-		joinGame(gameId: $gameId, password: $password, characterName: $characterName){
-			...gameAttributes
-		}
-	}
-`;
-export const LEAVE_GAME = gql`
-	mutation leaveGame($gameId: ID!) {
-		leaveGame(gameId: $gameId)
-	}
-`;
+
 export const SET_CHARACTER_ATTRIBUTES = gql`
 	${GAME_CHARACTERS}
 	mutation setCharacterAttributes($gameId: ID!, $str: Int, $dex: Int, $con: Int, $int: Int, $wis: Int, $cha: Int){
@@ -242,30 +293,10 @@ export const SET_GAME_MAP = gql`
 		}
 	}
 `;
-export const SET_MODEL_COLOR = gql`
-	${GAME_MODEL}
-	mutation setModelColor($gameId: ID!, $positionedModelId: ID!, $color: String){
-		setModelColor(gameId: $gameId, positionedModelId: $positionedModelId, color: $color){
-			...gameModel
-		}
-	}
-`;
-export const SET_MODEL_POSITION = gql`
-	${GAME_MODEL}
-	mutation setModelPosition($gameId: ID!, $positionedModelId: ID!, $x: Float!, $z: Float!, $lookAtX: Float!, $lookAtZ: Float!){
-		setModelPosition(gameId: $gameId, positionedModelId: $positionedModelId, x: $x, z: $z, lookAtX: $lookAtX, lookAtZ: $lookAtZ){
-			...gameModel
-		}
-	}
-`;
-export const SET_POSITIONED_MODEL_WIKI = gql`
-	${GAME_MODEL}
-	mutation setPositionedModelWiki($gameId: ID!, $positionedModelId: ID!, $wikiId: ID){
-		setPositionedModelWiki(gameId: $gameId, positionedModelId: $positionedModelId, wikiId: $wikiId){
-			...gameModel
-		}
-	}
-`;
+//endregion
+
+//region Map
+
 export const CREATE_PIN = gql`
 	${CURRENT_WORLD_PINS}
 	mutation createPin($mapId: ID!, $x: Float!, $y: Float!, $wikiId: ID){
@@ -284,11 +315,6 @@ export const DELETE_PIN = gql`
 		}
 	}
 `;
-export const SET_MAP_WIKI = gql`
-	mutation setMapWiki($mapWikiId: ID!) {
-		setMapWiki(mapWikiId: $mapWikiId) @client
-	}
-`;
 export const UPDATE_PIN = gql`
 	${CURRENT_WORLD_PINS}
 	mutation updatePin($pinId: ID!, $pageId: ID){
@@ -298,6 +324,10 @@ export const UPDATE_PIN = gql`
 		}
 	}
 `;
+//endregion
+
+//region Model
+
 export const CREATE_MODEL = gql`
 	mutation createModel(
 		$name: String!
@@ -336,6 +366,10 @@ export const UPDATE_MODEL = gql`
 		}
 	}
 `;
+//endregion
+
+//region Server Settings
+
 export const GENERATE_REGISTER_CODES = gql`
 	mutation generateRegisterCodes($amount: Int!) {
 		generateRegisterCodes(amount: $amount) {
@@ -359,25 +393,14 @@ export const UNLOCK_SERVER = gql`
 		)
 	}
 `;
+//endregion
+
+//region Wiki Folder
+
 export const CREATE_FOLDER = gql`
 	mutation createFolder($parentFolderId: ID!, $name: String!) {
 		createFolder(parentFolderId: $parentFolderId, name: $name) {
 			_id
-		}
-	}
-`;
-export const CREATE_IMAGE = gql`
-	mutation createImage($file: Upload!, $worldId: ID!, $chunkify: Boolean) {
-		createImage(file: $file, worldId: $worldId, chunkify: $chunkify) {
-			_id
-		}
-	}
-`;
-export const CREATE_WIKI = gql`
-	${CURRENT_WORLD_FOLDERS}
-	mutation createWiki($name: String!, $folderId: ID!){
-		createWiki(name: $name, folderId: $folderId){
-			...currentWorldFolders
 		}
 	}
 `;
@@ -388,16 +411,48 @@ export const DELETE_FOLDER = gql`
 		}
 	}
 `;
-export const DELETE_WIKI = gql`
-	mutation deleteWiki($wikiId: ID!) {
-		deleteWiki(wikiId: $wikiId) {
+export const MOVE_FOLDER = gql`
+	mutation moveFolder($folderId: ID!, $parentFolderId: ID!) {
+		moveFolder(folderId: $folderId, parentFolderId: $parentFolderId) {
 			_id
 		}
 	}
 `;
-export const MOVE_FOLDER = gql`
-	mutation moveFolder($folderId: ID!, $parentFolderId: ID!) {
-		moveFolder(folderId: $folderId, parentFolderId: $parentFolderId) {
+export const RENAME_FOLDER = gql`
+	mutation renameFolder($folderId: ID!, $name: String!) {
+		renameFolder(folderId: $folderId, name: $name) {
+			_id
+			name
+		}
+	}
+`;
+//endregion
+
+//region Image
+
+export const CREATE_IMAGE = gql`
+	mutation createImage($file: Upload!, $worldId: ID!, $chunkify: Boolean) {
+		createImage(file: $file, worldId: $worldId, chunkify: $chunkify) {
+			_id
+		}
+	}
+`;
+//endregion
+
+//region Wiki
+
+export const CREATE_WIKI = gql`
+	${CURRENT_WORLD_FOLDERS}
+	mutation createWiki($name: String!, $folderId: ID!){
+		createWiki(name: $name, folderId: $folderId){
+			...currentWorldFolders
+		}
+	}
+`;
+
+export const DELETE_WIKI = gql`
+	mutation deleteWiki($wikiId: ID!) {
+		deleteWiki(wikiId: $wikiId) {
 			_id
 		}
 	}
@@ -410,14 +465,7 @@ export const MOVE_WIKI = gql`
 		}
 	}
 `;
-export const RENAME_FOLDER = gql`
-	mutation renameFolder($folderId: ID!, $name: String!) {
-		renameFolder(folderId: $folderId, name: $name) {
-			_id
-			name
-		}
-	}
-`;
+
 export const UPDATE_MODELED_WIKI = gql`
 	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updateModeledWiki($wikiId: ID!, $model: ID, $color: String){
@@ -443,6 +491,10 @@ export const UPDATE_WIKI = gql`
 		}
 	}
 `;
+//endregion
+
+//region World
+
 export const CREATE_WORLD = gql`
 	mutation createWorld($name: String!, $public: Boolean!) {
 		createWorld(name: $name, public: $public) {
@@ -453,6 +505,19 @@ export const CREATE_WORLD = gql`
 		}
 	}
 `;
+export const RENAME_WORLD = gql`
+	mutation renameWorld($worldId: ID!, $newName: String!) {
+		renameWorld(worldId: $worldId, newName: $newName) {
+			_id
+			name
+		}
+	}
+`;
+
+//endregion
+
+//region Import
+
 export const IMPORT_CONTENT = gql`
 	${CURRENT_WORLD_FOLDERS}
 	mutation importContent($folderId: ID!, $zipFile: Upload!){
@@ -475,18 +540,5 @@ export const LOAD_5E_CONTENT = gql`
 		}
 	}
 `;
-export const RENAME_WORLD = gql`
-	mutation renameWorld($worldId: ID!, $newName: String!) {
-		renameWorld(worldId: $worldId, newName: $newName) {
-			_id
-			name
-		}
-	}
-`;
-export const SET_CURRENT_WORLD = gql`
-	mutation setCurrentWorld($worldId: ID!) {
-		setCurrentWorld(worldId: $worldId) {
-			_id
-		}
-	}
-`;
+
+//endregion

@@ -8,6 +8,7 @@ import {
 	WIKIS_IN_FOLDER_ATTRIBUTES
 } from "./gql-fragments";
 
+//region User
 export const GET_CURRENT_USER = gql`
 	query currentUser{
 		currentUser {
@@ -39,6 +40,9 @@ export const SEARCH_USERS = gql`
 		}
 	}
 `;
+//endregion
+
+//region Permissions
 export const MY_PERMISSIONS = gql`
 	query myPermissions($worldId: ID!) {
 		myPermissions(worldId: $worldId) {
@@ -63,6 +67,9 @@ export const MY_PERMISSIONS = gql`
 		}
 	}
 `;
+//endregion
+
+//region Roles
 export const SEARCH_ROLES = gql`
 	query roles($worldId: ID, $name: String, $canAdmin: Boolean) {
 		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
@@ -73,6 +80,10 @@ export const SEARCH_ROLES = gql`
 		}
 	}
 `;
+//endregion
+
+//region Game
+
 export const GET_GAME = gql`
 	${GAME_ATTRIBUTES}
 	query getGame($gameId: ID!){
@@ -88,6 +99,9 @@ export const MY_GAMES = gql`
 		}
 	}
 `;
+//endregion
+
+//region Map
 export const GET_CURRENT_MAP = gql`
 	query getWiki($wikiId: ID!) {
 		wiki(wikiId: $wikiId) {
@@ -120,14 +134,9 @@ export const GET_CURRENT_MAP = gql`
 		}
 	}
 `;
-export const MAP_WIKI = gql`
-	${CURRENT_WIKI_ATTRIBUTES}
-	query mapWiki($wikiId: ID!){
-		wiki(wikiId: $wikiId) {
-			...currentWikiAttributes
-		}
-	}
-`;
+//endregion
+
+//region Model
 export const GET_MODELS = gql`
 	${MODEL_ATTRIBUTES}
 	query getModels($worldId: ID!){
@@ -136,6 +145,9 @@ export const GET_MODELS = gql`
 		}
 	}
 `;
+//endregion
+
+//region Server Settings
 export const GET_SERVER_CONFIG = gql`
 	${ACCESS_CONTROL_LIST}
 	${SERVER_CONFIG_ROLES}
@@ -149,7 +161,11 @@ export const GET_SERVER_CONFIG = gql`
 		}
 	}
 `;
-export const GET_CURRENT_WIKI = gql`
+//endregion
+
+//region Wiki
+
+export const GET_WIKI = gql`
 	${CURRENT_WIKI_ATTRIBUTES}
 	${ACCESS_CONTROL_LIST}
 	${CURRENT_WIKI_PLACE_ATTRIBUTES}
@@ -164,36 +180,7 @@ export const GET_CURRENT_WIKI = gql`
 		}
 	}
 `;
-export const FOLDERS = gql`
-	query folders($worldId: ID!, $name: String, $canAdmin: Boolean) {
-		folders(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
-			_id
-			name
-			children {
-				_id
-				name
-			}
-			canWrite
-			canAdmin
-		}
-	}
-`;
-export const GAME_WIKI = gql`
-	${CURRENT_WIKI_ATTRIBUTES}
-	query wiki($wikiId: ID!){
-		wiki(wikiId: $wikiId) {
-			...currentWikiAttributes
-		}
-	}
-`;
-export const GET_FOLDER_PATH = gql`
-	query getFolderPath($wikiId: ID!) {
-		getFolderPath(wikiId: $wikiId) {
-			_id
-			name
-		}
-	}
-`;
+
 export const SEARCH_WIKIS = gql`
 	${MODEL_ATTRIBUTES}
 	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean){
@@ -227,6 +214,45 @@ export const WIKIS_IN_FOLDER = gql`
 		}
 	}
 `;
+//endregion
+
+//region Folders
+export const FOLDERS = gql`
+	query folders($worldId: ID!, $name: String, $canAdmin: Boolean) {
+		folders(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
+			_id
+			name
+			children {
+				_id
+				name
+			}
+			canWrite
+			canAdmin
+		}
+	}
+`;
+export const GET_FOLDER_PATH = gql`
+	query getFolderPath($wikiId: ID!) {
+		getFolderPath(wikiId: $wikiId) {
+			_id
+			name
+		}
+	}
+`;
+//endregion
+
+//region Game
+export const GAME_WIKI = gql`
+	${CURRENT_WIKI_ATTRIBUTES}
+	query wiki($wikiId: ID!){
+		wiki(wikiId: $wikiId) {
+			...currentWikiAttributes
+		}
+	}
+`;
+//endregion
+
+//region World
 export const GET_CURRENT_WORLD = gql`
 	${CURRENT_WORLD_FOLDERS}
 	${ACCESS_CONTROL_LIST}
@@ -283,3 +309,4 @@ export const GET_WORLDS = gql`
 		}
 	}
 `;
+//endregion

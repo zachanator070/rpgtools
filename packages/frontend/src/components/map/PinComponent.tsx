@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { Popover } from "antd";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import useSetMapWiki from "../../hooks/map/useSetMapWiki";
 import { EditPinModal } from "../modals/EditPinModal";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import {Pin} from "../../types";
+import MapWikiContext from "../../MapWikiContext";
+
+import './PinComponent.css';
 
 interface PinComponentProps {
 	pin: Pin;
@@ -17,7 +19,7 @@ export const PinComponent = ({ pin, translate }: PinComponentProps) => {
 	const { currentWorld } = useCurrentWorld();
 	const [editPinModalVisibility, setEditPinModalVisibility] = useState(false);
 
-	const { setMapWiki } = useSetMapWiki();
+	const { setMapWikiId, setShowMapDrawer } = useContext(MapWikiContext);
 	const [visible, setVisible] = useState(false);
 
 	const editButton = pin.canWrite ? (
@@ -25,8 +27,8 @@ export const PinComponent = ({ pin, translate }: PinComponentProps) => {
 			href="#"
 			className="margin-md-left"
 			onClick={async () => {
-				await setVisible(false);
-				await setEditPinModalVisibility(true);
+				setVisible(false);
+				setEditPinModalVisibility(true);
 			}}
 		>
 			Edit Pin
@@ -47,10 +49,10 @@ export const PinComponent = ({ pin, translate }: PinComponentProps) => {
 				<h3>{pin.page.type}</h3>
 				<a
 					href="#"
-					onClick={async () => {
-						await setVisible(false);
-						await setMapWiki(null);
-						await setMapWiki({mapWikiId: pin.page._id});
+					onClick={() => {
+						setVisible(false);
+						setMapWikiId( pin.page._id);
+						setShowMapDrawer(true);
 					}}
 				>
 					Details
@@ -89,17 +91,11 @@ export const PinComponent = ({ pin, translate }: PinComponentProps) => {
 				onVisibleChange={async (newVisible) => setVisible(newVisible)}
 			>
 				<div
+					id={'mapPin'}
+					className={'mapPin'}
 					style={{
-						position: "absolute",
 						left: coordinates[0] - 5,
-						top: coordinates[1] - 5,
-						zIndex: 1,
-						borderRadius: "50%",
-						width: "15px",
-						height: "15px",
-						backgroundColor: "crimson",
-						border: "3px solid powderblue",
-						cursor: "pointer",
+						top: coordinates[1] - 5
 					}}
 				/>
 			</Popover>

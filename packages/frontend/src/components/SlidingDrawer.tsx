@@ -37,7 +37,7 @@ export const SlidingDrawer = ({
 	return (
 		<>
 			<div style={buttonStyle}>
-				<Button onClick={async () => await setVisible(true)}>
+				<Button onClick={() => setVisible(true)}>
 					<MenuOutlined />
 				</Button>
 			</div>
@@ -45,7 +45,7 @@ export const SlidingDrawer = ({
 				title={title}
 				placement={placement || "right"}
 				closable={true}
-				onClose={async () => await setVisible(false)}
+				onClose={() => setVisible(false)}
 				visible={visible}
 				mask={false}
 				maskClosable={false}
