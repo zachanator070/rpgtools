@@ -1,6 +1,6 @@
-const config = require("./webpack.config");
+import config from"./webpack.config.js";
 
 config.mode = "development";
-config.devtool = "#eval-source-map";
+config.devtool = "inline-source-map";
 
-module.exports = config;
+export default config;

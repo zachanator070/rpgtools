@@ -3,5 +3,7 @@
 node_modules/
 .env
 dist/
-dev/mongodb-init/dump/
+dev/mongodb-init/dump.archive
 coverage/
+packages/frontend/cypress/screenshots
+packages/frontend/cypress/videos

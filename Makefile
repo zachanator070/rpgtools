@@ -3,7 +3,7 @@ CURRENT_UID=$(id -u):$(id -g)
 export CURRENT_UID
 
 # Builds rpgtools docker image
-build: prod-builder clean-uncompressed
+build: prod-frontend-builder clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f packages/server/Dockerfile .
 
@@ -21,40 +21,39 @@ clean-uncompressed:
 	rm -f dist/app.css
 
 # runs the js transpiler docker image
-prod-builder: clean init-env
+prod-frontend-builder: clean init-env
 	mkdir -p dist
-	docker-compose up --build prod-builder
+	docker-compose build frontend-builder
+	docker-compose run frontend-builder npm run -w packages/frontend start
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
 	export BUILD_WITH_STATS
-build-with-stats: prod-builder
+build-with-stats: prod-frontend-builder
 
 # runs production version of docker image with minimal depending services
-prod: init-env
-	docker-compose up --build prod-server
+prod: .env
+	docker-compose up --build prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-dev: init-env dev-up logs
+dev: .env
+	mkdir -p packages/frontend/dist
+	docker-compose up server frontend-builder
 
 # initializes environment file
-init-env:
-	touch .env
-
-# runs development docker images
-dev-up:
-	docker-compose up -d dev-server
+.env:
+	cp .env.example .env
 
 build-dev:
-	docker-compose build dev-server dev-builder
+	docker-compose build
 
 # stops and destroys any running containers
 down:
 	docker-compose down
 
 # watch logs of running docker containers
-logs:
-	docker-compose logs -f
+dev-logs:
+	docker-compose logs -f server frontend-builder
 
 # restart any running containers
 restart:
@@ -86,24 +85,37 @@ ci: install-deps lint test
 install-deps:
 	# installs node modules needed by CI
 	npm install
-	cd server && npm install
-	cd app && npm install
-	cd common && npm install
+	cd packages/server && npm install
+	cd packages/frontend && npm install
+	cd packages/common && npm install
 
 lint:
-	npx eslint server/src app/src common/src
+	npx eslint packages/server/src packages/common/src --ext .ts
+	# TODO: fix linting problems in frontend
+	# npx eslint packages/frontend/src
 
-test: test-integration
+test: down test-unit test-integration test-e2e
 
 JEST_OPTIONS=
 
-test-integration:
-	- docker-compose up -d mongodb
-	export JEST_SETUP_FILES=./server/tests/integration/setup.js && npx jest ${JEST_OPTIONS} server/tests/integration
+test-unit:
+	npm run test:unit --workspace=packages/server
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
 
+test-integration:
+	- docker-compose up -d mongodb
+	npm run test:integration --workspace=packages/server
+	- docker-compose down
+
+test-e2e:
+	- docker-compose up -d mongodb server
+	./wait_for_server.sh
+	npm run -w packages/frontend test
+	- docker-compose down
+
 dump:
-	sudo rm -rf ./dev/mongodb-init/dump/*
-	docker-compose exec mongodb mongodump --out /docker-entrypoint-initdb.d/dump
+	sudo rm -rf ./dev/mongodb-init/dump.archive
+	docker-compose exec mongodb mongodump --archive=/docker-entrypoint-initdb.d/dump.archive -d rpgtools
+	sudo chown ${USER}:${USER} ./dev/mongodb-init/dump.archive

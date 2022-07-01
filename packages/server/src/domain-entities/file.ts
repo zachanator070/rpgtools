@@ -1,0 +1,18 @@
+import { DomainEntity } from "../types";
+import { Readable } from "stream";
+import { FILE } from "@rpgtools/common/src/type-constants";
+import { FileAuthorizationRuleset } from "../security/ruleset/file-authorization-ruleset";
+import { inject, injectable } from "inversify";
+import { INJECTABLE_TYPES } from "../di/injectable-types";
+
+@injectable()
+export class File implements DomainEntity {
+	_id: string;
+	filename: string;
+	mimeType: string;
+	readStream: Readable;
+
+	@inject(INJECTABLE_TYPES.FileAuthorizationRuleset)
+	authorizationRuleset: FileAuthorizationRuleset;
+	type: string = FILE;
+}

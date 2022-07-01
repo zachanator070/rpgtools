@@ -1,0 +1,20 @@
+import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import {World} from "../../types";
+import {CREATE_WORLD} from "@rpgtools/common/src/gql-mutations";
+
+interface CreateWorldVariables {
+	name: string;
+	public: boolean;
+}
+
+interface CreateWorldResult extends GqlMutationResult<World,  CreateWorldVariables> {
+	createWorld: MutationMethod<World, CreateWorldVariables>
+}
+
+export default (callback): CreateWorldResult => {
+	const result = useGQLMutation<World, CreateWorldVariables>(CREATE_WORLD, {}, {onCompleted: callback});
+	return {
+		...result,
+		createWorld: result.mutate
+	};
+};

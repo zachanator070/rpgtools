@@ -1,0 +1,315 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`wiki page mutations with world create wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world delete wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world update cover image no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world update place no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world update wiki no permission 1`] = `
+Object {
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user create wiki 1`] = `
+Object {
+  "data": Object {
+    "createWiki": Object {
+      "_id": Any<String>,
+      "accessControlList": Array [],
+      "canAdmin": true,
+      "canWrite": true,
+      "children": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "name": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user delete wiki 1`] = `
+Object {
+  "data": Object {
+    "deleteWiki": Object {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user delete wiki root wiki 1`] = `
+Object {
+  "data": null,
+  "errors": Array [
+    [GraphQLError: You cannot delete the main page of a world],
+  ],
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user update type 1`] = `
+Object {
+  "data": Object {
+    "updateWiki": Object {
+      "_id": Any<String>,
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": Object {
+        "_id": Any<String>,
+      },
+      "name": "Earth",
+      "type": "Article",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user update wiki just content 1`] = `
+Object {
+  "data": Object {
+    "updateWiki": Object {
+      "_id": Any<String>,
+      "canAdmin": true,
+      "canWrite": true,
+      "content": Any<String>,
+      "coverImage": null,
+      "folder": Object {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "Earth",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user update wiki just name 1`] = `
+Object {
+  "data": Object {
+    "updateWiki": Object {
+      "_id": Any<String>,
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": Object {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "new name",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user with image update cover image 1`] = `
+Object {
+  "data": Object {
+    "updateWiki": Object {
+      "_id": Any<String>,
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": Object {
+        "_id": Any<String>,
+        "chunks": ArrayContaining [
+          ObjectContaining {
+            "_id": Any<String>,
+            "fileId": Any<String>,
+          },
+        ],
+        "height": 830,
+        "icon": Object {
+          "_id": Any<String>,
+          "chunks": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "fileId": Any<String>,
+            },
+          ],
+        },
+        "name": "tests/integration/resolvers/mutations/testmap.png",
+        "width": 1000,
+      },
+      "folder": Object {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "Earth",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": Object {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user with image update place 1`] = `
+Object {
+  "data": Object {
+    "updatePlace": Object {
+      "_id": Any<String>,
+      "mapImage": Object {
+        "_id": Any<String>,
+        "chunks": ArrayContaining [
+          ObjectContaining {
+            "_id": Any<String>,
+            "fileId": Any<String>,
+          },
+        ],
+        "height": 830,
+        "icon": Object {
+          "_id": Any<String>,
+          "chunks": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "fileId": Any<String>,
+            },
+          ],
+        },
+        "name": "tests/integration/resolvers/mutations/testmap.png",
+        "width": 1000,
+      },
+      "pixelsPerFoot": null,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
