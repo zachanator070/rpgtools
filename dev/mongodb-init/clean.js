@@ -1,3 +1,3 @@
 
-db = db.getSiblingDB('rpgtools');
+db = new Mongo().getDB('rpgtools');
 db.dropDatabase();

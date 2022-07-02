@@ -11,7 +11,7 @@
 		"test": "cypress run",
 		"cypress:open": "cypress open --e2e --browser chrome",
 		"seed:new": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh new_server.archive",
-		"seed:middle_earth": " docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh middle_earth.archive"
+		"seed:middle_earth": "docker exec rpgtools_mongodb_1 /docker-entrypoint-initdb.d/restore.sh middle_earth.archive"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.7.0",

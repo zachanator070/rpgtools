@@ -1,0 +1,16 @@
+import './1-setup/unlock.cy';
+import './2-authentication/login.cy';
+import './2-authentication/logout.cy';
+import './2-authentication/register.cy';
+import './3-world/create.cy';
+import './3-world/select.cy';
+import './4-wiki/edit.cy';
+import './4-wiki/view.cy';
+import './5-server-settings/server-permissions.cy';
+import './5-server-settings/register-codes.cy';
+import './6-world-settings/load-5e-content.cy';
+import './6-world-settings/permissions.cy';
+import './6-world-settings/load-5e-content.cy';
+import './6-world-settings/rename.cy';
+import './7-roles/roles.cy';
+import './8-map/pins.cy';
