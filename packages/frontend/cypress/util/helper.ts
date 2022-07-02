@@ -8,11 +8,11 @@ import {
 } from "./constants";
 
 export function seedNewServer() {
-    cy.exec("npm run seed:new");
+    cy.exec("npm run seed:new", {log: true}).its('code').should('eq', 0);
 }
 
 export function seedMiddleEarth() {
-    cy.exec("npm run seed:middle_earth");
+    cy.exec("npm run seed:middle_earth", {log: true}).its('code').should('eq', 0);
 }
 
 export function goHome() {
