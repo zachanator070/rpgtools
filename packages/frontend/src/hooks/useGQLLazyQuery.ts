@@ -1,6 +1,5 @@
-import {DocumentNode, LazyQueryResult, useLazyQuery} from "@apollo/client";
-import { useGQLResponse } from "./useGQLResponse";
-import {GqlQueryResult} from "./useGQLQuery";
+import {DocumentNode, useLazyQuery} from "@apollo/client";
+import useGQLResponse from "./useGQLResponse";
 // extends GqlQueryResult<TData, TVariables>
 export interface GqlLazyHookResult<TData, TVariables=void>  {
 	loading: boolean;
@@ -17,11 +16,11 @@ type LazyQueryOptions = {
 	displayErrors?: boolean;
 	updateQuery?: UpdateQuery;
 }
-export const useGQLLazyQuery = <TData, TVariables=void>(
+export default function useGQLLazyQuery<TData, TVariables=void>(
 	query: DocumentNode,
 	variables: any = null,
 	options: LazyQueryOptions = { displayErrors: true }
-): GqlLazyHookResult<TData, TVariables> => {
+): GqlLazyHookResult<TData, TVariables> {
 	const [
 		fetch,
 		{ data, loading, error, refetch, fetchMore },

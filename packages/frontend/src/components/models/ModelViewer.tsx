@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer";
 import { Button, Input } from "antd";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 import {Model} from "../../types";
 
 interface ModelViewerProps {
@@ -13,14 +13,14 @@ interface ModelViewerProps {
 	onChangeColor?: (color: string) => Promise<any>;
 }
 
-export const ModelViewer = ({
+export default function ModelViewer({
 	model,
 	width,
 	height,
 	defaultColor,
 	showColorControls,
 	onChangeColor,
-}: ModelViewerProps) => {
+}: ModelViewerProps) {
 	const [renderer, setRenderer] = useState<ModelRenderer>();
 	const [modelColor, setModelColor] = useState(defaultColor);
 	const renderCanvas = useRef();

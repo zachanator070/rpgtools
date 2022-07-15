@@ -1,10 +1,10 @@
 import React, {useContext} from "react";
-import { SlidingDrawer } from "../SlidingDrawer";
+import SlidingDrawer from "../SlidingDrawer";
 import WikiContent from "../wiki/WikiContent";
 import MapWikiContext from "../../MapWikiContext";
 import useGetWiki from "../../hooks/wiki/useGetWiki";
 
-export const MapDrawer = () => {
+export default function MapDrawer() {
 	const { mapWikiId, showMapDrawer, setShowMapDrawer } = useContext(MapWikiContext);
 	const {wiki, loading} = useGetWiki(mapWikiId);
 

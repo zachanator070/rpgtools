@@ -1,4 +1,4 @@
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {WorldPaginatedResult} from "../../types";
 import {GET_WORLDS} from "@rpgtools/common/src/gql-queries";
 
@@ -11,7 +11,7 @@ interface WorldsResult extends GqlQueryResult<WorldPaginatedResult, WorldsVariab
 	worlds: WorldPaginatedResult;
 }
 
-export default (variables): WorldsResult => {
+export default function useWorlds(variables): WorldsResult {
 	const result = useGQLQuery<WorldPaginatedResult, WorldsVariables>(GET_WORLDS, variables);
 	return {
 		...result,

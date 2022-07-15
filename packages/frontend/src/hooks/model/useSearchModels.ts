@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetModels } from "./useGetModels";
+import useGetModels from "./useGetModels";
 import {Model} from "../../types";
 
 interface SearchModelsResult {
@@ -8,7 +8,7 @@ interface SearchModelsResult {
 	loading: boolean;
 }
 
-export const useSearchModels = (): SearchModelsResult => {
+export default function useSearchModels(): SearchModelsResult {
 	const { models, loading } = useGetModels();
 	const [filter, setFilter] = useState({ name: "" });
 

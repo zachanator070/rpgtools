@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {ServerConfig} from "../../types";
 import {GENERATE_REGISTER_CODES} from "@rpgtools/common/src/gql-mutations";
 
@@ -10,7 +10,7 @@ interface GenerateRegisterCodesResult extends GqlMutationResult<ServerConfig, Ge
 	generateRegisterCodes: MutationMethod<ServerConfig, GenerateRegisterCodesVariables>
 }
 
-export const useGenerateRegisterCodes = (): GenerateRegisterCodesResult => {
+export default function useGenerateRegisterCodes(): GenerateRegisterCodesResult {
 	const result = useGQLMutation<ServerConfig, GenerateRegisterCodesVariables>(GENERATE_REGISTER_CODES);
 	return {
 		...result,

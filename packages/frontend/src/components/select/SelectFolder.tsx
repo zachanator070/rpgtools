@@ -2,14 +2,14 @@ import React, {CSSProperties, useState} from "react";
 import { Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
-import { useFolders } from "../../hooks/wiki/useFolders";
+import useFolders from "../../hooks/wiki/useFolders";
 
 interface SelectFolderProps {
 	onChange?: (folderId: string) => Promise<any>;
 	style?: CSSProperties;
 	canAdmin?: boolean;
 }
-export const SelectFolder = ({ onChange, style, canAdmin }: SelectFolderProps) => {
+export default function SelectFolder({ onChange, style, canAdmin }: SelectFolderProps) {
 	const params = useParams();
 	const { refetch, folders, loading } = useFolders({
 		worldId: params.world_id,

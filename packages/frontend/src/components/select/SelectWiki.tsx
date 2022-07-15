@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Select, Spin } from "antd";
-import { useSearchWikiPages } from "../../hooks/wiki/useSearchWikiPages";
+import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
 import { SearchOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import {WikiPage} from "../../types";
@@ -12,13 +12,13 @@ interface SelectWikiProps <T extends WikiPage>{
 	showClear?: boolean;
 	canAdmin?: boolean;
 }
-export const SelectWiki = <T extends WikiPage>({
+export default function SelectWiki<T extends WikiPage>({
 	types,
 	onChange,
 	style,
 	showClear = false,
 	canAdmin,
-}: SelectWikiProps<T>) => {
+}: SelectWikiProps<T>) {
 	const params = useParams();
 	const { refetch, wikis, loading } = useSearchWikiPages({
 		worldId: params.world_id,

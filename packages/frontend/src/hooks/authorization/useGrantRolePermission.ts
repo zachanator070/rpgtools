@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {GRANT_ROLE_PERMISSION} from "@rpgtools/common/src/gql-mutations";
 import {GET_CURRENT_WORLD} from "@rpgtools/common/src/gql-queries";
@@ -14,7 +14,7 @@ interface GrantRolePermissionResult extends GqlMutationResult<World, GrantRolePe
 	grantRolePermission: MutationMethod<World, GrantRolePermissionVariables>
 }
 
-export const useGrantRolePermission = (): GrantRolePermissionResult => {
+export default function useGrantRolePermission(): GrantRolePermissionResult {
 	const result = useGQLMutation<World, GrantRolePermissionVariables>(GRANT_ROLE_PERMISSION,{}, {
 		refetchQueries: [GET_CURRENT_WORLD]
 	});

@@ -1,7 +1,7 @@
 import useCurrentWorld from "../world/useCurrentWorld";
 import {useEffect} from "react";
 import {Model} from "../../types";
-import {GqlLazyHookResult, useGQLLazyQuery} from "../useGQLLazyQuery";
+import useGQLLazyQuery, {GqlLazyHookResult} from "../useGQLLazyQuery";
 import {GET_MODELS} from "@rpgtools/common/src/gql-queries";
 
 interface GetModelsVariables {
@@ -12,7 +12,7 @@ interface GetModelsResult extends GqlLazyHookResult<Model[], GetModelsVariables>
 	models: Model[];
 }
 
-export const useGetModels = (): GetModelsResult => {
+export default function useGetModels(): GetModelsResult {
 	const { currentWorld } = useCurrentWorld();
 	const result = useGQLLazyQuery<Model[], GetModelsVariables>(GET_MODELS);
 

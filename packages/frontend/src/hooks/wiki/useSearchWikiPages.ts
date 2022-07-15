@@ -1,4 +1,4 @@
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {WikiPagePaginatedResult} from "../../types";
 import {SEARCH_WIKIS} from "@rpgtools/common/src/gql-queries";
 
@@ -13,7 +13,7 @@ interface SearchWikiPagesResult extends GqlQueryResult<WikiPagePaginatedResult, 
 	wikis: WikiPagePaginatedResult;
 }
 
-export const useSearchWikiPages = (variables: SearchWikiPagesVariables): SearchWikiPagesResult => {
+export default function useSearchWikiPages(variables: SearchWikiPagesVariables): SearchWikiPagesResult {
 	const result = useGQLQuery<WikiPagePaginatedResult, SearchWikiPagesVariables>(SEARCH_WIKIS, variables);
 	return {
 		...result,

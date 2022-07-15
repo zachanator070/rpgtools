@@ -1,5 +1,5 @@
 import useCurrentGame from "./useCurrentGame";
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game} from "../../types";
 import {SET_POSITIONED_MODEL_WIKI} from "@rpgtools/common/src/gql-mutations";
 
@@ -13,7 +13,7 @@ interface SetPositionedModelResult extends GqlMutationResult<Game, SetPositioned
 	setPositionedModelWiki: MutationMethod<Game, SetPositionedModelWikiVariables>;
 }
 
-export const useSetPositionedModelWiki = (): SetPositionedModelResult => {
+export default function useSetPositionedModelWiki(): SetPositionedModelResult {
 	const { currentGame } = useCurrentGame();
 	const returnValues = useGQLMutation<Game, SetPositionedModelWikiVariables>(SET_POSITIONED_MODEL_WIKI, {gameId: currentGame._id});
 	return {

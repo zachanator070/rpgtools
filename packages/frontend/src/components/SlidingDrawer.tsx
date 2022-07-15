@@ -11,14 +11,14 @@ interface SlidingDrawerProps {
 	setVisible?: (visible: boolean) => void;
 }
 
-export const SlidingDrawer = ({
+export default function SlidingDrawer({
 	title,
 	placement,
 	children,
 	startVisible,
 	visible,
 	setVisible,
-}: SlidingDrawerProps) => {
+}: SlidingDrawerProps) {
 	if (visible === undefined || setVisible === undefined) {
 		[visible, setVisible] = useState(startVisible || false);
 	}

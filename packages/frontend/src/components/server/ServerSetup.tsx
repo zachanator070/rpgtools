@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import useLogin from "../../hooks/authentication/useLogin";
 
-export const ServerSetup = () => {
+export default function ServerSetup() {
 	const [email, setEmail] = useState("");
 	const [unlockCode, setUnlockCode] = useState("");
 	const [username, setUsername] = useState("");

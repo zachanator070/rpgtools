@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
 import { Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useSearchRoles } from "../../hooks/authorization/useSearchRoles";
+import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 
 interface SelectRoleProps {
 	onChange: (roleId: string) => Promise<any>;
@@ -9,7 +9,7 @@ interface SelectRoleProps {
 	canAdmin?: boolean;
 }
 
-export const SelectRole = ({ onChange, style, canAdmin }: SelectRoleProps) => {
+export default function SelectRole({ onChange, style, canAdmin }: SelectRoleProps) {
 	const { refetch, roles, loading } = useSearchRoles({ canAdmin });
 	const [value, setValue] = useState<string>();
 

@@ -10,7 +10,7 @@ interface InitiativeTrackerDummyCardProps {
 	setData: (roster: GameCharacter[]) => Promise<any>;
 }
 
-export const InitiativeTrackerDummyCard = ({ side, data, setData }: InitiativeTrackerDummyCardProps) => {
+export default function InitiativeTrackerDummyCard({ side, data, setData }: InitiativeTrackerDummyCardProps) {
 	const [dropProps, dropRef] = useDrop({
 		accept: INITIATIVE_CARD,
 		drop: (draggedItem: DraggableCharacterItem, monitor) => {

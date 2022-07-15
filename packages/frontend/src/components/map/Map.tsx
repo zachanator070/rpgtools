@@ -1,7 +1,7 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
 import { Dropdown, Menu } from "antd";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 
 interface MapProps {
 	menuItems: MapMenuItem[];
@@ -13,7 +13,7 @@ interface MapMenuItem {
 	onClick: (mouseX: number, mouseY: number) => Promise<any>
 }
 
-export const Map = ({ menuItems, extras }: MapProps) => {
+export default function Map({ menuItems, extras }: MapProps) {
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 

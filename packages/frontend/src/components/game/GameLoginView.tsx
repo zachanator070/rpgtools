@@ -1,13 +1,13 @@
 import React from "react";
 import { List, Row, Col, Form, Input, Button } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 import useCreateGame from "../../hooks/game/useCreateGame";
 import useJoinGame from "../../hooks/game/useJoinGame";
 import { Link, useHistory } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
 
-export const GameLoginView = () => {
+export default function GameLoginView() {
 	const history = useHistory();
 
 	const { currentWorld, loading } = useCurrentWorld();

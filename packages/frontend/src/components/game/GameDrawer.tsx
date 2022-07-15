@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { SlidingDrawer } from "../SlidingDrawer";
+import SlidingDrawer from "../SlidingDrawer";
 import { Tabs } from "antd";
-import { GameChat } from "./GameChat";
-import { ToolOptions } from "./ToolOptions";
+import GameChat from "./GameChat";
+import ToolOptions from "./ToolOptions";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS, GameRenderer,
@@ -10,9 +10,9 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import { DiceOptions } from "./DiceOptions";
-import { useGameChatSubscription } from "../../hooks/game/useGameChatSubscription";
-import { useCurrentCharacter } from "../../hooks/game/useCurrentCharacter";
+import DiceOptions from "./DiceOptions";
+import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
+import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 
 const { TabPane } = Tabs;
 
@@ -30,7 +30,7 @@ interface GameDrawerProps {
 	setGameWikiId: (wikiId: string) => void;
 }
 
-export const GameDrawer = ({ renderer, controlsMode, setGameWikiId }: GameDrawerProps) => {
+export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: GameDrawerProps) {
 	const [visible, setVisible] = useState<boolean>(true);
 	const [activeKey, setActiveKey] = useState<string>("1");
 	const { gameChat } = useGameChatSubscription();

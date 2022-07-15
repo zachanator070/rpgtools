@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {Game} from "../../types";
 import {GET_GAME} from "@rpgtools/common/src/gql-queries";
 
@@ -11,7 +11,7 @@ interface GetGameResult extends GqlQueryResult<Game, GetGameVariables>{
 	currentGame: Game;
 }
 
-export default (): GetGameResult => {
+export default function useCurrentGame(): GetGameResult {
 	const { game_id } = useParams();
 	const result = useGQLQuery<Game, GetGameVariables>(GET_GAME, {gameId: game_id});
 	return {

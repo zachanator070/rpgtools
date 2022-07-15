@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {MOVE_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
@@ -10,7 +10,7 @@ interface MoveFolderVariables {
 interface MoveFolderResult extends GqlMutationResult<World, MoveFolderVariables> {
 	moveFolder: MutationMethod<World, MoveFolderVariables>
 }
-export const useMoveFolder = (callback?: (data: World) => Promise<void>): MoveFolderResult => {
+export default function useMoveFolder(callback?: (data: World) => Promise<void>): MoveFolderResult {
 	const result = useGQLMutation<World, MoveFolderVariables>(
 		MOVE_FOLDER,
 		{},

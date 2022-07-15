@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, List, Radio, Row, Tabs } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
-import { useGrantUserPermission } from "../../hooks/authorization/useGrantUserPermisison";
-import { useGrantRolePermission } from "../../hooks/authorization/useGrantRolePermission";
-import { useRevokeUserPermission } from "../../hooks/authorization/useRevokeUserPermission";
-import { useRevokeRolePermission } from "../../hooks/authorization/useRevokeRolePermission";
-import { SelectUser } from "../select/SelectUser";
-import { SelectRole } from "../select/SelectRole";
+import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermisison";
+import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission";
+import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission";
+import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission";
+import SelectUser from "../select/SelectUser";
+import SelectRole from "../select/SelectRole";
 import {PermissionAssignment, Role, User} from "../../types";
 
 interface PermissionEditorProps {
@@ -16,7 +16,7 @@ interface PermissionEditorProps {
 	refetch?: () => Promise<void>
 }
 
-export const PermissionEditor = ({ subject, subjectType, refetch }: PermissionEditorProps) => {
+export default function PermissionEditor({ subject, subjectType, refetch }: PermissionEditorProps) {
 	const [permissionGroup, setPermissionGroup] = useState<string>("users");
 	const { grantUserPermission } = useGrantUserPermission();
 	const { grantRolePermission } = useGrantRolePermission();

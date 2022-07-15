@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {REMOVE_USER_ROLE} from "@rpgtools/common/src/gql-mutations";
 
@@ -11,7 +11,7 @@ interface RemoveUserRoleResult extends GqlMutationResult<World, RemoveUserRoleVa
 	removeUserRole: MutationMethod<World, RemoveUserRoleVariables>;
 }
 
-export default (): RemoveUserRoleResult => {
+export default function useRemoveUserRole(): RemoveUserRoleResult {
 	const result = useGQLMutation<World, RemoveUserRoleVariables>(REMOVE_USER_ROLE);
 	return {
 		...result,

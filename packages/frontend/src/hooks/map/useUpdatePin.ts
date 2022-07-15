@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {UPDATE_PIN} from "@rpgtools/common/src/gql-mutations";
 
@@ -10,7 +10,7 @@ interface UpdatePinVariables {
 interface UpdatePinResult extends GqlMutationResult<World, UpdatePinVariables>{
 	updatePin: MutationMethod<World, UpdatePinVariables>;
 }
-export const useUpdatePin = ():UpdatePinResult => {
+export default function useUpdatePin():UpdatePinResult {
 	const result = useGQLMutation<World, UpdatePinVariables>(UPDATE_PIN);
 	return {
 		...result,

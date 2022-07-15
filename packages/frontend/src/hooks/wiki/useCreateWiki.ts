@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {CREATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
@@ -11,7 +11,7 @@ interface CreateWikiResult {
 	createWiki: MutationMethod<World, CreateWikiVariables>;
 }
 
-export const useCreateWiki = (): CreateWikiResult => {
+export default function useCreateWiki(): CreateWikiResult {
 	const result = useGQLMutation<World, CreateWikiVariables>(CREATE_WIKI);
 	return {
 		...result,

@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {WikiPage} from "../../types";
 import useCurrentWiki from "./useCurrentWiki";
 import {GET_FOLDER_PATH, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
@@ -13,7 +13,7 @@ interface MoveWikiResult {
 	moveWiki: MutationMethod<WikiPage, MoveWikiVariables>;
 }
 
-export const useMoveWiki = (): MoveWikiResult => {
+export default function useMoveWiki(): MoveWikiResult {
 	const {currentWiki} = useCurrentWiki();
 	const result = useGQLMutation<WikiPage, MoveWikiVariables>(MOVE_WIKI, null, {
 		async update(cache, { data} , {variables}) {

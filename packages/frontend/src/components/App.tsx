@@ -3,14 +3,14 @@ import "@babel/polyfill";
 import { Route, Switch, Redirect } from "react-router-dom";
 import "../css/index.css";
 import "antd/dist/antd.css";
-import { NavBar } from "./nav/NavBar";
-import { DefaultView } from "./DefaultView";
+import NavBar from "./nav/NavBar";
+import DefaultView from "./DefaultView";
 import AppContent from "./AppContent";
-import { ServerSetup } from "./server/ServerSetup";
+import ServerSetup from "./server/ServerSetup";
 import ServerSettings from "./server/ServerSettings";
 import MapWikiContext from "../MapWikiContext";
 
-export default () => {
+export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();
 	const [showMapDrawer, setShowMapDrawer] = useState<boolean>(false);
 	return (

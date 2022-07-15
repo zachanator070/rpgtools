@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game} from "../../types";
 import {DELETE_POSITIONED_MODEL} from "@rpgtools/common/src/gql-mutations";
 
@@ -11,7 +11,7 @@ interface DeletePositionedModelResult extends GqlMutationResult<Game,  DeletePos
 	deletePositionedModel: MutationMethod<Game, DeletePositionedModelVariables>
 }
 
-export const useDeletePositionedModel = (): DeletePositionedModelResult => {
+export default function useDeletePositionedModel(): DeletePositionedModelResult {
 	const result = useGQLMutation<Game,  DeletePositionedModelVariables>(DELETE_POSITIONED_MODEL);
 	return {
 		...result,

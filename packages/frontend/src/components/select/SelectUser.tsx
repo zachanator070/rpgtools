@@ -1,14 +1,14 @@
 import React, {CSSProperties, useState} from "react";
 import { Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useSearchUsers } from "../../hooks/authentication/useSearchUsers";
+import useSearchUsers from "../../hooks/authentication/useSearchUsers";
 
 interface SelectUserProps {
 	onChange: (userId: string) => Promise<any>;
 	style?: CSSProperties;
 }
 
-export const SelectUser = ({ onChange, style }: SelectUserProps) => {
+export default function SelectUser({ onChange, style }: SelectUserProps) {
 	const { searchUsers, users, loading } = useSearchUsers();
 	const [value, setValue] = useState<string>();
 

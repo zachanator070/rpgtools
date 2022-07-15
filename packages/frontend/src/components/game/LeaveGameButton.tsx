@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 
-export const LeaveGameButton = () => {
+export default function LeaveGameButton() {
 	const { currentWorld } = useCurrentWorld();
 
 	const history = useHistory();

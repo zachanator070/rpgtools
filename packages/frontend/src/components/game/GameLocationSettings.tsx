@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { SelectWiki } from "../select/SelectWiki";
+import SelectWiki from "../select/SelectWiki";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import { Button, Checkbox } from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { useSetGameMap } from "../../hooks/game/useSetGameMap";
-import { LoadingView } from "../LoadingView";
+import useSetGameMap from "../../hooks/game/useSetGameMap";
+import LoadingView from "../LoadingView";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>
  }
 
-export const GameLocationSettings = ({ setGameWikiId }: GameLocationSettingsProps) => {
+export default function GameLocationSettings({ setGameWikiId }: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [clearPaint, setClearPaint] = useState<boolean>();

@@ -5,7 +5,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link } from "react-router-dom";
 import {Pin, Place} from "../../types";
 
-export const MapBreadCrumbs = () => {
+export default function MapBreadCrumbs() {
 	const { currentMap, loading } = useCurrentMap();
 	const { currentWorld } = useCurrentWorld();
 

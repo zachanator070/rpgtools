@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {World} from "../../types";
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {GET_CURRENT_WORLD} from "@rpgtools/common/src/gql-queries";
 
 interface CurrentWorldVariables {
@@ -11,7 +11,7 @@ interface CurrentWorldResult extends GqlQueryResult<World, CurrentWorldVariables
 	currentWorld: World;
 }
 
-export default (): CurrentWorldResult => {
+export default function useCurrentWorld(): CurrentWorldResult {
 	const { world_id } = useParams();
 	const result = useGQLQuery<World, CurrentWorldVariables>(GET_CURRENT_WORLD, {worldId: world_id});
 	return {

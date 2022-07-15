@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game} from "../../types";
 import {SET_GAME_MAP} from "@rpgtools/common/src/gql-mutations";
 
@@ -12,7 +12,7 @@ interface SetGameMapVariables {
 interface SetGameMapResult extends GqlMutationResult<Game, SetGameMapVariables> {
 	setGameMap: MutationMethod<Game, SetGameMapVariables>;
 }
-export const useSetGameMap = (): SetGameMapResult => {
+export default function useSetGameMap(): SetGameMapResult {
 	const result = useGQLMutation<Game, SetGameMapVariables>(SET_GAME_MAP);
 	return {
 		...result,

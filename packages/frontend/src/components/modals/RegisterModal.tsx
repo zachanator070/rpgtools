@@ -9,7 +9,7 @@ interface RegisterModalProps {
 	setVisibility: (visibility: boolean) => Promise<void>;
 }
 
-export const RegisterModal = ({ visibility, setVisibility }: RegisterModalProps) => {
+export default function RegisterModal({ visibility, setVisibility }: RegisterModalProps) {
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");

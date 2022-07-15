@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import useCurrentGame from "./useCurrentGame";
 import {Game} from "../../types";
 import {SET_MODEL_COLOR} from "@rpgtools/common/src/gql-mutations";
@@ -13,7 +13,7 @@ interface SetModelColorResult extends GqlMutationResult<Game, SetModelColorVaria
 	setModelColor: MutationMethod<Game, SetModelColorVariables>;
 }
 
-export const useSetModelColor = (): SetModelColorResult => {
+export default function useSetModelColor(): SetModelColorResult{
 	const { currentGame } = useCurrentGame();
 	const returnValues = useGQLMutation<Game, SetModelColorVariables>(SET_MODEL_COLOR, {gameId: currentGame});
 	return {

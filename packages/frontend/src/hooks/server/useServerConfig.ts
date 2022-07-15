@@ -1,12 +1,12 @@
 import {ServerConfig} from "../../types";
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries";
 
 interface ServerConfigResult extends GqlQueryResult<ServerConfig> {
 	serverConfig: ServerConfig
 }
 
-export default (): ServerConfigResult => {
+export default function useServerConfig(): ServerConfigResult {
 	const result = useGQLQuery<ServerConfig>(GET_SERVER_CONFIG);
 	return {
 		...result,

@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { Button, Col, Input, List, Row, Select, Table, Tabs } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateRole from "../../hooks/authorization/useCreateRole";
 import useDeleteRole from "../../hooks/authorization/useDeleteRole";
-import { useRevokeRolePermission } from "../../hooks/authorization/useRevokeRolePermission";
+import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
-import { SelectUser } from "../select/SelectUser";
+import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
-import { AddRolePermission } from "./AddRolePermission";
+import AddRolePermission from "./AddRolePermission";
 import {PermissionAssignment, User} from "../../types";
 
 interface TabulatedPermissionAssignment extends PermissionAssignment {
 	key: string;
 }
 
-export const RolesView = () => {
+export default function RolesView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
 	const { createRole, loading: createRoleLoading } = useCreateRole();
 	const { revokeRolePermission } = useRevokeRolePermission();

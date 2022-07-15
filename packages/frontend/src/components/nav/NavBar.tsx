@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Button, Col, Divider, Row } from "antd";
 import { Link } from "react-router-dom";
-import { WorldMenu } from "./WorldMenu";
+import WorldMenu from "./WorldMenu";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useLogout from "../../hooks/authentication/useLogout";
-import { SearchBarV2 } from "./SearchBar";
+import SearchBar from "./SearchBar";
 import { GlobalOutlined, UserOutlined, CloudServerOutlined } from "@ant-design/icons";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { LoginModal } from "../modals/LoginModal";
-import { RegisterModal } from "../modals/RegisterModal";
+import LoginModal from "../modals/LoginModal";
+import RegisterModal from "../modals/RegisterModal";
 
-export const NavBar = () => {
+export default function NavBar() {
 	const { currentUser, loading: userLoading } = useCurrentUser();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 	const [loginModalVisibility, setLoginModalVisibility] = useState(false);
@@ -105,7 +105,7 @@ export const NavBar = () => {
 							</div>
 						</Col>
 						<Col span={10}>
-							<SearchBarV2 />
+							<SearchBar />
 						</Col>
 					</>
 				) : (

@@ -1,5 +1,5 @@
 import {Game} from "../../types";
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {LEAVE_GAME} from "@rpgtools/common/src/gql-mutations";
 
 interface LeaveGameVariables {
@@ -11,7 +11,7 @@ interface LeaveGameResult extends GqlMutationResult<Game, LeaveGameVariables> {
 	leaveGame: MutationMethod<Game, LeaveGameVariables>
 }
 
-export default (callback): LeaveGameResult => {
+export default function useLeaveGame(callback): LeaveGameResult {
 
 	const result = useGQLMutation<Game, LeaveGameVariables>(LEAVE_GAME, {} , {
 		onCompleted: callback,

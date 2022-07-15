@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {REVOKE_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations";
 
@@ -12,7 +12,7 @@ interface RevokeUserPermissionResult extends GqlMutationResult<World, RevokeUser
 	revokeUserPermission: MutationMethod<World, RevokeUserPermissionVariables>
 }
 
-export const useRevokeUserPermission = (): RevokeUserPermissionResult => {
+export default function useRevokeUserPermission(): RevokeUserPermissionResult {
 	const result = useGQLMutation<World, RevokeUserPermissionVariables>(REVOKE_USER_PERMISSION);
 	return {
 		...result,

@@ -1,4 +1,4 @@
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {WikiPage} from "../../types";
 import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
 

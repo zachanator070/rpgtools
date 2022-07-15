@@ -16,12 +16,12 @@ interface InitiativeTrackerCardProps {
 	loading: boolean;
 }
 
-export const InitiativeTrackerCard = ({
+export default function InitiativeTrackerCard({
 	name,
 	data,
 	setData,
 	loading,
-}: InitiativeTrackerCardProps) => {
+}: InitiativeTrackerCardProps) {
 	const { currentGame } = useCurrentGame();
 
 	const [props, dragRef] = useDrag<DraggableCharacterItem, void, void>({

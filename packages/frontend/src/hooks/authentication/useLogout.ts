@@ -1,12 +1,12 @@
 import {useApolloClient} from "@apollo/client";
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {LOGOUT_QUERY} from "@rpgtools/common/src/gql-mutations";
 
 interface LogoutResult extends GqlMutationResult<boolean> {
 	logout: MutationMethod<boolean, undefined>
 }
 
-export default (): LogoutResult => {
+export default function useLogout(): LogoutResult {
 	const client = useApolloClient();
 
 	const result = useGQLMutation<boolean>(LOGOUT_QUERY, {}, {

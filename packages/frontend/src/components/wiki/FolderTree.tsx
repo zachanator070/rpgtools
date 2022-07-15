@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { useWikisInFolder } from "../../hooks/wiki/useWikisInFolder";
-import { useFolders } from "../../hooks/wiki/useFolders";
-import { LoadingView } from "../LoadingView";
+import React from "react";
+import useWikisInFolder from "../../hooks/wiki/useWikisInFolder";
+import useFolders from "../../hooks/wiki/useFolders";
+import LoadingView from "../LoadingView";
 import { useEffect, useState } from "react";
 import {
 	DownOutlined,
@@ -10,9 +10,9 @@ import {
 	FolderOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { FolderMenu } from "./FolderMenu";
+import FolderMenu from "./FolderMenu";
 import { useParams } from "react-router-dom";
-import { useGetFolderPath } from "../../hooks/wiki/useGetFolderPath";
+import useGetFolderPath from "../../hooks/wiki/useGetFolderPath";
 import {WikiFolder} from "../../types";
 
 interface FolderTreeProps {

@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {RENAME_WORLD} from "@rpgtools/common/src/gql-mutations";
 
@@ -11,7 +11,7 @@ interface RenameWorldResult extends GqlMutationResult<World, RenameWorldVariable
 	renameWorld: MutationMethod<World, RenameWorldVariables>;
 }
 
-export const useRenameWorld = (): RenameWorldResult => {
+export default function useRenameWorld(): RenameWorldResult {
 	const result = useGQLMutation<World, RenameWorldVariables>(RENAME_WORLD);
 	return {
 		...result,

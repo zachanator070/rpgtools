@@ -1,5 +1,5 @@
 import useCurrentWorld from "../world/useCurrentWorld";
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game} from "../../types";
 import {CREATE_GAME} from "@rpgtools/common/src/gql-mutations";
 
@@ -13,7 +13,7 @@ interface CreateGameResult extends GqlMutationResult<Game, CreateGameVariables>{
 	createGame: MutationMethod<Game, CreateGameVariables>;
 }
 
-export default (callback): CreateGameResult => {
+export default function useCreateGame(callback): CreateGameResult {
 	const { currentWorld } = useCurrentWorld();
 
 	const result = useGQLMutation<Game, CreateGameVariables>(CREATE_GAME, {gameId: currentWorld._id}, { onCompleted: callback });

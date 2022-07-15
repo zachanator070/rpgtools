@@ -13,25 +13,25 @@ import {
 } from "../../rendering/GameRenderer";
 import { Progress, Modal, notification } from "antd";
 import useAddStroke from "../../hooks/game/useAddStroke";
-import { useGameStrokeSubscription } from "../../hooks/game/useGameStrokeSubscription";
-import { GameControlsToolbar } from "./GameControlsToolbar";
-import { useGameModelAddedSubscription } from "../../hooks/game/useGameModelAddedSubscription";
-import { useSetModelPosition } from "../../hooks/game/useSetModelPosition";
-import { useGameModelPositionedSubscription } from "../../hooks/game/useGameModelPosistionedSubscription";
-import { useDeletePositionedModel } from "../../hooks/game/useDeletePositionedModel";
-import { useGameModelDeletedSubscription } from "../../hooks/game/useGameModelDeletedSubscription";
-import { useAddFogStroke } from "../../hooks/game/useAddFogStroke";
-import { useGameFogSubscription } from "../../hooks/game/useGameFogSubscription";
-import { GameWikiDrawer } from "./GameWikiDrawer";
-import { InitiativeTracker } from "./InitiativeTracker";
-import { GameDrawer } from "./GameDrawer";
+import useGameStrokeSubscription from "../../hooks/game/useGameStrokeSubscription";
+import GameControlsToolbar from "./GameControlsToolbar";
+import useGameModelAddedSubscription from "../../hooks/game/useGameModelAddedSubscription";
+import useSetModelPosition from "../../hooks/game/useSetModelPosition";
+import useGameModelPositionedSubscription from "../../hooks/game/useGameModelPosistionedSubscription";
+import useDeletePositionedModel from "../../hooks/game/useDeletePositionedModel";
+import useGameModelDeletedSubscription from "../../hooks/game/useGameModelDeletedSubscription";
+import useAddFogStroke from "../../hooks/game/useAddFogStroke";
+import useGameFogSubscription from "../../hooks/game/useGameFogSubscription";
+import GameWikiDrawer from "./GameWikiDrawer";
+import InitiativeTracker from "./InitiativeTracker";
+import GameDrawer from "./GameDrawer";
 import {Game} from "../../types";
 
 interface GameContentProps {
 	currentGame: Game;
 }
 
-export const GameContent = ({ currentGame }: GameContentProps) => {
+export default function GameContent({ currentGame }: GameContentProps) {
 	const renderCanvas: Ref<HTMLCanvasElement> = useRef();
 	const [renderer, setRenderer] = useState<GameRenderer>();
 	const [showLoading, setShowLoading] = useState<boolean>(false);

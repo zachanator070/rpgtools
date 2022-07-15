@@ -2,15 +2,15 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Modal } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { useCreateModel } from "../../hooks/model/useCreateModel";
-import { ModelForm } from "./ModelForm";
+import useCreateModel from "../../hooks/model/useCreateModel";
+import ModelForm from "./ModelForm";
 
 interface CreateModelModalProps {
 	visibility: boolean;
 	setVisibility: (visibility: boolean) => Promise<any>;
 }
 
-export const CreateModelModal = ({ visibility, setVisibility }: CreateModelModalProps) => {
+export default function CreateModelModal({ visibility, setVisibility }: CreateModelModalProps) {
 	const { currentWorld } = useCurrentWorld();
 
 	const { createModel, loading } = useCreateModel(async (data) => {

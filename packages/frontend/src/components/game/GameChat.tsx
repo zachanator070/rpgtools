@@ -1,11 +1,11 @@
 import React, {Ref, useEffect, useRef, useState} from "react";
-import { Button, Collapse, Comment, Form, Input, List } from "antd";
-import { useGameChatSubscription } from "../../hooks/game/useGameChatSubscription";
-import { useGameChat } from "../../hooks/game/useGameChat";
+import { Button, Comment, Form, Input, List } from "antd";
+import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
+import useGameChat from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { useCurrentCharacter } from "../../hooks/game/useCurrentCharacter";
+import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 
-export const GameChat = () => {
+export default function GameChat() {
 	const { currentGame } = useCurrentGame();
 	const { currentCharacter } = useCurrentCharacter();
 	const [messages, setMessages] = useState([]);

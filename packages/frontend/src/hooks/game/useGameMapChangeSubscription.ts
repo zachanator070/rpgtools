@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import {GqlSubscriptionResult, useGQLSubscription} from "../useGQLSubscription";
+import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
 import gql from "graphql-tag";
 import {Game} from "../../types";
 import {GAME_FOG_STROKES, GAME_MAP, GAME_STROKES} from "@rpgtools/common/src/gql-fragments";
@@ -26,7 +26,7 @@ interface GameMapChangeSubscriptionResult extends GqlSubscriptionResult<Game>{
 	gameMapChange: Game;
 }
 
-export const useGameMapChangeSubscription = (): GameMapChangeSubscriptionResult => {
+export default function useGameMapChangeSubscription(): GameMapChangeSubscriptionResult {
 	const { game_id } = useParams();
 	const result = useGQLSubscription<Game, GameMapChangeSubscriptionVariables>(GAME_MAP_SUBSCRIPTION, { gameId: game_id });
 	return {

@@ -1,5 +1,5 @@
 import {DocumentNode, MutationHookOptions, useMutation} from "@apollo/client";
-import {useGQLResponse} from "./useGQLResponse";
+import useGQLResponse from "./useGQLResponse";
 import {ApiHookResponse} from "./types";
 
 export interface GqlMutationResult<TData, TVariables=void> extends ApiHookResponse<TData> {
@@ -11,11 +11,11 @@ export type MutationMethod<TData, TVariables> = (variables?: TVariables) => Prom
 interface GqlMutationOptions<TData, TVariables> extends MutationHookOptions<TData, TVariables> {
 	displayErrors?: boolean;
 }
-export const useGQLMutation = <TData, TVariables=void>(
+export default function useGQLMutation<TData, TVariables=void>(
 	query: DocumentNode,
 	variables={},
 	options: GqlMutationOptions<TData, TVariables> = { displayErrors: true }
-): GqlMutationResult<TData, TVariables> => {
+): GqlMutationResult<TData, TVariables> {
 	const [mutation, { data, loading, error }] = useMutation<TData, TVariables>(query, options);
 
 	if(!variables) {

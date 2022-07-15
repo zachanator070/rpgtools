@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { InitiativeTrackerCard } from "./InitiativeTrackerCard";
-import { InitiativeTrackerDummyCard } from "./InitiativeTrackerDummyCard";
+import InitiativeTrackerCard from "./InitiativeTrackerCard";
+import InitiativeTrackerDummyCard from "./InitiativeTrackerDummyCard";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { useSetCharacterOrder } from "../../hooks/game/useSetCharacterOrder";
-import { useGameRosterSubscription } from "../../hooks/game/useGameRosterSubscription";
+import useSetCharacterOrder from "../../hooks/game/useSetCharacterOrder";
+import useGameRosterSubscription from "../../hooks/game/useGameRosterSubscription";
 import {GameCharacter} from "../../types";
 
-export const InitiativeTracker = () => {
+export default function InitiativeTracker() {
 	const { currentGame } = useCurrentGame();
 	const {
 		setCharacterOrder,

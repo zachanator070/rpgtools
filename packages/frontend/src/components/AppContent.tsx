@@ -1,15 +1,15 @@
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import useCurrentWorld from "../hooks/world/useCurrentWorld";
-import { LoadingView } from "./LoadingView";
-import { MapView } from "./map/MapView";
+import LoadingView from "./LoadingView";
+import MapView from "./map/MapView";
 import React from "react";
 import WorldSettings from "./WorldSettings";
-import { RolesView } from "./permissions/RolesView";
-import { MyPermissionsView } from "./permissions/MyPermissionsView";
-import { GameView } from "./game/GameView";
-import { GameLoginView } from "./game/GameLoginView";
+import RolesView from "./permissions/RolesView";
+import MyPermissionsView from "./permissions/MyPermissionsView";
+import GameView from "./game/GameView";
+import GameLoginView from "./game/GameLoginView";
 import WikView from "./wiki/WikiView";
-import { ModelView } from "./models/ModelView";
+import ModelView from "./models/ModelView";
 
 export default function AppContent(){
 	const match = useRouteMatch();

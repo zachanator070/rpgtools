@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Button, Form, Modal, Select } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { useUpdatePin } from "../../hooks/map/useUpdatePin";
-import { useDeletePin } from "../../hooks/map/useDeletePin";
-import { SelectWiki } from "../select/SelectWiki";
+import useUpdatePin from "../../hooks/map/useUpdatePin";
+import useDeletePin from "../../hooks/map/useDeletePin";
+import SelectWiki from "../select/SelectWiki";
 import {Place} from "../../types";
 
 interface EditPinModalProps {
@@ -12,7 +12,7 @@ interface EditPinModalProps {
 	pinId: string;
 }
 
-export const EditPinModal = ({ visibility, setVisibility, pinId }: EditPinModalProps) => {
+export default function EditPinModal({ visibility, setVisibility, pinId }: EditPinModalProps) {
 	const [page, setPage] = useState(null);
 
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();

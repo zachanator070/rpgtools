@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Button, Dropdown, Menu } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 import { DownOutlined } from "@ant-design/icons";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { CreateWorldModal } from "../modals/CreateWorldModal";
-import { SelectWorldModal } from "../modals/SelectWorldModal";
+import CreateWorldModal from "../modals/CreateWorldModal";
+import SelectWorldModal from "../modals/SelectWorldModal";
 
-export const WorldMenu = () => {
+export default function WorldMenu() {
 	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);
 	const [selectWorldModalVisibility, setSelectWorldModalVisibility] = useState(false);
 

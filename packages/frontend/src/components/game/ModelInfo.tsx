@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSetModelColor } from "../../hooks/game/useSetModelColor";
+import useSetModelColor from "../../hooks/game/useSetModelColor";
 import { Button, Input } from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { SelectWiki } from "../select/SelectWiki";
-import { useSetPositionedModelWiki } from "../../hooks/game/useSetPositionedModelWiki";
-import { useGameModelPositionedSubscription } from "../../hooks/game/useGameModelPosistionedSubscription";
-import { LoadingView } from "../LoadingView";
-import { useDeletePositionedModel } from "../../hooks/game/useDeletePositionedModel";
+import SelectWiki from "../select/SelectWiki";
+import useSetPositionedModelWiki from "../../hooks/game/useSetPositionedModelWiki";
+import useGameModelPositionedSubscription from "../../hooks/game/useGameModelPosistionedSubscription";
+import LoadingView from "../LoadingView";
+import useDeletePositionedModel from "../../hooks/game/useDeletePositionedModel";
 import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../rendering/GameRenderer";
 import { MODEL_SELECTED_EVENT } from "../../controls/SelectModelControls";
 import {PositionedModel, WikiPage} from "../../types";
@@ -16,7 +16,7 @@ interface ModelInfoProps {
 	setGameWikiId: (wikiId: string) => Promise<any>
 }
 
-export const ModelInfo = ({ renderer, setGameWikiId }: ModelInfoProps) => {
+export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 	const { currentGame, loading } = useCurrentGame();
 	const [positionedModel, setPositionedModel] = useState<PositionedModel>();
 	const [newWiki, setNewWiki] = useState<WikiPage>();

@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {ModeledWiki} from "../../types";
 import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
 import {UPDATE_MODELED_WIKI} from "@rpgtools/common/src/gql-mutations";
@@ -12,7 +12,7 @@ interface UpdateModeledWikiVariables {
 interface UpdateModeledWikiResult {
 	updateModeledWiki: MutationMethod<ModeledWiki, UpdateModeledWikiVariables>;
 }
-export const useUpdateModeledWiki = (): UpdateModeledWikiResult => {
+export default function useUpdateModeledWiki(): UpdateModeledWikiResult {
 	const result = useGQLMutation<ModeledWiki, UpdateModeledWikiVariables>(UPDATE_MODELED_WIKI, null, {
 		refetchQueries: [GET_WIKI]
 	});

@@ -1,19 +1,19 @@
 import React from "react";
-import { ModelForm } from "./ModelForm";
+import ModelForm from "./ModelForm";
 import Errors from "../Errors";
 import { Row, Col, Button, Modal } from "antd";
 import useUpdateModel from "../../hooks/model/useUpdateModel";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { LoadingView } from "../LoadingView";
-import { useDeleteModel } from "../../hooks/model/useDeleteModel";
+import LoadingView from "../LoadingView";
+import useDeleteModel from "../../hooks/model/useDeleteModel";
 import {Model} from "../../types";
 
 interface ModelEditProps {
 	model: Model;
 }
 
-export const ModelEdit = ({ model }: ModelEditProps) => {
+export default function ModelEdit({ model }: ModelEditProps) {
 	const { updateModel, loading } = useUpdateModel();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 	const history = useHistory();

@@ -1,16 +1,16 @@
 import React, {useContext} from "react";
-import { Map } from "./Map";
-import { PinComponent } from "./PinComponent";
+import Map from "./Map";
+import PinComponent from "./PinComponent";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 import useCreatePin from "../../hooks/map/useCreatePin";
 import { Link } from "react-router-dom";
-import { MapBreadCrumbs } from "./MapBreadCrumbs";
-import { MapDrawer } from "./MapDrawer";
+import MapBreadCrumbs from "./MapBreadCrumbs";
+import MapDrawer from "./MapDrawer";
 import MapWikiContext from "../../MapWikiContext";
 
-export const MapView = () => {
+export default function MapView() {
 	const { currentWorld, loading } = useCurrentWorld();
 	const { currentMap, loading: mapLoading } = useCurrentMap();
 	const { createPin } = useCreatePin();
