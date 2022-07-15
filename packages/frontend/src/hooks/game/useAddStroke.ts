@@ -1,5 +1,5 @@
 import useCurrentGame from "./useCurrentGame";
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game, PathNodeInput} from "../../types";
 import {ADD_STROKE} from "@rpgtools/common/src/gql-mutations";
 
@@ -17,7 +17,7 @@ interface AddStrokeResult extends GqlMutationResult<Game, AddStrokeVariables> {
 	addStroke: MutationMethod<Game, AddStrokeVariables>;
 }
 
-export default (): AddStrokeResult => {
+export default function useAddStroke(): AddStrokeResult {
 	const { currentGame } = useCurrentGame();
 	const returnValues = useGQLMutation<Game, AddStrokeVariables>(ADD_STROKE, {gameId: currentGame._id});
 	return {

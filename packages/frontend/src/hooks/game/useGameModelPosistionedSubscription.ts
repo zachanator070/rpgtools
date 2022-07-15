@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import {GqlSubscriptionResult, useGQLSubscription} from "../useGQLSubscription";
+import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
 import gql from "graphql-tag";
 import {Game, PositionedModel} from "../../types";
 import {GAME_MODEL} from "@rpgtools/common/src/gql-fragments";
@@ -20,7 +20,7 @@ interface GameModelPositionedSubscriptionVariables {
 interface GameModelPositionedSubscriptionResult extends GqlSubscriptionResult<PositionedModel>{
 	gameModelPositioned: PositionedModel
 }
-export const useGameModelPositionedSubscription = (): GameModelPositionedSubscriptionResult => {
+export default function useGameModelPositionedSubscription(): GameModelPositionedSubscriptionResult {
 	const { game_id } = useParams();
 	const result = useGQLSubscription<PositionedModel, GameModelPositionedSubscriptionVariables>(GAME_MODEL_POSITIONED_SUBSCRIPTION, {
 		gameId: game_id,

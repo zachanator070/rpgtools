@@ -8,7 +8,7 @@ interface LoginModalProps {
 	setVisibility: (visibility: boolean) => Promise<void>;
 }
 
-export const LoginModal = ({ visibility, setVisibility }: LoginModalProps) => {
+export default function LoginModal({ visibility, setVisibility }: LoginModalProps) {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 

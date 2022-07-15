@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
 
 interface UnlockServerVariables {
@@ -12,7 +12,7 @@ interface UnlockServerResult extends GqlMutationResult<boolean, UnlockServerVari
 	unlockServer: MutationMethod<boolean, UnlockServerVariables>
 }
 
-export default (callback?: (data: boolean) => Promise<void>): UnlockServerResult => {
+export default function useUnlockServer(callback?: (data: boolean) => Promise<void>): UnlockServerResult {
 	const result = useGQLMutation<boolean, UnlockServerVariables>(
 		UNLOCK_SERVER,
 		{},

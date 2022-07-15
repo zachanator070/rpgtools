@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {Place} from "../../types";
 import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
 import {UPDATE_PLACE} from "@rpgtools/common/src/gql-mutations";
@@ -13,7 +13,7 @@ interface UpdatePlaceResult {
 	updatePlace: MutationMethod<Place, UpdatePlaceVariables>;
 }
 
-export default (): UpdatePlaceResult => {
+export default function useUpdatePlace(): UpdatePlaceResult {
 	const result = useGQLMutation<Place, UpdatePlaceVariables>(UPDATE_PLACE, null, {
 		refetchQueries: [GET_WIKI]
 	});

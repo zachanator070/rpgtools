@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {CREATE_PIN} from "@rpgtools/common/src/gql-mutations";
 
@@ -13,7 +13,7 @@ interface CreatePinResult extends GqlMutationResult<World, CreatePinVariables>{
 	createPin: MutationMethod<World, CreatePinVariables>;
 }
 
-export default (): CreatePinResult => {
+export default function useCreatePin(): CreatePinResult {
 	const result = useGQLMutation<World, CreatePinVariables>(CREATE_PIN);
 	return {
 		...result,

@@ -1,5 +1,5 @@
 import {UserPaginatedResult} from "../../types";
-import {GqlLazyHookResult, LazyHookFetch, useGQLLazyQuery} from "../useGQLLazyQuery";
+import useGQLLazyQuery, {GqlLazyHookResult, LazyHookFetch} from "../useGQLLazyQuery";
 import {SEARCH_USERS} from "@rpgtools/common/src/gql-queries";
 
 interface SearchUsersVariables {
@@ -10,7 +10,7 @@ interface SearchUsersResult extends GqlLazyHookResult<UserPaginatedResult, Searc
 	searchUsers: LazyHookFetch<UserPaginatedResult, SearchUsersVariables>,
 	users: UserPaginatedResult
 }
-export const useSearchUsers = (): SearchUsersResult => {
+export default function useSearchUsers(): SearchUsersResult {
 	const result = useGQLLazyQuery<UserPaginatedResult, SearchUsersVariables>(SEARCH_USERS);
 	return {
 		...result,

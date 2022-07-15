@@ -10,15 +10,15 @@ import {
 	TeamOutlined,
 	UploadOutlined,
 } from "@ant-design/icons";
-import { useCreateWiki } from "../../hooks/wiki/useCreateWiki";
+import useCreateWiki from "../../hooks/wiki/useCreateWiki";
 import useCreateFolder from "../../hooks/wiki/useCreateFolder";
-import { useRenameFolder } from "../../hooks/wiki/useRenameFolder";
-import { SelectFolder } from "../select/SelectFolder";
-import { useMoveFolder } from "../../hooks/wiki/useMoveFolder";
-import { useDeleteFolder } from "../../hooks/wiki/useDeleteFolder";
-import { ToolTip } from "../ToolTip";
-import { useImportContent } from "../../hooks/world/useImportContent";
-import { PermissionEditor } from "../permissions/PermissionEditor";
+import useRenameFolder from "../../hooks/wiki/useRenameFolder";
+import SelectFolder from "../select/SelectFolder";
+import useMoveFolder from "../../hooks/wiki/useMoveFolder";
+import useDeleteFolder from "../../hooks/wiki/useDeleteFolder";
+import ToolTip from "../ToolTip";
+import useImportContent from "../../hooks/world/useImportContent";
+import PermissionEditor from "../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import {WikiFolder} from "../../types";
 
@@ -29,7 +29,7 @@ interface FolderMenuProps {
 	refetchWikis?: () => Promise<any>;
 }
 
-export const FolderMenu = ({ folder, children, refetchFolders, refetchWikis }: FolderMenuProps) => {
+export default function FolderMenu({ folder, children, refetchFolders, refetchWikis }: FolderMenuProps) {
 	const { createWiki } = useCreateWiki();
 	const { createFolder } = useCreateFolder();
 	const { renameFolder } = useRenameFolder();

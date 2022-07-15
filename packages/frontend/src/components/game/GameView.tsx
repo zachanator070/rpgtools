@@ -1,15 +1,15 @@
 import React, { useEffect} from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { LoadingView } from "../LoadingView";
-import { GameContent } from "./GameContent";
+import LoadingView from "../LoadingView";
+import GameContent from "./GameContent";
 import { Modal} from "antd";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { useGameMapChangeSubscription } from "../../hooks/game/useGameMapChangeSubscription";
+import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
 import useMyGames from "../../hooks/game/useMyGames";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 
-export const GameView = () => {
+export default function GameView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
 	const { currentGame, loading } = useCurrentGame();
 	const { currentUser } = useCurrentUser();

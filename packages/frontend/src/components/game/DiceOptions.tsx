@@ -1,11 +1,11 @@
 import React from "react";
-import { DiceAttribute } from "./DiceAttribute";
-import { useCurrentCharacter } from "../../hooks/game/useCurrentCharacter";
-import { LoadingView } from "../LoadingView";
-import { DiceRoller } from "./DiceRoller";
-import { ToolTip } from "../ToolTip";
+import DiceAttribute from "./DiceAttribute";
+import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
+import LoadingView from "../LoadingView";
+import DiceRoller from "./DiceRoller";
+import ToolTip from "../ToolTip";
 
-export const DiceOptions = () => {
+export default function DiceOptions() {
 	const { currentCharacter } = useCurrentCharacter();
 	if (!currentCharacter) {
 		return <LoadingView />;

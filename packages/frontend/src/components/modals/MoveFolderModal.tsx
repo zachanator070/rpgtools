@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useMoveFolder } from "../../hooks/wiki/useMoveFolder";
+import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import { Button, Form, Modal } from "antd";
-import { SelectFolder } from "../select/SelectFolder";
+import SelectFolder from "../select/SelectFolder";
 import Errors from "../Errors";
 import {WikiFolder} from "../../types";
 
@@ -11,7 +11,7 @@ interface MoveFolderModalProps {
 	setVisibility: (visibility: boolean) => Promise<void>;
 }
 
-export const MoveFolderModal = ({ folder, visibility, setVisibility }: MoveFolderModalProps) => {
+export default function MoveFolderModal({ folder, visibility, setVisibility }: MoveFolderModalProps) {
 	const [selectedParent, setSelectedParent] = useState<string>();
 	const { moveFolder, errors } = useMoveFolder(async () => {
 		await setVisibility(false);

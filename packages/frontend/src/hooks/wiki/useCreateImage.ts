@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {Image} from "../../types";
 import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
 
@@ -12,7 +12,7 @@ interface CreateImageResult {
 	createImage: MutationMethod<Image, CreateImageVariables>;
 }
 
-export const useCreateImage = (): CreateImageResult => {
+export default function useCreateImage(): CreateImageResult {
 	const result = useGQLMutation<Image, CreateImageVariables>(CREATE_IMAGE);
 	return {
 		...result,

@@ -11,7 +11,7 @@ interface CurrentWikiResult extends GqlQueryResult<WikiPage, CurrentWikiVariable
 	currentWiki: WikiPage;
 }
 
-export default (): CurrentWikiResult => {
+export default function useCurrentWiki(): CurrentWikiResult {
 	const { wiki_id } = useParams();
 	const result = useGetWiki(wiki_id);
 	return {

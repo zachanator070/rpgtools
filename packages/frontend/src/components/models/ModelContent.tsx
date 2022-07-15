@@ -3,15 +3,15 @@ import { Row, Col, Table, Button } from "antd";
 import { EditOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { LoadingView } from "../LoadingView";
-import { ModelViewer } from "./ModelViewer";
+import LoadingView from "../LoadingView";
+import ModelViewer from "./ModelViewer";
 import {Model} from "../../types";
 
 interface ModelContentProps {
 	model: Model;
 }
 
-export const ModelContent = ({ model }: ModelContentProps) => {
+export default function ModelContent({ model }: ModelContentProps) {
 	const history = useHistory();
 	const { currentWorld, loading } = useCurrentWorld();
 

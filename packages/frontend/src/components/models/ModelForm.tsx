@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Input, Upload } from "antd";
-import { ToolTip } from "../ToolTip";
+import ToolTip from "../ToolTip";
 import { UploadOutlined } from "@ant-design/icons";
 
 interface CallbackValues {
@@ -19,12 +19,12 @@ interface ModelFormProps {
 	fileRequired?: boolean;
 }
 
-export const ModelForm = ({
+export default function ModelForm({
 	callback,
 	initialValues,
 	loading,
 	fileRequired = true,
-}: ModelFormProps) => {
+}: ModelFormProps) {
 	const formItemLayout = {
 		labelCol: { span: 7 },
 		wrapperCol: { span: 12 },

@@ -6,7 +6,7 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 
 Quill.debug("error");
 
@@ -16,7 +16,7 @@ interface EditorProps {
 	onInit?: (editor: Quill) => Promise<any>;
 }
 
-export const Editor = ({ content, readOnly, onInit }: EditorProps) => {
+export default function Editor({ content, readOnly, onInit }: EditorProps) {
 	const { currentWorld, loading } = useCurrentWorld();
 	const editorCreated = useRef(false);
 	const [editor, setEditor] = useState<Quill>();

@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
 import { Button, Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useSearchModels } from "../../hooks/model/useSearchModels";
+import useSearchModels from "../../hooks/model/useSearchModels";
 import {Model} from "../../types";
 
 interface SelectModelProps {
@@ -11,12 +11,12 @@ interface SelectModelProps {
 	showClear?: boolean;
 }
 
-export const SelectModel = ({
+export default function SelectModel({
 	onChange,
 	style,
 	defaultModel,
 	showClear = true,
-}: SelectModelProps) => {
+}: SelectModelProps) {
 	const { searchModels, models, loading } = useSearchModels();
 	const [value, setValue] = useState<string>();
 

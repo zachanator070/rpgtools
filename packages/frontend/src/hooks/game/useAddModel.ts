@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game} from "../../types";
 import {ADD_MODEL} from "@rpgtools/common/src/gql-mutations";
 
@@ -13,7 +13,7 @@ interface AddModelResult extends GqlMutationResult<Game, AddModelVariables> {
 	addModel: MutationMethod<Game, AddModelVariables>;
 }
 
-export const useAddModel = (): AddModelResult => {
+export default function useAddModel(): AddModelResult {
 	const result = useGQLMutation<Game, AddModelVariables>(ADD_MODEL);
 	return {
 		...result,

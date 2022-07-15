@@ -1,7 +1,7 @@
 import useCurrentUser from "../authentication/useCurrentUser";
 import {ApiHookResponse} from "../types";
 import {World} from "../../types";
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {CREATE_ROLE} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateRoleVariables {
@@ -13,7 +13,7 @@ interface CreateRoleResult extends ApiHookResponse<World>{
 	createRole: MutationMethod<World, CreateRoleVariables>
 }
 
-export default (): CreateRoleResult => {
+export default function useCreateRole(): CreateRoleResult {
 	const { refetch } = useCurrentUser();
 	const result = useGQLMutation<World, CreateRoleVariables>(CREATE_ROLE, {}, {
 		onCompleted: async () => refetch()

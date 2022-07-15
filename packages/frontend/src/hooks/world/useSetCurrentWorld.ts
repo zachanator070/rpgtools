@@ -1,5 +1,5 @@
 import useCurrentUser from "../authentication/useCurrentUser";
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {SET_CURRENT_WORLD} from "@rpgtools/common/src/gql-mutations";
 
@@ -11,7 +11,7 @@ interface SetCurrentWorldResult extends GqlMutationResult<World,  SetCurrentWorl
 	setCurrentWorld: MutationMethod<World, SetCurrentWorldVariables>;
 }
 
-export const useSetCurrentWorld = (): SetCurrentWorldResult => {
+export default function useSetCurrentWorld(): SetCurrentWorldResult {
 	const { refetch } = useCurrentUser();
 	const result = useGQLMutation<World, SetCurrentWorldVariables>(SET_CURRENT_WORLD, {}, {
 		onCompleted: async () => {

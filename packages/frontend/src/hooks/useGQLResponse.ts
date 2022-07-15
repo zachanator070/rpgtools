@@ -9,9 +9,9 @@ interface GenericGqlResponse<T> {
 	queryName: string;
 }
 
-export const useGQLResponse =
+export default function useGQLResponse
 	<T>(query: DocumentNode, data: any, error: ApolloError | undefined, displayErrors: boolean):
-		GenericGqlResponse<T> => {
+		GenericGqlResponse<T> {
 	let errors: string[] = [];
 	let errorTitle = "Server Error";
 	if (error) {

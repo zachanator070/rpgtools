@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert } from "antd";
 
-export default ({ errors }) => {
+export default function Errors({ errors }) {
 	if (!errors || errors.length === 0) {
 		return <></>;
 	}

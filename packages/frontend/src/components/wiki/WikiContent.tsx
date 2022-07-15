@@ -1,21 +1,21 @@
 import React, {ReactElement, useRef} from "react";
-import { Editor } from "./Editor";
+import Editor from "./Editor";
 import { ExportOutlined, EditOutlined } from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 import { MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
 import { Button, Tooltip } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { ModelViewer } from "../models/ModelViewer";
-import {Model, ModeledWiki, Place, WikiPage} from "../../types";
+import ModelViewer from "../models/ModelViewer";
+import {ModeledWiki, Place, WikiPage} from "../../types";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
 	wikiLoading?: boolean;
 }
 
-export default function WikiContent({ currentWiki, wikiLoading }: WikiContentProps){
+export default function WikiContent({ currentWiki, wikiLoading }: WikiContentProps) {
 	const history = useHistory();
 
 	const { currentWorld, loading } = useCurrentWorld();

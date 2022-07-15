@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Model} from "../../types";
 import {UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
@@ -17,7 +17,7 @@ interface UpdateModelResult extends GqlMutationResult<Model,  UpdateModelVariabl
 	model: Model;
 }
 
-export default (): UpdateModelResult => {
+export default function useUpdateModel(): UpdateModelResult {
 	const result = useGQLMutation<Model, UpdateModelVariables>(UPDATE_MODEL)
 	return {
 		...result,

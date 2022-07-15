@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useGameChat } from "../../hooks/game/useGameChat";
+import useGameChat from "../../hooks/game/useGameChat";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Input, Form, Modal } from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { useSetCharacterAttributes } from "../../hooks/game/useSetCharacterAttributes";
+import useSetCharacterAttributes from "../../hooks/game/useSetCharacterAttributes";
 
 interface DiceAttributeProps {
 	attribute: string;
 	value: number;
 }
-export const DiceAttribute = ({ attribute, value }: DiceAttributeProps) => {
+export default function DiceAttribute({ attribute, value }: DiceAttributeProps) {
 	const { gameChat } = useGameChat();
 	const { currentGame } = useCurrentGame();
 	const { setCharacterAttributes } = useSetCharacterAttributes();

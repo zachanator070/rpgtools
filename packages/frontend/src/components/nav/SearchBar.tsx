@@ -1,10 +1,10 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { LoadingView } from "../LoadingView";
-import { SelectWiki } from "../select/SelectWiki";
+import LoadingView from "../LoadingView";
+import SelectWiki from "../select/SelectWiki";
 
-export const SearchBarV2 = () => {
+export default function SearchBar() {
 	const history = useHistory();
 	const { currentWorld, loading } = useCurrentWorld();
 	if (loading) {

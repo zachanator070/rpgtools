@@ -10,7 +10,7 @@ interface DiceIconProps {
 	tooltip: string;
 }
 
-export const DiceIcon = ({ reducer, count, bonus, icon, tooltip }: DiceIconProps) => {
+export default function DiceIcon ({ reducer, count, bonus, icon, tooltip }: DiceIconProps) {
 	return (
 		<Tooltip title={tooltip}>
 			<div className={'margin-md'}>

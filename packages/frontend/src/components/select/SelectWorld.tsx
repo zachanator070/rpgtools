@@ -9,7 +9,7 @@ interface SelectWorldProps {
 	style?: CSSProperties;
 	showClear?: boolean;
 }
-export const SelectWorld = ({ onChange, style, showClear = false }: SelectWorldProps) => {
+export default function SelectWorld ({ onChange, style, showClear = false }: SelectWorldProps) {
 	const { refetch, worlds, loading } = useWorlds({});
 	const [value, setValue] = useState();
 

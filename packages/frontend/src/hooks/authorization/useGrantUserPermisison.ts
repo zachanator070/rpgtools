@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {GRANT_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations";
 
@@ -12,7 +12,7 @@ interface GrantUserPermissionVariables {
 interface GrantUserPermissionResult extends GqlMutationResult<World, GrantUserPermissionVariables> {
 	grantUserPermission: MutationMethod<World, GrantUserPermissionVariables>;
 }
-export const useGrantUserPermission = (): GrantUserPermissionResult => {
+export default function useGrantUserPermission(): GrantUserPermissionResult {
 	const result = useGQLMutation<World, GrantUserPermissionVariables>(GRANT_USER_PERMISSION);
 	return {
 		...result,

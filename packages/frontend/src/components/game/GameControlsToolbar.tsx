@@ -25,8 +25,8 @@ import {
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { LeaveGameButton } from "./LeaveGameButton";
-import { PermissionModal } from "../modals/PermissionModal";
+import LeaveGameButton from "./LeaveGameButton";
+import PermissionModal from "../modals/PermissionModal";
 import { GAME } from "@rpgtools/common/src/type-constants";
 
 interface GameControlsToolbarProps {
@@ -34,7 +34,7 @@ interface GameControlsToolbarProps {
 	setControlsMode: (mode: string) => void;
 }
 
-export const GameControlsToolbar = ({ controlsMode, setControlsMode }: GameControlsToolbarProps) => {
+export default function GameControlsToolbar({ controlsMode, setControlsMode }: GameControlsToolbarProps) {
 	const { currentGame, loading, refetch: refetchCurrentGame } = useCurrentGame();
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 

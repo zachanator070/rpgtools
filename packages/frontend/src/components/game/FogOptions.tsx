@@ -5,14 +5,14 @@ import {
 	BRUSH_FOG,
 	DEFAULT_BRUSH_SIZE,
 } from "../../controls/PaintControls";
-import { ToolTip } from "../ToolTip";
+import ToolTip from "../ToolTip";
 import {GameRenderer} from "../../rendering/GameRenderer";
 
 interface FogOptionsProps {
 	renderer: GameRenderer;
 }
 
-export const FogOptions = ({ renderer }: FogOptionsProps) => {
+export default function FogOptions({ renderer }: FogOptionsProps) {
 	const [brushType, setBrushType] = useState(BRUSH_FOG);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
 

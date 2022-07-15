@@ -16,7 +16,7 @@ interface BrushOptionsProps {
 	renderer: GameRenderer
 }
 
-export const BrushOptions = ({ renderer }: BrushOptionsProps) => {
+export default function BrushOptions({ renderer }: BrushOptionsProps) {
 	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
 	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);

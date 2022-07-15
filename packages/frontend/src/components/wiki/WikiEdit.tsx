@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {Modal, Upload, InputNumber, Select, Button, Input} from "antd";
 import { UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined } from "@ant-design/icons";
-import { Editor } from "./Editor";
+import Editor from "./Editor";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import { useHistory, useParams } from "react-router-dom";
-import { useDeleteWiki } from "../../hooks/wiki/useDeleteWiki";
-import { useCreateImage } from "../../hooks/wiki/useCreateImage";
+import useDeleteWiki from "../../hooks/wiki/useDeleteWiki";
+import useCreateImage from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
 import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
-import { ToolTip } from "../ToolTip";
-import { SelectModel } from "../select/SelectModel";
-import { ModelViewer } from "../models/ModelViewer";
-import { useUpdateModeledWiki } from "../../hooks/wiki/useUpdateModeledWiki";
-import { LoadingView } from "../LoadingView";
-import { MoveWikiButton } from "./MoveWikiButton";
+import ToolTip from "../ToolTip";
+import SelectModel from "../select/SelectModel";
+import ModelViewer from "../models/ModelViewer";
+import useUpdateModeledWiki from "../../hooks/wiki/useUpdateModeledWiki";
+import LoadingView from "../LoadingView";
+import MoveWikiButton from "./MoveWikiButton";
 import {Model, ModeledWiki, Place} from "../../types";
 
-export const WikiEdit = () => {
+export default function WikiEdit() {
 	const history = useHistory();
 	const { currentWiki, loading } = useCurrentWiki();
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();

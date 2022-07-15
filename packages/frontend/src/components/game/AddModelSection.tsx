@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { SelectModel } from "../select/SelectModel";
+import SelectModel from "../select/SelectModel";
 import { Switch, Button } from "antd";
-import { ModelViewer } from "../models/ModelViewer";
-import { useAddModel } from "../../hooks/game/useAddModel";
+import ModelViewer from "../models/ModelViewer";
+import useAddModel from "../../hooks/game/useAddModel";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { SelectWiki } from "../select/SelectWiki";
+import SelectWiki from "../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
 import {ModeledWiki} from "../../types";
 
@@ -13,7 +13,7 @@ interface SelectedModel {
 	wiki?: any;
 }
 
-export const AddModelSection = () => {
+export default function AddModelSection() {
 	const [selectedModel, setSelectedModel] = useState<SelectedModel>();
 	const { currentGame } = useCurrentGame();
 	const { addModel } = useAddModel();

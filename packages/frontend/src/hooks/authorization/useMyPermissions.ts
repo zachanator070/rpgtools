@@ -1,4 +1,4 @@
-import {GqlQueryResult, useGQLQuery} from "../useGQLQuery";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {useParams} from "react-router-dom";
 import {PermissionAssignment} from "../../types";
 import {MY_PERMISSIONS} from "@rpgtools/common/src/gql-queries";
@@ -11,7 +11,7 @@ interface MyPermissionsResult extends GqlQueryResult<PermissionAssignment[], MyP
 	myPermissions: PermissionAssignment[];
 }
 
-export const useMyPermissions = (): MyPermissionsResult => {
+export default function useMyPermissions(): MyPermissionsResult {
 	const params = useParams();
 	const result = useGQLQuery<PermissionAssignment[], MyPermissionsVariables>(MY_PERMISSIONS, { worldId: params.world_id });
 	return {

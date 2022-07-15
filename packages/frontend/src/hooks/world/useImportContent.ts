@@ -1,4 +1,4 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {IMPORT_CONTENT} from "@rpgtools/common/src/gql-mutations";
 
@@ -11,7 +11,7 @@ interface ImportContentResult extends GqlMutationResult<World, ImportContentVari
 	importContent: MutationMethod<World, ImportContentVariables>;
 }
 
-export const useImportContent = (): ImportContentResult => {
+export default function useImportContent(): ImportContentResult {
 	const result = useGQLMutation<World, ImportContentVariables>(IMPORT_CONTENT);
 	return {
 		...result,

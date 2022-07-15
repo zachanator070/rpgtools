@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
-import { SlidingDrawer } from "../SlidingDrawer";
+import SlidingDrawer from "../SlidingDrawer";
 import useGameWiki from "../../hooks/wiki/useGameWiki";
 import WikiContent from "../wiki/WikiContent";
-import { LoadingView } from "../LoadingView";
+import LoadingView from "../LoadingView";
 
 interface GameWikiDrawerProps {
 	wikiId: string;
 }
 
-export const GameWikiDrawer = ({ wikiId }: GameWikiDrawerProps) => {
+export default function GameWikiDrawer({ wikiId }: GameWikiDrawerProps) {
 	const { fetch, wiki, loading } = useGameWiki();
 
 	useEffect(() => {

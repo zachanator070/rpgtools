@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { Button, Checkbox, Form, Input, Modal } from "antd";
 import useCreateWorld from "../../hooks/world/useCreateWorld";
 import { useHistory } from "react-router-dom";
-import { useSetCurrentWorld } from "../../hooks/world/useSetCurrentWorld";
+import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import { ToolTip } from "../ToolTip";
+import ToolTip from "../ToolTip";
 
 interface CreateWorldModalProps {
 	visibility: boolean;
 	setVisibility: (visibility: boolean) => Promise<void>;
 }
 
-export const CreateWorldModal = ({ visibility, setVisibility }: CreateWorldModalProps) => {
+export default function CreateWorldModal({ visibility, setVisibility }: CreateWorldModalProps) {
 	const history = useHistory();
 	const [name, setName] = useState("");
 	const [isPublic, setPublic] = useState(true);

@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import { Popover } from "antd";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { EditPinModal } from "../modals/EditPinModal";
+import EditPinModal from "../modals/EditPinModal";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import {Pin} from "../../types";
 import MapWikiContext from "../../MapWikiContext";
@@ -14,7 +14,7 @@ interface PinComponentProps {
 	translate?: (x: number, y: number) => number[];
 }
 
-export const PinComponent = ({ pin, translate }: PinComponentProps) => {
+export default function PinComponent({ pin, translate }: PinComponentProps) {
 	const history = useHistory();
 	const { currentWorld } = useCurrentWorld();
 	const [editPinModalVisibility, setEditPinModalVisibility] = useState(false);

@@ -1,7 +1,7 @@
 import useCurrentGame from "./useCurrentGame";
 import useCurrentUser from "../authentication/useCurrentUser";
 
-export const useCurrentCharacter = () => {
+export default function useCurrentCharacter() {
 	const { currentGame } = useCurrentGame();
 	const { currentUser } = useCurrentUser();
 

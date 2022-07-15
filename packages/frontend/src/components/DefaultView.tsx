@@ -1,10 +1,10 @@
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import useCurrentUser from "../hooks/authentication/useCurrentUser";
-import { LoadingView } from "./LoadingView";
-import React, { useEffect } from "react";
-import { WorldSelectPrompt } from "./prompts/WorldSelectPrompt";
+import LoadingView from "./LoadingView";
+import WorldSelectPrompt from "./prompts/WorldSelectPrompt";
 
-export const DefaultView = () => {
+export default function DefaultView() {
 	const history = useHistory();
 	const { currentUser, loading: currentUserLoading } = useCurrentUser();
 	useEffect(() => {

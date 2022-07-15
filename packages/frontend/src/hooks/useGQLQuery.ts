@@ -1,5 +1,5 @@
 import {DocumentNode, useQuery} from "@apollo/client";
-import { useGQLResponse } from "./useGQLResponse";
+import useGQLResponse from "./useGQLResponse";
 import {ApiHookResponse} from "./types";
 import {ApolloQueryResult} from "@apollo/client/core";
 
@@ -8,11 +8,11 @@ export interface GqlQueryResult<TData, TVariables=void> extends ApiHookResponse<
 	fetchMore: ((fetchMoreOptions: {variables: TVariables, updateQuery?: () => {}}) => Promise<ApolloQueryResult<TData>>);
 }
 
-export const useGQLQuery = <TData, TVariables=void>(
+export default function useGQLQuery<TData, TVariables=void>(
 	query: DocumentNode,
 	variables: any = null,
 	options = { onCompleted: () => {}, displayErrors: true }
-): GqlQueryResult<TData, TVariables> => {
+): GqlQueryResult<TData, TVariables> {
 	const { data, loading, error, refetch, fetchMore } = useQuery<TData, TVariables>(query, {
 		variables,
 		onCompleted: options.onCompleted,

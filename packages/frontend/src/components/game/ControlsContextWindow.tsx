@@ -7,22 +7,22 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import { BrushOptions } from "./BrushOptions";
-import { FogOptions } from "./FogOptions";
-import { ModelInfo } from "./ModelInfo";
-import { GameLocationSettings } from "./GameLocationSettings";
-import { AddModelSection } from "./AddModelSection";
+import BrushOptions from "./BrushOptions";
+import FogOptions from "./FogOptions";
+import ModelInfo from "./ModelInfo";
+import GameLocationSettings from "./GameLocationSettings";
+import AddModelSection from "./AddModelSection";
 
 interface ControlsContextWindowProps {
 	renderer: GameRenderer;
 	controlsMode: string;
 	setGameWikiId: (id: string) => void
 }
-export const ControlsContextWindow = ({
+export default function ControlsContextWindow({
 	renderer,
 	controlsMode,
 	setGameWikiId,
-}: ControlsContextWindowProps) => {
+}: ControlsContextWindowProps) {
 	const [visible, setVisible] = useState<boolean>();
 
 	useEffect(() => {

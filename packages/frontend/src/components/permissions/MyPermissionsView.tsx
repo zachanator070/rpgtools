@@ -3,10 +3,10 @@ import React from "react";
 import { ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WORLD } from "@rpgtools/common/src/type-constants";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useServerConfig from "../../hooks/server/useServerConfig";
-import { LoadingView } from "../LoadingView";
-import { useMyPermissions } from "../../hooks/authorization/useMyPermissions";
+import LoadingView from "../LoadingView";
+import useMyPermissions from "../../hooks/authorization/useMyPermissions";
 
-export const MyPermissionsView = () => {
+export default function MyPermissionsView() {
 	const { currentWorld, loading } = useCurrentWorld();
 	const { serverConfig, loading: serverConfigLoading } = useServerConfig();
 	const { myPermissions, loading: permissionsLoading } = useMyPermissions();

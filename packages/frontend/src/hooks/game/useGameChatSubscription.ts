@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import {GqlSubscriptionResult, useGQLSubscription} from "../useGQLSubscription";
+import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
 import gql from "graphql-tag";
 import {Game, GameMessage} from "../../types";
 import {GAME_MESSAGE} from "@rpgtools/common/src/gql-fragments";
@@ -21,7 +21,7 @@ interface GameChatSubscriptionResult extends GqlSubscriptionResult<GameMessage> 
 	gameChat: GameMessage;
 }
 
-export const useGameChatSubscription = (): GameChatSubscriptionResult => {
+export default function useGameChatSubscription(): GameChatSubscriptionResult {
 	const { game_id } = useParams();
 	const result = useGQLSubscription<GameMessage, GameChatSubscriptionVariables>(GAME_CHAT_SUBSCRIPTION, { gameId: game_id });
 	return {

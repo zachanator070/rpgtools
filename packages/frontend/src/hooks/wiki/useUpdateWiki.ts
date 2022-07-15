@@ -1,4 +1,4 @@
-import {MutationMethod, useGQLMutation} from "../useGQLMutation";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {WikiPage} from "../../types";
 import {GET_WIKI, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
 import {UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
@@ -15,7 +15,7 @@ interface UpdateWikiResult {
 	updateWiki: MutationMethod<WikiPage, UpdateWikiVariables>
 }
 
-export default (): UpdateWikiResult => {
+export default function useUpdateWiki(): UpdateWikiResult {
 	const result = useGQLMutation<WikiPage, UpdateWikiVariables>(UPDATE_WIKI, {}, {
 		refetchQueries: [GET_WIKI],
 		async update(cache, { data} , {variables}) {

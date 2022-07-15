@@ -1,6 +1,6 @@
-import {GqlMutationResult, MutationMethod, useGQLMutation} from "../useGQLMutation";
-import {useGetModels} from "./useGetModels";
-import {useMyPermissions} from "../authorization/useMyPermissions";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import useGetModels from "./useGetModels";
+import useMyPermissions from "../authorization/useMyPermissions";
 import {Model} from "../../types";
 import useCurrentWorld from "../world/useCurrentWorld";
 import {CREATE_MODEL} from "@rpgtools/common/src/gql-mutations";
@@ -18,7 +18,7 @@ interface CreateModelVariables {
 interface CreateModelResult extends GqlMutationResult<Model, CreateModelVariables>{
 	createModel: MutationMethod<Model, CreateModelVariables>
 }
-export const useCreateModel = (callback: (data: Model) => Promise<void>): CreateModelResult => {
+export default function useCreateModel(callback: (data: Model) => Promise<void>): CreateModelResult {
 	const { refetch } = useGetModels();
 	const {currentWorld} = useCurrentWorld();
 	const { refetch: refetchPermissions } = useMyPermissions();

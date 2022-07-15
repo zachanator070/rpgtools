@@ -6,11 +6,11 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import { BrushOptions } from "./BrushOptions";
-import { FogOptions } from "./FogOptions";
-import { ModelInfo } from "./ModelInfo";
-import { GameLocationSettings } from "./GameLocationSettings";
-import { AddModelSection } from "./AddModelSection";
+import BrushOptions from "./BrushOptions";
+import FogOptions from "./FogOptions";
+import ModelInfo from "./ModelInfo";
+import GameLocationSettings from "./GameLocationSettings";
+import AddModelSection from "./AddModelSection";
 
 interface ToolOptionsProps {
 	renderer: GameRenderer;
@@ -18,7 +18,7 @@ interface ToolOptionsProps {
 	setGameWikiId: (wikiId: string) => Promise<any>
 }
 
-export const ToolOptions = ({ renderer, controlsMode, setGameWikiId }: ToolOptionsProps) => {
+export default function ToolOptions({ renderer, controlsMode, setGameWikiId }: ToolOptionsProps) {
 	let content = null;
 
 	switch (controlsMode) {

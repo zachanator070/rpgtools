@@ -7,11 +7,11 @@ import dodecahedron from "../../icons/dodecahedron.svg";
 import icosahedron from "../../icons/icosahedron.svg";
 import doubleDecahedron from "../../icons/double-decahedron.svg";
 
-import { DiceIcon } from "./DiceIcon";
+import DiceIcon from "./DiceIcon";
 import {Button} from "antd";
-import { useGameChat } from "../../hooks/game/useGameChat";
+import useGameChat from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import { ToolTip } from "../ToolTip";
+import ToolTip from "../ToolTip";
 
 export const SET_COUNT_ACTION = 'SET_COUNT_ACTION';
 export const SET_BONUS_ACTION = 'SET_BONUS_ACTION';
@@ -27,7 +27,7 @@ const diceReducer = (state, action) => {
 	}
 }
 
-export const DiceRoller = () => {
+export default function DiceRoller() {
 	const [d4, setD4] = useReducer(diceReducer, {name: 'd4', count: 0, bonus: 0});
 	const [d6, setD6] = useReducer(diceReducer, {name: 'd6', count: 0, bonus: 0});
 	const [d8, setD8] = useReducer(diceReducer, {name: 'd8', count: 0, bonus: 0});
