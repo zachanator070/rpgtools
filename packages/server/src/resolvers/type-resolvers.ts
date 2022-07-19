@@ -5,7 +5,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { World } from "../domain-entities/world";
 import {
 	DataLoader,
-	DomainEntity, FileRepository,
+	DomainEntity, FileRepository, PermissionAssignmentRepository,
 	RoleRepository,
 	SessionContext,
 	UserRepository,
@@ -80,7 +80,15 @@ const permissionControlledInterfaceAttributes = {
 		_: any,
 		{ securityContext }: SessionContext
 	): Promise<PermissionAssignment[]> => {
-		return securityContext.getEntityPermissions(document._id, document.type);
+		let permissions: PermissionAssignment[] = [];
+		const permissionAssignmentRepository: PermissionAssignmentRepository = container.get<PermissionAssignmentRepository>(INJECTABLE_TYPES.PermissionAssignmentRepository);
+		if (await document.authorizationRuleset.canAdmin(securityContext, document)) {
+			permissions = await permissionAssignmentRepository.find([new FilterCondition('subjectType', document.type),
+				new FilterCondition('subject', document._id)]);
+		} else {
+			permissions = securityContext.getEntityPermissions(document._id, document.type);
+		}
+		return permissions;
 	},
 	canWrite: async (document: DomainEntity, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 		return await document.authorizationRuleset.canWrite(securityContext, document);
