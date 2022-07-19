@@ -46,3 +46,12 @@ h2 {
 video {
     width: 85em;
 }
+
+p.description {
+    margin-top: 5em;
+    margin-bottom: 5em;
+}
+
+img.logo {
+    width: 12em;
+}
