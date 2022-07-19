@@ -1,0 +1,48 @@
+
+div.root {
+    display: flex;
+    background-color: lightgray;
+    color: darkslategrey;
+    font-family: 'Work Sans', sans-serif;
+}
+
+div.side {
+    flex-grow: 2;
+}
+
+div.center {
+    text-align: center;
+    background-color: white;
+    padding-bottom: 15em;
+    padding-left: 5em;
+    padding-right: 5em;
+}
+
+p.attribution {
+    color: darkgray;
+    font-size: .75em;
+    margin-top: 1em;
+}
+
+h1 {
+    margin-top: 10em;
+}
+
+h2 {
+    margin-top: 15em;
+}
+
+.tab {
+    padding: .75em;
+    display: table;
+    text-align: left;
+    border-top: solid thin black;
+    border-left: solid thin black;
+    border-right: solid thin black;
+    border-top-right-radius: .5em;
+    border-top-left-radius: .5em;
+}
+
+video {
+    width: 85em;
+}
