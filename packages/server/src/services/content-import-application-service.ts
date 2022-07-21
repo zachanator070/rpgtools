@@ -6,7 +6,6 @@ import {
 	Archive,
 	AbstractArchiveFactory,
 	ContentImportService,
-	EntityAuthorizationRuleset,
 	Repository,
 	UnitOfWork,
 	Factory,
@@ -23,25 +22,11 @@ import { Place } from "../domain-entities/place";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
-class DeferredPromise {
-	promise: Promise<any>;
-	resolve: (value: any) => any;
-	reject: (reason: string) => any;
-
-	constructor() {
-		this.promise = new Promise((resolve: (value: any) => any, reject: (reason: string) => any) => {
-			this.resolve = resolve;
-			this.reject = reject;
-		});
-	}
-}
 
 @injectable()
 export class ContentImportApplicationService implements ContentImportService {
 	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
 	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
-
-	processedDocs: Map<string, DeferredPromise> = new Map<string, DeferredPromise>();
 
 	@inject(INJECTABLE_TYPES.ArchiveFactory)
 	archiveFactory: AbstractArchiveFactory;
@@ -162,17 +147,18 @@ export class ContentImportApplicationService implements ContentImportService {
 		destinationRootFolder: WikiFolder,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = await archive.worldRepository.findById(page.world);
 		let path: WikiFolder[] = [];
 		let currentFolder: WikiFolder = await archive.wikiFolderRepository.findOne([
 			new FilterCondition("pages", page._id, FILTER_CONDITION_OPERATOR_IN),
 		]);
-		while (currentFolder._id !== world.rootFolder) {
+		while (currentFolder) {
 			path.push(currentFolder);
 			currentFolder = await archive.wikiFolderRepository.findOne([
 				new FilterCondition("children", currentFolder._id, FILTER_CONDITION_OPERATOR_IN),
 			]);
 		}
+
+		path = path.reverse();
 
 		while (path.length > 0) {
 			let foundChild = false;
@@ -223,12 +209,12 @@ export class ContentImportApplicationService implements ContentImportService {
 		destinationRootFolder: WikiFolder,
 		unitOfWork: UnitOfWork
 	) => {
-		if (page.model) {
-			const model = await archive.modelRepository.findById(page.model);
-			await this.importModel(model, archive, destinationRootFolder, unitOfWork);
-			page.model = model._id;
+		if (page.pageModel) {
+			const model = await archive.modelRepository.findById(page.pageModel);
 			// delete from the source so its not recreated later
 			await archive.modelRepository.delete(model);
+			await this.importModel(model, archive, destinationRootFolder, unitOfWork);
+			page.pageModel = model._id;
 		}
 		await this.importWikiPage(page, archive, destinationRepo, destinationRootFolder, unitOfWork);
 	};

@@ -15,7 +15,7 @@ import { DeleteControls } from "../controls/DeleteControls";
 import { SelectModelControls } from "../controls/SelectModelControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import EventEmitter from "events";
-import {Game, Image, Model, PathNode, Place, PositionedModel} from "../types";
+import {Game, Image, PositionedModel} from "../types";
 import {MutationMethod} from "../hooks/useGQLMutation";
 import {AddStrokeVariables} from "../hooks/game/useAddFogStroke";
 import {SetModelPositionVariables} from "../hooks/game/useSetModelPosition";

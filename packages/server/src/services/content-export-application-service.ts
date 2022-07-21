@@ -47,7 +47,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		docId: string,
 		wikiType: string,
 		archive: Archive
-	): Promise<void> => {
+	): Promise<string> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		let page = await unitOfWork.wikiPageRepository.findById(docId);
 		if (!page) {
@@ -72,9 +72,10 @@ export class ContentExportApplicationService implements ContentExportService {
 			throw new TypeNotSupportedError(wikiType);
 		}
 		await unitOfWork.commit();
+		return page.name;
 	};
 
-	public exportModel = async (context: SecurityContext, docId: string, archive: Archive) => {
+	public exportModel = async (context: SecurityContext, docId: string, archive: Archive): Promise<string> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const model = await unitOfWork.modelRepository.findById(docId);
 		if (!model) {
@@ -82,6 +83,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		}
 		await this.addModel(context, model, archive, unitOfWork, true);
 		await unitOfWork.commit();
+		return model.name;
 	};
 
 	public exportWikiFolder = async (
@@ -89,7 +91,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		docId: string,
 		archive: Archive,
 		errorOut = true
-	) => {
+	): Promise<string> => {
 		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(docId);
 		if (!folder) {
@@ -99,50 +101,17 @@ export class ContentExportApplicationService implements ContentExportService {
 		const world = await unitOfWork.worldRepository.findById(folder.world);
 		await archive.worldRepository.create(world);
 
-		await this.addWikiFolder(context, folder, archive, errorOut);
+		await this.addWikiFolder(context, folder, archive, unitOfWork, errorOut);
 
-		for (let pageId of folder.pages) {
-			const articles = await unitOfWork.articleRepository.find([
-				new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-			]);
-			for (let article of articles) {
-				await this.addArticle(context, article, archive, unitOfWork, false);
-			}
-			const items = await unitOfWork.itemRepository.find([
-				new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-			]);
-			for (let item of items) {
-				await this.addItem(context, item, archive, unitOfWork, false);
-			}
-			const monsters = await unitOfWork.monsterRepository.find([
-				new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-			]);
-			for (let monster of monsters) {
-				await this.addMonster(context, monster, archive, unitOfWork, false);
-			}
-			const persons = await unitOfWork.personRepository.find([
-				new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-			]);
-			for (let person of persons) {
-				await this.addPerson(context, person, archive, unitOfWork, false);
-			}
-			const places = await unitOfWork.placeRepository.find([
-				new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-			]);
-			for (let place of places) {
-				await this.addPlace(context, place, archive, unitOfWork, false);
-			}
-		}
-		for (let childId of folder.children) {
-			await this.exportWikiFolder(context, docId, archive, false);
-		}
 		await unitOfWork.commit();
+		return folder.name;
 	};
 
 	private addWikiFolder = async (
 		context: SecurityContext,
 		folder: WikiFolder,
 		archive: Archive,
+		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
 		if (!(await this.wikiFolderAuthorizationRuleset.canRead(context, folder))) {
@@ -151,6 +120,42 @@ export class ContentExportApplicationService implements ContentExportService {
 			}
 			return;
 		}
+
+		const articles = await unitOfWork.articleRepository.find([
+			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
+		]);
+		for (let article of articles) {
+			await this.addArticle(context, article, archive, unitOfWork, false);
+		}
+		const items = await unitOfWork.itemRepository.find([
+			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
+		]);
+		for (let item of items) {
+			await this.addItem(context, item, archive, unitOfWork, false);
+		}
+		const monsters = await unitOfWork.monsterRepository.find([
+			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
+		]);
+		for (let monster of monsters) {
+			await this.addMonster(context, monster, archive, unitOfWork, false);
+		}
+		const persons = await unitOfWork.personRepository.find([
+			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
+		]);
+		for (let person of persons) {
+			await this.addPerson(context, person, archive, unitOfWork, false);
+		}
+		const places = await unitOfWork.placeRepository.find([
+			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
+		]);
+		for (let place of places) {
+			await this.addPlace(context, place, archive, unitOfWork, false);
+		}
+		for (let childId of folder.children) {
+			const child = await unitOfWork.wikiFolderRepository.findById(childId);
+			await this.addWikiFolder(context, child, archive, unitOfWork, false);
+		}
+
 		await archive.wikiFolderRepository.create(folder);
 	};
 
@@ -172,6 +177,7 @@ export class ContentExportApplicationService implements ContentExportService {
 			const file = await unitOfWork.fileRepository.findById(chunk.fileId);
 			await this.addFile(file, archive);
 		}
+		await archive.imageRepository.create(image);
 	};
 
 	private addModel = async (
@@ -263,8 +269,8 @@ export class ContentExportApplicationService implements ContentExportService {
 		archive: Archive,
 		unitOfWork: UnitOfWork
 	) => {
-		if (page.model) {
-			const model = await unitOfWork.modelRepository.findById(page.model);
+		if (page.pageModel) {
+			const model = await unitOfWork.modelRepository.findById(page.pageModel);
 			await this.addModel(context, model, archive, unitOfWork);
 		}
 	};
@@ -301,10 +307,6 @@ export class ContentExportApplicationService implements ContentExportService {
 		if (page.coverImage) {
 			const image = await unitOfWork.imageRepository.findById(page.coverImage);
 			await this.addImage(context, image, archive, unitOfWork);
-			if (image.icon) {
-				const icon = await unitOfWork.imageRepository.findById(image.icon);
-				await this.addImage(context, icon, archive, unitOfWork);
-			}
 		}
 		if (page.contentId) {
 			const file = await unitOfWork.fileRepository.findById(page.contentId);

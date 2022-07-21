@@ -1,14 +1,13 @@
 import express from "express";
 import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
-import { ExpressSessionContextFactory } from "../server/express-session-context-factory";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { AbstractArchiveFactory, ContentExportService } from "../types";
+import {AbstractArchiveFactory, ContentExportService, SessionContextFactory} from "../types";
 
 let ExportRouter = express.Router();
 
 ExportRouter.get("/:model/:id", async (req, res) => {
-	const sessionFactory = new ExpressSessionContextFactory();
+	const sessionFactory = container.get<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory);
 	const sessionContext = await sessionFactory.create({ req, res });
 
 	const modelName = req.params.model;
@@ -22,16 +21,17 @@ ExportRouter.get("/:model/:id", async (req, res) => {
 		.createDefault();
 
 	try {
+		let filename = null;
 		if (ALL_WIKI_TYPES.includes(modelName)) {
-			await service.exportWikiPage(sessionContext.securityContext, docId, modelName, archive);
+			filename = await service.exportWikiPage(sessionContext.securityContext, docId, modelName, archive);
 		} else if (modelName === MODEL) {
-			await service.exportModel(sessionContext.securityContext, docId, archive);
+			filename = await service.exportModel(sessionContext.securityContext, docId, archive);
 		} else if (modelName === WIKI_FOLDER) {
-			await service.exportWikiFolder(sessionContext.securityContext, docId, archive);
+			filename = await service.exportWikiFolder(sessionContext.securityContext, docId, archive);
 		} else {
 			return res.status(400).send(`Export type ${modelName} not supported`);
 		}
-
+		res.setHeader('Content-Disposition',`attachment;filename=${filename}.zip`);
 		await archive.pipe(res);
 	} catch (e) {
 		return res.status(400).send(e.message);

@@ -17,11 +17,22 @@ export default function useWikisInFolder(variables?: WikisInFolderVariables): Wi
 	useEffect(() => {
 		if (result.data && result.data.nextPage) {
 			(async () => {
-				await result.fetchMore(
+				const more = await result.fetchMore(
 					{
 						variables: {
 							...variables,
 							page: result.data.nextPage,
+						},
+						updateQuery: (previousResultQuery: WikisInFolderResult, options: {fetchMoreResult: WikisInFolderResult}) => {
+							const newResult = {
+								wikisInFolder: {
+									docs: [],
+									nextPage: options.fetchMoreResult.wikisInFolder.nextPage
+								}
+							};
+							newResult.wikisInFolder.docs.push(...previousResultQuery.wikisInFolder.docs);
+							newResult.wikisInFolder.docs.push(...options.fetchMoreResult.wikisInFolder.docs);
+							return newResult;
 						}
 					},
 				);

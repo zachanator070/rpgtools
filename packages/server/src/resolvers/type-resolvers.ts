@@ -101,8 +101,8 @@ const permissionControlledInterfaceAttributes = {
 const modeledWikiAttributes = {
 	model: async (document: ModeledPage, _: any, __: SessionContext): Promise<Model> => {
 		const dataLoader = container.get<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader);
-		if(document.model){
-			return dataLoader.getDocument(document.model);
+		if(document.pageModel){
+			return dataLoader.getDocument(document.pageModel);
 		}
 	},
 };
@@ -320,7 +320,8 @@ export const TypeResolvers = {
 		subject: async (assignment: PermissionAssignment, _: any, __: SessionContext): Promise<DomainEntity> => {
 			const mapper = new RepositoryMapper();
 			const repository = mapper.map<DomainEntity>(assignment.subjectType);
-			return repository.findById(assignment.subject);
+			const subject = await repository.findById(assignment.subject);
+			return subject;
 		},
 		canWrite: async (
 			assignment: PermissionAssignment,

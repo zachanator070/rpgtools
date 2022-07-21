@@ -6,6 +6,7 @@ import {
 } from "../../filter-condition";
 import { PaginatedResult } from "../../paginated-result";
 import {injectable} from "inversify";
+import { v4 as uuidv4 } from 'uuid';
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
@@ -16,15 +17,15 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	PAGE_LIMIT = 100;
 
 	create = async (entity: Type): Promise<void> => {
-		if (this.items.get(entity._id)) {
-			throw new Error(`Entity with id already exists: ${entity._id}`);
+		if (!entity._id) {
+			entity._id = uuidv4();
 		}
 		this.items.set(entity._id, entity);
 	};
 
 	delete = async (entity: Type): Promise<void> => {
 		if (!this.items.get(entity._id)) {
-			throw new Error(`Entity with id already exists: ${entity._id}`);
+			throw new Error(`Entity with id doesn't exists: ${entity._id}`);
 		}
 		this.items.delete(entity._id);
 	};
@@ -85,7 +86,7 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
 					return entity[filter.field] === filter.value;
 				} else if (filter.operator === FILTER_CONDITION_OPERATOR_IN) {
-					return filter.value.includes(entity[filter.field]);
+					return entity[filter.field].includes(filter.value);
 				}
 				return false;
 			});

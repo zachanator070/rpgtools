@@ -162,6 +162,7 @@ import {NoCacheClient} from "../dal/cache/no-cache-client";
 import {DeltaFactory} from "../five-e-import/delta-factory";
 import {Dnd5eApiClient} from "../five-e-import/dnd-5e-api-client";
 import {RoleApplicationService} from "../services/role-application-service";
+import {ZipArchive} from "../archive/zip-archive";
 
 const container = new Container();
 
@@ -312,7 +313,7 @@ container
 				item.world = world;
 				item.coverImage = coverImageId;
 				item.contentId = contentId;
-				item.model = modelId;
+				item.pageModel = modelId;
 				item.modelColor = modelColor;
 				return item;
 			}
@@ -365,7 +366,7 @@ container
 				monster.world = world;
 				monster.coverImage = coverImageId;
 				monster.contentId = contentId;
-				monster.model = modelId;
+				monster.pageModel = modelId;
 				monster.modelColor = modelColor;
 				return monster;
 			}
@@ -403,7 +404,7 @@ container
 				person.world = world;
 				person.coverImage = coverImageId;
 				person.contentId = contentId;
-				person.model = modelId;
+				person.pageModel = modelId;
 				person.modelColor = modelColor;
 				return person;
 			}
@@ -717,6 +718,11 @@ else
 
 // archive factory
 container.bind<AbstractArchiveFactory>(INJECTABLE_TYPES.ArchiveFactory).to(ArchiveFactory);
+
+container.bind<ZipArchive>(INJECTABLE_TYPES.ZipArchive).to(ZipArchive);
+container.bind<Factory<ZipArchive>>(INJECTABLE_TYPES.ZipArchiveFactory).toFactory((context) => () => {
+	return context.container.get<ZipArchive>(INJECTABLE_TYPES.ZipArchive);
+});
 
 // event publisher
 container

@@ -130,6 +130,9 @@ export const INJECTABLE_TYPES = {
 	// archive
 	ArchiveFactory: Symbol.for("ArchiveFactory"),
 
+	ZipArchiveFactory: Symbol.for("ZipArchiveFactory"),
+	ZipArchive: Symbol.for('ZipArchive'),
+
 	// event publisher
 	EventPublisher: Symbol.for("EventPublisher"),
 

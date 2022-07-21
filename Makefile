@@ -119,3 +119,6 @@ dump:
 	sudo rm -rf ./dev/mongodb-init/dump.archive
 	docker-compose exec mongodb mongodump --archive=/docker-entrypoint-initdb.d/dump.archive -d rpgtools
 	sudo chown ${USER}:${USER} ./dev/mongodb-init/dump.archive
+
+seed:
+	npm run -w packages/frontend seed:middle_earth

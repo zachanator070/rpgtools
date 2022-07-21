@@ -21,6 +21,7 @@ import {
 } from "../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {RepositoryMapper} from "./repository-mapper";
 
 @injectable()
 export class DbUnitOfWork implements UnitOfWork {

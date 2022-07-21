@@ -1,5 +1,5 @@
 import React, {ReactElement, CSSProperties, useState} from "react";
-import { Button, Drawer } from "antd";
+import {Button, Drawer, Space} from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 
 interface SlidingDrawerProps {
@@ -44,7 +44,7 @@ export default function SlidingDrawer({
 			<Drawer
 				title={title}
 				placement={placement || "right"}
-				closable={true}
+				closable={false}
 				onClose={() => setVisible(false)}
 				visible={visible}
 				mask={false}
@@ -53,6 +53,11 @@ export default function SlidingDrawer({
 				style={{ position: "absolute" }}
 				width={"512px"}
 			>
+				<div style={{textAlign: placement == 'left' ? 'right' : 'left'}}>
+					<Space>
+						<Button type="primary" onClick={() => setVisible(false)}>Close</Button>
+					</Space>
+				</div>
 				{children}
 			</Drawer>
 		</>
