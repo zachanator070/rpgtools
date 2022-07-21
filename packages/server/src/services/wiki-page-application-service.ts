@@ -150,7 +150,14 @@ export class WikiPageApplicationService implements WikiPageService {
 		/** TODO: This section probably will break,
 		 * I'm thinking a type attribute will need to be introduced so that the wikipage repository knows what to do with it
 		 **/
-		if (type) {
+		if (type && type !== wikiPage.type) {
+			// update old permissions to have the right subject type
+			const currentPermissions = await unitOfWork.permissionAssignmentRepository.find([new FilterCondition('subject', wikiPage._id)]);
+			for (const oldPermission of currentPermissions) {
+				oldPermission.subjectType = type;
+				await unitOfWork.permissionAssignmentRepository.update(oldPermission);
+			}
+			// recreate the wiki page with the right default values
 			switch (type) {
 				case PERSON:
 					wikiPage = this.personFactory(
@@ -294,9 +301,10 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (model && !foundModel) {
 			throw new Error(`Model ${model} does not exist`);
 		}
-		wikiPage.model = model;
+		wikiPage.pageModel = model;
 		wikiPage.modelColor = color;
-		await unitOfWork.wikiPageRepository.update(wikiPage);
+		const repo = this.mapper.map(wikiPage.type);
+		await repo.update(wikiPage);
 		await unitOfWork.commit();
 		return wikiPage;
 	};

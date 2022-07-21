@@ -28,7 +28,7 @@ export class MongodbFileRepository implements FileRepository {
 			});
 
 			writeStream.on("finish", (file: mongoose.Document) => {
-				resolve(file._id);
+				resolve(file._id.toString());
 			});
 
 			writeStream.on("error", (err) => {

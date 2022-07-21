@@ -6,7 +6,7 @@ export interface GqlMutationResult<TData, TVariables=void> extends ApiHookRespon
 	mutate: MutationMethod<TData, TVariables>
 }
 
-export type MutationMethod<TData, TVariables> = (variables?: TVariables) => Promise<TData>
+export type MutationMethod<TData, TVariables> = (variables?: TVariables, options?: MutationHookOptions) => Promise<TData>
 
 interface GqlMutationOptions<TData, TVariables> extends MutationHookOptions<TData, TVariables> {
 	displayErrors?: boolean;
@@ -26,10 +26,10 @@ export default function useGQLMutation<TData, TVariables=void>(
 	return {
 		...response,
 		loading,
-		mutate: async (givenVariables?: TVariables) => {
+		mutate: async (givenVariables?: TVariables, options?: MutationHookOptions) => {
 			const originalVariables = Object.create(variables);
 			Object.assign(originalVariables, givenVariables);
-			const result = await mutation({ variables: originalVariables });
+			const result = await mutation({ variables: originalVariables, ...options });
 			return (result.data as any)[response.queryName];
 		}
 	};

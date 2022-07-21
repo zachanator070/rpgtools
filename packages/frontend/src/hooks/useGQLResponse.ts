@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { notification } from "antd";
 import {DocumentNode, OperationDefinitionNode, FieldNode} from "graphql";
 import {ApolloError} from "@apollo/client/errors";
+import getQueryName from "./getQueryName";
 
 interface GenericGqlResponse<T> {
 	data: T;
@@ -29,16 +30,8 @@ export default function useGQLResponse
 	if (query.definitions.length === 0) {
 		throw new Error("Given query is empty! No definitions were supplied");
 	}
-	let queryName = null;
-	const definition = query.definitions.find(givenDefinition => givenDefinition.kind === "OperationDefinition") as OperationDefinitionNode;
-	if(!definition) {
-		throw new Error(`Could not find operation definition for query: ${query.loc.source.body}`);
-	}
-	if(definition.selectionSet.selections.length >= 1){
-		queryName = (definition.selectionSet.selections[0] as FieldNode).name.value;
-	} else {
-		throw new Error(`Could not find operation name definition for query: ${query.loc.source.body}`);
-	}
+
+	const queryName = getQueryName(query);
 
 	useEffect(() => {
 		if (displayErrors) {

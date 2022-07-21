@@ -22,7 +22,7 @@ import {
 	WorldRepository,
 } from "../types";
 import { WikiPage } from "../domain-entities/wiki-page";
-import { FilterCondition } from "../dal/filter-condition";
+import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../dal/filter-condition";
 import archiver from "archiver";
 import { Readable, Writable } from "stream";
 import {
@@ -42,9 +42,10 @@ import { Chunk } from "../domain-entities/chunk";
 import { World } from "../domain-entities/world";
 import { Article } from "../domain-entities/article";
 import { Image } from "../domain-entities/image";
-import { inject } from "inversify";
+import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
+@injectable()
 export class ZipArchive implements Archive {
 	@inject(INJECTABLE_TYPES.ArchiveArticleRepository)
 	articleRepository: ArticleRepository;
@@ -121,16 +122,16 @@ export class ZipArchive implements Archive {
 	};
 
 	private getWikiPagePath = async (page: WikiPage): Promise<string> => {
-		let path = "wikis/";
-		let parent = await this.wikiFolderRepository.findOne([new FilterCondition("pages", page._id)]);
-		const world = await this.worldRepository.findById(page.world);
-		while (parent._id !== world.rootFolder) {
-			path += parent.name + "/";
+		let path = "";
+		let parent = await this.wikiFolderRepository.findOne([new FilterCondition("pages", page._id, FILTER_CONDITION_OPERATOR_IN)]);
+		while (parent) {
+			path = parent.name + '/' + path;
 			parent = await this.wikiFolderRepository.findOne([
-				new FilterCondition("children", parent._id),
+				new FilterCondition("children", parent._id, FILTER_CONDITION_OPERATOR_IN),
 			]);
 		}
-		return path;
+		path = path.substring(0, path.length - 1 );
+		return 'wikis/' + path;
 	};
 
 	private addArchiveEntry = async (stream: Readable, path: string) => {

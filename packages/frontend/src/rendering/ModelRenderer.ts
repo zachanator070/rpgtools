@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import {STLLoader} from "three/examples/jsm/loaders/STLLoader";
 
 const CAMERA_FOV = 50;
 
@@ -148,10 +149,17 @@ export class ModelRenderer {
 
 		const extension = modelEntity.fileName.split(".").pop();
 
-		const loader =
-			extension === "glb"
-				? new GLTFLoader(this.loader)
-				: new OBJLoader(this.loader);
+		let loader = null;
+		if (extension === "glb") {
+			loader = new GLTFLoader(this.loader)
+		} else if (extension === 'stl') {
+			loader = new STLLoader(this.loader);
+		} else if (extension === 'obj') {
+			loader = new OBJLoader(this.loader);
+		} else {
+			throw new Error(`Unsupported model file type ${extension}`);
+		}
+
 		loader.load(
 			`/models/${modelEntity.fileId}`,
 			(model) => {
@@ -160,7 +168,15 @@ export class ModelRenderer {
 					return;
 				}
 
-				const loadedModel = extension === "glb" ? model.scene : model;
+				let loadedModel = null;
+				if (extension === "glb" ) {
+					loadedModel = model.scene;
+				} else if (extension === 'stl') {
+					loadedModel = new THREE.Mesh(model, new THREE.MeshPhongMaterial({ color: 0x787878 }));
+					loadedModel.rotateX(-Math.PI / 2);
+				} else if (extension === 'obj') {
+					loadedModel = model;
+				}
 
 				// get bounding box and scale to match board size
 				const bbox = new THREE.Box3().setFromObject(loadedModel);

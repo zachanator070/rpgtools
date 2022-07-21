@@ -54,6 +54,8 @@ export default function ModelForm({
 							Supported file types: <br />
 							<ul>
 								<li>.glb</li>
+								<li>.stl</li>
+								<li>.obj</li>
 							</ul>
 						</ToolTip>{" "}
 						File
@@ -69,7 +71,7 @@ export default function ModelForm({
 								return;
 							}
 							const file = value[0];
-							const supportedTypes = ["glb", "obj"];
+							const supportedTypes = ["glb", "obj", "stl"];
 							const parts = file.name.split(".");
 
 							const type = parts.length > 0 ? parts[parts.length - 1] : null;

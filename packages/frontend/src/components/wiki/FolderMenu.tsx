@@ -211,10 +211,13 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 						<Form
 							{...layout}
 							onFinish={async ({ file }) => {
-								setImportModalVisibility(false);
+
 								await importContent({
 									folderId: folder._id,
 									zipFile: file[0].originFileObj,
+								},
+								{
+									onCompleted: async () => setImportModalVisibility(false)
 								});
 							}}
 						>

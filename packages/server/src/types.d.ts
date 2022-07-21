@@ -375,14 +375,14 @@ export interface ContentExportService {
 		docId: string,
 		wikiType: string,
 		archive: Archive
-	) => Promise<void>;
-	exportModel: (context: SecurityContext, docId: string, archive: Archive) => Promise<void>;
+	) => Promise<string>;
+	exportModel: (context: SecurityContext, docId: string, archive: Archive) => Promise<string>;
 	exportWikiFolder: (
 		context: SecurityContext,
 		docId: string,
 		archive: Archive,
 		errorOut?: boolean
-	) => Promise<void>;
+	) => Promise<string>;
 }
 export interface ContentImportService {
 	importContent: (
