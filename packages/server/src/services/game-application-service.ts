@@ -47,7 +47,6 @@ import { User } from "../domain-entities/user";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
-import { GameAuthorizationRuleset } from "../security/ruleset/game-authorization-ruleset";
 
 @injectable()
 export class GameApplicationService implements GameService {
@@ -59,9 +58,6 @@ export class GameApplicationService implements GameService {
 
 	@inject(INJECTABLE_TYPES.EventPublisher)
 	eventPublisher: EventPublisher;
-
-	@inject(INJECTABLE_TYPES.GameAuthorizationRuleset)
-	gameAuthorizationRuleSet: GameAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
@@ -243,7 +239,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.canWrite(context, game))) {
+		if (!(await game.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		const place = await unitOfWork.placeRepository.findById(placeId);
@@ -318,7 +314,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanPaint(context, game))) {
+		if (!(await game.authorizationPolicy.userCanPaint(context))) {
 			throw new Error("You do not have permission to paint for this game");
 		}
 		const newStroke = new Stroke(strokeId, path, color, size, fill, type);
@@ -344,7 +340,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanWriteFog(context, game))) {
+		if (!(await game.authorizationPolicy.userCanWriteFog(context))) {
 			throw new Error("You do not have permission to edit fog for this game");
 		}
 		const newStroke = new FogStroke(strokeId, path, size, type);
@@ -369,7 +365,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanModel(context, game))) {
+		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		const model = await unitOfWork.modelRepository.findById(modelId);
@@ -404,7 +400,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanModel(context, game))) {
+		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel: InGameModel = null;
@@ -441,7 +437,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanModel(context, game))) {
+		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
@@ -473,7 +469,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanModel(context, game))) {
+		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
@@ -505,7 +501,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.userCanModel(context, game))) {
+		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
@@ -536,7 +532,7 @@ export class GameApplicationService implements GameService {
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
-		if (!(await this.gameAuthorizationRuleSet.canWrite(context, game))) {
+		if (!(await game.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to change the character order for this game.");
 		}
 		const newOrder = [];
@@ -604,7 +600,7 @@ export class GameApplicationService implements GameService {
 
 	getGame = async (context: SecurityContext, gameId: string): Promise<Game> => {
 		const foundGame = await this.gameRepository.findById(gameId);
-		if (foundGame && !(await this.gameAuthorizationRuleSet.canRead(context, foundGame))) {
+		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this game");
 		}
 		return foundGame;

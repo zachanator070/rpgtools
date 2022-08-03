@@ -1,6 +1,6 @@
-import { DomainEntity } from "../types";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
 import { IMAGE } from "@rpgtools/common/src/type-constants";
-import { ImageAuthorizationRuleset } from "../security/ruleset/image-authorization-ruleset";
+import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
@@ -16,8 +16,16 @@ export class Image implements DomainEntity {
 	public chunks: string[];
 	public icon: string | null;
 
-	@inject(INJECTABLE_TYPES.ImageAuthorizationRuleset)
-	authorizationRuleset: ImageAuthorizationRuleset;
+	authorizationPolicy: ImageAuthorizationPolicy;
 
 	type: string = IMAGE;
+
+	constructor(@inject(INJECTABLE_TYPES.ImageAuthorizationPolicy)
+					authorizationPolicy: ImageAuthorizationPolicy) {
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.imageRepository;
+	}
 }

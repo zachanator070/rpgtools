@@ -1,6 +1,6 @@
-import { DomainEntity } from "../types";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
 import { CHUNK } from "@rpgtools/common/src/type-constants";
-import { ChunkAuthorizationRuleset } from "../security/ruleset/chunk-authorization-ruleset";
+import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
@@ -14,7 +14,16 @@ export class Chunk implements DomainEntity {
 	public fileId: string;
 	public image: string;
 
-	@inject(INJECTABLE_TYPES.ChunkAuthorizationRuleset)
-	authorizationRuleset: ChunkAuthorizationRuleset;
+	authorizationPolicy: ChunkAuthorizationPolicy;
 	type: string = CHUNK;
+
+	constructor(@inject(INJECTABLE_TYPES.ChunkAuthorizationPolicy)
+					authorizationPolicy: ChunkAuthorizationPolicy) {
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.chunkRepository;
+	}
 }

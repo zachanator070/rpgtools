@@ -11,7 +11,6 @@ import {
 	Factory,
 	WikiFolderFactory,
 } from "../types";
-import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
 import { Model } from "../domain-entities/model";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Image } from "../domain-entities/image";
@@ -25,8 +24,6 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class ContentImportApplicationService implements ContentImportService {
-	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.ArchiveFactory)
 	archiveFactory: AbstractArchiveFactory;
@@ -46,7 +43,7 @@ export class ContentImportApplicationService implements ContentImportService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folder))) {
+		if (!(await folder.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to add content to this folder");
 		}
 

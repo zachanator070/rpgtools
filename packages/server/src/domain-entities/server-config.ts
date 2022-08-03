@@ -1,5 +1,5 @@
-import { DomainEntity } from "../types";
-import { ServerConfigAuthorizationRuleset } from "../security/ruleset/server-config-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -12,8 +12,17 @@ export class ServerConfig implements DomainEntity {
 	public adminUsers: string[];
 	public unlockCode: string;
 
-	@inject(INJECTABLE_TYPES.ServerConfigAuthorizationRuleset)
-	authorizationRuleset: ServerConfigAuthorizationRuleset;
+	authorizationPolicy: ServerConfigAuthorizationPolicy;
 
 	type: string = SERVER_CONFIG;
+
+	constructor(@inject(INJECTABLE_TYPES.ServerConfigAuthorizationPolicy)
+					authorizationPolicy: ServerConfigAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.serverConfigRepository;
+	}
 }

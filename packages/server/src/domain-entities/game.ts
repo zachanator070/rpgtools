@@ -1,5 +1,5 @@
-import { DomainEntity, EntityAuthorizationRuleset } from "../types";
-import { GameAuthorizationRuleset } from "../security/ruleset/game-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -17,13 +17,22 @@ export class Game implements DomainEntity {
 	public models: InGameModel[];
 	public host: string;
 
-	@inject(INJECTABLE_TYPES.GameAuthorizationRuleset)
-	authorizationRuleset: GameAuthorizationRuleset;
+	authorizationPolicy: GameAuthorizationPolicy;
 
 	type: string = GAME;
+
+	constructor(@inject(INJECTABLE_TYPES.GameAuthorizationPolicy)
+					authorizationPolicy: GameAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.gameRepository;
+	}
 }
 
-export class Character implements DomainEntity {
+export class Character {
 	public _id: string;
 	public name: string;
 	public player: string;
@@ -35,7 +44,6 @@ export class Character implements DomainEntity {
 	public wisdom: number;
 	public charisma: number;
 
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 	type: string;
 
 	constructor(
@@ -63,8 +71,8 @@ export class Character implements DomainEntity {
 	}
 }
 
-export class Stroke implements DomainEntity {
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+export class Stroke {
+
 	public _id: string;
 	public path: PathNode[];
 	public color: string;
@@ -89,13 +97,11 @@ export class Stroke implements DomainEntity {
 	}
 }
 
-export class FogStroke implements DomainEntity {
+export class FogStroke {
 	public _id: string;
 	public path: PathNode[];
 	public size: number;
 	public type: string;
-
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 
 	constructor(id: string, path: PathNode[], size: number, type: string) {
 		this._id = id;
@@ -105,12 +111,11 @@ export class FogStroke implements DomainEntity {
 	}
 }
 
-export class PathNode implements DomainEntity {
+export class PathNode {
 	public _id: string;
 	public x: number;
 	public y: number;
 
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 	type: string;
 
 	constructor(id: string, x: number, y: number) {
@@ -120,14 +125,13 @@ export class PathNode implements DomainEntity {
 	}
 }
 
-export class Message implements DomainEntity {
+export class Message {
 	public sender: string;
 	public receiver: string;
 	public message: string;
 	public timestamp: number;
 	public _id: string;
 
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 	type: string;
 
 	constructor(sender: string, receiver: string, message: string, timestamp: number, id: string) {
@@ -139,7 +143,7 @@ export class Message implements DomainEntity {
 	}
 }
 
-export class InGameModel implements DomainEntity {
+export class InGameModel {
 	public _id: string;
 	public model: string;
 	public x: number;
@@ -149,7 +153,6 @@ export class InGameModel implements DomainEntity {
 	public color: string | null;
 	public wiki: string | null;
 
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
 	type: string;
 
 	constructor(

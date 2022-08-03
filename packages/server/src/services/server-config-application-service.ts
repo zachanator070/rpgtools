@@ -13,7 +13,6 @@ import {
 	ServerConfigService,
 } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import { ServerConfigAuthorizationRuleset } from "../security/ruleset/server-config-authorization-ruleset";
 import { SecurityContext } from "../security/security-context";
 import {FilterCondition} from "../dal/filter-condition";
 
@@ -24,9 +23,6 @@ export class ServerConfigApplicationService implements ServerConfigService {
 
 	@inject(INJECTABLE_TYPES.ApiServer)
 	server: ApiServer;
-
-	@inject(INJECTABLE_TYPES.ServerConfigAuthorizationRuleset)
-	serverConfigAuthorizationRuleset: ServerConfigAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.ServerConfigRepository)
 	serverConfigRepository: ServerConfigRepository;
@@ -96,7 +92,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 		if (!serverConfig) {
 			throw new Error("Server config doesnt exist!");
 		}
-		if (!(await this.serverConfigAuthorizationRuleset.canWrite(context, serverConfig))) {
+		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to call this method");
 		}
 		const newCodes = Array(amount)

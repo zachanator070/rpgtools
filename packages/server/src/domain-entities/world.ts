@@ -1,5 +1,5 @@
-import { DomainEntity } from "../types";
-import { WorldAuthorizationRuleset } from "../security/ruleset/world-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -14,6 +14,15 @@ export class World implements DomainEntity {
 	public pins: string[];
 	public type: string = WORLD;
 
-	@inject(INJECTABLE_TYPES.WorldAuthorizationRuleset)
-	public authorizationRuleset: WorldAuthorizationRuleset;
+	authorizationPolicy: WorldAuthorizationPolicy;
+
+	constructor(@inject(INJECTABLE_TYPES.WorldAuthorizationPolicy)
+				authorizationPolicy: WorldAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.worldRepository;
+	}
 }

@@ -61,7 +61,7 @@ export class SrdImportApplicationService implements SrdImportService {
 			throw new Error("World does not exist");
 		}
 		const rootFolder = await unitOfWork.wikiFolderRepository.findById(world.rootFolder);
-		if (!(await rootFolder.authorizationRuleset.canWrite(context, rootFolder))) {
+		if (!(await rootFolder.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
 		const topFolder = this.wikiFolderFactory(null, "5e", worldId, [], []);

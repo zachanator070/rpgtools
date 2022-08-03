@@ -136,24 +136,24 @@ import { RoleSeeder } from "../seeders/role-seeder";
 import { ServerConfigSeeder } from "../seeders/server-config-seeder";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { SecurityContextFactory } from "../security/security-context-factory";
-import { ArticleAuthorizationRuleset } from "../security/ruleset/article-authorization-ruleset";
-import { ChunkAuthorizationRuleset } from "../security/ruleset/chunk-authorization-ruleset";
-import { FileAuthorizationRuleset } from "../security/ruleset/file-authorization-ruleset";
-import { GameAuthorizationRuleset } from "../security/ruleset/game-authorization-ruleset";
-import { ImageAuthorizationRuleset } from "../security/ruleset/image-authorization-ruleset";
-import { ItemAuthorizationRuleset } from "../security/ruleset/item-authorization-ruleset";
-import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
-import { MonsterAuthorizationRuleset } from "../security/ruleset/monster-authorization-ruleset";
-import { PermissionAssignmentAuthorizationRuleset } from "../security/ruleset/permission-assignment-authorization-ruleset";
-import { PersonAuthorizationRuleset } from "../security/ruleset/person-authorization-ruleset";
-import { PinAuthorizationRuleset } from "../security/ruleset/pin-authorization-ruleset";
-import { PlaceAuthorizationRuleset } from "../security/ruleset/place-authorization-ruleset";
-import { RoleAuthorizationRuleset } from "../security/ruleset/role-authorization-ruleset";
-import { ServerConfigAuthorizationRuleset } from "../security/ruleset/server-config-authorization-ruleset";
-import { UserAuthorizationRuleset } from "../security/ruleset/user-authorization-ruleset";
-import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
-import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
-import { WorldAuthorizationRuleset } from "../security/ruleset/world-authorization-ruleset";
+import { ArticleAuthorizationPolicy } from "../security/policy/article-authorization-policy";
+import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy";
+import { FileAuthorizationPolicy } from "../security/policy/file-authorization-policy";
+import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
+import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
+import { ItemAuthorizationPolicy } from "../security/policy/item-authorization-policy";
+import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy";
+import { MonsterAuthorizationPolicy } from "../security/policy/monster-authorization-policy";
+import { PermissionAssignmentAuthorizationPolicy } from "../security/policy/permission-assignment-authorization-policy";
+import { PersonAuthorizationPolicy } from "../security/policy/person-authorization-policy";
+import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
+import { PlaceAuthorizationPolicy } from "../security/policy/place-authorization-policy";
+import { RoleAuthorizationPolicy } from "../security/policy/role-authorization-policy";
+import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy";
+import { UserAuthorizationPolicy } from "../security/policy/user-authorization-policy";
+import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
+import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
+import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import { Readable } from "stream";
 import { RepositoryMapper } from "../dal/repository-mapper";
 import {ServerProperties} from "../server/server-properties";
@@ -567,61 +567,61 @@ container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorl
 
 // authorization rule sets
 container
-	.bind<ArticleAuthorizationRuleset>(INJECTABLE_TYPES.ArticleAuthorizationRuleset)
-	.to(ArticleAuthorizationRuleset);
+	.bind<ArticleAuthorizationPolicy>(INJECTABLE_TYPES.ArticleAuthorizationPolicy)
+	.to(ArticleAuthorizationPolicy);
 container
-	.bind<ChunkAuthorizationRuleset>(INJECTABLE_TYPES.ChunkAuthorizationRuleset)
-	.to(ChunkAuthorizationRuleset);
+	.bind<ChunkAuthorizationPolicy>(INJECTABLE_TYPES.ChunkAuthorizationPolicy)
+	.to(ChunkAuthorizationPolicy);
 container
-	.bind<FileAuthorizationRuleset>(INJECTABLE_TYPES.FileAuthorizationRuleset)
-	.to(FileAuthorizationRuleset);
+	.bind<FileAuthorizationPolicy>(INJECTABLE_TYPES.FileAuthorizationPolicy)
+	.to(FileAuthorizationPolicy);
 container
-	.bind<GameAuthorizationRuleset>(INJECTABLE_TYPES.GameAuthorizationRuleset)
-	.to(GameAuthorizationRuleset);
+	.bind<GameAuthorizationPolicy>(INJECTABLE_TYPES.GameAuthorizationPolicy)
+	.to(GameAuthorizationPolicy);
 container
-	.bind<ImageAuthorizationRuleset>(INJECTABLE_TYPES.ImageAuthorizationRuleset)
-	.to(ImageAuthorizationRuleset);
+	.bind<ImageAuthorizationPolicy>(INJECTABLE_TYPES.ImageAuthorizationPolicy)
+	.to(ImageAuthorizationPolicy);
 container
-	.bind<ItemAuthorizationRuleset>(INJECTABLE_TYPES.ItemAuthorizationRuleset)
-	.to(ItemAuthorizationRuleset);
+	.bind<ItemAuthorizationPolicy>(INJECTABLE_TYPES.ItemAuthorizationPolicy)
+	.to(ItemAuthorizationPolicy);
 container
-	.bind<ModelAuthorizationRuleset>(INJECTABLE_TYPES.ModelAuthorizationRuleset)
-	.to(ModelAuthorizationRuleset);
+	.bind<ModelAuthorizationPolicy>(INJECTABLE_TYPES.ModelAuthorizationPolicy)
+	.to(ModelAuthorizationPolicy);
 container
-	.bind<MonsterAuthorizationRuleset>(INJECTABLE_TYPES.MonsterAuthorizationRuleset)
-	.to(MonsterAuthorizationRuleset);
+	.bind<MonsterAuthorizationPolicy>(INJECTABLE_TYPES.MonsterAuthorizationPolicy)
+	.to(MonsterAuthorizationPolicy);
 container
-	.bind<PermissionAssignmentAuthorizationRuleset>(
-		INJECTABLE_TYPES.PermissionAssignmentAuthorizationRuleset
+	.bind<PermissionAssignmentAuthorizationPolicy>(
+		INJECTABLE_TYPES.PermissionAssignmentAuthorizationPolicy
 	)
-	.to(PermissionAssignmentAuthorizationRuleset);
+	.to(PermissionAssignmentAuthorizationPolicy);
 container
-	.bind<PersonAuthorizationRuleset>(INJECTABLE_TYPES.PersonAuthorizationRuleset)
-	.to(PersonAuthorizationRuleset);
+	.bind<PersonAuthorizationPolicy>(INJECTABLE_TYPES.PersonAuthorizationPolicy)
+	.to(PersonAuthorizationPolicy);
 container
-	.bind<PinAuthorizationRuleset>(INJECTABLE_TYPES.PinAuthorizationRuleset)
-	.to(PinAuthorizationRuleset);
+	.bind<PinAuthorizationPolicy>(INJECTABLE_TYPES.PinAuthorizationPolicy)
+	.to(PinAuthorizationPolicy);
 container
-	.bind<PlaceAuthorizationRuleset>(INJECTABLE_TYPES.PlaceAuthorizationRuleset)
-	.to(PlaceAuthorizationRuleset);
+	.bind<PlaceAuthorizationPolicy>(INJECTABLE_TYPES.PlaceAuthorizationPolicy)
+	.to(PlaceAuthorizationPolicy);
 container
-	.bind<RoleAuthorizationRuleset>(INJECTABLE_TYPES.RoleAuthorizationRuleset)
-	.to(RoleAuthorizationRuleset);
+	.bind<RoleAuthorizationPolicy>(INJECTABLE_TYPES.RoleAuthorizationPolicy)
+	.to(RoleAuthorizationPolicy);
 container
-	.bind<ServerConfigAuthorizationRuleset>(INJECTABLE_TYPES.ServerConfigAuthorizationRuleset)
-	.to(ServerConfigAuthorizationRuleset);
+	.bind<ServerConfigAuthorizationPolicy>(INJECTABLE_TYPES.ServerConfigAuthorizationPolicy)
+	.to(ServerConfigAuthorizationPolicy);
 container
-	.bind<UserAuthorizationRuleset>(INJECTABLE_TYPES.UserAuthorizationRuleset)
-	.to(UserAuthorizationRuleset);
+	.bind<UserAuthorizationPolicy>(INJECTABLE_TYPES.UserAuthorizationPolicy)
+	.to(UserAuthorizationPolicy);
 container
-	.bind<WikiFolderAuthorizationRuleset>(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
-	.to(WikiFolderAuthorizationRuleset);
+	.bind<WikiFolderAuthorizationPolicy>(INJECTABLE_TYPES.WikiFolderAuthorizationPolicy)
+	.to(WikiFolderAuthorizationPolicy);
 container
-	.bind<WikiPageAuthorizationRuleset>(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
-	.to(WikiPageAuthorizationRuleset);
+	.bind<WikiPageAuthorizationPolicy>(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
+	.to(WikiPageAuthorizationPolicy);
 container
-	.bind<WorldAuthorizationRuleset>(INJECTABLE_TYPES.WorldAuthorizationRuleset)
-	.to(WorldAuthorizationRuleset);
+	.bind<WorldAuthorizationPolicy>(INJECTABLE_TYPES.WorldAuthorizationPolicy)
+	.to(WorldAuthorizationPolicy);
 
 // archive repositories
 container

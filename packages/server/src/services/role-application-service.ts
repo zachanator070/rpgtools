@@ -4,7 +4,6 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { Factory, RoleRepository, RoleService, WorldRepository } from "../types";
 import { SecurityContext } from "../security/security-context";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
-import { RoleAuthorizationRuleset } from "../security/ruleset/role-authorization-ruleset";
 import { PaginatedResult } from "../dal/paginated-result";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
@@ -14,9 +13,6 @@ export class RoleApplicationService implements RoleService {
 	worldRepository: WorldRepository;
 	@inject(INJECTABLE_TYPES.RoleRepository)
 	roleRepository: RoleRepository;
-
-	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)
-	roleAuthorizationRuleset: RoleAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
@@ -36,7 +32,7 @@ export class RoleApplicationService implements RoleService {
 			if (!world) {
 				throw new Error("World does not exist");
 			}
-			if (!(await world.authorizationRuleset.canRead(context, world))) {
+			if (!(await world.authorizationPolicy.canRead(context))) {
 				throw new Error("You do not have permission to read this World");
 			}
 			conditions.push(new FilterCondition("world", worldId));
@@ -48,16 +44,16 @@ export class RoleApplicationService implements RoleService {
 
 		const results = await this.roleRepository.findPaginated(conditions, page);
 
-		const docs = [];
-		for (let doc of results.docs) {
-			if (canAdmin !== undefined && !(await this.roleAuthorizationRuleset.canAdmin(context, doc))) {
+		const roles = [];
+		for (let role of results.docs) {
+			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context))) {
 				continue;
 			}
-			if (await this.roleAuthorizationRuleset.canRead(context, doc)) {
-				docs.push(doc);
+			if (await role.authorizationPolicy.canRead(context)) {
+				roles.push(role);
 			}
 		}
-		results.docs = docs;
+		results.docs = roles;
 		return results;
 	};
 }

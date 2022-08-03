@@ -27,8 +27,10 @@ import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
 import {DocumentNode} from "graphql";
 export interface DomainEntity {
 	_id: string;
-	authorizationRuleset: EntityAuthorizationRuleset<this, DomainEntity>;
+	authorizationPolicy: EntityAuthorizationPolicy<this>;
 	type: string;
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity>;
 }
 
 export interface Repository<Type extends DomainEntity> {
@@ -234,14 +236,11 @@ export interface Seeder {
 	seed: () => Promise<void>;
 }
 
-export interface EntityAuthorizationRuleset<
-	Type extends DomainEntity,
-	Parent extends DomainEntity
-> {
-	canRead: (context: SecurityContext, entity: Type) => Promise<boolean>;
-	canWrite: (context: SecurityContext, entity: Type) => Promise<boolean>;
-	canAdmin: (context: SecurityContext, entity: Type) => Promise<boolean>;
-	canCreate: (context: SecurityContext, entity: Parent) => Promise<boolean>;
+export interface EntityAuthorizationPolicy<Type extends DomainEntity> {
+	canRead: (context: SecurityContext) => Promise<boolean>;
+	canWrite: (context: SecurityContext) => Promise<boolean>;
+	canAdmin: (context: SecurityContext) => Promise<boolean>;
+	canCreate: (context: SecurityContext) => Promise<boolean>;
 }
 
 export interface UnitOfWork {

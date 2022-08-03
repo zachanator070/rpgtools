@@ -10,13 +10,11 @@ import {
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { SecurityContext } from "../security/security-context";
 import { FilterCondition } from "../dal/filter-condition";
-import { PermissionAssignmentAuthorizationRuleset } from "../security/ruleset/permission-assignment-authorization-ruleset";
 import { Role } from "../domain-entities/role";
 import { World } from "../domain-entities/world";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
 import { ROLE } from "@rpgtools/common/src/type-constants";
 import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
-import { RoleAuthorizationRuleset } from "../security/ruleset/role-authorization-ruleset";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -25,10 +23,6 @@ import { User } from "../domain-entities/user";
 
 @injectable()
 export class AuthorizationApplicationService implements AuthorizationService {
-	@inject(INJECTABLE_TYPES.PermissionAssignmentAuthorizationRuleset)
-	permissionAssignmentAuthorizationRuleset: PermissionAssignmentAuthorizationRuleset;
-	@inject(INJECTABLE_TYPES.RoleAuthorizationRuleset)
-	roleAuthorizationRuleset: RoleAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
@@ -174,7 +168,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
-		if (!(await this.roleAuthorizationRuleset.canWrite(context, role))) {
+		if (!(await role.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have write permissions for this role`);
 		}
 		if (role.name === WORLD_OWNER || role.name === EVERYONE || role.name === LOGGED_IN) {
@@ -240,7 +234,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
 
-		if (!(await this.roleAuthorizationRuleset.canWrite(context, role))) {
+		if (!(await role.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission to manage this role`);
 		}
 
@@ -267,7 +261,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
 
-		if (!(await this.roleAuthorizationRuleset.canWrite(context, role))) {
+		if (!(await role.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission to manage this role`);
 		}
 
@@ -306,7 +300,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			assignment = this.permissionAssignmentFactory(null, permission, subjectId, subjectType);
 			needsCreation = true;
 		}
-		if (!(await this.permissionAssignmentAuthorizationRuleset.canWrite(context, assignment))) {
+		if (!(await assignment.authorizationPolicy.canWrite(context))) {
 			throw new Error(
 				`You do not have permission to assign the permission "${permission}" for this subject`
 			);
@@ -342,7 +336,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			);
 		}
 		if (
-			!(await this.permissionAssignmentAuthorizationRuleset.canWrite(context, permissionAssignment))
+			!(await permissionAssignment.authorizationPolicy.canWrite(context))
 		) {
 			throw new Error(
 				`You do not have permission to revoke the permission "${permissionAssignment.permission}"`
