@@ -1,5 +1,5 @@
-import { DomainEntity } from "../types";
-import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy";
 import { MODEL } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -16,7 +16,16 @@ export class Model implements DomainEntity {
 	public fileId: string | null;
 	public notes: string | null;
 
-	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
-	authorizationRuleset: ModelAuthorizationRuleset;
+	authorizationPolicy: ModelAuthorizationPolicy;
 	type: string = MODEL;
+
+	constructor(@inject(INJECTABLE_TYPES.ModelAuthorizationPolicy)
+					authorizationPolicy: ModelAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.modelRepository;
+	}
 }

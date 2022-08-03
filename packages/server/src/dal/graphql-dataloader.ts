@@ -1,7 +1,7 @@
 import {
 	DataLoader as DataLoaderInt,
 	DomainEntity,
-	EntityAuthorizationRuleset,
+	EntityAuthorizationPolicy,
 	Repository,
 } from "../types";
 import DataLoader from "dataloader";
@@ -12,7 +12,6 @@ import { injectable } from "inversify";
 @injectable()
 export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
 	repository: Repository<T>;
-	ruleset: EntityAuthorizationRuleset<T, DomainEntity>;
 
 	getDocument = async (id: string): Promise<T> => {
 		if (id) {
@@ -35,7 +34,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 
 	getPermissionControlledDocument = async (context: SecurityContext, id: string): Promise<T> => {
 		const document = await this.getDocument(id);
-		if (await this.ruleset.canRead(context, document)) {
+		if (await document.authorizationPolicy.canRead(context)) {
 			return document;
 		}
 	};
@@ -47,7 +46,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 		const documents = await this.getDocuments(ids);
 		const readableDocuments = [];
 		for (let document of documents) {
-			if (await this.ruleset.canRead(context, document)) {
+			if (await document.authorizationPolicy.canRead(context)) {
 				readableDocuments.push(document);
 			}
 		}

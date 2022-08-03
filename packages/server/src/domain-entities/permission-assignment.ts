@@ -1,5 +1,5 @@
-import { DomainEntity } from "../types";
-import { PermissionAssignmentAuthorizationRuleset } from "../security/ruleset/permission-assignment-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { PermissionAssignmentAuthorizationPolicy } from "../security/policy/permission-assignment-authorization-policy";
 import { PERMISSION_ASSIGNMENT } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -11,8 +11,17 @@ export class PermissionAssignment implements DomainEntity {
 	public subject: string;
 	public subjectType: string;
 
-	@inject(INJECTABLE_TYPES.PermissionAssignmentAuthorizationRuleset)
-	authorizationRuleset: PermissionAssignmentAuthorizationRuleset;
+	authorizationPolicy: PermissionAssignmentAuthorizationPolicy;
 
 	type: string = PERMISSION_ASSIGNMENT;
+
+	constructor(@inject(INJECTABLE_TYPES.PermissionAssignmentAuthorizationPolicy)
+					authorizationPolicy: PermissionAssignmentAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
+
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.permissionAssignmentRepository;
+	}
 }

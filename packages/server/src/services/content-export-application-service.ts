@@ -12,7 +12,6 @@ import {
 import { WikiPage } from "../domain-entities/wiki-page";
 import { SecurityContext } from "../security/security-context";
 import { EntityNotFoundError, ReadPermissionDeniedError, TypeNotSupportedError } from "../errors";
-import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
 import { Place } from "../domain-entities/place";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Image } from "../domain-entities/image";
@@ -21,9 +20,7 @@ import { Item } from "../domain-entities/item";
 import { Monster } from "../domain-entities/monster";
 import { Person } from "../domain-entities/person";
 import { Article } from "../domain-entities/article";
-import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
-import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Model } from "../domain-entities/model";
 import { File } from "../domain-entities/file";
@@ -33,12 +30,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class ContentExportApplicationService implements ContentExportService {
-	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
-	wikiPageAuthorizationRuleSet: WikiPageAuthorizationRuleset;
-	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
-	modelAuthorizationRuleset: ModelAuthorizationRuleset;
-	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
+
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
@@ -114,7 +106,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (!(await this.wikiFolderAuthorizationRuleset.canRead(context, folder))) {
+		if (!(await folder.authorizationPolicy.canRead(context))) {
 			if (errorOut) {
 				throw new ReadPermissionDeniedError(folder._id, WIKI_FOLDER);
 			}
@@ -187,7 +179,7 @@ export class ContentExportApplicationService implements ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (!(await this.modelAuthorizationRuleset.canRead(context, page))) {
+		if (!(await page.authorizationPolicy.canRead(context))) {
 			if (errorOut) {
 				return new ReadPermissionDeniedError(page._id, MODEL);
 			}
@@ -289,7 +281,7 @@ export class ContentExportApplicationService implements ContentExportService {
 	};
 
 	private canReadWikiPage = async (context: SecurityContext, page: WikiPage, errorOut = false) => {
-		if (!(await this.wikiPageAuthorizationRuleSet.canRead(context, page))) {
+		if (!(await page.authorizationPolicy.canRead(context))) {
 			if (errorOut) {
 				return new ReadPermissionDeniedError(page._id, WIKI_PAGE);
 			}

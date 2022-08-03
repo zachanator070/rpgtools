@@ -3,12 +3,12 @@ import { Model } from "../../domain-entities/model";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { ModelRepository } from "../../types";
-import { ModelAuthorizationRuleset } from "../../security/ruleset/model-authorization-ruleset";
+import { ModelAuthorizationPolicy } from "../../security/policy/model-authorization-policy";
 
 @injectable()
 export class ModelDataLoader extends GraphqlDataloader<Model> {
+
 	@inject(INJECTABLE_TYPES.ModelRepository)
 	repository: ModelRepository;
-	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
-	ruleset: ModelAuthorizationRuleset;
+
 }

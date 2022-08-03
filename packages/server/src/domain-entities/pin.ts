@@ -1,5 +1,5 @@
-import { DomainEntity } from "../types";
-import { PinAuthorizationRuleset } from "../security/ruleset/pin-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -12,7 +12,15 @@ export class Pin implements DomainEntity {
 	public map: string;
 	public page: string | null;
 
-	@inject(INJECTABLE_TYPES.PinAuthorizationRuleset)
-	authorizationRuleset: PinAuthorizationRuleset;
+	authorizationPolicy: PinAuthorizationPolicy;
 	type: string = PIN;
+
+	constructor(@inject(INJECTABLE_TYPES.PinAuthorizationPolicy)
+					authorizationPolicy: PinAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
+	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
+		return unitOfWork.pinRepository;
+	}
 }

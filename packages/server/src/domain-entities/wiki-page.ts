@@ -1,10 +1,11 @@
-import { DomainEntity } from "../types";
-import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
+import {DomainEntity, Repository, UnitOfWork} from "../types";
+import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export abstract class WikiPage implements DomainEntity {
+
 	public _id: string;
 	public name: string;
 	public world: string;
@@ -12,8 +13,15 @@ export abstract class WikiPage implements DomainEntity {
 	public contentId: string | null;
 	public content: string | null;
 
-	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
-	authorizationRuleset: WikiPageAuthorizationRuleset;
+	authorizationPolicy: WikiPageAuthorizationPolicy;
+
+	constructor(@inject(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
+					authorizationPolicy: WikiPageAuthorizationPolicy) {
+		authorizationPolicy.entity = this;
+		this.authorizationPolicy = authorizationPolicy;
+	}
 
 	abstract type: string;
+
+	abstract getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity>;
 }

@@ -1,7 +1,7 @@
 import {
 	ArticleFactory,
 	AuthorizationService,
-	EntityAuthorizationRuleset,
+	EntityAuthorizationPolicy,
 	Factory,
 	PermissionAssignmentFactory,
 	UnitOfWork,
@@ -11,9 +11,9 @@ import {
 	WorldRepository,
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
-import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
+import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
 import { WikiPage } from "../domain-entities/wiki-page";
-import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
+import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { SecurityContext } from "../security/security-context";
 import {
 	FILTER_CONDITION_OPERATOR_IN,
@@ -29,10 +29,6 @@ import { DbUnitOfWork } from "../dal/db-unit-of-work";
 
 @injectable()
 export class WikiFolderApplicationService implements WikiFolderService {
-	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
-	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
-	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
@@ -63,7 +59,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 			throw new Error("Parent folder does not exist");
 		}
 
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, parentFolder))) {
+		if (!(await parentFolder.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
 		const newFolder = this.wikiFolderFactory(null, name, parentFolder.world, [], []);
@@ -97,7 +93,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folder))) {
+		if (!(await folder.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
 
@@ -161,7 +157,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		]);
 
 		for (let folderToCheck of [folder, parentFolder, currentParent]) {
-			if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folderToCheck))) {
+			if (!(await folderToCheck.authorizationPolicy.canWrite(context))) {
 				throw new Error(`You do not have permission to edit folder ${folderToCheck.name}`);
 			}
 		}
@@ -185,7 +181,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		if (!(await world.authorizationRuleset.canRead(context, world))) {
+		if (!(await world.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this World");
 		}
 
@@ -200,11 +196,11 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		for (let doc of results) {
 			if (
 				canAdmin !== undefined &&
-				!(await this.wikiFolderAuthorizationRuleset.canAdmin(context, doc))
+				!(await doc.authorizationPolicy.canAdmin(context))
 			) {
 				continue;
 			}
-			if (await this.wikiFolderAuthorizationRuleset.canRead(context, doc)) {
+			if (await doc.authorizationPolicy.canRead(context)) {
 				docs.push(doc);
 			}
 		}
@@ -248,17 +244,15 @@ export class WikiFolderApplicationService implements WikiFolderService {
 	) => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folder))) {
+		if (!(await folder.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have write permission for the folder ${folderId}`);
 		}
 
 		// pages are auto populated
 		for (let childPage of folder.pages) {
+			const wikiPage = this.articleFactory(childPage, null, null, null, null);
 			if (
-				!(await this.wikiPageAuthorizationRuleset.canWrite(
-					context,
-					this.articleFactory(childPage, null, null, null, null)
-				))
+				!(await wikiPage.authorizationPolicy.canWrite(context))
 			) {
 				throw new Error(`You do not have write permission for the page ${childPage}`);
 			}

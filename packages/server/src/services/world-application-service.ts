@@ -21,17 +21,11 @@ import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import { World } from "../domain-entities/world";
 import {FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { WorldAuthorizationRuleset } from "../security/ruleset/world-authorization-ruleset";
-import { PinAuthorizationRuleset } from "../security/ruleset/pin-authorization-ruleset";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
 export class WorldApplicationService implements WorldService {
-	@inject(INJECTABLE_TYPES.WorldAuthorizationRuleset)
-	worldAuthorizationRuleset: WorldAuthorizationRuleset;
-	@inject(INJECTABLE_TYPES.PinAuthorizationRuleset)
-	pinAuthorizationRuleset: PinAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.WorldRepository)
 	worldRepository: WorldRepository;
@@ -76,7 +70,7 @@ export class WorldApplicationService implements WorldService {
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
-		if (!(await this.worldAuthorizationRuleset.canWrite(context, world))) {
+		if (!(await world.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to rename this world");
 		}
 		world.name = newName;
@@ -106,11 +100,12 @@ export class WorldApplicationService implements WorldService {
 			}
 		}
 
-		if (!(await this.pinAuthorizationRuleset.canCreate(context, map))) {
+		const newPin = this.pinFactory(null, x, y, mapId, wikiId);
+
+		if (!(await newPin.authorizationPolicy.canCreate(context))) {
 			throw new Error(`You do not have permission to add pins to this map`);
 		}
 
-		const newPin = this.pinFactory(null, x, y, mapId, wikiId);
 		await unitOfWork.pinRepository.create(newPin);
 		const world = await unitOfWork.worldRepository.findById(map.world);
 		world.pins.push(newPin._id);
@@ -126,7 +121,7 @@ export class WorldApplicationService implements WorldService {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
 
-		if (!(await this.pinAuthorizationRuleset.canRead(context, pin))) {
+		if (!(await pin.authorizationPolicy.canRead(context))) {
 			throw new Error(`You do not have permission to update this pin`);
 		}
 
@@ -153,7 +148,7 @@ export class WorldApplicationService implements WorldService {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
 
-		if (!(await this.pinAuthorizationRuleset.canWrite(context, pin))) {
+		if (!(await pin.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission to delete this pin`);
 		}
 
@@ -172,7 +167,7 @@ export class WorldApplicationService implements WorldService {
 		if (!world) {
 			return null;
 		}
-		if (!(await this.worldAuthorizationRuleset.canRead(context, world))) {
+		if (!(await world.authorizationPolicy.canRead(context))) {
 			return null;
 		}
 
@@ -187,7 +182,7 @@ export class WorldApplicationService implements WorldService {
 		const results = await this.worldRepository.findPaginated(conditions, page);
 		const docs = [];
 		for (let world of results.docs) {
-			if (await this.worldAuthorizationRuleset.canRead(context, world)) {
+			if (await world.authorizationPolicy.canRead(context)) {
 				docs.push(world);
 			}
 		}

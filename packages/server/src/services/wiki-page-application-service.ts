@@ -3,8 +3,6 @@ import { SecurityContext } from "../security/security-context";
 import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "@rpgtools/common/src/type-constants";
 import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
-import { WikiFolderAuthorizationRuleset } from "../security/ruleset/wiki-folder-authorization-ruleset";
-import { WikiPageAuthorizationRuleset } from "../security/ruleset/wiki-page-authorization-ruleset";
 import { Readable } from "stream";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import {
@@ -29,10 +27,6 @@ import { RepositoryMapper } from "../dal/repository-mapper";
 
 @injectable()
 export class WikiPageApplicationService implements WikiPageService {
-	@inject(INJECTABLE_TYPES.WikiFolderAuthorizationRuleset)
-	wikiFolderAuthorizationRuleset: WikiFolderAuthorizationRuleset;
-	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
-	wikiPageAuthorizationRuleset: WikiPageAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
@@ -72,7 +66,7 @@ export class WikiPageApplicationService implements WikiPageService {
 			throw new Error("Folder does not exist");
 		}
 
-		if (!(await this.wikiPageAuthorizationRuleset.canCreate(context, folder))) {
+		if (!(await folder.authorizationPolicy.canCreate(context))) {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
@@ -113,7 +107,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
-		if (!(await this.wikiPageAuthorizationRuleset.canWrite(context, wikiPage))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 
@@ -227,7 +221,7 @@ export class WikiPageApplicationService implements WikiPageService {
 			throw new Error("Page does not exist");
 		}
 
-		if (!(await this.wikiPageAuthorizationRuleset.canWrite(context, wikiPage))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 
@@ -265,7 +259,7 @@ export class WikiPageApplicationService implements WikiPageService {
 			throw new Error(`Place ${placeId} does not exist`);
 		}
 
-		if (!(await this.wikiPageAuthorizationRuleset.canWrite(context, place))) {
+		if (!(await place.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission to write to this page`);
 		}
 
@@ -294,7 +288,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
-		if (!(await this.wikiPageAuthorizationRuleset.canWrite(context, wikiPage))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 		const foundModel = await unitOfWork.modelRepository.findById(model);
@@ -315,7 +309,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
-		if (!(await this.wikiPageAuthorizationRuleset.canWrite(context, wikiPage))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 
@@ -323,14 +317,14 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await this.wikiFolderAuthorizationRuleset.canWrite(context, folder))) {
+		if (!(await folder.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
 		const oldFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("pages", wikiId),
 		]);
-		if (oldFolder && !(await this.wikiFolderAuthorizationRuleset.canWrite(context, oldFolder))) {
+		if (oldFolder && !(await oldFolder.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission to write to the folder ${oldFolder._id}`);
 		}
 
@@ -344,7 +338,7 @@ export class WikiPageApplicationService implements WikiPageService {
 
 	getWiki = async (context: SecurityContext, wikiId: string): Promise<WikiPage> => {
 		let foundWiki = await this.wikiPageRepository.findById(wikiId);
-		if (foundWiki && !(await this.wikiPageAuthorizationRuleset.canRead(context, foundWiki))) {
+		if (foundWiki && !(await foundWiki.authorizationPolicy.canRead(context))) {
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
 
@@ -358,7 +352,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		if (!(await world.authorizationRuleset.canRead(context, world))) {
+		if (!(await world.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this World");
 		}
 
@@ -373,10 +367,10 @@ export class WikiPageApplicationService implements WikiPageService {
 
 		const docs = [];
 		for (let doc of results.docs) {
-			if (canAdmin !== undefined && !(await doc.authorizationRuleset.canAdmin(context, doc))) {
+			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context))) {
 				continue;
 			}
-			if (await doc.authorizationRuleset.canRead(context, doc)) {
+			if (await doc.authorizationPolicy.canRead(context)) {
 				docs.push(doc);
 			}
 		}
@@ -393,7 +387,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationRuleset.canRead(context, folder))) {
+		if (!(await folder.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this folder");
 		}
 		const results = await this.wikiPageRepository.findPaginated(
@@ -403,7 +397,7 @@ export class WikiPageApplicationService implements WikiPageService {
 		);
 		const docs = [];
 		for (let doc of results.docs) {
-			if (await this.wikiPageAuthorizationRuleset.canRead(context, doc)) {
+			if (await doc.authorizationPolicy.canRead(context)) {
 				docs.push(doc);
 			}
 		}

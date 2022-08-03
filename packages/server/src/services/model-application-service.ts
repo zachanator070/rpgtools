@@ -13,7 +13,6 @@ import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants
 import { MODEL } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { ModelAuthorizationRuleset } from "../security/ruleset/model-authorization-ruleset";
 import { SecurityContext } from "../security/security-context";
 import { FileUpload } from "graphql-upload";
 import { Model } from "../domain-entities/model";
@@ -34,9 +33,6 @@ export class ModelApplicationService implements ModelService {
 
 	@inject(INJECTABLE_TYPES.ModelRepository)
 	modelRepository: ModelRepository;
-
-	@inject(INJECTABLE_TYPES.ModelAuthorizationRuleset)
-	modelAuthorizationRuleset: ModelAuthorizationRuleset;
 
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
@@ -64,14 +60,6 @@ export class ModelApplicationService implements ModelService {
 			throw new Error(`World with id ${worldId} does not exist`);
 		}
 
-		if (!(await this.modelAuthorizationRuleset.canCreate(context, world))) {
-			throw new Error("You do not have permission to add models to this world");
-		}
-
-		fileUpload = await fileUpload;
-
-		const file = this.fileFactory(null, fileUpload.filename, fileUpload.createReadStream(), null);
-		await unitOfWork.fileRepository.create(file);
 		const model = this.modelFactory(
 			null,
 			worldId,
@@ -79,10 +67,19 @@ export class ModelApplicationService implements ModelService {
 			depth,
 			width,
 			height,
-			file.filename,
-			file._id,
+			null,
+			null,
 			notes
 		);
+
+		if (!(await model.authorizationPolicy.canCreate(context))) {
+			throw new Error("You do not have permission to add models to this world");
+		}
+
+		fileUpload = await fileUpload;
+
+		const file = this.fileFactory(null, fileUpload.filename, fileUpload.createReadStream(), null);
+		await unitOfWork.fileRepository.create(file);
 		await unitOfWork.modelRepository.create(model);
 		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
 			const permissionAssignment = this.permissionAssignmentFactory(
@@ -115,7 +112,7 @@ export class ModelApplicationService implements ModelService {
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
-		if (!(await this.modelAuthorizationRuleset.canWrite(context, model))) {
+		if (!(await model.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to edit this model");
 		}
 		if (file) {
@@ -150,7 +147,7 @@ export class ModelApplicationService implements ModelService {
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
-		if (!(await this.modelAuthorizationRuleset.canWrite(context, model))) {
+		if (!(await model.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to delete this model");
 		}
 		const games = await unitOfWork.gameRepository.find([new FilterCondition("models", {_id: modelId})]);
@@ -176,7 +173,7 @@ export class ModelApplicationService implements ModelService {
 		const models = await this.modelRepository.find([new FilterCondition("world", worldId)]);
 		const returnModels = [];
 		for (let model of models) {
-			if (await this.modelAuthorizationRuleset.canRead(context, model)) {
+			if (await model.authorizationPolicy.canRead(context)) {
 				returnModels.push(model);
 			}
 		}

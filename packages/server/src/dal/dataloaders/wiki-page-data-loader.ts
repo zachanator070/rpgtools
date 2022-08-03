@@ -3,12 +3,12 @@ import { WikiPage } from "../../domain-entities/wiki-page";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { WikiPageRepository } from "../../types";
-import { WikiPageAuthorizationRuleset } from "../../security/ruleset/wiki-page-authorization-ruleset";
+import { WikiPageAuthorizationPolicy } from "../../security/policy/wiki-page-authorization-policy";
 
 @injectable()
 export class WikiPageDataLoader extends GraphqlDataloader<WikiPage> {
+
 	@inject(INJECTABLE_TYPES.WikiPageRepository)
 	repository: WikiPageRepository;
-	@inject(INJECTABLE_TYPES.WikiPageAuthorizationRuleset)
-	ruleset: WikiPageAuthorizationRuleset;
+
 }
