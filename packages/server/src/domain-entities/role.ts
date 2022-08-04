@@ -1,4 +1,4 @@
-import {DomainEntity, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
 import { RoleAuthorizationPolicy } from "../security/policy/role-authorization-policy";
 import { ROLE } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -13,13 +13,17 @@ export class Role implements DomainEntity {
 	public permissions: string[];
 
 	authorizationPolicy: RoleAuthorizationPolicy;
+	factory: Factory<Role>;
 
 	type: string = ROLE;
 
 	constructor(@inject(INJECTABLE_TYPES.RoleAuthorizationPolicy)
-					authorizationPolicy: RoleAuthorizationPolicy) {
+					authorizationPolicy: RoleAuthorizationPolicy,
+				@inject(INJECTABLE_TYPES.RoleFactory)
+					factory: Factory<Role>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
+		this.factory = factory;
 	}
 
 	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {

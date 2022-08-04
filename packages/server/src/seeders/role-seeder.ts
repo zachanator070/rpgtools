@@ -38,7 +38,7 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			allUsersRole = this.roleFactory(null, EVERYONE, null, []);
+			allUsersRole = this.roleFactory({_id: null, name: EVERYONE, world: null, permissions: []});
 			await this.roleRepository.create(allUsersRole);
 			console.log(`Created default role "${EVERYONE}"`);
 		}
@@ -50,7 +50,7 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			loggedInRole = this.roleFactory(null, LOGGED_IN, null, []);
+			loggedInRole = this.roleFactory({_id: null, name: LOGGED_IN, world: null, permissions: []});
 			await this.roleRepository.create(loggedInRole);
 			let createWorldPermission = await this.permissionAssignmentRepository.findOne([
 				new FilterCondition("permission", WORLD_CREATE),
@@ -59,10 +59,12 @@ export class RoleSeeder implements Seeder {
 			]);
 			if (!createWorldPermission) {
 				createWorldPermission = this.permissionAssignmentFactory(
-					null,
-					WORLD_CREATE,
-					server._id,
-					SERVER_CONFIG
+					{
+						_id: null,
+						permission: WORLD_CREATE,
+						subject: server._id,
+						subjectType: SERVER_CONFIG
+					}
 				);
 				await this.permissionAssignmentRepository.create(createWorldPermission);
 			}

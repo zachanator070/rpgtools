@@ -18,11 +18,13 @@ export class MongodbWikiFolderRepository
 
 	buildEntity(document: WikiFolderDocument): WikiFolder {
 		return this.wikiFolderFactory(
-			document._id.toString(),
-			document.name,
-			document.world.toString(),
-			document.pages.map((id) => id.toString()),
-			document.children.map((id) => id.toString())
+			{
+				_id: document._id.toString(),
+				name: document.name,
+				world: document.world.toString(),
+				pages: document.pages.map((id) => id.toString()),
+				children: document.children.map((id) => id.toString())
+			}
 		);
 	}
 }

@@ -18,11 +18,13 @@ export class MongodbPinRepository
 
 	buildEntity(document: PinDocument): Pin {
 		return this.pinFactory(
-			document._id.toString(),
-			document.x,
-			document.y,
-			document.map.toString(),
-			document.page ? document.page.toString() : null
+			{
+				_id: document._id.toString(),
+				x: document.x,
+				y: document.y,
+				map: document.map.toString(),
+				page: document.page ? document.page.toString() : null
+			}
 		);
 	}
 }

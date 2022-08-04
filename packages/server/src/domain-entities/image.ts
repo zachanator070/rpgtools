@@ -1,7 +1,7 @@
-import {DomainEntity, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
 import { IMAGE } from "@rpgtools/common/src/type-constants";
 import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
-import { inject, injectable } from "inversify";
+import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
@@ -17,12 +17,16 @@ export class Image implements DomainEntity {
 	public icon: string | null;
 
 	authorizationPolicy: ImageAuthorizationPolicy;
+	factory: Factory<Image>;
 
 	type: string = IMAGE;
 
 	constructor(@inject(INJECTABLE_TYPES.ImageAuthorizationPolicy)
-					authorizationPolicy: ImageAuthorizationPolicy) {
+					authorizationPolicy: ImageAuthorizationPolicy,
+				@inject(INJECTABLE_TYPES.ImageFactory)
+					factory: Factory<Image>) {
 		this.authorizationPolicy = authorizationPolicy;
+		this.factory = factory;
 	}
 
 	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {

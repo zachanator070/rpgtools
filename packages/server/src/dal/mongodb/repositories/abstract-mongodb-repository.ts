@@ -1,8 +1,5 @@
 import { DomainEntity, DatabaseEntity, Repository } from "../../../types";
 import {
-	FILTER_CONDITION_OPERATOR_EQUALS,
-	FILTER_CONDITION_OPERATOR_IN,
-	FILTER_CONDITION_REGEX,
 	FilterCondition,
 } from "../../filter-condition";
 import mongoose from "mongoose";

@@ -1,7 +1,5 @@
 import {
-	AuthorizationService,
 	DomainEntity,
-	Factory,
 	PermissionAssignmentFactory,
 	Repository,
 	RoleFactory,
@@ -15,17 +13,13 @@ import { World } from "../domain-entities/world";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
 import { ROLE } from "@rpgtools/common/src/type-constants";
 import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { RepositoryMapper } from "../dal/repository-mapper";
 import { User } from "../domain-entities/user";
 
 @injectable()
-export class AuthorizationApplicationService implements AuthorizationService {
-
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+export class AuthorizationService {
 
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
@@ -40,9 +34,9 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		permission: string,
 		subjectId: string,
 		subjectType: string,
-		userId: string
+		userId: string,
+		unitOfWork: UnitOfWork
 	): Promise<DomainEntity> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error(`User with id ${userId} does not exist`);
@@ -56,18 +50,16 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			user,
 			unitOfWork.userRepository
 		);
-		const subject = this.mapper.map(subjectType).findById(subjectId);
-		await unitOfWork.commit();
-		return subject;
+		return this.mapper.map(subjectType, unitOfWork).findById(subjectId);
 	};
 
 	revokeUserPermission = async (
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
-		userId: string
+		userId: string,
+		unitOfWork: UnitOfWork
 	): Promise<DomainEntity> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
 		if (!user) {
 			throw new Error("User does not exist");
@@ -80,9 +72,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			user,
 			unitOfWork.userRepository
 		);
-		const subject = this.mapper.map(permissionAssignment.subjectType).findById(subjectId);
-		await unitOfWork.commit();
-		return subject;
+		return this.mapper.map(permissionAssignment.subjectType, unitOfWork).findById(subjectId);
 	};
 
 	grantRolePermission = async (
@@ -90,9 +80,9 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		permission: string,
 		subjectId: string,
 		subjectType: string,
-		roleId: string
+		roleId: string,
+		unitOfWork: UnitOfWork
 	): Promise<Role> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
 		if (!role) {
 			throw new Error(`Role with id ${roleId} does not exist`);
@@ -106,7 +96,6 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			role,
 			unitOfWork.roleRepository
 		);
-		await unitOfWork.commit();
 		return role;
 	};
 
@@ -114,9 +103,9 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		context: SecurityContext,
 		roleId: string,
 		permission: string,
-		subjectId: string
+		subjectId: string,
+		unitOfWork: UnitOfWork
 	): Promise<Role> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
 		if (!role) {
 			throw new Error("Role does not exist");
@@ -130,12 +119,10 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			role,
 			unitOfWork.roleRepository
 		);
-		await unitOfWork.commit();
 		return role;
 	};
 
-	createRole = async (context: SecurityContext, worldId: string, name: string): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	createRole = async (context: SecurityContext, worldId: string, name: string, unitOfWork: UnitOfWork): Promise<World> => {
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
@@ -143,27 +130,27 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		if (!(await context.hasPermission(ROLE_ADD, worldId))) {
 			throw new Error(`You do not have permission to add roles to this world`);
 		}
-		const newRole = this.roleFactory(null, name, worldId, []);
+		const newRole = this.roleFactory({_id: null, name, world: worldId, permissions: []});
 		await unitOfWork.roleRepository.create(newRole);
 		world.roles.push(newRole._id);
 		await unitOfWork.worldRepository.update(world);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
 			const permissionAssignment = this.permissionAssignmentFactory(
-				null,
-				permission,
-				newRole._id,
-				ROLE
+				{
+					_id: null,
+					permission,
+					subject: newRole._id,
+					subjectType: ROLE
+				}
 			);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
 		}
 		await unitOfWork.userRepository.update(context.user);
-		await unitOfWork.commit();
 		return world;
 	};
 
-	deleteRole = async (context: SecurityContext, roleId: string): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	deleteRole = async (context: SecurityContext, roleId: string, unitOfWork: UnitOfWork): Promise<World> => {
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -186,7 +173,6 @@ export class AuthorizationApplicationService implements AuthorizationService {
 			await unitOfWork.userRepository.update(user);
 		}
 		await unitOfWork.roleRepository.delete(role);
-		await unitOfWork.commit();
 		return world;
 	};
 
@@ -221,9 +207,9 @@ export class AuthorizationApplicationService implements AuthorizationService {
 	addUserRole = async (
 		context: SecurityContext,
 		userId: string,
-		roleId: string
+		roleId: string,
+		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -240,17 +226,15 @@ export class AuthorizationApplicationService implements AuthorizationService {
 
 		user.roles.push(role._id);
 		await unitOfWork.userRepository.update(user);
-		const world = await unitOfWork.worldRepository.findById(role.world);
-		await unitOfWork.commit();
-		return world;
+		return unitOfWork.worldRepository.findById(role.world);
 	};
 
 	removeUserRole = async (
 		context: SecurityContext,
 		userId: string,
-		roleId: string
+		roleId: string,
+		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -276,9 +260,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 
 		user.roles = user.roles.filter((userRole) => userRole !== role._id);
 		await unitOfWork.userRepository.update(user);
-		const world = await unitOfWork.worldRepository.findById(role.world);
-		await unitOfWork.commit();
-		return world;
+		return unitOfWork.worldRepository.findById(role.world);
 	};
 
 	private grantEntityPermission = async (
@@ -297,7 +279,7 @@ export class AuthorizationApplicationService implements AuthorizationService {
 		]);
 		let needsCreation = false;
 		if (!assignment) {
-			assignment = this.permissionAssignmentFactory(null, permission, subjectId, subjectType);
+			assignment = this.permissionAssignmentFactory({_id: null, permission, subject: subjectId, subjectType});
 			needsCreation = true;
 		}
 		if (!(await assignment.authorizationPolicy.canWrite(context))) {

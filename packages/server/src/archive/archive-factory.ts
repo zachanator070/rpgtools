@@ -35,10 +35,10 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
 
-	public createDefault = (): Archive => this.zipArchiveFactory();
+	public createDefault = (): Archive => this.zipArchiveFactory({});
 
 	public zipFromZipStream = async (archiveReadStream: Readable): Promise<ZipArchive> => {
-		const archive = this.zipArchiveFactory();
+		const archive = this.zipArchiveFactory({});
 		await new Promise((resolve: (value?: any) => any, reject: (error?: any) => any) => {
 			const fileReadingPromises: Promise<any>[] = [];
 			archiveReadStream
@@ -76,7 +76,7 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 		if (entryType === FILE) {
 			const filename: string = this.getFilenameFromPath(entry.path);
 			const id = filename.split(".")[1];
-			const newFile = this.fileFactory(id, filename, await this.createReadStream(entry), null)
+			const newFile = this.fileFactory({_id: id, filename, readStream: await this.createReadStream(entry), mimeType: null})
 			await archive.fileRepository.create(newFile);
 		} else {
 			const entity = await this.getEntryContent(entry);
@@ -142,11 +142,13 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 
 	private async addFolder(name: string, currentFolder: WikiFolder, archive: Archive) {
 		const newFolder = this.wikiFolderFactory(
-			null,
-			name,
-			null,
-			[],
-			[]
+			{
+				_id: null,
+				name,
+				world: null,
+				pages: [],
+				children: []
+			}
 		);
 		await archive.wikiFolderRepository.create(newFolder);
 		if (currentFolder) {

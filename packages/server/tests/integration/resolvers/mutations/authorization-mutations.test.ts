@@ -1,7 +1,7 @@
 import { WIKI_READ, WIKI_RW, WORLD_READ } from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
 import { container } from "../../../../src/di/inversify";
-import { AuthorizationService, RoleFactory, RoleRepository } from "../../../../src/types";
+import { RoleFactory, RoleRepository } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {
@@ -11,6 +11,7 @@ import {
 	GRANT_ROLE_PERMISSION,
 	GRANT_USER_PERMISSION, REMOVE_USER_ROLE, REVOKE_ROLE_PERMISSION, REVOKE_USER_PERMISSION
 } from "@rpgtools/common/src/gql-mutations";
+import {AuthorizationService} from "../../../../src/services/authorization-service";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 

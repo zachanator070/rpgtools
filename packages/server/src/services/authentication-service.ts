@@ -1,14 +1,11 @@
 import {
-	AuthenticationService,
 	AuthenticationTokens,
 	CookieManager,
-	Factory,
 	UnitOfWork,
 	UserFactory,
 } from "../types";
 import { User } from "../domain-entities/user";
 import bcrypt from "bcrypt";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { FilterCondition } from "../dal/filter-condition";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
@@ -26,11 +23,8 @@ export const ACCESS_TOKEN_MAX_AGE: CookieConstants = { string: "30m", ms: 1000 *
 export const REFRESH_TOKEN_MAX_AGE: CookieConstants = { string: "1d", ms: 1000 * 60 * 60 * 24 };
 
 @injectable()
-export class AuthenticationApplicationService implements AuthenticationService {
+export class AuthenticationService {
 	SALT_ROUNDS = 10;
-
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory;
@@ -112,9 +106,9 @@ export class AuthenticationApplicationService implements AuthenticationService {
 	login = async (
 		username: string,
 		password: string,
-		cookieManager: CookieManager
+		cookieManager: CookieManager,
+		unitOfWork: UnitOfWork
 	): Promise<User> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const user = await unitOfWork.userRepository.findOne([
 			new FilterCondition("username", username),
 		]);
@@ -124,12 +118,10 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		let tokens = await this.createTokens(user, null, unitOfWork);
 		cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
 		cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
-		await unitOfWork.commit();
 		return user;
 	};
 
-	logout = async (currentUser: User, cookieManager: CookieManager): Promise<string> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	logout = async (currentUser: User, cookieManager: CookieManager, unitOfWork: UnitOfWork): Promise<string> => {
 		cookieManager.clearCookie(ACCESS_TOKEN);
 		cookieManager.clearCookie(REFRESH_TOKEN);
 		currentUser.tokenVersion = uuidv4();
@@ -141,18 +133,16 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		registerCode: string,
 		email: string,
 		username: string,
-		password: string
+		password: string,
+		unitOfWork: UnitOfWork
 	): Promise<User> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const config = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!config.registerCodes.includes(registerCode)) {
 			throw new Error("Register code not valid");
 		}
 		config.registerCodes = config.registerCodes.filter((code) => code !== registerCode);
 		await unitOfWork.serverConfigRepository.update(config);
-		const newUser = await this.registerUser(email, username, password, unitOfWork);
-		await unitOfWork.commit();
-		return newUser;
+		return this.registerUser(email, username, password, unitOfWork);
 	};
 
 	registerUser = async (
@@ -172,7 +162,7 @@ export class AuthenticationApplicationService implements AuthenticationService {
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
-		const newUser = this.userFactory("", email, username, password, null, null, [], []);
+		const newUser = this.userFactory({_id: "", email, username, password, tokenVersion: null, currentWorld: null, roles: [], permissions: []});
 		await unitOfWork.userRepository.create(newUser);
 		return newUser;
 	};

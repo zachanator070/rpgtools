@@ -1,19 +1,10 @@
 import {
 	ArticleFactory,
-	AuthorizationService,
-	EntityAuthorizationPolicy,
-	Factory,
 	PermissionAssignmentFactory,
 	UnitOfWork,
 	WikiFolderFactory,
-	WikiFolderRepository,
-	WikiFolderService,
-	WorldRepository,
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
-import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
-import { WikiPage } from "../domain-entities/wiki-page";
-import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { SecurityContext } from "../security/security-context";
 import {
 	FILTER_CONDITION_OPERATOR_IN,
@@ -25,18 +16,13 @@ import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
+import {AuthorizationService} from "./authorization-service";
 
 @injectable()
-export class WikiFolderApplicationService implements WikiFolderService {
+export class WikiFolderService {
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
-
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: WorldRepository;
-	@inject(INJECTABLE_TYPES.WikiFolderRepository)
-	wikiFolderRepository: WikiFolderRepository;
 
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
@@ -45,15 +31,12 @@ export class WikiFolderApplicationService implements WikiFolderService {
 	@inject(INJECTABLE_TYPES.ArticleFactory)
 	articleFactory: ArticleFactory;
 
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
-
 	createFolder = async (
 		context: SecurityContext,
 		name: string,
-		parentFolderId: string
+		parentFolderId: string,
+		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const parentFolder = await unitOfWork.wikiFolderRepository.findById(parentFolderId);
 		if (!parentFolder) {
 			throw new Error("Parent folder does not exist");
@@ -62,33 +45,33 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		if (!(await parentFolder.authorizationPolicy.canWrite(context))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
-		const newFolder = this.wikiFolderFactory(null, name, parentFolder.world, [], []);
+		const newFolder = this.wikiFolderFactory({_id: null, name, world: parentFolder.world, pages: [], children: []});
 		await unitOfWork.wikiFolderRepository.create(newFolder);
 		parentFolder.children.push(newFolder._id);
 		await unitOfWork.wikiFolderRepository.update(parentFolder);
 
 		for (let permission of [FOLDER_RW, FOLDER_ADMIN]) {
 			const newPermission = this.permissionAssignmentFactory(
-				null,
-				permission,
-				newFolder._id,
-				WIKI_FOLDER
+				{
+					_id: null,
+					permission,
+					subject: newFolder._id,
+					subjectType: WIKI_FOLDER
+				}
 			);
 			await unitOfWork.permissionAssignmentRepository.create(newPermission);
 			context.user.permissions.push(newPermission._id);
 		}
 		await unitOfWork.userRepository.update(context.user);
-		const world = await unitOfWork.worldRepository.findById(newFolder.world);
-		await unitOfWork.commit();
-		return world;
+		return unitOfWork.worldRepository.findById(newFolder.world);
 	};
 
 	renameFolder = async (
 		context: SecurityContext,
 		folderId: string,
-		name: string
+		name: string,
+		unitOfWork: UnitOfWork
 	): Promise<WikiFolder> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -99,12 +82,10 @@ export class WikiFolderApplicationService implements WikiFolderService {
 
 		folder.name = name;
 		await unitOfWork.wikiFolderRepository.update(folder);
-		await unitOfWork.commit();
 		return folder;
 	};
 
-	deleteFolder = async (context: SecurityContext, folderId: string): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	deleteFolder = async (context: SecurityContext, folderId: string, unitOfWork: UnitOfWork): Promise<World> => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -129,17 +110,15 @@ export class WikiFolderApplicationService implements WikiFolderService {
 
 		await this.recurseDeleteFolder(folder, unitOfWork);
 
-		const world = await unitOfWork.worldRepository.findById(folder.world);
-		await unitOfWork.commit();
-		return world;
+		return unitOfWork.worldRepository.findById(folder.world);
 	};
 
 	moveFolder = async (
 		context: SecurityContext,
 		folderId: string,
-		parentFolderId: string
+		parentFolderId: string,
+		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error(`Folder with id ${folderId} does not exist`);
@@ -166,18 +145,17 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		await unitOfWork.wikiFolderRepository.update(currentParent);
 		parentFolder.children.push(folder._id);
 		await unitOfWork.wikiFolderRepository.update(parentFolder);
-		const world = await unitOfWork.worldRepository.findById(folder.world);
-		await unitOfWork.commit();
-		return world;
+		return unitOfWork.worldRepository.findById(folder.world);
 	};
 
 	getFolders = async (
 		context: SecurityContext,
 		worldId: string,
 		name: string,
-		canAdmin: boolean
+		canAdmin: boolean,
+		unitOfWork: UnitOfWork
 	): Promise<WikiFolder[]> => {
-		const world = await this.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");
 		}
@@ -190,7 +168,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 			conditions.push(new FilterCondition("name", name, FILTER_CONDITION_REGEX));
 		}
 
-		const results = await this.wikiFolderRepository.find(conditions);
+		const results = await unitOfWork.wikiFolderRepository.find(conditions);
 
 		const docs = [];
 		for (let doc of results) {
@@ -207,12 +185,12 @@ export class WikiFolderApplicationService implements WikiFolderService {
 		return docs;
 	};
 
-	getFolderPath = async (context: SecurityContext, wikiId: string): Promise<WikiFolder[]> => {
+	getFolderPath = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork): Promise<WikiFolder[]> => {
 		const path = [];
-		let folder = await this.wikiFolderRepository.findOne([new FilterCondition("pages", wikiId)]);
+		let folder = await unitOfWork.wikiFolderRepository.findOne([new FilterCondition("pages", wikiId)]);
 		while (folder) {
 			path.push(folder);
-			folder = await this.wikiFolderRepository.findOne([
+			folder = await unitOfWork.wikiFolderRepository.findOne([
 				new FilterCondition("children", folder._id),
 			]);
 		}
@@ -250,7 +228,7 @@ export class WikiFolderApplicationService implements WikiFolderService {
 
 		// pages are auto populated
 		for (let childPage of folder.pages) {
-			const wikiPage = this.articleFactory(childPage, null, null, null, null);
+			const wikiPage = this.articleFactory({_id: childPage, name: null, world: null, coverImage: null, contentId: null});
 			if (
 				!(await wikiPage.authorizationPolicy.canWrite(context))
 			) {

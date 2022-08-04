@@ -5,10 +5,8 @@ import { inject, injectable } from "inversify";
 import {
 	Archive,
 	AbstractArchiveFactory,
-	ContentImportService,
 	Repository,
 	UnitOfWork,
-	Factory,
 	WikiFolderFactory,
 } from "../types";
 import { Model } from "../domain-entities/model";
@@ -18,27 +16,24 @@ import { WikiPage } from "../domain-entities/wiki-page";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Place } from "../domain-entities/place";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 
 @injectable()
-export class ContentImportApplicationService implements ContentImportService {
+export class ContentImportService {
 
 	@inject(INJECTABLE_TYPES.ArchiveFactory)
 	archiveFactory: AbstractArchiveFactory;
 
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
 
 	public importContent = async (
 		context: SecurityContext,
 		folderId: string,
-		zipFile: FileUpload
+		zipFile: FileUpload,
+		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -171,11 +166,13 @@ export class ContentImportApplicationService implements ContentImportService {
 			}
 			if (!foundChild) {
 				const newFolder = this.wikiFolderFactory(
-					null,
-					path[0].name,
-					destinationRootFolder.world,
-					[],
-					[]
+					{
+						_id: null,
+						name: path[0].name,
+						world: destinationRootFolder.world,
+						pages: [],
+						children: []
+					}
 				);
 				await unitOfWork.wikiFolderRepository.create(newFolder);
 				destinationRootFolder.children.push(newFolder._id);

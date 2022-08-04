@@ -1,7 +1,7 @@
 import { markdownToDelta } from "./markdown-to-delta";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { ArticleRepository } from "../types";
+import {UnitOfWork} from "../types";
 import { FilterCondition } from "../dal/filter-condition";
 import {
 	Open5eApiClient,
@@ -11,16 +11,14 @@ import {
 	Open5eSection,
 	Open5eSpell,
 } from "./open-5e-api-client";
-import {Dnd5eApiClient, Dnd5eRule, Dnd5eSubSection} from "./dnd-5e-api-client";
+import {Dnd5eRule} from "./dnd-5e-api-client";
 
 @injectable()
 export class DeltaFactory {
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	apiClient: Open5eApiClient;
-	@inject(INJECTABLE_TYPES.ArticleRepository)
-	articleRepository: ArticleRepository;
 
-	fromCharacterClass = async (characterClass: Open5eClass, worldId: string) => {
+	fromCharacterClass = async (characterClass: Open5eClass, worldId: string, unitOfWork: UnitOfWork) => {
 		const ops = [];
 
 		ops.push(...this.getHeading("Hit Points"));
@@ -83,7 +81,7 @@ export class DeltaFactory {
 				ops.push({ insert: "\n", attributes: { header: 2 } });
 				ops.push({ insert: "\n" });
 				for (let spell of classSpells[level]) {
-					const article = await this.articleRepository.findOne([
+					const article = await unitOfWork.articleRepository.findOne([
 						new FilterCondition("name", spell.name),
 						new FilterCondition("world", worldId),
 					]);

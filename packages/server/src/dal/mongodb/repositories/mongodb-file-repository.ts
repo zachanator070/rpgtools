@@ -59,7 +59,7 @@ export class MongodbFileRepository implements FileRepository {
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];
 		for (let doc of docs) {
-			results.push(this.fileFactory(doc._id, doc.filename, gfs.openDownloadStream(doc._id), null));
+			results.push(this.fileFactory({_id: doc._id, filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
 		}
 		return results;
 	};

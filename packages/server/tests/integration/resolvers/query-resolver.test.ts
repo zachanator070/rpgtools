@@ -1,7 +1,6 @@
 import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
 import { container } from "../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../src/di/injectable-types";
-import {WikiFolderService, WorldService} from "../../../src/types";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import {
 	GET_CURRENT_USER,
@@ -11,6 +10,8 @@ import {
 	SEARCH_USERS,
 	WIKIS_IN_FOLDER
 } from "@rpgtools/common/src/gql-queries";
+import {WorldService} from "../../../src/services/world-service";
+import {WikiFolderService} from "../../../src/services/wiki-folder-service";
 
 process.env.TEST_SUITE = "query-resolver-test";
 

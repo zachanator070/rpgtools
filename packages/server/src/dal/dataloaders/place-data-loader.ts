@@ -1,14 +1,12 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Place } from "../../domain-entities/place";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import { PlaceRepository } from "../../types";
-import { PlaceAuthorizationPolicy } from "../../security/policy/place-authorization-policy";
+import { injectable } from "inversify";
+import {Repository, UnitOfWork} from "../../types";
 
 @injectable()
 export class PlaceDataLoader extends GraphqlDataloader<Place> {
-
-	@inject(INJECTABLE_TYPES.PlaceRepository)
-	repository: PlaceRepository;
+	getRepository(unitOfWork: UnitOfWork): Repository<Place> {
+		return unitOfWork.placeRepository;
+	}
 
 }

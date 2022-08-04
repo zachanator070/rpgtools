@@ -36,16 +36,18 @@ export class MongodbGameRepository
 
 	build(entity: GameDocument): Game {
 		return this.gameFactory(
-			entity._id.toString(),
-			entity.passwordHash,
-			entity.world.toString(),
-			entity.map ? entity.map.toString() : null,
-			this.buildCharacters(entity.characters),
-			this.buildStrokes(entity.strokes),
-			this.buildFogStrokes(entity.fog),
-			this.buildMessages(entity.messages),
-			this.buildModels(entity.models),
-			entity.host.toString()
+			{
+				_id: entity._id.toString(),
+				passwordHash: entity.passwordHash,
+				world: entity.world.toString(),
+				map: entity.map ? entity.map.toString() : null,
+				characters: this.buildCharacters(entity.characters),
+				strokes: this.buildStrokes(entity.strokes),
+				fog: this.buildFogStrokes(entity.fog),
+				messages: this.buildMessages(entity.messages),
+				models: this.buildModels(entity.models),
+				host: entity.host.toString()
+			}
 		);
 	}
 

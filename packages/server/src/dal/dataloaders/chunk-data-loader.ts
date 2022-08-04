@@ -1,14 +1,13 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Chunk } from "../../domain-entities/chunk";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import { ChunkRepository } from "../../types";
-import { ChunkAuthorizationPolicy } from "../../security/policy/chunk-authorization-policy";
+import { injectable } from "inversify";
+import {Repository, UnitOfWork} from "../../types";
 
 @injectable()
 export class ChunkDataLoader extends GraphqlDataloader<Chunk> {
 
-	@inject(INJECTABLE_TYPES.ChunkRepository)
-	repository: ChunkRepository;
+	getRepository(unitOfWork: UnitOfWork): Repository<Chunk> {
+		return unitOfWork.chunkRepository;
+	}
 
 }

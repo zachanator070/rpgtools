@@ -1,4 +1,4 @@
-import {DomainEntity, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -15,11 +15,15 @@ export class World implements DomainEntity {
 	public type: string = WORLD;
 
 	authorizationPolicy: WorldAuthorizationPolicy;
+	factory: Factory<World>
 
 	constructor(@inject(INJECTABLE_TYPES.WorldAuthorizationPolicy)
-				authorizationPolicy: WorldAuthorizationPolicy) {
+					authorizationPolicy: WorldAuthorizationPolicy,
+				@inject(INJECTABLE_TYPES.WorldFactory)
+					factory: Factory<World>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
+		this.factory = factory;
 	}
 
 	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {

@@ -1,11 +1,7 @@
 import {
-	AuthorizationService,
 	EventPublisher,
-	Factory,
 	GameFactory,
-	GameRepository,
-	GameService,
-	PermissionAssignmentFactory,
+	PermissionAssignmentFactory, UnitOfWork,
 } from "../types";
 import {
 	ANON_USERNAME,
@@ -17,7 +13,6 @@ import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import { SecurityContext } from "../security/security-context";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import {
 	Character,
 	FogStroke,
@@ -47,20 +42,16 @@ import { User } from "../domain-entities/user";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
+import {AuthorizationService} from "./authorization-service";
 
 @injectable()
-export class GameApplicationService implements GameService {
-	@inject(INJECTABLE_TYPES.GameRepository)
-	gameRepository: GameRepository;
+export class GameService {
 
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
 
 	@inject(INJECTABLE_TYPES.EventPublisher)
 	eventPublisher: EventPublisher;
-
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	@inject(INJECTABLE_TYPES.GameFactory)
 	gameFactory: GameFactory;
@@ -71,44 +62,48 @@ export class GameApplicationService implements GameService {
 		context: SecurityContext,
 		worldId: string,
 		password: string,
-		characterName: string
+		characterName: string,
+		unitOfWork: UnitOfWork
 	) => {
 		if (!(await context.hasPermission(GAME_HOST, worldId))) {
 			throw new Error("You do not have permission to host games on this world");
 		}
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = this.gameFactory(
-			null,
-			password && bcrypt.hashSync(password, SALT_ROUNDS),
-			worldId,
-			null,
-			[
-				new Character(
-					"",
-					characterName || context.user.username,
-					context.user._id,
-					this.genColor(),
-					0,
-					0,
-					0,
-					0,
-					0,
-					0
-				),
-			],
-			[],
-			[],
-			[],
-			[],
-			context.user._id
+			{
+				_id: null,
+				passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS),
+				world: worldId,
+				map: null,
+				characters: [
+					new Character(
+						"",
+						characterName || context.user.username,
+						context.user._id,
+						this.genColor(),
+						0,
+						0,
+						0,
+						0,
+						0,
+						0
+					),
+				],
+				strokes: [],
+				fog: [],
+				messages: [],
+				models: [],
+				host: context.user._id
+			}
 		);
 
 		for (let permission of GAME_PERMISSIONS) {
 			const permissionAssignment = this.permissionAssignmentFactory(
-				null,
-				permission,
-				game._id,
-				GAME
+				{
+					_id: null,
+					permission,
+					subject: game._id,
+					subjectType: GAME
+				}
 			);
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			context.user.permissions.push(permissionAssignment._id);
@@ -116,7 +111,6 @@ export class GameApplicationService implements GameService {
 		}
 		await unitOfWork.gameRepository.create(game);
 		await unitOfWork.userRepository.update(context.user);
-		await unitOfWork.commit();
 		return game;
 	};
 
@@ -124,9 +118,9 @@ export class GameApplicationService implements GameService {
 		context: SecurityContext,
 		gameId: string,
 		password: string,
-		characterName: string
+		characterName: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -140,7 +134,7 @@ export class GameApplicationService implements GameService {
 			new FilterCondition("subjectType", GAME),
 		]);
 		if (!permissionAssignment) {
-			permissionAssignment = this.permissionAssignmentFactory(null, GAME_READ, game._id, GAME);
+			permissionAssignment = this.permissionAssignmentFactory({_id: null, permission: GAME_READ, subject: game._id, subjectType: GAME});
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 		}
 		context.user.permissions.push(permissionAssignment._id);
@@ -160,11 +154,9 @@ export class GameApplicationService implements GameService {
 		);
 		await unitOfWork.gameRepository.update(game);
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });
-		await unitOfWork.commit();
 		return game;
 	};
-	leaveGame = async (context: SecurityContext, gameId: string) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	leaveGame = async (context: SecurityContext, gameId: string, unitOfWork: UnitOfWork) => {
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -197,11 +189,9 @@ export class GameApplicationService implements GameService {
 		}
 
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });
-		await unitOfWork.commit();
 		return true;
 	};
-	gameChat = async (context: SecurityContext, gameId: string, message: string) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	gameChat = async (context: SecurityContext, gameId: string, message: string, unitOfWork: UnitOfWork) => {
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -224,7 +214,6 @@ export class GameApplicationService implements GameService {
 		for (let message of messages) {
 			await this.eventPublisher.publish(GAME_CHAT_EVENT, { gameId, gameChat: message });
 		}
-		await unitOfWork.commit();
 		return game;
 	};
 	setGameMap = async (
@@ -232,9 +221,9 @@ export class GameApplicationService implements GameService {
 		gameId: string,
 		placeId: string,
 		clearPaint: boolean,
-		setFog: boolean
+		setFog: boolean,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -295,7 +284,6 @@ export class GameApplicationService implements GameService {
 		game.map = place._id;
 
 		await unitOfWork.gameRepository.update(game);
-		await unitOfWork.commit();
 		await this.eventPublisher.publish(GAME_MAP_CHANGE, { gameMapChange: game });
 		return game;
 	};
@@ -307,9 +295,9 @@ export class GameApplicationService implements GameService {
 		size: number,
 		color: string,
 		fill: boolean,
-		strokeId: string
+		strokeId: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -324,7 +312,6 @@ export class GameApplicationService implements GameService {
 			gameId,
 			gameStrokeAdded: newStroke,
 		});
-		await unitOfWork.commit();
 		return game;
 	};
 	addFogStroke = async (
@@ -333,9 +320,9 @@ export class GameApplicationService implements GameService {
 		path: PathNode[],
 		type: string,
 		size: number,
-		strokeId: string
+		strokeId: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -350,7 +337,6 @@ export class GameApplicationService implements GameService {
 			gameId,
 			gameFogStrokeAdded: newStroke,
 		});
-		await unitOfWork.commit();
 		return game;
 	};
 	addModel = async (
@@ -358,9 +344,9 @@ export class GameApplicationService implements GameService {
 		gameId: string,
 		modelId: string,
 		wikiId: string,
-		color: string
+		color: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -383,7 +369,6 @@ export class GameApplicationService implements GameService {
 			gameId,
 			gameModelAdded: positionedModel,
 		});
-		await unitOfWork.commit();
 		return game;
 	};
 	setModelPosition = async (
@@ -393,9 +378,9 @@ export class GameApplicationService implements GameService {
 		x: number,
 		z: number,
 		lookAtX: number,
-		lookAtZ: number
+		lookAtZ: number,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -423,16 +408,15 @@ export class GameApplicationService implements GameService {
 			gameModelPositioned: positionedModel,
 		});
 
-		await unitOfWork.commit();
 		return positionedModel;
 	};
 	setModelColor = async (
 		context: SecurityContext,
 		gameId: string,
 		positionedModelId: string,
-		color: string
+		color: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -462,9 +446,9 @@ export class GameApplicationService implements GameService {
 	deletePositionedModel = async (
 		context: SecurityContext,
 		gameId: string,
-		positionedModelId: string
+		positionedModelId: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -487,16 +471,15 @@ export class GameApplicationService implements GameService {
 			gameId,
 			gameModelDeleted: positionedModel,
 		});
-		await unitOfWork.commit();
 		return game;
 	};
 	setPositionedModelWiki = async (
 		context: SecurityContext,
 		gameId: string,
 		positionedModelId: string,
-		wikiId: string
+		wikiId: string,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -523,11 +506,9 @@ export class GameApplicationService implements GameService {
 			gameId,
 			gameModelPositioned: positionedModel,
 		});
-		await unitOfWork.commit();
 		return positionedModel;
 	};
-	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[]) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[], unitOfWork: UnitOfWork) => {
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -547,7 +528,6 @@ export class GameApplicationService implements GameService {
 		game.characters = newOrder;
 		await unitOfWork.gameRepository.update(game);
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });
-		await unitOfWork.commit();
 		return game;
 	};
 	setCharacterAttributes = async (
@@ -558,9 +538,9 @@ export class GameApplicationService implements GameService {
 		con: number,
 		int: number,
 		wis: number,
-		cha: number
+		cha: number,
+		unitOfWork: UnitOfWork
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -594,23 +574,22 @@ export class GameApplicationService implements GameService {
 			userCharacter.charisma = cha;
 		}
 		await unitOfWork.gameRepository.update(game);
-		await unitOfWork.commit();
 		return game;
 	};
 
-	getGame = async (context: SecurityContext, gameId: string): Promise<Game> => {
-		const foundGame = await this.gameRepository.findById(gameId);
+	getGame = async (context: SecurityContext, gameId: string, unitOfWork: UnitOfWork): Promise<Game> => {
+		const foundGame = await unitOfWork.gameRepository.findById(gameId);
 		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this game");
 		}
 		return foundGame;
 	};
 
-	getMyGames = async (context: SecurityContext): Promise<Game[]> => {
+	getMyGames = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<Game[]> => {
 		if (context.user.username === ANON_USERNAME) {
 			return [];
 		}
-		return this.gameRepository.find([new FilterCondition("characters.player", context.user._id)]);
+		return unitOfWork.gameRepository.find([new FilterCondition("characters.player", context.user._id)]);
 	};
 
 	private genColor = () => "#" + Math.floor(Math.random() * 16777215).toString(16);

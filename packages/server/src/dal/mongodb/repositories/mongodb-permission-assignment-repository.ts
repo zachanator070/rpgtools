@@ -22,10 +22,12 @@ export class MongodbPermissionAssignmentRepository
 
 	buildEntity(document: PermissionAssignmentDocument): PermissionAssignment {
 		return this.permissionAssignmentFactory(
-			document._id.toString(),
-			document.permission,
-			document.subject.toString(),
-			document.subjectType
+			{
+				_id: document._id.toString(),
+				permission: document.permission,
+				subject: document.subject.toString(),
+				subjectType: document.subjectType
+			}
 		);
 	}
 }

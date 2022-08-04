@@ -16,8 +16,6 @@ import {
 	WIKI_RW_ALL,
 } from "@rpgtools/common/src/permission-constants";
 import { WikiFolder } from "../../domain-entities/wiki-folder";
-import { WikiFolderAuthorizationPolicy } from "./wiki-folder-authorization-policy";
-import {WorldAuthorizationPolicy} from "./world-authorization-policy";
 
 @injectable()
 export class WikiPageAuthorizationPolicy

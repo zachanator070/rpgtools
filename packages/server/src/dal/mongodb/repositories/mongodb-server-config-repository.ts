@@ -18,11 +18,13 @@ export class MongodbServerConfigRepository
 
 	buildEntity(document: ServerConfigDocument): ServerConfig {
 		return this.serverConfigFactory(
-			document._id.toString(),
-			document.version,
-			document.registerCodes,
-			document.adminUsers.map((id) => id.toString()),
-			document.unlockCode
+			{
+				_id: document._id.toString(),
+				version: document.version,
+				registerCodes: document.registerCodes,
+				adminUsers: document.adminUsers.map((id) => id.toString()),
+				unlockCode: document.unlockCode
+			}
 		);
 	}
 }

@@ -1,5 +1,4 @@
 import {
-	AuthenticationService,
 	CookieManager,
 	Factory,
 	SessionContext,
@@ -18,10 +17,10 @@ import { SecurityContextFactory } from "../security/security-context-factory";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import {
 	ACCESS_TOKEN,
-	ACCESS_TOKEN_MAX_AGE,
+	ACCESS_TOKEN_MAX_AGE, AuthenticationService,
 	REFRESH_TOKEN,
 	REFRESH_TOKEN_MAX_AGE,
-} from "../services/authentication-application-service";
+} from "../services/authentication-service";
 
 export class ExpressSessionContextParameters implements ExpressContext {
 	req: Request;
@@ -46,7 +45,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 		req,
 		res
 	}: ExpressSessionContextParameters): Promise<SessionContext> => {
-		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory();
+		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory({});
 		const cookieManager: CookieManager = new ExpressCookieManager(res);
 
 		const refreshToken: string = req.cookies["refreshToken"];
@@ -79,16 +78,16 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					cookieManager.clearCookie(REFRESH_TOKEN);
 				}
 			} else {
-				currentUser = this.userFactory(uuidv4(), "", ANON_USERNAME, "", "", null, [], []);
+				currentUser = this.userFactory({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: [], permissions: []});
 			}
 		}
 
 		const securityContext = await this.securityContextFactory.create(currentUser);
-		await unitOfWork.commit();
 
 		return {
 			cookieManager,
 			securityContext,
+			unitOfWork
 		};
 	};
 }
