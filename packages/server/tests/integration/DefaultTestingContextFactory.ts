@@ -2,22 +2,22 @@ import { TestingContext } from "./types";
 import { FilterCondition } from "../../src/dal/filter-condition";
 import { container } from "../../src/di/inversify";
 import {
-	AuthorizationService,
 	PinRepository,
 	RoleRepository,
 	SessionContextFactory,
 	UserFactory,
 	UserRepository,
 	WikiFolderRepository,
-	WikiFolderService,
 	WikiPageRepository,
-	WikiPageService,
-	WorldService,
 } from "../../src/types";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { SecurityContextFactory } from "../../src/security/security-context-factory";
 import { MockSessionContextFactory } from "./MockSessionContextFactory";
 import { ExpressApiServer } from "../../src/server/express-api-server";
+import {AuthorizationService} from "../../src/services/authorization-service";
+import {WorldService} from "../../src/services/world-service";
+import {WikiFolderService} from "../../src/services/wiki-folder-service";
+import {WikiPageService} from "../../src/services/wiki-page-service";
 
 export const defaultTestingContextFactory = (): TestingContext => {
 	container

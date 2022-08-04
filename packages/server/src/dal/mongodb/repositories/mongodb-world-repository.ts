@@ -18,12 +18,14 @@ export class MongodbWorldRepository
 
 	buildEntity(document: WorldDocument): World {
 		return this.worldFactory(
-			document._id.toString(),
-			document.name,
-			document.wikiPage.toString(),
-			document.rootFolder.toString(),
-			document.roles.map((id) => id.toString()),
-			document.pins.map((id) => id.toString())
+			{
+				_id: document._id.toString(),
+				name: document.name,
+				wikiPage: document.wikiPage.toString(),
+				rootFolder: document.rootFolder.toString(),
+				roles: document.roles.map((id) => id.toString()),
+				pins: document.pins.map((id) => id.toString())
+			}
 		);
 	}
 }

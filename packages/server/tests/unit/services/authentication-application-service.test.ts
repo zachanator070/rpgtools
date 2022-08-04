@@ -1,8 +1,9 @@
 import {container} from "../../../src/di/inversify";
-import {AuthenticationService, UnitOfWork, UserFactory, UserRepository} from "../../../src/types";
+import {UnitOfWork, UserFactory, UserRepository} from "../../../src/types";
 import {INJECTABLE_TYPES} from "../../../src/di/injectable-types";
 import {InMemoryUserRepository} from "../../../src/dal/in-memory/repositories/in-memory-user-repository";
 import {Factory} from "../../../src/types";
+import {AuthenticationService} from "../../../src/services/authentication-service";
 
 describe("AuthenticationApplicationService test", () => {
     const service = container.get<AuthenticationService>(INJECTABLE_TYPES.AuthenticationService);

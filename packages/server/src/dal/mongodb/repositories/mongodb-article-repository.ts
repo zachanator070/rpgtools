@@ -18,11 +18,13 @@ export class MongodbArticleRepository
 
 	buildEntity(document: ArticleDocument): Article {
 		return this.articleFactory(
-			document._id.toString(),
-			document.name,
-			document.world.toString(),
-			document.coverImage ? document.coverImage.toString() : null,
-			document.contentId ? document.contentId.toString() : null
+			{
+				_id: document._id.toString(),
+				name: document.name,
+				world: document.world.toString(),
+				coverImage: document.coverImage ? document.coverImage.toString() : null,
+				contentId: document.contentId ? document.contentId.toString() : null
+			}
 		);
 	}
 }

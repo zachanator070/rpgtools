@@ -18,10 +18,12 @@ export class MongodbRoleRepository
 
 	buildEntity(document: RoleDocument): Role {
 		return this.roleFactory(
-			document._id.toString(),
-			document.name,
-			document.world ? document.world.toString() : null,
-			document.permissions.map((id) => id.toString())
+			{
+				_id: document._id.toString(),
+				name: document.name,
+				world: document.world ? document.world.toString() : null,
+				permissions: document.permissions.map((id) => id.toString())
+			}
 		);
 	}
 }

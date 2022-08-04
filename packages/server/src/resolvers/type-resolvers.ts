@@ -5,7 +5,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { World } from "../domain-entities/world";
 import {
 	DataLoader,
-	DomainEntity, Factory, FileRepository, GameFactory, ModelFactory, PermissionAssignmentRepository, RoleFactory,
+	DomainEntity, FileRepository, GameFactory, ModelFactory, PermissionAssignmentRepository, RoleFactory,
 	RoleRepository,
 	SessionContext,
 	UserRepository,
@@ -15,13 +15,9 @@ import { WikiFolder } from "../domain-entities/wiki-folder";
 import { FilterCondition } from "../dal/filter-condition";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { Image } from "../domain-entities/image";
-import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { Model } from "../domain-entities/model";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Role } from "../domain-entities/role";
-import { RoleAuthorizationPolicy } from "../security/policy/role-authorization-policy";
-import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
-import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy";
 import { User } from "../domain-entities/user";
 import { Pin } from "../domain-entities/pin";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
@@ -32,18 +28,18 @@ import { RepositoryMapper } from "../dal/repository-mapper";
 import {Game, InGameModel, Message} from "../domain-entities/game";
 
 const wikiPageInterfaceAttributes = {
-	world: async (page: WikiPage): Promise<World> => {
+	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
 		const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-		return dataLoader.getDocument(page.world);
+		return dataLoader.getDocument(page.world, unitOfWork);
 	},
 	folder: async (page: WikiPage): Promise<WikiFolder> => {
 		const repository = container.get<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository);
 		return repository.findOne([new FilterCondition("pages", page._id)]);
 	},
-	coverImage: async (page: WikiPage): Promise<Image> => {
+	coverImage: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<Image> => {
 		const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
 		if(page.coverImage){
-			return dataLoader.getDocument(page.coverImage);
+			return dataLoader.getDocument(page.coverImage, unitOfWork);
 		}
 	},
 	canWrite: async (page: WikiPage, _: any, { securityContext }: SessionContext): Promise<boolean> => {
@@ -93,48 +89,48 @@ const permissionControlledInterfaceAttributes = {
 };
 
 const modeledWikiAttributes = {
-	model: async (document: ModeledPage, _: any, __: SessionContext): Promise<Model> => {
+	model: async (document: ModeledPage, _: any, {unitOfWork}: SessionContext): Promise<Model> => {
 		const dataLoader = container.get<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader);
 		if(document.pageModel){
-			return dataLoader.getDocument(document.pageModel);
+			return dataLoader.getDocument(document.pageModel, unitOfWork);
 		}
 	},
 };
 
 export const TypeResolvers = {
 	World: {
-		roles: async (world: World, _: any, { securityContext }: SessionContext): Promise<Role[]> => {
+		roles: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Role[]> => {
 			const dataLoader = container.get<DataLoader<Role>>(INJECTABLE_TYPES.RoleDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, world.roles);
+			return dataLoader.getPermissionControlledDocuments(securityContext, world.roles, unitOfWork);
 		},
-		rootFolder: async (world: World, _: any, { securityContext }: SessionContext): Promise<WikiFolder> => {
+		rootFolder: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<WikiFolder> => {
 			const dataLoader = container.get<DataLoader<WikiFolder>>(
 				INJECTABLE_TYPES.WikiFolderDataLoader
 			);
-			return dataLoader.getPermissionControlledDocument(securityContext, world.rootFolder);
+			return dataLoader.getPermissionControlledDocument(securityContext, world.rootFolder, unitOfWork);
 		},
-		wikiPage: async (world: World, _: any, __: SessionContext): Promise<WikiPage> => {
+		wikiPage: async (world: World, _: any, {unitOfWork}: SessionContext): Promise<WikiPage> => {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
-			return dataLoader.getDocument(world.wikiPage);
+			return dataLoader.getDocument(world.wikiPage, unitOfWork);
 		},
 		canAddRoles: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 			const roleFactory = container.get<RoleFactory>(INJECTABLE_TYPES.RoleFactory);
-			const testRole = roleFactory(null, "test role", world._id, []);
+			const testRole = roleFactory({_id: null, name: "test role", world: world._id, permissions: []});
 			return testRole.authorizationPolicy.canCreate(securityContext);
 		},
 		canHostGame: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 			const gameFactory = container.get<GameFactory>(INJECTABLE_TYPES.GameFactory);
-			const testGame = gameFactory(null, "password", world._id, null, [], [], [], [], [], null);
+			const testGame = gameFactory({_id: null, passwordHash: "password", world: world._id, map: null, characters: [], strokes: [], fog: [], messages: [], models: [], host: null});
 			return testGame.authorizationPolicy.canCreate(securityContext);
 		},
 		canAddModels: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 			const modelFactory = container.get<ModelFactory>(INJECTABLE_TYPES.ModelFactory);
-			const testModel = modelFactory(null, world._id, "model", 0, 0, 0, null, null, "");
+			const testModel = modelFactory({_id: null, world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: ""});
 			return testModel.authorizationPolicy.canCreate(securityContext);
 		},
-		pins: async (world: World, _: any, { securityContext }: SessionContext): Promise<Pin[]> => {
+		pins: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Pin[]> => {
 			const dataLoader = container.get<DataLoader<Pin>>(INJECTABLE_TYPES.PinDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, world.pins);
+			return dataLoader.getPermissionControlledDocuments(securityContext, world.pins, unitOfWork);
 		},
 		...permissionControlledInterfaceAttributes,
 	},
@@ -150,34 +146,34 @@ export const TypeResolvers = {
 			}
 			return user.email;
 		},
-		roles: async (user: User, _: any, { securityContext }: SessionContext): Promise<Role[]> => {
+		roles: async (user: User, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Role[]> => {
 			const dataLoader = container.get<DataLoader<Role>>(INJECTABLE_TYPES.RoleDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, user.roles);
+			return dataLoader.getPermissionControlledDocuments(securityContext, user.roles, unitOfWork);
 		},
-		permissions: async (user: User, _: any, { securityContext }: SessionContext): Promise<PermissionAssignment[]> => {
+		permissions: async (user: User, _: any, { securityContext, unitOfWork }: SessionContext): Promise<PermissionAssignment[]> => {
 			const dataLoader = container.get<DataLoader<PermissionAssignment>>(
 				INJECTABLE_TYPES.PermissionAssignmentDataLoader
 			);
-			return dataLoader.getPermissionControlledDocuments(securityContext, user.permissions);
+			return dataLoader.getPermissionControlledDocuments(securityContext, user.permissions, unitOfWork);
 		},
-		currentWorld: async (user: User, _: any, { securityContext }: SessionContext): Promise<World> => {
+		currentWorld: async (user: User, _: any, { securityContext, unitOfWork }: SessionContext): Promise<World> => {
 			if (user._id !== securityContext.user._id) {
 				return null;
 			}
 			if (user.currentWorld){
 				const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-				return dataLoader.getPermissionControlledDocument(securityContext, user.currentWorld);
+				return dataLoader.getPermissionControlledDocument(securityContext, user.currentWorld, unitOfWork);
 			}
 		},
 	},
 	Role: {
-		world: async (role: WikiFolder): Promise<World> => {
+		world: async (role: WikiFolder, _: any, {unitOfWork}: SessionContext): Promise<World> => {
 			if(role.world){
 				const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-				return dataLoader.getDocument(role.world);
+				return dataLoader.getDocument(role.world, unitOfWork);
 			}
 		},
-		permissions: async (role: Role, _: any, { securityContext }: SessionContext): Promise<PermissionAssignment[]> => {
+		permissions: async (role: Role, _: any, { securityContext, unitOfWork }: SessionContext): Promise<PermissionAssignment[]> => {
 			const dataLoader = container.get<DataLoader<PermissionAssignment>>(
 				INJECTABLE_TYPES.PermissionAssignmentDataLoader
 			);
@@ -187,9 +183,9 @@ export const TypeResolvers = {
 				(await role.authorizationPolicy.canWrite(securityContext)) ||
 				(await securityContext.hasRole(role.name))
 			) {
-				return dataLoader.getDocuments(role.permissions);
+				return dataLoader.getDocuments(role.permissions, unitOfWork);
 			} else {
-				return dataLoader.getPermissionControlledDocuments(securityContext, role.permissions);
+				return dataLoader.getPermissionControlledDocuments(securityContext, role.permissions, unitOfWork);
 			}
 		},
 		members: async (role: Role, _: any, { securityContext }: SessionContext): Promise<User[]> => {
@@ -221,10 +217,10 @@ export const TypeResolvers = {
 	Place: {
 		...wikiPageInterfaceAttributes,
 		...permissionControlledInterfaceAttributes,
-		mapImage: async (page: Place): Promise<Image> => {
+		mapImage: async (page: Place, _: any, {unitOfWork}: SessionContext): Promise<Image> => {
 			const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
 			if(page.mapImage){
-				return dataLoader.getDocument(page.mapImage);
+				return dataLoader.getDocument(page.mapImage, unitOfWork);
 			}
 		},
 	},
@@ -244,38 +240,38 @@ export const TypeResolvers = {
 		...modeledWikiAttributes,
 	},
 	WikiFolder: {
-		world: async (folder: WikiFolder): Promise<World> => {
+		world: async (folder: WikiFolder, _: any, {unitOfWork}: SessionContext): Promise<World> => {
 			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-			return dataLoader.getDocument(folder.world);
+			return dataLoader.getDocument(folder.world, unitOfWork);
 		},
-		children: async (folder: WikiFolder, _: any, { securityContext }: SessionContext): Promise<WikiFolder[]> => {
+		children: async (folder: WikiFolder, _: any, { securityContext, unitOfWork }: SessionContext): Promise<WikiFolder[]> => {
 			const dataLoader = container.get<DataLoader<WikiFolder>>(INJECTABLE_TYPES.WikiFolderDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, folder.children);
+			return dataLoader.getPermissionControlledDocuments(securityContext, folder.children, unitOfWork);
 		},
 		...permissionControlledInterfaceAttributes,
 	},
 	Image: {
-		world: async (image: Image): Promise<World> => {
+		world: async (image: Image, _: any, {unitOfWork}: SessionContext): Promise<World> => {
 			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-			return dataLoader.getDocument(image.world);
+			return dataLoader.getDocument(image.world, unitOfWork);
 		},
-		chunks: async (image: Image): Promise<Chunk[]> => {
+		chunks: async (image: Image, _: any, {unitOfWork}: SessionContext): Promise<Chunk[]> => {
 			const dataLoader = container.get<DataLoader<Chunk>>(INJECTABLE_TYPES.ChunkDataLoader);
-			return dataLoader.getDocuments(image.chunks);
+			return dataLoader.getDocuments(image.chunks, unitOfWork);
 		},
-		icon: async (image: Image): Promise<Image> => {
+		icon: async (image: Image, _: any, {unitOfWork}: SessionContext): Promise<Image> => {
 			const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
-			return dataLoader.getDocument(image.icon);
+			return dataLoader.getDocument(image.icon, unitOfWork);
 		},
 	},
 	Pin: {
-		map: async (pin: Pin): Promise<Place> => {
+		map: async (pin: Pin, _: any, {unitOfWork}: SessionContext): Promise<Place> => {
 			const dataLoader = container.get<DataLoader<Place>>(INJECTABLE_TYPES.PlaceDataLoader);
-			return dataLoader.getDocument(pin.map);
+			return dataLoader.getDocument(pin.map, unitOfWork);
 		},
-		page: async (pin: Pin): Promise<WikiPage> => {
+		page: async (pin: Pin, _: any, {unitOfWork}: SessionContext): Promise<WikiPage> => {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
-			return dataLoader.getDocument(pin.page);
+			return dataLoader.getDocument(pin.page, unitOfWork);
 		},
 		canWrite: async (pin: Pin, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 			return pin.authorizationPolicy.canWrite(securityContext);
@@ -302,9 +298,9 @@ export const TypeResolvers = {
 		...permissionControlledInterfaceAttributes,
 	},
 	PermissionAssignment: {
-		subject: async (assignment: PermissionAssignment, _: any, __: SessionContext): Promise<DomainEntity> => {
+		subject: async (assignment: PermissionAssignment, _: any, {unitOfWork}: SessionContext): Promise<DomainEntity> => {
 			const mapper = new RepositoryMapper();
-			const repository = mapper.map<DomainEntity>(assignment.subjectType);
+			const repository = mapper.map<DomainEntity>(assignment.subjectType, unitOfWork);
 			const subject = await repository.findById(assignment.subject);
 			return subject;
 		},
@@ -339,22 +335,22 @@ export const TypeResolvers = {
 		},
 	},
 	Game: {
-		world: async (game: Game, _: any, { securityContext }: SessionContext): Promise<World> => {
+		world: async (game: Game, _: any, { securityContext, unitOfWork }: SessionContext): Promise<World> => {
 			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
-			return dataLoader.getPermissionControlledDocument(securityContext, game.world);
+			return dataLoader.getPermissionControlledDocument(securityContext, game.world, unitOfWork);
 		},
-		map: async (game: Game, _: any, { securityContext }: SessionContext): Promise<Place> => {
+		map: async (game: Game, _: any, { unitOfWork }: SessionContext): Promise<Place> => {
 			const dataLoader = container.get<DataLoader<Place>>(INJECTABLE_TYPES.PlaceDataLoader);
-			return dataLoader.getDocument(game.map);
+			return dataLoader.getDocument(game.map, unitOfWork);
 		},
-		characters: async (game: Game): Promise<any[]> => {
+		characters: async (game: Game, _: any, {unitOfWork}: SessionContext): Promise<any[]> => {
 			const dataLoader = container.get<DataLoader<User>>(INJECTABLE_TYPES.UserRepository);
 			const characters = [];
 			for (let character of game.characters) {
 				characters.push({
 					name: character.name,
 					color: character.color,
-					player: await dataLoader.getDocument(character.player),
+					player: await dataLoader.getDocument(character.player, unitOfWork),
 					str: character.strength,
 					dex: character.dexterity,
 					con: character.constitution,
@@ -383,13 +379,13 @@ export const TypeResolvers = {
 		...permissionControlledInterfaceAttributes,
 	},
 	PositionedModel: {
-		model: async (model: InGameModel): Promise<Model> => {
+		model: async (model: InGameModel, _: any, {unitOfWork}: SessionContext): Promise<Model> => {
 			const dataLoader = container.get<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader);
-			return dataLoader.getDocument(model.model);
+			return dataLoader.getDocument(model.model, unitOfWork);
 		},
-		wiki: async (model: InGameModel): Promise<WikiPage> => {
+		wiki: async (model: InGameModel, _: any, {unitOfWork}: SessionContext): Promise<WikiPage> => {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
-			return dataLoader.getDocument(model.wiki);
+			return dataLoader.getDocument(model.wiki, unitOfWork);
 		},
 	},
 	Model: {

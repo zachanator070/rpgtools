@@ -2,7 +2,7 @@ import {
 	DataLoader as DataLoaderInt,
 	DomainEntity,
 	EntityAuthorizationPolicy,
-	Repository,
+	Repository, UnitOfWork,
 } from "../types";
 import DataLoader from "dataloader";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "./filter-condition";
@@ -13,15 +13,15 @@ import { injectable } from "inversify";
 export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
 	repository: Repository<T>;
 
-	getDocument = async (id: string): Promise<T> => {
+	getDocument = async (id: string, unitOfWork: UnitOfWork): Promise<T> => {
 		if (id) {
-			return this.getDataLoader().load(id);
+			return this.getDataLoader(unitOfWork).load(id);
 		}
 		return null;
 	};
 
-	getDocuments = async (ids: string[]): Promise<T[]> => {
-		const results = await this.getDataLoader().loadMany(ids);
+	getDocuments = async (ids: string[], unitOfWork: UnitOfWork): Promise<T[]> => {
+		const results = await this.getDataLoader(unitOfWork).loadMany(ids);
 		const goodResults: T[] = [];
 		for (let result of results) {
 			if (result instanceof Error) {
@@ -32,8 +32,8 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 		return goodResults;
 	};
 
-	getPermissionControlledDocument = async (context: SecurityContext, id: string): Promise<T> => {
-		const document = await this.getDocument(id);
+	getPermissionControlledDocument = async (context: SecurityContext, id: string, unitOfWork: UnitOfWork): Promise<T> => {
+		const document = await this.getDocument(id, unitOfWork);
 		if (await document.authorizationPolicy.canRead(context)) {
 			return document;
 		}
@@ -41,9 +41,10 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 
 	getPermissionControlledDocuments = async (
 		context: SecurityContext,
-		ids: string[]
+		ids: string[],
+		unitOfWork: UnitOfWork
 	): Promise<T[]> => {
-		const documents = await this.getDocuments(ids);
+		const documents = await this.getDocuments(ids, unitOfWork);
 		const readableDocuments = [];
 		for (let document of documents) {
 			if (await document.authorizationPolicy.canRead(context)) {
@@ -53,9 +54,11 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 		return readableDocuments;
 	};
 
-	private getDataLoader = () => {
+	private getDataLoader = (unitOfWork: UnitOfWork) => {
 		return new DataLoader((ids: string[]) =>
-			this.repository.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)])
+			this.getRepository(unitOfWork).find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)])
 		);
 	};
+
+	abstract getRepository(unitOfWork: UnitOfWork): Repository<T>;
 }

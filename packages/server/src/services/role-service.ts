@@ -1,34 +1,26 @@
 import { Role } from "../domain-entities/role";
-import {inject, injectable} from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { Factory, RoleRepository, RoleService, WorldRepository } from "../types";
+import {injectable} from "inversify";
 import { SecurityContext } from "../security/security-context";
 import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
 import { PaginatedResult } from "../dal/paginated-result";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
+import {UnitOfWork} from "../types";
 
 @injectable()
-export class RoleApplicationService implements RoleService {
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: WorldRepository;
-	@inject(INJECTABLE_TYPES.RoleRepository)
-	roleRepository: RoleRepository;
-
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+export class RoleService {
 
 	getRoles = async (
 		context: SecurityContext,
 		worldId: string,
 		name: string,
 		canAdmin: boolean,
-		page: number
+		page: number,
+		unitOfWork: UnitOfWork
 	): Promise<PaginatedResult<Role>> => {
 
 		const conditions: FilterCondition[] = [];
 
 		if (worldId) {
-			const world = await this.worldRepository.findById(worldId);
+			const world = await unitOfWork.worldRepository.findById(worldId);
 			if (!world) {
 				throw new Error("World does not exist");
 			}
@@ -42,7 +34,7 @@ export class RoleApplicationService implements RoleService {
 			conditions.push(new FilterCondition("name", name, FILTER_CONDITION_REGEX));
 		}
 
-		const results = await this.roleRepository.findPaginated(conditions, page);
+		const results = await unitOfWork.roleRepository.findPaginated(conditions, page);
 
 		const roles = [];
 		for (let role of results.docs) {

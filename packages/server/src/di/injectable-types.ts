@@ -1,4 +1,7 @@
 export const INJECTABLE_TYPES = {
+
+	DomainEntity: Symbol.for("DomainEntity"),
+
 	// domain entities
 	Article: Symbol.for("Article"),
 	Chunk: Symbol.for("Chunk"),

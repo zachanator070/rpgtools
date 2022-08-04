@@ -18,13 +18,15 @@ export class MongodbPersonRepository
 
 	buildEntity(document: PersonDocument): Person {
 		return this.personFactory(
-			document._id.toString(),
-			document.name,
-			document.world.toString(),
-			document.coverImage ? document.coverImage.toString() : null,
-			document.contentId ? document.contentId.toString() : null,
-			document.pageModel ? document.pageModel.toString() : null,
-			document.modelColor
+			{
+				_id: document._id.toString(),
+				name: document.name,
+				world: document.world.toString(),
+				coverImage: document.coverImage ? document.coverImage.toString() : null,
+				contentId: document.contentId ? document.contentId.toString() : null,
+				pageModel: document.pageModel ? document.pageModel.toString() : null,
+				modelColor: document.modelColor
+			}
 		);
 	}
 }

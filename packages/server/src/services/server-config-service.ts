@@ -1,34 +1,25 @@
 import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
 import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {
 	ApiServer,
-	AuthenticationService,
-	Factory,
 	PermissionAssignmentFactory,
 	RoleFactory,
-	ServerConfigRepository,
-	ServerConfigService,
+	UnitOfWork,
 } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { SecurityContext } from "../security/security-context";
 import {FilterCondition} from "../dal/filter-condition";
+import {AuthenticationService} from "./authentication-service";
 
 @injectable()
-export class ServerConfigApplicationService implements ServerConfigService {
+export class ServerConfigService {
 	@inject(INJECTABLE_TYPES.AuthenticationService)
 	authenticationService: AuthenticationService;
 
 	@inject(INJECTABLE_TYPES.ApiServer)
 	server: ApiServer;
-
-	@inject(INJECTABLE_TYPES.ServerConfigRepository)
-	serverConfigRepository: ServerConfigRepository;
-
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
 	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
 	permissionAssignmentFactory: PermissionAssignmentFactory;
@@ -36,8 +27,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
 
-	unlockServer = async (unlockCode: string, email: string, username: string, password: string) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	unlockServer = async (unlockCode: string, email: string, username: string, password: string, unitOfWork: UnitOfWork) => {
 		const server = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
@@ -57,7 +47,7 @@ export class ServerConfigApplicationService implements ServerConfigService {
 			password,
 			unitOfWork
 		);
-		const adminRole = this.roleFactory(null, SERVER_ADMIN_ROLE, null, []);
+		const adminRole = this.roleFactory({_id: null, name: SERVER_ADMIN_ROLE, world: null, permissions: []});
 		for (let permission of SERVER_PERMISSIONS) {
 			let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
 				new FilterCondition('permission', permission),
@@ -66,10 +56,12 @@ export class ServerConfigApplicationService implements ServerConfigService {
 			]);
 			if (!permissionAssignment) {
 				permissionAssignment = this.permissionAssignmentFactory(
-					null,
-					permission,
-					server._id,
-					SERVER_CONFIG
+					{
+						_id: null,
+						permission,
+						subject: server._id,
+						subjectType: SERVER_CONFIG
+					}
 				);
 				await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 			}
@@ -82,12 +74,10 @@ export class ServerConfigApplicationService implements ServerConfigService {
 		server.adminUsers.push(admin._id);
 		await unitOfWork.serverConfigRepository.update(server);
 		await this.server.checkConfig();
-		await unitOfWork.commit();
 		return true;
 	};
 
-	generateRegisterCodes = async (context: SecurityContext, amount: number) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	generateRegisterCodes = async (context: SecurityContext, amount: number, unitOfWork: UnitOfWork) => {
 		const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!serverConfig) {
 			throw new Error("Server config doesnt exist!");
@@ -100,11 +90,10 @@ export class ServerConfigApplicationService implements ServerConfigService {
 			.map(() => uuidv4());
 		serverConfig.registerCodes = serverConfig.registerCodes.concat(newCodes);
 		await unitOfWork.serverConfigRepository.update(serverConfig);
-		await unitOfWork.commit();
 		return serverConfig;
 	};
 
-	getServerConfig = async () => {
-		return this.serverConfigRepository.findOne([]);
+	getServerConfig = async (unitOfWork: UnitOfWork) => {
+		return unitOfWork.serverConfigRepository.findOne([]);
 	};
 }

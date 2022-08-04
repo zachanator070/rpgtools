@@ -18,15 +18,17 @@ export class MongodbModelRepository
 
 	buildEntity(document: ModelDocument): Model {
 		return this.modelFactory(
-			document._id.toString(),
-			document.world.toString(),
-			document.name,
-			document.depth,
-			document.width,
-			document.height,
-			document.fileName,
-			document.fileId,
-			document.notes
+			{
+				_id: document._id.toString(),
+				world: document.world.toString(),
+				name: document.name,
+				depth: document.depth,
+				width: document.width,
+				height: document.height,
+				fileName: document.fileName,
+				fileId: document.fileId,
+				notes: document.notes
+			}
 		);
 	}
 }

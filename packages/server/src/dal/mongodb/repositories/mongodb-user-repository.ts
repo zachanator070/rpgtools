@@ -17,14 +17,16 @@ export class MongodbUserRepository
 
 	buildEntity(document: UserDocument): User {
 		return this.userFactory(
-			document._id.toString(),
-			document.email,
-			document.username,
-			document.password,
-			document.tokenVersion,
-			document.currentWorld ? document.currentWorld.toString() : null,
-			document.roles.map((roleId) => roleId.toString()),
-			document.permissions.map((permissionId) => permissionId.toString())
+			{
+				_id: document._id.toString(),
+				email: document.email,
+				username: document.username,
+				password: document.password,
+				tokenVersion: document.tokenVersion,
+				currentWorld: document.currentWorld ? document.currentWorld.toString() : null,
+				roles: document.roles.map((roleId) => roleId.toString()),
+				permissions: document.permissions.map((permissionId) => permissionId.toString())
+			}
 		);
 	}
 }

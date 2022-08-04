@@ -18,13 +18,15 @@ export class MongodbChunkRepository
 
 	buildEntity(document: ChunkDocument): Chunk {
 		return this.chunkFactory(
-			document._id.toString(),
-			document.x,
-			document.y,
-			document.width,
-			document.height,
-			document.fileId.toString(),
-			document.image.toString()
+			{
+				_id: document._id.toString(),
+				x: document.x,
+				y: document.y,
+				width: document.width,
+				height: document.height,
+				fileId: document.fileId.toString(),
+				image: document.image.toString()
+			}
 		);
 	}
 }

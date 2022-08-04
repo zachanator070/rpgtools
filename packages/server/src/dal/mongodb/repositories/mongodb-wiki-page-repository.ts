@@ -1,6 +1,7 @@
-import { inject, injectable } from "inversify";
+import {inject, injectable, multiInject} from "inversify";
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import {
+	DomainEntity,
 	ItemDocument,
 	MonsterDocument,
 	PersonDocument,
@@ -27,37 +28,15 @@ export class MongodbWikiPageRepository
 {
 	model: mongoose.Model<any> = WikiPageModel;
 
-	@inject(INJECTABLE_TYPES.ArticleRepository)
-	articleRepository: MongodbArticleRepository;
-	@inject(INJECTABLE_TYPES.PlaceRepository)
-	placeRepository: MongodbPlaceRepository;
-	@inject(INJECTABLE_TYPES.PersonRepository)
-	personRepository: MongodbPersonRepository;
-	@inject(INJECTABLE_TYPES.ItemRepository)
-	itemRepository: MongodbItemRepository;
-	@inject(INJECTABLE_TYPES.MonsterRepository)
-	monsterRepository: MongodbMonsterRepository;
+	@multiInject(INJECTABLE_TYPES.DomainEntity)
+	domainEntities: DomainEntity[];
 
 	buildEntity(document: WikiPageDocument): WikiPage {
 		const name = document.type;
-		switch (name) {
-			case ARTICLE:
-				const articleDocument = document as ArticleDocument;
-				return this.articleRepository.buildEntity(articleDocument);
-			case PLACE:
-				const placeDocument = document as PlaceDocument;
-				return this.placeRepository.buildEntity(placeDocument);
-			case PERSON:
-				const personDocument = document as PersonDocument;
-				return this.personRepository.buildEntity(personDocument);
-			case ITEM:
-				const itemDocument = document as ItemDocument;
-				return this.itemRepository.buildEntity(itemDocument);
-			case MONSTER:
-				const monsterDocument = document as MonsterDocument;
-				return this.monsterRepository.buildEntity(monsterDocument);
-			default:
-				throw new Error(`Unknown wiki page type received from the database: ${name}`);
+		for (let entity of this.domainEntities) {
+			if(entity.type === name) {
+				return entity.factory(document) as WikiPage;
+			}
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
 import {FileUpload, Upload} from "graphql-upload";
 import fs from "fs";
-import {ModelApplicationService} from "../../../../src/services/model-application-service";
+import {ModelService} from "../../../../src/services/model-service";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
 import {CREATE_MODEL, DELETE_MODEL, UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
@@ -9,7 +9,7 @@ import {CREATE_MODEL, DELETE_MODEL, UPDATE_MODEL} from "@rpgtools/common/src/gql
 process.env.TEST_SUITE = "model-mutations-test";
 
 describe("model mutations", () => {
-    const modelApplicationService: ModelApplicationService = container.get<ModelApplicationService>(INJECTABLE_TYPES.ModelService);
+    const modelApplicationService: ModelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
     let {
         server,
         mockSessionContextFactory,

@@ -18,15 +18,17 @@ export class MongodbImageRepository
 
 	buildEntity(document: ImageDocument): Image {
 		return this.imageFactory(
-			document._id.toString(),
-			document.name,
-			document.world.toString(),
-			document.width,
-			document.height,
-			document.chunkWidth,
-			document.chunkHeight,
-			document.chunks.map((id) => id.toString()),
-			document.icon ? document.icon.toString() : null
+			{
+				_id: document._id.toString(),
+				name: document.name,
+				world: document.world.toString(),
+				width: document.width,
+				height: document.height,
+				chunkWidth: document.chunkWidth,
+				chunkHeight: document.chunkHeight,
+				chunks: document.chunks.map((id) => id.toString()),
+				icon: document.icon ? document.icon.toString() : null
+			}
 		);
 	}
 }

@@ -1,6 +1,7 @@
-import { AuthorizationService, SessionContext } from "../../types";
+import { SessionContext } from "../../types";
 import { container } from "../../di/inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
+import {AuthorizationService} from "../../services/authorization-service";
 
 export const authorizationMutations = {
 	grantUserPermission: async (
@@ -11,7 +12,7 @@ export const authorizationMutations = {
 			subjectId,
 			subjectType,
 		}: { userId: string; permission: string; subjectId: string; subjectType: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
@@ -21,13 +22,14 @@ export const authorizationMutations = {
 			permission,
 			subjectId,
 			subjectType,
-			userId
+			userId,
+			unitOfWork
 		);
 	},
 	revokeUserPermission: async (
 		_: any,
 		{ userId, permission, subjectId }: { userId: string; permission: string; subjectId: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
@@ -36,7 +38,8 @@ export const authorizationMutations = {
 			securityContext,
 			permission,
 			subjectId,
-			userId
+			userId,
+			unitOfWork
 		);
 	},
 	grantRolePermission: async (
@@ -47,7 +50,7 @@ export const authorizationMutations = {
 			subjectId,
 			subjectType,
 		}: { roleId: string; permission: string; subjectId: string; subjectType: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
@@ -57,13 +60,14 @@ export const authorizationMutations = {
 			permission,
 			subjectId,
 			subjectType,
-			roleId
+			roleId,
+			unitOfWork
 		);
 	},
 	revokeRolePermission: async (
 		_: any,
 		{ roleId, permission, subjectId }: { roleId: string; permission: string; subjectId: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
@@ -72,47 +76,48 @@ export const authorizationMutations = {
 			securityContext,
 			roleId,
 			permission,
-			subjectId
+			subjectId,
+			unitOfWork
 		);
 	},
 	createRole: async (
 		_: any,
 		{ worldId, name }: { worldId: string; name: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
 		);
-		return await authorizationService.createRole(securityContext, worldId, name);
+		return await authorizationService.createRole(securityContext, worldId, name, unitOfWork);
 	},
 	deleteRole: async (
 		_: any,
 		{ roleId }: { roleId: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
 		);
-		return await authorizationService.deleteRole(securityContext, roleId);
+		return await authorizationService.deleteRole(securityContext, roleId, unitOfWork);
 	},
 	addUserRole: async (
 		_: any,
 		{ userId, roleId }: { userId: string; roleId: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
 		);
-		return await authorizationService.addUserRole(securityContext, userId, roleId);
+		return await authorizationService.addUserRole(securityContext, userId, roleId, unitOfWork);
 	},
 	removeUserRole: async (
 		_: any,
 		{ userId, roleId }: { userId: string; roleId: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
 			INJECTABLE_TYPES.AuthorizationService
 		);
-		return await authorizationService.removeUserRole(securityContext, userId, roleId);
+		return await authorizationService.removeUserRole(securityContext, userId, roleId, unitOfWork);
 	},
 };

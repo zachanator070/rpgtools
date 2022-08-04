@@ -1,14 +1,12 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { World } from "../../domain-entities/world";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import { WorldRepository } from "../../types";
-import { WorldAuthorizationPolicy } from "../../security/policy/world-authorization-policy";
+import { injectable } from "inversify";
+import {Repository, UnitOfWork} from "../../types";
 
 @injectable()
 export class WorldDataLoader extends GraphqlDataloader<World> {
-
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	repository: WorldRepository;
+	getRepository(unitOfWork: UnitOfWork): Repository<World> {
+		return unitOfWork.worldRepository;
+	}
 
 }

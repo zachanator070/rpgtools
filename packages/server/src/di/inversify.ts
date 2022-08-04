@@ -2,20 +2,13 @@ import "reflect-metadata";
 import { Container } from "inversify";
 import {
 	ArticleRepository,
-	AuthenticationService,
-	AuthorizationService,
 	ChunkRepository,
-	ContentExportService,
-	ContentImportService,
 	EventPublisher,
 	FileRepository,
 	GameRepository,
-	GameService,
 	ImageRepository,
-	ImageService,
 	ItemRepository,
 	ModelRepository,
-	ModelService,
 	MonsterRepository,
 	PermissionAssignmentRepository,
 	PersonRepository,
@@ -23,22 +16,31 @@ import {
 	PlaceRepository,
 	RoleRepository,
 	ServerConfigRepository,
-	ServerConfigService,
 	SessionContextFactory,
-	SrdImportService,
 	UserRepository,
-	UserService,
 	WikiFolderRepository,
-	WikiFolderService,
 	WikiPageRepository,
-	WikiPageService,
 	WorldRepository,
-	WorldService,
 	Cache,
 	AbstractArchiveFactory,
 	ApiServer,
 	DataLoader,
-	Factory, RoleService,
+	Factory,
+	DomainEntity,
+	WorldFactory,
+	WikiFolderFactory,
+	UserFactory,
+	ServerConfigFactory,
+	RoleFactory,
+	PlaceFactory,
+	PinFactory,
+	PersonFactory,
+	PermissionAssignmentFactory,
+	MonsterFactory,
+	ModelFactory,
+	ItemFactory,
+	ImageFactory,
+	GameFactory, FileFactory, ChunkFactory, ArticleFactory
 } from "../types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "../dal/mongodb/repositories/mongodb-article-repository";
@@ -78,19 +80,19 @@ import { InMemoryWikiFolderRepository } from "../dal/in-memory/repositories/in-m
 import { InMemoryWikiPageRepository } from "../dal/in-memory/repositories/in-memory-wiki-page-repository";
 import { InMemoryWorldRepository } from "../dal/in-memory/repositories/in-memory-world-repository";
 import { InMemoryFileRepository } from "../dal/in-memory/repositories/in-memory-file-repository";
-import { AuthenticationApplicationService } from "../services/authentication-application-service";
-import { AuthorizationApplicationService } from "../services/authorization-application-service";
-import { ContentExportApplicationService } from "../services/content-export-application-service";
-import { ContentImportApplicationService } from "../services/content-import-application-service";
-import { GameApplicationService } from "../services/game-application-service";
-import { ImageApplicationService } from "../services/image-application-service";
-import { ModelApplicationService } from "../services/model-application-service";
-import { ServerConfigApplicationService } from "../services/server-config-application-service";
-import { SrdImportApplicationService } from "../services/srd-import-application-service";
-import { UserApplicationService } from "../services/user-application-service";
-import { WikiFolderApplicationService } from "../services/wiki-folder-application-service";
-import { WikiPageApplicationService } from "../services/wiki-page-application-service";
-import { WorldApplicationService } from "../services/world-application-service";
+import { AuthenticationService } from "../services/authentication-service";
+import { AuthorizationService } from "../services/authorization-service";
+import { ContentExportService } from "../services/content-export-service";
+import { ContentImportService } from "../services/content-import-service";
+import { GameService } from "../services/game-service";
+import { ImageService } from "../services/image-service";
+import { ModelService } from "../services/model-service";
+import { ServerConfigService } from "../services/server-config-service";
+import { SrdImportService } from "../services/srd-import-service";
+import { UserService } from "../services/user-service";
+import { WikiFolderService } from "../services/wiki-folder-service";
+import { WikiPageService } from "../services/wiki-page-service";
+import { WorldService } from "../services/world-service";
 import { ExpressSessionContextFactory } from "../server/express-session-context-factory";
 import { Open5eApiClient } from "../five-e-import/open-5e-api-client";
 import { RedisClient } from "../dal/cache/redis-client";
@@ -161,7 +163,7 @@ import FilterFactory from "../dal/mongodb/FilterFactory";
 import {NoCacheClient} from "../dal/cache/no-cache-client";
 import {DeltaFactory} from "../five-e-import/delta-factory";
 import {Dnd5eApiClient} from "../five-e-import/dnd-5e-api-client";
-import {RoleApplicationService} from "../services/role-application-service";
+import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
 
 const container = new Container();
@@ -187,156 +189,254 @@ container.bind<User>(INJECTABLE_TYPES.User).to(User);
 container.bind<WikiFolder>(INJECTABLE_TYPES.WikiFolder).to(WikiFolder);
 container.bind<World>(INJECTABLE_TYPES.World).to(World);
 
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Article);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Chunk);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(File);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Game);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Image);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Item);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Model);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Monster);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(PermissionAssignment);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Pin);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Role);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(ServerConfig);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(User);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(WikiFolder);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
+
 // entity factories
 container
-	.bind<Factory<Article>>(INJECTABLE_TYPES.ArticleFactory)
+	.bind<ArticleFactory>(INJECTABLE_TYPES.ArticleFactory)
 	.toFactory(
-		(context) =>
-			(id: string, name: string, worldId: string, coverImageId: string, contentId: string) => {
+		(context): ArticleFactory =>
+			({
+				 _id,
+				 name,
+				 world,
+				 coverImage,
+				 contentId
+			 }:{
+				_id: string,
+				name: string,
+				world: string,
+				coverImage: string,
+				contentId: string
+			}) => {
 				const article = context.container.get<Article>(INJECTABLE_TYPES.Article);
-				article._id = id;
+				article._id = _id
 				article.name = name;
-				article.world = worldId;
-				article.coverImage = coverImageId;
+				article.world = world;
+				article.coverImage = coverImage;
 				article.contentId = contentId;
 				return article;
 			}
 	);
 container
-	.bind<Factory<Chunk>>(INJECTABLE_TYPES.ChunkFactory)
+	.bind<ChunkFactory>(INJECTABLE_TYPES.ChunkFactory)
 	.toFactory(
-		(context) =>
+		(context): ChunkFactory =>
 			(
-				id: string,
-				x: number,
-				y: number,
-				width: number,
-				height: number,
-				fileId: string,
-				imageId: string
+				{
+					_id,
+					x,
+					y,
+					width,
+					height,
+					fileId,
+					image
+				}:{
+					_id: string,
+					x: number,
+					y: number,
+					width: number,
+					height: number,
+					fileId: string,
+					image: string
+				}
 			) => {
 				const chunk = context.container.get<Chunk>(INJECTABLE_TYPES.Chunk);
-				chunk._id = id;
+				chunk._id = _id;
 				chunk.x = x;
 				chunk.y = y;
 				chunk.width = width;
 				chunk.height = height;
 				chunk.fileId = fileId;
-				chunk.image = imageId;
+				chunk.image = image;
 				return chunk;
 			}
 	);
 container
-	.bind<Factory<File>>(INJECTABLE_TYPES.FileFactory)
-	.toFactory((context) => (id: string, filename: string, readStream: Readable, mimeType = "") => {
+	.bind<FileFactory>(INJECTABLE_TYPES.FileFactory)
+	.toFactory((context): FileFactory =>
+		(
+			{
+				 _id,
+				 filename,
+				 readStream,
+				 mimeType
+			}:{
+				_id: string,
+				filename: string,
+				readStream: Readable,
+				mimeType: string
+			}
+		) => {
 		const file = context.container.get<File>(INJECTABLE_TYPES.File);
-		file._id = id;
+		file._id = _id;
 		file.filename = filename;
 		file.readStream = readStream;
 		file.mimeType = mimeType;
 		return file;
 	});
 container
-	.bind<Factory<Game>>(INJECTABLE_TYPES.GameFactory)
+	.bind<GameFactory>(INJECTABLE_TYPES.GameFactory)
 	.toFactory(
-		(context) =>
+		(context): GameFactory =>
 			(
-				id: string,
-				passwordHash: string,
-				worldId: string,
-				mapId: string,
-				characters: Character[],
-				strokes: Stroke[],
-				fog: FogStroke[],
-				messages: Message[],
-				models: InGameModel[],
-				hostId: string
+				{
+					_id,
+					passwordHash,
+					world,
+					map,
+					characters,
+					strokes,
+					fog,
+					messages,
+					models,
+					host
+				}:{
+					_id: string,
+					passwordHash: string,
+					world: string,
+					map: string,
+					characters: Character[],
+					strokes: Stroke[],
+					fog: FogStroke[],
+					messages: Message[],
+					models: InGameModel[],
+					host: string
+				}
 			) => {
 				const game = context.container.get<Game>(INJECTABLE_TYPES.Game);
-				game._id = id;
+				game._id = _id;
 				game.passwordHash = passwordHash;
-				game.world = worldId;
-				game.map = mapId;
+				game.world = world;
+				game.map = map;
 				game.characters = characters;
 				game.strokes = strokes;
 				game.fog = fog;
 				game.messages = messages;
 				game.models = models;
-				game.host = hostId;
+				game.host = host;
 				return game;
 			}
 	);
 container
-	.bind<Factory<Image>>(INJECTABLE_TYPES.ImageFactory)
+	.bind<ImageFactory>(INJECTABLE_TYPES.ImageFactory)
 	.toFactory(
-		(context) =>
+		(context): ImageFactory =>
 			(
-				id: string,
-				name: string,
-				worldId: string,
-				width: number,
-				height: number,
-				chunkWidth: number,
-				chunkHeight: number,
-				chunkIds: string[],
-				iconId: string
+				{
+					_id,
+					name,
+					world,
+					width,
+					height,
+					chunkWidth,
+					chunkHeight,
+					chunks,
+					icon
+				}:{
+					_id: string,
+					name: string,
+					world: string,
+					width: number,
+					height: number,
+					chunkWidth: number,
+					chunkHeight: number,
+					chunks: string[],
+					icon: string
+				}
 			) => {
 				const image = context.container.get<Image>(INJECTABLE_TYPES.Image);
-				image._id = id;
+				image._id = _id;
 				image.name = name;
-				image.world = worldId;
+				image.world = world;
 				image.width = width;
 				image.height = height;
 				image.chunkWidth = chunkWidth;
 				image.chunkHeight = chunkHeight;
-				image.chunks = chunkIds;
-				image.icon = iconId;
+				image.chunks = chunks;
+				image.icon = icon;
 				return image;
 			}
 	);
 container
-	.bind<Factory<Item>>(INJECTABLE_TYPES.ItemFactory)
+	.bind<ItemFactory>(INJECTABLE_TYPES.ItemFactory)
 	.toFactory(
-		(context) =>
+		(context): ItemFactory =>
 			(
-				id: string,
-				name: string,
-				world: string,
-				coverImageId: string,
-				contentId: string,
-				modelId: string,
-				modelColor: string
+				{
+					_id,
+					name,
+					world,
+					coverImage,
+					content,
+					pageModel,
+					modelColor
+				}:{
+					_id: string,
+					name: string,
+					world: string,
+					coverImage: string,
+					content: string,
+					pageModel: string,
+					modelColor: string
+				}
 			) => {
 				const item = context.container.get<Item>(INJECTABLE_TYPES.Item);
-				item._id = id;
+				item._id = _id;
 				item.name = name;
 				item.world = world;
-				item.coverImage = coverImageId;
-				item.contentId = contentId;
-				item.pageModel = modelId;
+				item.coverImage = coverImage;
+				item.contentId = content;
+				item.pageModel = pageModel;
 				item.modelColor = modelColor;
 				return item;
 			}
 	);
 
 container
-	.bind<Factory<Model>>(INJECTABLE_TYPES.ModelFactory)
+	.bind<ModelFactory>(INJECTABLE_TYPES.ModelFactory)
 	.toFactory(
-		(context) =>
+		(context): ModelFactory =>
 			(
-				id: string,
-				worldId: string,
-				name: string,
-				depth: number,
-				width: number,
-				height: number,
-				fileName: string,
-				fileId: string,
-				notes: string
+				{
+					_id,
+					world,
+					name,
+					depth,
+					width,
+					height,
+					fileName,
+					fileId,
+					notes
+				}:{
+					_id: string,
+					world: string,
+					name: string,
+					depth: number,
+					width: number,
+					height: number,
+					fileName: string,
+					fileId: string,
+					notes: string
+				}
 			) => {
 				const model = context.container.get<Model>(INJECTABLE_TYPES.Model);
-				model._id = id;
-				model.world = worldId;
+				model._id = _id;
+				model.world = world;
 				model.name = name;
 				model.depth = depth;
 				model.width = width;
@@ -348,145 +448,223 @@ container
 			}
 	);
 container
-	.bind<Factory<Monster>>(INJECTABLE_TYPES.MonsterFactory)
+	.bind<MonsterFactory>(INJECTABLE_TYPES.MonsterFactory)
 	.toFactory(
-		(context) =>
+		(context): MonsterFactory =>
 			(
-				id: string,
-				name: string,
-				world: string,
-				coverImageId: string,
-				contentId: string,
-				modelId: string,
-				modelColor: string
+				{
+					_id,
+					name,
+					world,
+					coverImage,
+					contentId,
+					pageModel,
+					modelColor
+				}:{
+					_id: string,
+					name: string,
+					world: string,
+					coverImage: string,
+					contentId: string,
+					pageModel: string,
+					modelColor: string
+				}
 			) => {
 				const monster = context.container.get<Monster>(INJECTABLE_TYPES.Monster);
-				monster._id = id;
+				monster._id = _id;
 				monster.name = name;
 				monster.world = world;
-				monster.coverImage = coverImageId;
+				monster.coverImage = coverImage;
 				monster.contentId = contentId;
-				monster.pageModel = modelId;
+				monster.pageModel = pageModel;
 				monster.modelColor = modelColor;
 				return monster;
 			}
 	);
 container
-	.bind<Factory<PermissionAssignment>>(INJECTABLE_TYPES.PermissionAssignmentFactory)
+	.bind<PermissionAssignmentFactory>(INJECTABLE_TYPES.PermissionAssignmentFactory)
 	.toFactory(
-		(context) => (id: string, permission: string, subject: string, subjectType: string) => {
-			const permissionAssignment = context.container.get<PermissionAssignment>(
-				INJECTABLE_TYPES.PermissionAssignment
-			);
-			permissionAssignment._id = id;
-			permissionAssignment.permission = permission;
-			permissionAssignment.subject = subject;
-			permissionAssignment.subjectType = subjectType;
-			return permissionAssignment;
-		}
+		(context): PermissionAssignmentFactory =>
+			(
+				{
+					_id,
+					permission,
+					subject,
+					subjectType
+				}:{
+					_id: string,
+					permission: string,
+					subject: string,
+					subjectType: string
+				}
+			) => {
+				const permissionAssignment = context.container.get<PermissionAssignment>(
+					INJECTABLE_TYPES.PermissionAssignment
+				);
+				permissionAssignment._id = _id;
+				permissionAssignment.permission = permission;
+				permissionAssignment.subject = subject;
+				permissionAssignment.subjectType = subjectType;
+				return permissionAssignment;
+			}
 	);
 container
-	.bind<Factory<Person>>(INJECTABLE_TYPES.PersonFactory)
+	.bind<PersonFactory>(INJECTABLE_TYPES.PersonFactory)
 	.toFactory(
-		(context) =>
+		(context): PersonFactory =>
 			(
-				id: string,
-				name: string,
-				world: string,
-				coverImageId: string,
-				contentId: string,
-				modelId: string,
-				modelColor: string
+				{
+					_id,
+					name,
+					world,
+					coverImage,
+					contentId,
+					pageModel,
+					modelColor
+				}:{
+					_id: string,
+					name: string,
+					world: string,
+					coverImage: string,
+					contentId: string,
+					pageModel: string,
+					modelColor: string
+				}
 			) => {
 				const person = context.container.get<Person>(INJECTABLE_TYPES.Person);
-				person._id = id;
+				person._id = _id;
 				person.name = name;
 				person.world = world;
-				person.coverImage = coverImageId;
+				person.coverImage = coverImage;
 				person.contentId = contentId;
-				person.pageModel = modelId;
+				person.pageModel = pageModel;
 				person.modelColor = modelColor;
 				return person;
 			}
 	);
 container
-	.bind<Factory<Pin>>(INJECTABLE_TYPES.PinFactory)
-	.toFactory((context) => (id: string, x: number, y: number, mapId: string, pageId: string) => {
-		const pin = context.container.get<Pin>(INJECTABLE_TYPES.Pin);
-		pin._id = id;
-		pin.x = x;
-		pin.y = y;
-		pin.map = mapId;
-		pin.page = pageId;
-		return pin;
+	.bind<PinFactory>(INJECTABLE_TYPES.PinFactory)
+	.toFactory((context): PinFactory =>
+		(
+			{_id, x, y, map, page}: {_id: string, x: number, y: number, map: string, page: string}
+		) => {
+			const pin = context.container.get<Pin>(INJECTABLE_TYPES.Pin);
+			pin._id = _id;
+			pin.x = x;
+			pin.y = y;
+			pin.map = map;
+			pin.page = page;
+			return pin;
 	});
 container
-	.bind<Factory<Place>>(INJECTABLE_TYPES.PlaceFactory)
+	.bind<PlaceFactory>(INJECTABLE_TYPES.PlaceFactory)
 	.toFactory(
 		(context) =>
 			(
-				id: string,
-				name: string,
-				worldId: string,
-				coverImageId: string,
-				contentId: string,
-				mapImageId: string,
-				pixelsPerFoot: number
+				{
+					_id,
+					name,
+					world,
+					coverImage,
+					contentId,
+					mapImage,
+					pixelsPerFoot
+				}:{
+					_id: string,
+					name: string,
+					world: string,
+					coverImage: string,
+					contentId: string,
+					mapImage: string,
+					pixelsPerFoot: number
+				}
 			) => {
 				const place = context.container.get<Place>(INJECTABLE_TYPES.Place);
-				place._id = id;
+				place._id = _id;
 				place.name = name;
-				place.world = worldId;
-				place.coverImage = coverImageId;
+				place.world = world;
+				place.coverImage = coverImage;
 				place.contentId = contentId;
-				place.mapImage = mapImageId;
+				place.mapImage = mapImage;
 				place.pixelsPerFoot = pixelsPerFoot;
 				return place;
 			}
 	);
 container
-	.bind<Factory<Role>>(INJECTABLE_TYPES.RoleFactory)
-	.toFactory((context) => (id: string, name: string, worldId: string, permissionIds: string[]) => {
-		const role = context.container.get<Role>(INJECTABLE_TYPES.Role);
-		role._id = id;
-		role.name = name;
-		role.world = worldId;
-		role.permissions = permissionIds;
-		return role;
-	});
+	.bind<RoleFactory>(INJECTABLE_TYPES.RoleFactory)
+	.toFactory((context): RoleFactory =>
+		(
+			{
+				_id,
+				name,
+				world,
+				permissions
+			}:{
+				_id: string,
+				name: string,
+				world: string,
+				permissions: string[]
+			}
+		) => {
+			const role = context.container.get<Role>(INJECTABLE_TYPES.Role);
+			role._id = _id;
+			role.name = name;
+			role.world = world;
+			role.permissions = permissions;
+			return role;
+		});
 container
-	.bind<Factory<ServerConfig>>(INJECTABLE_TYPES.ServerConfigFactory)
+	.bind<ServerConfigFactory>(INJECTABLE_TYPES.ServerConfigFactory)
 	.toFactory(
-		(context) =>
+		(context):ServerConfigFactory =>
 			(
-				id: string,
-				version: string,
-				registerCodes: string[],
-				adminUserIds: string[],
-				unlockCode: string
+				{
+					_id,
+					version,
+					registerCodes,
+					adminUsers,
+					unlockCode
+				}:{
+					_id: string,
+					version: string,
+					registerCodes: string[],
+					adminUsers: string[],
+					unlockCode: string
+				}
 			) => {
 				const serverConfig = context.container.get<ServerConfig>(INJECTABLE_TYPES.ServerConfig);
-				serverConfig._id = id;
+				serverConfig._id = _id;
 				serverConfig.version = version;
 				serverConfig.registerCodes = registerCodes;
-				serverConfig.adminUsers = adminUserIds;
+				serverConfig.adminUsers = adminUsers;
 				serverConfig.unlockCode = unlockCode;
 				return serverConfig;
 			}
 	);
 container
-	.bind<Factory<User>>(INJECTABLE_TYPES.UserFactory)
+	.bind<UserFactory>(INJECTABLE_TYPES.UserFactory)
 	.toFactory(
 		(context) =>
 			(
-				_id: string,
-				email: string,
-				username: string,
-				password: string,
-				tokenVersion: string,
-				currentWorldId: string,
-				roleIds: string[],
-				permissionIds: string[]
+				{
+					_id,
+					email,
+					username,
+					password,
+					tokenVersion,
+					currentWorld,
+					roles,
+					permissions
+				}:{
+					_id: string,
+					email: string,
+					username: string,
+					password: string,
+					tokenVersion: string,
+					currentWorld: string,
+					roles: string[],
+					permissions: string[]
+				}
 			) => {
 				const user = context.container.get<User>(INJECTABLE_TYPES.User);
 				user._id = _id;
@@ -494,45 +672,68 @@ container
 				user.username = username;
 				user.password = password;
 				user.tokenVersion = tokenVersion;
-				user.currentWorld = currentWorldId;
-				user.roles = roleIds;
-				user.permissions = permissionIds;
+				user.currentWorld = currentWorld;
+				user.roles = roles;
+				user.permissions = permissions;
 				return user;
 			}
 	);
 container
-	.bind<Factory<WikiFolder>>(INJECTABLE_TYPES.WikiFolderFactory)
+	.bind<WikiFolderFactory>(INJECTABLE_TYPES.WikiFolderFactory)
 	.toFactory(
-		(context) =>
-			(id: string, name: string, worldId: string, pageIds: string[], childrenIds: string[]) => {
+		(context): WikiFolderFactory =>
+			(
+				{
+					_id,
+					name,
+					world,
+					pages,
+					children
+				}:{
+					_id: string,
+					name: string,
+					world: string,
+					pages: string[],
+					children: string[]
+				}
+			) => {
 				const folder = context.container.get<WikiFolder>(INJECTABLE_TYPES.WikiFolder);
-				folder._id = id;
+				folder._id = _id;
 				folder.name = name;
-				folder.world = worldId;
-				folder.pages = pageIds;
-				folder.children = childrenIds;
+				folder.world = world;
+				folder.pages = pages;
+				folder.children = children;
 				return folder;
 			}
 	);
 container
-	.bind<Factory<World>>(INJECTABLE_TYPES.WorldFactory)
+	.bind<WorldFactory>(INJECTABLE_TYPES.WorldFactory)
 	.toFactory(
-		(context) =>
+		(context): WorldFactory =>
 			(
-				id: string,
-				name: string,
-				wikiPageId: string,
-				rootFolderId: string,
-				roleIds: string[],
-				pinIds: string[]
+				{
+					_id,
+					name,
+					wikiPage,
+					rootFolder,
+					roles,
+					pins
+				}:{
+					_id: string,
+					name: string,
+					wikiPage: string,
+					rootFolder: string,
+					roles: string[],
+					pins: string[]
+				}
 			) => {
 				const world = context.container.get<World>(INJECTABLE_TYPES.World);
-				world._id = id;
+				world._id = _id;
 				world.name = name;
-				world.wikiPage = wikiPageId;
-				world.rootFolder = rootFolderId;
-				world.roles = roleIds;
-				world.pins = pinIds;
+				world.wikiPage = wikiPage;
+				world.rootFolder = rootFolder;
+				world.roles = roles;
+				world.pins = pins;
 				return world;
 			}
 	);
@@ -670,30 +871,30 @@ container
 // services
 container
 	.bind<AuthenticationService>(INJECTABLE_TYPES.AuthenticationService)
-	.to(AuthenticationApplicationService);
+	.to(AuthenticationService);
 container
 	.bind<AuthorizationService>(INJECTABLE_TYPES.AuthorizationService)
-	.to(AuthorizationApplicationService);
+	.to(AuthorizationService);
 container
 	.bind<ContentExportService>(INJECTABLE_TYPES.ContentExportService)
-	.to(ContentExportApplicationService);
+	.to(ContentExportService);
 container
 	.bind<ContentImportService>(INJECTABLE_TYPES.ContentImportService)
-	.to(ContentImportApplicationService);
-container.bind<GameService>(INJECTABLE_TYPES.GameService).to(GameApplicationService);
-container.bind<ImageService>(INJECTABLE_TYPES.ImageService).to(ImageApplicationService);
-container.bind<ModelService>(INJECTABLE_TYPES.ModelService).to(ModelApplicationService);
+	.to(ContentImportService);
+container.bind<GameService>(INJECTABLE_TYPES.GameService).to(GameService);
+container.bind<ImageService>(INJECTABLE_TYPES.ImageService).to(ImageService);
+container.bind<ModelService>(INJECTABLE_TYPES.ModelService).to(ModelService);
 container
 	.bind<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService)
-	.to(ServerConfigApplicationService);
-container.bind<SrdImportService>(INJECTABLE_TYPES.SrdImportService).to(SrdImportApplicationService);
-container.bind<UserService>(INJECTABLE_TYPES.UserService).to(UserApplicationService);
+	.to(ServerConfigService);
+container.bind<SrdImportService>(INJECTABLE_TYPES.SrdImportService).to(SrdImportService);
+container.bind<UserService>(INJECTABLE_TYPES.UserService).to(UserService);
 container
 	.bind<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService)
-	.to(WikiFolderApplicationService);
-container.bind<WikiPageService>(INJECTABLE_TYPES.WikiPageService).to(WikiPageApplicationService);
-container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldApplicationService);
-container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleApplicationService);
+	.to(WikiFolderService);
+container.bind<WikiPageService>(INJECTABLE_TYPES.WikiPageService).to(WikiPageService);
+container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldService);
+container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleService);
 
 // session contexts
 container

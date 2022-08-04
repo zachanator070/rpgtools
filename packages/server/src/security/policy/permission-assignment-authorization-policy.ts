@@ -1,14 +1,12 @@
-import { DomainEntity, EntityAuthorizationPolicy, Repository } from "../../types";
+import { EntityAuthorizationPolicy } from "../../types";
 import { PermissionAssignment } from "../../domain-entities/permission-assignment";
 import { SecurityContext } from "../security-context";
-import { RepositoryMapper } from "../../dal/repository-mapper";
 import { injectable } from "inversify";
 
 @injectable()
 export class PermissionAssignmentAuthorizationPolicy
 	implements EntityAuthorizationPolicy<PermissionAssignment>
 {
-	repoMapper = new RepositoryMapper();
 	entity: PermissionAssignment;
 
 	canAdmin = async (context: SecurityContext): Promise<boolean> => {
@@ -29,8 +27,7 @@ export class PermissionAssignmentAuthorizationPolicy
 	};
 
 	canWrite = async (context: SecurityContext): Promise<boolean> => {
-		const repo = this.repoMapper.map<DomainEntity>(this.entity.subjectType);
-		const subject = await repo.findById(this.entity.subject);
-		return subject.authorizationPolicy.canAdmin(context);
+		// this doesn't make sense to implement, you have to check the admin permission of the subject
+		return false;
 	};
 }

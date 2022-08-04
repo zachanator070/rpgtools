@@ -1,9 +1,8 @@
-import { GameModel } from "../../dal/mongodb/models/game";
-import { GAME_MODEL_DELETED } from "../subscription-resolvers";
-import { ModelService, SessionContext } from "../../types";
+import { SessionContext } from "../../types";
 import { FileUpload } from "graphql-upload";
 import { container } from "../../di/inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
+import {ModelService} from "../../services/model-service";
 
 export const modelMutations = {
 	createModel: async (
@@ -25,7 +24,7 @@ export const modelMutations = {
 			height: number;
 			notes: string;
 		},
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
 		return await modelService.createModel(
@@ -36,7 +35,8 @@ export const modelMutations = {
 			depth,
 			width,
 			height,
-			notes
+			notes,
+			unitOfWork
 		);
 	},
 	updateModel: async (
@@ -58,7 +58,7 @@ export const modelMutations = {
 			height: number;
 			notes: string;
 		},
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
 		return await modelService.updateModel(
@@ -69,15 +69,16 @@ export const modelMutations = {
 			width,
 			height,
 			notes,
+			unitOfWork,
 			file
 		);
 	},
 	deleteModel: async (
 		_: any,
 		{ modelId }: { modelId: string },
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
-		return await modelService.deleteModel(securityContext, modelId);
+		return await modelService.deleteModel(securityContext, modelId, unitOfWork);
 	},
 };

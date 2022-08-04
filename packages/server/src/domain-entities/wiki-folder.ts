@@ -1,4 +1,4 @@
-import {DomainEntity, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -13,13 +13,17 @@ export class WikiFolder implements DomainEntity {
 	public children: string[];
 
 	authorizationPolicy: WikiFolderAuthorizationPolicy;
+	factory: Factory<WikiFolder>;
 
 	type: string = WIKI_FOLDER;
 
 	constructor(@inject(INJECTABLE_TYPES.WikiFolderAuthorizationPolicy)
-					authorizationPolicy: WikiFolderAuthorizationPolicy) {
+					authorizationPolicy: WikiFolderAuthorizationPolicy,
+				@inject(INJECTABLE_TYPES.WikiFolderFactory)
+					factory: Factory<WikiFolder>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
+		this.factory = factory;
 	}
 
 	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {

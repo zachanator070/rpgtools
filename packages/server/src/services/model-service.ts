@@ -1,13 +1,9 @@
 import {
-	AuthorizationService,
 	Cache,
 	EventPublisher,
-	Factory,
 	FileFactory,
 	ModelFactory,
-	ModelRepository,
-	ModelService,
-	PermissionAssignmentFactory,
+	PermissionAssignmentFactory, UnitOfWork,
 } from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants";
 import { MODEL } from "@rpgtools/common/src/type-constants";
@@ -17,11 +13,11 @@ import { SecurityContext } from "../security/security-context";
 import { FileUpload } from "graphql-upload";
 import { Model } from "../domain-entities/model";
 import { FilterCondition } from "../dal/filter-condition";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
+import {AuthorizationService} from "./authorization-service";
 
 @injectable()
-export class ModelApplicationService implements ModelService {
+export class ModelService {
 	@inject(INJECTABLE_TYPES.Cache)
 	cache: Cache;
 
@@ -31,71 +27,12 @@ export class ModelApplicationService implements ModelService {
 	@inject(INJECTABLE_TYPES.AuthorizationService)
 	authorizationService: AuthorizationService;
 
-	@inject(INJECTABLE_TYPES.ModelRepository)
-	modelRepository: ModelRepository;
-
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
-
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
 	@inject(INJECTABLE_TYPES.ModelFactory)
 	modelFactory: ModelFactory;
 	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
 	permissionAssignmentFactory: PermissionAssignmentFactory;
-
-	createModel = async (
-		context: SecurityContext,
-		worldId: string,
-		name: string,
-		fileUpload: FileUpload,
-		depth: number,
-		width: number,
-		height: number,
-		notes: string
-	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
-		const world = await unitOfWork.worldRepository.findById(worldId);
-		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
-		}
-
-		const model = this.modelFactory(
-			null,
-			worldId,
-			name,
-			depth,
-			width,
-			height,
-			null,
-			null,
-			notes
-		);
-
-		if (!(await model.authorizationPolicy.canCreate(context))) {
-			throw new Error("You do not have permission to add models to this world");
-		}
-
-		fileUpload = await fileUpload;
-
-		const file = this.fileFactory(null, fileUpload.filename, fileUpload.createReadStream(), null);
-		await unitOfWork.fileRepository.create(file);
-		await unitOfWork.modelRepository.create(model);
-		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
-			const permissionAssignment = this.permissionAssignmentFactory(
-				null,
-				permission,
-				model._id,
-				MODEL
-			);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-			context.user.permissions.push(permissionAssignment._id);
-			context.permissions.push(permissionAssignment);
-		}
-		await unitOfWork.userRepository.update(context.user);
-		await unitOfWork.commit();
-		return model;
-	};
 
 	updateModel = async (
 		context: SecurityContext,
@@ -105,9 +42,9 @@ export class ModelApplicationService implements ModelService {
 		width: number,
 		height: number,
 		notes: string,
+		unitOfWork: UnitOfWork,
 		file?: FileUpload
 	) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
 		const model = await unitOfWork.modelRepository.findById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
@@ -126,7 +63,7 @@ export class ModelApplicationService implements ModelService {
 			}
 			file = await file;
 
-			const newFile = this.fileFactory(null, file.filename, file.createReadStream(), null);
+			const newFile = this.fileFactory({_id: null, filename: file.filename, readStream: file.createReadStream(), mimeType: null});
 			await unitOfWork.fileRepository.create(newFile);
 			model.fileId = newFile._id;
 			model.fileName = file.filename;
@@ -137,12 +74,66 @@ export class ModelApplicationService implements ModelService {
 		model.height = height;
 		model.notes = notes;
 		await unitOfWork.modelRepository.update(model);
-		await unitOfWork.commit();
 		return model;
 	};
 
-	deleteModel = async (context: SecurityContext, modelId: string) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	createModel = async (
+		context: SecurityContext,
+		worldId: string,
+		name: string,
+		fileUpload: FileUpload,
+		depth: number,
+		width: number,
+		height: number,
+		notes: string,
+		unitOfWork: UnitOfWork
+	) => {
+		const world = await unitOfWork.worldRepository.findById(worldId);
+		if (!world) {
+			throw new Error(`World with id ${worldId} does not exist`);
+		}
+
+		const model = this.modelFactory(
+			{
+				_id: null,
+				world: worldId,
+				name,
+				depth,
+				width,
+				height,
+				fileName: null,
+				fileId: null,
+				notes
+			}
+		);
+
+		if (!(await model.authorizationPolicy.canCreate(context))) {
+			throw new Error("You do not have permission to add models to this world");
+		}
+
+		fileUpload = await fileUpload;
+
+		const file = this.fileFactory({_id: null, filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: null});
+		await unitOfWork.fileRepository.create(file);
+		await unitOfWork.modelRepository.create(model);
+		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
+			const permissionAssignment = this.permissionAssignmentFactory(
+				{
+					_id: null,
+					permission,
+					subject: model._id,
+					subjectType: MODEL
+				}
+			);
+			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
+			context.user.permissions.push(permissionAssignment._id);
+			context.permissions.push(permissionAssignment);
+		}
+		await unitOfWork.userRepository.update(context.user);
+		return model;
+	};
+
+	deleteModel = async (context: SecurityContext, modelId: string, unitOfWork: UnitOfWork) => {
 		const model = await unitOfWork.modelRepository.findById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
@@ -165,12 +156,11 @@ export class ModelApplicationService implements ModelService {
 			await this.cache.delete(model.fileName);
 		}
 		await this.authorizationService.cleanUpPermissions(modelId, unitOfWork);
-		await unitOfWork.commit();
 		return model;
 	};
 
-	getModels = async (context: SecurityContext, worldId: string): Promise<Model[]> => {
-		const models = await this.modelRepository.find([new FilterCondition("world", worldId)]);
+	getModels = async (context: SecurityContext, worldId: string, unitOfWork: UnitOfWork): Promise<Model[]> => {
+		const models = await unitOfWork.modelRepository.find([new FilterCondition("world", worldId)]);
 		const returnModels = [];
 		for (let model of models) {
 			if (await model.authorizationPolicy.canRead(context)) {
@@ -180,8 +170,7 @@ export class ModelApplicationService implements ModelService {
 		return returnModels;
 	};
 
-	private filenameExists = async (filename: string) => {
-		const unitOfWork = this.dbUnitOfWorkFactory();
+	private filenameExists = async (filename: string, unitOfWork: UnitOfWork) => {
 		const models = await unitOfWork.modelRepository.find([
 			new FilterCondition("filename", filename),
 		]);

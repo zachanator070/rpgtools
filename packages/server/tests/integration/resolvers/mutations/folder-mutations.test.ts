@@ -1,10 +1,11 @@
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { container } from "../../../../src/di/inversify";
-import { AuthorizationService, WikiPageService } from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {CREATE_FOLDER, DELETE_FOLDER, RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
+import {AuthorizationService} from "../../../../src/services/authorization-service";
+import {WikiPageService} from "../../../../src/services/wiki-page-service";
 
 process.env.TEST_SUITE = "folder-mutations-test";
 
