@@ -401,6 +401,10 @@ export const CREATE_FOLDER = gql`
 	mutation createFolder($parentFolderId: ID!, $name: String!) {
 		createFolder(parentFolderId: $parentFolderId, name: $name) {
 			_id
+			children {
+				_id
+				name 
+			}
 		}
 	}
 `;
@@ -408,6 +412,10 @@ export const DELETE_FOLDER = gql`
 	mutation deleteFolder($folderId: ID!) {
 		deleteFolder(folderId: $folderId) {
 			_id
+			children {
+				_id
+				name 
+			}
 		}
 	}
 `;
@@ -415,6 +423,10 @@ export const MOVE_FOLDER = gql`
 	mutation moveFolder($folderId: ID!, $parentFolderId: ID!) {
 		moveFolder(folderId: $folderId, parentFolderId: $parentFolderId) {
 			_id
+			children {
+				_id
+				name 
+			}
 		}
 	}
 `;
@@ -519,12 +531,12 @@ export const RENAME_WORLD = gql`
 //region Import
 
 export const IMPORT_CONTENT = gql`
-	${CURRENT_WORLD_FOLDERS}
 	mutation importContent($folderId: ID!, $zipFile: Upload!){
 		importContent(folderId: $folderId, zipFile: $zipFile){
 			_id
-			rootFolder{
-				...currentWorldFolders
+			children {
+				_id
+				name
 			}
 		}
 	}

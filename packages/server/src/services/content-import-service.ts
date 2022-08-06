@@ -33,7 +33,7 @@ export class ContentImportService {
 		folderId: string,
 		zipFile: FileUpload,
 		unitOfWork: UnitOfWork
-	): Promise<World> => {
+	): Promise<WikiFolder> => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -53,7 +53,7 @@ export class ContentImportService {
 			console.log(e.message);
 		}
 
-		return await unitOfWork.worldRepository.findById(folder.world);
+		return folder;
 	};
 
 	private processArchive = async (

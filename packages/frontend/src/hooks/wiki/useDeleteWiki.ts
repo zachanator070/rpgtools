@@ -12,7 +12,7 @@ interface DeleteWikiResult {
 }
 
 export default function useDeleteWiki(): DeleteWikiResult {
-	const result = useGQLMutation<World, DeleteWikiVariables>(DELETE_WIKI, {refetchQueries: [WIKIS_IN_FOLDER]});
+	const result = useGQLMutation<World, DeleteWikiVariables>(DELETE_WIKI, {}, {refetchQueries: [WIKIS_IN_FOLDER]});
 	return {
 		...result,
 		deleteWiki: result.mutate

@@ -19,6 +19,7 @@ import { WikiPage } from "../domain-entities/wiki-page";
 import { PaginatedResult } from "../dal/paginated-result";
 import {AuthorizationService} from "./authorization-service";
 import EntityMapper from "../domain-entities/entity-mapper";
+import {WikiFolder} from "../domain-entities/wiki-folder";
 
 @injectable()
 export class WikiPageService {
@@ -44,7 +45,7 @@ export class WikiPageService {
 	@inject(INJECTABLE_TYPES.EntityMapper)
 	entityMapper: EntityMapper;
 
-	createWiki = async (context: SecurityContext, name: string, folderId: string, unitOfWork: UnitOfWork) => {
+	createWiki = async (context: SecurityContext, name: string, folderId: string, unitOfWork: UnitOfWork): Promise<WikiFolder> => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -86,7 +87,7 @@ export class WikiPageService {
 		name?: string,
 		coverImageId?: string,
 		type?: string
-	) => {
+	): Promise<WikiPage> => {
 		let wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
@@ -143,7 +144,7 @@ export class WikiPageService {
 		return wikiPage;
 	};
 
-	deleteWiki = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork) => {
+	deleteWiki = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork): Promise<WikiFolder> => {
 		const wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
 		if (!wikiPage) {
 			throw new Error("Page does not exist");
@@ -171,7 +172,7 @@ export class WikiPageService {
 
 		await this.authorizationService.cleanUpPermissions(wikiPage._id, unitOfWork);
 		await unitOfWork.wikiPageRepository.delete(wikiPage);
-		return await unitOfWork.worldRepository.findById(wikiPage.world);
+		return parentFolder;
 	};
 
 	updatePlace = async (

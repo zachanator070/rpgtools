@@ -35,7 +35,7 @@ ExportRouter.get("/:model/:id", async (req, res) => {
 		res.setHeader('Content-Disposition',`attachment;filename=${filename}.zip`);
 		await archive.pipe(res);
 	} catch (e) {
-		return res.status(400).send(e.message);
+		return;
 	}
 });
 

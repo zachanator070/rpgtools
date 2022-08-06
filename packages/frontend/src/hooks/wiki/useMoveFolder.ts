@@ -1,6 +1,7 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {MOVE_FOLDER} from "@rpgtools/common/src/gql-mutations";
+import {FOLDERS} from "@rpgtools/common/src/gql-queries";
 
 interface MoveFolderVariables {
 	folderId: string;
@@ -14,7 +15,7 @@ export default function useMoveFolder(callback?: (data: World) => Promise<void>)
 	const result = useGQLMutation<World, MoveFolderVariables>(
 		MOVE_FOLDER,
 		{},
-		{ onCompleted: callback, displayErrors: false }
+		{ onCompleted: callback, displayErrors: false, refetchQueries: [FOLDERS] }
 	);
 
 	return {

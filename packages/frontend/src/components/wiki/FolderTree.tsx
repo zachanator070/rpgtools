@@ -26,12 +26,10 @@ export default function FolderTree({ folder, initialExpanded, indent = 0 }: Fold
 	const {
 		wikisInFolder,
 		loading: wikisLoading,
-		refetch: refetchWikis,
 	} = useWikisInFolder({ folderId: folder._id });
 	const {
 		folders,
 		loading: foldersLoading,
-		refetch: refetchFolders,
 	} = useFolders({ worldId: params.world_id });
 	const { getFolderPath, loading: folderPathLoading } = useGetFolderPath({
 		wikiId: params.wiki_id,
@@ -130,11 +128,7 @@ export default function FolderTree({ folder, initialExpanded, indent = 0 }: Fold
 					setAnimateArrow(true);
 				}}
 			>
-				<FolderMenu
-					folder={folder}
-					refetchFolders={async () => await refetchFolders({})}
-					refetchWikis={async () => await refetchWikis({})}
-				>
+				<FolderMenu folder={folder}>
 					<>
 						{arrow} {folderIcon} {folder.name}
 					</>
