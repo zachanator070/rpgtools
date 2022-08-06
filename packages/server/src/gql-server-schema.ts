@@ -97,14 +97,14 @@ export const typeDefs = gql`
 		): Role!
 		revokeRolePermission(roleId: ID!, permission: String!, subjectId: ID!): Role!
 
-		createFolder(name: String!, parentFolderId: ID!): World!
+		createFolder(name: String!, parentFolderId: ID!): WikiFolder!
 		renameFolder(folderId: ID!, name: String!): WikiFolder!
-		deleteFolder(folderId: ID!): World!
-		moveFolder(folderId: ID!, parentFolderId: ID!): World!
-		importContent(folderId: ID!, zipFile: Upload!): World!
+		deleteFolder(folderId: ID!): WikiFolder!
+		moveFolder(folderId: ID!, parentFolderId: ID!): WikiFolder!
+		importContent(folderId: ID!, zipFile: Upload!): WikiFolder!
 
 		createWiki(name: String!, folderId: ID!): WikiFolder!
-		deleteWiki(wikiId: ID!): World!
+		deleteWiki(wikiId: ID!): WikiFolder!
 		updateWiki(
 			wikiId: ID!
 			name: String

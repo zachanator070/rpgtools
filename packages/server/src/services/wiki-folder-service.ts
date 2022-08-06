@@ -13,7 +13,6 @@ import {
 } from "../dal/filter-condition";
 import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
-import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {AuthorizationService} from "./authorization-service";
@@ -36,7 +35,7 @@ export class WikiFolderService {
 		name: string,
 		parentFolderId: string,
 		unitOfWork: UnitOfWork
-	): Promise<World> => {
+	): Promise<WikiFolder> => {
 		const parentFolder = await unitOfWork.wikiFolderRepository.findById(parentFolderId);
 		if (!parentFolder) {
 			throw new Error("Parent folder does not exist");
@@ -63,7 +62,7 @@ export class WikiFolderService {
 			context.user.permissions.push(newPermission._id);
 		}
 		await unitOfWork.userRepository.update(context.user);
-		return unitOfWork.worldRepository.findById(newFolder.world);
+		return parentFolder;
 	};
 
 	renameFolder = async (
@@ -85,7 +84,7 @@ export class WikiFolderService {
 		return folder;
 	};
 
-	deleteFolder = async (context: SecurityContext, folderId: string, unitOfWork: UnitOfWork): Promise<World> => {
+	deleteFolder = async (context: SecurityContext, folderId: string, unitOfWork: UnitOfWork): Promise<WikiFolder> => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -100,17 +99,15 @@ export class WikiFolderService {
 			throw new Error("You cannot delete the root folder of a world");
 		}
 
-		const parents = await unitOfWork.wikiFolderRepository.find([
+		const parent = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("children", folder._id),
 		]);
-		for (let parent of parents) {
-			parent.children = parent.children.filter((child) => child !== folder._id);
-			await unitOfWork.wikiFolderRepository.update(parent);
-		}
+		parent.children = parent.children.filter((child) => child !== folder._id);
+		await unitOfWork.wikiFolderRepository.update(parent);
 
 		await this.recurseDeleteFolder(folder, unitOfWork);
 
-		return unitOfWork.worldRepository.findById(folder.world);
+		return parent;
 	};
 
 	moveFolder = async (
@@ -118,7 +115,7 @@ export class WikiFolderService {
 		folderId: string,
 		parentFolderId: string,
 		unitOfWork: UnitOfWork
-	): Promise<World> => {
+	): Promise<WikiFolder> => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error(`Folder with id ${folderId} does not exist`);
@@ -145,7 +142,7 @@ export class WikiFolderService {
 		await unitOfWork.wikiFolderRepository.update(currentParent);
 		parentFolder.children.push(folder._id);
 		await unitOfWork.wikiFolderRepository.update(parentFolder);
-		return unitOfWork.worldRepository.findById(folder.world);
+		return parentFolder;
 	};
 
 	getFolders = async (

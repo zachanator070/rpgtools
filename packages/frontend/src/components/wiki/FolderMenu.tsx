@@ -25,11 +25,9 @@ import {WikiFolder} from "../../types";
 interface FolderMenuProps {
 	folder: WikiFolder;
 	children?: ReactElement;
-	refetchFolders?: () => Promise<any>;
-	refetchWikis?: () => Promise<any>;
 }
 
-export default function FolderMenu({ folder, children, refetchFolders, refetchWikis }: FolderMenuProps) {
+export default function FolderMenu({ folder, children }: FolderMenuProps) {
 	const { createWiki } = useCreateWiki();
 	const { createFolder } = useCreateFolder();
 	const { renameFolder } = useRenameFolder();
@@ -55,7 +53,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 			key="createWiki"
 			onClick={async () => {
 				await createWiki({name: "New Page", folderId: folder._id});
-				await refetchWikis();
 			}}
 		>
 			<FileAddOutlined />
@@ -65,7 +62,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 			key="createFolder"
 			onClick={async () => {
 				await createFolder({parentFolderId: folder._id, name: "New Folder"});
-				await refetchFolders();
 			}}
 		>
 			<FolderAddOutlined />
@@ -75,7 +71,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 			key="renameFolder"
 			onClick={async () => {
 				setRenameModalVisibility(true);
-				await refetchFolders();
 			}}
 		>
 			<EditOutlined />
@@ -85,7 +80,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 			key="moveFolder"
 			onClick={async () => {
 				setMoveFolderModalVisibility(true);
-				await refetchFolders();
 			}}
 		>
 			<ImportOutlined />
@@ -99,7 +93,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
 					onOk: async () => {
 						await deleteFolder({folderId: folder._id});
-						await refetchFolders();
 					},
 					onCancel: () => {},
 				});
@@ -112,7 +105,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 			key="importFolder"
 			onClick={async () => {
 				setImportModalVisibility(true);
-				await refetchFolders();
 			}}
 		>
 			<UploadOutlined />
@@ -188,7 +180,6 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 								folderId: folder._id,
 								parentFolderId: newFolder,
 							});
-							await refetchFolders();
 						}}
 					>
 						<Form.Item label={"New Parent Folder"} name={"newFolder"}>
@@ -277,7 +268,7 @@ export default function FolderMenu({ folder, children, refetchFolders, refetchWi
 					onCancel={() => setPermissionModalVisibility(false)}
 					width={750}
 				>
-					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={refetchFolders} />
+					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} />
 				</Modal>
 			</div>
 			<Dropdown

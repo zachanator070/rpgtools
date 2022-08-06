@@ -13,10 +13,9 @@ import {PermissionAssignment, Role, User} from "../../types";
 interface PermissionEditorProps {
 	subject: any;
 	subjectType: string;
-	refetch?: () => Promise<void>
 }
 
-export default function PermissionEditor({ subject, subjectType, refetch }: PermissionEditorProps) {
+export default function PermissionEditor({ subject, subjectType }: PermissionEditorProps) {
 	const [permissionGroup, setPermissionGroup] = useState<string>("users");
 	const { grantUserPermission } = useGrantUserPermission();
 	const { grantRolePermission } = useGrantRolePermission();
@@ -114,9 +113,6 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 																	subjectId: selectedPermissionAssignment.subject._id
 																});
 															}
-															if (refetch) {
-																await refetch();
-															}
 														}}
 													>
 														<DeleteOutlined />
@@ -170,9 +166,6 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 										subjectId: subject._id,
 										subjectType
 									});
-								}
-								if (refetch) {
-									await refetch();
 								}
 							}}
 						>

@@ -145,6 +145,7 @@ export class ZipArchive implements Archive {
 	): Promise<void> => {
 		for (let page of await repo.find([])) {
 			const path: string = await getPath(page);
+			delete page.authorizationPolicy;
 			await this.addArchiveEntry(
 				Readable.from([JSON.stringify(page)]),
 				`${path}/${entityType}.${page._id}.json`
