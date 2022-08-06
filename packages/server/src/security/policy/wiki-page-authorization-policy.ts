@@ -1,9 +1,7 @@
-import { EntityAuthorizationPolicy, Repository } from "../../types";
+import {EntityAuthorizationPolicy, UnitOfWork} from "../../types";
 import { WikiPage } from "../../domain-entities/wiki-page";
 import { SecurityContext } from "../security-context";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import { World } from "../../domain-entities/world";
+import {injectable } from "inversify";
 import { FilterCondition } from "../../dal/filter-condition";
 import {
 	FOLDER_READ_ALL_PAGES,
@@ -15,17 +13,11 @@ import {
 	WIKI_RW,
 	WIKI_RW_ALL,
 } from "@rpgtools/common/src/permission-constants";
-import { WikiFolder } from "../../domain-entities/wiki-folder";
 
 @injectable()
 export class WikiPageAuthorizationPolicy
 	implements EntityAuthorizationPolicy<WikiPage>
 {
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: Repository<World>;
-
-	@inject(INJECTABLE_TYPES.WikiFolderRepository)
-	wikiFolderRepository: Repository<WikiFolder>;
 
 	entity: WikiPage;
 
@@ -36,37 +28,37 @@ export class WikiPageAuthorizationPolicy
 		);
 	};
 
-	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		const parentFolder = await this.wikiFolderRepository.findOne([
+	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("pages", this.entity._id),
 		]);
 		if (!parentFolder) {
 			return false;
 		}
-		return parentFolder.authorizationPolicy.canWrite(context);
+		return parentFolder.authorizationPolicy.canWrite(context, unitOfWork);
 	};
 
-	canRead = async (context: SecurityContext): Promise<boolean> => {
+	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
 		// if this wiki page is the main page of a world
-		let world = await this.worldRepository.findOne([new FilterCondition("wikiPage", this.entity._id)]);
+		let world = await unitOfWork.worldRepository.findOne([new FilterCondition("wikiPage", this.entity._id)]);
 		if (world) {
-			return world.authorizationPolicy.canRead(context);
+			return world.authorizationPolicy.canRead(context, unitOfWork);
 		} else {
-			world = await this.worldRepository.findById(this.entity.world);
+			world = await unitOfWork.worldRepository.findById(this.entity.world);
 		}
-		const parentFolder = await this.wikiFolderRepository.findOne([
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("pages", this.entity._id),
 		]);
 		return (
 			context.hasPermission(FOLDER_READ_ALL_PAGES, parentFolder._id) ||
 			context.hasPermission(WIKI_READ, this.entity._id) ||
 			context.hasPermission(WIKI_READ_ALL, world._id) ||
-			(await this.canWrite(context))
+			(await this.canWrite(context, unitOfWork))
 		);
 	};
 
-	canWrite = async (context: SecurityContext): Promise<boolean> => {
-		const parentFolder = await this.wikiFolderRepository.findOne([
+	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("pages", this.entity._id),
 		]);
 		return (

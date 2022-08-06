@@ -1,8 +1,10 @@
 import { container } from "../../../../src/di/inversify";
-import { ServerConfigRepository } from "../../../../src/types";
+import {Factory} from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {gql} from "graphql-tag";
+import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {DefaultTestingContext} from "../../default-testing-context";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 
@@ -33,21 +35,11 @@ export const LOGIN_QUERY = gql`
 `;
 
 describe("authentication-mutations", () => {
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		...testingContext
-	} = defaultTestingContextFactory();
+	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	test("login", async () => {
-		const result = await server.executeGraphQLQuery({
+		const result = await testingContext.server.executeGraphQLQuery({
 			query: LOGIN_QUERY,
 			variables: { username: "tester", password: "tester" },
 		});
@@ -62,7 +54,7 @@ describe("authentication-mutations", () => {
 	});
 
 	test("login bad password", async () => {
-		const result = await server.executeGraphQLQuery({
+		const result = await testingContext.server.executeGraphQLQuery({
 			query: LOGIN_QUERY,
 			variables: { username: "tester", password: "asdf" },
 		});
@@ -70,7 +62,7 @@ describe("authentication-mutations", () => {
 	});
 
 	test("login bad username", async () => {
-		const result = await server.executeGraphQLQuery({
+		const result = await testingContext.server.executeGraphQLQuery({
 			query: LOGIN_QUERY,
 			variables: { username: "tester", password: "asdf" },
 		});
@@ -79,14 +71,15 @@ describe("authentication-mutations", () => {
 
 	describe("with good register code available", () => {
 		beforeEach(async () => {
-			const repo = container.get<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository);
-			const serverConfig = await repo.findOne();
+			const unitOfWork = unitOfWorkFactory({});
+			const serverConfig = await unitOfWork.serverConfigRepository.findOne();
 			serverConfig.registerCodes.push("asdf");
-			await repo.update(serverConfig);
+			await unitOfWork.serverConfigRepository.update(serverConfig);
+			await unitOfWork.commit();
 		});
 
 		test("register good", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
@@ -106,7 +99,7 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register use code twice", async () => {
-			await server.executeGraphQLQuery({
+			await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
@@ -115,7 +108,7 @@ describe("authentication-mutations", () => {
 					password: "tester",
 				},
 			});
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
@@ -128,7 +121,7 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register use email twice", async () => {
-			await server.executeGraphQLQuery({
+			await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
@@ -137,7 +130,7 @@ describe("authentication-mutations", () => {
 					password: "tester",
 				},
 			});
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "qwerty",
@@ -150,7 +143,7 @@ describe("authentication-mutations", () => {
 		});
 
 		test("register use username twice", async () => {
-			await server.executeGraphQLQuery({
+			await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "asdf",
@@ -159,7 +152,7 @@ describe("authentication-mutations", () => {
 					password: "tester",
 				},
 			});
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REGISTER_MUTATION,
 				variables: {
 					registerCode: "qwerty",
@@ -173,7 +166,7 @@ describe("authentication-mutations", () => {
 	});
 
 	test("register bad code", async () => {
-		const result = await server.executeGraphQLQuery({
+		const result = await testingContext.server.executeGraphQLQuery({
 			query: REGISTER_MUTATION,
 			variables: {
 				registerCode: "1234",

@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { SecurityContext } from "../security/security-context";
-import { ARTICLE, ITEM, MONSTER, PERSON, PLACE } from "@rpgtools/common/src/type-constants";
+import { ARTICLE } from "@rpgtools/common/src/type-constants";
 import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { Readable } from "stream";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
@@ -18,6 +18,7 @@ import { ModeledPage } from "../domain-entities/modeled-page";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { PaginatedResult } from "../dal/paginated-result";
 import {AuthorizationService} from "./authorization-service";
+import EntityMapper from "../domain-entities/entity-mapper";
 
 @injectable()
 export class WikiPageService {
@@ -40,13 +41,16 @@ export class WikiPageService {
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
 
+	@inject(INJECTABLE_TYPES.EntityMapper)
+	entityMapper: EntityMapper;
+
 	createWiki = async (context: SecurityContext, name: string, folderId: string, unitOfWork: UnitOfWork) => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
 
-		if (!(await folder.authorizationPolicy.canCreate(context))) {
+		if (!(await folder.authorizationPolicy.canCreate(context, unitOfWork))) {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
@@ -87,7 +91,7 @@ export class WikiPageService {
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
-		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 
@@ -131,7 +135,8 @@ export class WikiPageService {
 				await unitOfWork.permissionAssignmentRepository.update(oldPermission);
 			}
 			// recreate the wiki page with the right default values
-			wikiPage = wikiPage.factory(wikiPage);
+			const newType = this.entityMapper.map(type);
+			wikiPage = newType.factory(wikiPage) as WikiPage;
 		}
 
 		await unitOfWork.wikiPageRepository.update(wikiPage);
@@ -144,7 +149,7 @@ export class WikiPageService {
 			throw new Error("Page does not exist");
 		}
 
-		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 
@@ -181,7 +186,7 @@ export class WikiPageService {
 			throw new Error(`Place ${placeId} does not exist`);
 		}
 
-		if (!(await place.authorizationPolicy.canWrite(context))) {
+		if (!(await place.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to write to this page`);
 		}
 
@@ -209,7 +214,7 @@ export class WikiPageService {
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
-		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 		const foundModel = await unitOfWork.modelRepository.findById(model);
@@ -227,7 +232,7 @@ export class WikiPageService {
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
-		if (!(await wikiPage.authorizationPolicy.canWrite(context))) {
+		if (!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to write to this page");
 		}
 
@@ -235,14 +240,14 @@ export class WikiPageService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationPolicy.canWrite(context))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
 		const oldFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("pages", wikiId),
 		]);
-		if (oldFolder && !(await oldFolder.authorizationPolicy.canWrite(context))) {
+		if (oldFolder && !(await oldFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to write to the folder ${oldFolder._id}`);
 		}
 
@@ -255,7 +260,7 @@ export class WikiPageService {
 
 	getWiki = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork): Promise<WikiPage> => {
 		let foundWiki = await unitOfWork.wikiPageRepository.findById(wikiId);
-		if (foundWiki && !(await foundWiki.authorizationPolicy.canRead(context))) {
+		if (foundWiki && !(await foundWiki.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
 
@@ -269,7 +274,7 @@ export class WikiPageService {
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		if (!(await world.authorizationPolicy.canRead(context))) {
+		if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error("You do not have permission to read this World");
 		}
 
@@ -287,7 +292,7 @@ export class WikiPageService {
 			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context))) {
 				continue;
 			}
-			if (await doc.authorizationPolicy.canRead(context)) {
+			if (await doc.authorizationPolicy.canRead(context, unitOfWork)) {
 				docs.push(doc);
 			}
 		}
@@ -305,7 +310,7 @@ export class WikiPageService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationPolicy.canRead(context))) {
+		if (!(await folder.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error("You do not have permission to read this folder");
 		}
 		const results = await unitOfWork.wikiPageRepository.findPaginated(
@@ -315,7 +320,7 @@ export class WikiPageService {
 		);
 		const docs = [];
 		for (let doc of results.docs) {
-			if (await doc.authorizationPolicy.canRead(context)) {
+			if (await doc.authorizationPolicy.canRead(context, unitOfWork)) {
 				docs.push(doc);
 			}
 		}

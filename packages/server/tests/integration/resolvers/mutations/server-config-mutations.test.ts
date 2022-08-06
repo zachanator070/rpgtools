@@ -1,36 +1,27 @@
 import { container } from "../../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import { ServerConfigRepository, UserRepository } from "../../../../src/types";
+import {Factory} from "../../../../src/types";
 import { FilterCondition } from "../../../../src/dal/filter-condition";
-import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
+import {DefaultTestingContext} from "../../default-testing-context";
 import {GENERATE_REGISTER_CODES, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
+import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		...testingContext
-	} = defaultTestingContextFactory();
+	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
+
 
 	describe("with locked server", () => {
 		const resetConfig = async () => {
-			const serverConfigRepository = container.get<ServerConfigRepository>(
-				INJECTABLE_TYPES.ServerConfigRepository
-			);
-			const serverConfig = await serverConfigRepository.findOne([]);
+			const unitOfWork = unitOfWorkFactory({});
+			const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
 			serverConfig.unlockCode = "asdf";
 			serverConfig.adminUsers = [];
-			await serverConfigRepository.update(serverConfig);
-			await server.checkConfig();
+			await unitOfWork.serverConfigRepository.update(serverConfig);
+			await testingContext.server.checkConfig();
 		};
 		beforeEach(async () => {
 			await resetConfig();
@@ -41,7 +32,7 @@ describe("server mutations", () => {
 		});
 
 		test("unlock", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
 					unlockCode: "asdf",
@@ -59,7 +50,7 @@ describe("server mutations", () => {
 		});
 
 		test("unlock twice", async () => {
-			await server.executeGraphQLQuery({
+			await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
 					unlockCode: "asdf",
@@ -68,7 +59,7 @@ describe("server mutations", () => {
 					password: "zach",
 				},
 			});
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
 					unlockCode: "asdf",
@@ -82,7 +73,7 @@ describe("server mutations", () => {
 	});
 
 	test("generate register codes no permission", async () => {
-		const result = await server.executeGraphQLQuery({
+		const result = await testingContext.server.executeGraphQLQuery({
 			query: GENERATE_REGISTER_CODES,
 			variables: { amount: 10 },
 		});
@@ -91,14 +82,15 @@ describe("server mutations", () => {
 
 	describe("with authenticated user", () => {
 		beforeEach(async () => {
-			const userRepository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
-			mockSessionContextFactory.setCurrentUser(
-				await userRepository.findOne([new FilterCondition("username", "tester")])
+			const unitOfWork = unitOfWorkFactory({});
+			testingContext.mockSessionContextFactory.setCurrentUser(
+				await unitOfWork.userRepository.findOne([new FilterCondition("username", "tester")])
 			);
+			await unitOfWork.commit();
 		});
 
 		test("generate register codes", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GENERATE_REGISTER_CODES,
 				variables: { amount: 10 },
 			});

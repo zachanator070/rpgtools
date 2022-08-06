@@ -88,7 +88,7 @@ export class WorldService {
 
 		const newPin = this.pinFactory({_id: null, x, y, map: mapId, page: wikiId});
 
-		if (!(await newPin.authorizationPolicy.canCreate(context))) {
+		if (!(await newPin.authorizationPolicy.canCreate(context, unitOfWork))) {
 			throw new Error(`You do not have permission to add pins to this map`);
 		}
 
@@ -105,7 +105,7 @@ export class WorldService {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
 
-		if (!(await pin.authorizationPolicy.canRead(context))) {
+		if (!(await pin.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error(`You do not have permission to update this pin`);
 		}
 
@@ -129,7 +129,7 @@ export class WorldService {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
 
-		if (!(await pin.authorizationPolicy.canWrite(context))) {
+		if (!(await pin.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to delete this pin`);
 		}
 
@@ -147,7 +147,7 @@ export class WorldService {
 		if (!world) {
 			return null;
 		}
-		if (!(await world.authorizationPolicy.canRead(context))) {
+		if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
 			return null;
 		}
 
@@ -162,7 +162,7 @@ export class WorldService {
 		const results = await unitOfWork.worldRepository.findPaginated(conditions, page);
 		const docs = [];
 		for (let world of results.docs) {
-			if (await world.authorizationPolicy.canRead(context)) {
+			if (await world.authorizationPolicy.canRead(context, unitOfWork)) {
 				docs.push(world);
 			}
 		}

@@ -389,10 +389,10 @@ export interface Seeder {
 }
 
 export interface EntityAuthorizationPolicy<Type extends DomainEntity> {
-	canRead: (context: SecurityContext) => Promise<boolean>;
-	canWrite: (context: SecurityContext) => Promise<boolean>;
-	canAdmin: (context: SecurityContext) => Promise<boolean>;
-	canCreate: (context: SecurityContext) => Promise<boolean>;
+	canRead: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
+	canWrite: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
+	canAdmin: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
+	canCreate: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
 }
 
 export interface UnitOfWork {
@@ -416,6 +416,7 @@ export interface UnitOfWork {
 	fileRepository: FileRepository;
 
 	commit: () => Promise<void>;
+	rollback: () => Promise<void>;
 }
 
 export type Factory<T> = (args: any) => T;

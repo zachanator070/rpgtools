@@ -2,26 +2,20 @@ import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { container } from "../../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {CREATE_FOLDER, DELETE_FOLDER, RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
 import {AuthorizationService} from "../../../../src/services/authorization-service";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
+import {Factory} from "../../../../src/types";
+import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import {DefaultTestingContext} from "../../default-testing-context";
 
 process.env.TEST_SUITE = "folder-mutations-test";
 
 describe("folder-mutations", () => {
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		...testingContext
-	} = defaultTestingContextFactory();
+
+	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	const authorizationService = container.get<AuthorizationService>(
 		INJECTABLE_TYPES.AuthorizationService
@@ -30,24 +24,15 @@ describe("folder-mutations", () => {
 
 	describe("with tester logged in and world created", () => {
 		beforeEach(async () => {
-			({
-				mockSessionContextFactory,
-				otherUser,
-				otherUserSecurityContext,
-				world,
-				testRole,
-				currentUser,
-				testerSecurityContext,
-				newFolder,
-			} = await testingContext.reset());
+			await testingContext.reset();
 		});
 
 		test("create folder", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_FOLDER,
 				variables: {
 					name: "new folder",
-					parentFolderId: world.rootFolder.toString(),
+					parentFolderId: testingContext.world.rootFolder.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -60,11 +45,11 @@ describe("folder-mutations", () => {
 		});
 
 		test("rename folder", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: RENAME_FOLDER,
 				variables: {
 					name: "new folder",
-					folderId: world.rootFolder.toString(),
+					folderId: testingContext.world.rootFolder.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -77,9 +62,9 @@ describe("folder-mutations", () => {
 		});
 
 		test("delete folder", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_FOLDER,
-				variables: { folderId: newFolder._id.toString() },
+				variables: { folderId: testingContext.newFolder._id.toString() },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
@@ -91,44 +76,44 @@ describe("folder-mutations", () => {
 		});
 
 		test("delete root folder", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_FOLDER,
-				variables: { folderId: world.rootFolder.toString() },
+				variables: { folderId: testingContext.world.rootFolder.toString() },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		describe("with unauthenticated user", () => {
 			beforeEach(async () => {
-				mockSessionContextFactory.resetCurrentUser();
+				testingContext.mockSessionContextFactory.resetCurrentUser();
 			});
 
 			test("create folder permission denied", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: CREATE_FOLDER,
 					variables: {
 						name: "new folder",
-						parentFolderId: world.rootFolder.toString(),
+						parentFolderId: testingContext.world.rootFolder.toString(),
 					},
 				});
 				expect(result).toMatchSnapshot();
 			});
 
 			test("rename folder permission denied", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: RENAME_FOLDER,
 					variables: {
 						name: "new folder",
-						folderId: world.rootFolder.toString(),
+						folderId: testingContext.world.rootFolder.toString(),
 					},
 				});
 				expect(result).toMatchSnapshot();
 			});
 
 			test("delete folder permission denied", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: DELETE_FOLDER,
-					variables: { folderId: newFolder._id.toString() },
+					variables: { folderId: testingContext.newFolder._id.toString() },
 				});
 				expect(result).toMatchSnapshot({
 					errors: [
@@ -142,21 +127,26 @@ describe("folder-mutations", () => {
 
 		describe("as other user", () => {
 			beforeEach(async () => {
-				mockSessionContextFactory.setCurrentUser(otherUser);
-				await wikiPageService.createWiki(testerSecurityContext, "new page", newFolder._id);
+				await testingContext.reset();
+				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.otherUser);
+				const unitOfWork = unitOfWorkFactory({});
+				await wikiPageService.createWiki(testingContext.testerSecurityContext, "new page", testingContext.newFolder._id, unitOfWork);
 				await authorizationService.grantUserPermission(
-					testerSecurityContext,
+					testingContext.testerSecurityContext,
 					WIKI_RW,
-					newFolder._id,
+					testingContext.newFolder._id,
 					WIKI_FOLDER,
-					otherUser._id
+					testingContext.otherUser._id,
+					unitOfWork
 				);
+				await unitOfWork.commit();
+				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.otherUser);
 			});
 
 			test("no permission to child", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: DELETE_FOLDER,
-					variables: { folderId: newFolder._id.toString() },
+					variables: { folderId: testingContext.newFolder._id.toString() },
 				});
 				expect(result).toMatchSnapshot({
 					errors: [

@@ -14,7 +14,7 @@ import {WikiPageService} from "../services/wiki-page-service";
 
 export default {
 	currentUser: (_: any, __: any, { securityContext }: SessionContext) => securityContext.user,
-	serverConfig: async ({ unitOfWork }: SessionContext) => {
+	serverConfig: async (_: any, __: any, { unitOfWork }: SessionContext) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
 		return service.getServerConfig(unitOfWork);
 	},

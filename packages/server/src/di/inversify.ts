@@ -157,7 +157,6 @@ import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-au
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import { Readable } from "stream";
-import { RepositoryMapper } from "../dal/repository-mapper";
 import {ServerProperties} from "../server/server-properties";
 import FilterFactory from "../dal/mongodb/FilterFactory";
 import {NoCacheClient} from "../dal/cache/no-cache-client";
@@ -165,6 +164,8 @@ import {DeltaFactory} from "../five-e-import/delta-factory";
 import {Dnd5eApiClient} from "../five-e-import/dnd-5e-api-client";
 import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
+import EntityMapper from "../domain-entities/entity-mapper";
+import {ObjectId} from "mongoose";
 
 const container = new Container();
 
@@ -198,7 +199,9 @@ container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Item);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Model);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Monster);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(PermissionAssignment);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Person);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Pin);
+container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Place);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Role);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(ServerConfig);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(User);
@@ -217,18 +220,18 @@ container
 				 coverImage,
 				 contentId
 			 }:{
-				_id: string,
+				_id: string | ObjectId,
 				name: string,
-				world: string,
-				coverImage: string,
-				contentId: string
+				world: string | ObjectId,
+				coverImage: string | ObjectId,
+				contentId: string | ObjectId
 			}) => {
 				const article = context.container.get<Article>(INJECTABLE_TYPES.Article);
-				article._id = _id
+				article._id = _id && _id.toString();
 				article.name = name;
-				article.world = world;
-				article.coverImage = coverImage;
-				article.contentId = contentId;
+				article.world = world && world.toString();
+				article.coverImage = coverImage && coverImage.toString();
+				article.contentId = contentId && contentId.toString();
 				return article;
 			}
 	);
@@ -246,23 +249,23 @@ container
 					fileId,
 					image
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					x: number,
 					y: number,
 					width: number,
 					height: number,
-					fileId: string,
-					image: string
+					fileId: string | ObjectId,
+					image: string | ObjectId
 				}
 			) => {
 				const chunk = context.container.get<Chunk>(INJECTABLE_TYPES.Chunk);
-				chunk._id = _id;
+				chunk._id = _id && _id.toString();
 				chunk.x = x;
 				chunk.y = y;
 				chunk.width = width;
 				chunk.height = height;
-				chunk.fileId = fileId;
-				chunk.image = image;
+				chunk.fileId = fileId && fileId.toString();
+				chunk.image = image && image.toString();
 				return chunk;
 			}
 	);
@@ -276,14 +279,14 @@ container
 				 readStream,
 				 mimeType
 			}:{
-				_id: string,
+				_id: string | ObjectId,
 				filename: string,
 				readStream: Readable,
 				mimeType: string
 			}
 		) => {
 		const file = context.container.get<File>(INJECTABLE_TYPES.File);
-		file._id = _id;
+		file._id = _id && _id.toString();
 		file.filename = filename;
 		file.readStream = readStream;
 		file.mimeType = mimeType;
@@ -306,29 +309,29 @@ container
 					models,
 					host
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					passwordHash: string,
-					world: string,
-					map: string,
+					world: string | ObjectId,
+					map: string | ObjectId,
 					characters: Character[],
 					strokes: Stroke[],
 					fog: FogStroke[],
 					messages: Message[],
 					models: InGameModel[],
-					host: string
+					host: string | ObjectId
 				}
 			) => {
 				const game = context.container.get<Game>(INJECTABLE_TYPES.Game);
-				game._id = _id;
+				game._id = _id && _id.toString();
 				game.passwordHash = passwordHash;
-				game.world = world;
-				game.map = map;
+				game.world = world && world.toString();
+				game.map = map && map.toString();
 				game.characters = characters;
 				game.strokes = strokes;
 				game.fog = fog;
 				game.messages = messages;
 				game.models = models;
-				game.host = host;
+				game.host = host && host.toString();
 				return game;
 			}
 	);
@@ -348,27 +351,27 @@ container
 					chunks,
 					icon
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					world: string,
+					world: string | ObjectId,
 					width: number,
 					height: number,
 					chunkWidth: number,
 					chunkHeight: number,
-					chunks: string[],
-					icon: string
+					chunks: string[] | ObjectId[],
+					icon: string | ObjectId
 				}
 			) => {
 				const image = context.container.get<Image>(INJECTABLE_TYPES.Image);
-				image._id = _id;
+				image._id = _id && _id.toString();
 				image.name = name;
-				image.world = world;
+				image.world = world && world.toString();
 				image.width = width;
 				image.height = height;
 				image.chunkWidth = chunkWidth;
 				image.chunkHeight = chunkHeight;
-				image.chunks = chunks;
-				image.icon = icon;
+				image.chunks = chunks.map(chunk => chunk.toString());
+				image.icon = icon && icon.toString();
 				return image;
 			}
 	);
@@ -386,22 +389,22 @@ container
 					pageModel,
 					modelColor
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					world: string,
-					coverImage: string,
+					world: string | ObjectId,
+					coverImage: string | ObjectId,
 					content: string,
-					pageModel: string,
+					pageModel: string | ObjectId,
 					modelColor: string
 				}
 			) => {
 				const item = context.container.get<Item>(INJECTABLE_TYPES.Item);
-				item._id = _id;
+				item._id = _id && _id.toString();
 				item.name = name;
-				item.world = world;
-				item.coverImage = coverImage;
+				item.world = world && world.toString();
+				item.coverImage = coverImage && coverImage.toString();
 				item.contentId = content;
-				item.pageModel = pageModel;
+				item.pageModel = pageModel && pageModel.toString();
 				item.modelColor = modelColor;
 				return item;
 			}
@@ -423,26 +426,26 @@ container
 					fileId,
 					notes
 				}:{
-					_id: string,
-					world: string,
+					_id: string | ObjectId,
+					world: string | ObjectId,
 					name: string,
 					depth: number,
 					width: number,
 					height: number,
 					fileName: string,
-					fileId: string,
+					fileId: string | ObjectId,
 					notes: string
 				}
 			) => {
 				const model = context.container.get<Model>(INJECTABLE_TYPES.Model);
-				model._id = _id;
-				model.world = world;
+				model._id = _id && _id.toString();
+				model.world = world && world.toString();
 				model.name = name;
 				model.depth = depth;
 				model.width = width;
 				model.height = height;
 				model.fileName = fileName;
-				model.fileId = fileId;
+				model.fileId = fileId && fileId.toString();
 				model.notes = notes;
 				return model;
 			}
@@ -461,22 +464,22 @@ container
 					pageModel,
 					modelColor
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					world: string,
-					coverImage: string,
-					contentId: string,
-					pageModel: string,
+					world: string | ObjectId,
+					coverImage: string | ObjectId,
+					contentId: string | ObjectId,
+					pageModel: string | ObjectId,
 					modelColor: string
 				}
 			) => {
 				const monster = context.container.get<Monster>(INJECTABLE_TYPES.Monster);
-				monster._id = _id;
+				monster._id = _id && _id.toString();
 				monster.name = name;
-				monster.world = world;
-				monster.coverImage = coverImage;
-				monster.contentId = contentId;
-				monster.pageModel = pageModel;
+				monster.world = world && world.toString();
+				monster.coverImage = coverImage && coverImage.toString();
+				monster.contentId = contentId && contentId.toString();
+				monster.pageModel = pageModel && pageModel.toString();
 				monster.modelColor = modelColor;
 				return monster;
 			}
@@ -492,18 +495,18 @@ container
 					subject,
 					subjectType
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					permission: string,
-					subject: string,
+					subject: string | ObjectId,
 					subjectType: string
 				}
 			) => {
 				const permissionAssignment = context.container.get<PermissionAssignment>(
 					INJECTABLE_TYPES.PermissionAssignment
 				);
-				permissionAssignment._id = _id;
+				permissionAssignment._id = _id && _id.toString();
 				permissionAssignment.permission = permission;
-				permissionAssignment.subject = subject;
+				permissionAssignment.subject = subject && subject.toString();
 				permissionAssignment.subjectType = subjectType;
 				return permissionAssignment;
 			}
@@ -522,22 +525,22 @@ container
 					pageModel,
 					modelColor
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					world: string,
-					coverImage: string,
-					contentId: string,
-					pageModel: string,
+					world: string | ObjectId,
+					coverImage: string | ObjectId,
+					contentId: string | ObjectId,
+					pageModel: string | ObjectId,
 					modelColor: string
 				}
 			) => {
 				const person = context.container.get<Person>(INJECTABLE_TYPES.Person);
-				person._id = _id;
+				person._id = _id && _id.toString();
 				person.name = name;
-				person.world = world;
-				person.coverImage = coverImage;
-				person.contentId = contentId;
-				person.pageModel = pageModel;
+				person.world = world && world.toString();
+				person.coverImage = coverImage && coverImage.toString();
+				person.contentId = contentId && contentId.toString();
+				person.pageModel = pageModel && pageModel.toString();
 				person.modelColor = modelColor;
 				return person;
 			}
@@ -546,14 +549,20 @@ container
 	.bind<PinFactory>(INJECTABLE_TYPES.PinFactory)
 	.toFactory((context): PinFactory =>
 		(
-			{_id, x, y, map, page}: {_id: string, x: number, y: number, map: string, page: string}
+			{
+				_id,
+				x,
+				y,
+				map,
+				page
+			}: { _id: string | ObjectId, x: number, y: number, map: string | ObjectId, page: string | ObjectId }
 		) => {
 			const pin = context.container.get<Pin>(INJECTABLE_TYPES.Pin);
-			pin._id = _id;
+			pin._id = _id && _id.toString();
 			pin.x = x;
 			pin.y = y;
-			pin.map = map;
-			pin.page = page;
+			pin.map = map && map.toString();
+			pin.page = page && page.toString();
 			return pin;
 	});
 container
@@ -570,22 +579,22 @@ container
 					mapImage,
 					pixelsPerFoot
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					world: string,
-					coverImage: string,
-					contentId: string,
-					mapImage: string,
+					world: string | ObjectId,
+					coverImage: string | ObjectId,
+					contentId: string | ObjectId,
+					mapImage: string | ObjectId,
 					pixelsPerFoot: number
 				}
 			) => {
 				const place = context.container.get<Place>(INJECTABLE_TYPES.Place);
-				place._id = _id;
+				place._id = _id && _id.toString();
 				place.name = name;
-				place.world = world;
-				place.coverImage = coverImage;
-				place.contentId = contentId;
-				place.mapImage = mapImage;
+				place.world = world && world.toString();
+				place.coverImage = coverImage && coverImage.toString();
+				place.contentId = contentId && contentId.toString();
+				place.mapImage = mapImage && mapImage.toString();
 				place.pixelsPerFoot = pixelsPerFoot;
 				return place;
 			}
@@ -600,17 +609,17 @@ container
 				world,
 				permissions
 			}:{
-				_id: string,
+				_id: string | ObjectId,
 				name: string,
-				world: string,
-				permissions: string[]
+				world: string | ObjectId,
+				permissions: string[] | ObjectId[]
 			}
 		) => {
 			const role = context.container.get<Role>(INJECTABLE_TYPES.Role);
-			role._id = _id;
+			role._id = _id && _id.toString();
 			role.name = name;
-			role.world = world;
-			role.permissions = permissions;
+			role.world = world && world.toString();
+			role.permissions = permissions.map(permission => permission.toString());
 			return role;
 		});
 container
@@ -625,18 +634,18 @@ container
 					adminUsers,
 					unlockCode
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					version: string,
 					registerCodes: string[],
-					adminUsers: string[],
+					adminUsers: string[] | ObjectId[],
 					unlockCode: string
 				}
 			) => {
 				const serverConfig = context.container.get<ServerConfig>(INJECTABLE_TYPES.ServerConfig);
-				serverConfig._id = _id;
+				serverConfig._id = _id && _id.toString();
 				serverConfig.version = version;
 				serverConfig.registerCodes = registerCodes;
-				serverConfig.adminUsers = adminUsers;
+				serverConfig.adminUsers = adminUsers.map(user => user.toString());
 				serverConfig.unlockCode = unlockCode;
 				return serverConfig;
 			}
@@ -656,25 +665,25 @@ container
 					roles,
 					permissions
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					email: string,
 					username: string,
 					password: string,
 					tokenVersion: string,
-					currentWorld: string,
-					roles: string[],
-					permissions: string[]
+					currentWorld: string | ObjectId,
+					roles: string[] | ObjectId[],
+					permissions: string[] | ObjectId[]
 				}
 			) => {
 				const user = context.container.get<User>(INJECTABLE_TYPES.User);
-				user._id = _id;
+				user._id = _id && _id.toString();
 				user.email = email;
 				user.username = username;
 				user.password = password;
 				user.tokenVersion = tokenVersion;
-				user.currentWorld = currentWorld;
-				user.roles = roles;
-				user.permissions = permissions;
+				user.currentWorld = currentWorld && currentWorld.toString();
+				user.roles = roles.map(role => role.toString());
+				user.permissions = permissions.map(permission => permission.toString());
 				return user;
 			}
 	);
@@ -690,19 +699,19 @@ container
 					pages,
 					children
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					world: string,
-					pages: string[],
-					children: string[]
+					world: string | ObjectId,
+					pages: string[] | ObjectId[],
+					children: string[] | ObjectId[]
 				}
 			) => {
 				const folder = context.container.get<WikiFolder>(INJECTABLE_TYPES.WikiFolder);
-				folder._id = _id;
+				folder._id = _id && _id.toString();
 				folder.name = name;
-				folder.world = world;
-				folder.pages = pages;
-				folder.children = children;
+				folder.world = world && world.toString();
+				folder.pages = pages.map(page => page.toString());
+				folder.children = children.map(child => child.toString());
 				return folder;
 			}
 	);
@@ -719,21 +728,21 @@ container
 					roles,
 					pins
 				}:{
-					_id: string,
+					_id: string | ObjectId,
 					name: string,
-					wikiPage: string,
-					rootFolder: string,
-					roles: string[],
-					pins: string[]
+					wikiPage: string | ObjectId,
+					rootFolder: string | ObjectId,
+					roles: string[] | ObjectId[],
+					pins: string[] | ObjectId[]
 				}
 			) => {
 				const world = context.container.get<World>(INJECTABLE_TYPES.World);
-				world._id = _id;
+				world._id = _id && _id.toString();
 				world.name = name;
-				world.wikiPage = wikiPage;
-				world.rootFolder = rootFolder;
-				world.roles = roles;
-				world.pins = pins;
+				world.wikiPage = wikiPage && wikiPage.toString();
+				world.rootFolder = rootFolder && rootFolder.toString();
+				world.roles = roles.map(role => role.toString());
+				world.pins = pins.map(pin => pin.toString());
 				return world;
 			}
 	);
@@ -972,8 +981,8 @@ container
 	.bind<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	.toFactory((context) => () => context.container.get<DbUnitOfWork>(INJECTABLE_TYPES.DbUnitOfWork));
 
-// repo mapper
-container.bind<RepositoryMapper>(INJECTABLE_TYPES.RepositoryMapper).to(RepositoryMapper);
+// mappers
+container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);
 
 container.bind<FilterFactory>(INJECTABLE_TYPES.FilterFactory).to(FilterFactory);
 

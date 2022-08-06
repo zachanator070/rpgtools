@@ -149,7 +149,7 @@ Object {
       "permissions": Array [
         Object {
           "_id": Any<String>,
-          "canWrite": true,
+          "canWrite": false,
           "permission": "Read access to a single wiki page",
           "subject": Object {
             "_id": Any<String>,
@@ -319,7 +319,20 @@ Object {
   "data": Object {
     "revokeUserPermission": Object {
       "_id": Any<String>,
-      "accessControlList": Array [],
+      "accessControlList": Array [
+        Object {
+          "_id": Any<String>,
+          "canWrite": false,
+          "permission": "Read access to a single wiki page",
+          "roles": Array [],
+          "subject": Object {
+            "_id": Any<String>,
+            "name": "Earth",
+          },
+          "subjectType": "Place",
+          "users": Array [],
+        },
+      ],
       "canAdmin": true,
       "canWrite": true,
     },

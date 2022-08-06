@@ -24,7 +24,7 @@ export class RoleService {
 			if (!world) {
 				throw new Error("World does not exist");
 			}
-			if (!(await world.authorizationPolicy.canRead(context))) {
+			if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
 				throw new Error("You do not have permission to read this World");
 			}
 			conditions.push(new FilterCondition("world", worldId));

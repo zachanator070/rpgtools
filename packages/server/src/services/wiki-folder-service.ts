@@ -42,7 +42,7 @@ export class WikiFolderService {
 			throw new Error("Parent folder does not exist");
 		}
 
-		if (!(await parentFolder.authorizationPolicy.canWrite(context))) {
+		if (!(await parentFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
 		const newFolder = this.wikiFolderFactory({_id: null, name, world: parentFolder.world, pages: [], children: []});
@@ -76,7 +76,7 @@ export class WikiFolderService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationPolicy.canWrite(context))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
 
@@ -136,7 +136,7 @@ export class WikiFolderService {
 		]);
 
 		for (let folderToCheck of [folder, parentFolder, currentParent]) {
-			if (!(await folderToCheck.authorizationPolicy.canWrite(context))) {
+			if (!(await folderToCheck.authorizationPolicy.canWrite(context, unitOfWork))) {
 				throw new Error(`You do not have permission to edit folder ${folderToCheck.name}`);
 			}
 		}
@@ -159,7 +159,7 @@ export class WikiFolderService {
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		if (!(await world.authorizationPolicy.canRead(context))) {
+		if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error("You do not have permission to read this World");
 		}
 
@@ -178,7 +178,7 @@ export class WikiFolderService {
 			) {
 				continue;
 			}
-			if (await doc.authorizationPolicy.canRead(context)) {
+			if (await doc.authorizationPolicy.canRead(context, unitOfWork)) {
 				docs.push(doc);
 			}
 		}
@@ -222,15 +222,15 @@ export class WikiFolderService {
 	) => {
 		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
 
-		if (!(await folder.authorizationPolicy.canWrite(context))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have write permission for the folder ${folderId}`);
 		}
 
 		// pages are auto populated
 		for (let childPage of folder.pages) {
-			const wikiPage = this.articleFactory({_id: childPage, name: null, world: null, coverImage: null, contentId: null});
+			const wikiPage = await unitOfWork.wikiPageRepository.findById(childPage);
 			if (
-				!(await wikiPage.authorizationPolicy.canWrite(context))
+				!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))
 			) {
 				throw new Error(`You do not have write permission for the page ${childPage}`);
 			}

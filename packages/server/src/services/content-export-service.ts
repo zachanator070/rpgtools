@@ -97,7 +97,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (!(await folder.authorizationPolicy.canRead(context))) {
+		if (!(await folder.authorizationPolicy.canRead(context, unitOfWork))) {
 			if (errorOut) {
 				throw new ReadPermissionDeniedError(folder._id, WIKI_FOLDER);
 			}
@@ -194,7 +194,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (await this.canReadWikiPage(context, page, errorOut)) {
+		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
 			if (page.mapImage) {
 				const image = await unitOfWork.imageRepository.findById(page.mapImage);
 				await this.addImage(context, image, archive, unitOfWork);
@@ -211,7 +211,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (await this.canReadWikiPage(context, page, errorOut)) {
+		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
 			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
 			await archive.itemRepository.create(page);
 			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
@@ -225,7 +225,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (await this.canReadWikiPage(context, page, errorOut)) {
+		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
 			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
 			await archive.monsterRepository.create(page);
 			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
@@ -239,7 +239,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (await this.canReadWikiPage(context, page, errorOut)) {
+		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
 			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
 			await archive.personRepository.create(page);
 			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
@@ -265,14 +265,14 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (await this.canReadWikiPage(context, page, errorOut)) {
+		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
 			await archive.articleRepository.create(page);
 			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
 		}
 	};
 
-	private canReadWikiPage = async (context: SecurityContext, page: WikiPage, errorOut = false) => {
-		if (!(await page.authorizationPolicy.canRead(context))) {
+	private canReadWikiPage = async (context: SecurityContext, page: WikiPage, unitOfWork: UnitOfWork, errorOut = false) => {
+		if (!(await page.authorizationPolicy.canRead(context, unitOfWork))) {
 			if (errorOut) {
 				return new ReadPermissionDeniedError(page._id, WIKI_PAGE);
 			}

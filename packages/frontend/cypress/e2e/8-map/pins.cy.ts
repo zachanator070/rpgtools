@@ -13,7 +13,7 @@ describe("map pins", () => {
         cy.get('.mapPin').click();
         cy.get('a').contains('Details').click();
         cy.get('h1').contains('Minas Tirith');
-        cy.get('.ant-drawer-close').click();
+        cy.get('button').contains('Close').click();
         cy.get('h1').contains('Minas Tirith').should('not.be.visible');
     });
 

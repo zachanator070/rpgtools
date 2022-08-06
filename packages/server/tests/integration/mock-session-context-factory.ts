@@ -1,9 +1,10 @@
-import { inject, injectable } from "inversify";
-import { CookieManager, SessionContext, SessionContextFactory, UserFactory } from "../../src/types";
+import {inject, injectable} from "inversify";
+import {CookieManager, SessionContext, SessionContextFactory, UnitOfWork, UserFactory} from "../../src/types";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { SecurityContextFactory } from "../../src/security/security-context-factory";
 import { User } from "../../src/domain-entities/user";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import {Factory} from "../../src/types";
 
 class MockCookieManager implements CookieManager {
 	clearCookie(cookie: string): void {}
@@ -15,6 +16,8 @@ class MockCookieManager implements CookieManager {
 export class MockSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.SecurityContextFactory)
 	securityContextFactory: SecurityContextFactory;
+	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
+	unitOfWorkFactory: Factory<UnitOfWork>
 
 	userFactory: UserFactory;
 	currentUser: User;
@@ -29,7 +32,7 @@ export class MockSessionContextFactory implements SessionContextFactory {
 	}
 
 	getAnon = (): User => {
-		return this.userFactory(null, null, ANON_USERNAME, null, null, null, [], []);
+		return this.userFactory({_id: null, email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: [], permissions: []});
 	};
 
 	setCurrentUser = (user: User) => {
@@ -45,6 +48,7 @@ export class MockSessionContextFactory implements SessionContextFactory {
 		return {
 			securityContext,
 			cookieManager,
+			unitOfWork: this.unitOfWorkFactory({})
 		};
 	};
 }

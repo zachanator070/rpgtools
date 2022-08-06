@@ -38,7 +38,7 @@ export class ContentImportService {
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationPolicy.canWrite(context))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to add content to this folder");
 		}
 
