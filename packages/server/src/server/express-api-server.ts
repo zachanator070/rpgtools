@@ -56,9 +56,10 @@ export class ExpressApiServer implements ApiServer {
 	@inject(INJECTABLE_TYPES.ServerConfigSeeder)
 	serverConfigSeeder: ServerConfigSeeder;
 
-	constructor(
-		@inject(INJECTABLE_TYPES.SessionContextFactory) sessionContextFactory: SessionContextFactory
-	) {
+	@inject(INJECTABLE_TYPES.SessionContextFactory)
+	sessionContextFactory: SessionContextFactory
+
+	constructor() {
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
 
 		this.expressServer = express();
@@ -74,7 +75,7 @@ export class ExpressApiServer implements ApiServer {
 		const serverCleanup = useServer({ schema }, this.webSocketServer);
 		this.gqlServer = new ApolloServer({
 			schema,
-			context: sessionContextFactory.create,
+			context: (params) => this.sessionContextFactory.create(params),
 			csrfPrevention: true,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),

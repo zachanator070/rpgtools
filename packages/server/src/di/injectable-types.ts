@@ -172,7 +172,7 @@ export const INJECTABLE_TYPES = {
 	DbUnitOfWorkFactory: Symbol.for("DbUnitOfWorkFactory"),
 
 	// repo mapper
-	RepositoryMapper: Symbol.for("RepositoryMapper"),
+	EntityMapper: Symbol.for("EntityMapper"),
 
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),

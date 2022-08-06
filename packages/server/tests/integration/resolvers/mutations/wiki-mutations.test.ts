@@ -1,51 +1,34 @@
 import fs from "fs";
 import { ARTICLE } from "@rpgtools/common/src/type-constants";
-import {defaultTestingContextFactory} from "../../DefaultTestingContextFactory";
+import {DefaultTestingContext} from "../../default-testing-context";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
 import {Image} from "../../../../src/domain-entities/image";
 import {FileUpload, Upload} from "graphql-upload";
 import {CREATE_WIKI, DELETE_WIKI, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 import {ImageService} from "../../../../src/services/image-service";
+import {Factory} from "../../../../src/types";
+import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
 describe("wiki page mutations", () => {
 	const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		otherPage,
-		...testingContext
-	} = defaultTestingContextFactory();
+	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
+
 
 	describe("with world", () => {
 		beforeEach(async () => {
-			({
-				mockSessionContextFactory,
-				otherUser,
-				otherUserSecurityContext,
-				world,
-				testRole,
-				currentUser,
-				testerSecurityContext,
-				newFolder,
-				otherPage,
-			} = await testingContext.reset());
-			mockSessionContextFactory.resetCurrentUser();
+			await testingContext.reset();
+			testingContext.mockSessionContextFactory.resetCurrentUser();
 		});
 
 		test("create wiki no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_WIKI,
-				variables: { name: "new wiki", folderId: world.rootFolder.toString() },
+				variables: { name: "new wiki", folderId: testingContext.world.rootFolder.toString() },
 			});
 			expect(result).toMatchSnapshot({
 				errors: expect.arrayContaining([expect.any(Object)]),
@@ -53,9 +36,9 @@ describe("wiki page mutations", () => {
 		});
 
 		test("update wiki no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: UPDATE_WIKI,
-				variables: { wikiId: world.wikiPage, name: "new name" },
+				variables: { wikiId: testingContext.world.wikiPage, name: "new name" },
 			});
 			expect(result).toMatchSnapshot({
 				errors: expect.arrayContaining([expect.any(Object)]),
@@ -63,10 +46,10 @@ describe("wiki page mutations", () => {
 		});
 
 		test("update cover image no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: UPDATE_WIKI,
 				variables: {
-					wikiId: world.wikiPage,
+					wikiId: testingContext.world.wikiPage,
 					coverImageId: "12345",
 				},
 			});
@@ -76,9 +59,9 @@ describe("wiki page mutations", () => {
 		});
 
 		test("delete wiki no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_WIKI,
-				variables: { wikiId: world.wikiPage},
+				variables: { wikiId: testingContext.world.wikiPage},
 			});
 			expect(result).toMatchSnapshot({
 				errors: expect.arrayContaining([expect.any(Object)]),
@@ -86,9 +69,9 @@ describe("wiki page mutations", () => {
 		});
 
 		test("update place no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: UPDATE_PLACE,
-				variables: { placeId: world.wikiPage, mapImageId: null },
+				variables: { placeId: testingContext.world.wikiPage, mapImageId: null },
 			});
 			expect(result).toMatchSnapshot({
 				errors: expect.arrayContaining([expect.any(Object)]),
@@ -97,15 +80,15 @@ describe("wiki page mutations", () => {
 
 		describe("with authenticated user", () => {
 			beforeEach(async () => {
-				mockSessionContextFactory.setCurrentUser(currentUser);
+				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.currentUser);
 			});
 
 			test("create wiki", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: CREATE_WIKI,
 					variables: {
 						name: "new wiki",
-						folderId: world.rootFolder.toString(),
+						folderId: testingContext.world.rootFolder.toString(),
 					},
 				});
 				expect(result).toMatchSnapshot({
@@ -127,10 +110,10 @@ describe("wiki page mutations", () => {
 			});
 
 			test("update wiki just name", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPDATE_WIKI,
 					variables: {
-						wikiId: world.wikiPage,
+						wikiId: testingContext.world.wikiPage,
 						name: "new name",
 					},
 				});
@@ -163,10 +146,10 @@ describe("wiki page mutations", () => {
 				testUpload.promise = new Promise<FileUpload>((resolve) => {
 					resolve(content);
 				});
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPDATE_WIKI,
 					variables: {
-						wikiId: world.wikiPage,
+						wikiId: testingContext.world.wikiPage,
 						content: testUpload,
 					},
 				});
@@ -189,9 +172,9 @@ describe("wiki page mutations", () => {
 
 
 			test("update type", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPDATE_WIKI,
-					variables: { wikiId: world.wikiPage, type: ARTICLE },
+					variables: { wikiId: testingContext.world.wikiPage, type: ARTICLE },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -210,17 +193,17 @@ describe("wiki page mutations", () => {
 			});
 
 			test("delete wiki root wiki", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: DELETE_WIKI,
-					variables: { wikiId: world.wikiPage },
+					variables: { wikiId: testingContext.world.wikiPage },
 				});
 				expect(result).toMatchSnapshot();
 			});
 
 			test("delete wiki", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: DELETE_WIKI,
-					variables: { wikiId: otherPage._id },
+					variables: { wikiId: testingContext.otherPage._id },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -240,15 +223,17 @@ describe("wiki page mutations", () => {
 						fs.createReadStream(filename),
 				};
 				let image: Image = null;
-				beforeEach(async () => {
-					image = await imageService.createImage(world._id, false, testFile.filename, testFile.createReadStream());
+				beforeAll(async () => {
+					const unitOfWork = unitOfWorkFactory({});
+					image = await imageService.createImage(testingContext.world._id, false, testFile.filename, testFile.createReadStream(), unitOfWork);
+					await unitOfWork.commit();
 				});
 
 				test("update place", async () => {
-					const result = await server.executeGraphQLQuery({
+					const result = await testingContext.server.executeGraphQLQuery({
 						query: UPDATE_PLACE,
 						variables: {
-							placeId: world.wikiPage,
+							placeId: testingContext.world.wikiPage,
 							mapImageId: image._id,
 						},
 					});
@@ -282,10 +267,10 @@ describe("wiki page mutations", () => {
 
 
 				test("update cover image", async () => {
-					const result = await server.executeGraphQLQuery({
+					const result = await testingContext.server.executeGraphQLQuery({
 						query: UPDATE_WIKI,
 						variables: {
-							wikiId: world.wikiPage,
+							wikiId: testingContext.world.wikiPage,
 							coverImageId: image._id
 						},
 					});

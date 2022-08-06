@@ -56,7 +56,7 @@ export class SrdImportService {
 			throw new Error("World does not exist");
 		}
 		const rootFolder = await unitOfWork.wikiFolderRepository.findById(world.rootFolder);
-		if (!(await rootFolder.authorizationPolicy.canWrite(context))) {
+		if (!(await rootFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
 		const topFolder = this.wikiFolderFactory({_id: null, name: "5e", world: worldId, pages: [], children: []});

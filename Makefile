@@ -122,3 +122,9 @@ dump:
 
 seed:
 	npm run -w packages/frontend seed:middle_earth
+
+cypress:
+	npm run -w packages/frontend cypress:open
+
+db:
+	docker-compose up -d mongodb

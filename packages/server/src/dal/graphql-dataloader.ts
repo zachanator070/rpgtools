@@ -34,7 +34,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 
 	getPermissionControlledDocument = async (context: SecurityContext, id: string, unitOfWork: UnitOfWork): Promise<T> => {
 		const document = await this.getDocument(id, unitOfWork);
-		if (await document.authorizationPolicy.canRead(context)) {
+		if (await document.authorizationPolicy.canRead(context, unitOfWork)) {
 			return document;
 		}
 	};
@@ -47,7 +47,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 		const documents = await this.getDocuments(ids, unitOfWork);
 		const readableDocuments = [];
 		for (let document of documents) {
-			if (await document.authorizationPolicy.canRead(context)) {
+			if (await document.authorizationPolicy.canRead(context, unitOfWork)) {
 				readableDocuments.push(document);
 			}
 		}

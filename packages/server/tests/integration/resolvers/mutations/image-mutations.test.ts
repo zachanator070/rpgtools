@@ -1,23 +1,15 @@
 import fs from "fs";
-import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import { FileUpload, Upload } from "graphql-upload";
 import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
+import {container} from "../../../../src/di/inversify";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import {DefaultTestingContext} from "../../default-testing-context";
 
 process.env.TEST_SUITE = "image-mutations-test";
 
 describe("image-mutations", () => {
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		...testingContext
-	} = defaultTestingContextFactory();
+
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	describe("with existing world and logged in user", () => {
 
@@ -35,25 +27,15 @@ describe("image-mutations", () => {
 		});
 
 		beforeEach(async () => {
-			({
-				mockSessionContextFactory,
-				otherUser,
-				otherUserSecurityContext,
-				world,
-				testRole,
-				currentUser,
-				testerSecurityContext,
-				newFolder,
-			} = await testingContext.reset());
-
+			await testingContext.reset();
 		});
 
 		test("create image no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_IMAGE,
 				variables: {
 					file: testUpload,
-					worldId: world._id.toString(),
+					worldId: testingContext.world._id.toString(),
 					chunkify: true,
 				},
 			});
@@ -69,11 +51,11 @@ describe("image-mutations", () => {
 
 		describe("with unauthenticated user", () => {
 			test("create image no permission", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: CREATE_IMAGE,
 					variables: {
 						file: testUpload,
-						worldId: world._id.toString(),
+						worldId: testingContext.world._id.toString(),
 						chunkify: true,
 					},
 				});

@@ -15,8 +15,8 @@ import { ROLE } from "@rpgtools/common/src/type-constants";
 import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { RepositoryMapper } from "../dal/repository-mapper";
 import { User } from "../domain-entities/user";
+import EntityMapper from "../domain-entities/entity-mapper";
 
 @injectable()
 export class AuthorizationService {
@@ -26,8 +26,8 @@ export class AuthorizationService {
 	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
 	permissionAssignmentFactory: PermissionAssignmentFactory;
 
-	@inject(INJECTABLE_TYPES.RepositoryMapper)
-	mapper: RepositoryMapper;
+	@inject(INJECTABLE_TYPES.EntityMapper)
+	mapper: EntityMapper;
 
 	grantUserPermission = async (
 		context: SecurityContext,
@@ -41,7 +41,7 @@ export class AuthorizationService {
 		if (!user) {
 			throw new Error(`User with id ${userId} does not exist`);
 		}
-		await this.grantEntityPermission(
+		await this.grantPrincipalPermission(
 			unitOfWork,
 			context,
 			permission,
@@ -50,7 +50,7 @@ export class AuthorizationService {
 			user,
 			unitOfWork.userRepository
 		);
-		return this.mapper.map(subjectType, unitOfWork).findById(subjectId);
+		return this.mapper.map(subjectType).getRepository(unitOfWork).findById(subjectId);
 	};
 
 	revokeUserPermission = async (
@@ -72,7 +72,7 @@ export class AuthorizationService {
 			user,
 			unitOfWork.userRepository
 		);
-		return this.mapper.map(permissionAssignment.subjectType, unitOfWork).findById(subjectId);
+		return this.mapper.map(permissionAssignment.subjectType).getRepository(unitOfWork).findById(subjectId);
 	};
 
 	grantRolePermission = async (
@@ -87,7 +87,7 @@ export class AuthorizationService {
 		if (!role) {
 			throw new Error(`Role with id ${roleId} does not exist`);
 		}
-		await this.grantEntityPermission(
+		await this.grantPrincipalPermission(
 			unitOfWork,
 			context,
 			permission,
@@ -263,13 +263,13 @@ export class AuthorizationService {
 		return unitOfWork.worldRepository.findById(role.world);
 	};
 
-	private grantEntityPermission = async (
+	private grantPrincipalPermission = async (
 		unitOfWork: UnitOfWork,
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
 		subjectType: string,
-		entity: User | Role,
+		principal: User | Role,
 		entityRepository: Repository<any>
 	) => {
 		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
@@ -282,7 +282,8 @@ export class AuthorizationService {
 			assignment = this.permissionAssignmentFactory({_id: null, permission, subject: subjectId, subjectType});
 			needsCreation = true;
 		}
-		if (!(await assignment.authorizationPolicy.canWrite(context))) {
+		const subject: DomainEntity = await this.mapper.map(subjectType).getRepository(unitOfWork).findById(subjectId);
+		if (!(await subject.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to assign the permission "${permission}" for this subject`
 			);
@@ -291,13 +292,13 @@ export class AuthorizationService {
 			await unitOfWork.permissionAssignmentRepository.create(assignment);
 		}
 		// check if entity already has that permission
-		for (let entityPermission of entity.permissions) {
+		for (let entityPermission of principal.permissions) {
 			if (entityPermission === assignment._id) {
 				return;
 			}
 		}
-		entity.permissions.push(assignment._id);
-		await entityRepository.update(entity);
+		principal.permissions.push(assignment._id);
+		await entityRepository.update(principal);
 	};
 
 	private revokeEntityPermission = async (
@@ -317,9 +318,8 @@ export class AuthorizationService {
 				`Permission assignment does not exist for permission '${permission}'`
 			);
 		}
-		if (
-			!(await permissionAssignment.authorizationPolicy.canWrite(context))
-		) {
+		const subject: DomainEntity = await this.mapper.map(permissionAssignment.subjectType).getRepository(unitOfWork).findById(subjectId);
+		if (!(await subject.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to revoke the permission "${permissionAssignment.permission}"`
 			);

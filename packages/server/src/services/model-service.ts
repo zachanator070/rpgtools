@@ -113,6 +113,7 @@ export class ModelService {
 
 		fileUpload = await fileUpload;
 
+		model.fileName = fileUpload.filename;
 		const file = this.fileFactory({_id: null, filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: null});
 		await unitOfWork.fileRepository.create(file);
 		await unitOfWork.modelRepository.create(model);

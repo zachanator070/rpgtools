@@ -1,4 +1,4 @@
-import { defaultTestingContextFactory } from "../DefaultTestingContextFactory";
+import {DefaultTestingContext} from "../default-testing-context";
 import { container } from "../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../src/di/injectable-types";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
@@ -12,44 +12,26 @@ import {
 } from "@rpgtools/common/src/gql-queries";
 import {WorldService} from "../../../src/services/world-service";
 import {WikiFolderService} from "../../../src/services/wiki-folder-service";
+import {TEST_INJECTABLE_TYPES} from "../injectable-types";
+import {Factory} from "../../../src/types";
+import {DbUnitOfWork} from "../../../src/dal/db-unit-of-work";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
 describe("query resolver", () => {
 	const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 	const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		otherPage,
-		...testingContext
-	} = defaultTestingContextFactory();
+	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	describe("with world", () => {
 		beforeEach(async () => {
-			({
-				mockSessionContextFactory,
-				otherUser,
-				otherUserSecurityContext,
-				world,
-				testRole,
-				currentUser,
-				testerSecurityContext,
-				newFolder,
-				otherPage,
-			} = await testingContext.reset());
-			mockSessionContextFactory.resetCurrentUser();
+			await testingContext.reset();
+			testingContext.mockSessionContextFactory.resetCurrentUser();
 		});
 
 		test("no current user", async () => {
-			const result = await server.executeGraphQLQuery({ query: GET_CURRENT_USER });
+			const result = await testingContext.server.executeGraphQLQuery({ query: GET_CURRENT_USER });
 			expect(result).toMatchSnapshot({
 				data: {
 					currentUser: {
@@ -61,7 +43,7 @@ describe("query resolver", () => {
 		});
 
 		test("users", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: SEARCH_USERS,
 				variables: { username: "tester2" },
 			});
@@ -80,16 +62,18 @@ describe("query resolver", () => {
 		});
 
 		test("world", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_CURRENT_WORLD,
-				variables: { worldId: world._id.toString() },
+				variables: { worldId: testingContext.world._id.toString() },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("worlds with one private and one public world", async () => {
-			await worldService.createWorld("Azeroth", true, testerSecurityContext);
-			const result = await server.executeGraphQLQuery({
+			const unitOfWork = unitOfWorkFactory({});
+			await worldService.createWorld("Azeroth", true, testingContext.testerSecurityContext, unitOfWork);
+			await unitOfWork.commit();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_WORLDS,
 				variables: { page: 1 },
 			});
@@ -111,9 +95,9 @@ describe("query resolver", () => {
 		});
 
 		test("wiki no permission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_WIKI,
-				variables: { wikiId: world.wikiPage },
+				variables: { wikiId: testingContext.world.wikiPage },
 			});
 			expect(result).toMatchSnapshot({
 				errors: expect.arrayContaining([
@@ -126,11 +110,11 @@ describe("query resolver", () => {
 
 		describe("with authenticated user", () => {
 			beforeEach(async () => {
-				mockSessionContextFactory.setCurrentUser(currentUser);
+				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.currentUser);
 			});
 
 			test("current user", async () => {
-				const result = await server.executeGraphQLQuery({ query: GET_CURRENT_USER });
+				const result = await testingContext.server.executeGraphQLQuery({ query: GET_CURRENT_USER });
 				expect(result).toMatchSnapshot({
 					data: {
 						currentUser: {
@@ -147,9 +131,9 @@ describe("query resolver", () => {
 			});
 
 			test("world", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: GET_CURRENT_WORLD,
-					variables: { worldId: world._id.toString() },
+					variables: { worldId: testingContext.world._id.toString() },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -216,8 +200,10 @@ describe("query resolver", () => {
 			});
 
 			test("worlds with one private and one public world", async () => {
-				await worldService.createWorld("Azeroth", false, testerSecurityContext);
-				const result = await server.executeGraphQLQuery({
+				const unitOfWork = unitOfWorkFactory({});
+				await worldService.createWorld("Azeroth", false, testingContext.testerSecurityContext, unitOfWork);
+				await unitOfWork.commit();
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: GET_WORLDS,
 					variables: { page: 1 },
 				});
@@ -239,9 +225,9 @@ describe("query resolver", () => {
 			});
 
 			test("wiki", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: GET_WIKI,
-					variables: { wikiId: world.wikiPage },
+					variables: { wikiId: testingContext.world.wikiPage },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
@@ -260,8 +246,10 @@ describe("query resolver", () => {
 			});
 
 			test("wikis in folder", async () => {
-				const placesFolder = (await wikiFolderService.getFolders(testerSecurityContext, world._id, "Places", undefined)).filter(folder => folder.name === "Places");
-				const result = await server.executeGraphQLQuery({
+				const unitOfWork = unitOfWorkFactory({});
+				const placesFolder = (await wikiFolderService.getFolders(testingContext.testerSecurityContext, testingContext.world._id, "Places", undefined, unitOfWork)).filter(folder => folder.name === "Places");
+				await unitOfWork.commit();
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: WIKIS_IN_FOLDER,
 					variables: { folderId: placesFolder[0]._id},
 				});
@@ -281,21 +269,21 @@ describe("query resolver", () => {
 			});
 
 			it("get roles", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: SEARCH_ROLES,
 					variables: {
-						worldId: world._id,
+						worldId: testingContext.world._id,
 					},
 				});
 				expect(result).toMatchSnapshot();
 			});
 
 			it("get roles permission denied", async () => {
-				mockSessionContextFactory.resetCurrentUser();
-				const result = await server.executeGraphQLQuery({
+				testingContext.mockSessionContextFactory.resetCurrentUser();
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: SEARCH_ROLES,
 					variables: {
-						worldId: world._id,
+						worldId: testingContext.world._id,
 					},
 				});
 				expect(result).toMatchSnapshot();

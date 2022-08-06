@@ -121,7 +121,7 @@ export default function RolesView() {
 											dataIndex: "_id",
 											key: "_id",
 											render: (text: string, assignment: TabulatedPermissionAssignment) => {
-												return assignment.canWrite ? (
+												return assignment.subject.canAdmin ? (
 													<Button
 														className={"margin-md-left"}
 														type={"primary"}

@@ -1,9 +1,8 @@
-import { WIKI_READ, WIKI_RW, WORLD_READ } from "@rpgtools/common/src/permission-constants";
+import {WIKI_ADMIN, WIKI_READ, WORLD_READ} from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
 import { container } from "../../../../src/di/inversify";
-import { RoleFactory, RoleRepository } from "../../../../src/types";
+import {Factory, RoleFactory} from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
 import {
 	ADD_USER_ROLE,
 	CREATE_ROLE,
@@ -12,24 +11,16 @@ import {
 	GRANT_USER_PERMISSION, REMOVE_USER_ROLE, REVOKE_ROLE_PERMISSION, REVOKE_USER_PERMISSION
 } from "@rpgtools/common/src/gql-mutations";
 import {AuthorizationService} from "../../../../src/services/authorization-service";
+import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {DefaultTestingContext} from "../../default-testing-context";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 
 describe("authorization-mutations", () => {
-	let {
-		server,
-		mockSessionContextFactory,
-		otherUser,
-		otherUserSecurityContext,
-		world,
-		testRole,
-		currentUser,
-		testerSecurityContext,
-		newFolder,
-		...testingContext
-	} = defaultTestingContextFactory();
+	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
-	const roleRepo = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
 	const authorizationService = container.get<AuthorizationService>(
 		INJECTABLE_TYPES.AuthorizationService
 	);
@@ -37,25 +28,16 @@ describe("authorization-mutations", () => {
 
 	describe("with tester logged in and world created", () => {
 		beforeEach(async () => {
-			({
-				mockSessionContextFactory,
-				otherUser,
-				otherUserSecurityContext,
-				world,
-				testRole,
-				currentUser,
-				testerSecurityContext,
-				newFolder,
-			} = await testingContext.reset());
+			await testingContext.reset();
 		});
 
 		test("grantUserPermission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GRANT_USER_PERMISSION,
 				variables: {
-					userId: otherUser._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
 					permission: WORLD_READ,
-					subjectId: world._id.toString(),
+					subjectId: testingContext.world._id.toString(),
 					subjectType: WORLD,
 				},
 			});
@@ -81,13 +63,13 @@ describe("authorization-mutations", () => {
 		});
 
 		test("grantUserPermission permission denied", async () => {
-			mockSessionContextFactory.resetCurrentUser();
-			const result = await server.executeGraphQLQuery({
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GRANT_USER_PERMISSION,
 				variables: {
-					userId: otherUser._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
 					permission: WORLD_READ,
-					subjectId: world._id.toString(),
+					subjectId: testingContext.world._id.toString(),
 					subjectType: WORLD,
 				},
 			});
@@ -95,25 +77,36 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeUserPermission", async () => {
+			const unitOfWork = unitOfWorkFactory({});
 			await authorizationService.grantUserPermission(
-				testerSecurityContext,
+				testingContext.testerSecurityContext,
 				WIKI_READ,
-				world.wikiPage,
+				testingContext.world.wikiPage,
 				PLACE,
-				otherUser._id
+				testingContext.otherUser._id,
+				unitOfWork
 			);
-			const result = await server.executeGraphQLQuery({
+			await unitOfWork.commit();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_USER_PERMISSION,
 				variables: {
-					userId: otherUser._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
 					permission: WIKI_READ,
-					subjectId: world.wikiPage,
+					subjectId: testingContext.world.wikiPage,
 				},
 			});
 			expect(result).toMatchSnapshot({
 				data: {
 					revokeUserPermission: {
 						_id: expect.any(String),
+						accessControlList: [
+							{
+								_id: expect.any(String),
+								subject: {
+									_id: expect.any(String),
+								},
+							}
+						]
 					},
 				},
 				errors: undefined,
@@ -121,25 +114,25 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeUserPermission permission denied", async () => {
-			mockSessionContextFactory.resetCurrentUser();
-			const result = await server.executeGraphQLQuery({
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_USER_PERMISSION,
 				variables: {
-					userId: otherUser._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
 					permission: WORLD_READ,
-					subjectId: world._id.toString(),
+					subjectId: testingContext.world._id.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("grantRolePermission", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GRANT_ROLE_PERMISSION,
 				variables: {
-					roleId: testRole._id,
+					roleId: testingContext.testRole._id,
 					permission: WIKI_READ,
-					subjectId: world.wikiPage,
+					subjectId: testingContext.world.wikiPage,
 					subjectType: PLACE,
 				},
 			});
@@ -162,13 +155,13 @@ describe("authorization-mutations", () => {
 		});
 
 		test("grantRolePermission permission denied", async () => {
-			mockSessionContextFactory.resetCurrentUser();
-			const result = await server.executeGraphQLQuery({
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: GRANT_ROLE_PERMISSION,
 				variables: {
-					roleId: testRole._id,
+					roleId: testingContext.testRole._id,
 					permission: WIKI_READ,
-					subjectId: world.wikiPage,
+					subjectId: testingContext.world.wikiPage,
 					subjectType: PLACE,
 				},
 			});
@@ -176,19 +169,22 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeRolePermission", async () => {
+			const unitOfWork = unitOfWorkFactory({});
 			await authorizationService.grantRolePermission(
-				testerSecurityContext,
+				testingContext.testerSecurityContext,
 				WIKI_READ,
-				world.wikiPage,
+				testingContext.world.wikiPage,
 				PLACE,
-				testRole._id
+				testingContext.testRole._id,
+				unitOfWork
 			);
-			const result = await server.executeGraphQLQuery({
+			await unitOfWork.commit();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_ROLE_PERMISSION,
 				variables: {
-					roleId: testRole._id.toString(),
+					roleId: testingContext.testRole._id.toString(),
 					permission: WIKI_READ,
-					subjectId: world.wikiPage,
+					subjectId: testingContext.world.wikiPage,
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -204,29 +200,32 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeRolePermission permission denied", async () => {
-			mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const unitOfWork = unitOfWorkFactory({});
 			await authorizationService.grantRolePermission(
-				testerSecurityContext,
+				testingContext.testerSecurityContext,
 				WIKI_READ,
-				world.wikiPage,
+				testingContext.world.wikiPage,
 				PLACE,
-				testRole._id
+				testingContext.testRole._id,
+				unitOfWork
 			);
-			const result = await server.executeGraphQLQuery({
+			await unitOfWork.commit();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_ROLE_PERMISSION,
 				variables: {
-					roleId: testRole._id.toString(),
+					roleId: testingContext.testRole._id.toString(),
 					permission: WIKI_READ,
-					subjectId: world.wikiPage,
+					subjectId: testingContext.world.wikiPage,
 				},
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("createRole", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_ROLE,
-				variables: { worldId: world._id.toString(), name: "new role" },
+				variables: { worldId: testingContext.world._id.toString(), name: "new role" },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
@@ -258,18 +257,20 @@ describe("authorization-mutations", () => {
 		});
 
 		test("createRole permission denied", async () => {
-			mockSessionContextFactory.setCurrentUser(otherUser);
-			const result = await server.executeGraphQLQuery({
+			testingContext.mockSessionContextFactory.setCurrentUser(testingContext.otherUser);
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_ROLE,
-				variables: { worldId: world._id.toString(), name: "new role" },
+				variables: { worldId: testingContext.world._id.toString(), name: "new role" },
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("deleteRole", async () => {
-			const role = roleFactory(null, "other delete role", world._id, []);
-			await roleRepo.create(role);
-			const result = await server.executeGraphQLQuery({
+			const role = roleFactory({_id: null, name: "other delete role", world: testingContext.world._id, permissions: []});
+			const unitOfWork = unitOfWorkFactory({});
+			await unitOfWork.roleRepository.create(role);
+			await unitOfWork.commit();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_ROLE,
 				variables: { roleId: role._id.toString() },
 			});
@@ -284,10 +285,12 @@ describe("authorization-mutations", () => {
 		});
 
 		test("deleteRole permission denied", async () => {
-			mockSessionContextFactory.resetCurrentUser();
-			const role = roleFactory(null, "other role", world._id, []);
-			await roleRepo.create(role);
-			const result = await server.executeGraphQLQuery({
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const role = roleFactory({_id: null, name: "other role", world: testingContext.world._id, permissions: []});
+			const unitOfWork = unitOfWorkFactory({});
+			await unitOfWork.roleRepository.create(role);
+			await unitOfWork.commit();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_ROLE,
 				variables: { roleId: role._id.toString() },
 			});
@@ -295,11 +298,11 @@ describe("authorization-mutations", () => {
 		});
 
 		test("addUserRole", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: ADD_USER_ROLE,
 				variables: {
-					userId: otherUser._id.toString(),
-					roleId: testRole._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
+					roleId: testingContext.testRole._id.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -335,23 +338,23 @@ describe("authorization-mutations", () => {
 		});
 
 		test("addUserRole permission denied", async () => {
-			mockSessionContextFactory.resetCurrentUser();
-			const result = await server.executeGraphQLQuery({
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: ADD_USER_ROLE,
 				variables: {
-					userId: otherUser._id.toString(),
-					roleId: testRole._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
+					roleId: testingContext.testRole._id.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot();
 		});
 
 		test("removeUserRole", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REMOVE_USER_ROLE,
 				variables: {
-					userId: otherUser._id.toString(),
-					roleId: testRole._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
+					roleId: testingContext.testRole._id.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -386,13 +389,15 @@ describe("authorization-mutations", () => {
 		});
 
 		test("removeUserRole permission denied", async () => {
-			await authorizationService.addUserRole(testerSecurityContext, otherUser._id, testRole._id);
-			mockSessionContextFactory.resetCurrentUser();
-			const result = await server.executeGraphQLQuery({
+			const unitOfWork = unitOfWorkFactory({});
+			await authorizationService.addUserRole(testingContext.testerSecurityContext, testingContext.otherUser._id, testingContext.testRole._id, unitOfWork);
+			await unitOfWork.commit();
+			testingContext.mockSessionContextFactory.resetCurrentUser();
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: REMOVE_USER_ROLE,
 				variables: {
-					userId: otherUser._id.toString(),
-					roleId: testRole._id.toString(),
+					userId: testingContext.otherUser._id.toString(),
+					roleId: testingContext.testRole._id.toString(),
 				},
 			});
 			expect(result).toMatchSnapshot();

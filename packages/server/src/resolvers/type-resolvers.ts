@@ -24,8 +24,8 @@ import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { Place } from "../domain-entities/place";
 import { Chunk } from "../domain-entities/chunk";
 import { ServerConfig } from "../domain-entities/server-config";
-import { RepositoryMapper } from "../dal/repository-mapper";
 import {Game, InGameModel, Message} from "../domain-entities/game";
+import EntityMapper from "../domain-entities/entity-mapper";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
@@ -42,8 +42,8 @@ const wikiPageInterfaceAttributes = {
 			return dataLoader.getDocument(page.coverImage, unitOfWork);
 		}
 	},
-	canWrite: async (page: WikiPage, _: any, { securityContext }: SessionContext): Promise<boolean> => {
-		return page.authorizationPolicy.canWrite(securityContext);
+	canWrite: async (page: WikiPage, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
+		return page.authorizationPolicy.canWrite(securityContext, unitOfWork);
 	},
 	canAdmin: async (page: WikiPage, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 		return page.authorizationPolicy.canAdmin(securityContext);
@@ -68,11 +68,11 @@ const permissionControlledInterfaceAttributes = {
 	accessControlList: async (
 		document: DomainEntity,
 		_: any,
-		{ securityContext }: SessionContext
+		{ securityContext, unitOfWork }: SessionContext
 	): Promise<PermissionAssignment[]> => {
 		let permissions: PermissionAssignment[] = [];
 		const permissionAssignmentRepository: PermissionAssignmentRepository = container.get<PermissionAssignmentRepository>(INJECTABLE_TYPES.PermissionAssignmentRepository);
-		if (await document.authorizationPolicy.canAdmin(securityContext)) {
+		if (await document.authorizationPolicy.canAdmin(securityContext, unitOfWork)) {
 			permissions = await permissionAssignmentRepository.find([new FilterCondition('subjectType', document.type),
 				new FilterCondition('subject', document._id)]);
 		} else {
@@ -80,11 +80,11 @@ const permissionControlledInterfaceAttributes = {
 		}
 		return permissions;
 	},
-	canWrite: async (document: DomainEntity, _: any, { securityContext }: SessionContext): Promise<boolean> => {
-		return await document.authorizationPolicy.canWrite(securityContext);
+	canWrite: async (document: DomainEntity, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
+		return await document.authorizationPolicy.canWrite(securityContext, unitOfWork);
 	},
-	canAdmin: async (document: DomainEntity, _: any, { securityContext }: SessionContext): Promise<boolean> => {
-		return await document.authorizationPolicy.canAdmin(securityContext);
+	canAdmin: async (document: DomainEntity, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
+		return await document.authorizationPolicy.canAdmin(securityContext, unitOfWork);
 	},
 };
 
@@ -273,8 +273,8 @@ export const TypeResolvers = {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
 			return dataLoader.getDocument(pin.page, unitOfWork);
 		},
-		canWrite: async (pin: Pin, _: any, { securityContext }: SessionContext): Promise<boolean> => {
-			return pin.authorizationPolicy.canWrite(securityContext);
+		canWrite: async (pin: Pin, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
+			return pin.authorizationPolicy.canWrite(securityContext, unitOfWork);
 		},
 	},
 	ServerConfig: {
@@ -299,10 +299,9 @@ export const TypeResolvers = {
 	},
 	PermissionAssignment: {
 		subject: async (assignment: PermissionAssignment, _: any, {unitOfWork}: SessionContext): Promise<DomainEntity> => {
-			const mapper = new RepositoryMapper();
-			const repository = mapper.map<DomainEntity>(assignment.subjectType, unitOfWork);
-			const subject = await repository.findById(assignment.subject);
-			return subject;
+			const mapper = container.get<EntityMapper>(INJECTABLE_TYPES.EntityMapper);
+			const repository = mapper.map(assignment.subjectType).getRepository(unitOfWork);
+			return repository.findById(assignment.subject);
 		},
 		canWrite: async (
 			assignment: PermissionAssignment,

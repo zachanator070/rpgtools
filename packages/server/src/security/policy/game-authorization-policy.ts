@@ -1,4 +1,4 @@
-import {DomainEntity, EntityAuthorizationPolicy} from "../../types";
+import {EntityAuthorizationPolicy} from "../../types";
 import { Game } from "../../domain-entities/game";
 import { SecurityContext } from "../security-context";
 import {

@@ -1,6 +1,6 @@
 import {
 	EntityAuthorizationPolicy,
-	PlaceRepository,
+	PlaceRepository, UnitOfWork,
 	WikiPageRepository,
 	WorldRepository,
 } from "../../types";
@@ -14,12 +14,6 @@ import { Place } from "../../domain-entities/place";
 
 @injectable()
 export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
-	@inject(INJECTABLE_TYPES.WikiPageRepository)
-	wikiPageRepository: WikiPageRepository;
-	@inject(INJECTABLE_TYPES.PlaceRepository)
-	placeRepository: PlaceRepository;
-	@inject(INJECTABLE_TYPES.WorldRepository)
-	worldRepository: WorldRepository;
 
 	entity: Pin;
 
@@ -28,25 +22,25 @@ export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
 		return Promise.resolve(false);
 	}
 
-	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		const map = await this.placeRepository.findById(this.entity.map);
+	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const map = await unitOfWork.placeRepository.findById(this.entity.map);
 		if (!map) {
 			return false;
 		}
-		return map.authorizationPolicy.canWrite(context);
+		return map.authorizationPolicy.canWrite(context, unitOfWork);
 	};
 
-	canRead = async (context: SecurityContext): Promise<boolean> => {
-		const map = await this.placeRepository.findById(this.entity.map);
-		const page = await this.wikiPageRepository.findById(this.entity.page);
+	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const map = await unitOfWork.placeRepository.findById(this.entity.map);
+		const page = await unitOfWork.wikiPageRepository.findById(this.entity.page);
 		return (
-			(await map.authorizationPolicy.canRead(context)) &&
-			(page ? await page.authorizationPolicy.canRead(context) : true)
+			(await map.authorizationPolicy.canRead(context, unitOfWork)) &&
+			(page ? await page.authorizationPolicy.canRead(context, unitOfWork) : true)
 		);
 	};
 
-	canWrite = async (context: SecurityContext): Promise<boolean> => {
-		const map = await this.placeRepository.findById(this.entity.map);
-		return await map.authorizationPolicy.canWrite(context);
+	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const map = await unitOfWork.placeRepository.findById(this.entity.map);
+		return await map.authorizationPolicy.canWrite(context, unitOfWork);
 	};
 }

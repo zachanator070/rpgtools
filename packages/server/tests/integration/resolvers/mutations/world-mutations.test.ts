@@ -1,42 +1,20 @@
-import { defaultTestingContextFactory } from "../../DefaultTestingContextFactory";
+import {DefaultTestingContext} from "../../default-testing-context";
 import {CREATE_PIN, CREATE_WORLD, DELETE_PIN, RENAME_WORLD, UPDATE_PIN} from "@rpgtools/common/src/gql-mutations";
+import {container} from "../../../../src/di/inversify";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 
 process.env.TEST_SUITE = "world-mutations-test";
 
 describe("world-mutations", () => {
 	describe("with world and logged in", () => {
-		let {
-			server,
-			mockSessionContextFactory,
-			otherUser,
-			otherUserSecurityContext,
-			world,
-			testRole,
-			currentUser,
-			testerSecurityContext,
-			newFolder,
-			otherPage,
-			pin,
-			...testingContext
-		} = defaultTestingContextFactory();
+		const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 		beforeEach(async () => {
-			({
-				mockSessionContextFactory,
-				otherUser,
-				otherUserSecurityContext,
-				world,
-				testRole,
-				currentUser,
-				testerSecurityContext,
-				newFolder,
-				otherPage,
-				pin,
-			} = await testingContext.reset());
+			await testingContext.reset();
 		});
 
 		test("create world", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_WORLD,
 				variables: { name: "Earth", public: false },
 			});
@@ -54,9 +32,9 @@ describe("world-mutations", () => {
 		});
 
 		test("rename world", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: RENAME_WORLD,
-				variables: { worldId: world._id, newName: "Azeroth" },
+				variables: { worldId: testingContext.world._id, newName: "Azeroth" },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
@@ -69,13 +47,13 @@ describe("world-mutations", () => {
 		});
 
 		test("create pin", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_PIN,
 				variables: {
-					mapId: world.wikiPage,
+					mapId: testingContext.world.wikiPage,
 					x: 0,
 					y: 0,
-					wikiId: world.wikiPage,
+					wikiId: testingContext.world.wikiPage,
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -105,9 +83,9 @@ describe("world-mutations", () => {
 		});
 
 		test("update pin", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: UPDATE_PIN,
-				variables: { pinId: pin._id, pageId: otherPage._id },
+				variables: { pinId: testingContext.pin._id, pageId: testingContext.otherPage._id },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
@@ -131,9 +109,9 @@ describe("world-mutations", () => {
 		});
 
 		test("delete pin", async () => {
-			const result = await server.executeGraphQLQuery({
+			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_PIN,
-				variables: { pinId: pin._id },
+				variables: { pinId: testingContext.pin._id },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
@@ -147,10 +125,10 @@ describe("world-mutations", () => {
 
 		describe("not logged in", () => {
 			beforeEach(() => {
-				mockSessionContextFactory.resetCurrentUser();
+				testingContext.mockSessionContextFactory.resetCurrentUser();
 			});
 			test("create world no permissions", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: CREATE_WORLD,
 					variables: { name: "Earth", public: false },
 				});
@@ -160,9 +138,9 @@ describe("world-mutations", () => {
 			});
 
 			test("rename world no permission", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: RENAME_WORLD,
-					variables: { worldId: world._id, newName: "Azeroth" },
+					variables: { worldId: testingContext.world._id, newName: "Azeroth" },
 				});
 				expect(result).toMatchSnapshot({
 					errors: expect.arrayContaining([expect.any(Object)]),
@@ -170,13 +148,13 @@ describe("world-mutations", () => {
 			});
 
 			test("create pin no permission", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: CREATE_PIN,
 					variables: {
-						mapId: world.wikiPage,
+						mapId: testingContext.world.wikiPage,
 						x: 0,
 						y: 0,
-						wikiId: world.wikiPage,
+						wikiId: testingContext.world.wikiPage,
 					},
 				});
 				expect(result).toMatchSnapshot({
@@ -185,9 +163,9 @@ describe("world-mutations", () => {
 			});
 
 			test("update pin no permission", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPDATE_PIN,
-					variables: { pinId: pin._id, pageId: otherPage._id },
+					variables: { pinId: testingContext.pin._id, pageId: testingContext.otherPage._id },
 				});
 				expect(result).toMatchSnapshot({
 					errors: expect.arrayContaining([expect.any(Object)]),
@@ -195,9 +173,9 @@ describe("world-mutations", () => {
 			});
 
 			test("delete pin no permission", async () => {
-				const result = await server.executeGraphQLQuery({
+				const result = await testingContext.server.executeGraphQLQuery({
 					query: DELETE_PIN,
-					variables: { pinId: pin._id },
+					variables: { pinId: testingContext.pin._id },
 				});
 				expect(result).toMatchSnapshot({
 					errors: expect.arrayContaining([expect.any(Object)]),

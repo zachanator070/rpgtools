@@ -31,6 +31,7 @@ export const PERMISSIONS_GRANTED = gql`
                 ... on Role{
                     name
                 }
+                canAdmin
             }
         }
     }
