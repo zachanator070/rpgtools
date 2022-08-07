@@ -75,10 +75,10 @@ export default {
 	},
 	wikis: async (
 		_: any,
-		{worldId, name, types, canAdmin}: {worldId: string, name: string, types: string[], canAdmin: boolean},
+		{worldId, name, types, canAdmin, page}: {worldId: string, name: string, types: string[], canAdmin: boolean, page: number},
 		{ securityContext, unitOfWork }: SessionContext) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return service.searchWikis(securityContext, worldId, name, types, canAdmin, unitOfWork);
+		return service.searchWikis(securityContext, worldId, name, types, canAdmin, page, unitOfWork);
 	},
 	roles: async (
 		_: any,

@@ -11,8 +11,6 @@ export class ExpressCookieManager implements CookieManager {
 	setCookie = (cookie: string, value: string, age: number): void => {
 		this.res.cookie(cookie, value, {
 			maxAge: age,
-			sameSite: "none",
-			secure: true
 		});
 	};
 

@@ -36,7 +36,6 @@ export default function PermissionModal({
 			<PermissionEditor
 				subject={subject}
 				subjectType={subjectType}
-				refetch={refetch}
 			/>
 		</Modal>
 	);

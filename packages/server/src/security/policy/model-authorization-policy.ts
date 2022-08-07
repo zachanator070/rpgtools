@@ -23,7 +23,7 @@ export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy<Model
 	};
 
 	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(MODEL_ADD, this.entity._id);
+		return context.hasPermission(MODEL_ADD, this.entity.world);
 	};
 
 	canRead = async (context: SecurityContext): Promise<boolean> => {

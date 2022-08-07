@@ -150,6 +150,7 @@ export class ExpressApiServer implements ApiServer {
 			origin: ["https://studio.apollographql.com"],
 			credentials: true
 		}));
+		this.expressServer.set('trust proxy', process.env.NODE_ENV !== 'production')
 	}
 
 	executeGraphQLQuery = async (
