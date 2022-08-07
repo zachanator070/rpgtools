@@ -7,6 +7,7 @@ interface SearchWikiPagesVariables {
 	name?: string;
 	types: string[];
 	canAdmin: boolean;
+	page?: number;
 }
 
 interface SearchWikiPagesResult extends GqlQueryResult<WikiPagePaginatedResult, SearchWikiPagesVariables>{
@@ -14,6 +15,9 @@ interface SearchWikiPagesResult extends GqlQueryResult<WikiPagePaginatedResult, 
 }
 
 export default function useSearchWikiPages(variables: SearchWikiPagesVariables): SearchWikiPagesResult {
+	if (!variables.page) {
+		variables.page = 1;
+	}
 	const result = useGQLQuery<WikiPagePaginatedResult, SearchWikiPagesVariables>(SEARCH_WIKIS, variables);
 	return {
 		...result,

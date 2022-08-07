@@ -116,6 +116,7 @@ export class ModelService {
 		model.fileName = fileUpload.filename;
 		const file = this.fileFactory({_id: null, filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: null});
 		await unitOfWork.fileRepository.create(file);
+		model.fileId = file._id;
 		await unitOfWork.modelRepository.create(model);
 		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
 			const permissionAssignment = this.permissionAssignmentFactory(

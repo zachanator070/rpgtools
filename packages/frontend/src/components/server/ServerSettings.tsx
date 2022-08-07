@@ -71,7 +71,7 @@ export default function ServerSettings() {
 					<PermissionEditor
 						subject={serverConfig}
 						subjectType={SERVER_CONFIG}
-						refetch={async () => {await refetch()}}/>
+					/>
 				</Col>
 				<Col span={4} />
 			</Row>
