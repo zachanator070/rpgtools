@@ -23,7 +23,7 @@
 		"@babel/preset-env": "^7.11.5",
 		"@babel/preset-react": "^7.10.4",
 		"@rpgtools/common": "^0.1.0",
-		"@types/react": "^18.0.14",
+		"@types/react": "^18.0.16",
 		"antd": "^4.21.4",
 		"apollo-upload-client": "^17.0.0",
 		"babel-jest": "^24.9.0",
