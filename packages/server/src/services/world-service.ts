@@ -176,7 +176,7 @@ export class WorldService {
 		context: SecurityContext,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null, roles: [], pins: []});
+		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null, pins: []});
 		await unitOfWork.worldRepository.create(world);
 		const rootWiki = this.placeFactory({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0});
 		await unitOfWork.placeRepository.create(rootWiki);
@@ -235,8 +235,6 @@ export class WorldService {
 			}
 		}
 		await unitOfWork.roleRepository.update(everyoneRole);
-
-		world.roles = [ownerRole._id];
 		await unitOfWork.worldRepository.update(world);
 
 		return world;

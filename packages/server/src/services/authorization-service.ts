@@ -122,7 +122,7 @@ export class AuthorizationService {
 		return role;
 	};
 
-	createRole = async (context: SecurityContext, worldId: string, name: string, unitOfWork: UnitOfWork): Promise<World> => {
+	createRole = async (context: SecurityContext, worldId: string, name: string, unitOfWork: UnitOfWork): Promise<Role> => {
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
@@ -132,8 +132,6 @@ export class AuthorizationService {
 		}
 		const newRole = this.roleFactory({_id: null, name, world: worldId, permissions: []});
 		await unitOfWork.roleRepository.create(newRole);
-		world.roles.push(newRole._id);
-		await unitOfWork.worldRepository.update(world);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
 			const permissionAssignment = this.permissionAssignmentFactory(
 				{
@@ -147,10 +145,10 @@ export class AuthorizationService {
 			context.user.permissions.push(permissionAssignment._id);
 		}
 		await unitOfWork.userRepository.update(context.user);
-		return world;
+		return newRole;
 	};
 
-	deleteRole = async (context: SecurityContext, roleId: string, unitOfWork: UnitOfWork): Promise<World> => {
+	deleteRole = async (context: SecurityContext, roleId: string, unitOfWork: UnitOfWork): Promise<Role> => {
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -161,11 +159,6 @@ export class AuthorizationService {
 		if (role.name === WORLD_OWNER || role.name === EVERYONE || role.name === LOGGED_IN) {
 			throw new Error("You cannot delete this role");
 		}
-		const world = await unitOfWork.worldRepository.findById(role.world);
-		world.roles = world.roles.filter((otherRole) => {
-			return otherRole !== role._id;
-		});
-		await unitOfWork.worldRepository.update(world);
 		await this.cleanUpPermissions(role._id, unitOfWork);
 		const usersWithRole = await unitOfWork.userRepository.find([new FilterCondition('role', role._id)]);
 		for(let user of usersWithRole) {
@@ -173,7 +166,7 @@ export class AuthorizationService {
 			await unitOfWork.userRepository.update(user);
 		}
 		await unitOfWork.roleRepository.delete(role);
-		return world;
+		return role;
 	};
 
 	// deletes permissions of a subject that has been delete
@@ -209,7 +202,7 @@ export class AuthorizationService {
 		userId: string,
 		roleId: string,
 		unitOfWork: UnitOfWork
-	): Promise<World> => {
+	): Promise<Role> => {
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -226,7 +219,7 @@ export class AuthorizationService {
 
 		user.roles.push(role._id);
 		await unitOfWork.userRepository.update(user);
-		return unitOfWork.worldRepository.findById(role.world);
+		return role;
 	};
 
 	removeUserRole = async (
@@ -234,7 +227,7 @@ export class AuthorizationService {
 		userId: string,
 		roleId: string,
 		unitOfWork: UnitOfWork
-	): Promise<World> => {
+	): Promise<Role> => {
 		const role = await unitOfWork.roleRepository.findById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
@@ -260,7 +253,7 @@ export class AuthorizationService {
 
 		user.roles = user.roles.filter((userRole) => userRole !== role._id);
 		await unitOfWork.userRepository.update(user);
-		return unitOfWork.worldRepository.findById(role.world);
+		return role;
 	};
 
 	private grantPrincipalPermission = async (

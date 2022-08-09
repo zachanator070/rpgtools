@@ -725,14 +725,12 @@ container
 					name,
 					wikiPage,
 					rootFolder,
-					roles,
 					pins
 				}:{
 					_id: string | ObjectId,
 					name: string,
 					wikiPage: string | ObjectId,
 					rootFolder: string | ObjectId,
-					roles: string[] | ObjectId[],
 					pins: string[] | ObjectId[]
 				}
 			) => {
@@ -741,7 +739,6 @@ container
 				world.name = name;
 				world.wikiPage = wikiPage && wikiPage.toString();
 				world.rootFolder = rootFolder && rootFolder.toString();
-				world.roles = roles.map(role => role.toString());
 				world.pins = pins.map(pin => pin.toString());
 				return world;
 			}

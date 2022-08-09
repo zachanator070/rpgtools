@@ -343,14 +343,12 @@ export type WorldFactory = (
 		name,
 		wikiPage,
 		rootFolder,
-		roles,
 		pins
 	}:{
 		_id: string,
 		name: string,
 		wikiPage: string,
 		rootFolder: string,
-		roles: string[],
 		pins: string[]
 	}
 ) => World;
@@ -652,6 +650,5 @@ export interface WorldDocument extends MongoDBEntity {
 	name: string;
 	wikiPage: Schema.Types.ObjectId;
 	rootFolder: Schema.Types.ObjectId;
-	roles: Schema.Types.ObjectId[];
 	pins: Schema.Types.ObjectId[];
 }

@@ -1,4 +1,4 @@
-import {adminLogin, goToServerSettings, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
 
 
 describe("world settings permissions", () => {

@@ -38,12 +38,10 @@ export const LOGOUT_QUERY = gql`
 //region Role
 
 export const CREATE_ROLE = gql`
-	${ACCESS_CONTROL_LIST}
 	${CURRENT_WORLD_ROLES}
 	mutation createRole($worldId: ID!, $name: String!){
 		createRole(worldId: $worldId, name: $name){
 			_id
-			...accessControlList
 			...currentWorldRoles
 		}
 	}
@@ -56,12 +54,10 @@ export const DELETE_ROLE = gql`
 	}
 `;
 export const ADD_USER_ROLE = gql`
-	${ACCESS_CONTROL_LIST}
 	${CURRENT_WORLD_ROLES}
 	mutation addUserRole($userId: ID!, $roleId: ID!){
 		addUserRole(userId: $userId, roleId: $roleId){
 			_id
-			...accessControlList
 			...currentWorldRoles		
 		}
 	}

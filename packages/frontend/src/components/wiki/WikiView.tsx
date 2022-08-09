@@ -48,7 +48,12 @@ export default function WikView() {
 						overflowY: "auto",
 					}}
 				>
-					<FolderTree folder={currentWorld.rootFolder} />
+					<FolderTree
+						folder={currentWorld.rootFolder}
+						refetch={async () => {
+							await refetch({})
+						}}
+					/>
 				</Col>
 				<Col
 					span={16}

@@ -3,6 +3,7 @@ import {ApiHookResponse} from "../types";
 import {World} from "../../types";
 import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {CREATE_ROLE} from "@rpgtools/common/src/gql-mutations";
+import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 
 interface CreateRoleVariables {
 	worldId: string;
@@ -16,7 +17,8 @@ interface CreateRoleResult extends ApiHookResponse<World>{
 export default function useCreateRole(): CreateRoleResult {
 	const { refetch } = useCurrentUser();
 	const result = useGQLMutation<World, CreateRoleVariables>(CREATE_ROLE, {}, {
-		onCompleted: async () => refetch()
+		onCompleted: async () => refetch(),
+		refetchQueries: [SEARCH_ROLES]
 	});
 	return {
 		...result,

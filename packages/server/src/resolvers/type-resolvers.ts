@@ -99,10 +99,6 @@ const modeledWikiAttributes = {
 
 export const TypeResolvers = {
 	World: {
-		roles: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Role[]> => {
-			const dataLoader = container.get<DataLoader<Role>>(INJECTABLE_TYPES.RoleDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, world.roles, unitOfWork);
-		},
 		rootFolder: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<WikiFolder> => {
 			const dataLoader = container.get<DataLoader<WikiFolder>>(
 				INJECTABLE_TYPES.WikiFolderDataLoader

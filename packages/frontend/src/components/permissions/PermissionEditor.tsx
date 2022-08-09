@@ -13,14 +13,15 @@ import {PermissionAssignment, Role, User} from "../../types";
 interface PermissionEditorProps {
 	subject: any;
 	subjectType: string;
+	refetch: () => Promise<void>;
 }
 
-export default function PermissionEditor({ subject, subjectType }: PermissionEditorProps) {
+export default function PermissionEditor({ subject, subjectType, refetch }: PermissionEditorProps) {
 	const [permissionGroup, setPermissionGroup] = useState<string>("users");
 	const { grantUserPermission } = useGrantUserPermission();
-	const { grantRolePermission } = useGrantRolePermission();
+	const { grantRolePermission } = useGrantRolePermission({callback: refetch});
 	const { revokeUserPermission } = useRevokeUserPermission();
-	const { revokeRolePermission } = useRevokeRolePermission();
+	const { revokeRolePermission } = useRevokeRolePermission({callback: refetch});
 	const [permissionAssigneeId, setPermissionAssigneeId] = useState<string>(null);
 	const possiblePermissions = getPermissionsBySubjectType(subjectType);
 	const [selectedPermission, setSelectedPermission] = useState<string>(

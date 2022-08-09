@@ -23,7 +23,6 @@ export class MongodbWorldRepository
 				name: document.name,
 				wikiPage: document.wikiPage.toString(),
 				rootFolder: document.rootFolder.toString(),
-				roles: document.roles.map((id) => id.toString()),
 				pins: document.pins.map((id) => id.toString())
 			}
 		);
