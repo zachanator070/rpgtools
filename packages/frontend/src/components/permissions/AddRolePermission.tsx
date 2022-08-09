@@ -12,15 +12,16 @@ import {Role} from "../../types";
 
 interface AddRolePermissionProps {
 	role: Role;
+	refetch: () => Promise<void>;
 }
 
-export default function AddRolePermission({ role }: AddRolePermissionProps) {
+export default function AddRolePermission({ role, refetch }: AddRolePermissionProps) {
 	const { currentWorld } = useCurrentWorld();
 	const [permissionToAdd, setPermissionToAdd] = useState(null);
 	const [subjectTypeSelected, setSubjectTypeSelected] = useState<string>(null);
 	const [subjectTypeToSend, setSubjectTypeToSend] = useState<string>(null);
 	const [subjectId, setSubjectId] = useState<string>(null);
-	const { grantRolePermission, errors } = useGrantRolePermission();
+	const { grantRolePermission, errors } = useGrantRolePermission({callback: refetch});
 
 	useEffect(() => {
 		if (subjectTypeSelected !== WIKI_PAGE) {

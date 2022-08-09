@@ -9,7 +9,7 @@ import useLoad5eContent from "../hooks/world/useLoad5eContent";
 import { useHistory } from "react-router-dom";
 
 export default function WorldSettings() {
-	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
+	const { currentWorld, loading: currentWorldLoading, refetch } = useCurrentWorld();
 	const [newName, setNewName] = useState<string>();
 	const { renameWorld, loading } = useRenameWorld();
 	const { load5eContent, loading: contentLoading } = useLoad5eContent();
@@ -34,7 +34,7 @@ export default function WorldSettings() {
 				<Col span={16}>
 					<h2>Permissions</h2>
 					<div className={"margin-lg-top"}>
-						<PermissionEditor subject={currentWorld} subjectType={WORLD} />
+						<PermissionEditor subject={currentWorld} subjectType={WORLD} refetch={async () => {await refetch()}} />
 					</div>
 				</Col>
 				<Col span={4} />

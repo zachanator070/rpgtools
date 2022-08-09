@@ -2,6 +2,7 @@ import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {World} from "../../types";
 import {ApiHookResponse} from "../types";
 import {ADD_USER_ROLE} from "@rpgtools/common/src/gql-mutations";
+import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 
 interface AddUserRoleVariables {
 	userId: string;
@@ -13,7 +14,9 @@ interface AddUserRoleResult extends ApiHookResponse<World> {
 }
 
 export default function useAddUserRole(): AddUserRoleResult {
-	const result = useGQLMutation<World, AddUserRoleVariables>(ADD_USER_ROLE, {});
+	const result = useGQLMutation<World, AddUserRoleVariables>(ADD_USER_ROLE, {}, {
+		refetchQueries: [SEARCH_ROLES]
+	});
 	return {
 		...result,
 		addUserRole: result.mutate

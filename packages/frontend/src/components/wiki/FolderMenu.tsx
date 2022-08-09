@@ -25,9 +25,10 @@ import {WikiFolder} from "../../types";
 interface FolderMenuProps {
 	folder: WikiFolder;
 	children?: ReactElement;
+	refetch?: () => Promise<void>;
 }
 
-export default function FolderMenu({ folder, children }: FolderMenuProps) {
+export default function FolderMenu({ folder, children, refetch }: FolderMenuProps) {
 	const { createWiki } = useCreateWiki();
 	const { createFolder } = useCreateFolder();
 	const { renameFolder } = useRenameFolder();
@@ -268,7 +269,7 @@ export default function FolderMenu({ folder, children }: FolderMenuProps) {
 					onCancel={() => setPermissionModalVisibility(false)}
 					width={750}
 				>
-					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} />
+					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={async () => {await refetch()}}/>
 				</Modal>
 			</div>
 			<Dropdown

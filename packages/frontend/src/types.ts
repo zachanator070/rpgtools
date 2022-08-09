@@ -19,7 +19,6 @@ export interface World extends PermissionControlled {
     name: string;
     wikiPage: Place;
     rootFolder: WikiFolder;
-    roles: Role[];
     pins: Pin[];
     accessControlList: PermissionAssignment[];
     canWrite: boolean;

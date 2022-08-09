@@ -11,6 +11,7 @@ import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
 import AddRolePermission from "./AddRolePermission";
 import {PermissionAssignment, User} from "../../types";
+import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 
 interface TabulatedPermissionAssignment extends PermissionAssignment {
 	key: string;
@@ -18,8 +19,9 @@ interface TabulatedPermissionAssignment extends PermissionAssignment {
 
 export default function RolesView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
+	const {roles, loading: rolesLoading, refetch} = useSearchRoles({});
 	const { createRole, loading: createRoleLoading } = useCreateRole();
-	const { revokeRolePermission } = useRevokeRolePermission();
+	const { revokeRolePermission } = useRevokeRolePermission({callback: async () => {await refetch()}});
 	const { deleteRole } = useDeleteRole();
 	const { removeUserRole } = useRemoveUserRole();
 	const [newRoleName, setNewRoleName] = useState<string>();
@@ -27,13 +29,13 @@ export default function RolesView() {
 	const [userIdToAdd, setUserIdToAdd] = useState<string>(null);
 	const { addUserRole } = useAddUserRole();
 
-	if (currentWorldLoading) {
+	if (currentWorldLoading || rolesLoading) {
 		return <LoadingView />;
 	}
 
 	let selectedRole = null;
 	if (selectedRoleId) {
-		for (let role of currentWorld.roles) {
+		for (let role of roles.docs) {
 			if (role._id === selectedRoleId) {
 				selectedRole = role;
 			}
@@ -90,7 +92,7 @@ export default function RolesView() {
 						value={selectedRoleId}
 						onChange={(roleId: string) => setSelectedRoleId(roleId)}
 					>
-						{currentWorld.roles.map((role) => (
+						{roles.docs.map((role) => (
 							<Select.Option key={role._id} value={role._id}>
 								{role.name}
 							</Select.Option>
@@ -152,7 +154,7 @@ export default function RolesView() {
 									pagination={false}
 									scroll={{ y: 250 }}
 								/>
-								<AddRolePermission role={selectedRole} />
+								<AddRolePermission role={selectedRole} refetch={async () => {await refetch()}}/>
 							</Tabs.TabPane>
 							<Tabs.TabPane tab="Users with this role" key="2">
 								<List

@@ -19,9 +19,10 @@ interface FolderTreeProps {
 	folder: WikiFolder;
 	initialExpanded?: string[];
 	indent?: number;
+	refetch: () => Promise<void>;
 }
 
-export default function FolderTree({ folder, initialExpanded, indent = 0 }: FolderTreeProps){
+export default function FolderTree({ folder, initialExpanded, indent = 0, refetch }: FolderTreeProps){
 	const params = useParams();
 	const {
 		wikisInFolder,
@@ -114,7 +115,7 @@ export default function FolderTree({ folder, initialExpanded, indent = 0 }: Fold
 		return <LoadingView />;
 	}
 	const childrenComponents = childrenFolders.map((child) => (
-		<FolderTree key={child._id} indent={indent + 1} folder={child} />
+		<FolderTree key={child._id} indent={indent + 1} folder={child} refetch={refetch}/>
 	));
 
 	return (
@@ -128,7 +129,7 @@ export default function FolderTree({ folder, initialExpanded, indent = 0 }: Fold
 					setAnimateArrow(true);
 				}}
 			>
-				<FolderMenu folder={folder}>
+				<FolderMenu folder={folder} refetch={refetch}>
 					<>
 						{arrow} {folderIcon} {folder.name}
 					</>

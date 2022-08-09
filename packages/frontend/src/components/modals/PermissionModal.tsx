@@ -36,6 +36,7 @@ export default function PermissionModal({
 			<PermissionEditor
 				subject={subject}
 				subjectType={subjectType}
+				refetch={async () => {await refetch()}}
 			/>
 		</Modal>
 	);

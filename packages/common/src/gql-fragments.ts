@@ -130,22 +130,20 @@ export const CURRENT_WORLD_PINS = gql`
 export const CURRENT_WORLD_ROLES = gql`
     ${PERMISSIONS_GRANTED}
     ${ACCESS_CONTROL_LIST}
-    fragment currentWorldRoles on World {
-        roles{
+    fragment currentWorldRoles on Role {
+        _id
+        name
+        canWrite
+        canAdmin
+        world{
             _id
-            name
-            canWrite
-            canAdmin
-            world{
-                _id
-            }
-            ...permissionsGranted
-            members{
-                _id
-                username
-            }
-            ...accessControlList
         }
+        ...permissionsGranted
+        members{
+            _id
+            username
+        }
+        ...accessControlList
     }
 `;
 export const SERVER_CONFIG_ROLES = gql`

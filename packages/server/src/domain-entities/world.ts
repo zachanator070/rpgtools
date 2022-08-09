@@ -10,7 +10,6 @@ export class World implements DomainEntity {
 	public name: string;
 	public wikiPage: string | null;
 	public rootFolder: string | null;
-	public roles: string[];
 	public pins: string[];
 	public type: string = WORLD;
 

@@ -5,13 +5,15 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import LoadingView from "../LoadingView";
 import useMyPermissions from "../../hooks/authorization/useMyPermissions";
+import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 
 export default function MyPermissionsView() {
 	const { currentWorld, loading } = useCurrentWorld();
+	const {roles, loading: rolesLoading} = useSearchRoles({});
 	const { serverConfig, loading: serverConfigLoading } = useServerConfig();
 	const { myPermissions, loading: permissionsLoading } = useMyPermissions();
 
-	if (loading || serverConfigLoading || permissionsLoading) {
+	if (loading || serverConfigLoading || permissionsLoading || rolesLoading) {
 		return <LoadingView />;
 	}
 
@@ -29,7 +31,7 @@ export default function MyPermissionsView() {
 
 	for (let assignment of myPermissions) {
 		let source = "Direct Assignment";
-		for (let role of currentWorld.roles.concat(serverConfig.roles)) {
+		for (let role of roles.docs.concat(serverConfig.roles)) {
 			for (let permission of role.permissions) {
 				if (permission._id === assignment._id) {
 					source = `Role: ${role.name}`;

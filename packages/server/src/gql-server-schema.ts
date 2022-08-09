@@ -77,10 +77,10 @@ export const typeDefs = gql`
 		renameWorld(worldId: ID!, newName: String!): World!
 		load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
 
-		createRole(worldId: ID!, name: String!): World!
-		deleteRole(roleId: ID!): World!
-		addUserRole(userId: ID!, roleId: ID!): World!
-		removeUserRole(userId: ID!, roleId: ID!): World!
+		createRole(worldId: ID!, name: String!): Role!
+		deleteRole(roleId: ID!): Role!
+		addUserRole(userId: ID!, roleId: ID!): Role!
+		removeUserRole(userId: ID!, roleId: ID!): Role!
 
 		grantUserPermission(
 			userId: ID!
@@ -219,7 +219,6 @@ export const typeDefs = gql`
 		name: String!
 		wikiPage: Place
 		rootFolder: WikiFolder
-		roles: [Role!]!
 		pins: [Pin!]!
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!

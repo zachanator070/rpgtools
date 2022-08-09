@@ -71,11 +71,13 @@ export const MY_PERMISSIONS = gql`
 
 //region Roles
 export const SEARCH_ROLES = gql`
+	${CURRENT_WORLD_ROLES}
 	query roles($worldId: ID, $name: String, $canAdmin: Boolean) {
 		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
 			docs {
 				_id
 				name
+				...currentWorldRoles
 			}
 		}
 	}
@@ -256,7 +258,6 @@ export const GAME_WIKI = gql`
 export const GET_CURRENT_WORLD = gql`
 	${CURRENT_WORLD_FOLDERS}
 	${ACCESS_CONTROL_LIST}
-	${CURRENT_WORLD_ROLES}
 	${CURRENT_WORLD_PINS}
 	query currentWorld($worldId: ID){
 		world(worldId: $worldId){
@@ -289,7 +290,6 @@ export const GET_CURRENT_WORLD = gql`
 				...currentWorldFolders
 			}
 			...accessControlList
-			...currentWorldRoles
 			...currentWorldPins
 		}
 	}

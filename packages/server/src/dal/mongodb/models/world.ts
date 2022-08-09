@@ -15,12 +15,6 @@ const worldSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: WIKI_FOLDER,
 	},
-	roles: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: ROLE,
-		},
-	],
 	pins: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
