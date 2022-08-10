@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { IMAGE } from "@rpgtools/common/src/type-constants";
 import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
 import {inject, injectable} from "inversify";
@@ -29,7 +29,7 @@ export class Image implements DomainEntity {
 		this.factory = factory;
 	}
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.imageRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.imageRepository;
 	}
 }

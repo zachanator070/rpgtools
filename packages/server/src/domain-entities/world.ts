@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -24,7 +24,7 @@ export class World implements DomainEntity {
 		this.factory = factory;
 	}
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.worldRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.worldRepository;
 	}
 }

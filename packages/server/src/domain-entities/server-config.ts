@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy";
 import { SERVER_CONFIG } from "../../../common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -26,7 +26,7 @@ export class ServerConfig implements DomainEntity {
 		this.factory = factory;
 	}
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.serverConfigRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.serverConfigRepository;
 	}
 }

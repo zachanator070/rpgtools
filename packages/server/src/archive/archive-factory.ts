@@ -3,21 +3,14 @@ import { ZipArchive } from "./zip-archive";
 import unzipper, { Entry } from "unzipper";
 import {Archive, AbstractArchiveFactory, FileFactory, Factory, WikiFolderFactory} from "../types";
 import {
-	ARTICLE,
-	CHUNK,
-	FILE, IMAGE,
-	ITEM,
-	MODEL,
-	MONSTER,
-	PERSON,
-	PLACE,
-	WIKI_FOLDER,
-	WORLD,
+	ALL_WIKI_TYPES,
+	FILE,
 } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {WikiFolder} from "../domain-entities/wiki-folder";
 import {WikiPage} from "../domain-entities/wiki-page";
+import EntityMapper from "../domain-entities/entity-mapper";
 
 class TempFolder {
 	children: TempFolder[] = [];
@@ -34,6 +27,9 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
+
+	@inject(INJECTABLE_TYPES.EntityMapper)
+	entityMapper: EntityMapper;
 
 	public createDefault = (): Archive => this.zipArchiveFactory({});
 
@@ -79,43 +75,13 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 			const newFile = this.fileFactory({_id: id, filename, readStream: await this.createReadStream(entry), mimeType: null})
 			await archive.fileRepository.create(newFile);
 		} else {
-			const entity = await this.getEntryContent(entry);
-			switch (entryType) {
-				case ARTICLE:
-					await archive.articleRepository.create(entity);
-					await this.addWikiToFolder(entity, entry.path, archive);
-					break;
-				case CHUNK:
-					await archive.chunkRepository.create(entity);
-					break;
-				case ITEM:
-					await archive.itemRepository.create(entity);
-					await this.addWikiToFolder(entity, entry.path, archive);
-					break;
-				case IMAGE:
-					await archive.imageRepository.create(entity);
-					break;
-				case MODEL:
-					await archive.modelRepository.create(entity);
-					break;
-				case MONSTER:
-					await archive.monsterRepository.create(entity);
-					await this.addWikiToFolder(entity, entry.path, archive);
-					break;
-				case PERSON:
-					await archive.personRepository.create(entity);
-					await this.addWikiToFolder(entity, entry.path, archive);
-					break;
-				case PLACE:
-					await archive.placeRepository.create(entity);
-					await this.addWikiToFolder(entity, entry.path, archive);
-					break;
-				case WIKI_FOLDER:
-					await archive.wikiFolderRepository.create(entity);
-					break;
-				case WORLD:
-					await archive.worldRepository.create(entity);
-					break;
+			const rawEntity = await this.getEntryContent(entry);
+			const sibling = this.entityMapper.map(entryType);
+			const entity = sibling.factory(rawEntity);
+			const repo = entity.getRepository(archive);
+			await repo.create(entity);
+			if(ALL_WIKI_TYPES.includes(entryType)) {
+				await this.addWikiToFolder(entity as WikiPage, entry.path, archive);
 			}
 		}
 	};

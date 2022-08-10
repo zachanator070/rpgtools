@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -24,5 +24,5 @@ export abstract class WikiPage implements DomainEntity {
 	abstract type: string;
 	abstract factory: Factory<WikiPage>;
 
-	abstract getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity>;
+	abstract getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }

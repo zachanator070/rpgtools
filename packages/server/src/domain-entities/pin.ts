@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -24,7 +24,8 @@ export class Pin implements DomainEntity {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 	}
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.pinRepository;
+
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.pinRepository;
 	}
 }

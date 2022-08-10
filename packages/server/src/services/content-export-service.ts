@@ -1,25 +1,15 @@
 import { Archive, UnitOfWork } from "../types";
 import {
-	ARTICLE,
-	ITEM,
-	MODEL,
-	MONSTER,
-	PERSON,
-	PLACE,
+	MODEL, MODELED_WIKI_TYPES,
 	WIKI_FOLDER,
 	WIKI_PAGE,
 } from "@rpgtools/common/src/type-constants";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { SecurityContext } from "../security/security-context";
-import { EntityNotFoundError, ReadPermissionDeniedError, TypeNotSupportedError } from "../errors";
-import { Place } from "../domain-entities/place";
+import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Image } from "../domain-entities/image";
 import { Chunk } from "../domain-entities/chunk";
-import { Item } from "../domain-entities/item";
-import { Monster } from "../domain-entities/monster";
-import { Person } from "../domain-entities/person";
-import { Article } from "../domain-entities/article";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Model } from "../domain-entities/model";
@@ -40,24 +30,22 @@ export class ContentExportService {
 		if (!page) {
 			throw new EntityNotFoundError(docId, WIKI_PAGE);
 		}
-		if (wikiType === ARTICLE) {
-			page = await unitOfWork.articleRepository.findById(docId);
-			await this.addArticle(context, page, archive, unitOfWork, true);
-		} else if (wikiType === PLACE) {
-			page = await unitOfWork.placeRepository.findById(docId);
-			await this.addPlace(context, page as Place, archive, unitOfWork, true);
-		} else if (wikiType === ITEM) {
-			page = await unitOfWork.itemRepository.findById(docId);
-			await this.addItem(context, page as Item, archive, unitOfWork, true);
-		} else if (wikiType === MONSTER) {
-			page = await unitOfWork.monsterRepository.findById(docId);
-			await this.addMonster(context, page as Monster, archive, unitOfWork, true);
-		} else if (wikiType === PERSON) {
-			page = await unitOfWork.personRepository.findById(docId);
-			await this.addPerson(context, page as Person, archive, unitOfWork, true);
-		} else {
-			throw new TypeNotSupportedError(wikiType);
+		const repo = page.getRepository(unitOfWork);
+		page = await repo.findById(docId) as WikiPage;
+		if (!await page.authorizationPolicy.canRead(context, unitOfWork)) {
+			return;
 		}
+
+		if (MODELED_WIKI_TYPES.includes(wikiType)) {
+			await this.addModeledWikiPageRelationships(context, page as ModeledPage, archive, unitOfWork);
+		}
+
+		//add to archive
+		const archiveRepo = page.getRepository(archive);
+		await archiveRepo.create(page);
+
+		await this.addWikiPageRelationships(context, page, archive, unitOfWork);
+
 		return page.name;
 	};
 
@@ -104,36 +92,11 @@ export class ContentExportService {
 			return;
 		}
 
-		const articles = await unitOfWork.articleRepository.find([
-			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-		]);
-		for (let article of articles) {
-			await this.addArticle(context, article, archive, unitOfWork, false);
+		for (let pageId of folder.pages) {
+			const page = await unitOfWork.wikiPageRepository.findById(pageId);
+			await this.exportWikiPage(context, pageId, page.type, archive, unitOfWork);
 		}
-		const items = await unitOfWork.itemRepository.find([
-			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-		]);
-		for (let item of items) {
-			await this.addItem(context, item, archive, unitOfWork, false);
-		}
-		const monsters = await unitOfWork.monsterRepository.find([
-			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-		]);
-		for (let monster of monsters) {
-			await this.addMonster(context, monster, archive, unitOfWork, false);
-		}
-		const persons = await unitOfWork.personRepository.find([
-			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-		]);
-		for (let person of persons) {
-			await this.addPerson(context, person, archive, unitOfWork, false);
-		}
-		const places = await unitOfWork.placeRepository.find([
-			new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN),
-		]);
-		for (let place of places) {
-			await this.addPlace(context, place, archive, unitOfWork, false);
-		}
+
 		for (let childId of folder.children) {
 			const child = await unitOfWork.wikiFolderRepository.findById(childId);
 			await this.addWikiFolder(context, child, archive, unitOfWork, false);
@@ -187,65 +150,6 @@ export class ContentExportService {
 		await archive.fileRepository.create(file);
 	};
 
-	private addPlace = async (
-		context: SecurityContext,
-		page: Place,
-		archive: Archive,
-		unitOfWork: UnitOfWork,
-		errorOut = false
-	) => {
-		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
-			if (page.mapImage) {
-				const image = await unitOfWork.imageRepository.findById(page.mapImage);
-				await this.addImage(context, image, archive, unitOfWork);
-			}
-			await archive.placeRepository.create(page);
-			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
-		}
-	};
-
-	private addItem = async (
-		context: SecurityContext,
-		page: Item,
-		archive: Archive,
-		unitOfWork: UnitOfWork,
-		errorOut = false
-	) => {
-		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
-			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
-			await archive.itemRepository.create(page);
-			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
-		}
-	};
-
-	private addMonster = async (
-		context: SecurityContext,
-		page: Monster,
-		archive: Archive,
-		unitOfWork: UnitOfWork,
-		errorOut = false
-	) => {
-		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
-			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
-			await archive.monsterRepository.create(page);
-			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
-		}
-	};
-
-	private addPerson = async (
-		context: SecurityContext,
-		page: Person,
-		archive: Archive,
-		unitOfWork: UnitOfWork,
-		errorOut = false
-	) => {
-		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
-			await this.addModeledWikiPageRelationships(context, page, archive, unitOfWork);
-			await archive.personRepository.create(page);
-			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
-		}
-	};
-
 	private addModeledWikiPageRelationships = async (
 		context: SecurityContext,
 		page: ModeledPage,
@@ -256,29 +160,6 @@ export class ContentExportService {
 			const model = await unitOfWork.modelRepository.findById(page.pageModel);
 			await this.addModel(context, model, archive, unitOfWork);
 		}
-	};
-
-	private addArticle = async (
-		context: SecurityContext,
-		page: Article,
-		archive: Archive,
-		unitOfWork: UnitOfWork,
-		errorOut = false
-	) => {
-		if (await this.canReadWikiPage(context, page, unitOfWork, errorOut)) {
-			await archive.articleRepository.create(page);
-			await this.addWikiPageRelationships(context, page, archive, unitOfWork);
-		}
-	};
-
-	private canReadWikiPage = async (context: SecurityContext, page: WikiPage, unitOfWork: UnitOfWork, errorOut = false) => {
-		if (!(await page.authorizationPolicy.canRead(context, unitOfWork))) {
-			if (errorOut) {
-				return new ReadPermissionDeniedError(page._id, WIKI_PAGE);
-			}
-			return false;
-		}
-		return true;
 	};
 
 	private addWikiPageRelationships = async (
