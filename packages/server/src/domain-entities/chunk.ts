@@ -1,4 +1,4 @@
-import {ChunkFactory, DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {ChunkFactory, DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { CHUNK } from "@rpgtools/common/src/type-constants";
 import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy";
 import { inject, injectable } from "inversify";
@@ -28,8 +28,7 @@ export class Chunk implements DomainEntity {
 		this.factory = factory;
 	}
 
-
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.chunkRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.chunkRepository;
 	}
 }

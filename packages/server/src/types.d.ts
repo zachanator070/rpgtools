@@ -29,7 +29,7 @@ export interface DomainEntity {
 	authorizationPolicy: EntityAuthorizationPolicy<this>;
 	factory: Factory<DomainEntity>;
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity>;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }
 
 export interface Repository<Type extends DomainEntity> {
@@ -391,7 +391,7 @@ export interface EntityAuthorizationPolicy<Type extends DomainEntity> {
 	canCreate: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
 }
 
-export interface UnitOfWork {
+export interface RepositoryAccessor {
 	articleRepository: ArticleRepository;
 	chunkRepository: ChunkRepository;
 	gameRepository: GameRepository;
@@ -410,6 +410,9 @@ export interface UnitOfWork {
 	wikiPageRepository: WikiPageRepository;
 	worldRepository: WorldRepository;
 	fileRepository: FileRepository;
+}
+
+export interface UnitOfWork extends RepositoryAccessor {
 
 	commit: () => Promise<void>;
 	rollback: () => Promise<void>;
@@ -417,25 +420,7 @@ export interface UnitOfWork {
 
 export type Factory<T> = (args: any) => T;
 
-export interface Archive {
-	articleRepository: ArticleRepository;
-	chunkRepository: ChunkRepository;
-	gameRepository: GameRepository;
-	imageRepository: ImageRepository;
-	itemRepository: ItemRepository;
-	modelRepository: ModelRepository;
-	monsterRepository: MonsterRepository;
-	permissionAssignmentRepository: PermissionAssignmentRepository;
-	personRepository: PersonRepository;
-	pinRepository: PinRepository;
-	placeRepository: PlaceRepository;
-	roleRepository: RoleRepository;
-	serverConfigRepository: ServerConfigRepository;
-	userRepository: UserRepository;
-	wikiFolderRepository: WikiFolderRepository;
-	wikiPageRepository: WikiPageRepository;
-	worldRepository: WorldRepository;
-	fileRepository: FileRepository;
+export interface Archive extends RepositoryAccessor {
 
 	pipe: (output: Writable) => Promise<void>;
 }

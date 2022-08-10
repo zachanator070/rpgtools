@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -31,8 +31,8 @@ export class Game implements DomainEntity {
 		this.factory = factory;
 	}
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.gameRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.gameRepository;
 	}
 }
 

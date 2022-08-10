@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { PermissionAssignmentAuthorizationPolicy } from "../security/policy/permission-assignment-authorization-policy";
 import { PERMISSION_ASSIGNMENT } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
@@ -25,7 +25,7 @@ export class PermissionAssignment implements DomainEntity {
 		this.factory = factory;
 	}
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.permissionAssignmentRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.permissionAssignmentRepository;
 	}
 }

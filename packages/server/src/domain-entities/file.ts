@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, Repository, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
 import { Readable } from "stream";
 import { FILE } from "@rpgtools/common/src/type-constants";
 import { FileAuthorizationPolicy } from "../security/policy/file-authorization-policy";
@@ -24,7 +24,7 @@ export class File implements DomainEntity {
 		this.factory = factory;
 	}
 
-	getRepository(unitOfWork: UnitOfWork): Repository<DomainEntity> {
-		return unitOfWork.fileRepository;
+	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+		return accessor.fileRepository;
 	}
 }
