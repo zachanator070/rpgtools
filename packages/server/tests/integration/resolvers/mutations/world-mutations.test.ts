@@ -60,22 +60,12 @@ describe("world-mutations", () => {
 				data: {
 					createPin: {
 						_id: expect.any(String),
-						pins: expect.arrayContaining([
-							expect.objectContaining({
-								_id: expect.any(String),
-								map: {
-									_id: expect.any(String),
-									name: expect.any(String),
-								},
-								page: {
-									_id: expect.any(String),
-									name: expect.any(String),
-									type: expect.any(String),
-								},
-								x: 0,
-								y: 0,
-							}),
-						]),
+						page: {
+							_id: expect.any(String),
+						},
+						map: {
+							_id: expect.any(String),
+						}
 					},
 				},
 				errors: undefined,
@@ -91,17 +81,12 @@ describe("world-mutations", () => {
 				data: {
 					updatePin: {
 						_id: expect.any(String),
-						pins: [
-							{
-								_id: expect.any(String),
-								map: {
-									_id: expect.any(String),
-								},
-								page: {
-									_id: expect.any(String),
-								},
-							},
-						],
+						page: {
+							_id: expect.any(String),
+						},
+						map: {
+							_id: expect.any(String),
+						}
 					},
 				},
 				errors: undefined,
@@ -117,6 +102,12 @@ describe("world-mutations", () => {
 				data: {
 					deletePin: {
 						_id: expect.any(String),
+						page: {
+							_id: expect.any(String),
+						},
+						map: {
+							_id: expect.any(String),
+						}
 					},
 				},
 				errors: undefined,

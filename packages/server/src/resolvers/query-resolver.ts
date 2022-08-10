@@ -93,6 +93,19 @@ export default {
 		const service = container.get<RoleService>(INJECTABLE_TYPES.RoleService);
 		return service.getRoles(securityContext, worldId, name, canAdmin, page, unitOfWork);
 	},
+	pins: async (
+		_: any,
+		{
+			worldId,
+			name,
+			canAdmin,
+			page = 1,
+		}: { worldId: string; name: string; canAdmin: boolean; page: number },
+		{ securityContext, unitOfWork }: SessionContext
+	) => {
+		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
+		return service.getPins(securityContext, worldId, page, unitOfWork);
+	},
 	getFolderPath: async (
 		_: any,
 		{ wikiId }: { wikiId: string },

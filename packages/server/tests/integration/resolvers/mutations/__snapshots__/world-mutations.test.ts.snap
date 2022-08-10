@@ -5,22 +5,18 @@ Object {
   "data": Object {
     "createPin": Object {
       "_id": Any<String>,
-      "pins": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "map": Object {
-            "_id": Any<String>,
-            "name": Any<String>,
-          },
-          "page": Object {
-            "_id": Any<String>,
-            "name": Any<String>,
-            "type": Any<String>,
-          },
-          "x": 0,
-          "y": 0,
-        },
-      ],
+      "canWrite": true,
+      "map": Object {
+        "_id": Any<String>,
+        "name": "Earth",
+      },
+      "page": Object {
+        "_id": Any<String>,
+        "name": "Earth",
+        "type": "Place",
+      },
+      "x": 0,
+      "y": 0,
     },
   },
   "errors": undefined,
@@ -58,7 +54,18 @@ Object {
   "data": Object {
     "deletePin": Object {
       "_id": Any<String>,
-      "pins": Array [],
+      "canWrite": true,
+      "map": Object {
+        "_id": Any<String>,
+        "name": "Earth",
+      },
+      "page": Object {
+        "_id": Any<String>,
+        "name": "other page",
+        "type": "Article",
+      },
+      "x": 0,
+      "y": 0,
     },
   },
   "errors": undefined,
@@ -169,23 +176,18 @@ Object {
   "data": Object {
     "updatePin": Object {
       "_id": Any<String>,
-      "pins": Array [
-        Object {
-          "_id": Any<String>,
-          "canWrite": true,
-          "map": Object {
-            "_id": Any<String>,
-            "name": "Earth",
-          },
-          "page": Object {
-            "_id": Any<String>,
-            "name": "other page",
-            "type": "Article",
-          },
-          "x": 0,
-          "y": 0,
-        },
-      ],
+      "canWrite": true,
+      "map": Object {
+        "_id": Any<String>,
+        "name": "Earth",
+      },
+      "page": Object {
+        "_id": Any<String>,
+        "name": "other page",
+        "type": "Article",
+      },
+      "x": 0,
+      "y": 0,
     },
   },
   "errors": undefined,

@@ -9,6 +9,7 @@ import { Button, Tooltip } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import ModelViewer from "../models/ModelViewer";
 import {ModeledWiki, Place, WikiPage} from "../../types";
+import usePins from "../../hooks/map/usePins";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
@@ -19,20 +20,21 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 	const history = useHistory();
 
 	const { currentWorld, loading } = useCurrentWorld();
+	const {pins, loading: pinsLoading} = usePins({});
 
 	const wikiView = useRef(null);
 
 	const { wiki_id } = useParams();
 
 	const getPinFromPageId = (pageId) => {
-		for (let pin of currentWorld.pins) {
+		for (let pin of pins.docs) {
 			if (pin.page && pin.page._id === pageId) {
 				return pin;
 			}
 		}
 	};
 
-	if (loading || wikiLoading) {
+	if (loading || wikiLoading || pinsLoading) {
 		return <LoadingView />;
 	}
 

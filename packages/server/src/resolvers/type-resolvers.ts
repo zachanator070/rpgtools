@@ -124,10 +124,6 @@ export const TypeResolvers = {
 			const testModel = modelFactory({_id: null, world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: ""});
 			return testModel.authorizationPolicy.canCreate(securityContext);
 		},
-		pins: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Pin[]> => {
-			const dataLoader = container.get<DataLoader<Pin>>(INJECTABLE_TYPES.PinDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, world.pins, unitOfWork);
-		},
 		...permissionControlledInterfaceAttributes,
 	},
 	PermissionControlled: {

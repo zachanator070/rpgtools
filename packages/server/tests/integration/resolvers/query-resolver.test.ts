@@ -139,25 +139,6 @@ describe("query resolver", () => {
 					data: {
 						world: {
 							_id: expect.any(String),
-							roles: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-									members: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-											username: expect.any(String),
-										}),
-									]),
-									permissions: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-											subject: expect.objectContaining({
-												_id: expect.any(String),
-											}),
-										}),
-									]),
-								}),
-							]),
 							rootFolder: {
 								_id: expect.any(String),
 								children: expect.arrayContaining([
@@ -180,17 +161,6 @@ describe("query resolver", () => {
 											_id: expect.any(String),
 										}),
 									]),
-								}),
-							]),
-							pins: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-									map: expect.objectContaining({
-										_id: expect.any(String),
-									}),
-									page: expect.objectContaining({
-										_id: expect.any(String),
-									}),
 								}),
 							]),
 						},
@@ -275,7 +245,23 @@ describe("query resolver", () => {
 						worldId: testingContext.world._id,
 					},
 				});
-				expect(result).toMatchSnapshot();
+				expect(result).toMatchSnapshot({
+					data: {
+						roles: {
+							docs: expect.arrayContaining([
+								expect.objectContaining({
+									_id: expect.any(String),
+									accessControlList: expect.any(Array),
+									members: expect.any(Array),
+									permissions: expect.any(Array),
+									world: {
+										_id: expect.any(String)
+									}
+								}),
+							])
+						}
+					}
+				});
 			});
 
 			it("get roles permission denied", async () => {

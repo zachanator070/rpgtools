@@ -108,25 +108,6 @@ export const CURRENT_WORLD_FOLDERS = gql`
         ...accessControlList
 	}
 `;
-export const CURRENT_WORLD_PINS = gql`
-    fragment currentWorldPins on World {
-        pins{
-            _id
-            canWrite
-            page{
-                name
-                type
-                _id
-            }
-            map{
-                name
-                _id
-            }
-            x
-            y
-        }
-    }
-`;
 export const CURRENT_WORLD_ROLES = gql`
     ${PERMISSIONS_GRANTED}
     ${ACCESS_CONTROL_LIST}
@@ -396,4 +377,22 @@ export const GAME_ATTRIBUTES = gql`
         ...accessControlList
     }
 	
+`;
+
+export const PIN_ATTRIBUTES = gql`
+    fragment pinAttributes on Pin {
+        _id
+        canWrite
+        page{
+            name
+            type
+            _id
+        }
+        map{
+            name
+            _id
+        }
+        x
+        y
+    }  
 `;

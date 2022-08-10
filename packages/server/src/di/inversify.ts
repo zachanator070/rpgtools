@@ -725,13 +725,11 @@ container
 					name,
 					wikiPage,
 					rootFolder,
-					pins
 				}:{
 					_id: string | ObjectId,
 					name: string,
 					wikiPage: string | ObjectId,
 					rootFolder: string | ObjectId,
-					pins: string[] | ObjectId[]
 				}
 			) => {
 				const world = context.container.get<World>(INJECTABLE_TYPES.World);
@@ -739,7 +737,6 @@ container
 				world.name = name;
 				world.wikiPage = wikiPage && wikiPage.toString();
 				world.rootFolder = rootFolder && rootFolder.toString();
-				world.pins = pins.map(pin => pin.toString());
 				return world;
 			}
 	);

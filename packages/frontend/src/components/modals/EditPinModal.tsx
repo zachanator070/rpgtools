@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Form, Modal, Select } from "antd";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdatePin from "../../hooks/map/useUpdatePin";
 import useDeletePin from "../../hooks/map/useDeletePin";
 import SelectWiki from "../select/SelectWiki";
 import {Place} from "../../types";
+import usePins from "../../hooks/map/usePins";
 
 interface EditPinModalProps {
 	visibility: boolean;
@@ -15,17 +15,16 @@ interface EditPinModalProps {
 export default function EditPinModal({ visibility, setVisibility, pinId }: EditPinModalProps) {
 	const [page, setPage] = useState(null);
 
-	const { currentWorld, loading: worldLoading } = useCurrentWorld();
-
+	const {pins, loading} = usePins({});
 	const { updatePin, loading: updateLoading } = useUpdatePin();
 	const { deletePin, loading: deleteLoading } = useDeletePin();
 
-	if (worldLoading) {
+	if (loading) {
 		return <></>;
 	}
 
 	let pinBeingEdited = null;
-	let possiblePins = currentWorld ? currentWorld.pins : [];
+	let possiblePins = pins.docs;
 	for (let pin of possiblePins) {
 		if (pin._id === pinId) {
 			pinBeingEdited = pin;

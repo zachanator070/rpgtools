@@ -34,6 +34,12 @@ Object {
   "data": Object {
     "createFolder": Object {
       "_id": Any<String>,
+      "children": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "name": Any<String>,
+        },
+      ],
     },
   },
   "errors": undefined,
@@ -49,8 +55,14 @@ Object {
 exports[`folder-mutations with tester logged in and world created delete folder 1`] = `
 Object {
   "data": Object {
-    "deleteFolder": Object {
+    "deleteFolder": ObjectContaining {
       "_id": Any<String>,
+      "children": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "name": Any<String>,
+        },
+      ],
     },
   },
   "errors": undefined,

@@ -8,27 +8,16 @@ Object {
       "accessControlList": Any<Array>,
       "canAdmin": true,
       "canWrite": true,
-      "roles": ArrayContaining [
+      "members": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
-          "members": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-            },
-          ],
-          "permissions": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-              "subject": ObjectContaining {
-                "_id": Any<String>,
-              },
-            },
-          ],
-          "world": Object {
-            "_id": Any<String>,
-          },
         },
       ],
+      "name": "other role",
+      "permissions": Any<Array>,
+      "world": Object {
+        "_id": Any<String>,
+      },
     },
   },
   "errors": undefined,
@@ -64,24 +53,12 @@ Object {
       "accessControlList": Any<Array>,
       "canAdmin": true,
       "canWrite": true,
-      "roles": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "members": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-            },
-          ],
-          "permissions": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-              "subject": ObjectContaining {
-                "_id": Any<String>,
-              },
-            },
-          ],
-        },
-      ],
+      "members": Any<Array>,
+      "name": "new role",
+      "permissions": Any<Array>,
+      "world": Object {
+        "_id": Any<String>,
+      },
     },
   },
   "errors": undefined,
@@ -153,6 +130,7 @@ Object {
           "permission": "Read access to a single wiki page",
           "subject": Object {
             "_id": Any<String>,
+            "canAdmin": true,
             "name": "Earth",
           },
           "subjectType": "Place",
@@ -233,27 +211,19 @@ Object {
   "data": Object {
     "removeUserRole": Object {
       "_id": Any<String>,
-      "roles": ArrayContaining [
+      "accessControlList": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
-          "members": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-            },
-          ],
-          "permissions": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-              "subject": ObjectContaining {
-                "_id": Any<String>,
-              },
-            },
-          ],
-          "world": Object {
-            "_id": Any<String>,
-          },
         },
       ],
+      "canAdmin": true,
+      "canWrite": true,
+      "members": Any<Array>,
+      "name": "other role",
+      "permissions": Any<Array>,
+      "world": Object {
+        "_id": Any<String>,
+      },
     },
   },
   "errors": undefined,

@@ -19,7 +19,6 @@ export interface World extends PermissionControlled {
     name: string;
     wikiPage: Place;
     rootFolder: WikiFolder;
-    pins: Pin[];
     accessControlList: PermissionAssignment[];
     canWrite: boolean;
     canAdmin: boolean;
@@ -71,6 +70,19 @@ export interface RolePaginatedResult {
 
 export interface WikiPagePaginatedResult {
     docs: WikiPage[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: number;
+    nextPage: number;
+}
+
+export interface PinPaginatedResult {
+    docs: Pin[];
     totalDocs: number;
     limit: number;
     page: number;

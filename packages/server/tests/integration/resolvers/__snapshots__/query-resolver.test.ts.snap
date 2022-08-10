@@ -92,14 +92,15 @@ exports[`query resolver with world with authenticated user get roles 1`] = `
 Object {
   "data": Object {
     "roles": Object {
-      "docs": Array [
-        Object {
-          "_id": "62bd12cc2b21394632c80c5c",
-          "name": "World Owner",
-        },
-        Object {
-          "_id": "62bd12cc2b21394632c80c63",
-          "name": "other role",
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "accessControlList": Any<Array>,
+          "members": Any<Array>,
+          "permissions": Any<Array>,
+          "world": Object {
+            "_id": Any<String>,
+          },
         },
       ],
     },
@@ -207,36 +208,6 @@ Object {
       "canHostGame": false,
       "canWrite": true,
       "name": "Earth",
-      "pins": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "map": ObjectContaining {
-            "_id": Any<String>,
-          },
-          "page": ObjectContaining {
-            "_id": Any<String>,
-          },
-        },
-      ],
-      "roles": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "members": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-              "username": Any<String>,
-            },
-          ],
-          "permissions": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-              "subject": ObjectContaining {
-                "_id": Any<String>,
-              },
-            },
-          ],
-        },
-      ],
       "rootFolder": Object {
         "_id": Any<String>,
         "accessControlList": Array [],

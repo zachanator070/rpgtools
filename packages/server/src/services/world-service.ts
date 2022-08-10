@@ -65,6 +65,22 @@ export class WorldService {
 		return world;
 	};
 
+	getPins = async (
+		context: SecurityContext,
+		worldId: string,
+		page: number,
+		unitOfWork: UnitOfWork
+	) => {
+		const pinsPage = await unitOfWork.pinRepository.findPaginated([new FilterCondition('worldId', worldId)], page);
+		const results = [];
+		for (let pin of pinsPage.docs) {
+			if (await pin.authorizationPolicy.canRead(context, unitOfWork)) {
+				results.push(pin);
+			}
+		}
+		return pinsPage;
+	};
+
 	createPin = async (
 		context: SecurityContext,
 		mapId: string,
@@ -93,10 +109,7 @@ export class WorldService {
 		}
 
 		await unitOfWork.pinRepository.create(newPin);
-		const world = await unitOfWork.worldRepository.findById(map.world);
-		world.pins.push(newPin._id);
-		await unitOfWork.worldRepository.update(world);
-		return world;
+		return newPin;
 	};
 
 	updatePin = async (context: SecurityContext, pinId: string, pageId: string, unitOfWork: UnitOfWork) => {
@@ -119,8 +132,7 @@ export class WorldService {
 
 		pin.page = pageId;
 		await unitOfWork.pinRepository.update(pin);
-		const map = await unitOfWork.placeRepository.findById(pin.map);
-		return unitOfWork.worldRepository.findById(map.world);
+		return pin;
 	};
 
 	deletePin = async (context: SecurityContext, pinId: string, unitOfWork: UnitOfWork) => {
@@ -134,11 +146,7 @@ export class WorldService {
 		}
 
 		await unitOfWork.pinRepository.delete(pin);
-		const map = await unitOfWork.placeRepository.findById(pin.map);
-		const world = await unitOfWork.worldRepository.findById(map.world);
-		world.pins = world.pins.filter(worldPinId => worldPinId !== pinId);
-		await unitOfWork.worldRepository.update(world);
-		return world;
+		return pin;
 	};
 
 	getWorld = async (context: SecurityContext, worldId: string, unitOfWork: UnitOfWork) => {
@@ -176,7 +184,7 @@ export class WorldService {
 		context: SecurityContext,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null, pins: []});
+		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null});
 		await unitOfWork.worldRepository.create(world);
 		const rootWiki = this.placeFactory({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0});
 		await unitOfWork.placeRepository.create(rootWiki);

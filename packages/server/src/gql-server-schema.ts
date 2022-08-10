@@ -62,6 +62,8 @@ export const typeDefs = gql`
 		Get permissions for the current authenticated user for a particular world
 		"""
 		myPermissions(worldId: ID!): [PermissionAssignment!]!
+		
+		pins(worldId: ID!, page: Int): PinPaginatedResult!
 	}
 
 	type Mutation {
@@ -118,9 +120,9 @@ export const typeDefs = gql`
 
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
 
-		createPin(mapId: ID!, x: Float!, y: Float!, wikiId: ID): World!
-		updatePin(pinId: ID!, pageId: ID): World!
-		deletePin(pinId: ID!): World!
+		createPin(mapId: ID!, x: Float!, y: Float!, wikiId: ID): Pin!
+		updatePin(pinId: ID!, pageId: ID): Pin!
+		deletePin(pinId: ID!): Pin!
 
 		createGame(worldId: ID!, password: String, characterName: String): Game!
 		joinGame(gameId: ID!, password: String, characterName: String): Game!
@@ -280,7 +282,20 @@ export const typeDefs = gql`
 		prevPage: Int
 		nextPage: Int
 	}
-
+	
+	type PinPaginatedResult {
+	    docs: [Pin!]!
+		totalDocs: Int!
+		limit: Int!
+		page: Int!
+		totalPages: Int!
+		pagingCounter: Int!
+		hasPrevPage: Boolean!
+		hasNextPage: Boolean!
+		prevPage: Int
+		nextPage: Int
+    }
+	
 	interface WikiPage {
 		_id: ID!
 		name: String!

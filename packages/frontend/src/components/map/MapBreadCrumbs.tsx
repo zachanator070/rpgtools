@@ -4,17 +4,19 @@ import useCurrentMap from "../../hooks/map/useCurrentMap";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link } from "react-router-dom";
 import {Pin, Place} from "../../types";
+import usePins from "../../hooks/map/usePins";
 
 export default function MapBreadCrumbs() {
 	const { currentMap, loading } = useCurrentMap();
+	const {pins, loading: pinsLoading} = usePins({});
 	const { currentWorld } = useCurrentWorld();
 
-	if (loading || !currentMap) {
+	if (loading || !currentMap || pinsLoading) {
 		return null;
 	}
 
 	const getMapPins = (map: Place): Pin[] => {
-		return currentWorld.pins.filter((pin) => pin.map._id === map._id);
+		return pins.docs.filter((pin) => pin.map._id === map._id);
 	};
 
 	const bfs = (map: Place, target: Place, path): Place[] => {
