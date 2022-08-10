@@ -14,13 +14,7 @@ const worldSchema = new mongoose.Schema({
 	rootFolder: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: WIKI_FOLDER,
-	},
-	pins: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: PIN,
-		},
-	],
+	}
 });
 
 export const WorldModel = mongoose.model<WorldDocument>(WORLD, worldSchema);

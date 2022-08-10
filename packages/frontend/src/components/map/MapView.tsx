@@ -9,29 +9,31 @@ import { Link } from "react-router-dom";
 import MapBreadCrumbs from "./MapBreadCrumbs";
 import MapDrawer from "./MapDrawer";
 import MapWikiContext from "../../MapWikiContext";
+import usePins from "../../hooks/map/usePins";
 
 export default function MapView() {
 	const { currentWorld, loading } = useCurrentWorld();
+	const { pins, loading: pinsLoading} = usePins({});
 	const { currentMap, loading: mapLoading } = useCurrentMap();
 	const { createPin } = useCreatePin();
 	const {mapWikiId} = useContext(MapWikiContext);
 
 	const getPins = () => {
-		let pins = [];
-		let pinsOnThisMap = currentWorld.pins.filter((pin) => {
+		let filteredPins = [];
+		let pinsOnThisMap = pins.docs.filter((pin) => {
 			return pin.map._id === currentMap._id;
 		});
 		for (let pin of pinsOnThisMap) {
-			pins.push(<PinComponent pin={pin} key={pin._id} />);
+			filteredPins.push(<PinComponent pin={pin} key={pin._id} />);
 		}
 
-		return pins;
+		return filteredPins;
 	};
 
-	if (loading || mapLoading) {
+	if (loading || mapLoading || pinsLoading) {
 		return <LoadingView />;
 	}
-	const pins = getPins();
+	const pinComponents = getPins();
 
 	let map = (
 		<Map
@@ -43,7 +45,7 @@ export default function MapView() {
 					name: "New Pin",
 				},
 			]}
-			extras={pins}
+			extras={pinComponents}
 		/>
 	);
 

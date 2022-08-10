@@ -22,8 +22,7 @@ export class MongodbWorldRepository
 				_id: document._id.toString(),
 				name: document.name,
 				wikiPage: document.wikiPage.toString(),
-				rootFolder: document.rootFolder.toString(),
-				pins: document.pins.map((id) => id.toString())
+				rootFolder: document.rootFolder.toString()
 			}
 		);
 	}

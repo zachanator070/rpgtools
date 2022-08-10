@@ -39,6 +39,12 @@ describe("folder-mutations", () => {
 				data: {
 					createFolder: {
 						_id: expect.any(String),
+						children: expect.arrayContaining([
+							expect.objectContaining({
+								_id: expect.any(String),
+								name: expect.any(String)
+							})
+						])
 					},
 				},
 			});
@@ -67,10 +73,16 @@ describe("folder-mutations", () => {
 				variables: { folderId: testingContext.newFolder._id.toString() },
 			});
 			expect(result).toMatchSnapshot({
-				data: {
-					deleteFolder: {
+				data:{
+					deleteFolder: expect.objectContaining({
 						_id: expect.any(String),
-					},
+						children: expect.arrayContaining([
+							expect.objectContaining({
+								_id: expect.any(String),
+								name: expect.any(String)
+							}),
+						])
+					}),
 				},
 			});
 		});

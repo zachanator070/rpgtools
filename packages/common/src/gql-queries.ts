@@ -2,9 +2,9 @@ import gql from "graphql-tag";
 import {
 	ACCESS_CONTROL_LIST,
 	CURRENT_WIKI_ATTRIBUTES,
-	CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_PINS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS,
+	CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS,
 	GAME_ATTRIBUTES,
-	MODEL_ATTRIBUTES, SERVER_CONFIG_ROLES,
+	MODEL_ATTRIBUTES, PIN_ATTRIBUTES, SERVER_CONFIG_ROLES,
 	WIKIS_IN_FOLDER_ATTRIBUTES
 } from "./gql-fragments";
 
@@ -258,7 +258,6 @@ export const GAME_WIKI = gql`
 export const GET_CURRENT_WORLD = gql`
 	${CURRENT_WORLD_FOLDERS}
 	${ACCESS_CONTROL_LIST}
-	${CURRENT_WORLD_PINS}
 	query currentWorld($worldId: ID){
 		world(worldId: $worldId){
 			_id
@@ -290,7 +289,6 @@ export const GET_CURRENT_WORLD = gql`
 				...currentWorldFolders
 			}
 			...accessControlList
-			...currentWorldPins
 		}
 	}
 `;
@@ -309,4 +307,16 @@ export const GET_WORLDS = gql`
 		}
 	}
 `;
+
+export const GET_PINS = gql`
+	${PIN_ATTRIBUTES}
+	query pins($worldId: ID!, $page: Int) {
+		pins(worldId: $worldId, page: $page) {
+			docs {
+				...pinAttributes
+			}
+        }
+		
+	}
+`
 //endregion

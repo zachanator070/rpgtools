@@ -343,13 +343,11 @@ export type WorldFactory = (
 		name,
 		wikiPage,
 		rootFolder,
-		pins
 	}:{
 		_id: string,
 		name: string,
 		wikiPage: string,
 		rootFolder: string,
-		pins: string[]
 	}
 ) => World;
 

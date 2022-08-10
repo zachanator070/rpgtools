@@ -1,4 +1,4 @@
-import {WIKI_ADMIN, WIKI_READ, WORLD_READ} from "@rpgtools/common/src/permission-constants";
+import { WIKI_READ, WORLD_READ} from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
 import { container } from "../../../../src/di/inversify";
 import {Factory, RoleFactory} from "../../../../src/types";
@@ -231,25 +231,12 @@ describe("authorization-mutations", () => {
 				data: {
 					createRole: {
 						_id: expect.any(String),
-						roles: expect.arrayContaining([
-							expect.objectContaining({
-								_id: expect.any(String),
-								members: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-									}),
-								]),
-								permissions: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-										subject: expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									}),
-								]),
-							}),
-						]),
+						members: expect.any(Array),
+						permissions: expect.any(Array),
 						accessControlList: expect.any(Array),
+						world: {
+							_id: expect.any(String)
+						}
 					},
 				},
 				errors: undefined,
@@ -309,27 +296,15 @@ describe("authorization-mutations", () => {
 				data: {
 					addUserRole: {
 						_id: expect.any(String),
-						roles: expect.arrayContaining([
+						members: expect.arrayContaining([
 							expect.objectContaining({
 								_id: expect.any(String),
-								members: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-									}),
-								]),
-								permissions: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-										subject: expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									}),
-								]),
-								world: {
-									_id: expect.any(String),
-								},
 							}),
 						]),
+						permissions: expect.any(Array),
+						world: {
+							_id: expect.any(String),
+						},
 						accessControlList: expect.any(Array),
 					},
 				},
@@ -361,27 +336,16 @@ describe("authorization-mutations", () => {
 				data: {
 					removeUserRole: {
 						_id: expect.any(String),
-						roles: expect.arrayContaining([
+						members: expect.any(Array),
+						permissions: expect.any(Array),
+						accessControlList: expect.arrayContaining([
 							expect.objectContaining({
-								_id: expect.any(String),
-								members: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-									}),
-								]),
-								permissions: expect.arrayContaining([
-									expect.objectContaining({
-										_id: expect.any(String),
-										subject: expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									}),
-								]),
-								world: {
-									_id: expect.any(String),
-								},
-							}),
+								_id: expect.any(String)
+							})
 						]),
+						world: {
+							_id: expect.any(String),
+						},
 					},
 				},
 				errors: undefined,

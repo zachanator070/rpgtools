@@ -4,7 +4,6 @@ import {
 	CURRENT_WIKI_ATTRIBUTES,
 	CURRENT_WIKI_PLACE_ATTRIBUTES,
 	CURRENT_WORLD_FOLDERS,
-	CURRENT_WORLD_PINS,
 	CURRENT_WORLD_ROLES,
 	CURRENT_WORLD_WIKIS,
 	GAME_ATTRIBUTES,
@@ -15,7 +14,7 @@ import {
 	GAME_MODELS,
 	GAME_STROKES,
 	MODEL_ATTRIBUTES,
-	PERMISSIONS_GRANTED,
+	PERMISSIONS_GRANTED, PIN_ATTRIBUTES,
 	WIKIS_IN_FOLDER_ATTRIBUTES
 } from "./gql-fragments";
 
@@ -294,29 +293,29 @@ export const SET_GAME_MAP = gql`
 //region Map
 
 export const CREATE_PIN = gql`
-	${CURRENT_WORLD_PINS}
+	${PIN_ATTRIBUTES}
 	mutation createPin($mapId: ID!, $x: Float!, $y: Float!, $wikiId: ID){
 		createPin(mapId: $mapId, x: $x, y: $y, wikiId: $wikiId){
 			_id
-			...currentWorldPins	
+			...pinAttributes	
 		}
 	}
 `;
 export const DELETE_PIN = gql`
-	${CURRENT_WORLD_PINS}
+	${PIN_ATTRIBUTES}
 	mutation deletePin($pinId: ID!){
 		deletePin(pinId: $pinId){
 			_id
-			...currentWorldPins
+			...pinAttributes
 		}
 	}
 `;
 export const UPDATE_PIN = gql`
-	${CURRENT_WORLD_PINS}
+	${PIN_ATTRIBUTES}
 	mutation updatePin($pinId: ID!, $pageId: ID){
 		updatePin(pinId: $pinId, pageId: $pageId){
 			_id
-			...currentWorldPins
+			...pinAttributes
 		}
 	}
 `;
