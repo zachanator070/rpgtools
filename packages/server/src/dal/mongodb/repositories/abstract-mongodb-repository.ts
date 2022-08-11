@@ -23,8 +23,9 @@ export abstract class AbstractMongodbRepository<
 
 	create = async (entity: EntityType): Promise<void> => {
 		delete entity._id;
+		this.hydrateEmbeddedIds(entity);
 		const result = await this.model.create(entity);
-		entity._id = result._id.toString();
+		Object.assign(entity, this.buildEntity(result));
 	};
 
 	delete = async (entity: EntityType): Promise<void> => {
@@ -110,4 +111,6 @@ export abstract class AbstractMongodbRepository<
 	};
 
 	abstract buildEntity(document: DocumentType): EntityType;
+
+	hydrateEmbeddedIds(entity: EntityType) {}
 }

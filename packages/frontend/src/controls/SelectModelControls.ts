@@ -11,7 +11,7 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 	private renderRoot: any;
 	private camera: any;
 	private scene: any;
-	private selectControls: any;
+	selectControls: any;
 	private selectedPositionedModel: PositionedModel;
 	private glow: any;
 

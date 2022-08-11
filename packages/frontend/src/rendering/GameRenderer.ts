@@ -17,8 +17,9 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import EventEmitter from "events";
 import {Game, Image, PositionedModel} from "../types";
 import {MutationMethod} from "../hooks/useGQLMutation";
-import {AddStrokeVariables} from "../hooks/game/useAddFogStroke";
+import {AddStrokeVariables} from "../hooks/game/useAddStroke";
 import {SetModelPositionVariables} from "../hooks/game/useSetModelPosition";
+import {AddFogVariables} from "../hooks/game/useAddFogStroke";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -49,13 +50,13 @@ export class GameRenderer extends EventEmitter {
 	private scene;
 	private light;
 	private raycaster;
-	private selectControls;
-	selectModelControls;
-	private moveControls;
-	private rotateControls;
-	private paintControls;
-	private deleteControls;
-	private fogControls;
+	private selectControls: SelectControls;
+	public selectModelControls: SelectModelControls;
+	private moveControls: MoveControls;
+	private rotateControls: RotateControls;
+	private paintControls: PaintControls;
+	private deleteControls: DeleteControls;
+	private fogControls: PaintControls;
 	private meshedModels: MeshedModel[] = [];
 	private originalMeshedModels = [];
 	private mapMesh;
@@ -69,7 +70,7 @@ export class GameRenderer extends EventEmitter {
 	private addStroke: MutationMethod<Game, AddStrokeVariables>;
 	private setModelPosition: MutationMethod<Game, SetModelPositionVariables>;
 	private deleteModel: (model: PositionedModel) => void;
-	private addFogStroke: MutationMethod<Game, AddStrokeVariables>;
+	private addFogStroke: MutationMethod<Game, AddFogVariables>;
 
 	private mouseCoords: Vector2;
 
@@ -109,8 +110,8 @@ export class GameRenderer extends EventEmitter {
 			this.pixelsPerFoot = pixelsPerFoot;
 		}
 
-		this.setupScene();
 		this.setupRaycaster();
+		this.setupScene();
 
 		const animate = () => {
 			requestAnimationFrame(animate);
@@ -329,7 +330,7 @@ export class GameRenderer extends EventEmitter {
 		let paintControlsSaveState = null;
 		if (this.paintControls) {
 			paintControlsSaveState = this.paintControls.getSaveState();
-			this.paintControls.teardown();
+			this.paintControls.tearDown();
 		}
 		this.paintControls = new PaintControls(
 			this.renderRoot,
@@ -337,7 +338,14 @@ export class GameRenderer extends EventEmitter {
 			this.scene,
 			this.mapMesh,
 			{ pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage },
-			this.addStroke,
+			async (stroke) => await this.addStroke({
+				fill: stroke.fill,
+				path: stroke.path,
+				size: stroke.size,
+				strokeId: stroke._id,
+				type: stroke.type,
+				color: stroke.color
+			}),
 			DRAW_Y_POSITION
 		);
 		if (paintControlsSaveState) {
@@ -347,7 +355,7 @@ export class GameRenderer extends EventEmitter {
 		let fogControlsSaveState = null;
 		if (this.fogControls) {
 			fogControlsSaveState = this.fogControls.getSaveState();
-			this.fogControls.teardown();
+			this.fogControls.tearDown();
 		}
 		this.fogControls = new PaintControls(
 			this.renderRoot,
@@ -355,7 +363,14 @@ export class GameRenderer extends EventEmitter {
 			this.scene,
 			this.mapMesh,
 			{ pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage },
-			this.addFogStroke,
+			async (fogStroke) => {
+				await this.addFogStroke({
+					path: fogStroke.path,
+					size: fogStroke.size,
+					strokeId: fogStroke._id,
+					type: fogStroke.type
+				});
+			},
 			FOG_Y_POSITION
 		);
 
@@ -398,7 +413,13 @@ export class GameRenderer extends EventEmitter {
 			this.mapMesh,
 			this.selectControls,
 			async (meshedModel) => {
-				await this.setModelPosition(meshedModel.positionedModel);
+				await this.setModelPosition({
+					positionedModelId: meshedModel.positionedModel._id,
+					x: meshedModel.positionedModel.x,
+					z: meshedModel.positionedModel.z,
+					lookAtX: meshedModel.positionedModel.lookAtX,
+					lookAtZ: meshedModel.positionedModel.lookAtZ,
+				});
 			}
 		);
 
@@ -411,7 +432,13 @@ export class GameRenderer extends EventEmitter {
 			this.mapMesh,
 			this.selectControls,
 			async (meshedModel) => {
-				await this.setModelPosition(meshedModel.positionedModel);
+				await this.setModelPosition({
+					positionedModelId: meshedModel.positionedModel._id,
+					x: meshedModel.positionedModel.x,
+					z: meshedModel.positionedModel.z,
+					lookAtX: meshedModel.positionedModel.lookAtX,
+					lookAtZ: meshedModel.positionedModel.lookAtZ,
+				});
 			}
 		);
 
@@ -438,7 +465,7 @@ export class GameRenderer extends EventEmitter {
 		const model = positionedModel.model;
 		// push onto cache before loading to prevent race condition from model subscription
 		this.meshedModels.push({
-			positionedModel,
+			positionedModel: {...positionedModel},
 			mesh: null,
 		});
 
@@ -450,7 +477,7 @@ export class GameRenderer extends EventEmitter {
 				: new OBJLoader(this.loader);
 
 		loader.load(
-			`/models/${model.fileName}`,
+			`/models/${model.fileId}`,
 			(loadedModel) => {
 				const loadedMesh =
 					extension === "glb" ? loadedModel.scene : loadedModel;

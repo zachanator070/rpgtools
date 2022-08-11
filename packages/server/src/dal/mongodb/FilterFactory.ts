@@ -10,16 +10,16 @@ import {ObjectId} from 'bson';
 @injectable()
 export default class FilterFactory {
 
-    public build(conditions: FilterCondition[], useIdObjects = false) {
+    public build(conditions: FilterCondition[]) {
 
         const filter: any = {};
         for (let condition of conditions) {
             if (condition.operator === FILTER_CONDITION_OPERATOR_IN) {
-                filter[condition.field] = {$in: this.getConditionValue(condition, useIdObjects)};
+                filter[condition.field] = {$in: this.getConditionValue(condition)};
             } else if (condition.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
-                filter[condition.field] = this.getConditionValue(condition, useIdObjects);
+                filter[condition.field] = this.getConditionValue(condition);
             } else if (condition.operator === FILTER_CONDITION_REGEX) {
-                filter[condition.field] = {$regex: this.getConditionValue(condition, useIdObjects), $options: "i"};
+                filter[condition.field] = {$regex: this.getConditionValue(condition), $options: "i"};
             } else {
                 throw new Error(`Unsupported filter operator: ${condition.operator}`);
             }
@@ -28,22 +28,21 @@ export default class FilterFactory {
 
     }
 
-    private checkIdLength(id: string): void {
-        if (id.length !== 24) {
-            throw new Error(`ID ${id} must be at least 24 characters`);
-        }
-    }
-
-    private getConditionValue(condition: FilterCondition, useIdObjects: boolean): any {
-
+    private tryCastToObjectId(value: any): any {
         const idRegex = /[0-9a-f]{24}/;
 
-        if (typeof condition.value === "string" && condition.value.match(idRegex)) {
-            return new ObjectId(condition.value);
-        } else if (Array.isArray(condition.value)) {
-            return condition.value.map(value => new ObjectId(value));
+        if (typeof value === "string" && value.match(idRegex)) {
+            return new ObjectId(value);
+        }
+        return value;
+    }
+
+    private getConditionValue(condition: FilterCondition): any {
+
+        if (Array.isArray(condition.value)) {
+            return condition.value.map(value => this.tryCastToObjectId(value));
         }
 
-        return condition.value
+        return this.tryCastToObjectId(condition.value)
     }
 }

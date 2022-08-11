@@ -54,7 +54,7 @@ export class MongodbFileRepository implements FileRepository {
 	}
 
 	find = async (conditions: FilterCondition[]): Promise<File[]> => {
-		const filter: any = this.filterFactory.build(conditions, true);
+		const filter: any = this.filterFactory.build(conditions);
 		const gfs = new GridFSBucket(mongoose.connection.db);
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];

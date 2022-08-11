@@ -1,7 +1,8 @@
 import { withFilter } from "graphql-subscriptions";
 import { container } from "../di/inversify";
-import { EventPublisher } from "../types";
+import {EventPublisher, SessionContext} from "../types";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
 
 export const GAME_CHAT_EVENT = "GAME_CHAT_EVENT";
 export const ROSTER_CHANGE_EVENT = "PLAYER_JOINED_EVENT";
@@ -20,12 +21,12 @@ export const SubscriptionResolvers = {
 	gameChat: {
 		subscribe: withFilter(
 			() => getPubSub().asyncIterator([GAME_CHAT_EVENT]),
-			(payload, { gameId }, { currentUser }) => {
+			(payload, { gameId }, {securityContext}: SessionContext) => {
 				return (
 					payload.gameId === gameId &&
-					(payload.gameChat.sender === currentUser.username ||
-						payload.gameChat.receiver === currentUser.username ||
-						payload.gameChat.receiver === "all")
+					(payload.gameChat.senderUser === securityContext.user._id ||
+						payload.gameChat.receiverUser === securityContext.user._id ||
+						payload.gameChat.receiverUser === MESSAGE_ALL_RECEIVE)
 				);
 			}
 		),
@@ -34,7 +35,7 @@ export const SubscriptionResolvers = {
 		subscribe: withFilter(
 			() => getPubSub().asyncIterator([ROSTER_CHANGE_EVENT]),
 			(payload, { gameId }) => {
-				return payload.gameRosterChange._id.equals(gameId);
+				return payload.gameRosterChange._id === gameId;
 			}
 		),
 	},
@@ -42,7 +43,7 @@ export const SubscriptionResolvers = {
 		subscribe: withFilter(
 			() => getPubSub().asyncIterator([GAME_MAP_CHANGE]),
 			(payload, { gameId }) => {
-				return payload.gameMapChange._id.equals(gameId);
+				return payload.gameMapChange._id === gameId;
 			}
 		),
 	},

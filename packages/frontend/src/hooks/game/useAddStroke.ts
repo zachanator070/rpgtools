@@ -3,8 +3,8 @@ import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutati
 import {Game, PathNodeInput} from "../../types";
 import {ADD_STROKE} from "@rpgtools/common/src/gql-mutations";
 
-interface AddStrokeVariables {
-	gameId: string;
+export interface AddStrokeVariables {
+	gameId?: string;
 	path: PathNodeInput[];
 	type: string;
 	size: number;

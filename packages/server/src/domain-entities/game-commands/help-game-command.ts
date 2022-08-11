@@ -6,6 +6,7 @@ import {
 	GameCommandOptionDefinition,
 } from "./abstract-game-command";
 import { Character, Message } from "../game";
+import {MESSAGE_ALL_RECEIVE} from "../../services/game-service";
 
 export class HelpGameCommand extends AbstractGameCommand {
 	args: GameCommandArgDefinition[] = [
@@ -45,7 +46,8 @@ export class HelpGameCommand extends AbstractGameCommand {
 				this.allCommands.map((command) => command.formatHelpMessage()).join("\n\n");
 		}
 		if (options.length > 0) {
-			response.receiver = "all";
+			response.receiver = MESSAGE_ALL_RECEIVE;
+			response.receiverUser = MESSAGE_ALL_RECEIVE;
 		}
 		return [response];
 	}

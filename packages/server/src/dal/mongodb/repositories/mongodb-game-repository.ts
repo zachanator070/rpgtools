@@ -23,6 +23,7 @@ import mongoose from "mongoose";
 import { GameModel } from "../models/game";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import {ObjectId} from "bson";
 
 @injectable()
 export class MongodbGameRepository
@@ -34,25 +35,21 @@ export class MongodbGameRepository
 
 	model: mongoose.Model<any> = GameModel;
 
-	build(entity: GameDocument): Game {
+	buildEntity(document: GameDocument): Game {
 		return this.gameFactory(
 			{
-				_id: entity._id.toString(),
-				passwordHash: entity.passwordHash,
-				world: entity.world.toString(),
-				map: entity.map ? entity.map.toString() : null,
-				characters: this.buildCharacters(entity.characters),
-				strokes: this.buildStrokes(entity.strokes),
-				fog: this.buildFogStrokes(entity.fog),
-				messages: this.buildMessages(entity.messages),
-				models: this.buildModels(entity.models),
-				host: entity.host.toString()
+				_id: document._id.toString(),
+				passwordHash: document.passwordHash,
+				world: document.world.toString(),
+				map: document.map ? document.map.toString() : null,
+				characters: this.buildCharacters(document.characters),
+				strokes: this.buildStrokes(document.strokes),
+				fog: this.buildFogStrokes(document.fog),
+				messages: this.buildMessages(document.messages),
+				models: this.buildModels(document.models),
+				host: document.host.toString()
 			}
 		);
-	}
-
-	buildEntity(document: GameDocument): Game {
-		return undefined;
 	}
 
 	private buildNodePath(path: PathNodeDocument[]): PathNode[] {
@@ -122,7 +119,9 @@ export class MongodbGameRepository
 			messages.push(
 				new Message(
 					document.sender,
+					document.senderUser,
 					document.receiver,
+					document.receiverUser,
 					document.message,
 					document.timestamp,
 					document._id.toString()
@@ -138,7 +137,7 @@ export class MongodbGameRepository
 			models.push(
 				new InGameModel(
 					document._id.toString(),
-					document.gameModel.toString(),
+					document.model.toString(),
 					document.x,
 					document.z,
 					document.lookAtX,
@@ -149,5 +148,11 @@ export class MongodbGameRepository
 			);
 		}
 		return models;
+	}
+
+	hydrateEmbeddedIds(entity: Game) {
+		for (let character of entity.characters) {
+			character._id = (new ObjectId()).toString();
+		}
 	}
 }

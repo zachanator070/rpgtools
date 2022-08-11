@@ -41,15 +41,8 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
-	create = async ({
-		req,
-		res
-	}: ExpressSessionContextParameters): Promise<SessionContext> => {
+	create = async (accessToken: string, refreshToken: string, cookieManager: CookieManager): Promise<SessionContext> => {
 		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory({});
-		const cookieManager: CookieManager = new ExpressCookieManager(res);
-
-		const refreshToken: string = req.cookies["refreshToken"];
-		const accessToken: string = req.cookies["accessToken"];
 
 		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, unitOfWork);
 

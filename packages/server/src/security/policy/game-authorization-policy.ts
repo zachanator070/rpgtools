@@ -4,7 +4,7 @@ import { SecurityContext } from "../security-context";
 import {
 	GAME_ADMIN,
 	GAME_ADMIN_ALL,
-	GAME_FOG_WRITE,
+	GAME_FOG_WRITE, GAME_HOST,
 	GAME_MODEL,
 	GAME_PAINT,
 	GAME_READ,
@@ -25,7 +25,7 @@ export class GameAuthorizationPolicy implements EntityAuthorizationPolicy<Game> 
 	};
 
 	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(GAME_RW, this.entity._id);
+		return context.hasPermission(GAME_HOST, this.entity.world);
 	};
 
 	canRead = async (context: SecurityContext): Promise<boolean> => {
