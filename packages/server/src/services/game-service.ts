@@ -44,6 +44,9 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
 import {AuthorizationService} from "./authorization-service";
 
+export const MESSAGE_ALL_RECEIVE = "all";
+export const MESSAGE_SERVER_USER = "Server";
+
 @injectable()
 export class GameService {
 
@@ -76,7 +79,7 @@ export class GameService {
 				map: null,
 				characters: [
 					new Character(
-						"",
+						null,
 						characterName || context.user.username,
 						context.user._id,
 						this.genColor(),
@@ -96,6 +99,7 @@ export class GameService {
 			}
 		);
 
+		await unitOfWork.gameRepository.create(game);
 		for (let permission of GAME_PERMISSIONS) {
 			const permissionAssignment = this.permissionAssignmentFactory(
 				{
@@ -109,7 +113,6 @@ export class GameService {
 			context.user.permissions.push(permissionAssignment._id);
 			context.permissions.push(permissionAssignment);
 		}
-		await unitOfWork.gameRepository.create(game);
 		await unitOfWork.userRepository.update(context.user);
 		return game;
 	};
@@ -205,7 +208,7 @@ export class GameService {
 			const serverResponses = this.gameCommands(game, message, context.user);
 			messages.push(...serverResponses);
 		} else {
-			const userMessage = new Message(character.name, "all", message, Date.now(), uuidv4());
+			const userMessage = new Message(character.name, character.player, MESSAGE_ALL_RECEIVE, MESSAGE_ALL_RECEIVE, message, Date.now(), uuidv4());
 			messages.push(userMessage);
 		}
 		game.messages = game.messages.concat(messages);
@@ -608,7 +611,7 @@ export class GameService {
 		let serverResponse = command.getDefaultResponse(executor);
 		const messages: Message[] = [];
 		if (command.echoCommand) {
-			messages.push(new Message(executor.name, "Server", message, Date.now(), uuidv4()));
+			messages.push(new Message(executor.name, executor.player, MESSAGE_SERVER_USER, MESSAGE_SERVER_USER, message, Date.now(), uuidv4()));
 		}
 		if (!command) {
 			serverResponse.message = `${command} is not a recognized server command. Try using /help for command usage help.`;

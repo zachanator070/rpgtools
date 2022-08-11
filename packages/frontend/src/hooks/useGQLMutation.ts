@@ -27,9 +27,10 @@ export default function useGQLMutation<TData, TVariables=void>(
 		...response,
 		loading,
 		mutate: async (givenVariables?: TVariables, options?: MutationHookOptions) => {
-			const originalVariables = Object.create(variables);
-			Object.assign(originalVariables, givenVariables);
-			const result = await mutation({ variables: originalVariables, ...options });
+			const combinedVariables: any = {};
+			Object.assign(combinedVariables, variables);
+			Object.assign(combinedVariables, givenVariables);
+			const result = await mutation({ variables: combinedVariables, ...options });
 			return (result.data as any)[response.queryName];
 		}
 	};

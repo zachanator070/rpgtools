@@ -25,7 +25,7 @@ export class WhisperGameCommand extends AbstractGameCommand {
 	command = "/w";
 	description = "Whisper private message to another player";
 	echoCommand = false;
-	options: GameCommandOptionDefinition[];
+	options: GameCommandOptionDefinition[] = [];
 
 	characters: Character[];
 	constructor(characters: Character[]) {

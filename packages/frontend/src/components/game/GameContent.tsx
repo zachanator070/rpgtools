@@ -51,6 +51,7 @@ export default function GameContent({ currentGame }: GameContentProps) {
 	const { gameModelDeleted } = useGameModelDeletedSubscription();
 	const { gameFogStrokeAdded } = useGameFogSubscription();
 	const renderParent: Ref<HTMLDivElement> = useRef();
+	const focusedElement = useRef<HTMLElement>(null);
 
 	useEffect(() => {
 		(async () => {
@@ -90,18 +91,15 @@ export default function GameContent({ currentGame }: GameContentProps) {
 						});
 					},
 					addFogStroke,
-					currentGame.map.pixelsPerFoot ?? 1
+					currentGame.map ? currentGame.map.pixelsPerFoot : 1
 				)
 			);
 		})();
-		renderCanvas.current.addEventListener("mouseover", (event) => {
-			if ((event.relatedTarget) !== renderCanvas.current) {
-				return;
-			}
-			renderCanvas.current.focus();
-		});
 
-		renderCanvas.current.addEventListener("keydown", async ({ code }) => {
+		const mouseOverListener = (event) => {
+			focusedElement.current = event.target as HTMLElement;
+		};
+		const keyDownListener = ({ code }) => {
 			if (
 				![
 					"KeyP",
@@ -113,52 +111,60 @@ export default function GameContent({ currentGame }: GameContentProps) {
 					"KeyS",
 					"KeyA",
 					"KeyL",
-				].includes(code)
+				].includes(code) || renderCanvas.current !== focusedElement.current
 			) {
 				return;
 			}
 			switch (code) {
 				case "KeyC":
-					await setControlsMode(CAMERA_CONTROLS);
+					setControlsMode(CAMERA_CONTROLS);
 					break;
 				case "KeyP":
 					if (currentGame.canPaint) {
-						await setControlsMode(PAINT_CONTROLS);
+						setControlsMode(PAINT_CONTROLS);
 					}
 					break;
 				case "KeyM":
 					if (currentGame.canModel) {
-						await setControlsMode(MOVE_MODEL_CONTROLS);
+						setControlsMode(MOVE_MODEL_CONTROLS);
 					}
 					break;
 				case "KeyR":
 					if (currentGame.canModel) {
-						await setControlsMode(ROTATE_MODEL_CONTROLS);
+						setControlsMode(ROTATE_MODEL_CONTROLS);
 					}
 					break;
 				case "KeyX":
 					if (currentGame.canModel) {
-						await setControlsMode(DELETE_CONTROLS);
+						setControlsMode(DELETE_CONTROLS);
 					}
 					break;
 				case "KeyF":
 					if (currentGame.canWriteFog) {
-						await setControlsMode(FOG_CONTROLS);
+						setControlsMode(FOG_CONTROLS);
 					}
 					break;
 				case "KeyS":
-					await setControlsMode(SELECT_MODEL_CONTROLS);
+					setControlsMode(SELECT_MODEL_CONTROLS);
 					break;
 				case "KeyA":
 					if (currentGame.canModel) {
-						await setControlsMode(ADD_MODEL_CONTROLS);
+						setControlsMode(ADD_MODEL_CONTROLS);
 					}
 					break;
 				case "KeyL":
-					await setControlsMode(SELECT_LOCATION_CONTROLS);
+					setControlsMode(SELECT_LOCATION_CONTROLS);
 					break;
 			}
-		});
+		};
+		window.addEventListener("mouseover", mouseOverListener);
+
+		window.addEventListener("keydown", keyDownListener);
+
+		return () => {
+			window.removeEventListener("mouseover", mouseOverListener);
+			window.removeEventListener("keydown", keyDownListener);
+		}
 	}, []);
 
 	useEffect(() => {

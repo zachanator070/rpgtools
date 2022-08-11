@@ -131,16 +131,20 @@ export class PathNode {
 
 export class Message {
 	public sender: string;
+	public senderUser: string;
 	public receiver: string;
+	public receiverUser: string;
 	public message: string;
 	public timestamp: number;
 	public _id: string;
 
 	type: string;
 
-	constructor(sender: string, receiver: string, message: string, timestamp: number, id: string) {
+	constructor(sender: string, senderUser: string, receiver: string, receiverUser: string, message: string, timestamp: number, id: string) {
 		this.sender = sender;
+		this.senderUser = senderUser;
 		this.receiver = receiver;
+		this.receiverUser = receiverUser;
 		this.message = message;
 		this.timestamp = timestamp;
 		this._id = id;

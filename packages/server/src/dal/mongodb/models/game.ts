@@ -102,9 +102,17 @@ const gameSchema = new mongoose.Schema({
 				type: String,
 				required: [true, "sender required"],
 			},
+			senderUser: {
+				type: String,
+				required: [true, "sender user required"],
+			},
 			receiver: {
 				type: String,
 				required: [true, "receiver required"],
+			},
+			receiverUser: {
+				type: String,
+				required: [true, "receiver user required"],
 			},
 			message: {
 				type: String,

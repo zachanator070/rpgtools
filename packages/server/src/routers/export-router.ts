@@ -2,14 +2,19 @@ import express from "express";
 import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {AbstractArchiveFactory, SessionContextFactory} from "../types";
+import {AbstractArchiveFactory, CookieManager, SessionContextFactory} from "../types";
 import {ContentExportService} from "../services/content-export-service";
+import {ExpressCookieManager} from "../server/express-cookie-manager";
 
 let ExportRouter = express.Router();
 
 ExportRouter.get("/:model/:id", async (req, res) => {
 	const sessionFactory = container.get<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory);
-	const sessionContext = await sessionFactory.create({ req, res });
+	const cookieManager: CookieManager = new ExpressCookieManager(res);
+
+	const refreshToken: string = req.cookies["refreshToken"];
+	const accessToken: string = req.cookies["accessToken"];
+	const sessionContext = await sessionFactory.create(accessToken, refreshToken, cookieManager);
 
 	const modelName = req.params.model;
 	const docId = req.params.id;

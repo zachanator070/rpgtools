@@ -16,7 +16,7 @@ import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongo
 import { FilterCondition } from "../dal/filter-condition";
 import { RoleSeeder } from "../seeders/role-seeder";
 import { ServerConfigSeeder } from "../seeders/server-config-seeder";
-import { ApiServer, Seeder, SessionContextFactory } from "../types";
+import {ApiServer, CookieManager, Seeder, SessionContextFactory} from "../types";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ModelRouter } from "../routers/model-router";
 import ExportRouter from "../routers/export-router";
@@ -29,6 +29,7 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { GraphQLRequest } from "apollo-server-types";
 import cors from "cors";
+import {ExpressCookieManager} from "./express-cookie-manager";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -66,16 +67,26 @@ export class ExpressApiServer implements ApiServer {
 		this.httpServer = http.createServer(this.expressServer);
 		this.webSocketServer = new WebSocketServer(
 			{
-				// This is the `httpServer` we created in a previous step.
 				server: this.httpServer,
-				path: '/graphql',
+				path: '/subscriptions',
 			}
 		);
 
-		const serverCleanup = useServer({ schema }, this.webSocketServer);
+		const serverCleanup = useServer({
+			schema,
+			context: (params) => {
+				return this.sessionContextFactory.create(params.connectionParams.accessToken as string, null, null);
+			},
+		}, this.webSocketServer);
 		this.gqlServer = new ApolloServer({
 			schema,
-			context: (params) => this.sessionContextFactory.create(params),
+			context: ({req, res}) => {
+				const cookieManager: CookieManager = new ExpressCookieManager(res);
+
+				const refreshToken: string = req.cookies["refreshToken"];
+				const accessToken: string = req.cookies["accessToken"];
+				return this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
+			},
 			csrfPrevention: true,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
@@ -91,7 +102,7 @@ export class ExpressApiServer implements ApiServer {
 			]
 		});
 
-		this.expressServer.use(bodyParser.json());
+		this.expressServer.use(bodyParser.json({limit: "5mb"}));
 		this.expressServer.use(morgan("tiny"));
 
 		this.expressServer.use(cookieParser());

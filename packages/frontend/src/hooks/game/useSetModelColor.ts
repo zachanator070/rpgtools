@@ -15,7 +15,7 @@ interface SetModelColorResult extends GqlMutationResult<Game, SetModelColorVaria
 
 export default function useSetModelColor(): SetModelColorResult{
 	const { currentGame } = useCurrentGame();
-	const returnValues = useGQLMutation<Game, SetModelColorVariables>(SET_MODEL_COLOR, {gameId: currentGame});
+	const returnValues = useGQLMutation<Game, SetModelColorVariables>(SET_MODEL_COLOR, {gameId: currentGame._id});
 	return {
 		...returnValues,
 		setModelColor: returnValues.mutate

@@ -4,7 +4,7 @@ import {Game} from "../../types";
 import {SET_MODEL_POSITION} from "@rpgtools/common/src/gql-mutations";
 
 export interface SetModelPositionVariables {
-	gameId: string;
+	gameId?: string;
 	positionedModelId: string;
 	x: number;
 	z: number;

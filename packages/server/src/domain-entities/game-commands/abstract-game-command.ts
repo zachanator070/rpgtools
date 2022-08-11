@@ -1,5 +1,6 @@
 import { Character, Message } from "../game";
 import { v4 as uuidv4 } from "uuid";
+import {MESSAGE_SERVER_USER} from "../../services/game-service";
 
 export interface GameCommandArgDefinition {
 	name: string;
@@ -31,8 +32,10 @@ export abstract class AbstractGameCommand {
 	abstract options: GameCommandOptionDefinition[];
 	getDefaultResponse = (executor: Character): Message => {
 		return new Message(
-			"Server",
+			MESSAGE_SERVER_USER,
+			MESSAGE_SERVER_USER,
 			executor.name,
+			executor.player,
 			`Server error: no response message given!`,
 			Date.now(),
 			uuidv4()

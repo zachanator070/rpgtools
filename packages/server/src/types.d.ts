@@ -377,7 +377,7 @@ export interface SessionContext {
 }
 
 export interface SessionContextFactory {
-	create: (parameters: any) => Promise<SessionContext>;
+	create: (accessToken: string, refreshToken: string, cookieManager: CookieManager) => Promise<SessionContext>;
 }
 
 export interface Seeder {
@@ -614,13 +614,15 @@ export interface CharacterDocument extends MongoDBEntity {
 
 export interface MessageDocument extends MongoDBEntity {
 	sender: string;
+	senderUser: string;
 	receiver: string;
+	receiverUser: string;
 	message: string;
 	timestamp: number;
 }
 
 export interface InGameModelDocument extends MongoDBEntity {
-	gameModel: Schema.Types.ObjectId;
+	model: Schema.Types.ObjectId;
 	x: number;
 	z: number;
 	lookAtX: number;

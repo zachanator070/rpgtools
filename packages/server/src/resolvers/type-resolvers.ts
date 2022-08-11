@@ -26,6 +26,7 @@ import { Chunk } from "../domain-entities/chunk";
 import { ServerConfig } from "../domain-entities/server-config";
 import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
+import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
@@ -293,7 +294,8 @@ export const TypeResolvers = {
 		subject: async (assignment: PermissionAssignment, _: any, {unitOfWork}: SessionContext): Promise<DomainEntity> => {
 			const mapper = container.get<EntityMapper>(INJECTABLE_TYPES.EntityMapper);
 			const repository = mapper.map(assignment.subjectType).getRepository(unitOfWork);
-			return repository.findById(assignment.subject);
+			const subject = await repository.findById(assignment.subject);
+			return subject;
 		},
 		canWrite: async (
 			assignment: PermissionAssignment,
@@ -335,7 +337,7 @@ export const TypeResolvers = {
 			return dataLoader.getDocument(game.map, unitOfWork);
 		},
 		characters: async (game: Game, _: any, {unitOfWork}: SessionContext): Promise<any[]> => {
-			const dataLoader = container.get<DataLoader<User>>(INJECTABLE_TYPES.UserRepository);
+			const dataLoader = container.get<DataLoader<User>>(INJECTABLE_TYPES.UserDataLoader);
 			const characters = [];
 			for (let character of game.characters) {
 				characters.push({
@@ -352,10 +354,16 @@ export const TypeResolvers = {
 			}
 			return characters;
 		},
+		host: async (game: Game, _: any, {unitOfWork}: SessionContext): Promise<any> => {
+			const dataLoader = container.get<DataLoader<User>>(INJECTABLE_TYPES.UserDataLoader);
+			if (game.host) {
+				return dataLoader.getDocument(game.host, unitOfWork);
+			}
+		},
 		messages: async (game: Game, _: any, { securityContext }: SessionContext): Promise<Message[]> => {
 			return game.messages.filter(
 				(message) =>
-					message.receiver === securityContext.user.username || message.receiver === "all"
+					message.receiverUser === securityContext.user._id || message.receiver === MESSAGE_ALL_RECEIVE
 			);
 		},
 		canWriteFog: async (game: Game, _: any, { securityContext }: SessionContext): Promise<boolean> => {
