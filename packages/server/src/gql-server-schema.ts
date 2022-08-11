@@ -490,6 +490,7 @@ export const typeDefs = gql`
 		int: Int!
 		wis: Int!
 		cha: Int!
+		color: String!
 	}
 
 	input CharacterInput {

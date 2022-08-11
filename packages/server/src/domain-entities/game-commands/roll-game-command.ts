@@ -6,6 +6,7 @@ import {
 	GameCommandOptionDefinition,
 } from "./abstract-game-command";
 import { Character, Message } from "../game";
+import {MESSAGE_ALL_RECEIVE} from "../../services/game-service";
 
 export class RollGameCommand extends AbstractGameCommand {
 	args: GameCommandArgDefinition[] = [
@@ -59,7 +60,8 @@ export class RollGameCommand extends AbstractGameCommand {
 			response.message = this.formatHelpMessage();
 		}
 		if (!options.find((option) => option.name === "-q")) {
-			response.receiver = "all";
+			response.receiver = MESSAGE_ALL_RECEIVE;
+			response.receiverUser = MESSAGE_ALL_RECEIVE;
 		}
 		return [response];
 	}

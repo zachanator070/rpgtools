@@ -29,7 +29,7 @@ export default function SelectModel({
 	});
 
 	return (
-		<span>
+		<div>
 			<Select
 				showSearch
 				value={value}
@@ -69,6 +69,6 @@ export default function SelectModel({
 					Clear
 				</Button>
 			)}
-		</span>
+		</div>
 	);
 };

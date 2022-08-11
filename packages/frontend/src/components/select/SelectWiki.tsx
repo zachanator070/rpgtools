@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {ReactChildren, ReactComponentElement, useState} from "react";
 import { Button, Select, Spin } from "antd";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
 import { SearchOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ interface SelectWikiProps <T extends WikiPage>{
 	style?: any;
 	showClear?: boolean;
 	canAdmin?: boolean;
+	children?: ReactComponentElement<any>[] | ReactComponentElement<any>;
 }
 export default function SelectWiki<T extends WikiPage>({
 	types,
@@ -18,6 +19,7 @@ export default function SelectWiki<T extends WikiPage>({
 	style,
 	showClear = false,
 	canAdmin,
+	children
 }: SelectWikiProps<T>) {
 	const params = useParams();
 	const { refetch, wikis, loading } = useSearchWikiPages({
@@ -48,8 +50,16 @@ export default function SelectWiki<T extends WikiPage>({
 		}
 	};
 
+	const kids = [];
+	if (showClear) {
+		kids.push(<Button style={{marginRight: "1em"}} onClick={async () => await onSelect(null)}>Clear</Button>);
+	}
+	if (children) {
+		kids.push(...React.Children.toArray(children))
+	}
+
 	return (
-		<span>
+		<div>
 			<Select
 				showSearch
 				value={value}
@@ -71,11 +81,10 @@ export default function SelectWiki<T extends WikiPage>({
 			>
 				{options}
 			</Select>
-			{showClear && (
-				<span className={"margin-md-left"}>
-					<Button onClick={async () => await onSelect(null)}>Clear</Button>
-				</span>
-			)}
-		</span>
+			{kids.length > 0 && <div style={{display: "flex", marginTop: "1em"}}>
+				{...kids}
+			</div> }
+
+		</div>
 	);
 };

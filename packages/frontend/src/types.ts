@@ -288,6 +288,7 @@ export interface GameCharacter {
     int: number;
     wis: number;
     cha: number;
+    color: string;
 }
 
 export interface Stroke {

@@ -252,6 +252,7 @@ export const GAME_CHARACTERS = gql`
             int
             wis
             cha
+            color
         }
     }
 `;

@@ -29,8 +29,8 @@ export default function AddModelSection() {
 
 	return (
 		<div className={"margin-lg"}>
-			<div>
-				<span className={"margin-md"}>Search for</span>
+			<div style={{display: "flex", marginBottom: "1em"}}>
+				<div style={{marginLeft: "1em", marginRight: "1em"}}>Search for</div>
 
 				<Switch
 					checkedChildren={"Wiki's with Models"}

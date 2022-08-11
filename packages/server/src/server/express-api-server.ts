@@ -75,7 +75,7 @@ export class ExpressApiServer implements ApiServer {
 		const serverCleanup = useServer({
 			schema,
 			context: (params) => {
-				return this.sessionContextFactory.create(params.connectionParams.accessToken as string, null, null);
+				return this.sessionContextFactory.create(params.connectionParams.accessToken as string, params.connectionParams.refreshToken as string, null);
 			},
 		}, this.webSocketServer);
 		this.gqlServer = new ApolloServer({

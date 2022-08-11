@@ -41,13 +41,16 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
 	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
 
-	create = async (accessToken: string, refreshToken: string, cookieManager: CookieManager): Promise<SessionContext> => {
+	create = async (accessToken: string, refreshToken: string, cookieManager?: CookieManager): Promise<SessionContext> => {
 		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory({});
 
 		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, unitOfWork);
 
 		if (!currentUser) {
-			cookieManager.clearCookie(ACCESS_TOKEN);
+			if (cookieManager) {
+				cookieManager.clearCookie(ACCESS_TOKEN);
+			}
+
 			currentUser = await this.authenticationService.getUserFromRefreshToken(
 				refreshToken,
 				unitOfWork
@@ -64,11 +67,15 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 						version,
 						unitOfWork
 					);
-					cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
-					cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
+					if (cookieManager) {
+						cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
+						cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
+					}
 				} else {
 					// refreshToken was invalidated
-					cookieManager.clearCookie(REFRESH_TOKEN);
+					if (cookieManager) {
+						cookieManager.clearCookie(REFRESH_TOKEN);
+					}
 				}
 			} else {
 				currentUser = this.userFactory({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: [], permissions: []});

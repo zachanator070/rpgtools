@@ -63,7 +63,7 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 				onChange={(key) => setActiveKey(key)}
 				type={"card"}
 				style={{
-					height: "100%",
+					paddingTop: "1em"
 				}}
 			>
 				<TabPane
