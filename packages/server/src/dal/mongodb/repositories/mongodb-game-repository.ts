@@ -152,7 +152,9 @@ export class MongodbGameRepository
 
 	hydrateEmbeddedIds(entity: Game) {
 		for (let character of entity.characters) {
-			character._id = (new ObjectId()).toString();
+			if (!character._id) {
+				character._id = (new ObjectId()).toString();
+			}
 		}
 	}
 }

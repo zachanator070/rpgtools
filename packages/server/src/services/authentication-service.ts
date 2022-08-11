@@ -140,9 +140,10 @@ export class AuthenticationService {
 		if (!config.registerCodes.includes(registerCode)) {
 			throw new Error("Register code not valid");
 		}
+		const newUser = await this.registerUser(email, username, password, unitOfWork)
 		config.registerCodes = config.registerCodes.filter((code) => code !== registerCode);
 		await unitOfWork.serverConfigRepository.update(config);
-		return this.registerUser(email, username, password, unitOfWork);
+		return newUser;
 	};
 
 	registerUser = async (

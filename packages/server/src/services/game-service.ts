@@ -141,9 +141,10 @@ export class GameService {
 			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
 		}
 		context.user.permissions.push(permissionAssignment._id);
+		await unitOfWork.userRepository.update(context.user);
 		game.characters.push(
 			new Character(
-				"",
+				null,
 				characterName || context.user.username,
 				context.user._id,
 				this.genColor(),

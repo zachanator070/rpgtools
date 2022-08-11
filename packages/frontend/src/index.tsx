@@ -14,7 +14,6 @@ import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchSubtypes from "./fetchSubtypes";
 import {createRoot} from "react-dom/client";
-import MapWikiContext from "./MapWikiContext";
 
 fetchSubtypes().then(possibleTypes => {
 
@@ -81,9 +80,14 @@ fetchSubtypes().then(possibleTypes => {
 
 	const wsLink = new GraphQLWsLink(createClient({
 		url: ws_url,
-		connectionParams: {
-			accessToken: getCookie("accessToken"),
+		connectionParams: () => {
+			return {
+				accessToken: getCookie("accessToken"),
+				refreshToken: getCookie("refreshToken")
+			}
 		},
+		shouldRetry: () => true,
+		retryAttempts: 3,
 	}));
 
 // The split function takes three parameters:

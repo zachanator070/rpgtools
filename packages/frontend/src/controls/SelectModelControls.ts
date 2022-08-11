@@ -46,8 +46,6 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 
 		const basicMaterial = new MeshBasicMaterial({
 			color: new THREE.Color(0xffff00),
-			side: THREE.BackSide,
-			blending: THREE.AdditiveBlending,
 			transparent: true,
 			opacity: 0.5,
 		});

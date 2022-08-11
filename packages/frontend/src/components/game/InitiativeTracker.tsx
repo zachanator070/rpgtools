@@ -47,7 +47,7 @@ export default function InitiativeTracker() {
 				flexDirection: "row",
 				justifyContent: "space-between",
 				alignItems: "center",
-				height: "60px",
+				height: "6em",
 			}}
 		>
 			<InitiativeTrackerDummyCard
@@ -59,7 +59,7 @@ export default function InitiativeTracker() {
 				roster.map((player) => (
 					<InitiativeTrackerCard
 						key={player.name}
-						{...player}
+						character={player}
 						setData={setData}
 						data={roster}
 						loading={setCharacterLoading}

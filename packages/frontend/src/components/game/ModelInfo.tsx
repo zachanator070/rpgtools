@@ -118,81 +118,81 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 					</div>
 				)}
 				{currentGame.canModel && (
-					<div className={"margin-md"}>
-						<span className={"margin-md-right"}>Set Wiki Page:</span>
-						<SelectWiki
-							onChange={async (wiki) => setNewWiki(wiki)}
-							showClear={true}
-						/>
-						<span className={"margin-md-left"}>
-							<Button
-								type={"primary"}
-								onClick={async () =>
-									await setPositionedModelWiki({
-										positionedModelId: positionedModel._id,
-										wikiId: newWiki ? newWiki._id : null,
-									})
-								}
+					<div>
+						<h3>Set Wiki Page:</h3>
+						<div style={{marginLeft: "1em"}}>
+							<SelectWiki
+								onChange={async (wiki) => setNewWiki(wiki)}
+								showClear={true}
 							>
-								Set Wiki
-							</Button>
-						</span>
+								<Button
+									type={"primary"}
+									onClick={async () =>
+										await setPositionedModelWiki({
+											positionedModelId: positionedModel._id,
+											wikiId: newWiki ? newWiki._id : null,
+										})
+									}
+								>
+									Set Wiki
+								</Button>
+							</SelectWiki>
+						</div>
+
+						<h3 style={{marginTop: "1em"}}>Select Color:</h3>
+						<div style={{marginLeft: "1em"}}>
+							<Input
+								type={"color"}
+								value={color}
+								defaultValue={positionedModel.color}
+								style={{
+									width: "100px",
+								}}
+								onChange={async (e) => {
+									const value = e.target.value;
+									await setColor(value);
+								}}
+							/>
+							<div style={{display: "flex", marginTop: "1em"}}>
+								<Button
+									onClick={async () => {
+										await setModelColor({
+											positionedModelId: positionedModel._id,
+											color: color,
+										});
+									}}
+									style={{marginRight: "1em"}}
+								>
+									Set Color
+								</Button>
+								<Button
+									onClick={async () => {
+										await setModelColor({
+											positionedModelId: positionedModel._id,
+											color: null,
+										});
+									}}
+								>
+									Clear Color
+								</Button>
+							</div>
+						</div>
+
+						<Button
+							danger={true}
+							onClick={async () => {
+								await renderer.selectModelControls.select();
+								await deletePositionedModel({
+									gameId: currentGame._id,
+									positionedModelId: positionedModel._id,
+								});
+							}}
+							style={{marginTop: "1em"}}
+						>
+							Delete Model
+						</Button>
+
 					</div>
-				)}
-				{currentGame.canModel && (
-					<>
-						<span className={"margin-md"}>Select Color:</span>
-						<Input
-							type={"color"}
-							value={color}
-							defaultValue={positionedModel.color}
-							style={{
-								width: "100px",
-							}}
-							onChange={async (e) => {
-								const value = e.target.value;
-								await setColor(value);
-							}}
-						/>
-						<div>
-							<Button
-								className={"margin-md"}
-								onClick={async () => {
-									await setModelColor({
-										positionedModelId: positionedModel._id,
-										color: color,
-									});
-								}}
-							>
-								Set Color
-							</Button>
-							<Button
-								className={"margin-md"}
-								onClick={async () => {
-									await setModelColor({
-										positionedModelId: positionedModel._id,
-										color: null,
-									});
-								}}
-							>
-								Clear Color
-							</Button>
-						</div>
-						<div>
-							<Button
-								danger={true}
-								onClick={async () => {
-									await renderer.selectModelControls.select();
-									await deletePositionedModel({
-										gameId: currentGame._id,
-										positionedModelId: positionedModel._id,
-									});
-								}}
-							>
-								Delete Model
-							</Button>
-						</div>
-					</>
 				)}
 			</>
 		);

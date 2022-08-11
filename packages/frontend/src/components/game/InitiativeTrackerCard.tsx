@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import { useDrag, useDrop} from "react-dnd";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
@@ -10,14 +10,14 @@ export interface DraggableCharacterItem {
 }
 
 interface InitiativeTrackerCardProps {
-	name: string;
+	character: GameCharacter;
 	data: GameCharacter[];
 	setData: (roster: GameCharacter[]) => Promise<any>;
 	loading: boolean;
 }
 
 export default function InitiativeTrackerCard({
-	name,
+	character,
 	data,
 	setData,
 	loading,
@@ -28,20 +28,20 @@ export default function InitiativeTrackerCard({
 		type: INITIATIVE_CARD,
 		item: {
 			type: INITIATIVE_CARD,
-			name,
+			name: character.name,
 		},
 		canDrag: () => currentGame.canWrite && !loading,
 	});
 
 	const [dropProps, dropRef] = useDrop({
 		accept: INITIATIVE_CARD,
-		canDrop: (item: DraggableCharacterItem, monitor) => item.name !== name,
+		canDrop: (item: DraggableCharacterItem, monitor) => item.name !== character.name,
 		drop: async (draggedItem, monitor) => {
 			const newData = [];
 			for (let oldItem of data.filter(
 				(oldItem) => oldItem.name !== draggedItem.name
 			)) {
-				if (oldItem.name === name) {
+				if (oldItem.name === character.name) {
 					newData.push(draggedItem);
 				}
 				newData.push(oldItem);
@@ -50,21 +50,24 @@ export default function InitiativeTrackerCard({
 		},
 	});
 
+	const cardStyle: CSSProperties = {
+		backgroundColor: character.color,
+		fontWeight: 600,
+		borderRadius: "5px",
+		padding: "5px 8px",
+		margin: "5px",
+		color: "white"
+	};
+
 	return (
 		<div
-			style={{
-				backgroundColor: "white",
-				fontWeight: 600,
-				borderRadius: "5px",
-				padding: "5px 8px",
-				margin: "5px",
-			}}
+			style={cardStyle}
 			ref={(element) => {
 				dropRef(element);
 				dragRef(element);
 			}}
 		>
-			{name}
+			{character.name}
 		</div>
 	);
 };
