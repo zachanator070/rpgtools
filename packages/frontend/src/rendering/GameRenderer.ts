@@ -79,6 +79,8 @@ export class GameRenderer extends EventEmitter {
 	private loader: THREE.LoadingManager;
 	private pixelsPerFoot: number;
 
+	private drawGrid: boolean = false;
+
 	constructor(
 		renderRoot: HTMLCanvasElement,
 		mapImage: Image,
@@ -227,16 +229,7 @@ export class GameRenderer extends EventEmitter {
 		this.mapTexture.wrapS = this.mapTexture.wrapT = THREE.ClampToEdgeWrapping;
 		this.mapTexture.minFilter = THREE.LinearFilter;
 
-		const mapContext = this.mapCanvas.getContext("2d");
-
-		for (let chunk of this.mapImage.chunks) {
-			const base_image = new Image();
-			base_image.src = `/images/${chunk.fileId}`;
-			base_image.onload = () => {
-				mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
-				this.mapTexture.needsUpdate = true;
-			};
-		}
+		this.paintMap();
 
 		const mapGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
 		mapGeometry.rotateX(-Math.PI / 2);
@@ -260,6 +253,52 @@ export class GameRenderer extends EventEmitter {
 
 		this.setupControls();
 		this.setupLight();
+	}
+
+	paintMap() {
+		const mapContext = this.mapCanvas.getContext("2d");
+
+		const imagesLoading: Promise<void>[] = [];
+
+		for (let chunk of this.mapImage.chunks) {
+			const base_image = new Image();
+			base_image.src = `/images/${chunk.fileId}`;
+			const imagePromise = new Promise<void>((resolve, reject) => {
+				base_image.onload = () => {
+					mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
+					this.mapTexture.needsUpdate = true;
+					resolve();
+				};
+			});
+			imagesLoading.push(imagePromise);
+		}
+
+		Promise.all(imagesLoading).then(() => {
+			if (this.drawGrid) {
+				this.paintGrid();
+			}
+		});
+
+		this.mapTexture.needsUpdate = true;
+	}
+
+	private paintGrid() {
+		const squareSize = this.pixelsPerFoot * 5;
+		const context = this.mapCanvas.getContext("2d");
+		context.lineWidth = 3;
+		context.strokeStyle = "#000000";
+		context.beginPath();
+		for (let x = 0; x < this.mapImage.width; x += squareSize) {
+			context.moveTo(x, 0);
+			context.lineTo(x, this.mapImage.height);
+		}
+		for (let y = 0; y < this.mapImage.height; y += squareSize) {
+			context.moveTo(0, y);
+			context.lineTo(this.mapImage.width, y);
+		}
+		context.stroke();
+
+		this.mapTexture.needsUpdate = true;
 	}
 
 	setupRaycaster() {
@@ -659,5 +698,18 @@ export class GameRenderer extends EventEmitter {
 
 	setMapImage(image: Image): void {
 		this.mapImage = image;
+	}
+
+	setDrawGrid(drawGrid: boolean) {
+		this.drawGrid = drawGrid;
+		if (this.drawGrid) {
+			this.paintGrid();
+		} else {
+			this.paintMap();
+		}
+	}
+
+	getDrawGrid(): boolean {
+		return this.drawGrid;
 	}
 }
