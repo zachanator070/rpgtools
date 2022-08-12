@@ -3,15 +3,17 @@ import useGameChat from "../../hooks/game/useGameChat";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Input, Form, Modal } from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import useSetCharacterAttributes from "../../hooks/game/useSetCharacterAttributes";
+import useSetCharacterAttributes, {CharacterAttributeInput} from "../../hooks/game/useSetCharacterAttributes";
+import {GameCharacterAttribute} from "../../types";
+import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 
 interface DiceAttributeProps {
-	attribute: string;
-	value: number;
+	attribute: GameCharacterAttribute
 }
-export default function DiceAttribute({ attribute, value }: DiceAttributeProps) {
+export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 	const { gameChat } = useGameChat();
 	const { currentGame } = useCurrentGame();
+	const {currentCharacter} = useCurrentCharacter();
 	const { setCharacterAttributes } = useSetCharacterAttributes();
 
 	const [editVisibility, setEditVisibility] = useState(false);
@@ -30,17 +32,17 @@ export default function DiceAttribute({ attribute, value }: DiceAttributeProps) 
 					cursor: "pointer",
 				}}
 				onClick={async () => {
-					let parsedBonus = value.toString();
-					if (value > 0) {
+					let parsedBonus = attribute.value.toString();
+					if (attribute.value > 0) {
 						parsedBonus = "+" + parsedBonus;
 					}
-					await gameChat({gameId: currentGame._id, message: `/roll 1d20${value !== 0 ? parsedBonus : ""}`});
+					await gameChat({gameId: currentGame._id, message: `/roll 1d20${attribute.value !== 0 ? parsedBonus : ""}`});
 				}}
 			>
-				<h2>{attribute}</h2>
+				<h2>{attribute.name}</h2>
 				<h3>
-					{value > 0 ? "+" : ""}
-					{value}
+					{attribute.value > 0 ? "+" : ""}
+					{attribute.value}
 				</h3>
 			</div>
 			<div>
@@ -54,22 +56,36 @@ export default function DiceAttribute({ attribute, value }: DiceAttributeProps) 
 			</div>
 			<Modal
 				visible={editVisibility}
-				title={`Edit ${attribute} Bonus`}
+				title={`Edit ${attribute}`}
 				footer={null}
 				onCancel={() => setEditVisibility(false)}
 			>
 				<Form
 					initialValues={{
-						bonus: value,
+						value: attribute.value,
 					}}
-					onFinish={async ({ bonus }) => {
-						const variables: any = {};
-						variables[attribute.toLowerCase()] = parseInt(bonus);
-						await setCharacterAttributes({...variables});
+					onFinish={async ({ value }) => {
+						const attributes: GameCharacterAttribute[] = [];
+						for (let oldAttribute of currentCharacter.attributes) {
+							if (oldAttribute._id === attribute._id) {
+								attributes.push({
+									_id: oldAttribute._id,
+									name: oldAttribute.name,
+									value: parseInt(value),
+								});
+							} else {
+								attributes.push({
+									_id: oldAttribute._id,
+									name: oldAttribute.name,
+									value: oldAttribute.value,
+								});
+							}
+						}
+						await setCharacterAttributes({attributes});
 						setEditVisibility(false);
 					}}
 				>
-					<Form.Item name={"bonus"} label={`${attribute} Bonus`}>
+					<Form.Item name={"value"} label={`${attribute.name}`}>
 						<Input type={"number"} style={{ width: "75px" }} />
 					</Form.Item>
 					<Form.Item>

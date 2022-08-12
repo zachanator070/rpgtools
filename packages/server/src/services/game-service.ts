@@ -14,7 +14,7 @@ import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import { SecurityContext } from "../security/security-context";
 import {
-	Character,
+	Character, CharacterAttribute,
 	FogStroke,
 	Game,
 	InGameModel,
@@ -83,12 +83,7 @@ export class GameService {
 						characterName || context.user.username,
 						context.user._id,
 						this.genColor(),
-						0,
-						0,
-						0,
-						0,
-						0,
-						0
+						[]
 					),
 				],
 				strokes: [],
@@ -148,12 +143,7 @@ export class GameService {
 				characterName || context.user.username,
 				context.user._id,
 				this.genColor(),
-				0,
-				0,
-				0,
-				0,
-				0,
-				0
+				[]
 			)
 		);
 		await unitOfWork.gameRepository.update(game);
@@ -537,14 +527,9 @@ export class GameService {
 	setCharacterAttributes = async (
 		context: SecurityContext,
 		gameId: string,
-		str: number,
-		dex: number,
-		con: number,
-		int: number,
-		wis: number,
-		cha: number,
+		attributes: CharacterAttribute[],
 		unitOfWork: UnitOfWork
-	) => {
+	): Promise<Game> => {
 		const game = await unitOfWork.gameRepository.findById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
@@ -559,24 +544,8 @@ export class GameService {
 		if (!userCharacter) {
 			throw new Error("You are not playing in this game");
 		}
-		if (str !== undefined) {
-			userCharacter.strength = str;
-		}
-		if (dex !== undefined) {
-			userCharacter.dexterity = dex;
-		}
-		if (con !== undefined) {
-			userCharacter.constitution = con;
-		}
-		if (int !== undefined) {
-			userCharacter.intelligence = int;
-		}
-		if (wis !== undefined) {
-			userCharacter.wisdom = wis;
-		}
-		if (cha !== undefined) {
-			userCharacter.charisma = cha;
-		}
+		userCharacter.attributes = attributes;
+
 		await unitOfWork.gameRepository.update(game);
 		return game;
 	};

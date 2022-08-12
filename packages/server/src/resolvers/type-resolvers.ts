@@ -341,15 +341,11 @@ export const TypeResolvers = {
 			const characters = [];
 			for (let character of game.characters) {
 				characters.push({
+					_id: character._id,
 					name: character.name,
 					color: character.color,
 					player: await dataLoader.getDocument(character.player, unitOfWork),
-					str: character.strength,
-					dex: character.dexterity,
-					con: character.constitution,
-					int: character.intelligence,
-					wis: character.wisdom,
-					cha: character.charisma,
+					attributes: character.attributes
 				});
 			}
 			return characters;

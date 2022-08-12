@@ -241,18 +241,18 @@ export const GAME_MESSAGE = gql`
 export const GAME_CHARACTERS = gql`
     fragment gameCharacters on Game {
         characters {
+            _id
             name
             player {
                 _id
                 username
             }
-            str
-            dex
-            con
-            int
-            wis
-            cha
             color
+            attributes {
+                _id
+                name
+                value
+            }
         }
     }
 `;

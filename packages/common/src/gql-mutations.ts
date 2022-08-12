@@ -259,8 +259,8 @@ export const GAME_CHAT = gql`
 
 export const SET_CHARACTER_ATTRIBUTES = gql`
 	${GAME_CHARACTERS}
-	mutation setCharacterAttributes($gameId: ID!, $str: Int, $dex: Int, $con: Int, $int: Int, $wis: Int, $cha: Int){
-		setCharacterAttributes(gameId: $gameId, str: $str, dex: $dex, con: $con, int: $int, wis: $wis, cha: $cha){
+	mutation setCharacterAttributes($gameId: ID!, $attributes: [CharacterAttributeInput!]!){
+		setCharacterAttributes(gameId: $gameId, attributes: $attributes){
 			_id
 			...gameCharacters		
 		}

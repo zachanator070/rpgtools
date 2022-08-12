@@ -130,12 +130,7 @@ export const typeDefs = gql`
 		gameChat(gameId: ID!, message: String!): Game!
 		setCharacterAttributes(
 			gameId: ID!
-			str: Int
-			dex: Int
-			con: Int
-			int: Int
-			wis: Int
-			cha: Int
+			attributes: [CharacterAttributeInput!]!
 		): Game!
 		setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
 		addStroke(
@@ -482,16 +477,24 @@ export const typeDefs = gql`
 	}
 
 	type GameCharacter {
+	    _id: ID!
 		name: String
 		player: User!
-		str: Int!
-		dex: Int!
-		con: Int!
-		int: Int!
-		wis: Int!
-		cha: Int!
 		color: String!
+		attributes: [GameCharacterAttribute!]!
 	}
+	
+	type GameCharacterAttribute {
+	    _id: ID!
+	    name: String!
+	    value: Int!
+    }
+
+    input CharacterAttributeInput {
+        _id: ID
+	    name: String!
+	    value: Int!
+    }
 
 	input CharacterInput {
 		name: String
