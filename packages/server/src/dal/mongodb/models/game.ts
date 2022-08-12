@@ -47,6 +47,10 @@ const gameSchema = new mongoose.Schema({
 	},
 	characters: [
 		new mongoose.Schema({
+			_id: {
+				type: String,
+				required: [true, "_id required"],
+			},
 			name: {
 				type: String,
 			},
@@ -59,30 +63,22 @@ const gameSchema = new mongoose.Schema({
 				type: String,
 				required: [true, "color is required"],
 			},
-			str: {
-				type: Number,
-				default: 0,
-			},
-			dex: {
-				type: Number,
-				default: 0,
-			},
-			con: {
-				type: Number,
-				default: 0,
-			},
-			int: {
-				type: Number,
-				default: 0,
-			},
-			wis: {
-				type: Number,
-				default: 0,
-			},
-			cha: {
-				type: Number,
-				default: 0,
-			},
+			attributes: [
+				new mongoose.Schema({
+					_id: {
+						type: String,
+						required: [true, "_id required"],
+					},
+					name: {
+						type: String,
+						required: [true, "name required"],
+					},
+					value: {
+						type: Number,
+						required: [true, "value required"],
+					},
+				})
+			]
 		}),
 	],
 	host: {

@@ -604,12 +604,12 @@ export interface CharacterDocument extends MongoDBEntity {
 	name: string;
 	player: Schema.Types.ObjectId;
 	color: string;
-	str: number;
-	dex: number;
-	con: number;
-	int: number;
-	wis: number;
-	cha: number;
+	attributes: CharacterAttributeDocument[];
+}
+
+export interface CharacterAttributeDocument extends MongoDBEntity {
+	name: string;
+	value: number;
 }
 
 export interface MessageDocument extends MongoDBEntity {

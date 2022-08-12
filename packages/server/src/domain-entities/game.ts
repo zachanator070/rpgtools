@@ -41,12 +41,7 @@ export class Character {
 	public name: string;
 	public player: string;
 	public color: string;
-	public strength: number;
-	public dexterity: number;
-	public constitution: number;
-	public intelligence: number;
-	public wisdom: number;
-	public charisma: number;
+	public attributes: CharacterAttribute[];
 
 	type: string;
 
@@ -55,23 +50,29 @@ export class Character {
 		name: string,
 		playerId: string,
 		color: string,
-		strength: number,
-		dexterity: number,
-		constitution: number,
-		intelligence: number,
-		wisdom: number,
-		charisma: number
+		attributes: CharacterAttribute[]
 	) {
 		this._id = id;
 		this.name = name;
 		this.player = playerId;
 		this.color = color;
-		this.strength = strength;
-		this.dexterity = dexterity;
-		this.constitution = constitution;
-		this.intelligence = intelligence;
-		this.wisdom = wisdom;
-		this.charisma = charisma;
+		this.attributes = attributes;
+	}
+}
+
+export class CharacterAttribute {
+	public _id: string;
+	public name: string;
+	public value: number;
+
+	constructor(
+		_id: string,
+		name: string,
+		value: number
+	) {
+		this._id = _id;
+		this.name = name;
+		this.value = value;
 	}
 }
 

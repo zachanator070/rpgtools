@@ -280,15 +280,17 @@ export interface Game extends PermissionControlled {
 }
 
 export interface GameCharacter {
+    _id: string;
     name: string;
     player: User;
-    str: number;
-    dex: number;
-    con: number;
-    int: number;
-    wis: number;
-    cha: number;
     color: string;
+    attributes: GameCharacterAttribute[];
+}
+
+export interface GameCharacterAttribute {
+    _id: string;
+    name: string;
+    value: number;
 }
 
 export interface Stroke {

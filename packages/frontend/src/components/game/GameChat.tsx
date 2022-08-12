@@ -65,12 +65,11 @@ export default function GameChat() {
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				height: "100%",
 			}}
 		>
 			<List
 				style={{
-					flex: "1 1",
+					height: "50em",
 					overflowY: "scroll",
 				}}
 				id={"chat"}
@@ -95,9 +94,6 @@ export default function GameChat() {
 				}}
 			/>
 			<Comment
-				style={{
-					flex: "1 1",
-				}}
 				content={
 					<>
 						<Form.Item>

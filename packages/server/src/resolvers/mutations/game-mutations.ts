@@ -1,7 +1,7 @@
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import { SessionContext } from "../../types";
 import { container } from "../../di/inversify";
-import { Character, PathNode } from "../../domain-entities/game";
+import {Character, CharacterAttribute, PathNode} from "../../domain-entities/game";
 import {GameService} from "../../services/game-service";
 
 export const gameMutations = {
@@ -194,24 +194,14 @@ export const gameMutations = {
 		_: any,
 		{
 			gameId,
-			str,
-			dex,
-			con,
-			int,
-			wis,
-			cha,
+			attributes
 		}: {
 			gameId: string;
-			str: number;
-			dex: number;
-			con: number;
-			int: number;
-			wis: number;
-			cha: number;
+			attributes: CharacterAttribute[]
 		},
 		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.setCharacterAttributes(securityContext, gameId, str, dex, con, int, wis, cha, unitOfWork);
+		return service.setCharacterAttributes(securityContext, gameId, attributes, unitOfWork);
 	},
 };

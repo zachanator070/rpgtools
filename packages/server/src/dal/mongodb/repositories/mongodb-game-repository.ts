@@ -1,6 +1,6 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import {
-	Character,
+	Character, CharacterAttribute,
 	FogStroke,
 	Game,
 	InGameModel,
@@ -9,6 +9,7 @@ import {
 	Stroke,
 } from "../../../domain-entities/game";
 import {
+	CharacterAttributeDocument,
 	CharacterDocument,
 	FogStrokeDocument,
 	GameDocument,
@@ -101,16 +102,25 @@ export class MongodbGameRepository
 					document.name,
 					document.player.toString(),
 					document.color,
-					document.str,
-					document.dex,
-					document.con,
-					document.int,
-					document.wis,
-					document.cha
+					this.buildCharacterAttributes(document.attributes)
 				)
 			);
 		}
 		return characters;
+	}
+
+	private buildCharacterAttributes(documents: CharacterAttributeDocument[]): CharacterAttribute[] {
+		const attributes: CharacterAttribute[] = [];
+		for (let document of documents) {
+			attributes.push(
+				new CharacterAttribute(
+					document._id.toString(),
+					document.name,
+					document.value,
+				)
+			);
+		}
+		return attributes;
 	}
 
 	private buildMessages(documents: MessageDocument[]): Message[] {
@@ -154,6 +164,11 @@ export class MongodbGameRepository
 		for (let character of entity.characters) {
 			if (!character._id) {
 				character._id = (new ObjectId()).toString();
+			}
+			for (let attribute of character.attributes) {
+				if (!attribute._id) {
+					attribute._id = (new ObjectId()).toString();
+				}
 			}
 		}
 	}

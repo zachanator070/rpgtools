@@ -3,14 +3,15 @@ import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutati
 import {Game} from "../../types";
 import {SET_CHARACTER_ATTRIBUTES} from "@rpgtools/common/src/gql-mutations";
 
+export interface CharacterAttributeInput {
+	_id?: string;
+	name: string;
+	value: number;
+}
+
 interface SetCharacterAttributesVariables {
-	gameId: string;
-	str?: number;
-	dev?: number;
-	con?: number;
-	int?: number;
-	wis?: number;
-	cha?: number;
+	gameId?: string;
+	attributes: CharacterAttributeInput[];
 }
 
 interface SetCharacterAttributesResult extends GqlMutationResult<Game, SetCharacterAttributesVariables>{
