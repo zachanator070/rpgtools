@@ -639,7 +639,7 @@ export class GameRenderer extends EventEmitter {
 			this.selectModelControls.selectControls.selectedMeshedModel
 				.positionedModel._id === positionedModel._id
 		) {
-			this.selectModelControls.constructGlow();
+			this.selectModelControls.constructGlow(true);
 		}
 	}
 
