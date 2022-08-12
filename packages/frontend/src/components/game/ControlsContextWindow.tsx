@@ -44,7 +44,7 @@ export default function ControlsContextWindow({
 			content = <ModelInfo renderer={renderer} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case SELECT_LOCATION_CONTROLS:
-			content = <GameLocationSettings setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
+			content = <GameLocationSettings renderer={renderer} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case ADD_MODEL_CONTROLS:
 			content = <AddModelSection />;

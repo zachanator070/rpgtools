@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import SelectWiki from "../select/SelectWiki";
 import { PLACE } from "@rpgtools/common/src/type-constants";
-import { Button, Checkbox } from "antd";
+import {Button, Checkbox, Slider, Switch} from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../hooks/game/useSetGameMap";
 import LoadingView from "../LoadingView";
+import {GameRenderer} from "../../rendering/GameRenderer";
 
  interface GameLocationSettingsProps {
-	 setGameWikiId: (wikiId: string) => Promise<any>
+	 setGameWikiId: (wikiId: string) => Promise<any>;
+	 renderer: GameRenderer;
  }
 
-export default function GameLocationSettings({ setGameWikiId }: GameLocationSettingsProps) {
+export default function GameLocationSettings({ setGameWikiId, renderer }: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [clearPaint, setClearPaint] = useState<boolean>();
@@ -32,6 +34,16 @@ export default function GameLocationSettings({ setGameWikiId }: GameLocationSett
 				) : (
 					<p>No current location</p>
 				)}
+			</div>
+			<div className={"margin-lg-bottom"}>
+				<Switch
+					checkedChildren={"Grid"}
+					unCheckedChildren={"No Grid"}
+					defaultChecked={renderer.getDrawGrid()}
+					onChange={async (checked) => {
+						renderer.setDrawGrid(checked);
+					}}
+				/>
 			</div>
 			{currentGame.canWrite && (
 				<div className={"margin-lg-bottom"}>

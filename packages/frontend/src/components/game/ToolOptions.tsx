@@ -32,7 +32,7 @@ export default function ToolOptions({ renderer, controlsMode, setGameWikiId }: T
 			content = <ModelInfo renderer={renderer} setGameWikiId={setGameWikiId} />;
 			break;
 		case SELECT_LOCATION_CONTROLS:
-			content = <GameLocationSettings setGameWikiId={setGameWikiId} />;
+			content = <GameLocationSettings renderer={renderer} setGameWikiId={setGameWikiId} />;
 			break;
 		case ADD_MODEL_CONTROLS:
 			content = <AddModelSection />;
