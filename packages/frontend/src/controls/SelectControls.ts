@@ -68,6 +68,7 @@ export class SelectControls implements GameControls {
 
 	tearDown = () => {
 		this.renderRoot.removeEventListener("mousedown", this.selectModel);
+		this.clearSelection();
 	};
 
 	getSelectedMeshedModel(): MeshedModel {
