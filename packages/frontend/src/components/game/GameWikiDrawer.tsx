@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import SlidingDrawer from "../SlidingDrawer";
+import SlidingDrawer from "../generic/SlidingDrawer";
 import useGameWiki from "../../hooks/wiki/useGameWiki";
 import WikiContent from "../wiki/WikiContent";
 import LoadingView from "../LoadingView";

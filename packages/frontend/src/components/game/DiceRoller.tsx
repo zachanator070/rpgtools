@@ -8,10 +8,10 @@ import icosahedron from "../../icons/icosahedron.svg";
 import doubleDecahedron from "../../icons/double-decahedron.svg";
 
 import DiceIcon from "./DiceIcon";
-import {Button} from "antd";
 import useGameChat from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
-import ToolTip from "../ToolTip";
+import ToolTip from "../generic/ToolTip";
+import PrimaryButton from "../generic/PrimaryButton";
 
 export const SET_COUNT_ACTION = 'SET_COUNT_ACTION';
 export const SET_BONUS_ACTION = 'SET_BONUS_ACTION';
@@ -59,9 +59,7 @@ export default function DiceRoller() {
 			<div className={"margin-lg-bottom"}>
 				<h2 style={{ display: "inline" }}>Roll Dice</h2>
 				<span className={"margin-lg-left"}>
-					<ToolTip>
-						<p>Left click a dice to add it to selection, right click to remove it.</p>
-					</ToolTip>
+					<ToolTip title={"Left click a dice to add it to selection, right click to remove it."}/>
 				</span>
 			</div>
 			<div
@@ -80,8 +78,7 @@ export default function DiceRoller() {
 				<DiceIcon tooltip={"d20"} count={d20.count} reducer={setD20} icon={icosahedron} {...d20}/>
 				<DiceIcon tooltip={"d100"} count={d100.count} reducer={setD100} icon={doubleDecahedron} {...d100}/>
 			</div>
-			<Button
-				type={"primary"}
+			<PrimaryButton
 				disabled={
 					d4 === 0 && d6 === 0 && d8 === 0 && d10 === 0 && d12 === 0 && d20 === 0 && d100 === 0
 				}
@@ -99,7 +96,7 @@ export default function DiceRoller() {
 				}}
 			>
 				Roll
-			</Button>
+			</PrimaryButton>
 		</div>
 	);
 };

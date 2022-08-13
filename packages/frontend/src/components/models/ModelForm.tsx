@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, Form, Input, Upload } from "antd";
-import ToolTip from "../ToolTip";
+import ToolTip from "../generic/ToolTip";
 import { UploadOutlined } from "@ant-design/icons";
+import QuestionMarkIcon from "../generic/QuestionMarkIcon";
 
 interface CallbackValues {
 	name: string;
@@ -50,15 +51,22 @@ export default function ModelForm({
 				{...formItemLayout}
 				label={
 					<div>
-						<ToolTip>
-							Supported file types: <br />
-							<ul>
-								<li>.glb</li>
-								<li>.stl</li>
-								<li>.obj</li>
-							</ul>
-						</ToolTip>{" "}
-						File
+						<ToolTip
+							title={
+								<>
+									Supported file types:
+									<br />
+									<ul>
+										<li>.glb</li>
+										<li>.stl</li>
+										<li>.obj</li>
+									</ul>
+								</>
+							}
+						/>
+						<span style={{marginLeft: ".5em"}}>
+							File
+						</span>
 					</div>
 				}
 				name="file"
@@ -94,7 +102,7 @@ export default function ModelForm({
 				{...formItemLayout}
 				label={
 					<div>
-						<ToolTip>Depth of the model in feet</ToolTip> Depth
+						<ToolTip title={"Depth of the model in feet"}/> Depth
 					</div>
 				}
 				name="depth"
@@ -108,7 +116,7 @@ export default function ModelForm({
 				{...formItemLayout}
 				label={
 					<div>
-						<ToolTip>Width of the model in feet</ToolTip> Width
+						<ToolTip title={"Width of the model in feet"}/> Width
 					</div>
 				}
 				name="width"
@@ -122,7 +130,7 @@ export default function ModelForm({
 				{...formItemLayout}
 				label={
 					<div>
-						<ToolTip>Height of the model in feet</ToolTip> Height
+						<ToolTip title={"Height of the model in feet"}/> Height
 					</div>
 				}
 				name="height"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SlidingDrawer from "../SlidingDrawer";
+import SlidingDrawer from "../generic/SlidingDrawer";
 import { Tabs } from "antd";
 import GameChat from "./GameChat";
 import ToolOptions from "./ToolOptions";

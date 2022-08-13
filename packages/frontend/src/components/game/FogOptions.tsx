@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Select, Slider } from "antd";
 import {
 	BRUSH_ERASE,
 	BRUSH_FOG,
 	DEFAULT_BRUSH_SIZE,
 } from "../../controls/PaintControls";
-import ToolTip from "../ToolTip";
+import ToolTip from "../generic/ToolTip";
 import {GameRenderer} from "../../rendering/GameRenderer";
+import NumberSlider from "../generic/NumberSlider";
+import DropDownSelect from "../generic/DropDownSelect";
+import DropDownOption from "../generic/DropDownOption";
 
 interface FogOptionsProps {
 	renderer: GameRenderer;
@@ -20,7 +22,7 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 		<>
 			<div className={"margin-md"}>
 				<h3>Brush Type</h3>
-				<Select
+				<DropDownSelect
 					value={brushType}
 					style={{ width: 120 }}
 					onChange={async (value) => {
@@ -28,15 +30,15 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 						renderer.getFogControls().setBrushType(value);
 					}}
 				>
-					<Select.Option value={BRUSH_FOG} default>
+					<DropDownOption value={BRUSH_FOG} selectedByDefault={true}>
 						Fog
-					</Select.Option>
-					<Select.Option value={BRUSH_ERASE}>Erase</Select.Option>
-				</Select>
+					</DropDownOption>
+					<DropDownOption value={BRUSH_ERASE}>Erase</DropDownOption>
+				</DropDownSelect>
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Size</h3>
-				<Slider
+				<NumberSlider
 					min={1}
 					max={20}
 					value={brushSize}
@@ -48,13 +50,8 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 			</div>
 			<div className={"margin-md"}>
 				<h3>My Fog Opacity</h3>
-				<ToolTip>
-					<p>
-						Change the opacity of fog for yourself only. Has no effect on fog
-						for other players.
-					</p>
-				</ToolTip>
-				<Slider
+				<ToolTip title={"Change the opacity of fog for yourself only. Has no effect on fog for other players."}/>
+				<NumberSlider
 					min={0}
 					max={100}
 					onChange={async (value) => {

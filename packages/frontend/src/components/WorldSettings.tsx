@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import PermissionEditor from "./permissions/PermissionEditor";
-import { Button, Col, Input, Row, Modal, Checkbox } from "antd";
 import useRenameWorld from "../hooks/world/useRenameWorld";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import LoadingView from "./LoadingView";
 import useLoad5eContent from "../hooks/world/useLoad5eContent";
 import { useHistory } from "react-router-dom";
+import PrimaryButton from "./generic/PrimaryButton";
+import TextInput from "./generic/TextInput";
+import FullScreenModal from "./generic/FullScreenModal";
+import PrimaryCheckbox from "./generic/PrimaryCheckbox";
 
 export default function WorldSettings() {
 	const { currentWorld, loading: currentWorldLoading, refetch } = useCurrentWorld();
@@ -29,27 +32,27 @@ export default function WorldSettings() {
 		<div className="margin-md-left margin-md-top margin-lg-bottom">
 			<h1>Settings for {currentWorld.name}</h1>
 			<hr />
-			<Row className={"margin-lg-top"}>
-				<Col span={4} />
-				<Col span={16}>
+			<div className={"margin-lg-top"} style={{display: 'flex', flexWrap: 'nowrap'}}>
+				<div style={{flexGrow: 4}}/>
+				<div style={{flexGrow: 16}}>
 					<h2>Permissions</h2>
 					<div className={"margin-lg-top"}>
 						<PermissionEditor subject={currentWorld} subjectType={WORLD} refetch={async () => {await refetch()}} />
 					</div>
-				</Col>
-				<Col span={4} />
-			</Row>
+				</div>
+				<div style={{flexGrow: 4}}/>
+			</div>
 
 			{currentWorld.canWrite && (
 				<>
-					<Row className={"margin-lg-top"}>
-						<Col span={4} />
-						<Col span={16}>
+					<div className={"margin-lg-top"} style={{display: 'flex', flexWrap: 'nowrap'}}>
+						<div style={{flexGrow: 4}}/>
+						<div style={{flexGrow: 16}}>
 							<h2>Rename World</h2>
 							<div style={{ display: "flex" }} className={"margin-lg-top"}>
 								<div className="margin-md-right">New Name:</div>
 								<div>
-									<Input
+									<TextInput
 										id={'newWorldNameInput'}
 										value={newName}
 										onChange={async (e) => {
@@ -58,36 +61,35 @@ export default function WorldSettings() {
 									/>
 								</div>
 							</div>
-							<Button
+							<PrimaryButton
 								className={"margin-md-top"}
 								onClick={async () => {
 									await renameWorld({worldId: currentWorld._id, newName});
 								}}
-								disabled={loading}
+								loading={loading}
 							>
 								Submit
-							</Button>
-						</Col>
-						<Col span={4} />
-					</Row>
-					<Row className={"margin-lg-top"}>
-						<Col span={4} />
-						<Col span={16}>
-							<Modal visible={contentLoading} closable={false} footer={null}>
-								<LoadingView /> Loading 5e content ...
-							</Modal>
+							</PrimaryButton>
+						</div>
+						<div style={{flexGrow: 4}}/>
+					</div>
+					<div className={"margin-lg-top"} style={{display: 'flex', flexWrap: 'nowrap'}}>
+						<div style={{flexGrow: 4}}/>
+						<div style={{flexGrow: 16}}>
+							<FullScreenModal title={"Loading 5e content ..."} visible={contentLoading} closable={false} >
+								<LoadingView />
+							</FullScreenModal>
 							<h2>Load 5e Content</h2>
 							<div className={"margin-lg"}>
-								<Checkbox onChange={async (e) => setGetCC(e.target.checked)}>
+								<PrimaryCheckbox onChange={(checked) => setGetCC(checked)}>
 									Creature Codex
-								</Checkbox>
-								<Checkbox onChange={async (e) => setGetTob(e.target.checked)}>
+								</PrimaryCheckbox>
+								<PrimaryCheckbox onChange={(checked) => setGetTob(checked)}>
 									Tome of Beasts
-								</Checkbox>
+								</PrimaryCheckbox>
 							</div>
 							<div className={"margin-lg-top"}>
-								<Button
-									type={"primary"}
+								<PrimaryButton
 									loading={contentLoading}
 									onClick={async () => {
 										await load5eContent({
@@ -101,11 +103,11 @@ export default function WorldSettings() {
 									}}
 								>
 									Load
-								</Button>
+								</PrimaryButton>
 							</div>
-						</Col>
-						<Col span={4} />
-					</Row>
+						</div>
+						<div style={{flexGrow: 4}}/>
+					</div>
 				</>
 			)}
 		</div>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import SelectModel from "../select/SelectModel";
-import { Switch, Button } from "antd";
 import ModelViewer from "../models/ModelViewer";
 import useAddModel from "../../hooks/game/useAddModel";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import SelectWiki from "../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
 import {ModeledWiki} from "../../types";
+import PrimaryButton from "../generic/PrimaryButton";
+import Toggle from "../generic/Toggle";
 
 interface SelectedModel {
 	model: any;
@@ -32,10 +33,10 @@ export default function AddModelSection() {
 			<div style={{display: "flex", marginBottom: "1em"}}>
 				<div style={{marginLeft: "1em", marginRight: "1em"}}>Search for</div>
 
-				<Switch
+				<Toggle
 					checkedChildren={"Wiki's with Models"}
 					unCheckedChildren={"Model's only"}
-					defaultChecked
+					defaultChecked={true}
 					onChange={async (checked) => {
 						await setWikiSearch(checked);
 					}}
@@ -58,8 +59,7 @@ export default function AddModelSection() {
 				/>
 			)}
 
-			<Button
-				type={"primary"}
+			<PrimaryButton
 				className={"margin-lg"}
 				disabled={!selectedModel}
 				onClick={async () => {
@@ -72,7 +72,7 @@ export default function AddModelSection() {
 				}}
 			>
 				Add Model
-			</Button>
+			</PrimaryButton>
 			{selectedModel && (
 				<div style={{ width: "100%", height: "500px" }}>
 					<ModelViewer
