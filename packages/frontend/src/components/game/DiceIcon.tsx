@@ -1,6 +1,8 @@
 import React from "react";
-import {Badge, InputNumber, Tooltip} from "antd";
 import {SET_BONUS_ACTION, SET_COUNT_ACTION} from "./DiceRoller";
+import ToolTip from "../generic/ToolTip";
+import NumberBadge from "../generic/NumberBadge";
+import NumberInput from "../generic/NumberInput";
 
 interface DiceIconProps {
 	reducer: any;
@@ -12,7 +14,7 @@ interface DiceIconProps {
 
 export default function DiceIcon ({ reducer, count, bonus, icon, tooltip }: DiceIconProps) {
 	return (
-		<Tooltip title={tooltip}>
+		<ToolTip title={tooltip}>
 			<div className={'margin-md'}>
 				<span
 					style={{
@@ -26,16 +28,16 @@ export default function DiceIcon ({ reducer, count, bonus, icon, tooltip }: Dice
 						e.preventDefault();
 					}}
 				>
-				<Badge count={count}>
+				<NumberBadge count={count}>
 					<img src={icon} style={{ width: "4em" }} alt={tooltip} />
-				</Badge>
+				</NumberBadge>
 			</span>
 				<span className={'margin-md'}>
 				+
 			</span>
-				<InputNumber value={bonus} onChange={(value) => reducer({type: SET_BONUS_ACTION, payload: value})}/>
+				<NumberInput value={bonus} onChange={(value) => reducer({type: SET_BONUS_ACTION, payload: value})}/>
 			</div>
 
-		</Tooltip>
+		</ToolTip>
 	);
 };

@@ -1,6 +1,8 @@
 import React from "react";
-import { LoadingOutlined } from "@ant-design/icons";
+import LoadingIcon from "./generic/icons/LoadingIcon";
 
 export default function LoadingView() {
-	return <LoadingOutlined />;
+	return 	<div style={{height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+		<LoadingIcon />;
+	</div>
 };

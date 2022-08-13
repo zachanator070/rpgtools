@@ -3,10 +3,14 @@ import DiceAttribute from "./DiceAttribute";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 import LoadingView from "../LoadingView";
 import DiceRoller from "./DiceRoller";
-import ToolTip from "../ToolTip";
-import {Button, Form, Input, Modal} from "antd";
+import ToolTip from "../generic/ToolTip";
 import useSetCharacterAttributes, {CharacterAttributeInput} from "../../hooks/game/useSetCharacterAttributes";
-import {GameCharacterAttribute} from "../../types";
+import FullScreenModal from "../generic/FullScreenModal";
+import InputForm from "../generic/InputForm";
+import FormItem from "../generic/FormItem";
+import TextInput from "../generic/TextInput";
+import NumberInput from "../generic/NumberInput";
+import PrimaryButton from "../generic/PrimaryButton";
 
 export default function DiceOptions() {
 	const { currentCharacter } = useCurrentCharacter();
@@ -22,17 +26,16 @@ export default function DiceOptions() {
 				height: "100%",
 			}}
 		>
-			<Modal
+			<FullScreenModal
 				visible={addAttributeVisible}
 				title={`Add New Attribute`}
-				footer={null}
-				onCancel={() => setAddAttributeVisible(false)}
+				setVisible={setAddAttributeVisible}
 			>
-				<Form
+				<InputForm
 					initialValues={{
 						value: 0,
 					}}
-					onFinish={async ({ name, value }) => {
+					onSubmit={async ({ name, value }) => {
 						const newAttribute: CharacterAttributeInput = {name, value: parseInt(value)};
 						await setCharacterAttributes({
 							attributes: [newAttribute, ...currentCharacter.attributes.map(oldAttribute => {
@@ -42,25 +45,18 @@ export default function DiceOptions() {
 						setAddAttributeVisible(false);
 					}}
 				>
-					<Form.Item name={"name"} label={`Name`}>
-						<Input type={"string"} style={{ width: "75px" }} />
-					</Form.Item>
-					<Form.Item name={"value"} label={`Value`}>
-						<Input type={"number"} style={{ width: "75px" }} />
-					</Form.Item>
-					<Form.Item>
-						<Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
-							Submit
-						</Button>
-					</Form.Item>
-				</Form>
-			</Modal>
+					<FormItem name={"name"} label={`Name`}>
+						<TextInput style={{ width: "75px" }} />
+					</FormItem>
+					<FormItem name={"value"} label={`Value`}>
+						<NumberInput style={{ width: "75px" }} />
+					</FormItem>
+				</InputForm>
+			</FullScreenModal>
 			<div className={"margin-lg-bottom"}>
 				<h2 style={{ display: "inline" }}>Attribute Checks</h2>
 				<span className={"margin-lg-left"}>
-					<ToolTip>
-						<p>Click on an attribute to roll a skill check</p>
-					</ToolTip>
+					<ToolTip title={"Click on an attribute to roll a skill check"}/>
 				</span>
 			</div>
 			<div
@@ -72,7 +68,7 @@ export default function DiceOptions() {
 			>
 				{currentCharacter.attributes.map(attribute => <DiceAttribute attribute={attribute} key={attribute._id}/>)}
 			</div>
-			<Button onClick={() => setAddAttributeVisible(true)}>Add Attribute</Button>
+			<PrimaryButton onClick={() => setAddAttributeVisible(true)}>Add Attribute</PrimaryButton>
 			<DiceRoller />
 		</div>
 	);

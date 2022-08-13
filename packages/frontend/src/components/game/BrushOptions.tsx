@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Checkbox, Input, Select, Slider } from "antd";
 import {
 	BRUSH_CIRCLE,
 	BRUSH_ERASE,
@@ -11,6 +10,11 @@ import {
 	DEFAULT_BRUSH_TYPE,
 } from "../../controls/PaintControls";
 import {GameRenderer} from "../../rendering/GameRenderer";
+import PrimaryCheckbox from "../generic/PrimaryCheckbox";
+import ColorInput from "../generic/ColorInput";
+import DropDownSelect from "../generic/DropDownSelect";
+import DropDownOption from "../generic/DropDownOption";
+import NumberSlider from "../generic/NumberSlider";
 
 interface BrushOptionsProps {
 	renderer: GameRenderer
@@ -26,9 +30,8 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 		<>
 			<div className={"margin-md"}>
 				<h3>Brush Color</h3>
-				<Input
+				<ColorInput
 					style={{ width: "50px" }}
-					type={"color"}
 					value={brushColor}
 					onChange={async (e) => {
 						const value = e.target.value;
@@ -39,7 +42,7 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Type</h3>
-				<Select
+				<DropDownSelect
 					value={brushType}
 					style={{ width: 120 }}
 					onChange={async (value) => {
@@ -47,17 +50,17 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 						renderer.getPaintControls().setBrushType(value);
 					}}
 				>
-					<Select.Option value={BRUSH_LINE} default>
+					<DropDownOption value={BRUSH_LINE} selectedByDefault={true}>
 						Line
-					</Select.Option>
-					<Select.Option value={BRUSH_SQUARE}>Square</Select.Option>
-					<Select.Option value={BRUSH_CIRCLE}>Circle</Select.Option>
-					<Select.Option value={BRUSH_ERASE}>Erase</Select.Option>
-				</Select>
+					</DropDownOption>
+					<DropDownOption value={BRUSH_SQUARE}>Square</DropDownOption>
+					<DropDownOption value={BRUSH_CIRCLE}>Circle</DropDownOption>
+					<DropDownOption value={BRUSH_ERASE}>Erase</DropDownOption>
+				</DropDownSelect>
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Size</h3>
-				<Slider
+				<NumberSlider
 					min={1}
 					max={20}
 					value={brushSize}
@@ -69,11 +72,11 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 			</div>
 			<div className={"margin-md"}>
 				<h3>Fill Brush</h3>
-				<Checkbox
+				<PrimaryCheckbox
 					checked={fillBrush}
-					onChange={async (e) => {
-						await setFillBrush(e.target.checked);
-						renderer.getPaintControls().setBrushFill(e.target.checked);
+					onChange={async (checked) => {
+						await setFillBrush(checked);
+						renderer.getPaintControls().setBrushFill(checked);
 					}}
 				/>
 			</div>

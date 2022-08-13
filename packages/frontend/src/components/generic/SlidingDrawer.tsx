@@ -1,11 +1,12 @@
-import React, {ReactElement, CSSProperties, useState} from "react";
-import {Button, Drawer, Space} from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import React, { CSSProperties, useState} from "react";
+import {Drawer} from "antd";
+import PrimaryButton from "./PrimaryButton";
+import HamburgerMenuIcon from "./icons/HamburgerMenuIcon";
 
 interface SlidingDrawerProps {
 	title?: string;
 	placement: "right" | "top" | "bottom" | "left";
-	children: ReactElement;
+	children: React.ReactNode;
 	startVisible: boolean;
 	visible?: boolean;
 	setVisible?: (visible: boolean) => void;
@@ -37,9 +38,9 @@ export default function SlidingDrawer({
 	return (
 		<>
 			<div style={buttonStyle}>
-				<Button onClick={() => setVisible(true)}>
-					<MenuOutlined />
-				</Button>
+				<PrimaryButton onClick={() => setVisible(true)}>
+					<HamburgerMenuIcon />
+				</PrimaryButton>
 			</div>
 			<Drawer
 				title={title}
@@ -54,9 +55,9 @@ export default function SlidingDrawer({
 				width={"512px"}
 			>
 				<div style={{textAlign: placement == 'left' ? 'right' : 'left'}}>
-					<Space>
-						<Button type="primary" onClick={() => setVisible(false)}>Close</Button>
-					</Space>
+					<div style={{display: 'flex', justifyContent: 'space-around'}}>
+						<PrimaryButton onClick={() => setVisible(false)}>Close</PrimaryButton>
+					</div>
 				</div>
 				{children}
 			</Drawer>

@@ -4,7 +4,8 @@ import useCreateWorld from "../../hooks/world/useCreateWorld";
 import { useHistory } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import ToolTip from "../ToolTip";
+import ToolTip from "../generic/ToolTip";
+import QuestionMarkIcon from "../generic/QuestionMarkIcon";
 
 interface CreateWorldModalProps {
 	visibility: boolean;
@@ -48,8 +49,8 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 					<Checkbox onChange={() => setPublic(!isPublic)} checked={isPublic}>
 						Public World
 					</Checkbox>
-					<ToolTip>
-						<>
+					<ToolTip
+						title={<>
 							Public worlds will have the following permissions given to any visitor:
 							<br />
 							<ul>
@@ -60,8 +61,8 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 									</li>
 								))}
 							</ul>
-						</>
-					</ToolTip>
+						</>}
+					/>
 				</Form.Item>
 				<Form.Item {...noLabelItem}>
 					<Button

@@ -10,7 +10,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
 import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
-import ToolTip from "../ToolTip";
+import ToolTip from "../generic/ToolTip";
 import SelectModel from "../select/SelectModel";
 import ModelViewer from "../models/ModelViewer";
 import useUpdateModeledWiki from "../../hooks/wiki/useUpdateModeledWiki";
@@ -299,11 +299,7 @@ export default function WikiEdit() {
 							value={pixelsPerFoot}
 							onChange={async (value) => setPixelsPerFoot(value)}
 						/>
-						<ToolTip>
-							{
-								"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."
-							}
-						</ToolTip>
+						<ToolTip title={"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."}/>
 					</div>
 				</>
 			)}

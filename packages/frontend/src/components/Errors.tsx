@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert } from "antd";
+import AlertMessage from "./generic/AlertMessage";
 
 export default function Errors({ errors }) {
 	if (!errors || errors.length === 0) {
@@ -9,7 +9,7 @@ export default function Errors({ errors }) {
 	return (
 		<div>
 			{errors.map((error) => (
-				<Alert key={error} message={error} type={"error"} showIcon closable />
+				<AlertMessage key={error} error={error}/>
 			))}
 		</div>
 	);

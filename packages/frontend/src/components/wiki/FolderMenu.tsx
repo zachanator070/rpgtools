@@ -16,7 +16,7 @@ import useRenameFolder from "../../hooks/wiki/useRenameFolder";
 import SelectFolder from "../select/SelectFolder";
 import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import useDeleteFolder from "../../hooks/wiki/useDeleteFolder";
-import ToolTip from "../ToolTip";
+import ToolTip from "../generic/ToolTip";
 import useImportContent from "../../hooks/world/useImportContent";
 import PermissionEditor from "../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
@@ -216,13 +216,18 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 							<Form.Item
 								label={
 									<div>
-										<ToolTip>
-											Supported file types: <br />
-											<ul>
-												<li>.zip</li>
-											</ul>
-										</ToolTip>{" "}
-										File
+										<ToolTip
+											title={<>
+												Supported file types:
+												<br />
+												<ul>
+													<li>.zip</li>
+												</ul>
+											</>}
+										/>
+										<span style={{marginLeft: ".5em"}}>
+											File
+										</span>
 									</div>
 								}
 								name="file"
