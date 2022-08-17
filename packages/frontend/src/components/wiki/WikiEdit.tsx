@@ -10,7 +10,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
 import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
-import ToolTip from "../generic/ToolTip";
+import ToolTip from "../widgets/ToolTip";
 import SelectModel from "../select/SelectModel";
 import ModelViewer from "../models/ModelViewer";
 import useUpdateModeledWiki from "../../hooks/wiki/useUpdateModeledWiki";
@@ -338,7 +338,7 @@ export default function WikiEdit() {
 						danger
 						disabled={saving}
 						onClick={() => {
-							Modal.confirm({
+							Modal.modalConfirm({
 								title: "Confirm Delete",
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {

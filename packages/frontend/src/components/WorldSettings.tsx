@@ -6,10 +6,10 @@ import { WORLD } from "@rpgtools/common/src/type-constants";
 import LoadingView from "./LoadingView";
 import useLoad5eContent from "../hooks/world/useLoad5eContent";
 import { useHistory } from "react-router-dom";
-import PrimaryButton from "./generic/PrimaryButton";
-import TextInput from "./generic/TextInput";
-import FullScreenModal from "./generic/FullScreenModal";
-import PrimaryCheckbox from "./generic/PrimaryCheckbox";
+import PrimaryButton from "./widgets/PrimaryButton";
+import TextInput from "./widgets/TextInput";
+import FullScreenModal from "./widgets/FullScreenModal";
+import PrimaryCheckbox from "./widgets/PrimaryCheckbox";
 
 export default function WorldSettings() {
 	const { currentWorld, loading: currentWorldLoading, refetch } = useCurrentWorld();

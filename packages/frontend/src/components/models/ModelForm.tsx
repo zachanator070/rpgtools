@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Form, Input, Upload } from "antd";
-import ToolTip from "../generic/ToolTip";
+import ToolTip from "../widgets/ToolTip";
 import { UploadOutlined } from "@ant-design/icons";
-import QuestionMarkIcon from "../generic/QuestionMarkIcon";
+import QuestionMarkIcon from "../widgets/QuestionMarkIcon";
 
 interface CallbackValues {
 	name: string;

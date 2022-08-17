@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import SlidingDrawer from "../generic/SlidingDrawer";
+import SlidingDrawer from "../widgets/SlidingDrawer";
 import WikiContent from "../wiki/WikiContent";
 import MapWikiContext from "../../MapWikiContext";
 import useGetWiki from "../../hooks/wiki/useGetWiki";

@@ -4,8 +4,8 @@ import useCreateWorld from "../../hooks/world/useCreateWorld";
 import { useHistory } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import ToolTip from "../generic/ToolTip";
-import QuestionMarkIcon from "../generic/QuestionMarkIcon";
+import ToolTip from "../widgets/ToolTip";
+import QuestionMarkIcon from "../widgets/QuestionMarkIcon";
 
 interface CreateWorldModalProps {
 	visibility: boolean;

@@ -3,14 +3,14 @@ import DiceAttribute from "./DiceAttribute";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 import LoadingView from "../LoadingView";
 import DiceRoller from "./DiceRoller";
-import ToolTip from "../generic/ToolTip";
+import ToolTip from "../widgets/ToolTip";
 import useSetCharacterAttributes, {CharacterAttributeInput} from "../../hooks/game/useSetCharacterAttributes";
-import FullScreenModal from "../generic/FullScreenModal";
-import InputForm from "../generic/InputForm";
-import FormItem from "../generic/FormItem";
-import TextInput from "../generic/TextInput";
-import NumberInput from "../generic/NumberInput";
-import PrimaryButton from "../generic/PrimaryButton";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/InputForm";
+import FormItem from "../widgets/FormItem";
+import TextInput from "../widgets/TextInput";
+import NumberInput from "../widgets/NumberInput";
+import PrimaryButton from "../widgets/PrimaryButton";
 
 export default function DiceOptions() {
 	const { currentCharacter } = useCurrentCharacter();

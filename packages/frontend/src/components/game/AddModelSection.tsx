@@ -6,8 +6,8 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import SelectWiki from "../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
 import {ModeledWiki} from "../../types";
-import PrimaryButton from "../generic/PrimaryButton";
-import Toggle from "../generic/Toggle";
+import PrimaryButton from "../widgets/PrimaryButton";
+import Toggle from "../widgets/Toggle";
 
 interface SelectedModel {
 	model: any;

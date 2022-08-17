@@ -4,11 +4,11 @@ import {
 	BRUSH_FOG,
 	DEFAULT_BRUSH_SIZE,
 } from "../../controls/PaintControls";
-import ToolTip from "../generic/ToolTip";
+import ToolTip from "../widgets/ToolTip";
 import {GameRenderer} from "../../rendering/GameRenderer";
-import NumberSlider from "../generic/NumberSlider";
-import DropDownSelect from "../generic/DropDownSelect";
-import DropDownOption from "../generic/DropDownOption";
+import NumberSlider from "../widgets/NumberSlider";
+import DropdownSelect from "../widgets/DropdownSelect";
+import DropdownOption from "../widgets/DropdownOption";
 
 interface FogOptionsProps {
 	renderer: GameRenderer;
@@ -22,7 +22,7 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 		<>
 			<div className={"margin-md"}>
 				<h3>Brush Type</h3>
-				<DropDownSelect
+				<DropdownSelect
 					value={brushType}
 					style={{ width: 120 }}
 					onChange={async (value) => {
@@ -30,11 +30,11 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 						renderer.getFogControls().setBrushType(value);
 					}}
 				>
-					<DropDownOption value={BRUSH_FOG} selectedByDefault={true}>
+					<DropdownOption value={BRUSH_FOG} selectedByDefault={true}>
 						Fog
-					</DropDownOption>
-					<DropDownOption value={BRUSH_ERASE}>Erase</DropDownOption>
-				</DropDownSelect>
+					</DropdownOption>
+					<DropdownOption value={BRUSH_ERASE}>Erase</DropdownOption>
+				</DropdownSelect>
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Size</h3>

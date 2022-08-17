@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import useSetModelColor from "../../hooks/game/useSetModelColor";
-import { Button, Input } from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import SelectWiki from "../select/SelectWiki";
 import useSetPositionedModelWiki from "../../hooks/game/useSetPositionedModelWiki";
@@ -10,6 +9,10 @@ import useDeletePositionedModel from "../../hooks/game/useDeletePositionedModel"
 import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../rendering/GameRenderer";
 import { MODEL_SELECTED_EVENT } from "../../controls/SelectModelControls";
 import {PositionedModel, WikiPage} from "../../types";
+import PrimaryButton from "../widgets/PrimaryButton";
+import DangerButton from "../widgets/DangerButton";
+import TextInput from "../widgets/TextInput";
+import ColorInput from "../widgets/ColorInput";
 
 interface ModelInfoProps {
 	renderer: GameRenderer,
@@ -125,8 +128,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 								onChange={async (wiki) => setNewWiki(wiki)}
 								showClear={true}
 							>
-								<Button
-									type={"primary"}
+								<PrimaryButton
 									onClick={async () =>
 										await setPositionedModelWiki({
 											positionedModelId: positionedModel._id,
@@ -135,16 +137,14 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 									}
 								>
 									Set Wiki
-								</Button>
+								</PrimaryButton>
 							</SelectWiki>
 						</div>
 
 						<h3 style={{marginTop: "1em"}}>Select Color:</h3>
 						<div style={{marginLeft: "1em"}}>
-							<Input
-								type={"color"}
+							<ColorInput
 								value={color}
-								defaultValue={positionedModel.color}
 								style={{
 									width: "100px",
 								}}
@@ -154,7 +154,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 								}}
 							/>
 							<div style={{display: "flex", marginTop: "1em"}}>
-								<Button
+								<PrimaryButton
 									onClick={async () => {
 										await setModelColor({
 											positionedModelId: positionedModel._id,
@@ -164,8 +164,8 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 									style={{marginRight: "1em"}}
 								>
 									Set Color
-								</Button>
-								<Button
+								</PrimaryButton>
+								<PrimaryButton
 									onClick={async () => {
 										await setModelColor({
 											positionedModelId: positionedModel._id,
@@ -174,12 +174,11 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 									}}
 								>
 									Clear Color
-								</Button>
+								</PrimaryButton>
 							</div>
 						</div>
 
-						<Button
-							danger={true}
+						<DangerButton
 							onClick={async () => {
 								await renderer.selectModelControls.select();
 								await deletePositionedModel({
@@ -190,7 +189,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 							style={{marginTop: "1em"}}
 						>
 							Delete Model
-						</Button>
+						</DangerButton>
 
 					</div>
 				)}

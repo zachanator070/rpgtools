@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SlidingDrawer from "../generic/SlidingDrawer";
-import { Tabs } from "antd";
+import SlidingDrawer from "../widgets/SlidingDrawer";
 import GameChat from "./GameChat";
 import ToolOptions from "./ToolOptions";
 import {
@@ -13,8 +12,8 @@ import {
 import DiceOptions from "./DiceOptions";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
-
-const { TabPane } = Tabs;
+import TabCollection from "../widgets/TabCollection";
+import TabPane from "../widgets/TabPane";
 
 const GAME_CONTROLS_WITH_CONTEXT = [
 	SELECT_MODEL_CONTROLS,
@@ -57,17 +56,15 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 			visible={visible}
 			setVisible={setVisible}
 		>
-			<Tabs
-				defaultActiveKey="1"
+			<TabCollection
 				activeKey={activeKey}
 				onChange={(key) => setActiveKey(key)}
-				type={"card"}
 				style={{
 					paddingTop: "1em"
 				}}
 			>
 				<TabPane
-					tab="Chat"
+					title="Chat"
 					key="1"
 					style={{
 						height: "100%",
@@ -75,7 +72,7 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 				>
 					<GameChat />
 				</TabPane>
-				<TabPane tab="Tool Options" key="2">
+				<TabPane title="Tool Options" key="2">
 					<ToolOptions
 						renderer={renderer}
 						controlsMode={controlsMode}
@@ -83,7 +80,7 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 					/>
 				</TabPane>
 				<TabPane
-					tab="Dice"
+					title="Dice"
 					key="3"
 					style={{
 						height: "100%",
@@ -91,7 +88,7 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 				>
 					<DiceOptions />
 				</TabPane>
-			</Tabs>
+			</TabCollection>
 		</SlidingDrawer>
 	);
 };

@@ -1,7 +1,8 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
-import { Dropdown, Menu } from "antd";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import LoadingView from "../LoadingView";
+import DropdownMenu from "../widgets/DropdownMenu";
+import DropdownMenuItem from "../widgets/DropdownMenuItem";
 
 interface MapProps {
 	menuItems: MapMenuItem[];
@@ -171,27 +172,18 @@ export default function Map({ menuItems, extras }: MapProps) {
 	if (!menuItems) {
 		menuItems = [];
 	}
-	const getDropdownMenu = () => {
-		const items = [];
-		for (let item of menuItems) {
-			items.push(
-				<Menu.Item
-					key={item.name}
-					onClick={async () => {
-						const boundingBox = map.current.getBoundingClientRect();
-						const newPinX = lastMouseX.current - boundingBox.x;
-						const newPinY = lastMouseY.current - boundingBox.y;
-						const coords = reverseTranslate(newPinX, newPinY);
-						await item.onClick(coords[0], coords[1]);
-					}}
-				>
-					{item.name}
-				</Menu.Item>
-			);
-		}
-
-		return items;
-	};
+	const dropdownItems = menuItems.map(item => <DropdownMenuItem
+		key={item.name}
+		onClick={async () => {
+			const boundingBox = map.current.getBoundingClientRect();
+			const newPinX = lastMouseX.current - boundingBox.x;
+			const newPinY = lastMouseY.current - boundingBox.y;
+			const coords = reverseTranslate(newPinX, newPinY);
+			await item.onClick(coords[0], coords[1]);
+		}}
+	>
+		{item.name}
+	</DropdownMenuItem>) ?? [];
 
 	if (loading) {
 		return <LoadingView />;
@@ -234,14 +226,13 @@ export default function Map({ menuItems, extras }: MapProps) {
 		</div>
 	);
 
-	const menu = getDropdownMenu();
 
 	return (
 		<div ref={mapContainer} className="flex-grow-1 flex-column">
-			{currentMap.canWrite && menu.length > 0 ? (
-				<Dropdown overlay={<Menu>{menu}</Menu>} trigger={["contextMenu"]}>
+			{currentMap.canWrite && dropdownItems.length > 0 ? (
+				<DropdownMenu menu={dropdownItems}>
 					{mapComponent}
-				</Dropdown>
+				</DropdownMenu>
 			) : (
 				mapComponent
 			)}

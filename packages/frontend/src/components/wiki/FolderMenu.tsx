@@ -16,7 +16,7 @@ import useRenameFolder from "../../hooks/wiki/useRenameFolder";
 import SelectFolder from "../select/SelectFolder";
 import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import useDeleteFolder from "../../hooks/wiki/useDeleteFolder";
-import ToolTip from "../generic/ToolTip";
+import ToolTip from "../widgets/ToolTip";
 import useImportContent from "../../hooks/world/useImportContent";
 import PermissionEditor from "../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
@@ -89,7 +89,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 		<Menu.Item
 			key="deleteFolder"
 			onClick={() => {
-				Modal.confirm({
+				Modal.modalConfirm({
 					title: "Confirm Delete",
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
 					onOk: async () => {

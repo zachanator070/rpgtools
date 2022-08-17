@@ -69,7 +69,7 @@ export default function ModelEdit({ model }: ModelEditProps) {
 						<Button
 							danger={true}
 							onClick={() => {
-								Modal.confirm({
+								Modal.modalConfirm({
 									title: "Confirm",
 									content: `Are you sure you want to delete the model ${model.name} ?`,
 									cancelText: "Cancel",

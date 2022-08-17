@@ -7,9 +7,17 @@ export default function InputForm<T>({initialValues, onSubmit, children}: {initi
     return <Form
         initialValues={initialValues}
         onFinish={onSubmit}
+        labelCol={{
+            span: 8,
+        }}
+		wrapperCol={{
+            span: 16,
+        }}
     >
         {children}
-        <FormItem>
+        <FormItem
+            lastItem={true}
+        >
             <PrimaryButton submit={true}>Submit</PrimaryButton>
         </FormItem>
     </Form>

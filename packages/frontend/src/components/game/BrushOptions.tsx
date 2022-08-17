@@ -10,11 +10,11 @@ import {
 	DEFAULT_BRUSH_TYPE,
 } from "../../controls/PaintControls";
 import {GameRenderer} from "../../rendering/GameRenderer";
-import PrimaryCheckbox from "../generic/PrimaryCheckbox";
-import ColorInput from "../generic/ColorInput";
-import DropDownSelect from "../generic/DropDownSelect";
-import DropDownOption from "../generic/DropDownOption";
-import NumberSlider from "../generic/NumberSlider";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
+import ColorInput from "../widgets/ColorInput";
+import DropdownSelect from "../widgets/DropdownSelect";
+import DropdownOption from "../widgets/DropdownOption";
+import NumberSlider from "../widgets/NumberSlider";
 
 interface BrushOptionsProps {
 	renderer: GameRenderer
@@ -42,7 +42,7 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Type</h3>
-				<DropDownSelect
+				<DropdownSelect
 					value={brushType}
 					style={{ width: 120 }}
 					onChange={async (value) => {
@@ -50,13 +50,13 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 						renderer.getPaintControls().setBrushType(value);
 					}}
 				>
-					<DropDownOption value={BRUSH_LINE} selectedByDefault={true}>
+					<DropdownOption value={BRUSH_LINE} selectedByDefault={true}>
 						Line
-					</DropDownOption>
-					<DropDownOption value={BRUSH_SQUARE}>Square</DropDownOption>
-					<DropDownOption value={BRUSH_CIRCLE}>Circle</DropDownOption>
-					<DropDownOption value={BRUSH_ERASE}>Erase</DropDownOption>
-				</DropDownSelect>
+					</DropdownOption>
+					<DropdownOption value={BRUSH_SQUARE}>Square</DropdownOption>
+					<DropdownOption value={BRUSH_CIRCLE}>Circle</DropdownOption>
+					<DropdownOption value={BRUSH_ERASE}>Erase</DropdownOption>
+				</DropdownSelect>
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Size</h3>

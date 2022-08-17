@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import SelectWiki from "../select/SelectWiki";
 import { PLACE } from "@rpgtools/common/src/type-constants";
-import {Button, Checkbox, Slider, Switch} from "antd";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../hooks/game/useSetGameMap";
 import LoadingView from "../LoadingView";
 import {GameRenderer} from "../../rendering/GameRenderer";
+import PrimaryButton from "../widgets/PrimaryButton";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
+import {Switch} from "antd";
+import Toggle from "../widgets/Toggle";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;
@@ -36,7 +39,7 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 				)}
 			</div>
 			<div className={"margin-lg-bottom"}>
-				<Switch
+				<Toggle
 					checkedChildren={"Grid"}
 					unCheckedChildren={"No Grid"}
 					defaultChecked={renderer.getDrawGrid()}
@@ -56,25 +59,25 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 					/>
 					<div className={"margin-md"}>
 						Clear Paint:{" "}
-						<Checkbox
+						<PrimaryCheckbox
 							checked={clearPaint}
-							onChange={async (e) => {
-								await setClearPaint(e.target.checked);
+							onChange={async (checked) => {
+								await setClearPaint(checked);
 							}}
 						/>
 					</div>
 					<div className={"margin-md"}>
 						Set Fog:{" "}
-						<Checkbox
+						<PrimaryCheckbox
 							checked={setFog}
-							onChange={async (e) => {
-								await setSetFog(e.target.checked);
+							onChange={async (checked) => {
+								await setSetFog(checked);
 							}}
 						/>
 					</div>
 
 					<div className={"margin-md"}>
-						<Button
+						<PrimaryButton
 							onClick={async () => {
 								await setGameMap({
 									gameId: currentGame._id,
@@ -86,7 +89,7 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 							disabled={!selectedLocation}
 						>
 							Change location
-						</Button>
+						</PrimaryButton>
 					</div>
 				</div>
 			)}

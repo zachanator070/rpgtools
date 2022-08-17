@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Tooltip } from "antd";
 import {
 	CloudOutlined,
 	DeleteOutlined,
@@ -28,6 +27,7 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LeaveGameButton from "./LeaveGameButton";
 import PermissionModal from "../modals/PermissionModal";
 import { GAME } from "@rpgtools/common/src/type-constants";
+import ToolTip from "../widgets/ToolTip";
 
 interface GameControlsToolbarProps {
 	controlsMode: string;
@@ -115,11 +115,11 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 			}}
 			key={"Help Text"}
 		>
-			<Tooltip placement="top" title={toolTipText[controlsMode]}>
+			<ToolTip title={toolTipText[controlsMode]}>
 				<span style={{ padding: "10px", backgroundColor: "white" }}>
 					<QuestionCircleOutlined />
 				</span>
-			</Tooltip>
+			</ToolTip>
 		</span>,
 	];
 	menu.push(
@@ -134,7 +134,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 					}}
 					key={mode}
 				>
-					<Tooltip placement="top" title={mouseOverText[mode]}>
+					<ToolTip title={mouseOverText[mode]}>
 						<span
 							key={mode}
 							style={{
@@ -150,7 +150,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 						>
 							{icons[mode]}
 						</span>
-					</Tooltip>
+					</ToolTip>
 				</span>
 			);
 		})
@@ -170,7 +170,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 				subjectType={GAME}
 				refetch={refetchCurrentGame}
 			/>
-			<Tooltip placement="top" title={"Game Permissions"}>
+			<ToolTip title={"Game Permissions"}>
 				<span style={{ padding: "10px", backgroundColor: "white" }}>
 					<a
 						onClick={async () => {
@@ -180,7 +180,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 						<TeamOutlined style={{ fontSize: "20px" }} />
 					</a>
 				</span>
-			</Tooltip>
+			</ToolTip>
 		</span>
 	);
 

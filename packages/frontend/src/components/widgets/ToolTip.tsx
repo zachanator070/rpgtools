@@ -4,7 +4,7 @@ import QuestionMarkIcon from "./QuestionMarkIcon";
 
 export default function ToolTip({ title, children }: {title: React.ReactNode, children?: React.ReactNode}) {
 	return (
-		<Tooltip title={title}>
+		<Tooltip title={title} placement="top">
 			{children || <QuestionMarkIcon/>}
 		</Tooltip>
 	);

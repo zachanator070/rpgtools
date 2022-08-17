@@ -6,7 +6,7 @@ export interface DropDownOptionProps {
     selectedByDefault?: boolean,
     children: React.ReactNode
 }
-export default function DropDownOption({value, selectedByDefault, children}: DropDownOptionProps) {
+export default function DropdownOption({value, selectedByDefault, children}: DropDownOptionProps) {
     return <Select.Option value={value} default={selectedByDefault}>
         {children}
     </Select.Option>;
