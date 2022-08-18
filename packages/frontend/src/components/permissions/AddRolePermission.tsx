@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import { Button, Select } from "antd";
 import {ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
 import SelectRole from "../select/SelectRole";
@@ -9,6 +8,9 @@ import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermis
 import Errors from "../Errors";
 import SelectFolder from "../select/SelectFolder";
 import {Role} from "../../types";
+import DropdownSelect from "../widgets/DropdownSelect";
+import DropdownOption from "../widgets/DropdownOption";
+import PrimaryButton from "../widgets/PrimaryButton";
 
 interface AddRolePermissionProps {
 	role: Role;
@@ -32,11 +34,11 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 	let selectSubject = null;
 	if (subjectTypeSelected === WORLD) {
 		selectSubject = (
-			<Select style={{ width: "200px" }} onChange={async (worldId: string) => setSubjectId(worldId)}>
+			<DropdownSelect style={{ width: "200px" }} onChange={async (worldId: string) => setSubjectId(worldId)}>
 				{currentWorld.canAdmin && (
-					<Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>
+					<DropdownOption value={currentWorld._id}>{currentWorld.name}</DropdownOption>
 				)}
-			</Select>
+			</DropdownSelect>
 		);
 	} else if (subjectTypeSelected === WIKI_PAGE) {
 		selectSubject = (
@@ -62,7 +64,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 			<Errors errors={errors} />
 			<div className={"margin-lg-top"}>
 				<span className={"margin-lg-right"}>Subject Type:</span>
-				<Select
+				<DropdownSelect
 					style={{ width: "200px" }}
 					onChange={async (value) => {
 						await setPermissionToAdd(null);
@@ -72,14 +74,14 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 					value={subjectTypeSelected}
 				>
 					{[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map((permission) => (
-						<Select.Option key={permission} value={permission}>{permission}</Select.Option>
+						<DropdownOption key={permission} value={permission}>{permission}</DropdownOption>
 					))}
-				</Select>
+				</DropdownSelect>
 			</div>
 			{subjectTypeSelected && (
 				<div className={"margin-lg-top"}>
 					<span className={"margin-lg-right"}>Permission:</span>
-					<Select
+					<DropdownSelect
 						style={{ width: "200px" }}
 						onChange={async (value) => {
 							await setPermissionToAdd(value);
@@ -87,9 +89,9 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 						value={permissionToAdd}
 					>
 						{availablePermissions.map((permission) => (
-							<Select.Option key={permission} value={permission}>{permission}</Select.Option>
+							<DropdownOption key={permission} value={permission}>{permission}</DropdownOption>
 						))}
-					</Select>
+					</DropdownSelect>
 				</div>
 			)}
 			{permissionToAdd && (
@@ -99,8 +101,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 			)}
 			{subjectId && (
 				<div className={"margin-lg-top"}>
-					<Button
-						type={"primary"}
+					<PrimaryButton
 						onClick={async () =>
 							await grantRolePermission({
 								roleId: role._id,
@@ -111,7 +112,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 						}
 					>
 						Add Permission
-					</Button>
+					</PrimaryButton>
 				</div>
 			)}
 		</div>

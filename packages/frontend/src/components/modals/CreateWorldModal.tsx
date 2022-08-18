@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { Button, Checkbox, Form, Input, Modal } from "antd";
+import React from "react";
 import useCreateWorld from "../../hooks/world/useCreateWorld";
 import { useHistory } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
 import ToolTip from "../widgets/ToolTip";
-import QuestionMarkIcon from "../widgets/QuestionMarkIcon";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
+import InputForm from "../widgets/InputForm";
+import FormItem from "../widgets/FormItem";
+import TextInput from "../widgets/TextInput";
+import FullScreenModal from "../widgets/FullScreenModal";
 
 interface CreateWorldModalProps {
 	visibility: boolean;
@@ -14,8 +17,6 @@ interface CreateWorldModalProps {
 
 export default function CreateWorldModal({ visibility, setVisibility }: CreateWorldModalProps) {
 	const history = useHistory();
-	const [name, setName] = useState("");
-	const [isPublic, setPublic] = useState(true);
 
 	const { setCurrentWorld } = useSetCurrentWorld();
 
@@ -24,31 +25,27 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 	});
 
-	const formItemLayout = {
-		labelCol: { span: 4 },
-		wrapperCol: { span: 14 },
-	};
-	const noLabelItem = {
-		wrapperCol: { span: 10, offset: 4 },
-	};
 	return (
-		<Modal
+		<FullScreenModal
 			title="Create World"
 			visible={visibility}
-			onCancel={async () => {
-				await setVisibility(false);
-			}}
-			footer={null}
+			setVisible={setVisibility}
 		>
-			{errors && errors.join("/n")}
-			<Form layout="horizontal">
-				<Form.Item label="Name" required={true} {...formItemLayout}>
-					<Input onChange={(e) => setName(e.target.value)} id={'newWorldName'}/>
-				</Form.Item>
-				<Form.Item {...noLabelItem}>
-					<Checkbox onChange={() => setPublic(!isPublic)} checked={isPublic}>
+			<InputForm
+				errors={errors}
+				loading={loading}
+				onSubmit={async ({name, isPublic}) => {
+					await createWorld({name, public: isPublic});
+					await setVisibility(false);
+				}}
+			>
+				<FormItem name="name" label="Name" required={true}>
+					<TextInput id={'newWorldName'}/>
+				</FormItem>
+				<FormItem name={"isPublic"}>
+					<PrimaryCheckbox>
 						Public World
-					</Checkbox>
+					</PrimaryCheckbox>
 					<ToolTip
 						title={<>
 							Public worlds will have the following permissions given to any visitor:
@@ -63,21 +60,8 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 							</ul>
 						</>}
 					/>
-				</Form.Item>
-				<Form.Item {...noLabelItem}>
-					<Button
-						type="primary"
-						disabled={loading}
-						onClick={async () => {
-							await createWorld({name, public: isPublic});
-							await setVisibility(false);
-						}}
-						id={'submit'}
-					>
-						Submit
-					</Button>
-				</Form.Item>
-			</Form>
-		</Modal>
+				</FormItem>
+			</InputForm>
+		</FullScreenModal>
 	);
 };

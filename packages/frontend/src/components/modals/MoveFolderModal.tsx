@@ -1,64 +1,43 @@
-import React, { useState } from "react";
+import React from "react";
 import useMoveFolder from "../../hooks/wiki/useMoveFolder";
-import { Button, Form, Modal } from "antd";
 import SelectFolder from "../select/SelectFolder";
-import Errors from "../Errors";
 import {WikiFolder} from "../../types";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/InputForm";
+import FormItem from "../widgets/FormItem";
 
 interface MoveFolderModalProps {
 	folder: WikiFolder;
 	visibility: boolean;
-	setVisibility: (visibility: boolean) => Promise<void>;
+	setVisibility: (visibility: boolean) => any;
 }
 
 export default function MoveFolderModal({ folder, visibility, setVisibility }: MoveFolderModalProps) {
-	const [selectedParent, setSelectedParent] = useState<string>();
-	const { moveFolder, errors } = useMoveFolder(async () => {
+	const { moveFolder, errors, loading } = useMoveFolder(async () => {
 		await setVisibility(false);
 	});
-	const formItemLayout = {
-		labelCol: { span: 7 },
-		wrapperCol: { span: 12 },
-	};
-
-	const tailLayout = {
-		wrapperCol: { offset: 8, span: 16 },
-	};
 
 	return (
-		<Modal
-			title={`Moving ${folder.name}`}
+		<FullScreenModal
+			title={`Move ${folder.name}`}
 			visible={visibility}
-			onCancel={async () => await setVisibility(false)}
-			onOk={async () => {}}
-			okText={"Move Folder"}
-			footer={null}
+			setVisible={setVisibility}
 		>
-			{errors && (
-				<div className={"margin-lg-bottom"}>
-					<Errors errors={errors} />
-				</div>
-			)}
 
-			<Form
-				onFinish={async () => {
+			<InputForm
+				loading={loading}
+				errors={errors}
+				onSubmit={async ({mewParentId}) => {
 					await moveFolder({
 						folderId: folder._id,
-						parentFolderId: selectedParent,
+						parentFolderId: mewParentId,
 					});
 				}}
 			>
-				<Form.Item label={"New Parent"} {...formItemLayout}>
-					<SelectFolder
-						onChange={async (value) => await setSelectedParent(value)}
-					/>
-				</Form.Item>
-				<Form.Item {...tailLayout}>
-					<Button type={"primary"} htmlType="submit">
-						Move Folder
-					</Button>
-				</Form.Item>
-			</Form>
-		</Modal>
+				<FormItem name="newParentId" label={"New Parent"} >
+					<SelectFolder/>
+				</FormItem>
+			</InputForm>
+		</FullScreenModal>
 	);
 };

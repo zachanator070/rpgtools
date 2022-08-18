@@ -1,44 +1,48 @@
 import React, { useState } from "react";
-import { Button, Dropdown, Menu } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import LoadingView from "../LoadingView";
 import { DownOutlined } from "@ant-design/icons";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import CreateWorldModal from "../modals/CreateWorldModal";
 import SelectWorldModal from "../modals/SelectWorldModal";
+import SecondaryButton from "../widgets/SecondaryButton";
+import DropdownMenu from "../widgets/DropdownMenu";
+import DropdownMenuItem from "../widgets/DropdownMenuItem";
+import useServerConfig from "../../hooks/server/useServerConfig";
 
 export default function WorldMenu() {
 	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);
 	const [selectWorldModalVisibility, setSelectWorldModalVisibility] = useState(false);
 
-	const { currentUser, loading } = useCurrentUser();
+	const {serverConfig, loading: serverConfigLoading} = useServerConfig();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 
-	if (loading || worldLoading) {
+	if (worldLoading || serverConfigLoading) {
 		return <LoadingView />;
 	}
 
-	const menu = (
-		<Menu>
-			{currentUser.username !== ANON_USERNAME && (
-				<Menu.Item key="0">
-					<a href="#" onClick={async () => setCreateWorldModalVisibility(true)}>
-						New World
-					</a>
-				</Menu.Item>
-			)}
-			<Menu.Item key="1">
+	let menu = [
+			<DropdownMenuItem onClick={async () => setSelectWorldModalVisibility(true)}>
 				<SelectWorldModal
 					visibility={selectWorldModalVisibility}
 					setVisibility={async (visibility: boolean) => setSelectWorldModalVisibility(visibility)}
 				/>
-				<a href="#" onClick={async () => setSelectWorldModalVisibility(true)}>
+				<a href="#">
 					Select World
 				</a>
-			</Menu.Item>
-		</Menu>
-	);
+			</DropdownMenuItem>
+	];
+
+	if (serverConfig.canCreateWorlds) {
+		menu = [
+			<DropdownMenuItem onClick={async () => setCreateWorldModalVisibility(true)}>
+				<a href="#">
+					New World
+				</a>
+			</DropdownMenuItem>,
+			...menu
+		];
+	}
 
 	return (
 		<span id={'worldMenu'}>
@@ -46,11 +50,11 @@ export default function WorldMenu() {
 				visibility={createWorldModalVisibility}
 				setVisibility={async (visibility: boolean) => setCreateWorldModalVisibility(visibility)}
 			/>
-			<Dropdown overlay={menu} trigger={["click"]}>
-				<Button>
+			<DropdownMenu menu={menu}>
+				<SecondaryButton>
 					{currentWorld ? currentWorld.name : "No World Selected"} <DownOutlined />
-				</Button>
-			</Dropdown>
+				</SecondaryButton>
+			</DropdownMenu>
 		</span>
 	);
 };

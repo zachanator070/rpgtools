@@ -251,6 +251,7 @@ export interface ServerConfig extends PermissionControlled {
     accessControlList: PermissionAssignment[];
     canWrite: boolean;
     canAdmin: boolean;
+    canCreateWorlds: boolean;
     roles: Role[];
 }
 

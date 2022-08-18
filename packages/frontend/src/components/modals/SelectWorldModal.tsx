@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Button, Modal } from "antd";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import SelectWorld from "../select/SelectWorld";
-import {World} from "../../types";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/InputForm";
+import FormItem from "../widgets/FormItem";
 
 interface SelectWorldModalProps {
 	visibility: boolean;
@@ -12,41 +13,34 @@ interface SelectWorldModalProps {
 }
 
 export default function SelectWorldModal({ visibility, setVisibility }: SelectWorldModalProps) {
-	const [selectedWorld, setSelectedWorld] = useState<World>(null);
-
-	const { setCurrentWorld } = useSetCurrentWorld();
+	const { setCurrentWorld, errors, loading } = useSetCurrentWorld();
 	const { currentUser } = useCurrentUser();
 
 	const history = useHistory();
 
 	return (
-		<Modal
+		<FullScreenModal
 			title="Select a World"
 			visible={visibility}
-			onCancel={async () => {
-				await setVisibility(false);
-			}}
-			footer={[
-				<Button
-					type={"primary"}
-					key="select button"
-					onClick={async () => {
-						if (currentUser) {
-							await setCurrentWorld({worldId: selectedWorld._id});
-						}
-						history.push(
-							`/ui/world/${selectedWorld._id}/map/${selectedWorld.wikiPage._id}`
-						);
-						await setVisibility(false);
-					}}
-					disabled={selectedWorld === null}
-					id={'selectWorld'}
-				>
-					Select
-				</Button>,
-			]}
+			setVisible={setVisibility}
 		>
-			<SelectWorld onChange={async (world: World) => setSelectedWorld(world)} />
-		</Modal>
+			<InputForm
+				onSubmit={async ({selectedWorld}) => {
+					if (currentUser) {
+						await setCurrentWorld({worldId: selectedWorld});
+					}
+					history.push(
+						`/ui/world/${selectedWorld}`
+					);
+					await setVisibility(false);
+				}}
+				loading={loading}
+				errors={errors}
+			>
+				<FormItem name={"selectedWorld"} label={"Select World"}>
+					<SelectWorld />
+				</FormItem>
+			</InputForm>
+		</FullScreenModal>
 	);
 };

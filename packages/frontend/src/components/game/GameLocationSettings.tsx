@@ -7,7 +7,6 @@ import LoadingView from "../LoadingView";
 import {GameRenderer} from "../../rendering/GameRenderer";
 import PrimaryButton from "../widgets/PrimaryButton";
 import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
-import {Switch} from "antd";
 import Toggle from "../widgets/Toggle";
 
  interface GameLocationSettingsProps {

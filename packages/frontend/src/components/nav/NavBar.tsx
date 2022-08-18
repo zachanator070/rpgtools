@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button, Col, Divider, Row } from "antd";
 import { Link } from "react-router-dom";
 import WorldMenu from "./WorldMenu";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
@@ -11,6 +10,9 @@ import useServerConfig from "../../hooks/server/useServerConfig";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import LoginModal from "../modals/LoginModal";
 import RegisterModal from "../modals/RegisterModal";
+import VerticalBar from "../widgets/VerticalBar";
+import PrimaryButton from "../widgets/PrimaryButton";
+import ColumnedContent from "../widgets/ColumnedContent";
 
 export default function NavBar() {
 	const { currentUser, loading: userLoading } = useCurrentUser();
@@ -25,16 +27,16 @@ export default function NavBar() {
 		return <></>;
 	}
 
-	let loginOptions = null;
+	let loginOptions;
 
 	if (currentUser.username !== ANON_USERNAME) {
 		loginOptions = (
 			<span>
 				<span className="margin-md-right">Hello {currentUser.username}</span>
 				<span>
-					<Button id="logoutButton" type="primary" onClick={async () => logout()}>
+					<PrimaryButton id="logoutButton" onClick={async () => logout()}>
 						Logout
-					</Button>
+					</PrimaryButton>
 				</span>
 			</span>
 		);
@@ -61,8 +63,8 @@ export default function NavBar() {
 				setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}
 				visibility={registerModalVisibility}
 			/>
-			<Row>
-				<Col span={4}>
+			<ColumnedContent>
+				<>
 					<div className="margin-md-left">
 						<WorldMenu />
 						{currentWorld && currentWorld.canWrite && (
@@ -83,37 +85,32 @@ export default function NavBar() {
 							</span>
 						)}
 					</div>
-				</Col>
-				{currentWorld ? (
-					<>
-						<Col span={4}>
+
+					{currentWorld &&
+						<>
 							<div className="margin-sm-top">
-								<Divider type="vertical" />
+								<VerticalBar/>
 								<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
 									Map
 								</Link>
-								<Divider type="vertical" />
+								<VerticalBar/>
 								<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>
 									Wiki
 								</Link>
-								<Divider type="vertical" />
+								<VerticalBar/>
 								<Link to={`/ui/world/${currentWorld._id}/model`}>Models</Link>
-								<Divider type="vertical" />
+								<VerticalBar/>
 								<Link to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
-								<Divider type="vertical" />
+								<VerticalBar/>
 								<Link to={`/ui/world/${currentWorld._id}/gameLogin`}>Game</Link>
 							</div>
-						</Col>
-						<Col span={10}>
-							<SearchBar />
-						</Col>
-					</>
-				) : (
-					<Col span={14}>
-						<></>
-					</Col>
-				)}
-				<Col span={6} className={"padding-md-right"} style={{ textAlign: "right" }}>
+						</>
+					}
+				</>
+				<>
+					{currentWorld && <SearchBar />}
+				</>
+				<div style={{ textAlign: "right" }}>
 					{(serverConfig.canAdmin || serverConfig.canWrite) && (
 						<Link to={`/ui/serverSettings`} className={"margin-lg-right"}>
 							<CloudServerOutlined />
@@ -121,8 +118,8 @@ export default function NavBar() {
 						</Link>
 					)}
 					{loginOptions}
-				</Col>
-			</Row>
+				</div>
+			</ColumnedContent>
 		</div>
 	);
 };

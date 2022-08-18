@@ -448,6 +448,7 @@ export const typeDefs = gql`
 		accessControlList: [PermissionAssignment!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
+		canCreateWorlds: Boolean!
 		roles: [Role!]!
 	}
 

@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import { Button, Form, Input, Modal } from "antd";
+import React from "react";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import useLogin from "../../hooks/authentication/useLogin";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/InputForm";
+import FormItem from "../widgets/FormItem";
+import TextInput from "../widgets/TextInput";
+import PasswordInput from "../widgets/PasswordInput";
 
 interface LoginModalProps {
 	visibility: boolean;
@@ -9,69 +13,37 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ visibility, setVisibility }: LoginModalProps) {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
 
 	const { login, loading, errors } = useLogin(async () => {
 		await setVisibility(false);
 	});
 
-	const formItemLayout = {
-		labelCol: { span: 5 },
-		wrapperCol: { span: 14 },
-	};
-
 	return (
-		<Modal
+		<FullScreenModal
 			title="Login"
 			visible={visibility}
-			centered
-			onCancel={async () => await setVisibility(false)}
-			footer={null}
+			setVisible={setVisibility}
 		>
-			{errors.join("/n")}
-			<>
-				<Form layout="horizontal">
-					<Form.Item label="Username" {...formItemLayout}>
-						<Input
-							placeholder="zach"
-							prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={username}
-							onChange={(event) => {
-								setUsername(event.target.value);
-							}}
-							name="loginEmail"
-							id="loginEmail"
-							autoComplete="loginEmail"
-						/>
-					</Form.Item>
-					<Form.Item label="Password" {...formItemLayout}>
-						<Input
-							placeholder="$up3r$3cr37"
-							prefix={<KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={password}
-							onChange={(event) => {
-								setPassword(event.target.value);
-							}}
-							type="password"
-							name="loginPassword"
-							id="loginPassword"
-							autoComplete="loginPassword"
-						/>
-					</Form.Item>
-				</Form>
-				<Button
-					type="primary"
-					disabled={loading}
-					onClick={async () => {
-						try {
-							await login({username, password});
-						} catch {}
-					}}
+			<InputForm
+				errors={errors}
+				loading={loading}
+				onSubmit={async ({username, password}) => {
+					await login({username, password})
+				}}
+			>
+				<FormItem
+					label={<>Username <UserOutlined style={{ color: "rgba(0,0,0,.25)" }} /></> }
+					name={"username"}
 				>
-					Login
-				</Button>
-			</>
-		</Modal>
+					<TextInput id="loginEmail"/>
+				</FormItem>
+				<FormItem
+					label={<>Password <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}
+					name={"username"}
+				>
+					<PasswordInput id="loginPassword"/>
+				</FormItem>
+			</InputForm>
+		</FullScreenModal>
 	);
 };

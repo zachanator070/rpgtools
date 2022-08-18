@@ -5,7 +5,7 @@ import useWorlds from "../../hooks/world/useWorlds";
 import {World} from "../../types";
 
 interface SelectWorldProps {
-	onChange: (world: World) => Promise<any>;
+	onChange?: (world: World) => Promise<any>;
 	style?: CSSProperties;
 	showClear?: boolean;
 }

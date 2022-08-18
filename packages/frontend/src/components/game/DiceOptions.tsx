@@ -15,7 +15,7 @@ import PrimaryButton from "../widgets/PrimaryButton";
 export default function DiceOptions() {
 	const { currentCharacter } = useCurrentCharacter();
 	const [addAttributeVisible, setAddAttributeVisible] = useState<boolean>(false);
-	const {setCharacterAttributes, loading} = useSetCharacterAttributes();
+	const {setCharacterAttributes, loading, errors} = useSetCharacterAttributes();
 	if (!currentCharacter) {
 		return <LoadingView />;
 	}
@@ -32,6 +32,8 @@ export default function DiceOptions() {
 				setVisible={setAddAttributeVisible}
 			>
 				<InputForm
+					errors={errors}
+					loading={loading}
 					initialValues={{
 						value: 0,
 					}}

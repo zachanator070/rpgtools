@@ -1,4 +1,4 @@
-import { Col, Row, Table } from "antd";
+import { Table } from "antd";
 import React from "react";
 import { ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WORLD } from "@rpgtools/common/src/type-constants";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -6,6 +6,7 @@ import useServerConfig from "../../hooks/server/useServerConfig";
 import LoadingView from "../LoadingView";
 import useMyPermissions from "../../hooks/authorization/useMyPermissions";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
+import ColumnedContent from "../widgets/ColumnedContent";
 
 export default function MyPermissionsView() {
 	const { currentWorld, loading } = useCurrentWorld();
@@ -91,9 +92,8 @@ export default function MyPermissionsView() {
 		<div className={"margin-md"}>
 			<h1>My Permissions on {currentWorld.name}</h1>
 			<hr />
-			<Row className={"margin-xlg-top"}>
-				<Col span={4} />
-				<Col span={16}>
+			<ColumnedContent>
+				<>
 					<h2 className={"margin-lg-bottom"}>My Permissions</h2>
 					<Table
 						dataSource={permissionAssignments}
@@ -101,9 +101,8 @@ export default function MyPermissionsView() {
 						pagination={false}
 						scroll={{ y: 500 }}
 					/>
-				</Col>
-				<Col span={4} />
-			</Row>
+				</>
+			</ColumnedContent>
 		</div>
 	);
 };

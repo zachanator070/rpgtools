@@ -13,7 +13,6 @@ import {
 import useCreateWiki from "../../hooks/wiki/useCreateWiki";
 import useCreateFolder from "../../hooks/wiki/useCreateFolder";
 import useRenameFolder from "../../hooks/wiki/useRenameFolder";
-import SelectFolder from "../select/SelectFolder";
 import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import useDeleteFolder from "../../hooks/wiki/useDeleteFolder";
 import ToolTip from "../widgets/ToolTip";
@@ -21,6 +20,7 @@ import useImportContent from "../../hooks/world/useImportContent";
 import PermissionEditor from "../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import {WikiFolder} from "../../types";
+import MoveFolderModal from "../modals/MoveFolderModal";
 
 interface FolderMenuProps {
 	folder: WikiFolder;
@@ -167,32 +167,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 						</Form.Item>
 					</Form>
 				</Modal>
-				<Modal
-					footer={null}
-					title={`Move ${folder.name}`}
-					visible={moveFolderModalVisibility}
-					onCancel={() => setMoveFolderModalVisibility(false)}
-				>
-					<Form
-						{...layout}
-						onFinish={async ({ newFolder }) => {
-							setMoveFolderModalVisibility(false);
-							await moveFolder({
-								folderId: folder._id,
-								parentFolderId: newFolder,
-							});
-						}}
-					>
-						<Form.Item label={"New Parent Folder"} name={"newFolder"}>
-							<SelectFolder />
-						</Form.Item>
-						<Form.Item {...tailLayout}>
-							<Button type="primary" htmlType="submit">
-								Submit
-							</Button>
-						</Form.Item>
-					</Form>
-				</Modal>
+				<MoveFolderModal folder={folder} visibility={moveFolderModalVisibility} setVisibility={setMoveFolderModalVisibility}/>
 				<Modal
 					title={"Import Content"}
 					visible={importModalVisibility}
