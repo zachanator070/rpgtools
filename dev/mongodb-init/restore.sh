@@ -10,7 +10,7 @@ then
   echo "Deleting old database $MONGO_INITDB_DATABASE"
   mongo /docker-entrypoint-initdb.d/clean.js
   echo "Restoring dump to database: $DUMP_PATH"
-  mongorestore --archive=$DUMP_PATH
+  mongorestore --archive=$DUMP_PATH --noIndexRestore
 else
   echo "Dump archive does not exist: $DUMP_PATH"
 fi
