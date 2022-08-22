@@ -205,7 +205,7 @@ Object {
       "canAddModels": true,
       "canAddRoles": true,
       "canAdmin": true,
-      "canHostGame": false,
+      "canHostGame": true,
       "canWrite": true,
       "name": "Earth",
       "rootFolder": Object {
