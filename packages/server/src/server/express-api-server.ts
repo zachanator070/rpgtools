@@ -83,8 +83,8 @@ export class ExpressApiServer implements ApiServer {
 			context: ({req, res}) => {
 				const cookieManager: CookieManager = new ExpressCookieManager(res);
 
-				const refreshToken: string = req.cookies["refreshToken"];
-				const accessToken: string = req.cookies["accessToken"];
+				const refreshToken: string = req?.cookies["refreshToken"];
+				const accessToken: string = req?.cookies["accessToken"];
 				return this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
 			},
 			csrfPrevention: true,
