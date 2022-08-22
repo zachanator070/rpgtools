@@ -79,7 +79,7 @@ install:
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
 
-ci: install-deps lint test
+ci: install-deps test
 
 # installs all dependencies for dev and CI work
 install-deps:
@@ -91,8 +91,7 @@ install-deps:
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
-	# TODO: fix linting problems in frontend
-	# npx eslint packages/frontend/src
+	npx eslint packages/frontend/src --ext .ts
 
 test: down test-unit test-integration test-e2e
 
