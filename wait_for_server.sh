@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 attempt_counter=0
-max_attempts=5
+max_attempts=15
 
 until curl --output /dev/null --silent --head --fail http://localhost:3000; do
     if [ ${attempt_counter} -eq ${max_attempts} ];then
