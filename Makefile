@@ -48,7 +48,7 @@ build-dev:
 	docker-compose build
 
 # stops and destroys any running containers
-down:
+down: .env
 	docker-compose down
 
 # watch logs of running docker containers
