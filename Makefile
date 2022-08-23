@@ -8,12 +8,14 @@ build: prod-frontend-builder clean-uncompressed
 	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f packages/server/Dockerfile .
 
 # cleans built transpiled js and node modules
-clean:
+clean: down
 	rm -rf node_modules
 	rm -rf packages/frontend/dist
 	rm -rf packages/frontend/node_modules
 	rm -rf packages/server/node_modules
 	rm -rf packages/common/node_modules
+	docker rmi rpgtools_server
+	docker rmi rpgtools_frontend-builder
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
@@ -85,15 +87,12 @@ ci: install-deps test
 install-deps:
 	# installs node modules needed by CI
 	npm install
-	cd packages/server && npm install
-	cd packages/frontend && npm install
-	cd packages/common && npm install
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
 	npx eslint packages/frontend/src --ext .ts
 
-test: down test-unit test-integration test-e2e
+test: down test-unit test-integration
 
 JEST_OPTIONS=
 
