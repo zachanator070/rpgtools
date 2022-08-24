@@ -1,5 +1,5 @@
 # node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
-FROM node:16.14.0-slim
+FROM node:16.17.0-slim
 
 WORKDIR /home/node/app
 ADD package.json .
