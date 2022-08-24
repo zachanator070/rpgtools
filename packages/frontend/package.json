@@ -6,7 +6,7 @@
 	"repository": "https://github.com/zachanator070/rpgtools",
 	"type": "module",
 	"scripts": {
-		"start": "webpack --optimize-minimize --optimize-dedupe",
+		"start": "webpack",
 		"start-dev": "webpack --config webpack-dev.config.js -w",
 		"test": "cypress run",
 		"cypress:open": "cypress open --e2e --browser chrome",
@@ -58,7 +58,7 @@
 		"webpack-visualizer-plugin": "^0.1.11"
 	},
 	"devDependencies": {
-		"cypress": "^10.3.0",
+		"cypress": "^10.6.0",
 		"cypress-file-upload": "^5.0.8",
 		"cypress-xpath": "^1.6.2"
 	}

@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
-    command: "npm run dev --workspace=packages/server"
+    command: "npm run --workspace=packages/server dev"
     user: ${CURRENT_UID}
     env_file:
       - .env
@@ -24,12 +24,13 @@ services:
     depends_on:
       - mongodb
       - redis
-      - frontend-builder
+      - ui-builder
     networks:
       - rpgtools
 
   prod:
     image: zachanator070/rpgtools:latest
+    user: ${CURRENT_UID}
     env_file:
       - .env
     ports:
@@ -44,7 +45,7 @@ services:
   # Frontend Builder #
   ####################
 
-  frontend-builder:
+  ui-builder:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile

@@ -206,21 +206,32 @@ export class ExpressApiServer implements ApiServer {
 		}
 	};
 
-	initDb = async () => {
+	createDbConnection(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			mongoose
 				.connect(`mongodb://${this.mongodb_host}/${this.mongodb_db_name}`)
+				.catch(error => {
+					console.error('Error while trying to connect');
+					reject(error);
+				})
 				.then(async () => {
 					console.log(
 						`Connected to mongodb at mongodb://${this.mongodb_host}/${this.mongodb_db_name}`
 					);
 					await this.seedDB();
 					resolve();
-				})
-				.catch(async (error) => {
-					reject(error);
 				});
+
 		});
+	}
+
+	initDb = async (attempt: number = 0) => {
+		try {
+			await this.createDbConnection();
+		} catch (e) {
+			console.warn(e.message, e);
+			setTimeout(() => this.initDb(attempt++), 1000);
+		}
 	};
 
 	startListen = async () => {

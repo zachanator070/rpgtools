@@ -1,3 +1,4 @@
+# node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
 FROM node:16.14.0-slim
 
 WORKDIR /home/node/app
@@ -17,6 +18,8 @@ RUN npm install
 
 ADD packages/common/src packages/common/src
 ADD packages/server/src packages/server/src
+
+ADD packages/frontend/dist packages/frontend/dist
 
 EXPOSE 3000
 

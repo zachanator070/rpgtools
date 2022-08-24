@@ -1,21 +1,24 @@
+.EXPORT_ALL_VARIABLES:
+
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(id -u):$(id -g)
-export CURRENT_UID
 
 # Builds rpgtools docker image
-build: prod-frontend-builder clean-uncompressed
+build: ui-prod clean-uncompressed
 	echo "Building version ${VERSION}"
-	docker build -t rpgtools:latest -t rpgtools:${VERSION} -f packages/server/Dockerfile .
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:${VERSION} -f packages/server/Dockerfile .
 
 # cleans built transpiled js and node modules
 clean: down
-	rm -rf node_modules
 	rm -rf packages/frontend/dist
+	rm -rf packages/server/dist
+	-docker rmi zachanator070/rpgtools:latest
+
+clean-deps:
+	rm -rf node_modules
 	rm -rf packages/frontend/node_modules
 	rm -rf packages/server/node_modules
 	rm -rf packages/common/node_modules
-	docker rmi rpgtools_server
-	docker rmi rpgtools_frontend-builder
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
@@ -23,24 +26,23 @@ clean-uncompressed:
 	rm -f dist/app.css
 
 # runs the js transpiler docker image
-prod-frontend-builder: clean init-env
-	mkdir -p dist
-	docker-compose build frontend-builder
-	docker-compose run frontend-builder npm run -w packages/frontend start
+ui-prod: .env
+	docker-compose build ui-builder
+	docker-compose run ui-builder npm run -w packages/frontend start
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
 	export BUILD_WITH_STATS
-build-with-stats: prod-frontend-builder
+build-with-stats: ui-prod
 
 # runs production version of docker image with minimal depending services
-prod: .env
-	docker-compose up --build prod
+prod: build
+	docker-compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
 dev: .env
 	mkdir -p packages/frontend/dist
-	docker-compose up server frontend-builder
+	docker-compose up server ui-builder
 
 # initializes environment file
 .env:
@@ -55,7 +57,7 @@ down: .env
 
 # watch logs of running docker containers
 dev-logs:
-	docker-compose logs -f server frontend-builder
+	docker-compose logs -f server ui-builder
 
 # restart any running containers
 restart:
@@ -92,7 +94,7 @@ lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
 	npx eslint packages/frontend/src --ext .ts
 
-test: down test-unit test-integration
+test: down test-unit test-integration test-e2e
 
 JEST_OPTIONS=
 
@@ -107,8 +109,7 @@ test-integration:
 	npm run test:integration --workspace=packages/server
 	- docker-compose down
 
-test-e2e:
-	- docker-compose up -d mongodb server
+test-e2e: prod
 	./wait_for_server.sh
 	npm run -w packages/frontend test
 	- docker-compose down
