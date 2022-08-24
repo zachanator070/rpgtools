@@ -20,6 +20,7 @@ jobs:
     - name: CI
       run: make ci
     - uses: actions/upload-artifact@v3
+      if: failure()
       with:
         name: e2e-videos
         path: /home/runner/work/rpgtools/rpgtools/packages/frontend/cypress/videos
