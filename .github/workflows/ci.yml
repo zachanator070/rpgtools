@@ -13,9 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.14.0
     - uses: actions/checkout@v3
-    - name: Install Node
-      run: nvm use v16.14.0
     - name: CI
       run: make ci
     - name: Publish Docker Image
