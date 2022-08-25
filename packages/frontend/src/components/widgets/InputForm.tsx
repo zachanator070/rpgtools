@@ -3,8 +3,17 @@ import {Form} from "antd";
 import FormItem, {FormItemProps} from "./FormItem";
 import PrimaryButton from "./PrimaryButton";
 import Errors from "../Errors";
+import {WidgetProps} from "./WidgetProps";
 
-export default function InputForm<T>({initialValues, onSubmit, children, loading, errors}: {initialValues?: T, onSubmit: (T) => any, children: ReactElement<FormItemProps> | ReactElement<FormItemProps>[], loading: boolean, errors: string[]}) {
+interface InputFormProps<T> extends WidgetProps {
+    initialValues?: T;
+    onSubmit: (T) => any;
+    children: ReactElement<FormItemProps> | ReactElement<FormItemProps>[];
+    loading: boolean;
+    errors: string[];
+}
+
+export default function InputForm<T>({initialValues, onSubmit, children, loading, errors}: InputFormProps<T>) {
     return <Form
         initialValues={initialValues}
         onFinish={onSubmit}

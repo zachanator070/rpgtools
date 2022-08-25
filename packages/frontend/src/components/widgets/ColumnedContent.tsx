@@ -1,7 +1,11 @@
 import React, {CSSProperties} from 'react';
+import {WidgetProps} from "./WidgetProps";
 
+interface ColumnedContentProps extends WidgetProps {
+    children: React.ReactNode;
+}
 
-export default function ColumnedContent({children, style}: {children: React.ReactNode, style?: CSSProperties}) {
+export default function ColumnedContent({children, style}: ColumnedContentProps) {
     const kids = React.Children.toArray(children);
     if (kids.length > 3) {
         throw new Error("ColumnedContent component only supports three columns")

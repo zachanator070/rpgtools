@@ -1,14 +1,12 @@
 import React, {CSSProperties} from 'react';
 import {Input} from "antd";
+import {WidgetProps} from "./WidgetProps";
 
-interface TextInputProps {
-    id?: string,
-    value?: string,
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => any,
-    style?: CSSProperties,
-    ref?: React.Ref<any>,
-    disabled?: boolean,
-    onKeyDown?: (key: string) => any,
+interface TextInputProps extends WidgetProps{
+    value?: string;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => any;
+    disabled?: boolean;
+    onKeyDown?: (key: string) => any;
 }
 
 export default function TextInput({id, value, onChange, style, ref, disabled, onKeyDown}: TextInputProps) {

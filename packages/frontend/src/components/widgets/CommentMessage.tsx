@@ -1,7 +1,16 @@
 import React from 'react';
 import {Comment} from 'antd';
+import {WidgetProps} from "./WidgetProps";
 
-export default function CommentMessage({author, content, hours, minutes, seconds}: {author: string, content: React.ReactNode, hours: number, minutes: number, seconds: number}){
+interface CommentMessageProps extends WidgetProps {
+    author: string;
+    content: React.ReactNode;
+    hours: number;
+    minutes: number;
+    seconds: number;
+}
+
+export default function CommentMessage({author, content, hours, minutes, seconds}: CommentMessageProps){
 
     return <Comment
         author={author}

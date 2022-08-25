@@ -1,16 +1,16 @@
-import React, {CSSProperties} from 'react';
+import React from 'react';
 import {Button} from "antd";
+import {WidgetProps} from "./WidgetProps";
 
-export default function PrimaryButton({className, loading, onClick, children, disabled, submit, style, id}: {
-    className?: string,
-    loading?: boolean,
-    disabled?: boolean,
-    submit?: boolean,
-    onClick?: () => any,
-    children?: React.ReactNode,
-    style?: CSSProperties,
-    id?: string;
-}) {
+interface PrimaryButtonProps extends WidgetProps {
+    loading?: boolean;
+    disabled?: boolean;
+    submit?: boolean;
+    onClick?: () => any;
+    children?: React.ReactNode;
+}
+
+export default function PrimaryButton({className, loading, onClick, children, disabled, submit, style, id}: PrimaryButtonProps) {
     return <Button disabled={disabled || loading} className={className} loading={loading} onClick={onClick} htmlType={submit ? "submit": null} style={style} id={id}>
         {children}
     </Button>;

@@ -1,13 +1,14 @@
 import React, {ReactElement} from 'react';
-import {RadioButtonProps} from "./RadioButton";
 import {Radio} from "antd";
+import {WidgetProps} from "./WidgetProps";
 
-
-export default function RadioGroup({onChange, defaultValue, children}: {
+interface RadioButtonProps extends WidgetProps {
     onChange: (string) => any,
     defaultValue: string,
     children: ReactElement<RadioButtonProps> | ReactElement<RadioButtonProps>[]
-}) {
+}
+
+export default function RadioGroup({onChange, defaultValue, children}: RadioButtonProps) {
     return <Radio>
         {children}
     </Radio>

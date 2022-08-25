@@ -1,14 +1,15 @@
 import React, {CSSProperties, ReactElement} from 'react';
 import {Select} from "antd";
 import {DropDownOptionProps} from "./DropdownOption";
+import {WidgetProps} from "./WidgetProps";
 
-export default function DropdownSelect({style, value, onChange, children, id}: {
-    style?: CSSProperties,
+interface DropdownSelectProps extends WidgetProps {
     value?: string,
     onChange: (string) => any,
     children: ReactElement<DropDownOptionProps> | ReactElement<DropDownOptionProps>[],
-    id?: string
-}) {
+}
+
+export default function DropdownSelect({style, value, onChange, children, id}: DropdownSelectProps) {
     return <Select
         value={value}
         style={style}

@@ -1,12 +1,14 @@
 import React, {CSSProperties} from 'react';
 import {Tabs} from "antd";
+import {WidgetProps} from "./WidgetProps";
 
-export default function TabCollection({activeKey, onChange, style, children}: {
+interface TabCollectionProps extends WidgetProps {
     activeKey?: string;
     onChange?: (key: string) => any;
     children?: React.ReactNode;
-    style?: CSSProperties;
-}) {
+}
+
+export default function TabCollection({activeKey, onChange, style, children}: TabCollectionProps) {
     return <Tabs
         activeKey={activeKey}
         onChange={onChange}

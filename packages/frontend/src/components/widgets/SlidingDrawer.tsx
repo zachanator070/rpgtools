@@ -2,8 +2,9 @@ import React, { CSSProperties, useState} from "react";
 import {Drawer} from "antd";
 import PrimaryButton from "./PrimaryButton";
 import HamburgerMenuIcon from "./icons/HamburgerMenuIcon";
+import {WidgetProps} from "./WidgetProps";
 
-interface SlidingDrawerProps {
+interface SlidingDrawerProps extends WidgetProps {
 	title?: string;
 	placement: "right" | "top" | "bottom" | "left";
 	children: React.ReactNode;

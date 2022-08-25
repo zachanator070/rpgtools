@@ -1,7 +1,12 @@
 import React from 'react';
 import {Badge} from "antd";
+import {WidgetProps} from "./WidgetProps";
 
-export default function NumberBadge({count, children}: {count: number, children: React.ReactNode}) {
+interface NumberBadgeProps extends WidgetProps {
+    count: number, children: React.ReactNode
+}
+
+export default function NumberBadge({count, children}: NumberBadgeProps) {
     return <Badge count={count}>
         {children}
     </Badge>;
