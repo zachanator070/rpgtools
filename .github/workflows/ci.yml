@@ -24,6 +24,11 @@ jobs:
       with:
         name: e2e-videos
         path: /home/runner/work/rpgtools/rpgtools/packages/frontend/cypress/videos
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: seed_logs
+        path: /home/runner/work/rpgtools/rpgtools/packages/frontend/seed.log
     - name: Publish Docker Image
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
