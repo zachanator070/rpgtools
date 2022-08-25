@@ -66,10 +66,8 @@ restart:
 # pushes built docker container to dockerhub
 publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-	docker tag rpgtools:${VERSION} ${DOCKER_USERNAME}/rpgtools:${VERSION}
-	docker tag rpgtools:latest ${DOCKER_USERNAME}/rpgtools:latest
-	docker push ${DOCKER_USERNAME}/rpgtools:latest
-	docker push ${DOCKER_USERNAME}/rpgtools:${VERSION}
+	docker push zachanator070/rpgtools:latest
+	docker push zachanator070/rpgtools:${VERSION}
 
 # performs minimal install on a debian host
 install:
