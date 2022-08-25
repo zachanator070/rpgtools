@@ -22,7 +22,7 @@ describe('edit wiki', () => {
         cy.get('#coverImageUpload').attachFile(TEST_IMAGE);
         cy.get('#mapImageUpload').attachFile(TEST_IMAGE);
         cy.get('button').contains('Save').click();
-        cy.location().should(location => {
+        cy.location({ timeout: 120000 }).should(location => {
             expect(location.href).contains(MIDDLE_EARTH_WIKI_URL);
         });
         cy.get('img').should('have.length.at.least', 2);
