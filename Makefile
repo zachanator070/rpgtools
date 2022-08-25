@@ -94,7 +94,7 @@ lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
 	npx eslint packages/frontend/src --ext .ts
 
-test: down test-unit db test-integration prod test-e2e down
+test: test-e2e test-unit test-integration
 
 JEST_OPTIONS=
 
@@ -105,11 +105,14 @@ test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
 
 test-integration:
+	docker-compose up -d mongodb
 	npm run test:integration --workspace=packages/server
+	docker-compose down
 
-test-e2e:
+test-e2e: prod
 	./wait_for_server.sh
 	npm run -w packages/frontend test
+	docker-compose down
 
 dump:
 	sudo rm -rf ./dev/mongodb-init/dump.archive
@@ -118,6 +121,9 @@ dump:
 
 seed:
 	npm run -w packages/frontend seed:middle_earth
+
+seed_new:
+	npm run -w packages/frontend seed:new
 
 cypress:
 	npm run -w packages/frontend cypress:open
