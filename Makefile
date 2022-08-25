@@ -116,7 +116,7 @@ test-e2e: prod
 
 dump:
 	sudo rm -rf ./dev/mongodb-init/dump.archive
-	docker-compose exec mongodb mongodump --archive=/docker-entrypoint-initdb.d/dump.archive -d rpgtools
+	docker-compose exec mongodb mongodump --archive=/mongodb-scripts/dump.archive -d rpgtools
 	sudo chown ${USER}:${USER} ./dev/mongodb-init/dump.archive
 
 seed:
