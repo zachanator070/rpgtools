@@ -8,7 +8,7 @@ DUMP_PATH=/mongodb-scripts/$DUMP_NAME
 if [ -e "$DUMP_PATH" ]
 then
   echo "Deleting old database $MONGO_INITDB_DATABASE"
-  mongo /mongodb-scripts/clean.js
+  mongosh /mongodb-scripts/clean.js
   echo "Restoring dump to database: $DUMP_PATH"
   mongorestore --archive=$DUMP_PATH --noIndexRestore
 else
