@@ -13,4 +13,5 @@ then
   mongorestore --archive=$DUMP_PATH --noIndexRestore
 else
   echo "Dump archive does not exist: $DUMP_PATH"
+  exit 1
 fi
