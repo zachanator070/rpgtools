@@ -70,6 +70,7 @@ services:
       MONGO_INITDB_DATABASE: "rpgtools"
     volumes:
       - ./dev/mongodb-init:/docker-entrypoint-initdb.d
+      - ./dev/mongodb-scripts:/mongodb-scripts
     ports:
       - "27017:27017"
     networks:
