@@ -66,8 +66,8 @@ restart:
 # pushes built docker container to dockerhub
 publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-	docker push zachanator070/rpgtools:latest
 	docker push zachanator070/rpgtools:${VERSION}
+	docker push zachanator070/rpgtools:latest
 
 # performs minimal install on a debian host
 install:
@@ -107,7 +107,7 @@ test-integration:
 
 test-e2e:
 	./wait_for_server.sh
-	> seed.log
+	> packages/frontend/seed.log
 	npm run -w packages/frontend test
 
 dump:
