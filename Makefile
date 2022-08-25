@@ -83,7 +83,7 @@ install:
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
 
-ci: install-deps test
+ci: .env install-deps test
 
 # installs all dependencies for dev and CI work
 install-deps:
