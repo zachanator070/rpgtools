@@ -6,3 +6,4 @@ dist/
 coverage/
 packages/frontend/cypress/screenshots
 packages/frontend/cypress/videos
+packages/frontend/seed.log
