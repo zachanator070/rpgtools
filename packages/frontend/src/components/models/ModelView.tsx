@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import useGetModels from "../../hooks/model/useGetModels";
-import { Row, Col, List, Button } from "antd";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import PermissionModal from "../modals/PermissionModal";
 import { MODEL } from "@rpgtools/common/src/type-constants";
@@ -12,6 +11,9 @@ import ModelEdit from "./ModelEdit";
 import ModelContent from "./ModelContent";
 import { useParams, useHistory } from "react-router-dom";
 import {Model} from "../../types";
+import ColumnedContent from "../widgets/ColumnedContent";
+import PrimaryButton from "../widgets/PrimaryButton";
+import ItemList from "../widgets/ItemList";
 
 export default function ModelView() {
 	const { models, loading, refetch } = useGetModels();
@@ -41,85 +43,84 @@ export default function ModelView() {
 	}
 
 	return (
-		<>
-			<Row>
-				<Col span={4}>
-					{currentWorld.canAddModels && (
-						<>
-							<Button
-								className={"margin-lg"}
-								type={"primary"}
-								onClick={async () => {
-									await setCreateModelModalVisibility(true);
-								}}
-							>
-								Create Model
-							</Button>
-							<CreateModelModal
-								visibility={createModelModalVisibility}
-								setVisibility={async (visibility) => setCreateModelModalVisibility(visibility)}
-							/>
-						</>
-					)}
-					<h1 className={"margin-lg-left"}>Models</h1>
-					<div className={"margin-lg"}>
-						<List
-							dataSource={models || []}
-							locale={{ emptyText: <>No Models</> }}
-							renderItem={(model) => {
-								return (
-									<List.Item key={model._id}>
-										<a
-											onClick={async () =>
-												history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`)
-											}
-										>
-											{model.name}
-										</a>
-									</List.Item>
-								);
+		<ColumnedContent>
+			<div>
+				{currentWorld.canAddModels && (
+					<>
+						<PrimaryButton
+							className={"margin-lg"}
+							onClick={async () => {
+								await setCreateModelModalVisibility(true);
 							}}
+						>
+							Create Model
+						</PrimaryButton>
+						<CreateModelModal
+							visibility={createModelModalVisibility}
+							setVisibility={async (visibility) => setCreateModelModalVisibility(visibility)}
 						/>
+					</>
+				)}
+				<h1 className={"margin-lg-left"}>Models</h1>
+				<div className={"margin-lg"}>
+					<ItemList>
+						{models.map((model) => {
+							return (
+								<a
+									onClick={async () =>
+										history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`)
+									}
+								>
+									{model.name}
+								</a>
+							);
+						})}
+					</ItemList>
+				</div>
+			</div>
+
+			{selectedModel && (
+				<div>
+					<div className={"margin-lg"}>
+						<Switch>
+							<Route path={`${match.path}/edit`}>
+								<h1>Edit {selectedModel.name}</h1>
+							</Route>
+							<Route path={`${match.path}/view`}>
+								<h1>{selectedModel.name}</h1>
+							</Route>
+						</Switch>
+
 					</div>
-				</Col>
-				<Col span={16}>
-					{selectedModel && (
-						<>
-							<Switch>
-								<Route path={`${match.path}/edit`}>
-									<ModelEdit model={selectedModel} />
-								</Route>
-								<Route path={`${match.path}/view`}>
-									<div>
-										<ModelContent model={selectedModel} />
-									</div>
-								</Route>
-							</Switch>
-						</>
-					)}
-				</Col>
-				<Col span={4}>
-					{selectedModel && (
-						<div className={"margin-lg"}>
-							<a
-								title={"View permissions for this model"}
-								onClick={async () => {
-									await setPermissionModalVisibility(true);
-								}}
-							>
-								<TeamOutlined style={{ fontSize: "20px" }} />
-							</a>
-							<PermissionModal
-								visibility={permissionModalVisibility}
-								setVisibility={async (visibility: boolean) => setPermissionModalVisibility(visibility)}
-								subject={selectedModel}
-								subjectType={MODEL}
-								refetch={async () => await refetch({})}
-							/>
-						</div>
-					)}
-				</Col>
-			</Row>
-		</>
+					<Switch>
+						<Route path={`${match.path}/edit`}>
+							<ModelEdit model={selectedModel} />
+						</Route>
+						<Route path={`${match.path}/view`}>
+							<ModelContent model={selectedModel} />
+						</Route>
+					</Switch>
+				</div>
+			)}
+			{selectedModel && (
+				<div className={"margin-lg"}>
+					<a
+						title={"View permissions for this model"}
+						onClick={async () => {
+							await setPermissionModalVisibility(true);
+						}}
+					>
+						<TeamOutlined style={{ fontSize: "20px" }} />
+					</a>
+					<PermissionModal
+						visibility={permissionModalVisibility}
+						setVisibility={async (visibility: boolean) => setPermissionModalVisibility(visibility)}
+						subject={selectedModel}
+						subjectType={MODEL}
+						refetch={async () => await refetch({})}
+					/>
+				</div>
+			)}
+		</ColumnedContent>
 	);
 };

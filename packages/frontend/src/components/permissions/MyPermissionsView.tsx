@@ -1,4 +1,3 @@
-import { Table } from "antd";
 import React from "react";
 import { ALL_WIKI_TYPES, ROLE, WIKI_FOLDER, WORLD } from "@rpgtools/common/src/type-constants";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -7,6 +6,7 @@ import LoadingView from "../LoadingView";
 import useMyPermissions from "../../hooks/authorization/useMyPermissions";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 import ColumnedContent from "../widgets/ColumnedContent";
+import FormattedTable from "../widgets/FormattedTable";
 
 export default function MyPermissionsView() {
 	const { currentWorld, loading } = useCurrentWorld();
@@ -48,46 +48,6 @@ export default function MyPermissionsView() {
 		});
 	}
 
-	let allPermissionNames = permissionAssignments.map((assignment) => assignment.permission);
-	allPermissionNames = [...new Set(allPermissionNames)];
-	let allSubjectNames = permissionAssignments.map((assignment) => assignment.subject);
-	allSubjectNames = [...new Set(allSubjectNames)];
-	let allSources = permissionAssignments.map((assignment) => assignment.source);
-	allSources = [...new Set(allSources)];
-
-	const columns = [
-		{
-			title: "Permission",
-			dataIndex: "permission",
-			filters: allPermissionNames.map((permission) => {
-				return { text: permission, value: permission };
-			}),
-			onFilter: (value, record) => record.permission === value,
-			filterMultiple: false,
-			sorter: (a, b) => a.name < b.name ? -1 : 1,
-		},
-		{
-			title: "Subject",
-			dataIndex: "subject",
-			filters: allSubjectNames.map((subject) => {
-				return { text: subject, value: subject };
-			}),
-			onFilter: (value, record) => record.subject === value,
-			filterMultiple: false,
-			sorter: (a, b) => a.subject < b.subject ? -1 : 1,
-		},
-		{
-			title: "Source",
-			dataIndex: "source",
-			filters: allSources.map((source) => {
-				return { text: source, value: source };
-			}),
-			onFilter: (value, record) => record.source === value,
-			filterMultiple: false,
-			sorter: (a, b) => a.source < b.source ? -1 : 1,
-		},
-	];
-
 	return (
 		<div className={"margin-md"}>
 			<h1>My Permissions on {currentWorld.name}</h1>
@@ -95,11 +55,18 @@ export default function MyPermissionsView() {
 			<ColumnedContent>
 				<>
 					<h2 className={"margin-lg-bottom"}>My Permissions</h2>
-					<Table
-						dataSource={permissionAssignments}
-						columns={columns}
-						pagination={false}
-						scroll={{ y: 500 }}
+					<FormattedTable
+						data={permissionAssignments.map((assignment) => {
+							return [
+								assignment.permission,
+								assignment.subject,
+								assignment.subject
+							];
+						})}
+						headers={["Permission", "Subject", "Source"]}
+						filters={true}
+						sorting={true}
+						scrollHeight={500}
 					/>
 				</>
 			</ColumnedContent>

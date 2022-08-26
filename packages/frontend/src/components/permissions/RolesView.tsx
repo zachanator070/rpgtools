@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Table } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import LoadingView from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -21,6 +20,7 @@ import DropdownSelect from "../widgets/DropdownSelect";
 import DropdownOption from "../widgets/DropdownOption";
 import TabCollection from "../widgets/TabCollection";
 import TabPane from "../widgets/TabPane";
+import FormattedTable from "../widgets/FormattedTable";
 
 interface TabulatedPermissionAssignment extends PermissionAssignment {
 	key: string;
@@ -103,57 +103,38 @@ export default function RolesView() {
 					{selectedRole ? (
 						<TabCollection>
 							<TabPane title="Permissions in this role" key="1">
-								<Table
-									columns={[
-										{
-											title: "Permission",
-											dataIndex: "permission",
-											key: "permission",
-										},
-										{
-											title: "Subject Type",
-											dataIndex: "subjectType",
-											key: "subjectType",
-										},
-										{
-											title: "Subject Name",
-											dataIndex: "subjectName",
-											key: "subjectName",
-										},
-										{
-											title: "Remove Permission",
-											dataIndex: "_id",
-											key: "_id",
-											render: (text: string, assignment: TabulatedPermissionAssignment) => {
-												return assignment.subject.canAdmin ? (
-													<DangerButton
-														loading={revokeRolePermissionLoading}
-														className={"margin-md-left"}
-														onClick={async () => {
-															await revokeRolePermission({
-																roleId: selectedRole._id,
-																permission: assignment.permission,
-																subjectId: assignment.subject._id
-															});
-														}}
-													>
-														<DeleteOutlined />
-													</DangerButton>
-												) : (
-													<></>
-												);
-											},
-										},
+								<FormattedTable
+									headers={[
+										"Permission",
+										"Subject Type",
+										"Subject Name",
+										"Remove Permission",
 									]}
-									dataSource={selectedRole.permissions.map((permission) => {
-										return {
-											key: permission._id,
-											subjectName: permission.subject.name,
-											...permission
-										};
-									})}
-									pagination={false}
-									scroll={{ y: 250 }}
+									data={
+										selectedRole.permissions.map(assignment => [
+											assignment.permission,
+											assignment.subjectType,
+											assignment.subject.name,
+											assignment.subject.canAdmin ? (
+												<DangerButton
+													loading={revokeRolePermissionLoading}
+													className={"margin-md-left"}
+													onClick={async () => {
+														await revokeRolePermission({
+															roleId: selectedRole._id,
+															permission: assignment.permission,
+															subjectId: assignment.subject._id
+														});
+													}}
+												>
+													<DeleteOutlined />
+												</DangerButton>
+											) : (
+												<></>
+											)
+										])
+									}
+									scrollHeight={250}
 								/>
 								<AddRolePermission role={selectedRole} refetch={async () => {await refetch()}}/>
 							</TabPane>

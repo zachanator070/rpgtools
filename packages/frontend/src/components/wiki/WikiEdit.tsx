@@ -17,6 +17,8 @@ import useUpdateModeledWiki from "../../hooks/wiki/useUpdateModeledWiki";
 import LoadingView from "../LoadingView";
 import MoveWikiButton from "./MoveWikiButton";
 import {Model, ModeledWiki, Place} from "../../types";
+import useModal from "../widgets/useModal";
+import Errors from "../Errors";
 
 export default function WikiEdit() {
 	const history = useHistory();
@@ -43,6 +45,7 @@ export default function WikiEdit() {
 	const [editor, setEditor] = useState(null);
 
 	const { wiki_id } = useParams();
+	const {modalConfirm} = useModal();
 
 	const loadCoverImageList = async () => {
 		await setCoverImageList(
@@ -99,11 +102,15 @@ export default function WikiEdit() {
 	}
 
 	if (!currentWiki) {
-		return <div>{`404 - wiki ${wiki_id} not found`}</div>;
+		return <Errors
+			errors={[`404 - wiki ${wiki_id} not found`]}
+		/>;
 	}
 
 	if (!currentWiki.canWrite) {
-		return <div>{`You do not have permission to edit wiki ${wiki_id}`}</div>;
+		return <Errors
+			errors={[`You do not have permission to edit wiki ${wiki_id}`]}
+		/>;
 	}
 
 	const wikiTypes = ALL_WIKI_TYPES;
@@ -338,7 +345,7 @@ export default function WikiEdit() {
 						danger
 						disabled={saving}
 						onClick={() => {
-							Modal.modalConfirm({
+							modalConfirm({
 								title: "Confirm Delete",
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {

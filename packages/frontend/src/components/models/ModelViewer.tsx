@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer";
-import { Button, Input } from "antd";
 import LoadingView from "../LoadingView";
 import {Model} from "../../types";
+import PrimaryButton from "../widgets/PrimaryButton";
+import ColorInput from "../widgets/ColorInput";
 
 interface ModelViewerProps {
 	model: Model;
@@ -77,11 +78,10 @@ export default function ModelViewer({
 				<>
 					<div>
 						<span className={"margin-md-right"}>Color:</span>
-						<Input
+						<ColorInput
 							style={{
 								width: "100px",
 							}}
-							type={"color"}
 							value={modelColor}
 							onChange={async (e) => {
 								const value = e.target.value;
@@ -90,13 +90,13 @@ export default function ModelViewer({
 						/>
 					</div>
 					<div className={"margin-md-top"}>
-						<Button
+						<PrimaryButton
 							onClick={async () => {
 								await setModelColor(null);
 							}}
 						>
 							Clear Color
-						</Button>
+						</PrimaryButton>
 					</div>
 				</>
 			)}
