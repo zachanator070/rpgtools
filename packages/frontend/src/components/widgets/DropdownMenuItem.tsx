@@ -4,7 +4,7 @@ import {WidgetProps} from "./WidgetProps";
 
 export interface DropdownMenuItemProps extends WidgetProps {
     children: React.ReactNode;
-    onClick: () => any;
+    onClick?: () => any;
 }
 
 export default function DropdownMenuItem({children, onClick}: DropdownMenuItemProps) {

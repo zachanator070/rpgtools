@@ -1,6 +1,6 @@
 import React from "react";
 import { Tooltip } from "antd";
-import QuestionMarkIcon from "./QuestionMarkIcon";
+import QuestionMarkIcon from "./icons/QuestionMarkIcon";
 import {WidgetProps} from "./WidgetProps";
 
 interface ToolTipProps extends WidgetProps {
@@ -8,10 +8,12 @@ interface ToolTipProps extends WidgetProps {
 	children?: React.ReactNode;
 }
 
-export default function ToolTip({ title, children }: ToolTipProps) {
+export default function ToolTip({ title, children, className }: ToolTipProps) {
 	return (
-		<Tooltip title={title} placement="top">
-			{children || <QuestionMarkIcon/>}
-		</Tooltip>
+		<div className={className}>
+			<Tooltip title={title} placement="top">
+				{children || <QuestionMarkIcon />}
+			</Tooltip>
+		</div>
 	);
 };

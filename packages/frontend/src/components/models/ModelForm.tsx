@@ -5,7 +5,7 @@ import FormItem from "../widgets/FormItem";
 import FileInput from "../widgets/FileInput";
 import TextInput from "../widgets/TextInput";
 import NumberInput from "../widgets/NumberInput";
-import TextArea from "antd/es/input/TextArea";
+import TextAreaInput from "../widgets/TextAreaInput";
 
 interface CallbackValues {
 	name: string;
@@ -117,7 +117,7 @@ export default function ModelForm({
 				<NumberInput/>
 			</FormItem>
 			<FormItem label={<div>Notes</div>} name="notes">
-				<TextArea rows={15} cols={50} />
+				<TextAreaInput rows={15} cols={50} />
 			</FormItem>
 		</InputForm>
 	);

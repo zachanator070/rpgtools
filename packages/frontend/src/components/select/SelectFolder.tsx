@@ -1,8 +1,9 @@
 import React, {CSSProperties, useState} from "react";
-import { Select, Spin } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import useFolders from "../../hooks/wiki/useFolders";
+import DropdownSelect from "../widgets/DropdownSelect";
+import DropdownOption from "../widgets/DropdownOption";
+import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectFolderProps {
 	onChange?: (folderId: string) => Promise<any>;
@@ -21,33 +22,31 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 		folders &&
 		folders.map((folder) => {
 			return (
-				<Select.Option key={folder._id} value={folder._id}>
+				<DropdownOption key={folder._id} value={folder._id}>
 					{folder.name}
-				</Select.Option>
+				</DropdownOption>
 			);
 		});
 
 	return (
-		<Select
-			showSearch
+		<DropdownSelect
 			value={value}
-			showArrow={false}
-			filterOption={false}
-			notFoundContent={loading ? <Spin size="small" /> : null}
+			loading={loading}
 			onSearch={async (term) => {
 				await refetch({ worldId: params.world_id, name: term, canAdmin });
 			}}
-			onSelect={async (newValue) => {
+			onChange={async (newValue) => {
 				await setValue(newValue);
 				if (onChange) {
 					await onChange(newValue);
 				}
 			}}
-			placeholder="Search for a folder"
 			style={style ? style : { width: 200 }}
-			suffixIcon={<SearchOutlined />}
+			icon={<SearchIcon />}
+			helpText={"Search for a model"}
+			showArrow={false}
 		>
 			{options}
-		</Select>
+		</DropdownSelect>
 	);
 };

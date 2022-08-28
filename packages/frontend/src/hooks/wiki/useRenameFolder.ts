@@ -1,4 +1,4 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {WikiFolder} from "../../types";
 import {RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
@@ -7,7 +7,7 @@ interface RenameFolderVariables {
 	name: string;
 }
 
-interface RenameFolderResult {
+interface RenameFolderResult extends GqlMutationResult<WikiFolder, RenameFolderVariables>{
 	renameFolder: MutationMethod<WikiFolder, RenameFolderVariables>;
 }
 

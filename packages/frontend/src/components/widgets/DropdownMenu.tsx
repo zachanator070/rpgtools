@@ -9,7 +9,18 @@ interface DropdownMenuProps extends WidgetProps {
 }
 
 export default function DropdownMenu({menu, children}: DropdownMenuProps) {
-    return <Dropdown overlay={<Menu>{menu}</Menu>} trigger={["contextMenu"]}>
+    return <Dropdown
+        overlay={
+            <Menu
+                onClick={(event) => {
+                    event.domEvent.stopPropagation();
+                }}
+            >
+                {menu}
+            </Menu>
+        }
+        trigger={["contextMenu"]}
+    >
         {children}
     </Dropdown>
 }

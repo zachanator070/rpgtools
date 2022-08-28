@@ -7,7 +7,7 @@ interface FullScreenModalProps extends WidgetProps {
     visible: boolean,
     closable?: boolean,
     setVisible?: (boolean) => any,
-    children?: ReactComponentElement<any>[] | ReactComponentElement<any> | string
+    children?: React.ReactNode
 }
 
 export default function FullScreenModal({title, visible, closable, setVisible, children}: FullScreenModalProps) {

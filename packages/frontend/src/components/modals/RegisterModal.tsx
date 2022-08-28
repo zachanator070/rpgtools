@@ -1,12 +1,14 @@
 import React from "react";
 import useRegister from "../../hooks/authentication/useRegister";
 import useLogin from "../../hooks/authentication/useLogin";
-import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import FullScreenModal from "../widgets/FullScreenModal";
 import InputForm from "../widgets/InputForm";
 import FormItem from "../widgets/FormItem";
 import TextInput from "../widgets/TextInput";
 import PasswordInput from "../widgets/PasswordInput";
+import KeyIcon from "../widgets/icons/KeyIcon";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import MailIcon from "../widgets/icons/MailIcon";
 
 interface RegisterModalProps {
 	visibility: boolean;
@@ -35,19 +37,19 @@ export default function RegisterModal({ visibility, setVisibility }: RegisterMod
 						await login({username, password});
 					}}
 				>
-					<FormItem name="registerCode" label={<>Register Code <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+					<FormItem name="registerCode" label={<>Register Code <KeyIcon/></>}>
 						<TextInput id="registerCode"/>
 					</FormItem>
-					<FormItem name="email" label={<>Email <MailOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+					<FormItem name="email" label={<>Email <MailIcon/></>}>
 						<TextInput id="registerEmail"/>
 					</FormItem>
-					<FormItem name="username" label={<>Username <UserOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+					<FormItem name="username" label={<>Username <PersonIcon/></>}>
 						<TextInput id="registerDisplayName"/>
 					</FormItem>
-					<FormItem name="password" label={<>Password <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+					<FormItem name="password" label={<>Password <KeyIcon/></>}>
 						<PasswordInput id="registerPassword"/>
 					</FormItem>
-					<FormItem name="repeatPassword" label={<>Repeat Password <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+					<FormItem name="repeatPassword" label={<>Repeat Password <KeyIcon/></>}>
 						<PasswordInput id="registerRepeatPassword"/>
 					</FormItem>
 				</InputForm>

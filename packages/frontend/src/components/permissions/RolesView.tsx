@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { DeleteOutlined } from "@ant-design/icons";
 import LoadingView from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateRole from "../../hooks/authorization/useCreateRole";
@@ -21,6 +20,7 @@ import DropdownOption from "../widgets/DropdownOption";
 import TabCollection from "../widgets/TabCollection";
 import TabPane from "../widgets/TabPane";
 import FormattedTable from "../widgets/FormattedTable";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
 
 interface TabulatedPermissionAssignment extends PermissionAssignment {
 	key: string;
@@ -127,7 +127,7 @@ export default function RolesView() {
 														});
 													}}
 												>
-													<DeleteOutlined />
+													<DeleteIcon />
 												</DangerButton>
 											) : (
 												<></>
@@ -151,7 +151,7 @@ export default function RolesView() {
 												await removeUserRole({userId: item._id, roleId: selectedRole._id});
 											}}
 												>
-												<DeleteOutlined />
+												<DeleteIcon />
 												</DangerButton>
 												)}
 										</>;
@@ -184,7 +184,7 @@ export default function RolesView() {
 										}}
 									>
 										Delete this role
-										<DeleteOutlined />
+										<DeleteIcon />
 									</DangerButton>
 								</TabPane>
 							)}

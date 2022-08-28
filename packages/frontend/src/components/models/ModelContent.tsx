@@ -8,6 +8,7 @@ import PrimaryButton from "../widgets/PrimaryButton";
 import FormattedTable from "../widgets/FormattedTable";
 import EditIcon from "../widgets/icons/EditIcon";
 import DownloadIcon from "../widgets/icons/DownloadIcon";
+import TextAreaInput from "../widgets/TextAreaInput";
 
 interface ModelContentProps {
 	model: Model;
@@ -40,7 +41,7 @@ export default function ModelContent({ model }: ModelContentProps) {
 					Notes:
 					<div>
 						{model.notes && (
-							<textarea
+							<TextAreaInput
 								rows={15}
 								cols={50}
 								readOnly={true}

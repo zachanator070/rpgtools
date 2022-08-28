@@ -1,7 +1,8 @@
 import React, {CSSProperties, useState} from "react";
-import { Select, Spin } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
+import DropdownOption from "../widgets/DropdownOption";
+import DropdownSelect from "../widgets/DropdownSelect";
+import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectRoleProps {
 	onChange: (roleId: string) => Promise<any>;
@@ -17,34 +18,31 @@ export default function SelectRole({ onChange, style, canAdmin }: SelectRoleProp
 		roles &&
 		roles.docs.map((role) => {
 			return (
-				<Select.Option key={role._id} value={role._id}>
+				<DropdownOption key={role._id} value={role._id}>
 					{role.name}
-				</Select.Option>
+				</DropdownOption>
 			);
 		});
 
 	return (
-		<Select
-			showSearch
+		<DropdownSelect
 			value={value}
-			showArrow={false}
-			filterOption={false}
-			notFoundContent={loading ? <Spin size="small" /> : null}
 			onSearch={async (term) => {
 				await refetch({ name: term, canAdmin });
 			}}
-			onSelect={async (newValue) => {
+			onChange={async (newValue) => {
 				await setValue(newValue);
 				if (onChange) {
 					await onChange(newValue);
 				}
 			}}
-			placeholder="Search for a role"
+			icon={<SearchIcon />}
+			helpText={"Search for a model"}
+			showArrow={false}
 			style={style ? style : { width: 200 }}
-			suffixIcon={<SearchOutlined />}
 			id={'selectRole'}
 		>
 			{options}
-		</Select>
+		</DropdownSelect>
 	);
 };

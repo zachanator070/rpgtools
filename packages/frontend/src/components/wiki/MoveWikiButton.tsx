@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
 import SelectFolder from "../select/SelectFolder";
 import useMoveWiki from "../../hooks/wiki/useMoveWiki";
 import {WikiPage} from "../../types";
+import FullScreenModal from "../widgets/FullScreenModal";
+import PrimaryButton from "../widgets/PrimaryButton";
 
 interface MoveWikiButtonProps {
 	wikiPage: WikiPage;
@@ -15,28 +16,26 @@ export default function MoveWikiButton({ wikiPage }: MoveWikiButtonProps) {
 
 	return (
 		<span className={"margin-lg"}>
-			<Modal
+			<FullScreenModal
 				visible={moveModalVisibility}
 				title={`Move ${wikiPage.name}`}
-				footer={null}
-				onCancel={() => setMoveModalVisibility(false)}
+				setVisible={() => setMoveModalVisibility(false)}
 			>
 				New Folder: <SelectFolder onChange={async (folderId: string) => setNewFolder(folderId)} />
 				<div className={"margin-lg"}>
-					<Button
-						type={"primary"}
+					<PrimaryButton
 						onClick={async () => {
 							await moveWiki({ wikiId: wikiPage._id, folderId: newFolder });
 							await setMoveModalVisibility(false);
 						}}
 					>
 						Move Wiki
-					</Button>
+					</PrimaryButton>
 				</div>
-			</Modal>
-			<Button type="primary" onClick={() => setMoveModalVisibility(true)}>
+			</FullScreenModal>
+			<PrimaryButton onClick={() => setMoveModalVisibility(true)}>
 				Move Wiki
-			</Button>
+			</PrimaryButton>
 		</span>
 	);
 };

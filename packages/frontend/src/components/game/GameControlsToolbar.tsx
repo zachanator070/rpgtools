@@ -1,18 +1,5 @@
 import React, { useState } from "react";
 import {
-	CloudOutlined,
-	DeleteOutlined,
-	DragOutlined,
-	HighlightOutlined,
-	QuestionCircleOutlined,
-	RedoOutlined,
-	VideoCameraOutlined,
-	SelectOutlined,
-	EnvironmentOutlined,
-	PlusCircleOutlined,
-	TeamOutlined,
-} from "@ant-design/icons";
-import {
 	ADD_MODEL_CONTROLS,
 	CAMERA_CONTROLS,
 	DELETE_CONTROLS,
@@ -28,6 +15,17 @@ import LeaveGameButton from "./LeaveGameButton";
 import PermissionModal from "../modals/PermissionModal";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import ToolTip from "../widgets/ToolTip";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
+import QuestionMarkIcon from "../widgets/icons/QuestionMarkIcon";
+import CloudIcon from "../widgets/icons/CloudIcon";
+import HighlightIcon from "../widgets/icons/HighlightIcon";
+import RedoIcon from "../widgets/icons/RedoIcon";
+import AddIcon from "../widgets/icons/AddIcon";
+import CameraIcon from "../widgets/icons/CameraIcon";
+import MoveIcon from "../widgets/icons/MoveIcon";
+import PeopleIcon from "../widgets/icons/PeopleIcon";
+import LocationIcon from "../widgets/icons/LocationIcon";
+import SelectIcon from "../widgets/icons/SelectIcon";
 
 interface GameControlsToolbarProps {
 	controlsMode: string;
@@ -87,15 +85,15 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	mouseOverText[SELECT_LOCATION_CONTROLS] = <>Game Location, hotkey: l</>;
 
 	const icons = {};
-	icons[CAMERA_CONTROLS] = <VideoCameraOutlined />;
-	icons[PAINT_CONTROLS] = <HighlightOutlined />;
-	icons[ADD_MODEL_CONTROLS] = <PlusCircleOutlined />;
-	icons[MOVE_MODEL_CONTROLS] = <DragOutlined />;
-	icons[ROTATE_MODEL_CONTROLS] = <RedoOutlined />;
-	icons[DELETE_CONTROLS] = <DeleteOutlined />;
-	icons[FOG_CONTROLS] = <CloudOutlined />;
-	icons[SELECT_MODEL_CONTROLS] = <SelectOutlined />;
-	icons[SELECT_LOCATION_CONTROLS] = <EnvironmentOutlined />;
+	icons[CAMERA_CONTROLS] = <CameraIcon />;
+	icons[PAINT_CONTROLS] = <HighlightIcon />;
+	icons[ADD_MODEL_CONTROLS] = <AddIcon />;
+	icons[MOVE_MODEL_CONTROLS] = <MoveIcon />;
+	icons[ROTATE_MODEL_CONTROLS] = <RedoIcon />;
+	icons[DELETE_CONTROLS] = <DeleteIcon />;
+	icons[FOG_CONTROLS] = <CloudIcon />;
+	icons[SELECT_MODEL_CONTROLS] = <SelectIcon />;
+	icons[SELECT_LOCATION_CONTROLS] = <LocationIcon />;
 
 	const permission = {};
 	permission[CAMERA_CONTROLS] = true;
@@ -117,7 +115,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 		>
 			<ToolTip title={toolTipText[controlsMode]}>
 				<span style={{ padding: "10px", backgroundColor: "white" }}>
-					<QuestionCircleOutlined />
+					<QuestionMarkIcon />
 				</span>
 			</ToolTip>
 		</span>,
@@ -177,7 +175,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 							await setPermissionModalVisibility(true);
 						}}
 					>
-						<TeamOutlined style={{ fontSize: "20px" }} />
+						<PeopleIcon />
 					</a>
 				</span>
 			</ToolTip>

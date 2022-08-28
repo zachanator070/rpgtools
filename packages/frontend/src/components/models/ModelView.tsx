@@ -3,7 +3,6 @@ import useGetModels from "../../hooks/model/useGetModels";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import PermissionModal from "../modals/PermissionModal";
 import { MODEL } from "@rpgtools/common/src/type-constants";
-import { TeamOutlined } from "@ant-design/icons";
 import LoadingView from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import CreateModelModal from "./CreateModelModal";
@@ -14,6 +13,7 @@ import {Model} from "../../types";
 import ColumnedContent from "../widgets/ColumnedContent";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ItemList from "../widgets/ItemList";
+import PeopleIcon from "../widgets/icons/PeopleIcon";
 
 export default function ModelView() {
 	const { models, loading, refetch } = useGetModels();
@@ -110,7 +110,7 @@ export default function ModelView() {
 							await setPermissionModalVisibility(true);
 						}}
 					>
-						<TeamOutlined style={{ fontSize: "20px" }} />
+						<PeopleIcon/>
 					</a>
 					<PermissionModal
 						visibility={permissionModalVisibility}

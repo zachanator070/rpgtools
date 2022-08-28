@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { CloseOutlined, MenuOutlined } from "@ant-design/icons";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS, GameRenderer,
@@ -12,6 +11,8 @@ import FogOptions from "./FogOptions";
 import ModelInfo from "./ModelInfo";
 import GameLocationSettings from "./GameLocationSettings";
 import AddModelSection from "./AddModelSection";
+import MenuIcon from "../widgets/icons/MenuIcon";
+import CloseIcon from "../widgets/icons/CloseIcon";
 
 interface ControlsContextWindowProps {
 	renderer: GameRenderer;
@@ -67,7 +68,7 @@ export default function ControlsContextWindow({
 						backgroundColor: "white",
 					}}
 				>
-					<MenuOutlined />
+					<MenuIcon />
 				</div>
 			</a>
 
@@ -90,7 +91,7 @@ export default function ControlsContextWindow({
 						className={"margin-md"}
 						onClick={async () => setVisible(false)}
 					>
-						<CloseOutlined />
+						<CloseIcon />
 					</a>
 					<h2
 						style={{

@@ -1,9 +1,11 @@
-import React, {ReactChildren, ReactComponentElement, useState} from "react";
-import { Button, Select, Spin } from "antd";
+import React, {ReactComponentElement, useState} from "react";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
-import { SearchOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import {WikiPage} from "../../types";
+import DropdownOption from "../widgets/DropdownOption";
+import PrimaryButton from "../widgets/PrimaryButton";
+import DropdownSelect from "../widgets/DropdownSelect";
+import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectWikiProps <T extends WikiPage>{
 	types?: string[];
@@ -33,9 +35,9 @@ export default function SelectWiki<T extends WikiPage>({
 		wikis &&
 		wikis.docs.map((wiki) => {
 			return (
-				<Select.Option key={wiki._id} value={wiki._id}>
+				<DropdownOption key={wiki._id} value={wiki._id}>
 					{wiki.name}
-				</Select.Option>
+				</DropdownOption>
 			);
 		});
 
@@ -52,7 +54,7 @@ export default function SelectWiki<T extends WikiPage>({
 
 	const kids = [];
 	if (showClear) {
-		kids.push(<Button style={{marginRight: "1em"}} onClick={async () => await onSelect(null)}>Clear</Button>);
+		kids.push(<PrimaryButton style={{marginRight: "1em"}} onClick={async () => await onSelect(null)}>Clear</PrimaryButton>);
 	}
 	if (children) {
 		kids.push(...React.Children.toArray(children))
@@ -60,12 +62,9 @@ export default function SelectWiki<T extends WikiPage>({
 
 	return (
 		<div>
-			<Select
-				showSearch
+			<DropdownSelect
 				value={value}
 				showArrow={false}
-				filterOption={false}
-				notFoundContent={loading ? <Spin size="small" /> : null}
 				onSearch={async (term) => {
 					await refetch({
 						worldId: params.world_id,
@@ -74,13 +73,13 @@ export default function SelectWiki<T extends WikiPage>({
 						canAdmin,
 					});
 				}}
-				onSelect={onSelect}
-				placeholder="Search for a wiki page"
+				onChange={onSelect}
+				helpText="Search for a wiki page"
 				style={style ? style : { width: 200 }}
-				suffixIcon={<SearchOutlined />}
+				icon={<SearchIcon />}
 			>
 				{options}
-			</Select>
+			</DropdownSelect>
 			{kids.length > 0 && <div style={{display: "flex", marginTop: "1em"}}>
 				{...kids}
 			</div> }

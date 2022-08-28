@@ -3,12 +3,12 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import React, { useState } from "react";
 import PermissionModal from "../modals/PermissionModal";
-import { Col, Row } from "antd";
-import { TeamOutlined } from "@ant-design/icons";
 import WikiEdit from "./WikiEdit";
 import WikiContent from "./WikiContent";
 import FolderTree from "./FolderTree";
 import LoadingView from "../LoadingView";
+import ColumnedContent from "../widgets/ColumnedContent";
+import PeopleIcon from "../widgets/icons/PeopleIcon";
 
 export default function WikView() {
 	const { currentWiki, loading: wikiLoading, refetch } = useCurrentWiki();
@@ -35,13 +35,8 @@ export default function WikView() {
 				/>
 			)}
 
-			<Row
-				style={{
-					height: "100%",
-				}}
-			>
-				<Col
-					span={4}
+			<ColumnedContent>
+				<div
 					className="padding-md"
 					style={{
 						height: "100%",
@@ -54,9 +49,8 @@ export default function WikView() {
 							await refetch({})
 						}}
 					/>
-				</Col>
-				<Col
-					span={16}
+				</div>
+				<div
 					style={{
 						height: "100%",
 						overflowY: "auto",
@@ -74,8 +68,8 @@ export default function WikView() {
 							/>
 						</Route>
 					</Switch>
-				</Col>
-				<Col span={4} className="padding-md">
+				</div>
+				<div className="padding-md">
 					<Route path={`${match.path}/view`}>
 						{currentWiki && (
 							<a
@@ -84,12 +78,12 @@ export default function WikView() {
 									await setPermissionModalVisibility(true);
 								}}
 							>
-								<TeamOutlined style={{ fontSize: "20px" }} />
+								<PeopleIcon/>
 							</a>
 						)}
 					</Route>
-				</Col>
-			</Row>
+				</div>
+			</ColumnedContent>
 		</div>
 	);
 };

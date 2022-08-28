@@ -5,7 +5,6 @@ import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useLogout from "../../hooks/authentication/useLogout";
 import SearchBar from "./SearchBar";
-import { GlobalOutlined, UserOutlined, CloudServerOutlined } from "@ant-design/icons";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import LoginModal from "../modals/LoginModal";
@@ -13,6 +12,9 @@ import RegisterModal from "../modals/RegisterModal";
 import VerticalBar from "../widgets/VerticalBar";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ColumnedContent from "../widgets/ColumnedContent";
+import WorldIcon from "../widgets/icons/WorldIcon";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import ServerIcon from "../widgets/icons/ServerIcon";
 
 export default function NavBar() {
 	const { currentUser, loading: userLoading } = useCurrentUser();
@@ -70,7 +72,7 @@ export default function NavBar() {
 						{currentWorld && currentWorld.canWrite && (
 							<span className="margin-lg-left">
 								<Link to={`/ui/world/${currentWorld._id}/settings`} title="World Settings">
-									<GlobalOutlined />
+									<WorldIcon />
 								</Link>
 							</span>
 						)}
@@ -80,7 +82,7 @@ export default function NavBar() {
 									to={`/ui/world/${currentWorld._id}/myPermissions`}
 									title="My permissions on this world"
 								>
-									<UserOutlined />
+									<PersonIcon />
 								</Link>
 							</span>
 						)}
@@ -113,7 +115,7 @@ export default function NavBar() {
 				<div style={{ textAlign: "right" }}>
 					{(serverConfig.canAdmin || serverConfig.canWrite) && (
 						<Link to={`/ui/serverSettings`} className={"margin-lg-right"}>
-							<CloudServerOutlined />
+							<ServerIcon />
 							Server Settings
 						</Link>
 					)}

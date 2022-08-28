@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import LoadingView from "../LoadingView";
-import { DownOutlined } from "@ant-design/icons";
 import CreateWorldModal from "../modals/CreateWorldModal";
 import SelectWorldModal from "../modals/SelectWorldModal";
 import SecondaryButton from "../widgets/SecondaryButton";
 import DropdownMenu from "../widgets/DropdownMenu";
 import DropdownMenuItem from "../widgets/DropdownMenuItem";
 import useServerConfig from "../../hooks/server/useServerConfig";
+import DownArrowIcon from "../widgets/icons/DownArrowIcon";
 
 export default function WorldMenu() {
 	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);
@@ -52,7 +51,7 @@ export default function WorldMenu() {
 			/>
 			<DropdownMenu menu={menu}>
 				<SecondaryButton>
-					{currentWorld ? currentWorld.name : "No World Selected"} <DownOutlined />
+					{currentWorld ? currentWorld.name : "No World Selected"} <DownArrowIcon />
 				</SecondaryButton>
 			</DropdownMenu>
 		</span>

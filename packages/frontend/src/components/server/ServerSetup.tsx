@@ -1,13 +1,15 @@
 import React from "react";
 import useUnlockServer from "../../hooks/server/useUnlockServer";
 import { useHistory } from "react-router-dom";
-import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import useLogin from "../../hooks/authentication/useLogin";
 import ColumnedContent from "../widgets/ColumnedContent";
 import InputForm from "../widgets/InputForm";
 import FormItem from "../widgets/FormItem";
 import TextInput from "../widgets/TextInput";
 import PasswordInput from "../widgets/PasswordInput";
+import KeyIcon from "../widgets/icons/KeyIcon";
+import MailIcon from "../widgets/icons/MailIcon";
+import PersonIcon from "../widgets/icons/PersonIcon";
 
 export default function ServerSetup() {
 	const { unlockServer, loading, errors } = useUnlockServer();
@@ -36,19 +38,19 @@ export default function ServerSetup() {
 					await login({username, password});
 				}}
 			>
-				<FormItem name={"unlockCode"} label={<>Server Unlock Code <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+				<FormItem name={"unlockCode"} label={<>Server Unlock Code <KeyIcon/></>}>
 					<TextInput id="adminSecret"/>
 				</FormItem>
-				<FormItem name={"email"} label={<>Email <MailOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+				<FormItem name={"email"} label={<>Email <MailIcon/></>}>
 					<TextInput id="registerEmail"/>
 				</FormItem>
-				<FormItem name="username" label={<>Username <UserOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+				<FormItem name="username" label={<>Username <PersonIcon/></>}>
 					<TextInput id="registerDisplayName"/>
 				</FormItem>
-				<FormItem name="password" label={<>Password <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+				<FormItem name="password" label={<>Password <KeyIcon/></>}>
 					<PasswordInput id="registerPassword"/>
 				</FormItem>
-				<FormItem name="repeatPassword" label={<>Repeat Password <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}>
+				<FormItem name="repeatPassword" label={<>Repeat Password <KeyIcon/></>}>
 					<PasswordInput id="registerRepeatPassword"/>
 				</FormItem>
 			</InputForm>

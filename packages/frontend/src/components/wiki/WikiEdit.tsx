@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {Modal, Upload, InputNumber, Select, Button, Input} from "antd";
-import { UploadOutlined, SaveOutlined, DeleteOutlined, UndoOutlined } from "@ant-design/icons";
-import Editor from "./Editor";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import { useHistory, useParams } from "react-router-dom";
 import useDeleteWiki from "../../hooks/wiki/useDeleteWiki";
@@ -19,18 +16,27 @@ import MoveWikiButton from "./MoveWikiButton";
 import {Model, ModeledWiki, Place} from "../../types";
 import useModal from "../widgets/useModal";
 import Errors from "../Errors";
+import DangerButton from "../widgets/DangerButton";
+import DropdownOption from "../widgets/DropdownOption";
+import TextInput from "../widgets/TextInput";
+import DropdownSelect from "../widgets/DropdownSelect";
+import ImageInput from "../widgets/ImageInput";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
+import UndoIcon from "../widgets/icons/UndoIcon";
+import PrimaryButton from "../widgets/PrimaryButton";
+import SaveIcon from "../widgets/icons/SaveIcon";
+import Editor from "./Editor";
+import NumberInput from "../widgets/NumberInput";
 
 export default function WikiEdit() {
 	const history = useHistory();
 	const { currentWiki, loading } = useCurrentWiki();
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();
 
-	const [mapToUpload, setMapToUpload] = useState<File>();
-	const [coverToUpload, setCoverToUpload] = useState<File>(undefined);
 	const [name, setName] = useState(null);
 	const [type, setType] = useState(null);
-	const [coverImageList, setCoverImageList] = useState([]);
-	const [mapImageList, setMapImageList] = useState([]);
+	const [newCoverImageFile, setNewCoverImageFile] = useState<any>(null);
+	const [newMapImageFile, setNewMapImageFile] = useState<any>(null);
 	const [pixelsPerFoot, setPixelsPerFoot] = useState<number>(0);
 	const [modelColor, setModelColor] = useState<string>();
 	const [saving, setSaving] = useState(false);
@@ -47,42 +53,12 @@ export default function WikiEdit() {
 	const { wiki_id } = useParams();
 	const {modalConfirm} = useModal();
 
-	const loadCoverImageList = async () => {
-		await setCoverImageList(
-			currentWiki.coverImage
-				? [
-						{
-							uid: "-1",
-							url: `/images/${currentWiki.coverImage.icon.chunks[0].fileId}`,
-							name: currentWiki.coverImage.name,
-						},
-				  ]
-				: []
-		);
-	};
-
-	const loadMapImageList = async () => {
-		const currentMap = currentWiki as Place;
-		await setMapImageList(
-			currentMap.mapImage
-				? [
-						{
-							uid: "-1",
-							url: `/images/${currentMap.mapImage.icon.chunks[0].fileId}`,
-							name: currentMap.mapImage.name,
-						},
-				  ]
-				: []
-		);
-	};
 
 	useEffect(() => {
 		if (!currentWiki) {
 			return;
 		}
 		(async () => {
-			await loadCoverImageList();
-			await loadMapImageList();
 			await setName(currentWiki.name);
 			await setType(currentWiki.type);
 			if(currentWiki.type === PLACE) {
@@ -117,43 +93,9 @@ export default function WikiEdit() {
 	const options = [];
 	for (let type of wikiTypes) {
 		options.push(
-			<Select.Option key={type} value={type}>
+			<DropdownOption key={type} value={type}>
 				{type}
-			</Select.Option>
-		);
-	}
-
-	let coverRevert = null;
-	if (coverToUpload) {
-		coverRevert = (
-			<Button
-				danger={true}
-				className={"margin-md"}
-				onClick={async () => {
-					await setCoverToUpload(undefined);
-					await loadCoverImageList();
-				}}
-				id={'revertCover'}
-			>
-				Revert
-			</Button>
-		);
-	}
-
-	let mapRevert = null;
-	if (mapToUpload) {
-		mapRevert = (
-			<Button
-				danger={true}
-				className={"margin-md"}
-				onClick={async () => {
-					await setMapToUpload(undefined);
-					await loadMapImageList();
-				}}
-				id={'revertMap'}
-			>
-				Revert
-			</Button>
+			</DropdownOption>
 		);
 	}
 
@@ -161,10 +103,10 @@ export default function WikiEdit() {
 		await setSaving(true);
 
 		let coverImageId = currentWiki.coverImage ? currentWiki.coverImage._id : undefined;
-		if (coverToUpload) {
-			const coverUploadResult = await createImage({file: coverToUpload, worldId: currentWorld._id, chunkify: false});
+		if (newCoverImageFile) {
+			const coverUploadResult = await createImage({file: newCoverImageFile, worldId: currentWorld._id, chunkify: false});
 			coverImageId = coverUploadResult._id;
-		} else if (coverToUpload === null) {
+		} else if (newCoverImageFile === null) {
 			coverImageId = null;
 		}
 
@@ -176,10 +118,10 @@ export default function WikiEdit() {
 		if (type === PLACE) {
 			const currentPlace = currentWiki as Place;
 			let mapImageId = currentPlace.mapImage ? currentPlace.mapImage._id : undefined;
-			if (mapToUpload) {
-				const mapUploadResult = await createImage({file: mapToUpload, worldId: currentWorld._id, chunkify: true});
+			if (newMapImageFile) {
+				const mapUploadResult = await createImage({file: newMapImageFile, worldId: currentWorld._id, chunkify: true});
 				mapImageId = mapUploadResult._id;
-			} else if (mapToUpload === null) {
+			} else if (newMapImageFile === null) {
 				mapImageId = null;
 			}
 			await updatePlace({placeId: currentPlace._id, mapImageId, pixelsPerFoot});
@@ -233,8 +175,7 @@ export default function WikiEdit() {
 		<div>
 			<div className="margin-lg">
 				Article Name:{" "}
-				<Input
-					placeholder="Article Name"
+				<TextInput
 					style={{ width: 120 }}
 					value={name}
 					onChange={async (event) => setName(event.target.value)}
@@ -242,67 +183,26 @@ export default function WikiEdit() {
 			</div>
 			<div className="margin-lg">
 				Type:{" "}
-				<Select defaultValue={currentWiki.type} style={{ width: 120 }} onChange={setType}>
+				<DropdownSelect defaultValue={currentWiki.type} style={{ width: 120 }} onChange={setType}>
 					{options}
-				</Select>
+				</DropdownSelect>
 			</div>
 			<div className="margin-lg">
-				<Upload
-					beforeUpload={(file) => {
-						setCoverToUpload(file);
-						return false;
-					}}
-					multiple={false}
-					listType={"picture"}
-					fileList={coverImageList}
-					className="upload-list-inline"
-					onChange={async (files) => {
-						await setCoverImageList(
-							files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []
-						);
-						if (files.fileList.length === 0) {
-							await setCoverToUpload(null);
-						}
-					}}
+				<ImageInput
+					onChange={setNewCoverImageFile}
+					initialImage={newCoverImageFile}
 					id={'coverImageUpload'}
-				>
-					<Button>
-						<UploadOutlined /> Select Cover Image
-					</Button>
-				</Upload>
-				{coverRevert}
+					buttonText={"Select Cover Image"}
+				/>
 			</div>
 			{type === PLACE && (
 				<>
 					<div className="margin-lg">
-						<Upload
-							beforeUpload={(file) => {
-								setMapToUpload(file);
-								return false;
-							}}
-							multiple={false}
-							listType={"picture"}
-							fileList={mapImageList}
-							className="upload-list-inline"
-							onChange={async (files) => {
-								await setMapImageList(
-									files.fileList.length > 0 ? [files.fileList[files.fileList.length - 1]] : []
-								);
-								if (files.fileList.length === 0) {
-									await setMapToUpload(null);
-								}
-							}}
-							id={'mapImageUpload'}
-						>
-							<Button>
-								<UploadOutlined /> Select Map Image
-							</Button>
-						</Upload>
-						{mapRevert}
+						<ImageInput onChange={setNewMapImageFile} initialImage={newMapImageFile} buttonText={"Select Map Image"}/>
 					</div>
 					<div className="margin-lg">
 						Pixels Per Foot:
-						<InputNumber
+						<NumberInput
 							value={pixelsPerFoot}
 							onChange={async (value) => setPixelsPerFoot(value)}
 						/>
@@ -323,26 +223,23 @@ export default function WikiEdit() {
 
 			<div>
 				{saving && <div>Saving ... </div>}
-				<Button type="primary" disabled={saving} onClick={save}>
-					<SaveOutlined />
+				<PrimaryButton disabled={saving} onClick={save}>
+					<SaveIcon />
 					Save
-				</Button>
+				</PrimaryButton>
 				<MoveWikiButton wikiPage={currentWiki} />
-				<Button
-					danger={true}
+				<DangerButton
 					disabled={saving}
 					className="margin-md-left"
 					onClick={() => {
 						history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 					}}
 				>
-					<UndoOutlined />
+					<UndoIcon />
 					Discard
-				</Button>
+				</DangerButton>
 				<span className="absolute-right">
-					<Button
-						type="primary"
-						danger
+					<DangerButton
 						disabled={saving}
 						onClick={() => {
 							modalConfirm({
@@ -357,9 +254,9 @@ export default function WikiEdit() {
 							});
 						}}
 					>
-						<DeleteOutlined />
+						<DeleteIcon/>
 						Delete Page
-					</Button>
+					</DangerButton>
 				</span>
 			</div>
 		</div>

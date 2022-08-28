@@ -1,11 +1,12 @@
 import React from "react";
-import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import useLogin from "../../hooks/authentication/useLogin";
 import FullScreenModal from "../widgets/FullScreenModal";
 import InputForm from "../widgets/InputForm";
 import FormItem from "../widgets/FormItem";
 import TextInput from "../widgets/TextInput";
 import PasswordInput from "../widgets/PasswordInput";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import KeyIcon from "../widgets/icons/KeyIcon";
 
 interface LoginModalProps {
 	visibility: boolean;
@@ -32,13 +33,13 @@ export default function LoginModal({ visibility, setVisibility }: LoginModalProp
 				}}
 			>
 				<FormItem
-					label={<>Username <UserOutlined style={{ color: "rgba(0,0,0,.25)" }} /></> }
+					label={<>Username <PersonIcon/></> }
 					name={"username"}
 				>
 					<TextInput id="loginEmail"/>
 				</FormItem>
 				<FormItem
-					label={<>Password <KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} /></>}
+					label={<>Password <KeyIcon/></>}
 					name={"username"}
 				>
 					<PasswordInput id="loginPassword"/>
