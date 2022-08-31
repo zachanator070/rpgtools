@@ -1,7 +1,6 @@
 import React, {CSSProperties, useState} from "react";
 import useSearchUsers from "../../hooks/authentication/useSearchUsers";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DropdownOption from "../widgets/DropdownOption";
 import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectUserProps {
@@ -16,11 +15,10 @@ export default function SelectUser({ onChange, style }: SelectUserProps) {
 	let options = [];
 	if(users){
 		options = users.docs.map((user) => {
-			return (
-				<DropdownOption key={user._id} value={user._id}>
-					{user.username}
-				</DropdownOption>
-			);
+			return {
+				value: user,
+				label: user.username
+			};
 		});
 	} 
 
@@ -41,8 +39,7 @@ export default function SelectUser({ onChange, style }: SelectUserProps) {
 			helpText="Search for a user"
 			style={style ? style : { width: 200 }}
 			icon={<SearchIcon />}
-		>
-			{options}
-		</DropdownSelect>
+			options={options}
+		/>
 	);
 };

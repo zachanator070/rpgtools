@@ -24,7 +24,7 @@ RUN mkdir -p dist
 RUN chmod o+w dist
 
 WORKDIR /home/node/app
-ADD packages/common/src common/src
-ADD packages/frontend/src frontend/src
+ADD packages/common/src packages/common/src
+ADD packages/frontend/src packages/frontend/src
 
 CMD ["npm", "run", "-w", "packages/frontend", "start"]

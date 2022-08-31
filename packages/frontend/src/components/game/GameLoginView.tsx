@@ -62,12 +62,12 @@ export default function GameLoginView() {
 							}}
 							onSubmit={createGame}
 						>
-							<FormItem label="Password" name="createPassword">
-								<PasswordInput />
+							<FormItem label="Password" >
+								<PasswordInput name="createPassword" />
 							</FormItem>
 
-							<FormItem label="Character Name" name="characterName">
-								<TextInput />
+							<FormItem label="Character Name" >
+								<TextInput name="characterName"/>
 							</FormItem>
 						</InputForm>
 					</>
@@ -86,18 +86,17 @@ export default function GameLoginView() {
 					>
 						<FormItem
 							label="Game ID"
-							name="gameId"
 							required={true}
 						>
-							<TextInput />
+							<TextInput name="gameId"/>
 						</FormItem>
 
-						<FormItem label="Password" name="password">
-							<PasswordInput />
+						<FormItem label="Password">
+							<PasswordInput name="password"/>
 						</FormItem>
 
-						<FormItem label="Character Name" name="characterName">
-							<TextInput />
+						<FormItem label="Character Name">
+							<TextInput name="characterName"/>
 						</FormItem>
 					</InputForm>
 				</>

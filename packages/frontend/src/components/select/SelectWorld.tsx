@@ -2,12 +2,11 @@ import React, {CSSProperties, useState} from "react";
 import useWorlds from "../../hooks/world/useWorlds";
 import {World} from "../../types";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DropdownOption from "../widgets/DropdownOption";
 import PrimaryButton from "../widgets/PrimaryButton";
 import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectWorldProps {
-	onChange?: (world: World) => Promise<any>;
+	onChange?: (world: World) => any;
 	style?: CSSProperties;
 	showClear?: boolean;
 }
@@ -16,14 +15,13 @@ export default function SelectWorld ({ onChange, style, showClear = false }: Sel
 	const [value, setValue] = useState();
 
 	const options =
-		worlds &&
+		worlds ?
 		worlds.docs.map((world) => {
-			return (
-				<DropdownOption key={world._id} value={world._id}>
-					{world.name}
-				</DropdownOption>
-			);
-		});
+			return {
+				label: world.name,
+				value: world._id
+			};
+		}) : [];
 
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
@@ -49,9 +47,8 @@ export default function SelectWorld ({ onChange, style, showClear = false }: Sel
 				style={style ? style : { width: 200 }}
 				icon={<SearchIcon />}
 				id={'searchWorld'}
-			>
-				{options}
-			</DropdownSelect>
+				options={options}
+			/>
 			{showClear && (
 				<span className={"margin-md-left"}>
 					<PrimaryButton onClick={async () => await onSelect(null)}>Clear</PrimaryButton>

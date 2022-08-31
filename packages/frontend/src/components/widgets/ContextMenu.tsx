@@ -2,12 +2,12 @@ import React, {ReactNode} from 'react';
 import {Dropdown, Menu} from "antd";
 import {WidgetProps} from "./WidgetProps";
 
-interface DropdownMenuProps extends WidgetProps {
+interface ContextMenuProps extends WidgetProps {
     menu: ReactNode[];
     children: React.ReactNode;
 }
 
-export default function DropdownMenu({menu, children}: DropdownMenuProps) {
+export default function ContextMenu({menu, children}: ContextMenuProps) {
     const items = menu.map((item, index) => {
         return {
             key: index,
@@ -17,7 +17,7 @@ export default function DropdownMenu({menu, children}: DropdownMenuProps) {
         overlay={
             <Menu items={items}/>
         }
-        trigger={['click']}
+        trigger={['contextMenu']}
     >
         {children}
     </Dropdown>;

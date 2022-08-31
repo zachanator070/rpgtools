@@ -1,22 +1,27 @@
-import React, {ReactElement} from 'react';
+import React from 'react';
 import {Select} from "antd";
-import {DropDownOptionProps} from "./DropdownOption";
 import {WidgetProps} from "./WidgetProps";
 import SpinIcon from "./icons/SpinIcon";
 
+interface DropdownSelectOption {
+    value: string | number;
+    label: React.ReactNode;
+}
+
 interface DropdownSelectProps extends WidgetProps {
     value?: string,
-    onChange: (string) => any,
-    children: ReactElement<DropDownOptionProps> | ReactElement<DropDownOptionProps>[],
+    onChange: (newValue: string) => any,
+    options: DropdownSelectOption[];
     loading?: boolean,
-    onSearch?: (string) => Promise<void>;
+    onSearch?: (searchTerm: string) => Promise<void>;
     icon?: React.ReactNode;
     defaultValue?: string;
     showArrow?: boolean;
     helpText?: string;
 }
 
-export default function DropdownSelect({icon, loading, style, value, onChange, children, id, onSearch, defaultValue, showArrow, helpText}: DropdownSelectProps) {
+export default function DropdownSelect({icon, loading, style, value, onChange, id, onSearch, defaultValue, showArrow, helpText, options}: DropdownSelectProps) {
+    const children = options.map(option => <Select.Option key={option.value}>{option.label}</Select.Option>);
     return <Select
         id={id}
         value={value}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useHistory } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
@@ -6,15 +6,17 @@ import SelectWorld from "../select/SelectWorld";
 import FullScreenModal from "../widgets/FullScreenModal";
 import InputForm from "../widgets/InputForm";
 import FormItem from "../widgets/FormItem";
+import {World} from "../../types";
 
 interface SelectWorldModalProps {
 	visibility: boolean;
-	setVisibility: (visibility: boolean) => Promise<void>;
+	setVisibility: (visibility: boolean) => any;
 }
 
 export default function SelectWorldModal({ visibility, setVisibility }: SelectWorldModalProps) {
 	const { setCurrentWorld, errors, loading } = useSetCurrentWorld();
 	const { currentUser } = useCurrentUser();
+	const [selectedWorld, setSelectedWorld] = useState<World>(null);
 
 	const history = useHistory();
 
@@ -25,20 +27,20 @@ export default function SelectWorldModal({ visibility, setVisibility }: SelectWo
 			setVisible={setVisibility}
 		>
 			<InputForm
-				onSubmit={async ({selectedWorld}) => {
+				onSubmit={async () => {
 					if (currentUser) {
-						await setCurrentWorld({worldId: selectedWorld});
+						await setCurrentWorld({worldId: selectedWorld._id});
 					}
 					history.push(
-						`/ui/world/${selectedWorld}`
+						`/ui/world/${selectedWorld._id}`
 					);
-					await setVisibility(false);
+					setVisibility(false);
 				}}
 				loading={loading}
 				errors={errors}
 			>
-				<FormItem name={"selectedWorld"} label={"Select World"}>
-					<SelectWorld />
+				<FormItem label={"Select World"}>
+					<SelectWorld onChange={setSelectedWorld}/>
 				</FormItem>
 			</InputForm>
 		</FullScreenModal>

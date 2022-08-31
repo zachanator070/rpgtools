@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import App from "./components/App";
 import { BrowserRouter } from "react-router-dom";
 import { createUploadLink } from "apollo-upload-client";
@@ -10,7 +10,7 @@ import { gql, ApolloClient, ApolloProvider, split, ApolloLink, InMemoryCache  } 
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
-import "./favicon.ico";
+import "./branding/favicon_old.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchSubtypes from "./fetchSubtypes";
 import {createRoot} from "react-dom/client";

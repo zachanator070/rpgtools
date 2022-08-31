@@ -29,7 +29,7 @@ export default {
 		new HtmlWebpackPlugin({
 			title: "RPG Tools",
 			template: __dirname + "/src/index.html",
-			favicon: __dirname + "/src/favicon.ico",
+			favicon: __dirname + "/src/favicon_old.ico",
 		}),
 		new MiniCssExtractPlugin(),
 	].concat(

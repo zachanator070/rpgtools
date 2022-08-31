@@ -12,7 +12,7 @@ import FullScreenModal from "../widgets/FullScreenModal";
 
 interface CreateWorldModalProps {
 	visibility: boolean;
-	setVisibility: (visibility: boolean) => Promise<void>;
+	setVisibility: (visibility: boolean) => any;
 }
 
 export default function CreateWorldModal({ visibility, setVisibility }: CreateWorldModalProps) {
@@ -39,11 +39,11 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 					await setVisibility(false);
 				}}
 			>
-				<FormItem name="name" label="Name" required={true}>
-					<TextInput id={'newWorldName'}/>
+				<FormItem label="Name" required={true}>
+					<TextInput name="name" id={'newWorldName'}/>
 				</FormItem>
-				<FormItem name={"isPublic"}>
-					<PrimaryCheckbox>
+				<FormItem >
+					<PrimaryCheckbox name={"isPublic"}>
 						Public World
 					</PrimaryCheckbox>
 					<ToolTip

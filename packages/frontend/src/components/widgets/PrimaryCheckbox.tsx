@@ -5,11 +5,12 @@ import {WidgetProps} from "./WidgetProps";
 interface PrimaryCheckboxProps extends WidgetProps {
     checked?: boolean,
     onChange?: (newValue: boolean) => any,
-    children?: React.ReactNode
+    children?: React.ReactNode;
+    name?: string;
 }
 
-export default function PrimaryCheckbox({checked, onChange, children}: PrimaryCheckboxProps) {
-    return <Checkbox checked={checked} onChange={(e) => onChange(e.target.checked)}>
+export default function PrimaryCheckbox({checked, onChange, children, name}: PrimaryCheckboxProps) {
+    return <Checkbox name={name} checked={checked} onChange={(e) => onChange(e.target.checked)}>
         {children}
     </Checkbox>
 }

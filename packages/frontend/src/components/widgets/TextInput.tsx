@@ -7,8 +7,9 @@ interface TextInputProps extends WidgetProps{
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => any;
     disabled?: boolean;
     onKeyDown?: (key: string) => any;
+    name?: string;
 }
 
-export default function TextInput({id, value, onChange, style, ref, disabled, onKeyDown}: TextInputProps) {
-    return <Input id={id} value={value} onChange={onChange} style={style} ref={ref} disabled={disabled} onKeyDown={(event) => onKeyDown(event.key)}/>;
+export default function TextInput({id, value, onChange, style, ref, disabled, onKeyDown, name}: TextInputProps) {
+    return <Input id={id} name={name} value={value} onChange={onChange} style={style} ref={ref} disabled={disabled} onKeyDown={(event) => onKeyDown && onKeyDown(event.key)}/>;
 }

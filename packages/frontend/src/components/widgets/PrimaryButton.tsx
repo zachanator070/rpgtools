@@ -11,7 +11,7 @@ interface PrimaryButtonProps extends WidgetProps {
 }
 
 export default function PrimaryButton({className, loading, onClick, children, disabled, submit, style, id}: PrimaryButtonProps) {
-    return <Button disabled={disabled || loading} className={className} loading={loading} onClick={onClick} htmlType={submit ? "submit": null} style={style} id={id}>
+    return <Button type={'primary'} disabled={disabled || loading} className={className} loading={loading} onClick={onClick} htmlType={submit ? "submit": null} style={style} id={id}>
         {children}
     </Button>;
 }

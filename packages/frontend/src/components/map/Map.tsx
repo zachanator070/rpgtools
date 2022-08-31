@@ -1,8 +1,7 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import LoadingView from "../LoadingView";
-import DropdownMenu from "../widgets/DropdownMenu";
-import DropdownMenuItem from "../widgets/DropdownMenuItem";
+import ContextMenu from "../widgets/ContextMenu";
 
 interface MapProps {
 	menuItems: MapMenuItem[];
@@ -172,18 +171,20 @@ export default function Map({ menuItems, extras }: MapProps) {
 	if (!menuItems) {
 		menuItems = [];
 	}
-	const dropdownItems = menuItems.map(item => <DropdownMenuItem
-		key={item.name}
-		onClick={async () => {
-			const boundingBox = map.current.getBoundingClientRect();
-			const newPinX = lastMouseX.current - boundingBox.x;
-			const newPinY = lastMouseY.current - boundingBox.y;
-			const coords = reverseTranslate(newPinX, newPinY);
-			await item.onClick(coords[0], coords[1]);
-		}}
-	>
-		{item.name}
-	</DropdownMenuItem>) ?? [];
+	const dropdownItems = menuItems.map(item => {
+		return <span
+			key={item.name}
+			onClick={async () => {
+				const boundingBox = map.current.getBoundingClientRect();
+				const newPinX = lastMouseX.current - boundingBox.x;
+				const newPinY = lastMouseY.current - boundingBox.y;
+				const coords = reverseTranslate(newPinX, newPinY);
+				await item.onClick(coords[0], coords[1]);
+			}}
+		>
+			{item.name}
+		</span>;
+	});
 
 	if (loading) {
 		return <LoadingView />;
@@ -230,9 +231,9 @@ export default function Map({ menuItems, extras }: MapProps) {
 	return (
 		<div ref={mapContainer} className="flex-grow-1 flex-column">
 			{currentMap.canWrite && dropdownItems.length > 0 ? (
-				<DropdownMenu menu={dropdownItems}>
+				<ContextMenu menu={dropdownItems}>
 					{mapComponent}
-				</DropdownMenu>
+				</ContextMenu>
 			) : (
 				mapComponent
 			)}

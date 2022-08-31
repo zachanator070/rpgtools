@@ -2,14 +2,13 @@ import React, {ReactComponentElement, useState} from "react";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
 import { useParams } from "react-router-dom";
 import {WikiPage} from "../../types";
-import DropdownOption from "../widgets/DropdownOption";
 import PrimaryButton from "../widgets/PrimaryButton";
 import DropdownSelect from "../widgets/DropdownSelect";
 import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectWikiProps <T extends WikiPage>{
 	types?: string[];
-	onChange?: (wiki: T) => Promise<void>;
+	onChange?: (wiki: T) => any;
 	style?: any;
 	showClear?: boolean;
 	canAdmin?: boolean;
@@ -32,14 +31,13 @@ export default function SelectWiki<T extends WikiPage>({
 	const [value, setValue] = useState<string>();
 
 	const options =
-		wikis &&
+		wikis ?
 		wikis.docs.map((wiki) => {
-			return (
-				<DropdownOption key={wiki._id} value={wiki._id}>
-					{wiki.name}
-				</DropdownOption>
-			);
-		});
+			return {
+				label: wiki.name,
+				value: wiki._id
+			};
+		}) : [];
 
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
@@ -77,9 +75,8 @@ export default function SelectWiki<T extends WikiPage>({
 				helpText="Search for a wiki page"
 				style={style ? style : { width: 200 }}
 				icon={<SearchIcon />}
-			>
-				{options}
-			</DropdownSelect>
+				options={options}
+			/>
 			{kids.length > 0 && <div style={{display: "flex", marginTop: "1em"}}>
 				{...kids}
 			</div> }

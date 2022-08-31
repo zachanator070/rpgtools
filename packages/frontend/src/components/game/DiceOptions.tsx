@@ -47,11 +47,11 @@ export default function DiceOptions() {
 						setAddAttributeVisible(false);
 					}}
 				>
-					<FormItem name={"name"} label={`Name`}>
-						<TextInput style={{ width: "75px" }} />
+					<FormItem label={`Name`}>
+						<TextInput name={"name"}  style={{ width: "75px" }} />
 					</FormItem>
-					<FormItem name={"value"} label={`Value`}>
-						<NumberInput style={{ width: "75px" }} />
+					<FormItem label={`Value`}>
+						<NumberInput name={"value"}  style={{ width: "75px" }} />
 					</FormItem>
 				</InputForm>
 			</FullScreenModal>

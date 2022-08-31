@@ -2,11 +2,11 @@ import React, {CSSProperties, useState} from "react";
 import { useParams } from "react-router-dom";
 import useFolders from "../../hooks/wiki/useFolders";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DropdownOption from "../widgets/DropdownOption";
 import SearchIcon from "../widgets/icons/SearchIcon";
+import {WikiFolder} from "../../types";
 
 interface SelectFolderProps {
-	onChange?: (folderId: string) => Promise<any>;
+	onChange?: (folder: WikiFolder) => any;
 	style?: CSSProperties;
 	canAdmin?: boolean;
 }
@@ -18,15 +18,25 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 	});
 	const [value, setValue] = useState<string>();
 
+	const onSelect = async (newValue) => {
+		await setValue(newValue);
+		if (onChange) {
+			for (let folder of folders) {
+				if (folder._id === newValue) {
+					await onChange(folder);
+				}
+			}
+		}
+	};
+
 	const options =
-		folders &&
+		folders ?
 		folders.map((folder) => {
-			return (
-				<DropdownOption key={folder._id} value={folder._id}>
-					{folder.name}
-				</DropdownOption>
-			);
-		});
+			return {
+				label: folder.name,
+				value: folder._id
+			};
+		}) : [];
 
 	return (
 		<DropdownSelect
@@ -35,18 +45,12 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 			onSearch={async (term) => {
 				await refetch({ worldId: params.world_id, name: term, canAdmin });
 			}}
-			onChange={async (newValue) => {
-				await setValue(newValue);
-				if (onChange) {
-					await onChange(newValue);
-				}
-			}}
+			onChange={onSelect}
 			style={style ? style : { width: 200 }}
 			icon={<SearchIcon />}
 			helpText={"Search for a model"}
 			showArrow={false}
-		>
-			{options}
-		</DropdownSelect>
+			options={options}
+		/>
 	);
 };

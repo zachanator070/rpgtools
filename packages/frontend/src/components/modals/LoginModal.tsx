@@ -7,6 +7,7 @@ import TextInput from "../widgets/TextInput";
 import PasswordInput from "../widgets/PasswordInput";
 import PersonIcon from "../widgets/icons/PersonIcon";
 import KeyIcon from "../widgets/icons/KeyIcon";
+import InlineMargin from "../widgets/InlineMargin";
 
 interface LoginModalProps {
 	visibility: boolean;
@@ -33,16 +34,14 @@ export default function LoginModal({ visibility, setVisibility }: LoginModalProp
 				}}
 			>
 				<FormItem
-					label={<>Username <PersonIcon/></> }
-					name={"username"}
+					label={<>Username <InlineMargin size={1}><PersonIcon/></InlineMargin></> }
 				>
-					<TextInput id="loginEmail"/>
+					<TextInput name={"username"} id="loginEmail"/>
 				</FormItem>
 				<FormItem
-					label={<>Password <KeyIcon/></>}
-					name={"username"}
+					label={<>Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}
 				>
-					<PasswordInput id="loginPassword"/>
+					<PasswordInput name={"password"} id="loginPassword"/>
 				</FormItem>
 			</InputForm>
 		</FullScreenModal>

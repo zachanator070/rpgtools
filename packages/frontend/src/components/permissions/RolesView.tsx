@@ -8,7 +8,7 @@ import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
 import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
 import AddRolePermission from "./AddRolePermission";
-import {PermissionAssignment, User} from "../../types";
+import {User} from "../../types";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 import ColumnedContent from "../widgets/ColumnedContent";
 import PrimaryButton from "../widgets/PrimaryButton";
@@ -16,15 +16,11 @@ import DangerButton from "../widgets/DangerButton";
 import TextInput from "../widgets/TextInput";
 import ItemList from "../widgets/ItemList";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DropdownOption from "../widgets/DropdownOption";
 import TabCollection from "../widgets/TabCollection";
 import TabPane from "../widgets/TabPane";
 import FormattedTable from "../widgets/FormattedTable";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
 
-interface TabulatedPermissionAssignment extends PermissionAssignment {
-	key: string;
-}
 
 export default function RolesView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
@@ -93,13 +89,8 @@ export default function RolesView() {
 						style={{ width: 200 }}
 						value={selectedRoleId}
 						onChange={(roleId: string) => setSelectedRoleId(roleId)}
-					>
-						{roles.docs.map((role) => (
-							<DropdownOption key={role._id} value={role._id}>
-								{role.name}
-							</DropdownOption>
-						))}
-					</DropdownSelect>
+						options={roles.docs.map((role) => {return {value: role._id, label: role.name}})}
+					/>
 					{selectedRole ? (
 						<TabCollection>
 							<TabPane title="Permissions in this role" key="1">

@@ -17,7 +17,7 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 	const { gameChat } = useGameChat();
 	const { currentGame } = useCurrentGame();
 	const {currentCharacter} = useCurrentCharacter();
-	const { setCharacterAttributes } = useSetCharacterAttributes();
+	const { setCharacterAttributes, loading, errors } = useSetCharacterAttributes();
 
 	const [editVisibility, setEditVisibility] = useState(false);
 
@@ -63,6 +63,8 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 				setVisible={setEditVisibility}
 			>
 				<InputForm
+					loading={loading}
+					errors={errors}
 					initialValues={{
 						value: attribute.value,
 					}}
@@ -87,8 +89,8 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 						setEditVisibility(false);
 					}}
 				>
-					<FormItem name={"value"} label={`${attribute.name}`}>
-						<NumberInput style={{ width: "75px" }} />
+					<FormItem label={`${attribute.name}`}>
+						<NumberInput name={"value"} style={{ width: "75px" }} />
 					</FormItem>
 				</InputForm>
 			</FullScreenModal>

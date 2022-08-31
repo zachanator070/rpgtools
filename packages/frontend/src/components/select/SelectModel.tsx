@@ -3,7 +3,6 @@ import useSearchModels from "../../hooks/model/useSearchModels";
 import {Model} from "../../types";
 import DropdownSelect from "../widgets/DropdownSelect";
 import DangerButton from "../widgets/DangerButton";
-import DropdownOption from "../widgets/DropdownOption";
 
 interface SelectModelProps {
 	onChange?: (model: Model) => Promise<any>;
@@ -22,11 +21,10 @@ export default function SelectModel({
 	const [value, setValue] = useState<string>();
 
 	const options = models.map((model) => {
-		return (
-			<DropdownOption key={model._id} value={model._id}>
-				{model.name}
-			</DropdownOption>
-		);
+		return {
+			value: model._id,
+			label: model.name
+		};
 	});
 
 	return (
@@ -51,9 +49,8 @@ export default function SelectModel({
 				style={style ? style : { width: 200 }}
 				helpText={"Search for a model"}
 				showArrow={false}
-			>
-				{options}
-			</DropdownSelect>
+				options={options}
+			/>
 			{showClear && (
 				<DangerButton
 					className={"margin-md-left"}

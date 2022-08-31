@@ -11,7 +11,10 @@ interface FullScreenModalProps extends WidgetProps {
 }
 
 export default function FullScreenModal({title, visible, closable, setVisible, children}: FullScreenModalProps) {
-    return <Modal title={title} visible={visible} closable={closable} footer={null} onCancel={setVisible && setVisible(false)}>
+    return <Modal title={title} visible={visible} footer={null} onCancel={async () => {
+        if (setVisible) {
+            await setVisible(false);
+        }}}>
         {children && React.Children.toArray(children)}
     </Modal>;
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import ToolTip from "../widgets/ToolTip";
 import InputForm from "../widgets/InputForm";
 import FormItem from "../widgets/FormItem";
@@ -32,14 +32,15 @@ export default function ModelForm({
 	fileRequired = true,
 }: ModelFormProps) {
 
+	const [selectedFile, setSelectedFile] = useState(null);
+
 	return (
-		<InputForm initialValues={initialValues} onSubmit={callback} loading={loading} errors={errors}>
+		<InputForm initialValues={initialValues} onSubmit={(values) => callback({file: selectedFile, ...values})} loading={loading} errors={errors}>
 			<FormItem
 				label="Name"
-				name="name"
 				required={true}
 			>
-				<TextInput />
+				<TextInput name="name"/>
 			</FormItem>
 			<FormItem
 				label={
@@ -62,7 +63,6 @@ export default function ModelForm({
 						</span>
 					</div>
 				}
-				name="file"
 				validationRules={[
 					async (value) => {
 						// this function has to be async b/c the validator has to return a promise
@@ -81,7 +81,7 @@ export default function ModelForm({
 				]}
 				required={fileRequired}
 			>
-				<FileInput />
+				<FileInput onChange={setSelectedFile}/>
 			</FormItem>
 			<FormItem
 				label={
@@ -89,10 +89,9 @@ export default function ModelForm({
 						<ToolTip title={"Depth of the model in feet"}/> Depth
 					</div>
 				}
-				name="depth"
 				required={true}
 			>
-				<NumberInput/>
+				<NumberInput name="depth"/>
 			</FormItem>
 			<FormItem
 				label={
@@ -100,10 +99,9 @@ export default function ModelForm({
 						<ToolTip title={"Width of the model in feet"}/> Width
 					</div>
 				}
-				name="width"
 				required={true}
 			>
-				<NumberInput/>
+				<NumberInput name="width"/>
 			</FormItem>
 			<FormItem
 				label={
@@ -111,13 +109,12 @@ export default function ModelForm({
 						<ToolTip title={"Height of the model in feet"}/> Height
 					</div>
 				}
-				name="height"
 				required={true}
 			>
-				<NumberInput/>
+				<NumberInput name="height"/>
 			</FormItem>
-			<FormItem label={<div>Notes</div>} name="notes">
-				<TextAreaInput rows={15} cols={50} />
+			<FormItem label={<div>Notes</div>} >
+				<TextAreaInput name="notes" rows={15} cols={50} />
 			</FormItem>
 		</InputForm>
 	);

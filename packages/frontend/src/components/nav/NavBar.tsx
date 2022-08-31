@@ -66,7 +66,7 @@ export default function NavBar() {
 				visibility={registerModalVisibility}
 			/>
 			<ColumnedContent>
-				<>
+				<div style={{display: 'flex', justifyContent: 'space-between'}}>
 					<div className="margin-md-left">
 						<WorldMenu />
 						{currentWorld && currentWorld.canWrite && (
@@ -89,26 +89,25 @@ export default function NavBar() {
 					</div>
 
 					{currentWorld &&
-						<>
-							<div className="margin-sm-top">
-								<VerticalBar/>
-								<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
-									Map
-								</Link>
-								<VerticalBar/>
-								<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>
-									Wiki
-								</Link>
-								<VerticalBar/>
-								<Link to={`/ui/world/${currentWorld._id}/model`}>Models</Link>
-								<VerticalBar/>
-								<Link to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
-								<VerticalBar/>
-								<Link to={`/ui/world/${currentWorld._id}/gameLogin`}>Game</Link>
-							</div>
-						</>
+						<div className="margin-sm-top margin-lg-right">
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
+								Map
+							</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>
+								Wiki
+							</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/model`}>Models</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/gameLogin`}>Game</Link>
+						</div>
+
 					}
-				</>
+				</div>
 				<>
 					{currentWorld && <SearchBar />}
 				</>

@@ -56,9 +56,7 @@ export default function SlidingDrawer({
 				width={"512px"}
 			>
 				<div style={{textAlign: placement == 'left' ? 'right' : 'left'}}>
-					<div style={{display: 'flex', justifyContent: 'space-around'}}>
-						<PrimaryButton onClick={() => setVisible(false)}>Close</PrimaryButton>
-					</div>
+					<PrimaryButton onClick={() => setVisible(false)}>Close</PrimaryButton>
 				</div>
 				{children}
 			</Drawer>

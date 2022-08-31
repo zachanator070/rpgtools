@@ -21,7 +21,7 @@ export default function MoveWikiButton({ wikiPage }: MoveWikiButtonProps) {
 				title={`Move ${wikiPage.name}`}
 				setVisible={() => setMoveModalVisibility(false)}
 			>
-				New Folder: <SelectFolder onChange={async (folderId: string) => setNewFolder(folderId)} />
+				New Folder: <SelectFolder onChange={async (folder) => setNewFolder(folder._id)} />
 				<div className={"margin-lg"}>
 					<PrimaryButton
 						onClick={async () => {

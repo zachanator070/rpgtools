@@ -3,7 +3,6 @@ import React from 'react';
 import {WidgetProps} from "./WidgetProps";
 
 export interface FormItemProps extends WidgetProps{
-    name?: string;
     label?: React.ReactNode;
     children: React.ReactNode;
     lastItem?: boolean;
@@ -11,7 +10,7 @@ export interface FormItemProps extends WidgetProps{
     validationRules?: ((any) => Promise<void>)[]
 }
 
-export default function FormItem({name, label, children, lastItem, required, validationRules}: FormItemProps) {
+export default function FormItem({label, children, lastItem, required, validationRules}: FormItemProps) {
     const rules: any[] = [
         {
             required: true,
@@ -24,13 +23,13 @@ export default function FormItem({name, label, children, lastItem, required, val
         }
     }
     return <Form.Item
-        name={name}
         label={label}
         wrapperCol={lastItem && {
             offset: 8,
-            span: 16,
+            span: 8,
         }}
         rules={required && rules}
+        getValueFromEvent={(e) => e.target.value}
     >
         {children}
     </Form.Item>

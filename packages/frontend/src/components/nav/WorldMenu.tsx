@@ -5,7 +5,6 @@ import CreateWorldModal from "../modals/CreateWorldModal";
 import SelectWorldModal from "../modals/SelectWorldModal";
 import SecondaryButton from "../widgets/SecondaryButton";
 import DropdownMenu from "../widgets/DropdownMenu";
-import DropdownMenuItem from "../widgets/DropdownMenuItem";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import DownArrowIcon from "../widgets/icons/DownArrowIcon";
 
@@ -21,36 +20,36 @@ export default function WorldMenu() {
 	}
 
 	let menu = [
-			<DropdownMenuItem onClick={async () => setSelectWorldModalVisibility(true)}>
-				<SelectWorldModal
-					visibility={selectWorldModalVisibility}
-					setVisibility={async (visibility: boolean) => setSelectWorldModalVisibility(visibility)}
-				/>
-				<a href="#">
-					Select World
-				</a>
-			</DropdownMenuItem>
+		<div key={'selectWorld'} onClick={() => setSelectWorldModalVisibility(true)}>
+			<a href="#">
+				Select World
+			</a>
+		</div>
 	];
 
 	if (serverConfig.canCreateWorlds) {
 		menu = [
-			<DropdownMenuItem onClick={async () => setCreateWorldModalVisibility(true)}>
+			<div key={'createWorld'} onClick={() => setCreateWorldModalVisibility(true)}>
 				<a href="#">
 					New World
 				</a>
-			</DropdownMenuItem>,
+			</div>,
 			...menu
 		];
 	}
 
 	return (
 		<span id={'worldMenu'}>
+			<SelectWorldModal
+				visibility={selectWorldModalVisibility}
+				setVisibility={setSelectWorldModalVisibility}
+			/>
 			<CreateWorldModal
 				visibility={createWorldModalVisibility}
-				setVisibility={async (visibility: boolean) => setCreateWorldModalVisibility(visibility)}
+				setVisibility={setCreateWorldModalVisibility}
 			/>
 			<DropdownMenu menu={menu}>
-				<SecondaryButton>
+				<SecondaryButton onClick={(e) => e.preventDefault()}>
 					{currentWorld ? currentWorld.name : "No World Selected"} <DownArrowIcon />
 				</SecondaryButton>
 			</DropdownMenu>

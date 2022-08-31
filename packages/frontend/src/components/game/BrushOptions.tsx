@@ -13,7 +13,6 @@ import {GameRenderer} from "../../rendering/GameRenderer";
 import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
 import ColorInput from "../widgets/ColorInput";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DropdownOption from "../widgets/DropdownOption";
 import NumberSlider from "../widgets/NumberSlider";
 
 interface BrushOptionsProps {
@@ -49,14 +48,13 @@ export default function BrushOptions({ renderer }: BrushOptionsProps) {
 						await setBrushType(value);
 						renderer.getPaintControls().setBrushType(value);
 					}}
-				>
-					<DropdownOption value={BRUSH_LINE} selectedByDefault={true}>
-						Line
-					</DropdownOption>
-					<DropdownOption value={BRUSH_SQUARE}>Square</DropdownOption>
-					<DropdownOption value={BRUSH_CIRCLE}>Circle</DropdownOption>
-					<DropdownOption value={BRUSH_ERASE}>Erase</DropdownOption>
-				</DropdownSelect>
+					options={[
+						{value: BRUSH_LINE, label: 'Line'},
+						{value: BRUSH_SQUARE, label: 'Square'},
+						{value: BRUSH_CIRCLE, label: 'Circle'},
+						{value: BRUSH_ERASE, label: 'Erase'},
+					]}
+				/>
 			</div>
 			<div className={"margin-md"}>
 				<h3>Brush Size</h3>

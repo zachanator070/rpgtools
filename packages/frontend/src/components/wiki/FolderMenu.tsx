@@ -10,8 +10,6 @@ import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import {WikiFolder} from "../../types";
 import MoveFolderModal from "../modals/MoveFolderModal";
 import useModal from "../widgets/useModal";
-import DropdownMenuItem from "../widgets/DropdownMenuItem";
-import DropdownMenu from "../widgets/DropdownMenu";
 import FullScreenModal from "../widgets/FullScreenModal";
 import InputForm from "../widgets/InputForm";
 import TextInput from "../widgets/TextInput";
@@ -25,6 +23,7 @@ import DownloadIcon from "../widgets/icons/DownloadIcon";
 import PeopleIcon from "../widgets/icons/PeopleIcon";
 import ImportIcon from "../widgets/icons/ImportIcon";
 import AddFolderIcon from "../widgets/icons/AddFolderIcon";
+import ContextMenu from "../widgets/ContextMenu";
 
 interface FolderMenuProps {
 	folder: WikiFolder;
@@ -37,6 +36,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 	const { createFolder } = useCreateFolder();
 	const { renameFolder, loading: renameLoading, errors: renameErrors } = useRenameFolder();
 	const { deleteFolder } = useDeleteFolder();
+	const [selectedImportFile, setSelectedImportFile] = useState(null);
 
 	const { importContent, loading: importLoading, errors: importErrors } = useImportContent();
 	const [renameModalVisibility, setRenameModalVisibility] = useState(false);
@@ -47,7 +47,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 	const {modalConfirm} = useModal();
 
 	const canWriteMenu = [
-		<DropdownMenuItem
+		<div
 			key="createWiki"
 			onClick={async () => {
 				await createWiki({name: "New Page", folderId: folder._id});
@@ -57,8 +57,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<AddFileIcon />
 			</span>
 			New Wiki Page
-		</DropdownMenuItem>,
-		<DropdownMenuItem
+		</div>,
+		<div
 			key="createFolder"
 			onClick={async () => {
 				await createFolder({parentFolderId: folder._id, name: "New Folder"});
@@ -68,8 +68,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<AddFolderIcon />
 			</span>
 			New Folder
-		</DropdownMenuItem>,
-		<DropdownMenuItem
+		</div>,
+		<div
 			key="renameFolder"
 			onClick={async () => {
 				setRenameModalVisibility(true);
@@ -79,8 +79,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<EditIcon />
 			</span>
 			Rename Folder
-		</DropdownMenuItem>,
-		<DropdownMenuItem
+		</div>,
+		<div
 			key="moveFolder"
 			onClick={async () => {
 				setMoveFolderModalVisibility(true);
@@ -90,8 +90,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<ImportIcon />
 			</span>
 			Move Folder
-		</DropdownMenuItem>,
-		<DropdownMenuItem
+		</div>,
+		<div
 			key="deleteFolder"
 			onClick={() => {
 				modalConfirm({
@@ -107,8 +107,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<DeleteIcon />
 			</span>
 			Delete Folder
-		</DropdownMenuItem>,
-		<DropdownMenuItem
+		</div>,
+		<div
 			key="importFolder"
 			onClick={async () => {
 				setImportModalVisibility(true);
@@ -118,11 +118,11 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<UploadIcon />
 			</span>
 			Import Content
-		</DropdownMenuItem>,
+		</div>,
 	];
 
 	const menu = [
-		<DropdownMenuItem
+		<div
 			key="exportFolder"
 			onClick={() => {
 				window.location.href = `/export/WikiFolder/${folder._id}`;
@@ -132,8 +132,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<DownloadIcon />
 			</span>
 			Export Folder
-		</DropdownMenuItem>,
-		<DropdownMenuItem
+		</div>,
+		<div
 			key="permissions"
 			onClick={() => {
 				setPermissionModalVisibility(true);
@@ -143,7 +143,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				<PeopleIcon />
 			</span>
 			Folder Permissions
-		</DropdownMenuItem>,
+		</div>,
 	];
 	if (folder.canWrite) {
 		menu.unshift(...canWriteMenu);
@@ -169,8 +169,8 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 							await renameFolder({folderId: folder._id, name: newName});
 						}}
 					>
-						<FormItem name={"newName"} label={"New Name"}>
-							<TextInput />
+						<FormItem label={"New Name"}>
+							<TextInput name={"newName"} />
 						</FormItem>
 					</InputForm>
 				</FullScreenModal>
@@ -184,11 +184,11 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 						<InputForm
 							loading={importLoading}
 							errors={importErrors}
-							onSubmit={async ({ file }) => {
+							onSubmit={async () => {
 
 								await importContent({
 									folderId: folder._id,
-									zipFile: file[0].originFileObj,
+									zipFile: selectedImportFile[0].originFileObj,
 								},
 								{
 									onCompleted: async () => setImportModalVisibility(false)
@@ -212,7 +212,6 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 										</span>
 									</div>
 								}
-								name="file"
 								required={true}
 								validationRules={[
 									async (value) => {
@@ -231,7 +230,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 									},
 								]}
 							>
-								<FileInput/>
+								<FileInput onChange={setSelectedImportFile}/>
 							</FormItem>
 						</InputForm>
 					</div>
@@ -244,9 +243,9 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={async () => {await refetch()}}/>
 				</FullScreenModal>
 			</div>
-			<DropdownMenu menu={menu}>
+			<ContextMenu menu={menu}>
 				<div>{children}</div>
-			</DropdownMenu>
+			</ContextMenu>
 		</div>
 	);
 };

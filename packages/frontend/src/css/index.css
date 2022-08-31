@@ -48,72 +48,66 @@ body {
 	text-align: center;
 }
 
+/*********/
+/*PADDING*/
+/*********/
+
+/*Small*/
 .padding-sm {
-	padding: 5px;
+	padding: .33em;
 }
 
+/*Medium*/
 .padding-md {
-	padding: 15px;
+	padding: 1em;
 }
 
 .padding-md-left {
-	padding-left: 15px;
+	padding-left: 1em;
 }
 
 .padding-md-right {
-	padding-right: 15px;
+	padding-right: 1em;
 }
 
+/*Large*/
 .padding-lg {
-	padding: 30px;
+	padding: 2em;
 }
 
+/*********/
+/*MARGIN*/
+/*********/
+
+/*None*/
 .margin-none {
-	margin: 0px;
+	margin: 0;
 }
 
+/*Small*/
 .margin-sm {
-	margin: 5px;
-}
-
-.margin-md {
-	margin: 15px;
-}
-
-.margin-lg {
-	margin: 30px;
-}
-
-.margin-lg-top {
-	margin-top: 30px;
-}
-
-.margin-lg-left {
-	margin-left: 30px;
-}
-
-.margin-lg-right {
-	margin-right: 30px;
-}
-
-.margin-lg-bottom {
-	margin-bottom: 30px;
-}
-
-.margin-xlg-top {
-	margin-top: 60px;
+	margin: .33em;
 }
 
 .margin-sm-bottom {
-	margin-bottom: 5px;
+	margin-bottom: .33em;
 }
 
 .margin-sm-top {
-	margin-top: 5px;
+	margin-top: .33em;
 }
 
-.margin-md-top {
-	margin-top: 15px;
+.margin-sm-left {
+	margin-left: .33em;
+}
+
+.margin-sm-right {
+	margin-right: .33em;
+}
+
+/*Medium*/
+.margin-md {
+	margin: 1em;
 }
 
 .margin-md-right {
@@ -124,8 +118,38 @@ body {
 	margin-left: 15px;
 }
 
+.margin-md-top {
+	margin-top: 1em;
+}
+
+/*Large*/
+.margin-lg {
+	margin: 30px;
+}
+
+.margin-lg-top {
+	margin-top: 2em;
+}
+
+.margin-lg-left {
+	margin-left: 2em;
+}
+
+.margin-lg-right {
+	margin-right: 2em;
+}
+
+.margin-lg-bottom {
+	margin-bottom: 2em;
+}
+
+/*X Large*/
+.margin-xlg-top {
+	margin-top: 4em;
+}
+
 .shadow-sm {
-	box-shadow: 0px 0px 10px;
+	box-shadow: 0 0 1em;
 }
 
 .background-white {
@@ -165,11 +189,11 @@ body {
 
 .upload-list-inline {
 	width: 200px;
-	margin-right: 8px;
+	margin-right: .5em;
 }
 
 div.ant-upload-list-item {
-	width: 200px;
+	width: 12.5em;
 }
 
 .absolute {
@@ -178,12 +202,12 @@ div.ant-upload-list-item {
 
 .absolute-right {
 	position: absolute;
-	right: 0px;
+	right: 0;
 }
 
 .absolute-left {
 	position: absolute;
-	left: 0px;
+	left: 0;
 }
 
 .float-left {
@@ -203,7 +227,7 @@ div.ant-upload-list-item {
 
 .drawer-content {
 	display: inline-block;
-	padding: 15px;
+	padding: 1em;
 	width: 100%;
 	height: 100%;
 	border-right: thin lightgrey solid;
@@ -215,39 +239,39 @@ div.ant-upload-list-item {
 .drawer-button {
 	display: inline-block;
 	position: absolute;
-	margin-left: 15px;
-	margin-top: 15px;
-	margin-right: 15px;
+	margin-left: 1em;
+	margin-top: 1em;
+	margin-right: 1em;
 	background-color: white;
-	border-radius: 5px;
-	padding: 5px;
-	box-shadow: 0px 0px 5px;
+	border-radius: .33em;
+	padding: .33em;
+	box-shadow: 0 0 .33em;
 }
 
 .search-results {
 	position: relative;
-	top: 15px;
+	top: 1em;
 	background-color: white;
 }
 
 .map-upload {
-	width: 260px;
-	padding: 30px;
+	width: 16.5em;
+	padding: 2em;
 	margin: auto;
 }
 
 .message-box {
 	border: thin solid lightgrey;
-	border-radius: 5px;
-	padding: 15px;
-	height: 300px;
+	border-radius: .33em;
+	padding: 1em;
+	height: 19em;
 	overflow: auto;
 }
 
 .breadcrumbs {
 	background-color: white;
 	z-index: 9;
-	padding: 5px;
+	padding: .33em;
 	position: relative;
 	border-bottom: thin solid lightgrey;
 }

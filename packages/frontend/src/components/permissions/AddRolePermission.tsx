@@ -9,7 +9,6 @@ import Errors from "../Errors";
 import SelectFolder from "../select/SelectFolder";
 import {Role} from "../../types";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DropdownOption from "../widgets/DropdownOption";
 import PrimaryButton from "../widgets/PrimaryButton";
 
 interface AddRolePermissionProps {
@@ -34,11 +33,9 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 	let selectSubject = null;
 	if (subjectTypeSelected === WORLD) {
 		selectSubject = (
-			<DropdownSelect style={{ width: "200px" }} onChange={async (worldId: string) => setSubjectId(worldId)}>
-				{currentWorld.canAdmin && (
-					<DropdownOption value={currentWorld._id}>{currentWorld.name}</DropdownOption>
-				)}
-			</DropdownSelect>
+			<DropdownSelect style={{ width: "200px" }} onChange={(worldId: string) => setSubjectId(worldId)} options={
+				currentWorld.canAdmin && [{value: currentWorld._id, label: currentWorld.name}]
+			}/>
 		);
 	} else if (subjectTypeSelected === WIKI_PAGE) {
 		selectSubject = (
@@ -51,9 +48,9 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 			/>
 		);
 	} else if (subjectTypeSelected === ROLE) {
-		selectSubject = <SelectRole canAdmin={true} onChange={async (roleId: string) => setSubjectId(roleId)} />;
+		selectSubject = <SelectRole canAdmin={true} onChange={(roleId: string) => setSubjectId(roleId)} />;
 	} else if (subjectTypeSelected === WIKI_FOLDER) {
-		selectSubject = <SelectFolder canAdmin={true} onChange={async (folderId: string) => setSubjectId(folderId)} />;
+		selectSubject = <SelectFolder canAdmin={true} onChange={(folder) => setSubjectId(folder._id)} />;
 	}
 
 	let availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
@@ -66,17 +63,14 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 				<span className={"margin-lg-right"}>Subject Type:</span>
 				<DropdownSelect
 					style={{ width: "200px" }}
-					onChange={async (value) => {
-						await setPermissionToAdd(null);
-						await setSubjectTypeSelected(value);
-						await setSubjectId(null);
+					onChange={(value) => {
+						setPermissionToAdd(null);
+						setSubjectTypeSelected(value);
+						setSubjectId(null);
 					}}
 					value={subjectTypeSelected}
-				>
-					{[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map((permission) => (
-						<DropdownOption key={permission} value={permission}>{permission}</DropdownOption>
-					))}
-				</DropdownSelect>
+					options={[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map(permission => {return {label: permission, value: permission};})}
+				/>
 			</div>
 			{subjectTypeSelected && (
 				<div className={"margin-lg-top"}>
@@ -87,11 +81,8 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 							await setPermissionToAdd(value);
 						}}
 						value={permissionToAdd}
-					>
-						{availablePermissions.map((permission) => (
-							<DropdownOption key={permission} value={permission}>{permission}</DropdownOption>
-						))}
-					</DropdownSelect>
+						options={availablePermissions.map((permission) => {return {label: permission, value: permission};})}
+					/>
 				</div>
 			)}
 			{permissionToAdd && (

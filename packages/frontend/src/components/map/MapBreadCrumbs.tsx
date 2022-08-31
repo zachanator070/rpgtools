@@ -41,8 +41,9 @@ export default function MapBreadCrumbs() {
 
 	const breadCrumbs: ReactElement[] = [];
 	for (let map of path) {
+		const url = `/ui/world/${currentWorld._id}/map/${map._id}`
 		breadCrumbs.push(
-			<Link to={`/ui/world/${currentWorld._id}/map/${map._id}`}>
+			<Link to={url} key={url}>
 				{map.name}
 			</Link>
 		);

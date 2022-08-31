@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import SelectFolder from "../select/SelectFolder";
 import {WikiFolder} from "../../types";
@@ -13,6 +13,7 @@ interface MoveFolderModalProps {
 }
 
 export default function MoveFolderModal({ folder, visibility, setVisibility }: MoveFolderModalProps) {
+	const [newParent, setNewParent] = useState(null);
 	const { moveFolder, errors, loading } = useMoveFolder(async () => {
 		await setVisibility(false);
 	});
@@ -27,15 +28,15 @@ export default function MoveFolderModal({ folder, visibility, setVisibility }: M
 			<InputForm
 				loading={loading}
 				errors={errors}
-				onSubmit={async ({mewParentId}) => {
+				onSubmit={async () => {
 					await moveFolder({
 						folderId: folder._id,
-						parentFolderId: mewParentId,
+						parentFolderId: newParent?._id,
 					});
 				}}
 			>
-				<FormItem name="newParentId" label={"New Parent"} >
-					<SelectFolder/>
+				<FormItem label={"New Parent"} >
+					<SelectFolder onChange={(newFolder) => setNewParent(newFolder)}/>
 				</FormItem>
 			</InputForm>
 		</FullScreenModal>

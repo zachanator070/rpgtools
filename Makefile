@@ -1,7 +1,7 @@
 .EXPORT_ALL_VARIABLES:
 
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
-CURRENT_UID=$(id -u):$(id -g)
+CURRENT_UID=$(shell id -u):$(shell id -g)
 
 # Builds rpgtools docker image
 build: ui-prod clean-uncompressed
@@ -40,8 +40,10 @@ prod: build
 	docker-compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
+.PHONY: dev
 dev: .env
 	mkdir -p packages/frontend/dist
+	mkdir -p packages/server/dist
 	docker-compose up server ui-builder
 
 # initializes environment file

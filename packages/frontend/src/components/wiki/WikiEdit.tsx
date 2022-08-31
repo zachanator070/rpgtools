@@ -17,7 +17,6 @@ import {Model, ModeledWiki, Place} from "../../types";
 import useModal from "../widgets/useModal";
 import Errors from "../Errors";
 import DangerButton from "../widgets/DangerButton";
-import DropdownOption from "../widgets/DropdownOption";
 import TextInput from "../widgets/TextInput";
 import DropdownSelect from "../widgets/DropdownSelect";
 import ImageInput from "../widgets/ImageInput";
@@ -92,11 +91,10 @@ export default function WikiEdit() {
 	const wikiTypes = ALL_WIKI_TYPES;
 	const options = [];
 	for (let type of wikiTypes) {
-		options.push(
-			<DropdownOption key={type} value={type}>
-				{type}
-			</DropdownOption>
-		);
+		options.push({
+			label: type,
+			value: type
+		});
 	}
 
 	const save = async () => {
@@ -183,9 +181,7 @@ export default function WikiEdit() {
 			</div>
 			<div className="margin-lg">
 				Type:{" "}
-				<DropdownSelect defaultValue={currentWiki.type} style={{ width: 120 }} onChange={setType}>
-					{options}
-				</DropdownSelect>
+				<DropdownSelect defaultValue={currentWiki.type} style={{ width: 120 }} onChange={setType} options={options}/>
 			</div>
 			<div className="margin-lg">
 				<ImageInput

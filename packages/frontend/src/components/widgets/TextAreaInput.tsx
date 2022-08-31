@@ -8,12 +8,14 @@ interface TextAreaInputProps extends WidgetProps {
     cols: number;
     readOnly?: boolean;
     value?: string;
+    name?: string;
 }
-export default function TextAreaInput({rows, cols, readOnly, value}: TextAreaInputProps){
+export default function TextAreaInput({rows, cols, readOnly, value, name}: TextAreaInputProps){
     return <TextArea
         rows={rows}
         cols={cols}
         readOnly={readOnly}
         value={value}
+        name={name}
     />;
 }

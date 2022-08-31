@@ -10,10 +10,10 @@ interface ToolTipProps extends WidgetProps {
 
 export default function ToolTip({ title, children, className }: ToolTipProps) {
 	return (
-		<div className={className}>
+		<span className={className + ' margin-sm-left margin-sm-right'}>
 			<Tooltip title={title} placement="top">
-				{children || <QuestionMarkIcon />}
+				<span>{children || <QuestionMarkIcon />}</span>
 			</Tooltip>
-		</div>
+		</span>
 	);
 };

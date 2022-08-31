@@ -5,8 +5,9 @@ import {WidgetProps} from "./WidgetProps";
 interface NumberInputProps extends WidgetProps {
     value?: number;
     onChange?: (number) => any;
+    name?: string;
 }
 
-export default function NumberInput({style, value, onChange, id}: NumberInputProps) {
-    return <Input type="number" style={style} value={value} onChange={onChange} id={id}/>;
+export default function NumberInput({style, value, onChange, id, name}: NumberInputProps) {
+    return <Input type="number" name={name} style={style} value={value} onChange={onChange} id={id}/>;
 }

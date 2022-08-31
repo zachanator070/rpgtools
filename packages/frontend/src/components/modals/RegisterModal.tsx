@@ -37,20 +37,20 @@ export default function RegisterModal({ visibility, setVisibility }: RegisterMod
 						await login({username, password});
 					}}
 				>
-					<FormItem name="registerCode" label={<>Register Code <KeyIcon/></>}>
-						<TextInput id="registerCode"/>
+					<FormItem label={<>Register Code <KeyIcon/></>}>
+						<TextInput name="registerCode" id="registerCode"/>
 					</FormItem>
-					<FormItem name="email" label={<>Email <MailIcon/></>}>
-						<TextInput id="registerEmail"/>
+					<FormItem label={<>Email <MailIcon/></>}>
+						<TextInput name="email" id="registerEmail"/>
 					</FormItem>
-					<FormItem name="username" label={<>Username <PersonIcon/></>}>
-						<TextInput id="registerDisplayName"/>
+					<FormItem label={<>Username <PersonIcon/></>}>
+						<TextInput name="username" id="registerDisplayName"/>
 					</FormItem>
-					<FormItem name="password" label={<>Password <KeyIcon/></>}>
-						<PasswordInput id="registerPassword"/>
+					<FormItem label={<>Password <KeyIcon/></>}>
+						<PasswordInput name="password" id="registerPassword"/>
 					</FormItem>
-					<FormItem name="repeatPassword" label={<>Repeat Password <KeyIcon/></>}>
-						<PasswordInput id="registerRepeatPassword"/>
+					<FormItem label={<>Repeat Password <KeyIcon/></>}>
+						<PasswordInput name="repeatPassword" id="registerRepeatPassword"/>
 					</FormItem>
 				</InputForm>
 			</FullScreenModal>

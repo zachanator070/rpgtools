@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {Form} from "antd";
 import FormItem, {FormItemProps} from "./FormItem";
 import PrimaryButton from "./PrimaryButton";
@@ -14,17 +14,40 @@ interface InputFormProps<T> extends WidgetProps {
 }
 
 export default function InputForm<T>({initialValues, onSubmit, children, loading, errors}: InputFormProps<T>) {
+
     return <Form
         initialValues={initialValues}
-        onFinish={onSubmit}
+        onFinish={() => {}}
         labelCol={{
             span: 8,
         }}
 		wrapperCol={{
-            span: 16,
+            span: 8,
+        }}
+        onValuesChange={(changedValues, allValues) => {
+            console.log(changedValues);
+            console.log(allValues);
+        }}
+        onSubmitCapture={(event) => {
+            const values = {};
+            for (let key of (event.target as HTMLFormElement).elements) {
+                const name = (key as HTMLInputElement)?.name;
+                const value = (key as HTMLInputElement)?.value;
+                if (name && value) {
+                    values[name] = value;
+                }
+            }
+            onSubmit(values);
         }}
     >
-        {errors && <Errors errors={errors}/>}
+        <div>
+            <div style={{flexGrow: 2}}/>
+            <div style={{flexGrow: 1}}>
+                {errors && <Errors errors={errors}/>}
+            </div>
+            <div style={{flexGrow: 2}}/>
+        </div>
+
         {children}
         <FormItem
             lastItem={true}
