@@ -1,5 +1,5 @@
-import React, {CSSProperties} from 'react';
-import {Input} from "antd";
+import React from 'react';
+import {InputNumber} from "antd";
 import {WidgetProps} from "./WidgetProps";
 
 interface NumberInputProps extends WidgetProps {
@@ -9,5 +9,5 @@ interface NumberInputProps extends WidgetProps {
 }
 
 export default function NumberInput({style, value, onChange, id, name}: NumberInputProps) {
-    return <Input type="number" name={name} style={style} value={value} onChange={onChange} id={id}/>;
+    return <InputNumber name={name} style={style} value={value} onChange={onChange} id={id}/>;
 }

@@ -26,6 +26,7 @@ import PrimaryButton from "../widgets/PrimaryButton";
 import SaveIcon from "../widgets/icons/SaveIcon";
 import Editor from "./Editor";
 import NumberInput from "../widgets/NumberInput";
+import FormItem from "../widgets/FormItem";
 
 export default function WikiEdit() {
 	const history = useHistory();
@@ -186,7 +187,7 @@ export default function WikiEdit() {
 			<div className="margin-lg">
 				<ImageInput
 					onChange={setNewCoverImageFile}
-					initialImage={newCoverImageFile}
+					initialImage={currentWiki.coverImage}
 					id={'coverImageUpload'}
 					buttonText={"Select Cover Image"}
 				/>
@@ -194,15 +195,18 @@ export default function WikiEdit() {
 			{type === PLACE && (
 				<>
 					<div className="margin-lg">
-						<ImageInput onChange={setNewMapImageFile} initialImage={newMapImageFile} buttonText={"Select Map Image"}/>
+						<ImageInput onChange={setNewMapImageFile} initialImage={(currentWiki as Place).mapImage} buttonText={"Select Map Image"}/>
 					</div>
-					<div className="margin-lg">
-						Pixels Per Foot:
-						<NumberInput
-							value={pixelsPerFoot}
-							onChange={async (value) => setPixelsPerFoot(value)}
-						/>
-						<ToolTip title={"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."}/>
+					<div className="margin-lg" style={{display: 'flex'}}>
+						<FormItem label={<>
+							<ToolTip title={"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."}/>
+							Pixels Per Foot
+						</>}>
+							<NumberInput
+								value={pixelsPerFoot}
+								onChange={async (value) => setPixelsPerFoot(value)}
+							/>
+						</FormItem>
 					</div>
 				</>
 			)}
@@ -217,24 +221,27 @@ export default function WikiEdit() {
 				/>
 			</div>
 
-			<div>
+			<div style={{display: 'flex'}} className="margin-lg">
 				{saving && <div>Saving ... </div>}
-				<PrimaryButton disabled={saving} onClick={save}>
-					<SaveIcon />
-					Save
-				</PrimaryButton>
-				<MoveWikiButton wikiPage={currentWiki} />
-				<DangerButton
-					disabled={saving}
-					className="margin-md-left"
-					onClick={() => {
-						history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
-					}}
-				>
-					<UndoIcon />
-					Discard
-				</DangerButton>
-				<span className="absolute-right">
+				<div style={{flexGrow: '1', display: 'flex', justifyContent: 'space-between'}}>
+					<PrimaryButton disabled={saving} onClick={save}>
+						<SaveIcon />
+						Save
+					</PrimaryButton>
+					<MoveWikiButton wikiPage={currentWiki} />
+
+					<DangerButton
+						disabled={saving}
+						onClick={() => {
+							history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
+						}}
+					>
+						<UndoIcon />
+						Discard
+					</DangerButton>
+				</div>
+
+				<div style={{flexGrow: '4', display: 'flex', justifyContent: 'flex-end'}}>
 					<DangerButton
 						disabled={saving}
 						onClick={() => {
@@ -253,7 +260,9 @@ export default function WikiEdit() {
 						<DeleteIcon/>
 						Delete Page
 					</DangerButton>
-				</span>
+				</div>
+
+
 			</div>
 		</div>
 	);

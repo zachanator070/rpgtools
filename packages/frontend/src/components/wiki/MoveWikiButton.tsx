@@ -15,7 +15,7 @@ export default function MoveWikiButton({ wikiPage }: MoveWikiButtonProps) {
 	const { moveWiki } = useMoveWiki();
 
 	return (
-		<span className={"margin-lg"}>
+		<>
 			<FullScreenModal
 				visible={moveModalVisibility}
 				title={`Move ${wikiPage.name}`}
@@ -36,6 +36,6 @@ export default function MoveWikiButton({ wikiPage }: MoveWikiButtonProps) {
 			<PrimaryButton onClick={() => setMoveModalVisibility(true)}>
 				Move Wiki
 			</PrimaryButton>
-		</span>
+		</>
 	);
 };

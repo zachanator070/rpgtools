@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Upload} from "antd";
 import {WidgetProps} from "./WidgetProps";
 import PrimaryButton from "./PrimaryButton";
@@ -14,29 +14,45 @@ interface PictureInputProps extends WidgetProps {
 
 export default function ImageInput({onChange, initialImage, className, id, buttonText}: PictureInputProps) {
 
-   const [fileList, setFileList] = useState([{
-       uid: "-1",
-       name: initialImage.name,
-       url: `/images/${initialImage.icon.chunks[0].fileId}`,
-   }]);
+   const [fileList, setFileList] = useState([]);
 
-    return <Upload
-        beforeUpload={async (file) => {
-            await onChange(file);
-            return false;
-        }}
-        multiple={false}
-        listType={"picture"}
-        fileList={fileList}
-        onChange={async (files) => {
-            await onChange(files.file);
-        }}
-        className={"upload-list-inline " + className}
-        id={id}
-    >
-        <PrimaryButton>
-            <UploadIcon/> {buttonText}
-        </PrimaryButton>
+   useEffect(() => {
+       if(initialImage){
+           setFileList([{
+               uid: "-1",
+               name: initialImage.name,
+               url: `/images/${initialImage.icon.chunks[0].fileId}`,
+           }]);
+       }
+
+   }, [initialImage])
+
+    return <div>
+        <Upload
+            beforeUpload={async (file) => {
+                await onChange(file);
+                return false;
+            }}
+            multiple={false}
+            listType={"picture"}
+            fileList={fileList}
+            onChange={async (files) => {
+                if (files.file.status === 'removed') {
+                    await onChange(null);
+                    setFileList([]);
+                } else {
+                    await onChange(files.file);
+                    setFileList(files.fileList.filter(file => file.uid === files.file.uid));
+                }
+
+            }}
+            className={"upload-list-inline " + className}
+            id={id}
+        >
+            <PrimaryButton>
+                <UploadIcon/> {buttonText}
+            </PrimaryButton>
+        </Upload>
         <DangerButton
             className={"margin-md"}
             onClick={async () => {
@@ -51,5 +67,6 @@ export default function ImageInput({onChange, initialImage, className, id, butto
         >
             Revert
         </DangerButton>
-    </Upload>
+    </div>;
+
 }
