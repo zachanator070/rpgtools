@@ -81,10 +81,10 @@ export default function WorldSettings() {
 							</FullScreenModal>
 							<h2>Load 5e Content</h2>
 							<div className={"margin-lg"}>
-								<PrimaryCheckbox onChange={(checked) => setGetCC(checked)}>
+								<PrimaryCheckbox checked={getCC} onChange={(checked) => setGetCC(checked)}>
 									Creature Codex
 								</PrimaryCheckbox>
-								<PrimaryCheckbox onChange={(checked) => setGetTob(checked)}>
+								<PrimaryCheckbox checked={getTob} onChange={(checked) => setGetTob(checked)}>
 									Tome of Beasts
 								</PrimaryCheckbox>
 							</div>

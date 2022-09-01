@@ -12,7 +12,7 @@ import PrimaryButton from "../widgets/PrimaryButton";
 import ItemList from "../widgets/ItemList";
 import TabCollection from "../widgets/TabCollection";
 import TabPane from "../widgets/TabPane";
-import RadioGroup from "../widgets/RadioGroup";
+import RadioButtonGroup from "../widgets/RadioButtonGroup";
 import RadioButton from "../widgets/RadioButton";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
 
@@ -67,7 +67,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 	return (
 		<>
 			<div style={{ textAlign: "center" }}>
-				<RadioGroup
+				<RadioButtonGroup
 					onChange={async (e: string) => {
 						await setPrincipalType(e);
 					}}
@@ -75,7 +75,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 				>
 					<RadioButton value="users">Users</RadioButton>
 					<RadioButton id="rolesPermissionTab" value="roles">Roles</RadioButton>
-				</RadioGroup>
+				</RadioButtonGroup>
 			</div>
 			<div className="margin-md-top">
 				<TabCollection

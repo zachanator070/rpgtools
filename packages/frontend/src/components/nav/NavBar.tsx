@@ -59,7 +59,7 @@ export default function NavBar() {
 	}
 
 	return (
-		<div className="shadow-sm padding-sm nav-bar" style={{position: 'sticky', top: 0}}>
+		<div className="shadow-sm padding-sm nav-bar">
 			<LoginModal setVisibility={async (visibility: boolean) => setLoginModalVisibility(visibility)} visibility={loginModalVisibility} />
 			<RegisterModal
 				setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}

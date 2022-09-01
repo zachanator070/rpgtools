@@ -35,7 +35,7 @@ export default function WikView() {
 				/>
 			)}
 
-			<ColumnedContent style={{overflowY: 'scroll'}} childrenStyles={[{top: 0, position: 'sticky'}, {}, {top: 0, position: 'sticky'}]}>
+			<ColumnedContent style={{overflowY: 'scroll'}} childrenStyles={[{top: 0, position: 'sticky', overflowY: 'auto'}, {}, {top: 0, position: 'sticky'}]}>
 				<div className="padding-md">
 					<FolderTree
 						folder={currentWorld.rootFolder}
