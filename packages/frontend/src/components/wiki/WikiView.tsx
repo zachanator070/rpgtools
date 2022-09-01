@@ -24,7 +24,7 @@ export default function WikView() {
 	}
 
 	return (
-		<div style={{ overflow: "hidden" }}>
+		<div style={{ overflow: 'hidden', display: 'grid' }}>
 			{currentWiki && (
 				<PermissionModal
 					visibility={permissionModalVisibility}
@@ -35,14 +35,8 @@ export default function WikView() {
 				/>
 			)}
 
-			<ColumnedContent>
-				<div
-					className="padding-md"
-					style={{
-						height: "100%",
-						overflowY: "auto",
-					}}
-				>
+			<ColumnedContent style={{overflowY: 'scroll'}} childrenStyles={[{top: 0, position: 'sticky'}, {}, {top: 0, position: 'sticky'}]}>
+				<div className="padding-md">
 					<FolderTree
 						folder={currentWorld.rootFolder}
 						refetch={async () => {
@@ -50,13 +44,7 @@ export default function WikView() {
 						}}
 					/>
 				</div>
-				<div
-					style={{
-						height: "100%",
-						overflowY: "auto",
-					}}
-					className="padding-md"
-				>
+				<div className="padding-md">
 					<Switch>
 						<Route path={`${match.path}/edit`}>
 							<WikiEdit />

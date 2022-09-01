@@ -84,12 +84,12 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 						</span>
 					</div>
 					<>
-						<span>Pixels per foot: {currentPlace.pixelsPerFoot}</span>
 						<ToolTip
 							title={
 								"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."
 							}
 						/>
+						<span>Pixels per foot: {currentPlace.pixelsPerFoot}</span>
 					</>
 				</>
 			);

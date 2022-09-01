@@ -35,8 +35,8 @@ export default function WikiEdit() {
 
 	const [name, setName] = useState(null);
 	const [type, setType] = useState(null);
-	const [newCoverImageFile, setNewCoverImageFile] = useState<any>(null);
-	const [newMapImageFile, setNewMapImageFile] = useState<any>(null);
+	const [newCoverImageFile, setNewCoverImageFile] = useState<any>(undefined);
+	const [newMapImageFile, setNewMapImageFile] = useState<any>(undefined);
 	const [pixelsPerFoot, setPixelsPerFoot] = useState<number>(0);
 	const [modelColor, setModelColor] = useState<string>();
 	const [saving, setSaving] = useState(false);
@@ -261,8 +261,6 @@ export default function WikiEdit() {
 						Delete Page
 					</DangerButton>
 				</div>
-
-
 			</div>
 		</div>
 	);

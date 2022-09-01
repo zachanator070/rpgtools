@@ -56,11 +56,15 @@ export default function ImageInput({onChange, initialImage, className, id, butto
         <DangerButton
             className={"margin-md"}
             onClick={async () => {
-                setFileList([{
-                    uid: "-1",
-                    name: initialImage.name,
-                    url: `/images/${initialImage.icon.chunks[0].fileId}`,
-                }]);
+                if (initialImage) {
+                    setFileList([{
+                        uid: "-1",
+                        name: initialImage.name,
+                        url: `/images/${initialImage.icon.chunks[0].fileId}`,
+                    }]);
+                } else {
+                    setFileList([]);
+                }
                 onChange(undefined);
             }}
             id={'revertMap'}
