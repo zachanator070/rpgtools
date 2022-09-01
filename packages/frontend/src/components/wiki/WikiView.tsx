@@ -44,7 +44,7 @@ export default function WikView() {
 						}}
 					/>
 				</div>
-				<div className="padding-md">
+				<div className="padding-md" style={{maxWidth: 'fit-content'}}>
 					<Switch>
 						<Route path={`${match.path}/edit`}>
 							<WikiEdit />

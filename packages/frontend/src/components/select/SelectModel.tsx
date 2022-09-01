@@ -2,7 +2,7 @@ import React, {CSSProperties, useState} from "react";
 import useSearchModels from "../../hooks/model/useSearchModels";
 import {Model} from "../../types";
 import DropdownSelect from "../widgets/DropdownSelect";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 
 interface SelectModelProps {
 	onChange?: (model: Model) => Promise<any>;
@@ -52,7 +52,7 @@ export default function SelectModel({
 				options={options}
 			/>
 			{showClear && (
-				<DangerButton
+				<PrimaryDangerButton
 					className={"margin-md-left"}
 					onClick={async () => {
 						await setValue(null);
@@ -60,7 +60,7 @@ export default function SelectModel({
 					}}
 				>
 					Clear
-				</DangerButton>
+				</PrimaryDangerButton>
 			)}
 		</div>
 	);

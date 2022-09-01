@@ -1,7 +1,15 @@
 import React from 'react';
 import {Table} from "antd";
+import {WidgetProps} from "./WidgetProps";
 
-export default function FormattedTable({headers, data, scrollHeight, filters, sorting}: {headers: string[], data: any[][], scrollHeight?: number, filters?: boolean, sorting?: boolean}) {
+interface FormattedTableProps extends WidgetProps {
+    headers: string[];
+    data: any[][];
+    scrollHeight?: number;
+    filters?: boolean;
+    sorting?: boolean;
+}
+export default function FormattedTable({headers, data, scrollHeight, filters, sorting, style}: FormattedTableProps) {
     const columnDefinitions = [];
 
     for (let headerIndex = 0; headerIndex < headers.length; headerIndex++) {
@@ -44,6 +52,7 @@ export default function FormattedTable({headers, data, scrollHeight, filters, so
     }
 
     return <Table
+        style={style}
         size={"small"}
         columns={columnDefinitions}
         dataSource={tableRows}

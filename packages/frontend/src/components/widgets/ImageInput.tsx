@@ -4,7 +4,7 @@ import {WidgetProps} from "./WidgetProps";
 import PrimaryButton from "./PrimaryButton";
 import UploadIcon from "./icons/UploadIcon";
 import {Image, Place} from "../../types";
-import DangerButton from "./DangerButton";
+import SecondaryDangerButton from "./SecondaryDangerButton";
 
 interface PictureInputProps extends WidgetProps {
     onChange: (picture: any) => any;
@@ -53,7 +53,7 @@ export default function ImageInput({onChange, initialImage, className, id, butto
                 <UploadIcon/> {buttonText}
             </PrimaryButton>
         </Upload>
-        <DangerButton
+        <SecondaryDangerButton
             className={"margin-md"}
             onClick={async () => {
                 if (initialImage) {
@@ -70,7 +70,7 @@ export default function ImageInput({onChange, initialImage, className, id, butto
             id={'revertMap'}
         >
             Revert
-        </DangerButton>
+        </SecondaryDangerButton>
     </div>;
 
 }

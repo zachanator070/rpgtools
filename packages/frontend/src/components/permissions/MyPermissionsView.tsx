@@ -52,24 +52,21 @@ export default function MyPermissionsView() {
 		<div className={"margin-md"}>
 			<h1>My Permissions on {currentWorld.name}</h1>
 			<hr />
-			<ColumnedContent>
-				<>
-					<h2 className={"margin-lg-bottom"}>My Permissions</h2>
-					<FormattedTable
-						data={permissionAssignments.map((assignment) => {
-							return [
-								assignment.permission,
-								assignment.subject,
-								assignment.subject
-							];
-						})}
-						headers={["Permission", "Subject", "Source"]}
-						filters={true}
-						sorting={true}
-						scrollHeight={500}
-					/>
-				</>
-			</ColumnedContent>
+			<div style={{justifyContent: 'center', display: 'flex'}}>
+				<FormattedTable
+					data={permissionAssignments.map((assignment) => {
+						return [
+							assignment.permission,
+							assignment.subject,
+							assignment.subject
+						];
+					})}
+					headers={["Permission", "Subject", "Source"]}
+					filters={true}
+					sorting={true}
+					style={{width: '100em'}}
+				/>
+			</div>
 		</div>
 	);
 };

@@ -75,6 +75,14 @@ body {
 	padding: 2em;
 }
 
+.padding-lg-top {
+	padding-top: 2em;
+}
+
+.padding-lg-bottom {
+	padding-bottom: 2em;
+}
+
 /*********/
 /*MARGIN*/
 /*********/

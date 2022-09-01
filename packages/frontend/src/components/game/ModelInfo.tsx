@@ -10,7 +10,7 @@ import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../rendering/GameRenderer";
 import { MODEL_SELECTED_EVENT } from "../../controls/SelectModelControls";
 import {PositionedModel, WikiPage} from "../../types";
 import PrimaryButton from "../widgets/PrimaryButton";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import TextInput from "../widgets/TextInput";
 import ColorInput from "../widgets/ColorInput";
 
@@ -178,7 +178,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 							</div>
 						</div>
 
-						<DangerButton
+						<PrimaryDangerButton
 							onClick={async () => {
 								await renderer.selectModelControls.select();
 								await deletePositionedModel({
@@ -189,7 +189,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 							style={{marginTop: "1em"}}
 						>
 							Delete Model
-						</DangerButton>
+						</PrimaryDangerButton>
 
 					</div>
 				)}

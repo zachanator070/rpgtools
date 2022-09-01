@@ -7,7 +7,7 @@ import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePerm
 import SelectUser from "../select/SelectUser";
 import SelectRole from "../select/SelectRole";
 import {PermissionAssignment, Role, User} from "../../types";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ItemList from "../widgets/ItemList";
 import TabCollection from "../widgets/TabCollection";
@@ -84,10 +84,11 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 						await setSelectedPermission(tab);
 						await updateSelectedPermission(tab);
 					}}
-				>
-					{possiblePermissions.map((permission) => (
-						<TabPane title={permission} key={permission}>
-							<ItemList>
+					tabPosition={'left'}
+					tabs={possiblePermissions.map((permission) => (
+						{
+							title:permission,
+							children: <ItemList>
 								{selectedPermissionPrincipals.map(principal => {
 									if(principalType === "users") {
 										principal = principal as User;
@@ -98,7 +99,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 										<div key={selectedPermissionAssignment._id + "." + principal._id}>
 											{principalType === "users" ? principal.username : principal.name}
 											{subject.canAdmin && (
-												<DangerButton
+												<PrimaryDangerButton
 													className="margin-md-left"
 													onClick={async () => {
 														if (principalType === "users") {
@@ -118,15 +119,15 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 													}}
 												>
 													<DeleteIcon />
-												</DangerButton>
+												</PrimaryDangerButton>
 											)}
 										</div>
 									);
 								})}
 							</ItemList>
-						</TabPane>
+						}
 					))}
-				</TabCollection>
+				/>
 			</div>
 
 			{subject.canAdmin && (

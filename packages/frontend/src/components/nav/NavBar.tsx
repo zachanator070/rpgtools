@@ -59,13 +59,13 @@ export default function NavBar() {
 	}
 
 	return (
-		<div className="shadow-sm padding-sm nav-bar">
+		<div className="shadow-sm padding-sm nav-bar" style={{top: 0, position: 'sticky'}}>
 			<LoginModal setVisibility={async (visibility: boolean) => setLoginModalVisibility(visibility)} visibility={loginModalVisibility} />
 			<RegisterModal
 				setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}
 				visibility={registerModalVisibility}
 			/>
-			<ColumnedContent>
+			<ColumnedContent childrenSizes={[1,2,1]}>
 				<div style={{display: 'flex', justifyContent: 'space-between'}}>
 					<div className="margin-md-left">
 						<WorldMenu />

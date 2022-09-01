@@ -9,7 +9,7 @@ import useDeleteModel from "../../hooks/model/useDeleteModel";
 import {Model} from "../../types";
 import ColumnedContent from "../widgets/ColumnedContent";
 import useModal from "../widgets/useModal";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 
 interface ModelEditProps {
 	model: Model;
@@ -70,7 +70,7 @@ export default function ModelEdit({ model }: ModelEditProps) {
 					fileRequired={false}
 					loading={loading}
 				/>
-				<DangerButton
+				<PrimaryDangerButton
 					onClick={() => {
 						modalConfirm({
 							title: "Confirm",
@@ -84,7 +84,7 @@ export default function ModelEdit({ model }: ModelEditProps) {
 					}}
 				>
 					Delete Model
-				</DangerButton>
+				</PrimaryDangerButton>
 			</div>
 		</ColumnedContent>
 

@@ -10,6 +10,7 @@ import PrimaryButton from "./widgets/PrimaryButton";
 import TextInput from "./widgets/TextInput";
 import FullScreenModal from "./widgets/FullScreenModal";
 import PrimaryCheckbox from "./widgets/PrimaryCheckbox";
+import ColumnedContent from "./widgets/ColumnedContent";
 
 export default function WorldSettings() {
 	const { currentWorld, loading: currentWorldLoading, refetch } = useCurrentWorld();
@@ -32,84 +33,78 @@ export default function WorldSettings() {
 		<div className="margin-md-left margin-md-top margin-lg-bottom">
 			<h1>Settings for {currentWorld.name}</h1>
 			<hr />
-			<div className={"margin-lg-top"} style={{display: 'flex', flexWrap: 'nowrap'}}>
-				<div style={{flexGrow: 4}}/>
-				<div style={{flexGrow: 16}}>
-					<h2>Permissions</h2>
-					<div className={"margin-lg-top"}>
-						<PermissionEditor subject={currentWorld} subjectType={WORLD} refetch={async () => {await refetch()}} />
-					</div>
-				</div>
-				<div style={{flexGrow: 4}}/>
-			</div>
 
-			{currentWorld.canWrite && (
-				<>
-					<div className={"margin-lg-top"} style={{display: 'flex', flexWrap: 'nowrap'}}>
-						<div style={{flexGrow: 4}}/>
-						<div style={{flexGrow: 16}}>
-							<h2>Rename World</h2>
-							<div style={{ display: "flex" }} className={"margin-lg-top"}>
-								<div className="margin-md-right">New Name:</div>
-								<div>
-									<TextInput
-										id={'newWorldNameInput'}
-										value={newName}
-										onChange={async (e) => {
-											await setNewName(e.target.value);
-										}}
-									/>
-								</div>
-							</div>
-							<PrimaryButton
-								className={"margin-md-top"}
-								onClick={async () => {
-									await renameWorld({worldId: currentWorld._id, newName});
-								}}
-								loading={loading}
-							>
-								Submit
-							</PrimaryButton>
+			<ColumnedContent className={"margin-lg-top margin-lg-bottom"} childrenSizes={[1, 2, 1]}>
+				<div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+					<div className={"margin-lg-top"}>
+						<h2>Permissions</h2>
+						<div className={"margin-lg-top"}>
+							<PermissionEditor subject={currentWorld} subjectType={WORLD} refetch={async () => {await refetch()}} />
 						</div>
-						<div style={{flexGrow: 4}}/>
 					</div>
-					<div className={"margin-lg-top"} style={{display: 'flex', flexWrap: 'nowrap'}}>
-						<div style={{flexGrow: 4}}/>
-						<div style={{flexGrow: 16}}>
-							<FullScreenModal title={"Loading 5e content ..."} visible={contentLoading} closable={false} >
-								<LoadingView />
-							</FullScreenModal>
-							<h2>Load 5e Content</h2>
-							<div className={"margin-lg"}>
-								<PrimaryCheckbox checked={getCC} onChange={(checked) => setGetCC(checked)}>
-									Creature Codex
-								</PrimaryCheckbox>
-								<PrimaryCheckbox checked={getTob} onChange={(checked) => setGetTob(checked)}>
-									Tome of Beasts
-								</PrimaryCheckbox>
-							</div>
+
+					{currentWorld.canWrite && (
+						<>
 							<div className={"margin-lg-top"}>
+								<h2>Rename World</h2>
+								<div style={{ display: "flex" }} className={"margin-lg-top"}>
+									<div className="margin-md-right">New Name:</div>
+									<div>
+										<TextInput
+											id={'newWorldNameInput'}
+											value={newName}
+											onChange={async (e) => {
+												await setNewName(e.target.value);
+											}}
+										/>
+									</div>
+								</div>
 								<PrimaryButton
-									loading={contentLoading}
+									className={"margin-md-top"}
 									onClick={async () => {
-										await load5eContent({
-											worldId: currentWorld._id,
-											creatureCodex: getCC,
-											tomeOfBeasts: getTob,
-										});
-										history.push(
-											`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
-										);
+										await renameWorld({worldId: currentWorld._id, newName});
 									}}
+									loading={loading}
 								>
-									Load
+									Submit
 								</PrimaryButton>
 							</div>
-						</div>
-						<div style={{flexGrow: 4}}/>
-					</div>
-				</>
-			)}
+							<div className={"margin-lg-top"}>
+								<FullScreenModal title={"Loading 5e content ..."} visible={contentLoading} closable={false} >
+									<LoadingView />
+								</FullScreenModal>
+								<h2>Load 5e Content</h2>
+								<div className={"margin-lg"}>
+									<PrimaryCheckbox checked={getCC} onChange={(checked) => setGetCC(checked)}>
+										Creature Codex
+									</PrimaryCheckbox>
+									<PrimaryCheckbox checked={getTob} onChange={(checked) => setGetTob(checked)}>
+										Tome of Beasts
+									</PrimaryCheckbox>
+								</div>
+								<div className={"margin-lg-top"}>
+									<PrimaryButton
+										loading={contentLoading}
+										onClick={async () => {
+											await load5eContent({
+												worldId: currentWorld._id,
+												creatureCodex: getCC,
+												tomeOfBeasts: getTob,
+											});
+											history.push(
+												`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
+											);
+										}}
+									>
+										Load
+									</PrimaryButton>
+								</div>
+							</div>
+						</>
+					)}
+				</div>
+			</ColumnedContent>
+
 		</div>
 	);
 };

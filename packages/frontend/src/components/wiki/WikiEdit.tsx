@@ -16,7 +16,7 @@ import MoveWikiButton from "./MoveWikiButton";
 import {Model, ModeledWiki, Place} from "../../types";
 import useModal from "../widgets/useModal";
 import Errors from "../Errors";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import TextInput from "../widgets/TextInput";
 import DropdownSelect from "../widgets/DropdownSelect";
 import ImageInput from "../widgets/ImageInput";
@@ -27,6 +27,7 @@ import SaveIcon from "../widgets/icons/SaveIcon";
 import Editor from "./Editor";
 import NumberInput from "../widgets/NumberInput";
 import FormItem from "../widgets/FormItem";
+import SecondaryDangerButton from "../widgets/SecondaryDangerButton";
 
 export default function WikiEdit() {
 	const history = useHistory();
@@ -230,7 +231,7 @@ export default function WikiEdit() {
 					</PrimaryButton>
 					<MoveWikiButton wikiPage={currentWiki} />
 
-					<DangerButton
+					<SecondaryDangerButton
 						disabled={saving}
 						onClick={() => {
 							history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
@@ -238,11 +239,11 @@ export default function WikiEdit() {
 					>
 						<UndoIcon />
 						Discard
-					</DangerButton>
+					</SecondaryDangerButton>
 				</div>
 
 				<div style={{flexGrow: '4', display: 'flex', justifyContent: 'flex-end'}}>
-					<DangerButton
+					<PrimaryDangerButton
 						disabled={saving}
 						onClick={() => {
 							modalConfirm({
@@ -259,7 +260,7 @@ export default function WikiEdit() {
 					>
 						<DeleteIcon/>
 						Delete Page
-					</DangerButton>
+					</PrimaryDangerButton>
 				</div>
 			</div>
 		</div>

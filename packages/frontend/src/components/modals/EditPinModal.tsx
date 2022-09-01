@@ -7,7 +7,7 @@ import FullScreenModal from "../widgets/FullScreenModal";
 import InputForm from "../widgets/InputForm";
 import {PLACE} from "@rpgtools/common/src/type-constants";
 import FormItem from "../widgets/FormItem";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import {Pin, WikiPage} from "../../types";
 
 interface EditPinModalProps {
@@ -60,7 +60,7 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 						<SelectWiki types={[PLACE]} onChange={(page) => setPinPage(page)}/>
 					</FormItem>
 				</InputForm>
-				<DangerButton
+				<PrimaryDangerButton
 					loading={updateLoading || deleteLoading}
 					onClick={async () => {
 						await deletePin({pinId});
@@ -68,7 +68,7 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 					}}
 				>
 					Delete
-				</DangerButton>
+				</PrimaryDangerButton>
 			</FullScreenModal>
 		</div>
 	);

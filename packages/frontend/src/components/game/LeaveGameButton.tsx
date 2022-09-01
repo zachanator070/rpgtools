@@ -4,7 +4,7 @@ import useLeaveGame from "../../hooks/game/useLeaveGame";
 import { useHistory } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import DangerButton from "../widgets/DangerButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 
 export default function LeaveGameButton() {
 	const { currentWorld } = useCurrentWorld();
@@ -19,12 +19,12 @@ export default function LeaveGameButton() {
 	});
 
 	return (
-		<DangerButton
+		<PrimaryDangerButton
 			onClick={async () => {
 				await leaveGame({gameId: currentGame._id});
 			}}
 		>
 			Leave Game
-		</DangerButton>
+		</PrimaryDangerButton>
 	);
 };

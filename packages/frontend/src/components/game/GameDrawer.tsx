@@ -56,39 +56,39 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 			visible={visible}
 			setVisible={setVisible}
 		>
-			<TabCollection
-				activeKey={activeKey}
-				onChange={(key) => setActiveKey(key)}
-				style={{
-					paddingTop: "1em"
-				}}
-			>
-				<TabPane
-					title="Chat"
-					key="1"
-					style={{
-						height: "100%",
-					}}
-				>
-					<GameChat />
-				</TabPane>
-				<TabPane title="Tool Options" key="2">
-					<ToolOptions
-						renderer={renderer}
-						controlsMode={controlsMode}
-						setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
-					/>
-				</TabPane>
-				<TabPane
-					title="Dice"
-					key="3"
-					style={{
-						height: "100%",
-					}}
-				>
-					<DiceOptions />
-				</TabPane>
-			</TabCollection>
+			{/*<TabCollection*/}
+			{/*	activeKey={activeKey}*/}
+			{/*	onChange={(key) => setActiveKey(key)}*/}
+			{/*	style={{*/}
+			{/*		paddingTop: "1em"*/}
+			{/*	}}*/}
+			{/*>*/}
+			{/*	<TabPane*/}
+			{/*		title="Chat"*/}
+			{/*		key="1"*/}
+			{/*		style={{*/}
+			{/*			height: "100%",*/}
+			{/*		}}*/}
+			{/*	>*/}
+			{/*		<GameChat />*/}
+			{/*	</TabPane>*/}
+			{/*	<TabPane title="Tool Options" key="2">*/}
+			{/*		<ToolOptions*/}
+			{/*			renderer={renderer}*/}
+			{/*			controlsMode={controlsMode}*/}
+			{/*			setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}*/}
+			{/*		/>*/}
+			{/*	</TabPane>*/}
+			{/*	<TabPane*/}
+			{/*		title="Dice"*/}
+			{/*		key="3"*/}
+			{/*		style={{*/}
+			{/*			height: "100%",*/}
+			{/*		}}*/}
+			{/*	>*/}
+			{/*		<DiceOptions />*/}
+			{/*	</TabPane>*/}
+			{/*</TabCollection>*/}
 		</SlidingDrawer>
 	);
 };

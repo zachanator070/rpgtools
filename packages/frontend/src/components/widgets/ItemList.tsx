@@ -7,12 +7,11 @@ interface ItemListProps extends WidgetProps {
 }
 
 export default function ItemList({children, id}: ItemListProps) {
-    const renderedChildren = [React.Children.toArray(children)].map(child => <List.Item>{child}</List.Item>);
     return <List
         bordered={true}
         id={id}
         locale={{ emptyText: <div>No items here</div> }}
-    >
-        {renderedChildren}
-    </List>;
+        dataSource={React.Children.toArray(children)}
+        renderItem={(child, index) => <List.Item key={index}>{child}</List.Item>}
+    />;
 }
