@@ -13,7 +13,7 @@ interface CallbackValues {
 	width: string;
 	height: string;
 	notes: string;
-	file: any[];
+	file: any;
 }
 
 interface ModelFormProps {

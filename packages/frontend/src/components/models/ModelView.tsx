@@ -79,48 +79,54 @@ export default function ModelView() {
 				</div>
 			</div>
 
-			{selectedModel && (
-				<div>
-					<div className={"margin-lg"}>
-						<Switch>
-							<Route path={`${match.path}/edit`}>
-								<h1>Edit {selectedModel.name}</h1>
-							</Route>
-							<Route path={`${match.path}/view`}>
-								<h1>{selectedModel.name}</h1>
-							</Route>
-						</Switch>
+			<div>
+				{selectedModel && (
+						<>
+							<div className={"margin-lg"}>
+								<Switch>
+									<Route path={`${match.path}/edit`}>
+										<h1>Edit {selectedModel.name}</h1>
+									</Route>
+									<Route path={`${match.path}/view`}>
+										<h1>{selectedModel.name}</h1>
+									</Route>
+								</Switch>
 
-					</div>
-					<Switch>
-						<Route path={`${match.path}/edit`}>
-							<ModelEdit model={selectedModel} />
-						</Route>
-						<Route path={`${match.path}/view`}>
-							<ModelContent model={selectedModel} />
-						</Route>
-					</Switch>
-				</div>
-			)}
-			{selectedModel && (
-				<div className={"margin-lg"}>
-					<a
-						title={"View permissions for this model"}
-						onClick={async () => {
-							await setPermissionModalVisibility(true);
-						}}
-					>
-						<PeopleIcon/>
-					</a>
-					<PermissionModal
-						visibility={permissionModalVisibility}
-						setVisibility={async (visibility: boolean) => setPermissionModalVisibility(visibility)}
-						subject={selectedModel}
-						subjectType={MODEL}
-						refetch={async () => await refetch({})}
-					/>
-				</div>
-			)}
+							</div>
+							<Switch>
+								<Route path={`${match.path}/edit`}>
+									<ModelEdit model={selectedModel} />
+								</Route>
+								<Route path={`${match.path}/view`}>
+									<ModelContent model={selectedModel} />
+								</Route>
+							</Switch>
+						</>
+
+
+				)}
+			</div>
+			<div className={"margin-lg"}>
+				{selectedModel && (
+					<>
+						<a
+							title={"View permissions for this model"}
+							onClick={async () => {
+								await setPermissionModalVisibility(true);
+							}}
+						>
+							<PeopleIcon/>
+						</a>
+						<PermissionModal
+							visibility={permissionModalVisibility}
+							setVisibility={async (visibility: boolean) => setPermissionModalVisibility(visibility)}
+							subject={selectedModel}
+							subjectType={MODEL}
+							refetch={async () => await refetch({})}
+						/>
+					</>
+				)}
+			</div>
 		</ColumnedContent>
 	);
 };

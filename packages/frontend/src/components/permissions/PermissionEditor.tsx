@@ -11,7 +11,6 @@ import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ItemList from "../widgets/ItemList";
 import TabCollection from "../widgets/TabCollection";
-import TabPane from "../widgets/TabPane";
 import RadioButtonGroup from "../widgets/RadioButtonGroup";
 import RadioButton from "../widgets/RadioButton";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
@@ -65,7 +64,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 	}
 
 	return (
-		<>
+		<div style={{maxWidth: '60em'}}>
 			<div style={{ textAlign: "center" }}>
 				<RadioButtonGroup
 					onChange={async (e: string) => {
@@ -176,6 +175,6 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 					</div>
 				</div>
 			)}
-		</>
+		</div>
 	);
 };

@@ -26,6 +26,6 @@ export default function useGetModels(): GetModelsResult {
 
 	return {
 		...result,
-		models: result.data
+		models: result.data || []
 	};
 };

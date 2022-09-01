@@ -15,7 +15,7 @@ interface TabCollectionProps extends WidgetProps {
     tabPosition?: 'left' | 'right' | 'top' | 'bottom';
 }
 
-export default function TabCollection({activeKey, onChange, style, tabs, tabPosition}: TabCollectionProps) {
+export default function TabCollection({activeKey, onChange, style, tabs, tabPosition,}: TabCollectionProps) {
     if (!tabPosition) {
         tabPosition = 'top';
     }

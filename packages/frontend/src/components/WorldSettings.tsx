@@ -30,7 +30,7 @@ export default function WorldSettings() {
 	}
 
 	return (
-		<div className="margin-md-left margin-md-top margin-lg-bottom">
+		<div className="margin-md-left margin-md-top padding-lg-bottom">
 			<h1>Settings for {currentWorld.name}</h1>
 			<hr />
 

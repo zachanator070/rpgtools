@@ -31,7 +31,7 @@ export default function CreateModelModal({ visibility, setVisibility }: CreateMo
 				callback={async (values) => {
 					await createModel({
 						name: values.name,
-						file: values.file[0].originFileObj,
+						file: values.file.file,
 						depth: parseFloat(values.depth),
 						width: parseFloat(values.width),
 						height: parseFloat(values.height),

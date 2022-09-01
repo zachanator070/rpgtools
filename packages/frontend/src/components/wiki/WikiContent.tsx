@@ -65,10 +65,10 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 
 			typeSpecificContent = (
 				<>
-					<div className="padding-md" style={{maxHeight: "100em", maxWidth: "100em"}}>
+					<div className="padding-md">
 						<img
 							alt={currentPlace.mapImage.name}
-							style={{objectFit: "contain"}}
+							style={{maxWidth: '100%'}}
 							src={`/images/${currentPlace.mapImage.icon.chunks[0].fileId}`}
 							id={'mapImage'}
 						/>
@@ -116,14 +116,13 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
 			{currentWiki.coverImage && (
-				<div className="padding-md" style={{ maxHeight: "500em", maxWidth: "500em" }}>
-					<img
-						alt={currentWiki.coverImage.name}
-						style={{ objectFit: "contain" }}
-						src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}
-						id={'coverImage'}
-					/>
-				</div>
+				<img
+					className="padding-md"
+					alt={currentWiki.coverImage.name}
+					style={{ objectFit: "contain", maxWidth: '100%'}}
+					src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}
+					id={'coverImage'}
+				/>
 			)}
 
 			{typeSpecificContent}

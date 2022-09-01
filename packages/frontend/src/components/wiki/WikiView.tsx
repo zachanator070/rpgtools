@@ -24,7 +24,7 @@ export default function WikView() {
 	}
 
 	return (
-		<div style={{ overflow: 'hidden', display: 'grid' }}>
+		<>
 			{currentWiki && (
 				<PermissionModal
 					visibility={permissionModalVisibility}
@@ -72,6 +72,6 @@ export default function WikView() {
 					</Route>
 				</div>
 			</ColumnedContent>
-		</div>
+		</>
 	);
 };

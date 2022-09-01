@@ -49,7 +49,7 @@ export default function MyPermissionsView() {
 	}
 
 	return (
-		<div className={"margin-md"}>
+		<div className={"padding-lg"}>
 			<h1>My Permissions on {currentWorld.name}</h1>
 			<hr />
 			<div style={{justifyContent: 'center', display: 'flex'}}>

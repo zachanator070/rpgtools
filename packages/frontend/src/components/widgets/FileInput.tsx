@@ -7,8 +7,8 @@ interface FileInputProps {
     onChange: (any) => any;
 }
 
-export default function FileInput({onChange}) {
+export default function FileInput({onChange}: FileInputProps) {
     return <Upload maxCount={1} multiple={false} beforeUpload={() => false} onChange={onChange}>
-        <PrimaryButton><UploadIcon/> Select File</PrimaryButton>
+        <PrimaryButton onClick={(e) => e.preventDefault()}><UploadIcon/> Select File</PrimaryButton>
     </Upload>;
 }

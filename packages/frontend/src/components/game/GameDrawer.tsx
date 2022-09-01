@@ -13,7 +13,6 @@ import DiceOptions from "./DiceOptions";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 import TabCollection from "../widgets/TabCollection";
-import TabPane from "../widgets/TabPane";
 
 const GAME_CONTROLS_WITH_CONTEXT = [
 	SELECT_MODEL_CONTROLS,
@@ -56,39 +55,32 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 			visible={visible}
 			setVisible={setVisible}
 		>
-			{/*<TabCollection*/}
-			{/*	activeKey={activeKey}*/}
-			{/*	onChange={(key) => setActiveKey(key)}*/}
-			{/*	style={{*/}
-			{/*		paddingTop: "1em"*/}
-			{/*	}}*/}
-			{/*>*/}
-			{/*	<TabPane*/}
-			{/*		title="Chat"*/}
-			{/*		key="1"*/}
-			{/*		style={{*/}
-			{/*			height: "100%",*/}
-			{/*		}}*/}
-			{/*	>*/}
-			{/*		<GameChat />*/}
-			{/*	</TabPane>*/}
-			{/*	<TabPane title="Tool Options" key="2">*/}
-			{/*		<ToolOptions*/}
-			{/*			renderer={renderer}*/}
-			{/*			controlsMode={controlsMode}*/}
-			{/*			setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}*/}
-			{/*		/>*/}
-			{/*	</TabPane>*/}
-			{/*	<TabPane*/}
-			{/*		title="Dice"*/}
-			{/*		key="3"*/}
-			{/*		style={{*/}
-			{/*			height: "100%",*/}
-			{/*		}}*/}
-			{/*	>*/}
-			{/*		<DiceOptions />*/}
-			{/*	</TabPane>*/}
-			{/*</TabCollection>*/}
+			<TabCollection
+				activeKey={activeKey}
+				onChange={(key) => setActiveKey(key)}
+				style={{
+					paddingTop: "1em",
+					height: '100%'
+				}}
+				tabs={[
+					{
+						title: 'Chat',
+						children: <GameChat />
+					},
+					{
+						title: 'Tool Options',
+						children: <ToolOptions
+							renderer={renderer}
+							controlsMode={controlsMode}
+							setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
+						/>
+					},
+					{
+						title: 'Dice',
+						children: <DiceOptions />
+					}
+				]}
+			/>
 		</SlidingDrawer>
 	);
 };
