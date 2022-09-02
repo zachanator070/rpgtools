@@ -13,6 +13,7 @@ interface SelectWikiProps <T extends WikiPage>{
 	showClear?: boolean;
 	canAdmin?: boolean;
 	children?: ReactComponentElement<any>[] | ReactComponentElement<any>;
+	hasModel?: boolean;
 }
 export default function SelectWiki<T extends WikiPage>({
 	types,
@@ -20,13 +21,15 @@ export default function SelectWiki<T extends WikiPage>({
 	style,
 	showClear = false,
 	canAdmin,
-	children
+	children,
+	hasModel
 }: SelectWikiProps<T>) {
 	const params = useParams();
 	const { refetch, wikis, loading } = useSearchWikiPages({
 		worldId: params.world_id,
 		types,
 		canAdmin,
+		hasModel
 	});
 	const [value, setValue] = useState<string>();
 

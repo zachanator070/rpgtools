@@ -107,18 +107,14 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	permission[SELECT_LOCATION_CONTROLS] = true;
 
 	const menu = [
-		<span
+		<div
 			style={{
-				display: "inline",
+				display: "flex",
 			}}
 			key={"Help Text"}
 		>
-			<ToolTip title={toolTipText[controlsMode]}>
-				<span style={{ padding: "10px", backgroundColor: "white" }}>
-					<QuestionMarkIcon />
-				</span>
-			</ToolTip>
-		</span>,
+			<ToolTip title={toolTipText[controlsMode]}/>
+		</div>,
 	];
 	menu.push(
 		...Object.keys(icons).map((mode) => {
@@ -126,14 +122,14 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 				return null;
 			}
 			return (
-				<span
+				<div
 					style={{
-						display: "inline",
+						display: "flex",
 					}}
 					key={mode}
 				>
 					<ToolTip title={mouseOverText[mode]}>
-						<span
+						<div
 							key={mode}
 							style={{
 								padding: "10px",
@@ -147,17 +143,17 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 							}}
 						>
 							{icons[mode]}
-						</span>
+						</div>
 					</ToolTip>
-				</span>
+				</div>
 			);
 		})
 	);
 
 	menu.push(
-		<span
+		<div
 			style={{
-				display: "inline",
+				display: "flex",
 			}}
 			key={"Game Permissions"}
 		>
@@ -169,7 +165,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 				refetch={refetchCurrentGame}
 			/>
 			<ToolTip title={"Game Permissions"}>
-				<span style={{ padding: "10px", backgroundColor: "white" }}>
+				<div style={{ padding: "10px", backgroundColor: "white" }}>
 					<a
 						onClick={async () => {
 							await setPermissionModalVisibility(true);
@@ -177,29 +173,31 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 					>
 						<PeopleIcon />
 					</a>
-				</span>
+				</div>
 			</ToolTip>
-		</span>
+		</div>
 	);
 
 	return (
-		<span>
-			<span
+		<div>
+			<div
 				style={{
-					padding: "7px",
+					padding: "1em",
 					position: "absolute",
 					margin: "0 auto",
 					left: 0,
 					right: 0,
 					bottom: 0,
-					width: "33%",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center'
 				}}
 			>
-				<span style={{ backgroundColor: "white" }}>{menu}</span>
-				<span className={"margin-lg-left"}>
+				<div style={{ backgroundColor: "white", display: 'flex', alignItems: 'center' }}>{menu}</div>
+				<div className={"margin-lg-left"}>
 					<LeaveGameButton />
-				</span>
-			</span>
-		</span>
+				</div>
+			</div>
+		</div>
 	);
 };

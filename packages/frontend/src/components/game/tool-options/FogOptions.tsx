@@ -3,11 +3,11 @@ import {
 	BRUSH_ERASE,
 	BRUSH_FOG,
 	DEFAULT_BRUSH_SIZE,
-} from "../../controls/PaintControls";
-import ToolTip from "../widgets/ToolTip";
-import {GameRenderer} from "../../rendering/GameRenderer";
-import NumberSlider from "../widgets/NumberSlider";
-import DropdownSelect from "../widgets/DropdownSelect";
+} from "../../../controls/PaintControls";
+import ToolTip from "../../widgets/ToolTip";
+import {GameRenderer} from "../../../rendering/GameRenderer";
+import NumberSlider from "../../widgets/NumberSlider";
+import DropdownSelect from "../../widgets/DropdownSelect";
 
 interface FogOptionsProps {
 	renderer: GameRenderer;

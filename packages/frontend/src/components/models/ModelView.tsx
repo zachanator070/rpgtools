@@ -67,6 +67,7 @@ export default function ModelView() {
 						{models.map((model) => {
 							return (
 								<a
+									key={model._id}
 									onClick={async () =>
 										history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`)
 									}
@@ -81,29 +82,27 @@ export default function ModelView() {
 
 			<div>
 				{selectedModel && (
-						<>
-							<div className={"margin-lg"}>
-								<Switch>
-									<Route path={`${match.path}/edit`}>
-										<h1>Edit {selectedModel.name}</h1>
-									</Route>
-									<Route path={`${match.path}/view`}>
-										<h1>{selectedModel.name}</h1>
-									</Route>
-								</Switch>
-
-							</div>
+					<>
+						<div className={"margin-lg"}>
 							<Switch>
 								<Route path={`${match.path}/edit`}>
-									<ModelEdit model={selectedModel} />
+									<h1>Edit {selectedModel.name}</h1>
 								</Route>
 								<Route path={`${match.path}/view`}>
-									<ModelContent model={selectedModel} />
+									<h1>{selectedModel.name}</h1>
 								</Route>
 							</Switch>
-						</>
 
-
+						</div>
+						<Switch>
+							<Route path={`${match.path}/edit`}>
+								<ModelEdit model={selectedModel} />
+							</Route>
+							<Route path={`${match.path}/view`}>
+								<ModelContent model={selectedModel} />
+							</Route>
+						</Switch>
+					</>
 				)}
 			</div>
 			<div className={"margin-lg"}>

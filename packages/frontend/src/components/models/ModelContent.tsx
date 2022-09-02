@@ -8,7 +8,7 @@ import PrimaryButton from "../widgets/PrimaryButton";
 import FormattedTable from "../widgets/FormattedTable";
 import EditIcon from "../widgets/icons/EditIcon";
 import DownloadIcon from "../widgets/icons/DownloadIcon";
-import TextAreaInput from "../widgets/TextAreaInput";
+import TextAreaInput from "../widgets/input/TextAreaInput";
 
 interface ModelContentProps {
 	model: Model;
@@ -23,8 +23,8 @@ export default function ModelContent({ model }: ModelContentProps) {
 	}
 
 	return (
-		<div style={{display: "flex"}}>
-			<div style={{flexGrow: 1}}>
+		<div style={{display: "flex", justifyContent: 'space-around'}}>
+			<div>
 				<div className={"margin-lg"}>
 					Filename: {model.fileName}
 					<a className={"margin-lg-left"} href={`/models/${model.fileId}`}>
@@ -74,7 +74,7 @@ export default function ModelContent({ model }: ModelContentProps) {
 					</span>
 				</span>
 			</div>
-			<div style={{flexGrow: 1}}>
+			<div>
 				<div style={{ width: 500, height: 750 }}>
 					<ModelViewer model={model} />
 				</div>

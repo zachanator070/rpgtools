@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import useGameChat from "../../hooks/game/useGameChat";
-import useCurrentGame from "../../hooks/game/useCurrentGame";
-import useSetCharacterAttributes from "../../hooks/game/useSetCharacterAttributes";
-import {GameCharacterAttribute} from "../../types";
-import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
-import NumberInput from "../widgets/NumberInput";
-import FullScreenModal from "../widgets/FullScreenModal";
-import EditIcon from "../widgets/icons/EditIcon";
+import useGameChat from "../../../hooks/game/useGameChat";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import useSetCharacterAttributes from "../../../hooks/game/useSetCharacterAttributes";
+import {GameCharacterAttribute} from "../../../types";
+import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter";
+import InputForm from "../../widgets/input/InputForm";
+import FormItem from "../../widgets/input/FormItem";
+import NumberInput from "../../widgets/input/NumberInput";
+import FullScreenModal from "../../widgets/FullScreenModal";
+import EditIcon from "../../widgets/icons/EditIcon";
 
 interface DiceAttributeProps {
 	attribute: GameCharacterAttribute
@@ -65,9 +65,6 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 				<InputForm
 					loading={loading}
 					errors={errors}
-					initialValues={{
-						value: attribute.value,
-					}}
 					onSubmit={async ({ value }) => {
 						const attributes: GameCharacterAttribute[] = [];
 						for (let oldAttribute of currentCharacter.attributes) {
@@ -90,7 +87,7 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 					}}
 				>
 					<FormItem label={`${attribute.name}`}>
-						<NumberInput name={"value"} style={{ width: "75px" }} />
+						<NumberInput defaultValue={attribute.value} name={"value"} style={{ width: "75px" }} />
 					</FormItem>
 				</InputForm>
 			</FullScreenModal>

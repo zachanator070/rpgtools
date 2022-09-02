@@ -1,6 +1,6 @@
 import { Form } from 'antd';
 import React from 'react';
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "../WidgetProps";
 
 export interface FormItemProps extends WidgetProps{
     label?: React.ReactNode;

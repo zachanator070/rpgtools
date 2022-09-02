@@ -1,7 +1,7 @@
 import React from "react";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
 import { useDrop } from "react-dnd";
-import {GameCharacter} from "../../types";
+import {GameCharacter} from "../../../types";
 import {DraggableCharacterItem} from "./InitiativeTrackerCard";
 
 interface InitiativeTrackerDummyCardProps {

@@ -17,16 +17,16 @@ import {Model, ModeledWiki, Place} from "../../types";
 import useModal from "../widgets/useModal";
 import Errors from "../Errors";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import TextInput from "../widgets/TextInput";
+import TextInput from "../widgets/input/TextInput";
 import DropdownSelect from "../widgets/DropdownSelect";
-import ImageInput from "../widgets/ImageInput";
+import ImageInput from "../widgets/input/ImageInput";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
 import UndoIcon from "../widgets/icons/UndoIcon";
 import PrimaryButton from "../widgets/PrimaryButton";
 import SaveIcon from "../widgets/icons/SaveIcon";
 import Editor from "./Editor";
-import NumberInput from "../widgets/NumberInput";
-import FormItem from "../widgets/FormItem";
+import NumberInput from "../widgets/input/NumberInput";
+import FormItem from "../widgets/input/FormItem";
 import SecondaryDangerButton from "../widgets/SecondaryDangerButton";
 
 export default function WikiEdit() {

@@ -11,10 +11,10 @@ import {WikiFolder} from "../../types";
 import MoveFolderModal from "../modals/MoveFolderModal";
 import useModal from "../widgets/useModal";
 import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/InputForm";
-import TextInput from "../widgets/TextInput";
-import FormItem from "../widgets/FormItem";
-import FileInput from "../widgets/FileInput";
+import InputForm from "../widgets/input/InputForm";
+import TextInput from "../widgets/input/TextInput";
+import FormItem from "../widgets/input/FormItem";
+import FileInput from "../widgets/input/FileInput";
 import AddFileIcon from "../widgets/icons/AddFileIcon";
 import EditIcon from "../widgets/icons/EditIcon";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
@@ -188,7 +188,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 
 								await importContent({
 									folderId: folder._id,
-									zipFile: selectedImportFile[0].originFileObj,
+									zipFile: selectedImportFile.fileList[0].originFileObj,
 								},
 								{
 									onCompleted: async () => setImportModalVisibility(false)

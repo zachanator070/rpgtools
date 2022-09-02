@@ -6,7 +6,7 @@ import useGenerateRegisterCodes from "../../hooks/server/useGenerateRegisterCode
 import PermissionEditor from "../permissions/PermissionEditor";
 import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
 import PrimaryButton from "../widgets/PrimaryButton";
-import NumberInput from "../widgets/NumberInput";
+import NumberInput from "../widgets/input/NumberInput";
 import ItemList from "../widgets/ItemList";
 import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
 import ColumnedContent from "../widgets/ColumnedContent";

@@ -5,11 +5,11 @@ import useCreateGame from "../../hooks/game/useCreateGame";
 import useJoinGame from "../../hooks/game/useJoinGame";
 import { Link, useHistory } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
-import PasswordInput from "../widgets/PasswordInput";
-import TextInput from "../widgets/TextInput";
+import PasswordInput from "../widgets/input/PasswordInput";
+import TextInput from "../widgets/input/TextInput";
 import ItemList from "../widgets/ItemList";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
 import ColumnedContent from "../widgets/ColumnedContent";
 
 export default function GameLoginView() {
@@ -34,6 +34,7 @@ export default function GameLoginView() {
 	}
 
 	const links = myGames.map(game => <Link
+		key={game._id}
 		to={`/ui/world/${currentWorld._id}/game/${game._id}`}
 	>
 		${game._id}
@@ -57,9 +58,6 @@ export default function GameLoginView() {
 						<InputForm
 							errors={createGameErrors}
 							loading={createGameLoading || joinGameLoading}
-							initialValues={{
-								remember: true,
-							}}
 							onSubmit={createGame}
 						>
 							<FormItem label="Password" >
@@ -79,9 +77,6 @@ export default function GameLoginView() {
 					<InputForm
 						loading={joinGameLoading || createGameLoading}
 						errors={joinGameErrors}
-						initialValues={{
-							remember: true,
-						}}
 						onSubmit={async ({password, characterName, gameId}) => await joinGame({gameId, password, characterName})}
 					>
 						<FormItem

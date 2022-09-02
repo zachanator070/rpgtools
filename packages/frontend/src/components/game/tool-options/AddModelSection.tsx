@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import SelectModel from "../select/SelectModel";
-import ModelViewer from "../models/ModelViewer";
-import useAddModel from "../../hooks/game/useAddModel";
-import useCurrentGame from "../../hooks/game/useCurrentGame";
-import SelectWiki from "../select/SelectWiki";
+import SelectModel from "../../select/SelectModel";
+import ModelViewer from "../../models/ModelViewer";
+import useAddModel from "../../../hooks/game/useAddModel";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import SelectWiki from "../../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
-import {ModeledWiki} from "../../types";
-import PrimaryButton from "../widgets/PrimaryButton";
-import Toggle from "../widgets/Toggle";
+import {ModeledWiki} from "../../../types";
+import PrimaryButton from "../../widgets/PrimaryButton";
+import Toggle from "../../widgets/Toggle";
 
 interface SelectedModel {
 	model: any;
@@ -29,7 +29,7 @@ export default function AddModelSection() {
 	}, [wikiSearch]);
 
 	return (
-		<div className={"margin-lg"}>
+		<div className={"padding-lg-top"}>
 			<div style={{display: "flex", marginBottom: "1em"}}>
 				<div style={{marginLeft: "1em", marginRight: "1em"}}>Search for</div>
 
@@ -49,6 +49,7 @@ export default function AddModelSection() {
 						setSelectedModel({model: wiki.model, wiki});
 						await setModelColor(wiki.modelColor);
 					}}
+					hasModel={true}
 				/>
 			) : (
 				<SelectModel
@@ -58,30 +59,29 @@ export default function AddModelSection() {
 					showClear={false}
 				/>
 			)}
-
-			<PrimaryButton
-				className={"margin-lg"}
-				disabled={!selectedModel}
-				onClick={async () => {
-					await addModel({
-						gameId: currentGame._id,
-						modelId: selectedModel.model._id,
-						wikiId: selectedModel.wiki ? selectedModel.wiki._id : null,
-						color: modelColor,
-					});
-				}}
-			>
-				Add Model
-			</PrimaryButton>
 			{selectedModel && (
-				<div style={{ width: "100%", height: "500px" }}>
+				<>
 					<ModelViewer
 						model={selectedModel.model}
 						defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor}
 						showColorControls={true}
 						onChangeColor={async (color) => setModelColor(color)}
 					/>
-				</div>
+					<PrimaryButton
+						className={"margin-lg-top"}
+						disabled={!selectedModel}
+						onClick={async () => {
+							await addModel({
+								gameId: currentGame._id,
+								modelId: selectedModel.model._id,
+								wikiId: selectedModel.wiki ? selectedModel.wiki._id : null,
+								color: modelColor,
+							});
+						}}
+					>
+						Add Model
+					</PrimaryButton>
+				</>
 			)}
 		</div>
 	);

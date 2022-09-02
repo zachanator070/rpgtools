@@ -1,16 +1,16 @@
 import React, {useState} from "react";
 import DiceAttribute from "./DiceAttribute";
-import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
-import LoadingView from "../LoadingView";
+import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter";
+import LoadingView from "../../LoadingView";
 import DiceRoller from "./DiceRoller";
-import ToolTip from "../widgets/ToolTip";
-import useSetCharacterAttributes, {CharacterAttributeInput} from "../../hooks/game/useSetCharacterAttributes";
-import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
-import TextInput from "../widgets/TextInput";
-import NumberInput from "../widgets/NumberInput";
-import PrimaryButton from "../widgets/PrimaryButton";
+import ToolTip from "../../widgets/ToolTip";
+import useSetCharacterAttributes, {CharacterAttributeInput} from "../../../hooks/game/useSetCharacterAttributes";
+import FullScreenModal from "../../widgets/FullScreenModal";
+import InputForm from "../../widgets/input/InputForm";
+import FormItem from "../../widgets/input/FormItem";
+import TextInput from "../../widgets/input/TextInput";
+import NumberInput from "../../widgets/input/NumberInput";
+import PrimaryButton from "../../widgets/PrimaryButton";
 
 export default function DiceOptions() {
 	const { currentCharacter } = useCurrentCharacter();
@@ -20,12 +20,7 @@ export default function DiceOptions() {
 		return <LoadingView />;
 	}
 	return (
-		<div
-			style={{
-				overflow: "auto",
-				height: "100%",
-			}}
-		>
+		<div className={'padding-lg-bottom'}>
 			<FullScreenModal
 				visible={addAttributeVisible}
 				title={`Add New Attribute`}
@@ -34,9 +29,6 @@ export default function DiceOptions() {
 				<InputForm
 					errors={errors}
 					loading={loading}
-					initialValues={{
-						value: 0,
-					}}
 					onSubmit={async ({ name, value }) => {
 						const newAttribute: CharacterAttributeInput = {name, value: parseInt(value)};
 						await setCharacterAttributes({
@@ -51,7 +43,7 @@ export default function DiceOptions() {
 						<TextInput name={"name"}  style={{ width: "75px" }} />
 					</FormItem>
 					<FormItem label={`Value`}>
-						<NumberInput name={"value"}  style={{ width: "75px" }} />
+						<NumberInput defaultValue={0} name={"value"}  style={{ width: "75px" }} />
 					</FormItem>
 				</InputForm>
 			</FullScreenModal>

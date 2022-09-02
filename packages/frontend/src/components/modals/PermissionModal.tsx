@@ -28,6 +28,7 @@ export default function PermissionModal({
 			visible={visibility}
 			title={`Permissions for ${subjectName}`}
 			setVisible={setVisibility}
+			width={'60em'}
 		>
 			<PermissionEditor
 				subject={subject}

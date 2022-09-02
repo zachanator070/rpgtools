@@ -153,7 +153,7 @@ export class MongodbGameRepository
 					document.lookAtX,
 					document.lookAtZ,
 					document.color,
-					document.wiki.toString()
+					document.wiki ? document.wiki.toString() : null
 				)
 			);
 		}

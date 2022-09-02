@@ -23,7 +23,7 @@ export const typeDefs = gql`
 		Get all wikis that are in a set of folders
 		"""
 		wikisInFolder(folderId: ID!, page: Int): WikiPagePaginatedResult!
-        wikis(worldId: ID, name: String, types: [String!], canAdmin: Boolean, page: Int): WikiPagePaginatedResult!
+        wikis(worldId: ID, name: String, types: [String!], canAdmin: Boolean, hasModel: Boolean, page: Int): WikiPagePaginatedResult!
 		"""
 		Get all wiki folders for a world
 		"""

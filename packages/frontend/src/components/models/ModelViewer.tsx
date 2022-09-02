@@ -3,7 +3,7 @@ import { ModelRenderer } from "../../rendering/ModelRenderer";
 import LoadingView from "../LoadingView";
 import {Model} from "../../types";
 import PrimaryButton from "../widgets/PrimaryButton";
-import ColorInput from "../widgets/ColorInput";
+import ColorInput from "../widgets/input/ColorInput";
 
 interface ModelViewerProps {
 	model: Model;
@@ -105,8 +105,8 @@ export default function ModelViewer({
 				{modelLoading && (
 					<div
 						style={{
-							width: width || defaultWidth,
-							height: height || defaultHeight,
+							// width: width || defaultWidth,
+							// height: height || defaultHeight,
 							backgroundColor: "rgba(140,140,140,0.4)",
 							position: "absolute",
 							display: "flex",
@@ -128,10 +128,10 @@ export default function ModelViewer({
 				)}
 				<canvas
 					ref={renderCanvas}
-					style={{
-						width: width || defaultWidth,
-						height: height || defaultHeight,
-					}}
+					// style={{
+					// 	width: width || defaultWidth,
+					// 	height: height || defaultHeight,
+					// }}
 				/>
 			</div>
 		</div>

@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import ToolTip from "../widgets/ToolTip";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
-import FileInput from "../widgets/FileInput";
-import TextInput from "../widgets/TextInput";
-import NumberInput from "../widgets/NumberInput";
-import TextAreaInput from "../widgets/TextAreaInput";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import FileInput from "../widgets/input/FileInput";
+import TextInput from "../widgets/input/TextInput";
+import NumberInput from "../widgets/input/NumberInput";
+import TextAreaInput from "../widgets/input/TextAreaInput";
+import {Model} from "../../types";
 
 interface CallbackValues {
 	name: string;
@@ -18,7 +19,7 @@ interface CallbackValues {
 
 interface ModelFormProps {
 	callback: (values: CallbackValues) => Promise<any>;
-	initialValues?: any;
+	initialValues?: Model;
 	loading: boolean;
 	fileRequired?: boolean;
 	errors: string[];
@@ -35,12 +36,12 @@ export default function ModelForm({
 	const [selectedFile, setSelectedFile] = useState(null);
 
 	return (
-		<InputForm initialValues={initialValues} onSubmit={(values) => callback({file: selectedFile, ...values})} loading={loading} errors={errors}>
+		<InputForm onSubmit={(values) => callback({file: selectedFile, ...values})} loading={loading} errors={errors}>
 			<FormItem
 				label="Name"
 				required={true}
 			>
-				<TextInput name="name"/>
+				<TextInput defaultValue={initialValues && initialValues.name} name="name"/>
 			</FormItem>
 			<FormItem
 				label={
@@ -91,7 +92,7 @@ export default function ModelForm({
 				}
 				required={true}
 			>
-				<NumberInput name="depth"/>
+				<NumberInput defaultValue={initialValues && initialValues.depth} name="depth"/>
 			</FormItem>
 			<FormItem
 				label={
@@ -101,7 +102,7 @@ export default function ModelForm({
 				}
 				required={true}
 			>
-				<NumberInput name="width"/>
+				<NumberInput defaultValue={initialValues && initialValues.width} name="width"/>
 			</FormItem>
 			<FormItem
 				label={
@@ -111,10 +112,10 @@ export default function ModelForm({
 				}
 				required={true}
 			>
-				<NumberInput name="height"/>
+				<NumberInput defaultValue={initialValues && initialValues.height} name="height"/>
 			</FormItem>
 			<FormItem label={<div>Notes</div>} >
-				<TextAreaInput name="notes" rows={15} cols={50} />
+				<TextAreaInput name="notes" defaultValue={initialValues && initialValues.notes} rows={15} cols={50} />
 			</FormItem>
 		</InputForm>
 	);

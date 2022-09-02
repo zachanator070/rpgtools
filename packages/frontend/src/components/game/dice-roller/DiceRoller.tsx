@@ -1,17 +1,17 @@
 import React, {useReducer} from "react";
-import tetrahedron from "../../icons/tetrahedron.svg";
-import cube from "../../icons/cube.svg";
-import octahedron from "../../icons/octahedron.svg";
-import decahedron from "../../icons/decahedron.svg";
-import dodecahedron from "../../icons/dodecahedron.svg";
-import icosahedron from "../../icons/icosahedron.svg";
-import doubleDecahedron from "../../icons/double-decahedron.svg";
+import tetrahedron from "../../../icons/tetrahedron.svg";
+import cube from "../../../icons/cube.svg";
+import octahedron from "../../../icons/octahedron.svg";
+import decahedron from "../../../icons/decahedron.svg";
+import dodecahedron from "../../../icons/dodecahedron.svg";
+import icosahedron from "../../../icons/icosahedron.svg";
+import doubleDecahedron from "../../../icons/double-decahedron.svg";
 
 import DiceIcon from "./DiceIcon";
-import useGameChat from "../../hooks/game/useGameChat";
-import useCurrentGame from "../../hooks/game/useCurrentGame";
-import ToolTip from "../widgets/ToolTip";
-import PrimaryButton from "../widgets/PrimaryButton";
+import useGameChat from "../../../hooks/game/useGameChat";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import ToolTip from "../../widgets/ToolTip";
+import PrimaryButton from "../../widgets/PrimaryButton";
 
 export const SET_COUNT_ACTION = 'SET_COUNT_ACTION';
 export const SET_BONUS_ACTION = 'SET_BONUS_ACTION';

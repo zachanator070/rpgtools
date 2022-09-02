@@ -1,8 +1,8 @@
 import React, {CSSProperties} from "react";
 import { useDrag, useDrop} from "react-dnd";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
-import useCurrentGame from "../../hooks/game/useCurrentGame";
-import {GameCharacter} from "../../types";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import {GameCharacter} from "../../../types";
 
 export interface DraggableCharacterItem {
 	type: string;

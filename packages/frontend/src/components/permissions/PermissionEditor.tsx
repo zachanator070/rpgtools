@@ -57,14 +57,14 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 				: selectedPermissionAssignment.roles
 			);
 		}
-	}, [selectedPermissionAssignment])
+	}, [selectedPermissionAssignment, principalType])
 
 	if (subject === null || subjectType === null) {
 		return <></>;
 	}
 
 	return (
-		<div style={{maxWidth: '60em'}}>
+		<div style={{width: '55em'}}>
 			<div style={{ textAlign: "center" }}>
 				<RadioButtonGroup
 					onChange={async (e: string) => {

@@ -5,7 +5,7 @@ import {
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
-} from "../../rendering/GameRenderer";
+} from "../../../rendering/GameRenderer";
 import BrushOptions from "./BrushOptions";
 import FogOptions from "./FogOptions";
 import ModelInfo from "./ModelInfo";

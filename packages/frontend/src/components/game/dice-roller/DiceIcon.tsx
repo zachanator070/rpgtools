@@ -1,8 +1,8 @@
 import React from "react";
 import {SET_BONUS_ACTION, SET_COUNT_ACTION} from "./DiceRoller";
-import ToolTip from "../widgets/ToolTip";
-import NumberBadge from "../widgets/NumberBadge";
-import NumberInput from "../widgets/NumberInput";
+import ToolTip from "../../widgets/ToolTip";
+import NumberBadge from "../../widgets/NumberBadge";
+import NumberInput from "../../widgets/input/NumberInput";
 
 interface DiceIconProps {
 	reducer: any;
@@ -41,3 +41,4 @@ export default function DiceIcon ({ reducer, count, bonus, icon, tooltip }: Dice
 		</ToolTip>
 	);
 };
+

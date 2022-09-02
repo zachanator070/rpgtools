@@ -5,7 +5,7 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 import PrimaryButton from "../widgets/PrimaryButton";
 import CommentMessage from "../widgets/CommentMessage";
-import TextInput from "../widgets/TextInput";
+import TextInput from "../widgets/input/TextInput";
 
 export default function GameChat() {
 	const { currentGame } = useCurrentGame();
@@ -62,7 +62,7 @@ export default function GameChat() {
 		return "";
 	};
 
-	let comments = [<div>No messages</div>];
+	let comments = [<div key={"0"}>No messages</div>];
 
 	if (messages.length > 0) {
 		comments = messages.map(({ sender, timestamp, message, receiver }) => {
@@ -73,10 +73,11 @@ export default function GameChat() {
 			return (
 				<CommentMessage
 					author={sender}
-					content={<p>{message}</p>}
+					content={message}
 					hours={date.getHours()}
 					minutes={date.getMinutes()}
 					seconds={date.getSeconds()}
+					key={sender+receiver+message+timestamp}
 				/>
 			);
 		})
@@ -87,20 +88,24 @@ export default function GameChat() {
 			style={{
 				display: "flex",
 				flexDirection: "column",
+				gap: '2em',
+				marginTop: '2em',
+				marginBottom: '2em'
 			}}
 		>
 			<div
 				style={{
-					height: "50em",
+					height: '50vh',
 					overflowY: "scroll",
 					display: "flex",
-					flexDirection: "column"
+					flexDirection: "column",
 				}}
+				id={'chat'}
 			>
 				{comments}
 			</div>
 			<TextInput
-				ref={chatInput}
+				innerRef={chatInput}
 				disabled={chatLoading}
 				onChange={async (value) => {
 					await setComment(value.target.value);

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Input} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "../WidgetProps";
 
 interface PasswordInputProps extends WidgetProps {
     name?: string;

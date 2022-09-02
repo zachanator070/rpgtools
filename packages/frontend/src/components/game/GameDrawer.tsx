@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SlidingDrawer from "../widgets/SlidingDrawer";
 import GameChat from "./GameChat";
-import ToolOptions from "./ToolOptions";
+import ToolOptions from "./tool-options/ToolOptions";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS, GameRenderer,
@@ -9,7 +9,7 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import DiceOptions from "./DiceOptions";
+import DiceOptions from "./dice-roller/DiceOptions";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
 import TabCollection from "../widgets/TabCollection";
@@ -30,21 +30,21 @@ interface GameDrawerProps {
 
 export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: GameDrawerProps) {
 	const [visible, setVisible] = useState<boolean>(true);
-	const [activeKey, setActiveKey] = useState<string>("1");
+	const [activeKey, setActiveKey] = useState<string>("Chat");
 	const { gameChat } = useGameChatSubscription();
 	const { currentCharacter } = useCurrentCharacter();
 
 	useEffect(() => {
 		if (gameChat && gameChat.receiver === "Server" && gameChat.sender === currentCharacter.name) {
 			setVisible(true);
-			setActiveKey("1");
+			setActiveKey("Chat");
 		}
 	}, [gameChat]);
 
 	useEffect(() => {
 		if (GAME_CONTROLS_WITH_CONTEXT.includes(controlsMode)) {
 			setVisible(true);
-			setActiveKey("2");
+			setActiveKey("Tool Options");
 		}
 	}, [controlsMode]);
 

@@ -1,22 +1,20 @@
 import React, {ReactElement, useState} from 'react';
 import {Form} from "antd";
 import FormItem, {FormItemProps} from "./FormItem";
-import PrimaryButton from "./PrimaryButton";
-import Errors from "../Errors";
-import {WidgetProps} from "./WidgetProps";
+import PrimaryButton from "../PrimaryButton";
+import Errors from "../../Errors";
+import {WidgetProps} from "../WidgetProps";
 
 interface InputFormProps<T> extends WidgetProps {
-    initialValues?: T;
     onSubmit: (T) => any;
     children: ReactElement<FormItemProps> | ReactElement<FormItemProps>[];
     loading: boolean;
     errors: string[];
 }
 
-export default function InputForm<T>({initialValues, onSubmit, children, loading, errors}: InputFormProps<T>) {
+export default function InputForm<T>({ onSubmit, children, loading, errors}: InputFormProps<T>) {
 
     return <Form
-        initialValues={initialValues}
         onFinish={() => {}}
         labelCol={{
             span: 8,

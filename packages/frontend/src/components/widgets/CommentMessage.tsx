@@ -14,7 +14,7 @@ export default function CommentMessage({author, content, hours, minutes, seconds
 
     return <Comment
         author={author}
-        content={<p>{content}</p>}
+        content={content}
         datetime={`${hours}:${minutes}:${seconds}`}
     />;
 

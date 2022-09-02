@@ -7,7 +7,7 @@ import LoadingView from "./LoadingView";
 import useLoad5eContent from "../hooks/world/useLoad5eContent";
 import { useHistory } from "react-router-dom";
 import PrimaryButton from "./widgets/PrimaryButton";
-import TextInput from "./widgets/TextInput";
+import TextInput from "./widgets/input/TextInput";
 import FullScreenModal from "./widgets/FullScreenModal";
 import PrimaryCheckbox from "./widgets/PrimaryCheckbox";
 import ColumnedContent from "./widgets/ColumnedContent";

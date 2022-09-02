@@ -13,7 +13,7 @@ import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 import ColumnedContent from "../widgets/ColumnedContent";
 import PrimaryButton from "../widgets/PrimaryButton";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import TextInput from "../widgets/TextInput";
+import TextInput from "../widgets/input/TextInput";
 import ItemList from "../widgets/ItemList";
 import DropdownSelect from "../widgets/DropdownSelect";
 import TabCollection from "../widgets/TabCollection";

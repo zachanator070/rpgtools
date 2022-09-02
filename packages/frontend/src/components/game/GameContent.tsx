@@ -22,7 +22,7 @@ import useGameModelDeletedSubscription from "../../hooks/game/useGameModelDelete
 import useAddFogStroke from "../../hooks/game/useAddFogStroke";
 import useGameFogSubscription from "../../hooks/game/useGameFogSubscription";
 import GameWikiDrawer from "./GameWikiDrawer";
-import InitiativeTracker from "./InitiativeTracker";
+import InitiativeTracker from "./initiative-tracker/InitiativeTracker";
 import GameDrawer from "./GameDrawer";
 import {Game} from "../../types";
 import useModal from "../widgets/useModal";

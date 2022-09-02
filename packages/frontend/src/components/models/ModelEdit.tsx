@@ -56,7 +56,7 @@ export default function ModelEdit({ model }: ModelEditProps) {
 						await updateModel({
 							modelId: model._id,
 							name: values.name,
-							file: values.file ? values.file[0].originFileObj : null,
+							file: values.file ? values.file.fileList[0].originFileObj : undefined,
 							depth: parseFloat(values.depth),
 							width: parseFloat(values.width),
 							height: parseFloat(values.height),

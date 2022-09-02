@@ -6,11 +6,11 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import BrushOptions from "./BrushOptions";
-import FogOptions from "./FogOptions";
-import ModelInfo from "./ModelInfo";
-import GameLocationSettings from "./GameLocationSettings";
-import AddModelSection from "./AddModelSection";
+import BrushOptions from "./tool-options/BrushOptions";
+import FogOptions from "./tool-options/FogOptions";
+import ModelInfo from "./tool-options/ModelInfo";
+import GameLocationSettings from "./tool-options/GameLocationSettings";
+import AddModelSection from "./tool-options/AddModelSection";
 import MenuIcon from "../widgets/icons/MenuIcon";
 import CloseIcon from "../widgets/icons/CloseIcon";
 

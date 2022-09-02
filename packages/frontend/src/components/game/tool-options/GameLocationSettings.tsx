@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import SelectWiki from "../select/SelectWiki";
+import SelectWiki from "../../select/SelectWiki";
 import { PLACE } from "@rpgtools/common/src/type-constants";
-import useCurrentGame from "../../hooks/game/useCurrentGame";
-import useSetGameMap from "../../hooks/game/useSetGameMap";
-import LoadingView from "../LoadingView";
-import {GameRenderer} from "../../rendering/GameRenderer";
-import PrimaryButton from "../widgets/PrimaryButton";
-import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
-import Toggle from "../widgets/Toggle";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import useSetGameMap from "../../../hooks/game/useSetGameMap";
+import LoadingView from "../../LoadingView";
+import {GameRenderer} from "../../../rendering/GameRenderer";
+import PrimaryButton from "../../widgets/PrimaryButton";
+import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
+import Toggle from "../../widgets/Toggle";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;

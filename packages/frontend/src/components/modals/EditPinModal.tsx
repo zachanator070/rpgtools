@@ -4,9 +4,9 @@ import useDeletePin from "../../hooks/map/useDeletePin";
 import SelectWiki from "../select/SelectWiki";
 import usePins from "../../hooks/map/usePins";
 import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/InputForm";
+import InputForm from "../widgets/input/InputForm";
 import {PLACE} from "@rpgtools/common/src/type-constants";
-import FormItem from "../widgets/FormItem";
+import FormItem from "../widgets/input/FormItem";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import {Pin, WikiPage} from "../../types";
 

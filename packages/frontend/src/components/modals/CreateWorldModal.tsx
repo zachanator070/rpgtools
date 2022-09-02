@@ -5,9 +5,9 @@ import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
 import ToolTip from "../widgets/ToolTip";
 import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
-import TextInput from "../widgets/TextInput";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import TextInput from "../widgets/input/TextInput";
 import FullScreenModal from "../widgets/FullScreenModal";
 
 interface CreateWorldModalProps {

@@ -3,8 +3,8 @@ import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import SelectFolder from "../select/SelectFolder";
 import {WikiFolder} from "../../types";
 import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
 
 interface MoveFolderModalProps {
 	folder: WikiFolder;

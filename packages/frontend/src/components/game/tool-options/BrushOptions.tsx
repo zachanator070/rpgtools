@@ -8,12 +8,12 @@ import {
 	DEFAULT_BRUSH_FILL,
 	DEFAULT_BRUSH_SIZE,
 	DEFAULT_BRUSH_TYPE,
-} from "../../controls/PaintControls";
-import {GameRenderer} from "../../rendering/GameRenderer";
-import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
-import ColorInput from "../widgets/ColorInput";
-import DropdownSelect from "../widgets/DropdownSelect";
-import NumberSlider from "../widgets/NumberSlider";
+} from "../../../controls/PaintControls";
+import {GameRenderer} from "../../../rendering/GameRenderer";
+import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
+import ColorInput from "../../widgets/input/ColorInput";
+import DropdownSelect from "../../widgets/DropdownSelect";
+import NumberSlider from "../../widgets/NumberSlider";
 
 interface BrushOptionsProps {
 	renderer: GameRenderer

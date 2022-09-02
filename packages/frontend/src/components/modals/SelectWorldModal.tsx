@@ -4,8 +4,8 @@ import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import SelectWorld from "../select/SelectWorld";
 import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/InputForm";
-import FormItem from "../widgets/FormItem";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
 import {World} from "../../types";
 
 interface SelectWorldModalProps {

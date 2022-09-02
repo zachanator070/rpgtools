@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import useSetModelColor from "../../hooks/game/useSetModelColor";
-import useCurrentGame from "../../hooks/game/useCurrentGame";
-import SelectWiki from "../select/SelectWiki";
-import useSetPositionedModelWiki from "../../hooks/game/useSetPositionedModelWiki";
-import useGameModelPositionedSubscription from "../../hooks/game/useGameModelPosistionedSubscription";
-import LoadingView from "../LoadingView";
-import useDeletePositionedModel from "../../hooks/game/useDeletePositionedModel";
-import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../rendering/GameRenderer";
-import { MODEL_SELECTED_EVENT } from "../../controls/SelectModelControls";
-import {PositionedModel, WikiPage} from "../../types";
-import PrimaryButton from "../widgets/PrimaryButton";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import TextInput from "../widgets/TextInput";
-import ColorInput from "../widgets/ColorInput";
+import useSetModelColor from "../../../hooks/game/useSetModelColor";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import SelectWiki from "../../select/SelectWiki";
+import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModelWiki";
+import useGameModelPositionedSubscription from "../../../hooks/game/useGameModelPosistionedSubscription";
+import LoadingView from "../../LoadingView";
+import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel";
+import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../../rendering/GameRenderer";
+import { MODEL_SELECTED_EVENT } from "../../../controls/SelectModelControls";
+import {PositionedModel, WikiPage} from "../../../types";
+import PrimaryButton from "../../widgets/PrimaryButton";
+import PrimaryDangerButton from "../../widgets/PrimaryDangerButton";
+import TextInput from "../../widgets/input/TextInput";
+import ColorInput from "../../widgets/input/ColorInput";
 
 interface ModelInfoProps {
 	renderer: GameRenderer,
