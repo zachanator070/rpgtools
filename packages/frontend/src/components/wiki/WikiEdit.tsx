@@ -50,6 +50,7 @@ export default function WikiEdit() {
 	const [selectedModel, setSelectedModel] = useState<Model>();
 
 	const [editor, setEditor] = useState(null);
+	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	const { wiki_id } = useParams();
 	const {modalConfirm} = useModal();
@@ -152,7 +153,7 @@ export default function WikiEdit() {
 
 	if(MODELED_WIKI_TYPES.includes(type)){
 		const currentModeledWiki = currentWiki as ModeledWiki;
-		modeledWikiFields = (<div className={"margin-lg"}>
+		modeledWikiFields = (<div className={"margin-lg"} ref={setModelViewerContainer}>
 			{type} model:
 			<span className={"margin-md"}>
 						<SelectModel
@@ -166,6 +167,7 @@ export default function WikiEdit() {
 					defaultColor={currentModeledWiki.modelColor}
 					showColorControls={true}
 					onChangeColor={async (color: string) => setModelColor(color)}
+					container={modelViewerContainer}
 				/>
 			)}
 		</div>);

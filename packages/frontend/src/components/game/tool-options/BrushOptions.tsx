@@ -4,10 +4,6 @@ import {
 	BRUSH_ERASE,
 	BRUSH_LINE,
 	BRUSH_SQUARE,
-	DEFAULT_BRUSH_COLOR,
-	DEFAULT_BRUSH_FILL,
-	DEFAULT_BRUSH_SIZE,
-	DEFAULT_BRUSH_TYPE,
 } from "../../../controls/PaintControls";
 import {GameRenderer} from "../../../rendering/GameRenderer";
 import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
@@ -20,10 +16,10 @@ interface BrushOptionsProps {
 }
 
 export default function BrushOptions({ renderer }: BrushOptionsProps) {
-	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
-	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
-	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
-	const [fillBrush, setFillBrush] = useState(DEFAULT_BRUSH_FILL);
+	const [brushColor, setBrushColor] = useState(renderer.getPaintControls().getBrushColor());
+	const [brushType, setBrushType] = useState(renderer.getPaintControls().getBrushType());
+	const [brushSize, setBrushSize] = useState(renderer.getPaintControls().getBrushSize());
+	const [fillBrush, setFillBrush] = useState(renderer.getPaintControls().getBrushFill());
 
 	return (
 		<>

@@ -1,4 +1,4 @@
-import React, {ReactElement, useRef} from "react";
+import React, {ReactElement, useRef, useState} from "react";
 import Editor from "./Editor";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -26,6 +26,8 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 	const wikiView = useRef(null);
 
 	const { wiki_id } = useParams();
+
+	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	const getPinFromPageId = (pageId) => {
 		for (let pin of pins.docs) {
@@ -97,13 +99,13 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 	} else if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
 		const currentModeledWiki = currentWiki as ModeledWiki;
 		if(currentModeledWiki.model) {
-
 			typeSpecificContent = (
-				<div className={"margin-lg"}>
+				<div className={"margin-lg"} ref={setModelViewerContainer}>
 					<ModelViewer
 					model={currentModeledWiki.model}
 					showColorControls={false}
 					defaultColor={currentModeledWiki.modelColor}
+					container={modelViewerContainer}
 					/>
 				</div>
 			);

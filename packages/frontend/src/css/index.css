@@ -83,6 +83,20 @@ body {
 	padding-bottom: 2em;
 }
 
+/* X Large */
+.padding-xlg {
+	padding: 4em;
+}
+
+.padding-xlg-top {
+	padding-top: 4em;
+}
+
+.padding-xlg-bottom {
+	padding-bottom: 4em;
+}
+
+
 /*********/
 /*MARGIN*/
 /*********/

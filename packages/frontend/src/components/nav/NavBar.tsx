@@ -65,7 +65,7 @@ export default function NavBar() {
 				setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}
 				visibility={registerModalVisibility}
 			/>
-			<ColumnedContent childrenSizes={[1,2,1]}>
+			<ColumnedContent childrenSizes={['25%', '50%', '25%']}>
 				<div style={{display: 'flex', justifyContent: 'space-between'}}>
 					<div className="margin-md-left">
 						<WorldMenu />

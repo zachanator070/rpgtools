@@ -34,7 +34,7 @@ export default function WorldSettings() {
 			<h1>Settings for {currentWorld.name}</h1>
 			<hr />
 
-			<ColumnedContent className={"margin-lg-top margin-lg-bottom"} childrenSizes={[1, 2, 1]}>
+			<ColumnedContent className={"margin-lg-top margin-lg-bottom"} childrenSizes={['25%', '50%', '25%']}>
 				<div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
 					<div className={"margin-lg-top"}>
 						<h2>Permissions</h2>

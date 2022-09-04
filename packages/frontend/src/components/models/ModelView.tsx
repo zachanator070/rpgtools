@@ -43,7 +43,7 @@ export default function ModelView() {
 	}
 
 	return (
-		<ColumnedContent>
+		<ColumnedContent stickySides={true}>
 			<div>
 				{currentWorld.canAddModels && (
 					<>
@@ -80,7 +80,7 @@ export default function ModelView() {
 				</div>
 			</div>
 
-			<div>
+			<div style={{display: "flex", flexDirection: 'column'}}>
 				{selectedModel && (
 					<>
 						<div className={"margin-lg"}>

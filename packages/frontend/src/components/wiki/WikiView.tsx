@@ -35,7 +35,7 @@ export default function WikView() {
 				/>
 			)}
 
-			<ColumnedContent style={{overflowY: 'scroll'}} childrenStyles={[{top: 0, position: 'sticky', overflowY: 'auto'}, {}, {top: 0, position: 'sticky'}]}>
+			<ColumnedContent stickySides={true}>
 				<div className="padding-md">
 					<FolderTree
 						folder={currentWorld.rootFolder}
@@ -44,7 +44,7 @@ export default function WikView() {
 						}}
 					/>
 				</div>
-				<div className="padding-md" style={{maxWidth: 'fit-content'}}>
+				<div className="padding-md" >
 					<Switch>
 						<Route path={`${match.path}/edit`}>
 							<WikiEdit />

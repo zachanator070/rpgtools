@@ -22,6 +22,8 @@ export default function AddModelSection() {
 
 	const [wikiSearch, setWikiSearch] = useState<boolean>(true);
 
+	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
+
 	useEffect(() => {
 		(async () => {
 			await setSelectedModel(null);
@@ -60,12 +62,13 @@ export default function AddModelSection() {
 				/>
 			)}
 			{selectedModel && (
-				<>
+				<div ref={setModelViewerContainer}>
 					<ModelViewer
 						model={selectedModel.model}
 						defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor}
 						showColorControls={true}
 						onChangeColor={async (color) => setModelColor(color)}
+						container={modelViewerContainer}
 					/>
 					<PrimaryButton
 						className={"margin-lg-top"}
@@ -81,7 +84,7 @@ export default function AddModelSection() {
 					>
 						Add Model
 					</PrimaryButton>
-				</>
+				</div>
 			)}
 		</div>
 	);

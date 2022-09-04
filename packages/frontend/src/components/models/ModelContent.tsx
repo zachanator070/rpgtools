@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef, useState} from "react";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
@@ -18,13 +18,18 @@ export default function ModelContent({ model }: ModelContentProps) {
 	const history = useHistory();
 	const { currentWorld, loading } = useCurrentWorld();
 
+	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
+
 	if (loading) {
 		return <LoadingView />;
 	}
 
 	return (
-		<div style={{display: "flex", justifyContent: 'space-around'}}>
-			<div style={{display: 'flex', flexGrow: '1', justifyContent: 'space-around', flexDirection: 'column'}}>
+		<div style={{display: "flex", flexDirection: 'column'}} className={'padding-xlg-bottom'}>
+			<div ref={setModelViewerContainer} style={{paddingLeft: '25%', paddingRight: '25%'}}>
+				<ModelViewer model={model} container={modelViewerContainer}/>
+			</div>
+			<div style={{display: 'flex', flexDirection: 'column'}}>
 				<div style={{alignSelf: 'center'}}>
 					<div className={"margin-lg"}>
 						Filename: {model.fileName}
@@ -76,9 +81,6 @@ export default function ModelContent({ model }: ModelContentProps) {
 						</span>
 					</span>
 				</div>
-			</div>
-			<div style={{display: 'flex', flexGrow: '1', justifyContent: 'space-around'}}>
-				<ModelViewer model={model} />
 			</div>
 		</div>
 	);

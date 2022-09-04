@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {Ref, RefObject, useEffect, useRef, useState} from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer";
 import LoadingView from "../LoadingView";
 import {Model} from "../../types";
@@ -7,17 +7,14 @@ import ColorInput from "../widgets/input/ColorInput";
 
 interface ModelViewerProps {
 	model: Model;
-	width?: number;
-	height?: number;
 	defaultColor?: string;
 	showColorControls?: boolean;
 	onChangeColor?: (color: string) => Promise<any>;
+	container?: HTMLElement;
 }
 
 export default function ModelViewer({
 	model,
-	width,
-	height,
 	defaultColor,
 	showColorControls,
 	onChangeColor,
@@ -25,26 +22,38 @@ export default function ModelViewer({
 	const [renderer, setRenderer] = useState<ModelRenderer>();
 	const [modelColor, setModelColor] = useState(defaultColor);
 	const renderCanvas = useRef();
+	const [canvasWidth, setCanvasWidth] = useState(100);
+	const [canvasHeight, setCanvasHeight] = useState(75);
 	const [modelLoading, setModelLoading] = useState(true);
-
-	const defaultWidth = 500;
-	const defaultHeight = 700;
+	const [container, setContainer] = useState<HTMLElement>();
 
 	useEffect(() => {
 		(async () => {
-			await setRenderer(
-				new ModelRenderer(
-					renderCanvas.current,
-					model.depth,
-					model.width,
-					model.height,
-					(loading) => {
-						setModelLoading(loading);
+			if (container) {
+				const observer = new ResizeObserver(() => {
+					if (container.offsetWidth !== canvasWidth) {
+						setCanvasWidth(container.offsetWidth);
+						setCanvasHeight(container.offsetWidth * 3/4);
 					}
-				)
-			);
+				});
+				observer.observe(container);
+				setCanvasWidth(container.offsetWidth);
+				setCanvasHeight(container.offsetWidth * 3/4);
+				await setRenderer(
+					new ModelRenderer(
+						renderCanvas.current,
+						model.depth,
+						model.width,
+						model.height,
+						(loading) => {
+							setModelLoading(loading);
+						}
+					)
+				);
+			}
+
 		})();
-	}, []);
+	}, [container]);
 
 	useEffect(() => {
 		if (renderer && model) {
@@ -73,7 +82,7 @@ export default function ModelViewer({
 	}, [renderer, modelColor]);
 
 	return (
-		<div className={"margin-md-top"}>
+		<div>
 			{showColorControls && (
 				<>
 					<div>
@@ -101,12 +110,12 @@ export default function ModelViewer({
 				</>
 			)}
 
-			<div className={"margin-md-top"}>
+			<div className={"margin-md-top"} ref={setContainer}>
 				{modelLoading && (
 					<div
 						style={{
-							width: width || defaultWidth,
-							height: height || defaultHeight,
+							width: canvasWidth,
+							height: canvasHeight,
 							backgroundColor: "rgba(140,140,140,0.4)",
 							position: "absolute",
 							display: "flex",
@@ -129,8 +138,8 @@ export default function ModelViewer({
 				<canvas
 					ref={renderCanvas}
 					style={{
-						width: width || defaultWidth,
-						height: height || defaultHeight,
+						width: canvasWidth,
+						height: canvasHeight,
 					}}
 				/>
 			</div>
