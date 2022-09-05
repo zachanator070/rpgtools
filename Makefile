@@ -50,7 +50,6 @@ packages/frontend/dist:
 
 packages/server/dist:
 	mkdir -p packages/server/dist
-	chmod o+rw -R packages/server/dist
 
 # initializes environment file
 .env:

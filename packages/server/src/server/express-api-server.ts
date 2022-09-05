@@ -119,8 +119,8 @@ export class ExpressApiServer implements ApiServer {
 			res.set("Content-Type", "text/css");
 			next();
 		});
-		this.expressServer.get("*favicon_old.ico", function (req, res, next) {
-			req.url = "/favicon_old.ico";
+		this.expressServer.get("*favicon.ico", function (req, res, next) {
+			req.url = "/favicon.ico";
 			next();
 		});
 
@@ -143,7 +143,7 @@ export class ExpressApiServer implements ApiServer {
 						"/app.css",
 						"/app.bundle.js.gz",
 						"/app.css.gz",
-						"favicon_old.ico",
+						"favicon.ico",
 					].includes(req.url)
 				) {
 					return next();
