@@ -10,7 +10,7 @@ import { gql, ApolloClient, ApolloProvider, split, ApolloLink, InMemoryCache  } 
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
-import "./branding/favicon.ico";
+import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchSubtypes from "./fetchSubtypes";
 import {createRoot} from "react-dom/client";
