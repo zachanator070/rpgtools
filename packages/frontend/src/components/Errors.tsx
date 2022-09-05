@@ -7,7 +7,7 @@ export default function Errors({ errors }) {
 	}
 
 	return (
-		<div style={{margin: '1em'}}>
+		<div id={'errors'} style={{margin: '1em'}}>
 			{errors.map((error) => (
 				<AlertMessage key={error} error={error}/>
 			))}

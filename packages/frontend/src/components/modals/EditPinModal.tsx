@@ -55,6 +55,7 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 						await updatePin({pinId, pageId: pinPage._id});
 						await setVisibility(false);
 					}}
+					buttonText={'Save'}
 				>
 					<FormItem label="Page">
 						<SelectWiki types={[PLACE]} onChange={(page) => setPinPage(page)}/>

@@ -31,8 +31,8 @@ describe('edit wiki', () => {
     it('revert change images', () => {
         cy.get('#coverImageUpload').attachFile(TEST_IMAGE);
         cy.get('#mapImageUpload').attachFile(TEST_IMAGE);
-        cy.get('#revertMap').click();
-        cy.get('#revertCover').click();
+        cy.get('#mapImageRevert').click();
+        cy.get('#coverImageRevert').click();
         cy.get('button').contains('Save').click();
         cy.location().should(location => {
             expect(location.href).contains(MIDDLE_EARTH_WIKI_URL);

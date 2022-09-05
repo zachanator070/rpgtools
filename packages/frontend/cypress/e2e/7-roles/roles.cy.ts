@@ -40,7 +40,7 @@ describe("roles", () => {
                 cy.get(':nth-child(4) > .ant-select > .ant-select-selector').click();
                 cy.get(':nth-child(5) > :nth-child(1) > .ant-select-dropdown > :nth-child(1) > .rc-virtual-list > .rc-virtual-list-holder > :nth-child(1) > .rc-virtual-list-holder-inner > .ant-select-item').click();
                 cy.get('button').contains('Add Permission').click();
-                cy.get('[data-row-key="6250f18b8f489b1a4cf7836d"]').contains(WORLD_ADMIN);
+                cy.get('.ant-table-cell').should('contain.text', WORLD_ADMIN);
             });
         });
 
@@ -67,8 +67,8 @@ describe("roles", () => {
 
             it('delete role', () => {
                 cy.get('button').contains('Delete this role').click();
-                cy.get('#selectRole').type('test role');
-                cy.get('.ant-empty-image');
+                cy.get('#selectRole').click();
+                cy.get('.ant-select-dropdown').should('have.length', 1);
             });
         });
     });

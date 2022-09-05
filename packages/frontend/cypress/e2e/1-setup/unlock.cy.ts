@@ -19,11 +19,11 @@ describe("Unlock server test", () => {
         cy.get("#registerDisplayName").type(`${username}`);
         cy.get("#registerPassword").type(`${password}`);
         cy.get("#registerRepeatPassword").type(`${password}`);
-        cy.get("button").contains("Unlock").click();
+        cy.get("#submit").click();
         cy.location().should((location) => {
             expect(location.href).eq("http://localhost:3000/ui/setup")
         });
-        cy.get('.ant-notification-notice');
+        cy.get('#errors');
     });
 
     it("success", () => {
@@ -32,7 +32,7 @@ describe("Unlock server test", () => {
         cy.get("#registerDisplayName").type(`${username}`);
         cy.get("#registerPassword").type(`${password}`);
         cy.get("#registerRepeatPassword").type(`${password}`);
-        cy.get("button").contains("Unlock").click();
+        cy.get("#submit").click();
         cy.location().should((location) => {
             expect(location.href).eq("http://localhost:3000/")
         })

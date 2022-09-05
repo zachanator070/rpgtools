@@ -38,6 +38,8 @@ export default function SelectWorldModal({ visibility, setVisibility }: SelectWo
 				}}
 				loading={loading}
 				errors={errors}
+				buttonText={'Select World'}
+				disabled={selectedWorld === null}
 			>
 				<FormItem label={"Select World"}>
 					<SelectWorld onChange={setSelectedWorld}/>

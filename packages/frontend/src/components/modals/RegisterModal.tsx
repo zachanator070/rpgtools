@@ -36,6 +36,7 @@ export default function RegisterModal({ visibility, setVisibility }: RegisterMod
 						await register({registerCode, email, username, password});
 						await login({username, password});
 					}}
+					buttonText={'Register'}
 				>
 					<FormItem label={<>Register Code <KeyIcon/></>}>
 						<TextInput name="registerCode" id="registerCode"/>

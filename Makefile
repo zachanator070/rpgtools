@@ -113,9 +113,9 @@ test-e2e:
 	npm run -w packages/frontend test
 
 dump:
-	sudo rm -rf ./dev/mongodb-init/dump.archive
+	sudo rm -rf ./dev/mongodb-scripts/dump.archive
 	docker-compose exec mongodb mongodump --archive=/mongodb-scripts/dump.archive -d rpgtools
-	sudo chown ${USER}:${USER} ./dev/mongodb-init/dump.archive
+	sudo chown ${USER}:${USER} ./dev/mongodb-scripts/dump.archive
 
 seed:
 	npm run -w packages/frontend seed:middle_earth

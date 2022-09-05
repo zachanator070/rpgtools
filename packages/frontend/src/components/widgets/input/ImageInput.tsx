@@ -10,9 +10,10 @@ interface PictureInputProps extends WidgetProps {
     onChange: (picture: any) => any;
     initialImage: Image;
     buttonText: string;
+    revertId?: string;
 }
 
-export default function ImageInput({onChange, initialImage, className, id, buttonText}: PictureInputProps) {
+export default function ImageInput({onChange, initialImage, className, id, revertId, buttonText}: PictureInputProps) {
 
    const [fileList, setFileList] = useState([]);
 
@@ -54,7 +55,7 @@ export default function ImageInput({onChange, initialImage, className, id, butto
             </PrimaryButton>
         </Upload>
         <SecondaryDangerButton
-            className={"margin-md"}
+            className={"margin-top-md margin-bottom-md"}
             onClick={async () => {
                 if (initialImage) {
                     setFileList([{
@@ -67,7 +68,7 @@ export default function ImageInput({onChange, initialImage, className, id, butto
                 }
                 onChange(undefined);
             }}
-            id={'revertMap'}
+            id={revertId}
         >
             Revert
         </SecondaryDangerButton>

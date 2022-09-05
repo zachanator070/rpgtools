@@ -32,6 +32,7 @@ export default function LoginModal({ visibility, setVisibility }: LoginModalProp
 				onSubmit={async ({username, password}) => {
 					await login({username, password})
 				}}
+				buttonText={'Login'}
 			>
 				<FormItem
 					label={<>Username <InlineMargin size={1}><PersonIcon/></InlineMargin></> }

@@ -40,6 +40,7 @@ export default function ServerSetup() {
 						await unlockServer({unlockCode, email, username, password});
 						await login({username, password});
 					}}
+					buttonText={'Unlock'}
 				>
 					<FormItem label={<>Server Unlock Code <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
 						<TextInput name={"unlockCode"} id="adminSecret"/>

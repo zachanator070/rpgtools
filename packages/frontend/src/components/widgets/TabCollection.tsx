@@ -2,7 +2,7 @@ import React, {CSSProperties} from 'react';
 import {Tabs} from "antd";
 import {WidgetProps} from "./WidgetProps";
 
-interface TabPaneProps  {
+export interface TabPaneProps  {
     title: string;
     style?: CSSProperties;
     children?: React.ReactNode;

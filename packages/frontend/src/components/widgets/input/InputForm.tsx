@@ -10,9 +10,11 @@ interface InputFormProps<T> extends WidgetProps {
     children: ReactElement<FormItemProps> | ReactElement<FormItemProps>[];
     loading: boolean;
     errors: string[];
+    buttonText?: string;
+    disabled?: boolean;
 }
 
-export default function InputForm<T>({ onSubmit, children, loading, errors}: InputFormProps<T>) {
+export default function InputForm<T>({ onSubmit, children, loading, errors, buttonText, disabled}: InputFormProps<T>) {
 
     return <Form
         onFinish={() => {}}
@@ -50,7 +52,7 @@ export default function InputForm<T>({ onSubmit, children, loading, errors}: Inp
         <FormItem
             lastItem={true}
         >
-            <PrimaryButton submit={true} disabled={loading}>Submit</PrimaryButton>
+            <PrimaryButton id={'submit'} submit={true} disabled={loading || disabled}>{buttonText || 'Submit'}</PrimaryButton>
         </FormItem>
     </Form>
 }

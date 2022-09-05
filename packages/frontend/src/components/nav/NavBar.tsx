@@ -34,7 +34,7 @@ export default function NavBar() {
 	if (currentUser.username !== ANON_USERNAME) {
 		loginOptions = (
 			<span>
-				<span className="margin-md-right">Hello {currentUser.username}</span>
+				<span className="margin-md-right" id={'userGreeting'}>Hello {currentUser.username}</span>
 				<span>
 					<PrimaryButton id="logoutButton" onClick={async () => logout()}>
 						Logout

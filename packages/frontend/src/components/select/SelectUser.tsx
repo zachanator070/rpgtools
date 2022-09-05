@@ -16,7 +16,7 @@ export default function SelectUser({ onChange, style }: SelectUserProps) {
 	if(users){
 		options = users.docs.map((user) => {
 			return {
-				value: user,
+				value: user._id,
 				label: user.username
 			};
 		});

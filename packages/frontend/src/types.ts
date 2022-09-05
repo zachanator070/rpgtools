@@ -11,6 +11,7 @@ export interface PermissionControlled {
     accessControlList: PermissionAssignment[];
     canWrite: boolean;
     canAdmin: boolean;
+    name: string;
     _id: string;
 }
 

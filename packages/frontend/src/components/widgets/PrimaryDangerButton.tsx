@@ -9,8 +9,8 @@ interface DangerButtonProps extends WidgetProps {
     disabled?: boolean;
 }
 
-export default function PrimaryDangerButton({onClick, children, style, loading, className, disabled}: DangerButtonProps) {
-    return <Button type="primary" danger={true} onClick={onClick} style={style} disabled={loading} className={className}>
+export default function PrimaryDangerButton({onClick, children, style, loading, className, disabled, id}: DangerButtonProps) {
+    return <Button id={id} type="primary" danger={true} onClick={onClick} style={style} disabled={loading || disabled} className={className}>
         {children}
     </Button>;
 }

@@ -192,13 +192,20 @@ export default function WikiEdit() {
 					onChange={setNewCoverImageFile}
 					initialImage={currentWiki.coverImage}
 					id={'coverImageUpload'}
+					revertId={'coverImageRevert'}
 					buttonText={"Select Cover Image"}
 				/>
 			</div>
 			{type === PLACE && (
 				<>
 					<div className="margin-lg">
-						<ImageInput onChange={setNewMapImageFile} initialImage={(currentWiki as Place).mapImage} buttonText={"Select Map Image"}/>
+						<ImageInput
+							onChange={setNewMapImageFile}
+							initialImage={(currentWiki as Place).mapImage}
+							id={'mapImageUpload'}
+							revertId={'mapImageRevert'}
+							buttonText={"Select Map Image"}
+						/>
 					</div>
 					<div className="margin-lg" style={{display: 'flex'}}>
 						<FormItem label={<>

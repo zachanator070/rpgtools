@@ -116,6 +116,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 															});
 														}
 													}}
+													id={'removeRole'}
 												>
 													<DeleteIcon />
 												</PrimaryDangerButton>

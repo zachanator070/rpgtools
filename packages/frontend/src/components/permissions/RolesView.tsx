@@ -16,7 +16,7 @@ import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import TextInput from "../widgets/input/TextInput";
 import ItemList from "../widgets/ItemList";
 import DropdownSelect from "../widgets/DropdownSelect";
-import TabCollection from "../widgets/TabCollection";
+import TabCollection, {TabPaneProps} from "../widgets/TabCollection";
 import FormattedTable from "../widgets/FormattedTable";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
 
@@ -46,8 +46,8 @@ export default function RolesView() {
 		}
 	}
 
-	const getTabs = (role: Role) => {
-		const tabs = [
+	const getTabs = (role: Role): TabPaneProps[] => {
+		const tabs: TabPaneProps[] = [
 			{
 				title: "Permissions in this role",
 				children: <>
@@ -59,7 +59,7 @@ export default function RolesView() {
 							"Remove Permission",
 						]}
 						data={
-							selectedRole.permissions.map(assignment => [
+							role.permissions.map(assignment => [
 								assignment.permission,
 								assignment.subjectType,
 								assignment.subject.name,
@@ -69,7 +69,7 @@ export default function RolesView() {
 										className={"margin-md-left"}
 										onClick={async () => {
 											await revokeRolePermission({
-												roleId: selectedRole._id,
+												roleId: role._id,
 												permission: assignment.permission,
 												subjectId: assignment.subject._id
 											});
@@ -84,44 +84,44 @@ export default function RolesView() {
 						}
 						scrollHeight={250}
 					/>
-					<AddRolePermission role={selectedRole} refetch={async () => {await refetch()}}/>
+					<AddRolePermission role={role} refetch={async () => {await refetch()}}/>
 				</>
 			},
 			{
 				title: "Users with this role",
-				content: <>
+				children: <>
 					<ItemList>
-						{selectedRole.members.map((item: User) => {
-							return <>
+						{role.members.map((item: User) => {
+							return <React.Fragment key={item._id}>
 								{item.username}
-								{selectedRole.canWrite && (
+								{role.canWrite && (
 									<PrimaryDangerButton
 										loading={removeUserRoleLoading}
 										className={"margin-md-left"}
 										onClick={async () => {
-											await removeUserRole({userId: item._id, roleId: selectedRole._id});
+											await removeUserRole({userId: item._id, roleId: role._id});
 										}}
 									>
 										<DeleteIcon />
 									</PrimaryDangerButton>
 								)}
-							</>;
+							</React.Fragment>;
 						})}
 					</ItemList>
-					{selectedRole.canWrite && (
-						<>
+					{role.canWrite && (
+						<div className={'margin-lg-top'}>
 							<SelectUser onChange={async (userId: string) => setUserIdToAdd(userId)} />
 							<PrimaryButton
 								loading={addUserRoleLoading}
 								className={"margin-md-left"}
 								onClick={async () => {
-									await addUserRole({userId: userIdToAdd, roleId: selectedRole._id});
+									await addUserRole({userId: userIdToAdd, roleId: role._id});
 								}}
 								disabled={userIdToAdd === null}
 							>
 								Add User
 							</PrimaryButton>
-						</>
+						</div>
 					)}
 				</>
 			}
@@ -134,7 +134,7 @@ export default function RolesView() {
 						loading={deleteRoleLoading}
 						className={"margin-md-left"}
 						onClick={async () => {
-							await deleteRole({roleId: selectedRole._id});
+							await deleteRole({roleId: role._id});
 							await setSelectedRoleId(null);
 						}}
 					>
