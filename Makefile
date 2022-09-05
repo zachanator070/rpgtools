@@ -22,13 +22,13 @@ clean-deps:
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
-	rm -f dist/app.bundle.js
-	rm -f dist/app.css
+	rm -f packages/frontend/dist/app.bundle.js
+	rm -f packages/frontend/dist/app.css
 
 # runs the js transpiler docker image
 ui-prod: .env packages/frontend/dist packages/server/dist
 	echo Current UID: ${CURRENT_UID}
-	docker-compose run -T ui-builder npm run -w packages/frontend start
+	npm run -w packages/frontend start
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
