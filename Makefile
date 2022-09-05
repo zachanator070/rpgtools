@@ -26,7 +26,7 @@ clean-uncompressed:
 	rm -f dist/app.css
 
 # runs the js transpiler docker image
-ui-prod: .env
+ui-prod: .env packages/frontend/dist packages/server/dist
 	docker-compose build ui-builder
 	docker-compose run ui-builder npm run -w packages/frontend start
 
@@ -41,10 +41,14 @@ prod: build
 
 # runs development docker environment with auto transpiling and restarting services upon file change
 .PHONY: dev
-dev: .env
-	mkdir -p packages/frontend/dist
-	mkdir -p packages/server/dist
+dev: .env packages/frontend/dist packages/server/dist
 	docker-compose up server ui-builder
+
+packages/frontend/dist:
+	mkdir -p packages/frontend/dist
+
+packages/server/dist:
+	mkdir -p packages/server/dist
 
 # initializes environment file
 .env:

@@ -30,7 +30,6 @@ services:
 
   prod:
     image: zachanator070/rpgtools:latest
-    user: ${CURRENT_UID}
     env_file:
       - .env
     ports:
