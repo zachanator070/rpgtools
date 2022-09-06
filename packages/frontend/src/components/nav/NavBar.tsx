@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import { Button, Col, Divider, Row } from "antd";
 import { Link } from "react-router-dom";
 import WorldMenu from "./WorldMenu";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useLogout from "../../hooks/authentication/useLogout";
 import SearchBar from "./SearchBar";
-import { GlobalOutlined, UserOutlined, CloudServerOutlined } from "@ant-design/icons";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import LoginModal from "../modals/LoginModal";
 import RegisterModal from "../modals/RegisterModal";
+import VerticalBar from "../widgets/VerticalBar";
+import PrimaryButton from "../widgets/PrimaryButton";
+import ColumnedContent from "../widgets/ColumnedContent";
+import WorldIcon from "../widgets/icons/WorldIcon";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import ServerIcon from "../widgets/icons/ServerIcon";
 
 export default function NavBar() {
 	const { currentUser, loading: userLoading } = useCurrentUser();
@@ -25,16 +29,16 @@ export default function NavBar() {
 		return <></>;
 	}
 
-	let loginOptions = null;
+	let loginOptions;
 
 	if (currentUser.username !== ANON_USERNAME) {
 		loginOptions = (
 			<span>
-				<span className="margin-md-right">Hello {currentUser.username}</span>
+				<span className="margin-md-right" id={'userGreeting'}>Hello {currentUser.username}</span>
 				<span>
-					<Button id="logoutButton" type="primary" onClick={async () => logout()}>
+					<PrimaryButton id="logoutButton" onClick={async () => logout()}>
 						Logout
-					</Button>
+					</PrimaryButton>
 				</span>
 			</span>
 		);
@@ -55,20 +59,20 @@ export default function NavBar() {
 	}
 
 	return (
-		<div className="shadow-sm padding-sm nav-bar">
+		<div className="shadow-sm padding-sm nav-bar" style={{top: 0, position: 'sticky'}}>
 			<LoginModal setVisibility={async (visibility: boolean) => setLoginModalVisibility(visibility)} visibility={loginModalVisibility} />
 			<RegisterModal
 				setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}
 				visibility={registerModalVisibility}
 			/>
-			<Row>
-				<Col span={4}>
+			<ColumnedContent childrenSizes={['25%', '50%', '25%']}>
+				<div style={{display: 'flex', justifyContent: 'space-between'}}>
 					<div className="margin-md-left">
 						<WorldMenu />
 						{currentWorld && currentWorld.canWrite && (
 							<span className="margin-lg-left">
 								<Link to={`/ui/world/${currentWorld._id}/settings`} title="World Settings">
-									<GlobalOutlined />
+									<WorldIcon />
 								</Link>
 							</span>
 						)}
@@ -78,51 +82,45 @@ export default function NavBar() {
 									to={`/ui/world/${currentWorld._id}/myPermissions`}
 									title="My permissions on this world"
 								>
-									<UserOutlined />
+									<PersonIcon />
 								</Link>
 							</span>
 						)}
 					</div>
-				</Col>
-				{currentWorld ? (
-					<>
-						<Col span={4}>
-							<div className="margin-sm-top">
-								<Divider type="vertical" />
-								<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
-									Map
-								</Link>
-								<Divider type="vertical" />
-								<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>
-									Wiki
-								</Link>
-								<Divider type="vertical" />
-								<Link to={`/ui/world/${currentWorld._id}/model`}>Models</Link>
-								<Divider type="vertical" />
-								<Link to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
-								<Divider type="vertical" />
-								<Link to={`/ui/world/${currentWorld._id}/gameLogin`}>Game</Link>
-							</div>
-						</Col>
-						<Col span={10}>
-							<SearchBar />
-						</Col>
-					</>
-				) : (
-					<Col span={14}>
-						<></>
-					</Col>
-				)}
-				<Col span={6} className={"padding-md-right"} style={{ textAlign: "right" }}>
+
+					{currentWorld &&
+						<div className="margin-sm-top margin-lg-right">
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
+								Map
+							</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`}>
+								Wiki
+							</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/model`}>Models</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
+							<VerticalBar/>
+							<Link to={`/ui/world/${currentWorld._id}/gameLogin`}>Game</Link>
+						</div>
+
+					}
+				</div>
+				<>
+					{currentWorld && <SearchBar />}
+				</>
+				<div style={{ textAlign: "right" }}>
 					{(serverConfig.canAdmin || serverConfig.canWrite) && (
 						<Link to={`/ui/serverSettings`} className={"margin-lg-right"}>
-							<CloudServerOutlined />
+							<ServerIcon />
 							Server Settings
 						</Link>
 					)}
 					{loginOptions}
-				</Col>
-			</Row>
+				</div>
+			</ColumnedContent>
 		</div>
 	);
 };

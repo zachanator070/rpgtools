@@ -1,7 +1,12 @@
-import React from "react";
-import { Button, Form, Input, Upload } from "antd";
-import ToolTip from "../ToolTip";
-import { UploadOutlined } from "@ant-design/icons";
+import React, {useState} from "react";
+import ToolTip from "../widgets/ToolTip";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import FileInput from "../widgets/input/FileInput";
+import TextInput from "../widgets/input/TextInput";
+import NumberInput from "../widgets/input/NumberInput";
+import TextAreaInput from "../widgets/input/TextAreaInput";
+import {Model} from "../../types";
 
 interface CallbackValues {
 	name: string;
@@ -9,137 +14,109 @@ interface CallbackValues {
 	width: string;
 	height: string;
 	notes: string;
-	file: any[];
+	file: any;
 }
 
 interface ModelFormProps {
 	callback: (values: CallbackValues) => Promise<any>;
-	initialValues?: any;
-	loading?: boolean;
+	initialValues?: Model;
+	loading: boolean;
 	fileRequired?: boolean;
+	errors: string[];
 }
 
 export default function ModelForm({
 	callback,
 	initialValues,
 	loading,
+	errors,
 	fileRequired = true,
 }: ModelFormProps) {
-	const formItemLayout = {
-		labelCol: { span: 7 },
-		wrapperCol: { span: 12 },
-	};
 
-	const tailLayout = {
-		wrapperCol: { offset: 8, span: 16 },
-	};
+	const [selectedFile, setSelectedFile] = useState(null);
 
 	return (
-		<Form initialValues={initialValues} onFinish={callback}>
-			<Form.Item
-				{...formItemLayout}
+		<InputForm onSubmit={(values) => callback({file: selectedFile, ...values})} loading={loading} errors={errors}>
+			<FormItem
 				label="Name"
-				name="name"
-				rules={[
-					{ required: true, message: "Please input a name for this model" },
-				]}
+				required={true}
 			>
-				<Input />
-			</Form.Item>
-			<Form.Item
-				{...formItemLayout}
+				<TextInput defaultValue={initialValues && initialValues.name} name="name"/>
+			</FormItem>
+			<FormItem
 				label={
 					<div>
-						<ToolTip>
-							Supported file types: <br />
-							<ul>
-								<li>.glb</li>
-								<li>.stl</li>
-								<li>.obj</li>
-							</ul>
-						</ToolTip>{" "}
-						File
+						<ToolTip
+							title={
+								<>
+									Supported file types:
+									<br />
+									<ul>
+										<li>.glb</li>
+										<li>.stl</li>
+										<li>.obj</li>
+									</ul>
+								</>
+							}
+						/>
+						<span style={{marginLeft: ".5em"}}>
+							File
+						</span>
 					</div>
 				}
-				name="file"
-				rules={[
-					{ required: fileRequired, message: "File required" },
-					{
-						validator: async (rule, value) => {
-							// this function has to be async b/c the validator has to return a promise
-							if (!value || value.length !== 1) {
-								return;
-							}
-							const file = value[0];
-							const supportedTypes = ["glb", "obj", "stl"];
-							const parts = file.name.split(".");
+				validationRules={[
+					async (value) => {
+						// this function has to be async b/c the validator has to return a promise
+						if (!value || value.length !== 1) {
+							return;
+						}
+						const file = value[0];
+						const supportedTypes = ["glb", "obj", "stl"];
+						const parts = file.name.split(".");
 
-							const type = parts.length > 0 ? parts[parts.length - 1] : null;
-							if (!supportedTypes.includes(type)) {
-								throw new Error(`File type ${type} not supported`);
-							}
-						},
-					},
+						const type = parts.length > 0 ? parts[parts.length - 1] : null;
+						if (!supportedTypes.includes(type)) {
+							throw new Error(`File type ${type} not supported`);
+						}
+					}
 				]}
-				getValueFromEvent={(e) => {
-					return e.fileList.length > 0 ? [e.fileList[0]] : [];
-				}}
-				valuePropName="fileList"
+				required={fileRequired}
 			>
-				<Upload multiple={false} beforeUpload={() => false}>
-					<Button icon={<UploadOutlined />}>Select File</Button>
-				</Upload>
-			</Form.Item>
-			<Form.Item
-				{...formItemLayout}
+				<FileInput onChange={setSelectedFile}/>
+			</FormItem>
+			<FormItem
 				label={
 					<div>
-						<ToolTip>Depth of the model in feet</ToolTip> Depth
+						<ToolTip title={"Depth of the model in feet"}/> Depth
 					</div>
 				}
-				name="depth"
-				rules={[
-					{ required: true, message: "Please input a depth for this model" },
-				]}
+				required={true}
 			>
-				<Input type={"number"} />
-			</Form.Item>
-			<Form.Item
-				{...formItemLayout}
+				<NumberInput defaultValue={initialValues && initialValues.depth} name="depth"/>
+			</FormItem>
+			<FormItem
 				label={
 					<div>
-						<ToolTip>Width of the model in feet</ToolTip> Width
+						<ToolTip title={"Width of the model in feet"}/> Width
 					</div>
 				}
-				name="width"
-				rules={[
-					{ required: true, message: "Please input a width for this model" },
-				]}
+				required={true}
 			>
-				<Input type={"number"} />
-			</Form.Item>
-			<Form.Item
-				{...formItemLayout}
+				<NumberInput defaultValue={initialValues && initialValues.width} name="width"/>
+			</FormItem>
+			<FormItem
 				label={
 					<div>
-						<ToolTip>Height of the model in feet</ToolTip> Height
+						<ToolTip title={"Height of the model in feet"}/> Height
 					</div>
 				}
-				name="height"
-				rules={[
-					{ required: true, message: "Please input a height for this model" },
-				]}
+				required={true}
 			>
-				<Input type={"number"} />
-			</Form.Item>
-			<Form.Item {...formItemLayout} label={<div>Notes</div>} name="notes">
-				<Input.TextArea rows={15} cols={50} />
-			</Form.Item>
-			<Form.Item {...tailLayout}>
-				<Button type="primary" htmlType="submit" loading={loading}>
-					Submit
-				</Button>
-			</Form.Item>
-		</Form>
+				<NumberInput defaultValue={initialValues && initialValues.height} name="height"/>
+			</FormItem>
+			<FormItem label={<div>Notes</div>} >
+				<TextAreaInput name="notes" defaultValue={initialValues && initialValues.notes} rows={15} cols={50} />
+			</FormItem>
+		</InputForm>
 	);
 };

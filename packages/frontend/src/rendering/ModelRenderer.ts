@@ -26,6 +26,8 @@ export class ModelRenderer {
 
 	private aspect: number = 1;
 
+	private resizeObservable: ResizeObserver;
+
 	constructor(
 		renderRoot: any,
 		modelDepth: number,
@@ -34,6 +36,8 @@ export class ModelRenderer {
 		onProgress = (started: boolean) => {}
 	) {
 		this.renderRoot = renderRoot;
+		this.resizeObservable = new ResizeObserver(() => this.resize());
+		this.resizeObservable.observe(this.renderRoot);
 
 		this.modelDepth = modelDepth;
 		this.modelWidth = modelWidth;
@@ -74,18 +78,26 @@ export class ModelRenderer {
 		this.orbitControls.update();
 	}
 
+	resize() {
+		if (this.renderRoot.parentElement.clientWidth === this.renderRoot.clientWidth) {
+			return;
+		}
+		const renderHeight = this.renderRoot.parentElement.clientHeight;
+		const renderWidth = this.renderRoot.parentElement.clientWidth;
+
+		this.aspect = renderWidth / renderHeight;
+		this.camera.aspectRatio = this.aspect;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize(renderWidth, renderHeight);
+	}
+
+	resizeDimensionWithinError(oldDimension: number, newDimension: number) {
+		return newDimension > (oldDimension - oldDimension * .05) && newDimension < (oldDimension + oldDimension * .05)
+	}
+
 	setupScene() {
 		let renderHeight = this.renderRoot.clientHeight;
 		let renderWidth = this.renderRoot.clientWidth;
-
-		this.renderRoot.addEventListener("resize", () => {
-			renderHeight = this.renderRoot.clientHeight;
-			renderWidth = this.renderRoot.clientWidth;
-			this.aspect = renderWidth / renderHeight;
-			this.camera.aspectRatio = this.aspect;
-			this.camera.updateProjectionMatrix();
-			this.renderer.setSize(renderWidth, renderHeight);
-		});
 
 		this.scene = new THREE.Scene();
 

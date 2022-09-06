@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal } from "antd";
 import PermissionEditor from "../permissions/PermissionEditor";
+import FullScreenModal from "../widgets/FullScreenModal";
 
 interface PermissionModalProps {
 	visibility: boolean;
@@ -24,20 +24,17 @@ export default function PermissionModal({
 	let subjectName = subject.name;
 
 	return (
-		<Modal
+		<FullScreenModal
 			visible={visibility}
 			title={`Permissions for ${subjectName}`}
-			onCancel={async () => {
-				await setVisibility(false);
-			}}
-			footer={[]}
-			width={"750px"}
+			setVisible={setVisibility}
+			width={'60em'}
 		>
 			<PermissionEditor
 				subject={subject}
 				subjectType={subjectType}
 				refetch={async () => {await refetch()}}
 			/>
-		</Modal>
+		</FullScreenModal>
 	);
 };

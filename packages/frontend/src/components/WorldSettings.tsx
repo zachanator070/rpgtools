@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import PermissionEditor from "./permissions/PermissionEditor";
-import { Button, Col, Input, Row, Modal, Checkbox } from "antd";
 import useRenameWorld from "../hooks/world/useRenameWorld";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import LoadingView from "./LoadingView";
 import useLoad5eContent from "../hooks/world/useLoad5eContent";
 import { useHistory } from "react-router-dom";
+import PrimaryButton from "./widgets/PrimaryButton";
+import TextInput from "./widgets/input/TextInput";
+import FullScreenModal from "./widgets/FullScreenModal";
+import PrimaryCheckbox from "./widgets/PrimaryCheckbox";
+import ColumnedContent from "./widgets/ColumnedContent";
 
 export default function WorldSettings() {
 	const { currentWorld, loading: currentWorldLoading, refetch } = useCurrentWorld();
@@ -26,88 +30,81 @@ export default function WorldSettings() {
 	}
 
 	return (
-		<div className="margin-md-left margin-md-top margin-lg-bottom">
+		<div className="margin-md-left margin-md-top padding-lg-bottom">
 			<h1>Settings for {currentWorld.name}</h1>
 			<hr />
-			<Row className={"margin-lg-top"}>
-				<Col span={4} />
-				<Col span={16}>
-					<h2>Permissions</h2>
-					<div className={"margin-lg-top"}>
-						<PermissionEditor subject={currentWorld} subjectType={WORLD} refetch={async () => {await refetch()}} />
-					</div>
-				</Col>
-				<Col span={4} />
-			</Row>
 
-			{currentWorld.canWrite && (
-				<>
-					<Row className={"margin-lg-top"}>
-						<Col span={4} />
-						<Col span={16}>
-							<h2>Rename World</h2>
-							<div style={{ display: "flex" }} className={"margin-lg-top"}>
-								<div className="margin-md-right">New Name:</div>
-								<div>
-									<Input
-										id={'newWorldNameInput'}
-										value={newName}
-										onChange={async (e) => {
-											await setNewName(e.target.value);
-										}}
-									/>
+			<ColumnedContent className={"margin-lg-top margin-lg-bottom"} childrenSizes={['25%', '50%', '25%']}>
+				<div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+					<div className={"margin-lg-top"}>
+						<h2>Permissions</h2>
+						<div className={"margin-lg-top"}>
+							<PermissionEditor subject={currentWorld} subjectType={WORLD} refetch={async () => {await refetch()}} />
+						</div>
+					</div>
+
+					{currentWorld.canWrite && (
+						<>
+							<div className={"margin-lg-top"}>
+								<h2>Rename World</h2>
+								<div style={{ display: "flex" }} className={"margin-lg-top"}>
+									<div className="margin-md-right">New Name:</div>
+									<div>
+										<TextInput
+											id={'newWorldNameInput'}
+											value={newName}
+											onChange={async (e) => {
+												await setNewName(e.target.value);
+											}}
+										/>
+									</div>
 								</div>
-							</div>
-							<Button
-								className={"margin-md-top"}
-								onClick={async () => {
-									await renameWorld({worldId: currentWorld._id, newName});
-								}}
-								disabled={loading}
-							>
-								Submit
-							</Button>
-						</Col>
-						<Col span={4} />
-					</Row>
-					<Row className={"margin-lg-top"}>
-						<Col span={4} />
-						<Col span={16}>
-							<Modal visible={contentLoading} closable={false} footer={null}>
-								<LoadingView /> Loading 5e content ...
-							</Modal>
-							<h2>Load 5e Content</h2>
-							<div className={"margin-lg"}>
-								<Checkbox onChange={async (e) => setGetCC(e.target.checked)}>
-									Creature Codex
-								</Checkbox>
-								<Checkbox onChange={async (e) => setGetTob(e.target.checked)}>
-									Tome of Beasts
-								</Checkbox>
+								<PrimaryButton
+									className={"margin-md-top"}
+									onClick={async () => {
+										await renameWorld({worldId: currentWorld._id, newName});
+									}}
+									loading={loading}
+								>
+									Submit
+								</PrimaryButton>
 							</div>
 							<div className={"margin-lg-top"}>
-								<Button
-									type={"primary"}
-									loading={contentLoading}
-									onClick={async () => {
-										await load5eContent({
-											worldId: currentWorld._id,
-											creatureCodex: getCC,
-											tomeOfBeasts: getTob,
-										});
-										history.push(
-											`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
-										);
-									}}
-								>
-									Load
-								</Button>
+								<FullScreenModal title={"Loading 5e content ..."} visible={contentLoading} closable={false} >
+									<LoadingView />
+								</FullScreenModal>
+								<h2>Load 5e Content</h2>
+								<div className={"margin-lg"}>
+									<PrimaryCheckbox checked={getCC} onChange={(checked) => setGetCC(checked)}>
+										Creature Codex
+									</PrimaryCheckbox>
+									<PrimaryCheckbox checked={getTob} onChange={(checked) => setGetTob(checked)}>
+										Tome of Beasts
+									</PrimaryCheckbox>
+								</div>
+								<div className={"margin-lg-top"}>
+									<PrimaryButton
+										loading={contentLoading}
+										onClick={async () => {
+											await load5eContent({
+												worldId: currentWorld._id,
+												creatureCodex: getCC,
+												tomeOfBeasts: getTob,
+											});
+											history.push(
+												`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
+											);
+										}}
+									>
+										Load
+									</PrimaryButton>
+								</div>
 							</div>
-						</Col>
-						<Col span={4} />
-					</Row>
-				</>
-			)}
+						</>
+					)}
+				</div>
+			</ColumnedContent>
+
 		</div>
 	);
 };

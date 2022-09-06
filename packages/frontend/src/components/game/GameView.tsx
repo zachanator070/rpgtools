@@ -2,12 +2,12 @@ import React, { useEffect} from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LoadingView from "../LoadingView";
 import GameContent from "./GameContent";
-import { Modal} from "antd";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
 import useMyGames from "../../hooks/game/useMyGames";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
+import useModal from "../widgets/useModal";
 
 export default function GameView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
@@ -15,6 +15,8 @@ export default function GameView() {
 	const { currentUser } = useCurrentUser();
 	const { refetch } = useMyGames();
 	const { data: mapChangeGame } = useGameMapChangeSubscription();
+
+	const {modalWarning} = useModal();
 
 	const history = useHistory();
 
@@ -27,9 +29,8 @@ export default function GameView() {
 				}
 			}
 			if (hostGone && currentGame.host._id !== currentUser._id) {
-				Modal.warning({
+				modalWarning({
 					title: "Host Gone",
-					closable: false,
 					content: (
 						<>
 							<p>The host has left the game. This game has ended.</p>

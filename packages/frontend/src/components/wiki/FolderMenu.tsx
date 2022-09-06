@@ -1,26 +1,29 @@
 import React, {ReactElement, useState} from "react";
-import { Dropdown, Form, Menu, Modal, Input, Button, Upload } from "antd";
-import {
-	DeleteOutlined,
-	DownloadOutlined,
-	EditOutlined,
-	FileAddOutlined,
-	FolderAddOutlined,
-	ImportOutlined,
-	TeamOutlined,
-	UploadOutlined,
-} from "@ant-design/icons";
 import useCreateWiki from "../../hooks/wiki/useCreateWiki";
 import useCreateFolder from "../../hooks/wiki/useCreateFolder";
 import useRenameFolder from "../../hooks/wiki/useRenameFolder";
-import SelectFolder from "../select/SelectFolder";
-import useMoveFolder from "../../hooks/wiki/useMoveFolder";
 import useDeleteFolder from "../../hooks/wiki/useDeleteFolder";
-import ToolTip from "../ToolTip";
+import ToolTip from "../widgets/ToolTip";
 import useImportContent from "../../hooks/world/useImportContent";
 import PermissionEditor from "../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import {WikiFolder} from "../../types";
+import MoveFolderModal from "../modals/MoveFolderModal";
+import useModal from "../widgets/useModal";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/input/InputForm";
+import TextInput from "../widgets/input/TextInput";
+import FormItem from "../widgets/input/FormItem";
+import FileInput from "../widgets/input/FileInput";
+import AddFileIcon from "../widgets/icons/AddFileIcon";
+import EditIcon from "../widgets/icons/EditIcon";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
+import UploadIcon from "../widgets/icons/UploadIcon";
+import DownloadIcon from "../widgets/icons/DownloadIcon";
+import PeopleIcon from "../widgets/icons/PeopleIcon";
+import ImportIcon from "../widgets/icons/ImportIcon";
+import AddFolderIcon from "../widgets/icons/AddFolderIcon";
+import ContextMenu from "../widgets/ContextMenu";
 
 interface FolderMenuProps {
 	folder: WikiFolder;
@@ -31,107 +34,116 @@ interface FolderMenuProps {
 export default function FolderMenu({ folder, children, refetch }: FolderMenuProps) {
 	const { createWiki } = useCreateWiki();
 	const { createFolder } = useCreateFolder();
-	const { renameFolder } = useRenameFolder();
-	const { moveFolder } = useMoveFolder();
+	const { renameFolder, loading: renameLoading, errors: renameErrors } = useRenameFolder();
 	const { deleteFolder } = useDeleteFolder();
+	const [selectedImportFile, setSelectedImportFile] = useState(null);
 
-	const { importContent, loading: importLoading } = useImportContent();
+	const { importContent, loading: importLoading, errors: importErrors } = useImportContent();
 	const [renameModalVisibility, setRenameModalVisibility] = useState(false);
 	const [moveFolderModalVisibility, setMoveFolderModalVisibility] = useState(false);
 	const [importModalVisibility, setImportModalVisibility] = useState(false);
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
-	const layout = {
-		labelCol: { span: 8 },
-		wrapperCol: { span: 16 },
-	};
-	const tailLayout = {
-		wrapperCol: { offset: 8, span: 16 },
-	};
+	const {modalConfirm} = useModal();
 
 	const canWriteMenu = [
-		<Menu.Item
+		<div
 			key="createWiki"
 			onClick={async () => {
 				await createWiki({name: "New Page", folderId: folder._id});
 			}}
 		>
-			<FileAddOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<AddFileIcon />
+			</span>
 			New Wiki Page
-		</Menu.Item>,
-		<Menu.Item
+		</div>,
+		<div
 			key="createFolder"
 			onClick={async () => {
 				await createFolder({parentFolderId: folder._id, name: "New Folder"});
 			}}
 		>
-			<FolderAddOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<AddFolderIcon />
+			</span>
 			New Folder
-		</Menu.Item>,
-		<Menu.Item
+		</div>,
+		<div
 			key="renameFolder"
 			onClick={async () => {
 				setRenameModalVisibility(true);
 			}}
 		>
-			<EditOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<EditIcon />
+			</span>
 			Rename Folder
-		</Menu.Item>,
-		<Menu.Item
+		</div>,
+		<div
 			key="moveFolder"
 			onClick={async () => {
 				setMoveFolderModalVisibility(true);
 			}}
 		>
-			<ImportOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<ImportIcon />
+			</span>
 			Move Folder
-		</Menu.Item>,
-		<Menu.Item
+		</div>,
+		<div
 			key="deleteFolder"
 			onClick={() => {
-				Modal.confirm({
+				modalConfirm({
 					title: "Confirm Delete",
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
 					onOk: async () => {
 						await deleteFolder({folderId: folder._id});
 					},
-					onCancel: () => {},
 				});
 			}}
 		>
-			<DeleteOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<DeleteIcon />
+			</span>
 			Delete Folder
-		</Menu.Item>,
-		<Menu.Item
+		</div>,
+		<div
 			key="importFolder"
 			onClick={async () => {
 				setImportModalVisibility(true);
 			}}
 		>
-			<UploadOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<UploadIcon />
+			</span>
 			Import Content
-		</Menu.Item>,
+		</div>,
 	];
 
 	const menu = [
-		<Menu.Item
+		<div
 			key="exportFolder"
 			onClick={() => {
 				window.location.href = `/export/WikiFolder/${folder._id}`;
 			}}
 		>
-			<DownloadOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<DownloadIcon />
+			</span>
 			Export Folder
-		</Menu.Item>,
-		<Menu.Item
+		</div>,
+		<div
 			key="permissions"
 			onClick={() => {
 				setPermissionModalVisibility(true);
 			}}
 		>
-			<TeamOutlined />
+			<span style={{marginRight: '.5em'}}>
+				<PeopleIcon />
+			</span>
 			Folder Permissions
-		</Menu.Item>,
+		</div>,
 	];
 	if (folder.canWrite) {
 		menu.unshift(...canWriteMenu);
@@ -144,152 +156,96 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 					event.stopPropagation();
 				}}
 			>
-				<Modal
-					footer={null}
+				<FullScreenModal
 					title={`Rename ${folder.name}`}
 					visible={renameModalVisibility}
-					onCancel={() => setRenameModalVisibility(false)}
+					setVisible={() => setRenameModalVisibility(false)}
 				>
-					<Form
-						{...layout}
-						onFinish={async ({ newName }) => {
+					<InputForm
+						loading={renameLoading}
+						errors={renameErrors}
+						onSubmit={async ({ newName }) => {
 							setRenameModalVisibility(false);
 							await renameFolder({folderId: folder._id, name: newName});
 						}}
 					>
-						<Form.Item name={"newName"} label={"New Name"}>
-							<Input />
-						</Form.Item>
-						<Form.Item {...tailLayout}>
-							<Button type="primary" htmlType="submit">
-								Submit
-							</Button>
-						</Form.Item>
-					</Form>
-				</Modal>
-				<Modal
-					footer={null}
-					title={`Move ${folder.name}`}
-					visible={moveFolderModalVisibility}
-					onCancel={() => setMoveFolderModalVisibility(false)}
-				>
-					<Form
-						{...layout}
-						onFinish={async ({ newFolder }) => {
-							setMoveFolderModalVisibility(false);
-							await moveFolder({
-								folderId: folder._id,
-								parentFolderId: newFolder,
-							});
-						}}
-					>
-						<Form.Item label={"New Parent Folder"} name={"newFolder"}>
-							<SelectFolder />
-						</Form.Item>
-						<Form.Item {...tailLayout}>
-							<Button type="primary" htmlType="submit">
-								Submit
-							</Button>
-						</Form.Item>
-					</Form>
-				</Modal>
-				<Modal
+						<FormItem label={"New Name"}>
+							<TextInput name={"newName"} />
+						</FormItem>
+					</InputForm>
+				</FullScreenModal>
+				<MoveFolderModal folder={folder} visibility={moveFolderModalVisibility} setVisibility={setMoveFolderModalVisibility}/>
+				<FullScreenModal
 					title={"Import Content"}
 					visible={importModalVisibility}
-					footer={null}
-					onCancel={() => setImportModalVisibility(false)}
+					setVisible={() => setImportModalVisibility(false)}
 				>
 					<div className={"margin-lg-top"}>
-						<Form
-							{...layout}
-							onFinish={async ({ file }) => {
+						<InputForm
+							loading={importLoading}
+							errors={importErrors}
+							onSubmit={async () => {
 
 								await importContent({
 									folderId: folder._id,
-									zipFile: file[0].originFileObj,
+									zipFile: selectedImportFile.fileList[0].originFileObj,
 								},
 								{
 									onCompleted: async () => setImportModalVisibility(false)
 								});
 							}}
 						>
-							<Form.Item
+							<FormItem
 								label={
 									<div>
-										<ToolTip>
-											Supported file types: <br />
-											<ul>
-												<li>.zip</li>
-											</ul>
-										</ToolTip>{" "}
-										File
+										<ToolTip
+											title={<>
+												Supported file types:
+												<br />
+												<ul>
+													<li>.zip</li>
+												</ul>
+											</>}
+										/>
+										<span style={{marginLeft: ".5em"}}>
+											File
+										</span>
 									</div>
 								}
-								name="file"
-								rules={[
-									{ required: true, message: "File required" },
-									{
-										validator: async (rule, value) => {
-											// this function has to be async b/c the validator has to return a promise
-											if (!value || value.length !== 1) {
-												return;
-											}
-											const file = value[0];
-											const supportedTypes = ["zip"];
-											const parts = file.name.split(".");
+								required={true}
+								validationRules={[
+									async (value) => {
+										// this function has to be async b/c the validator has to return a promise
+										if (!value || value.length !== 1) {
+											return;
+										}
+										const file = value[0];
+										const supportedTypes = ["zip"];
+										const parts = file.name.split(".");
 
-											const type = parts.length > 0 ? parts[parts.length - 1] : null;
-											if (!supportedTypes.includes(type)) {
-												throw new Error(`File type ${type} not supported`);
-											}
-										},
+										const type = parts.length > 0 ? parts[parts.length - 1] : null;
+										if (!supportedTypes.includes(type)) {
+											throw new Error(`File type ${type} not supported`);
+										}
 									},
 								]}
-								getValueFromEvent={(e) => {
-									return e.fileList.length > 0 ? [e.fileList[0]] : [];
-								}}
-								valuePropName="fileList"
 							>
-								<Upload multiple={false} beforeUpload={() => false}>
-									<Button icon={<UploadOutlined />}>Select File</Button>
-								</Upload>
-							</Form.Item>
-							<Form.Item {...tailLayout}>
-								<Button type="primary" htmlType="submit" loading={importLoading}>
-									Submit
-								</Button>
-							</Form.Item>
-						</Form>
+								<FileInput onChange={setSelectedImportFile}/>
+							</FormItem>
+						</InputForm>
 					</div>
-				</Modal>
-				<Modal
-					footer={null}
+				</FullScreenModal>
+				<FullScreenModal
 					title={`Permissions for ${folder.name}`}
 					visible={permissionModalVisibility}
-					onCancel={() => setPermissionModalVisibility(false)}
-					width={750}
+					setVisible={() => setPermissionModalVisibility(false)}
 				>
 					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={async () => {await refetch()}}/>
-				</Modal>
+				</FullScreenModal>
 			</div>
-			<Dropdown
-				overlay={
-					<Menu
-						onClick={(event) => {
-							event.domEvent.stopPropagation();
-						}}
-					>
-						{menu.length > 0 ? (
-							menu
-						) : (
-							<Menu.Item>You don't have permission to do anything here</Menu.Item>
-						)}
-					</Menu>
-				}
-				trigger={["contextMenu"]}
-			>
+			<ContextMenu menu={menu}>
 				<div>{children}</div>
-			</Dropdown>
+			</ContextMenu>
 		</div>
 	);
 };

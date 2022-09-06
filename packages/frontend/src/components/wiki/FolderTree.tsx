@@ -3,17 +3,15 @@ import useWikisInFolder from "../../hooks/wiki/useWikisInFolder";
 import useFolders from "../../hooks/wiki/useFolders";
 import LoadingView from "../LoadingView";
 import { useEffect, useState } from "react";
-import {
-	DownOutlined,
-	FileTextOutlined,
-	FolderOpenOutlined,
-	FolderOutlined,
-} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import FolderMenu from "./FolderMenu";
 import { useParams } from "react-router-dom";
 import useGetFolderPath from "../../hooks/wiki/useGetFolderPath";
 import {WikiFolder} from "../../types";
+import DownArrowIcon from "../widgets/icons/DownArrowIcon";
+import FolderIcon from "../widgets/icons/FolderIcon";
+import OpenFolderIcon from "../widgets/icons/OpenFolderIcon";
+import FileIcon from "../widgets/icons/FileIcon";
 
 interface FolderTreeProps {
 	folder: WikiFolder;
@@ -61,11 +59,11 @@ export default function FolderTree({ folder, initialExpanded, indent = 0, refetc
 					}}
 					to={`/ui/world/${wiki.world._id}/wiki/${wiki._id}/view`}
 				>
-					<FileTextOutlined
-						style={{
-							marginRight: "5px",
-						}}
-					/>
+					<span style={{
+						marginRight: "5px",
+					}}>
+						<FileIcon/>
+					</span>
 					{wiki.name}
 				</Link>
 			</div>
@@ -98,14 +96,14 @@ export default function FolderTree({ folder, initialExpanded, indent = 0, refetc
 			: "arrow-rotate-back"
 		: null;
 	const arrow = (
-		<DownOutlined
+		<DownArrowIcon
 			style={{
 				animation: arrowClass && `${arrowClass} .5s`,
 				transform: !expanded && "rotate(-90deg)",
 			}}
 		/>
 	);
-	const folderIcon = expanded ? <FolderOpenOutlined /> : <FolderOutlined />;
+	const folderIcon = expanded ? <OpenFolderIcon /> : <FolderIcon />;
 
 	const childrenFolders = folder.children.map((child) =>
 		folders.find((otherFolder) => otherFolder._id === child._id)

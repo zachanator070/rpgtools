@@ -6,7 +6,7 @@ export const ADMIN_PASSWORD = "admin";
 export const ADMIN_EMAIL = "admin@gmail.com";
 
 export const TEST_USER_USERNAME = "tester";
-export const TEST_USER_PASSWORD = "password";
+export const TEST_USER_PASSWORD = "tester";
 export const TEST_USER_EMAIL = "tester@gmail.com";
 
 export const MIDDLE_EARTH_MAP_URL = "http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/map/6250f18b8f489b1a4cf78362";

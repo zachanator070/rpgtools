@@ -1,14 +1,12 @@
 name: CI
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
 
-  build:
+  CI-Tests:
 
     runs-on: ubuntu-latest
 
@@ -29,8 +27,3 @@ jobs:
       with:
         name: seed_logs
         path: /home/runner/work/rpgtools/rpgtools/packages/frontend/seed.log
-    - name: Publish Docker Image
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: make publish

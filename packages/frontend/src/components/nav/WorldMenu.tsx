@@ -1,56 +1,58 @@
 import React, { useState } from "react";
-import { Button, Dropdown, Menu } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import LoadingView from "../LoadingView";
-import { DownOutlined } from "@ant-design/icons";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import CreateWorldModal from "../modals/CreateWorldModal";
 import SelectWorldModal from "../modals/SelectWorldModal";
+import SecondaryButton from "../widgets/SecondaryButton";
+import DropdownMenu from "../widgets/DropdownMenu";
+import useServerConfig from "../../hooks/server/useServerConfig";
+import DownArrowIcon from "../widgets/icons/DownArrowIcon";
 
 export default function WorldMenu() {
 	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);
 	const [selectWorldModalVisibility, setSelectWorldModalVisibility] = useState(false);
 
-	const { currentUser, loading } = useCurrentUser();
+	const {serverConfig, loading: serverConfigLoading} = useServerConfig();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 
-	if (loading || worldLoading) {
+	if (worldLoading || serverConfigLoading) {
 		return <LoadingView />;
 	}
 
-	const menu = (
-		<Menu>
-			{currentUser.username !== ANON_USERNAME && (
-				<Menu.Item key="0">
-					<a href="#" onClick={async () => setCreateWorldModalVisibility(true)}>
-						New World
-					</a>
-				</Menu.Item>
-			)}
-			<Menu.Item key="1">
-				<SelectWorldModal
-					visibility={selectWorldModalVisibility}
-					setVisibility={async (visibility: boolean) => setSelectWorldModalVisibility(visibility)}
-				/>
-				<a href="#" onClick={async () => setSelectWorldModalVisibility(true)}>
-					Select World
+	let menu = [
+		<div key={'selectWorld'} onClick={() => setSelectWorldModalVisibility(true)}>
+			<a href="#">
+				Select World
+			</a>
+		</div>
+	];
+
+	if (serverConfig.canCreateWorlds) {
+		menu = [
+			<div key={'createWorld'} onClick={() => setCreateWorldModalVisibility(true)}>
+				<a href="#">
+					New World
 				</a>
-			</Menu.Item>
-		</Menu>
-	);
+			</div>,
+			...menu
+		];
+	}
 
 	return (
 		<span id={'worldMenu'}>
+			<SelectWorldModal
+				visibility={selectWorldModalVisibility}
+				setVisibility={setSelectWorldModalVisibility}
+			/>
 			<CreateWorldModal
 				visibility={createWorldModalVisibility}
-				setVisibility={async (visibility: boolean) => setCreateWorldModalVisibility(visibility)}
+				setVisibility={setCreateWorldModalVisibility}
 			/>
-			<Dropdown overlay={menu} trigger={["click"]}>
-				<Button>
-					{currentWorld ? currentWorld.name : "No World Selected"} <DownOutlined />
-				</Button>
-			</Dropdown>
+			<DropdownMenu menu={menu}>
+				<SecondaryButton onClick={(e) => e.preventDefault()}>
+					{currentWorld ? currentWorld.name : "No World Selected"} <DownArrowIcon />
+				</SecondaryButton>
+			</DropdownMenu>
 		</span>
 	);
 };

@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
-import { Select, Spin } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 import useSearchUsers from "../../hooks/authentication/useSearchUsers";
+import DropdownSelect from "../widgets/DropdownSelect";
+import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectUserProps {
 	onChange: (userId: string) => Promise<any>;
@@ -15,36 +15,31 @@ export default function SelectUser({ onChange, style }: SelectUserProps) {
 	let options = [];
 	if(users){
 		options = users.docs.map((user) => {
-			return (
-				<Select.Option key={user._id} value={user._id}>
-					{user.username}
-				</Select.Option>
-			);
+			return {
+				value: user._id,
+				label: user.username
+			};
 		});
 	} 
 
 	return (
-		<Select
+		<DropdownSelect
 			id={'selectUserInput'}
-			showSearch
 			value={value}
 			showArrow={false}
-			filterOption={false}
-			notFoundContent={loading ? <Spin size="small" /> : null}
 			onSearch={async (term) => {
 				await searchUsers({username: term});
 			}}
-			onSelect={async (newValue) => {
+			onChange={async (newValue) => {
 				await setValue(newValue);
 				if (onChange) {
 					await onChange(newValue);
 				}
 			}}
-			placeholder="Search for a user"
+			helpText="Search for a user"
 			style={style ? style : { width: 200 }}
-			suffixIcon={<SearchOutlined />}
-		>
-			{options}
-		</Select>
+			icon={<SearchIcon />}
+			options={options}
+		/>
 	);
 };

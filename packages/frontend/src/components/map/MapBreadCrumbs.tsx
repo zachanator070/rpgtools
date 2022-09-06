@@ -1,10 +1,10 @@
 import React, {ReactElement} from "react";
-import { Breadcrumb } from "antd";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link } from "react-router-dom";
 import {Pin, Place} from "../../types";
 import usePins from "../../hooks/map/usePins";
+import Breadcrumbs from "../widgets/Breadcrumbs";
 
 export default function MapBreadCrumbs() {
 	const { currentMap, loading } = useCurrentMap();
@@ -41,18 +41,17 @@ export default function MapBreadCrumbs() {
 
 	const breadCrumbs: ReactElement[] = [];
 	for (let map of path) {
+		const url = `/ui/world/${currentWorld._id}/map/${map._id}`
 		breadCrumbs.push(
-			<Breadcrumb.Item key={map._id}>
-				<Link to={`/ui/world/${currentWorld._id}/map/${map._id}`}>
-					{map.name}
-				</Link>
-			</Breadcrumb.Item>
+			<Link to={url} key={url}>
+				{map.name}
+			</Link>
 		);
 	}
 
 	return (
 		<div className="breadcrumbs">
-			<Breadcrumb>{breadCrumbs}</Breadcrumb>
+			<Breadcrumbs>{breadCrumbs}</Breadcrumbs>
 		</div>
 	);
 };

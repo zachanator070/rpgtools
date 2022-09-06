@@ -1,9 +1,9 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Modal } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateModel from "../../hooks/model/useCreateModel";
 import ModelForm from "./ModelForm";
+import FullScreenModal from "../widgets/FullScreenModal";
 
 interface CreateModelModalProps {
 	visibility: boolean;
@@ -13,7 +13,7 @@ interface CreateModelModalProps {
 export default function CreateModelModal({ visibility, setVisibility }: CreateModelModalProps) {
 	const { currentWorld } = useCurrentWorld();
 
-	const { createModel, loading } = useCreateModel(async (data) => {
+	const { createModel, loading, errors } = useCreateModel(async (data) => {
 		await setVisibility(false);
 		history.push(
 			`/ui/world/${currentWorld._id}/model/${data._id}/view`
@@ -22,20 +22,16 @@ export default function CreateModelModal({ visibility, setVisibility }: CreateMo
 	const history = useHistory();
 
 	return (
-		<Modal
+		<FullScreenModal
 			title={"Create New Model"}
 			visible={visibility}
-			onCancel={async () => {
-				await setVisibility(false);
-			}}
-			width={650}
-			footer={null}
+			setVisible={setVisibility}
 		>
 			<ModelForm
 				callback={async (values) => {
 					await createModel({
 						name: values.name,
-						file: values.file[0].originFileObj,
+						file: values.file ? values.file.fileList[0].originFileObj : undefined,
 						depth: parseFloat(values.depth),
 						width: parseFloat(values.width),
 						height: parseFloat(values.height),
@@ -44,7 +40,8 @@ export default function CreateModelModal({ visibility, setVisibility }: CreateMo
 					});
 				}}
 				loading={loading}
+				errors={errors}
 			/>
-		</Modal>
+		</FullScreenModal>
 	);
 };

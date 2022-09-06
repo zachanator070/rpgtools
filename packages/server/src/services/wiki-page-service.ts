@@ -270,7 +270,7 @@ export class WikiPageService {
 		return foundWiki;
 	};
 
-	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean, page: number, unitOfWork: UnitOfWork): Promise<PaginatedResult<WikiPage>>  => {
+	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean, hasModel: boolean, page: number, unitOfWork: UnitOfWork): Promise<PaginatedResult<WikiPage>>  => {
 		const world = await unitOfWork.worldRepository.findById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");
@@ -292,6 +292,13 @@ export class WikiPageService {
 		for (let doc of results.docs) {
 			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context))) {
 				continue;
+			}
+			if (hasModel !== undefined) {
+				if (hasModel && !(doc as ModeledPage).pageModel) {
+					continue;
+				} else if (!hasModel && (doc as ModeledPage).pageModel) {
+					continue;
+				}
 			}
 			if (await doc.authorizationPolicy.canRead(context, unitOfWork)) {
 				docs.push(doc);

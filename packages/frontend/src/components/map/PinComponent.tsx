@@ -1,5 +1,4 @@
 import React, {useContext, useState} from "react";
-import { Popover } from "antd";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import EditPinModal from "../modals/EditPinModal";
@@ -8,6 +7,7 @@ import {Pin} from "../../types";
 import MapWikiContext from "../../MapWikiContext";
 
 import './PinComponent.css';
+import PopoverBubble from "../widgets/PopoverBubble";
 
 interface PinComponentProps {
 	pin: Pin;
@@ -76,17 +76,14 @@ export default function PinComponent({ pin, translate }: PinComponentProps) {
 	const coordinates = translate(pin.x, pin.y);
 
 	return (
-		<>
+		<div>
 			<EditPinModal
 				visibility={editPinModalVisibility}
 				setVisibility={async (visible) => setEditPinModalVisibility(visible)}
 				pinId={pin._id}
 			/>
-			<Popover
+			<PopoverBubble
 				content={pinPopupContent}
-				trigger="click"
-				key={pin._id}
-				overlayStyle={{ zIndex: 10 }}
 				visible={visible}
 				onVisibleChange={async (newVisible) => setVisible(newVisible)}
 			>
@@ -98,7 +95,7 @@ export default function PinComponent({ pin, translate }: PinComponentProps) {
 						top: coordinates[1] - 5
 					}}
 				/>
-			</Popover>
-		</>
+			</PopoverBubble>
+		</div>
 	);
 };

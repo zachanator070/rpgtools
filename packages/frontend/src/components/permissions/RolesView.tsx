@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { Button, Col, Input, List, Row, Select, Table, Tabs } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
 import LoadingView from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateRole from "../../hooks/authorization/useCreateRole";
@@ -10,24 +8,30 @@ import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
 import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
 import AddRolePermission from "./AddRolePermission";
-import {PermissionAssignment, User} from "../../types";
+import {Role, User} from "../../types";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
+import ColumnedContent from "../widgets/ColumnedContent";
+import PrimaryButton from "../widgets/PrimaryButton";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
+import TextInput from "../widgets/input/TextInput";
+import ItemList from "../widgets/ItemList";
+import DropdownSelect from "../widgets/DropdownSelect";
+import TabCollection, {TabPaneProps} from "../widgets/TabCollection";
+import FormattedTable from "../widgets/FormattedTable";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
 
-interface TabulatedPermissionAssignment extends PermissionAssignment {
-	key: string;
-}
 
 export default function RolesView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
 	const {roles, loading: rolesLoading, refetch} = useSearchRoles({});
 	const { createRole, loading: createRoleLoading } = useCreateRole();
-	const { revokeRolePermission } = useRevokeRolePermission({callback: async () => {await refetch()}});
-	const { deleteRole } = useDeleteRole();
-	const { removeUserRole } = useRemoveUserRole();
+	const { revokeRolePermission, loading: revokeRolePermissionLoading } = useRevokeRolePermission({callback: async () => {await refetch()}});
+	const { deleteRole, loading: deleteRoleLoading } = useDeleteRole();
+	const { removeUserRole, loading: removeUserRoleLoading } = useRemoveUserRole();
 	const [newRoleName, setNewRoleName] = useState<string>();
 	const [selectedRoleId, setSelectedRoleId] = useState<string>(null);
 	const [userIdToAdd, setUserIdToAdd] = useState<string>(null);
-	const { addUserRole } = useAddUserRole();
+	const { addUserRole, loading: addUserRoleLoading } = useAddUserRole();
 
 	if (currentWorldLoading || rolesLoading) {
 		return <LoadingView />;
@@ -42,181 +46,160 @@ export default function RolesView() {
 		}
 	}
 
+	const getTabs = (role: Role): TabPaneProps[] => {
+		const tabs: TabPaneProps[] = [
+			{
+				title: "Permissions in this role",
+				children: <>
+					<FormattedTable
+						headers={[
+							"Permission",
+							"Subject Type",
+							"Subject Name",
+							"Remove Permission",
+						]}
+						data={
+							role.permissions.map(assignment => [
+								assignment.permission,
+								assignment.subjectType,
+								assignment.subject.name,
+								assignment.subject.canAdmin ? (
+									<PrimaryDangerButton
+										loading={revokeRolePermissionLoading}
+										className={"margin-md-left"}
+										onClick={async () => {
+											await revokeRolePermission({
+												roleId: role._id,
+												permission: assignment.permission,
+												subjectId: assignment.subject._id
+											});
+										}}
+									>
+										<DeleteIcon />
+									</PrimaryDangerButton>
+								) : (
+									<></>
+								)
+							])
+						}
+						scrollHeight={250}
+					/>
+					<AddRolePermission role={role} refetch={async () => {await refetch()}}/>
+				</>
+			},
+			{
+				title: "Users with this role",
+				children: <>
+					<ItemList>
+						{role.members.map((item: User) => {
+							return <React.Fragment key={item._id}>
+								{item.username}
+								{role.canWrite && (
+									<PrimaryDangerButton
+										loading={removeUserRoleLoading}
+										className={"margin-md-left"}
+										onClick={async () => {
+											await removeUserRole({userId: item._id, roleId: role._id});
+										}}
+									>
+										<DeleteIcon />
+									</PrimaryDangerButton>
+								)}
+							</React.Fragment>;
+						})}
+					</ItemList>
+					{role.canWrite && (
+						<div className={'margin-lg-top'}>
+							<SelectUser onChange={async (userId: string) => setUserIdToAdd(userId)} />
+							<PrimaryButton
+								loading={addUserRoleLoading}
+								className={"margin-md-left"}
+								onClick={async () => {
+									await addUserRole({userId: userIdToAdd, roleId: role._id});
+								}}
+								disabled={userIdToAdd === null}
+							>
+								Add User
+							</PrimaryButton>
+						</div>
+					)}
+				</>
+			}
+		];
+		if (role.canWrite) {
+			tabs.push({
+				title: 'Delete this role',
+				children: <>
+					<PrimaryDangerButton
+						loading={deleteRoleLoading}
+						className={"margin-md-left"}
+						onClick={async () => {
+							await deleteRole({roleId: role._id});
+							await setSelectedRoleId(null);
+						}}
+					>
+						Delete this role
+						<DeleteIcon />
+					</PrimaryDangerButton>
+				</>
+			})
+		}
+		return tabs;
+	};
+
 	return (
-		<div className={"margin-md"}>
+		<div className={"margin-md padding-lg-bottom"}>
 			<h1>Roles</h1>
 			<hr />
-			{currentWorld.canAddRoles && (
-				<Row className={"margin-xlg-top"}>
-					<Col span={4} />
-					<Col span={16}>
-						<h2>Add New Role</h2>
-						<div className={"flex margin-lg-top"}>
-							<span>Role Name:</span>
-							<div className={"margin-lg-left"}>
-								<Input
-									id={'newRoleName'}
-									value={newRoleName}
-									onChange={async (e) => {
-										await setNewRoleName(e.target.value);
-									}}
-								/>
-							</div>
-							<Button
-								className={"margin-lg-left"}
-								disabled={createRoleLoading}
-								onClick={async () => {
-									await createRole({worldId: currentWorld._id, name: newRoleName});
-								}}
-								type={"primary"}
-							>
-								Create
-							</Button>
-						</div>
-					</Col>
-					<Col span={4} />
-				</Row>
-			)}
-			<Row className={"margin-xlg-top"}>
-				<Col span={4} />
 
-				<Col span={16}>
+			<ColumnedContent>
+				<>
 					<h2 className={"margin-lg-bottom"}>Manage Roles</h2>
 					<span className={"margin-lg-right"}>Role:</span>
-					<Select
+					<DropdownSelect
 						id={'selectRole'}
-						showSearch
 						style={{ width: 200 }}
-						placeholder="Select a role"
-						optionFilterProp="children"
 						value={selectedRoleId}
 						onChange={(roleId: string) => setSelectedRoleId(roleId)}
-					>
-						{roles.docs.map((role) => (
-							<Select.Option key={role._id} value={role._id}>
-								{role.name}
-							</Select.Option>
-						))}
-					</Select>
-					{selectedRole ? (
-						<Tabs defaultActiveKey="1">
-							<Tabs.TabPane tab="Permissions in this role" key="1">
-								<Table
-									columns={[
-										{
-											title: "Permission",
-											dataIndex: "permission",
-											key: "permission",
-										},
-										{
-											title: "Subject Type",
-											dataIndex: "subjectType",
-											key: "subjectType",
-										},
-										{
-											title: "Subject Name",
-											dataIndex: "subjectName",
-											key: "subjectName",
-										},
-										{
-											title: "Remove Permission",
-											dataIndex: "_id",
-											key: "_id",
-											render: (text: string, assignment: TabulatedPermissionAssignment) => {
-												return assignment.subject.canAdmin ? (
-													<Button
-														className={"margin-md-left"}
-														type={"primary"}
-														onClick={async () => {
-															await revokeRolePermission({
-																roleId: selectedRole._id,
-																permission: assignment.permission,
-																subjectId: assignment.subject._id
-															});
-														}}
-														danger
-													>
-														<DeleteOutlined />
-													</Button>
-												) : (
-													<></>
-												);
-											},
-										},
-									]}
-									dataSource={selectedRole.permissions.map((permission) => {
-										return {
-											key: permission._id,
-											subjectName: permission.subject.name,
-											...permission
-										};
-									})}
-									pagination={false}
-									scroll={{ y: 250 }}
-								/>
-								<AddRolePermission role={selectedRole} refetch={async () => {await refetch()}}/>
-							</Tabs.TabPane>
-							<Tabs.TabPane tab="Users with this role" key="2">
-								<List
-									dataSource={selectedRole.members}
-									renderItem={(item: User) => (
-										<List.Item>
-											{item.username}
-											{selectedRole.canWrite && (
-												<Button
-													className={"margin-md-left"}
-													type={"primary"}
-													onClick={async () => {
-														await removeUserRole({userId: item._id, roleId: selectedRole._id});
-													}}
-													danger
-												>
-													<DeleteOutlined />
-												</Button>
-											)}
-										</List.Item>
-									)}
-								/>
-								{selectedRole.canWrite && (
-									<>
-										<SelectUser onChange={async (userId: string) => setUserIdToAdd(userId)} />
-										<Button
-											className={"margin-md-left"}
-											type={"primary"}
-											onClick={async () => {
-												await addUserRole({userId: userIdToAdd, roleId: selectedRole._id});
-											}}
-											disabled={userIdToAdd === null}
-										>
-											Add User
-										</Button>
-									</>
-								)}
-							</Tabs.TabPane>
-							{selectedRole.canWrite && (
-								<Tabs.TabPane tab="Delete this role" key="3">
-									<Button
-										disabled={!selectedRole.canWrite}
-										className={"margin-md-left"}
-										type={"primary"}
-										onClick={async () => {
-											await deleteRole({roleId: selectedRole._id});
-											await setSelectedRoleId(null);
+						options={roles.docs.map((role) => {return {value: role._id, label: role.name}})}
+					/>
+					<div className={'margin-lg-top'}>
+						{selectedRole ?
+							<TabCollection tabs={getTabs(selectedRole)} style={{maxWidth: '60em'}}/>
+							:
+							<>Please select a role</>
+						}
+					</div>
+
+					{currentWorld.canAddRoles && (
+						<div className={'padding-lg-top'}>
+							<h2>Add New Role</h2>
+							<div className={"flex margin-lg-top"}>
+								<span>Role Name:</span>
+								<div className={"margin-lg-left"}>
+									<TextInput
+										id={'newRoleName'}
+										value={newRoleName}
+										onChange={async (e) => {
+											await setNewRoleName(e.target.value);
 										}}
-										danger
-									>
-										Delete this role
-										<DeleteOutlined />
-									</Button>
-								</Tabs.TabPane>
-							)}
-						</Tabs>
-					) : (
-						<div className={"margin-md-top"}>Please select a role</div>
+									/>
+								</div>
+								<PrimaryButton
+									className={"margin-lg-left"}
+									disabled={createRoleLoading}
+									onClick={async () => {
+										await createRole({worldId: currentWorld._id, name: newRoleName});
+									}}
+								>
+									Create
+								</PrimaryButton>
+							</div>
+						</div>
 					)}
-				</Col>
-				<Col span={4} />
-			</Row>
+				</>
+			</ColumnedContent>
+
 		</div>
 	);
 };

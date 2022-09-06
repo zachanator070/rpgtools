@@ -1,43 +1,29 @@
-import React, {useEffect, useState} from "react";
-import { Button, Col, Form, Input, notification, Row } from "antd";
+import React from "react";
 import useUnlockServer from "../../hooks/server/useUnlockServer";
 import { useHistory } from "react-router-dom";
-import { KeyOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import useLogin from "../../hooks/authentication/useLogin";
+import ColumnedContent from "../widgets/ColumnedContent";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import TextInput from "../widgets/input/TextInput";
+import PasswordInput from "../widgets/input/PasswordInput";
+import KeyIcon from "../widgets/icons/KeyIcon";
+import MailIcon from "../widgets/icons/MailIcon";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import InlineMargin from "../widgets/InlineMargin";
 
 export default function ServerSetup() {
-	const [email, setEmail] = useState("");
-	const [unlockCode, setUnlockCode] = useState("");
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [repeatPassword, setRepeatPassword] = useState("");
-	const [unlockError, setUnlockError] = useState("");
-	const { unlockServer, loading } = useUnlockServer();
+	const { unlockServer, loading, errors } = useUnlockServer();
 	const history = useHistory();
 
 	const { login } = useLogin(() => {
 		history.push("/");
 	});
 
-	useEffect(() => {
-		if (unlockError) {
-			notification.error({
-				message: unlockError,
-				placement: 'topLeft'
-			})
-		}
-	}, [unlockError]);
-
-	const formItemLayout = {
-		labelCol: { span: 5 },
-		wrapperCol: { span: 14 },
-	};
-
-	return (
-		<Row>
-			<Col span={4}></Col>
-			<Col span={16}>
-				<div>
+	return <ColumnedContent>
+		<>
+			<div>
+				<div style={{textAlign: 'center'}}>
 					<h1>Server needs unlocking</h1>
 					<p>
 						The server has not been configured with an admin user yet, please
@@ -46,82 +32,33 @@ export default function ServerSetup() {
 						an admin user.
 					</p>
 				</div>
-				<Form layout="horizontal">
-					<Form.Item label="Server Unlock Code" {...formItemLayout}>
-						<Input
-							placeholder="somesecret12345"
-							prefix={<KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={unlockCode}
-							onChange={(e) => setUnlockCode(e.target.value)}
-							name="adminSecret"
-							id="adminSecret"
-							autoComplete="adminSecret"
-						/>
-					</Form.Item>
-					<Form.Item label="Email" {...formItemLayout}>
-						<Input
-							placeholder="zach@thezachcave.com"
-							prefix={<MailOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							name="registerEmail"
-							id="registerEmail"
-							autoComplete="registerEmail"
-						/>
-					</Form.Item>
-					<Form.Item label="Username" {...formItemLayout}>
-						<Input
-							placeholder="DragonSlayer1234"
-							prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							name="registerDisplayName"
-							id="registerDisplayName"
-							autoComplete="registerDisplayName"
-						/>
-					</Form.Item>
-					<Form.Item label="Password" {...formItemLayout}>
-						<Input
-							placeholder="$up3r$3cr37"
-							prefix={<KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							type="password"
-							name="registerPassword"
-							id="registerPassword"
-							autoComplete="registerPassword"
-						/>
-					</Form.Item>
-					<Form.Item label="Repeat Password" {...formItemLayout}>
-						<Input
-							placeholder="$up3r$3cr37"
-							prefix={<KeyOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-							value={repeatPassword}
-							onChange={(e) => setRepeatPassword(e.target.value)}
-							type="password"
-							name="registerRepeatPassword"
-							id="registerRepeatPassword"
-							autoComplete="registerRepeatPassword"
-						/>
-					</Form.Item>
-				</Form>
-				<Button
-					type="primary"
-					htmlType="submit"
-					disabled={loading}
-					onClick={async () => {
-						try {
-							await unlockServer({unlockCode, email, username, password});
-							await login({username, password});
-						} catch (e) {
-							setUnlockError(e.message);
-						}
+
+				<InputForm
+					errors={errors}
+					loading={loading}
+					onSubmit={async ({unlockCode, email, username, password}) => {
+						await unlockServer({unlockCode, email, username, password});
+						await login({username, password});
 					}}
+					buttonText={'Unlock'}
 				>
-					Unlock
-				</Button>
-			</Col>
-			<Col span={4}></Col>
-		</Row>
-	);
+					<FormItem label={<>Server Unlock Code <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
+						<TextInput name={"unlockCode"} id="adminSecret"/>
+					</FormItem>
+					<FormItem label={<>Email <InlineMargin size={1}><MailIcon/></InlineMargin></>}>
+						<TextInput name={"email"} id="registerEmail"/>
+					</FormItem>
+					<FormItem label={<>Username <InlineMargin size={1}><PersonIcon/></InlineMargin></>}>
+						<TextInput name={"username"} id="registerDisplayName"/>
+					</FormItem>
+					<FormItem label={<>Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
+						<PasswordInput name={"password"} id="registerPassword"/>
+					</FormItem>
+					<FormItem label={<>Repeat Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
+						<PasswordInput name={"repeatPassword"} id="registerRepeatPassword"/>
+					</FormItem>
+				</InputForm>
+			</div>
+		</>
+	</ColumnedContent>;
 };

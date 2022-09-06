@@ -15,7 +15,7 @@ describe("world settings permissions", () => {
         });
 
         it("remove role", () => {
-            cy.get('.ant-list-items > :nth-child(1) > .ant-btn').click();
+            cy.get('#removeRole').click();
             cy.get('ul.ant-list-items > li').should('have.length', 2);
         });
 

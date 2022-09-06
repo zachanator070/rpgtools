@@ -28,10 +28,10 @@ export class PaintControls implements GameControls {
 	private drawMeshOpacity: number;
 	private pathBeingPainted: any[];
 	private strokeId: any;
-	private brushType: string;
-	private brushColor: string;
-	private brushFill: boolean;
-	private brushSize: number;
+	private brushType: string = DEFAULT_BRUSH_TYPE;
+	private brushColor: string = DEFAULT_BRUSH_COLOR;
+	private brushFill: boolean = DEFAULT_BRUSH_FILL;
+	private brushSize: number = DEFAULT_BRUSH_SIZE;
 	private strokesAlreadyDrawn: any[];
 	private paintBrushMesh: any;
 	private paintBrushMaterial: any;
@@ -99,21 +99,36 @@ export class PaintControls implements GameControls {
 		this.scene.add(this.paintBrushMesh);
 		this.updateBrushPosition();
 	};
+	getBrushType = () => {
+		return this.brushType;
+	}
+
 	setBrushColor = (color) => {
 		this.brushColor = color;
 		this.paintBrushMaterial.color.setHex(parseInt("0x" + color.substr(1)));
 		this.paintBrushMaterial.needsUpdate = true;
 	};
+	getBrushColor = () => {
+		return this.brushColor;
+	}
+
 	setBrushFill = (fill) => {
 		this.brushFill = fill;
 
 		this.paintBrushMaterial.wireframe = !fill;
 		this.paintBrushMaterial.needsUpdate = true;
 	};
+	getBrushFill = () => {
+		return this.brushFill;
+	}
+
 	setBrushSize = (size) => {
 		this.brushSize = size;
 		this.createPaintBrushMesh();
 	};
+	getBrushSize = () => {
+		return this.brushSize;
+	}
 
 	setupBrush = () => {
 		this.createPaintBrushMesh();

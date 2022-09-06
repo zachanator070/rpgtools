@@ -12,7 +12,7 @@ describe('select world', () => {
     it('select middle earth', () => {
         cy.get('#searchWorld').type('middle earth');
         cy.get('div').contains('Middle Earth').click();
-        cy.get('#selectWorld').click();
+        cy.get('#submit').click();
         cy.location().should((location) => {
             expect(location.href).eq("http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/map/6250f18b8f489b1a4cf78362");
         });
@@ -20,6 +20,6 @@ describe('select world', () => {
 
     it('no found worlds', () => {
         cy.get('#searchWorld').type('asdf');
-        cy.get('#selectWorld').should('be.disabled');
+        cy.get('#submit').should('be.disabled');
     });
 });

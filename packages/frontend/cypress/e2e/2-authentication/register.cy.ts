@@ -17,7 +17,7 @@ describe("register", () => {
        cy.get('#registerDisplayName').type('user');
        cy.get('#registerPassword').type('password');
        cy.get('#registerRepeatPassword').type('password');
-       cy.get('button').contains('Register').click();
+       cy.get('#submit').click();
     });
 
     it('failure', () => {
@@ -26,7 +26,7 @@ describe("register", () => {
         cy.get('#registerDisplayName').type('user');
         cy.get('#registerPassword').type('password');
         cy.get('#registerRepeatPassword').type('password');
-        cy.get('button').contains('Register').click();
+        cy.get('#submit').click();
         cy.get('.ant-modal-body').contains('Register code not valid');
     });
 
