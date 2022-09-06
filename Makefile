@@ -4,7 +4,7 @@ VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
 # Builds rpgtools docker image
-build: ui-prod clean-uncompressed
+build: install-deps ui-prod clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:${VERSION} -f packages/server/Dockerfile .
 
