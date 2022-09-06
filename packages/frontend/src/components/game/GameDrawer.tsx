@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import SlidingDrawer from "../SlidingDrawer";
-import { Tabs } from "antd";
+import SlidingDrawer from "../widgets/SlidingDrawer";
 import GameChat from "./GameChat";
-import ToolOptions from "./ToolOptions";
+import ToolOptions from "./tool-options/ToolOptions";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS, GameRenderer,
@@ -10,11 +9,10 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import DiceOptions from "./DiceOptions";
+import DiceOptions from "./dice-roller/DiceOptions";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
-
-const { TabPane } = Tabs;
+import TabCollection from "../widgets/TabCollection";
 
 const GAME_CONTROLS_WITH_CONTEXT = [
 	SELECT_MODEL_CONTROLS,
@@ -32,21 +30,21 @@ interface GameDrawerProps {
 
 export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: GameDrawerProps) {
 	const [visible, setVisible] = useState<boolean>(true);
-	const [activeKey, setActiveKey] = useState<string>("1");
+	const [activeKey, setActiveKey] = useState<string>("Chat");
 	const { gameChat } = useGameChatSubscription();
 	const { currentCharacter } = useCurrentCharacter();
 
 	useEffect(() => {
 		if (gameChat && gameChat.receiver === "Server" && gameChat.sender === currentCharacter.name) {
 			setVisible(true);
-			setActiveKey("1");
+			setActiveKey("Chat");
 		}
 	}, [gameChat]);
 
 	useEffect(() => {
 		if (GAME_CONTROLS_WITH_CONTEXT.includes(controlsMode)) {
 			setVisible(true);
-			setActiveKey("2");
+			setActiveKey("Tool Options");
 		}
 	}, [controlsMode]);
 
@@ -57,41 +55,32 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 			visible={visible}
 			setVisible={setVisible}
 		>
-			<Tabs
-				defaultActiveKey="1"
+			<TabCollection
 				activeKey={activeKey}
 				onChange={(key) => setActiveKey(key)}
-				type={"card"}
 				style={{
-					paddingTop: "1em"
+					paddingTop: "1em",
+					height: '100%'
 				}}
-			>
-				<TabPane
-					tab="Chat"
-					key="1"
-					style={{
-						height: "100%",
-					}}
-				>
-					<GameChat />
-				</TabPane>
-				<TabPane tab="Tool Options" key="2">
-					<ToolOptions
-						renderer={renderer}
-						controlsMode={controlsMode}
-						setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
-					/>
-				</TabPane>
-				<TabPane
-					tab="Dice"
-					key="3"
-					style={{
-						height: "100%",
-					}}
-				>
-					<DiceOptions />
-				</TabPane>
-			</Tabs>
+				tabs={[
+					{
+						title: 'Chat',
+						children: <GameChat />
+					},
+					{
+						title: 'Tool Options',
+						children: <ToolOptions
+							renderer={renderer}
+							controlsMode={controlsMode}
+							setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
+						/>
+					},
+					{
+						title: 'Dice',
+						children: <DiceOptions />
+					}
+				]}
+			/>
 		</SlidingDrawer>
 	);
 };

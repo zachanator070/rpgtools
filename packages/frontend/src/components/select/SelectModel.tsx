@@ -1,8 +1,8 @@
 import React, {CSSProperties, useState} from "react";
-import { Button, Select, Spin } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 import useSearchModels from "../../hooks/model/useSearchModels";
 import {Model} from "../../types";
+import DropdownSelect from "../widgets/DropdownSelect";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 
 interface SelectModelProps {
 	onChange?: (model: Model) => Promise<any>;
@@ -21,26 +21,21 @@ export default function SelectModel({
 	const [value, setValue] = useState<string>();
 
 	const options = models.map((model) => {
-		return (
-			<Select.Option key={model._id} value={model._id}>
-				{model.name}
-			</Select.Option>
-		);
+		return {
+			value: model._id,
+			label: model.name
+		};
 	});
 
 	return (
 		<div>
-			<Select
-				showSearch
+			<DropdownSelect
 				value={value}
 				defaultValue={defaultModel && defaultModel._id}
-				showArrow={false}
-				filterOption={false}
-				notFoundContent={loading ? <Spin size="small" /> : null}
 				onSearch={async (term) => {
 					await searchModels(term);
 				}}
-				onSelect={async (newValue) => {
+				onChange={async (newValue) => {
 					await setValue(newValue);
 					if (onChange) {
 						for (let model of models) {
@@ -51,23 +46,21 @@ export default function SelectModel({
 						}
 					}
 				}}
-				placeholder="Search for a model"
 				style={style ? style : { width: 200 }}
-				suffixIcon={<SearchOutlined />}
-			>
-				{options}
-			</Select>
+				helpText={"Search for a model"}
+				showArrow={false}
+				options={options}
+			/>
 			{showClear && (
-				<Button
+				<PrimaryDangerButton
 					className={"margin-md-left"}
 					onClick={async () => {
 						await setValue(null);
 						await onChange(null);
 					}}
-					danger={true}
 				>
 					Clear
-				</Button>
+				</PrimaryDangerButton>
 			)}
 		</div>
 	);

@@ -4,6 +4,7 @@ import EventEmitter from "events";
 import {GameControls} from "./GameControls";
 import {PositionedModel} from "../types";
 
+
 export const MODEL_SELECTED_EVENT = "model selected";
 
 export class SelectModelControls extends EventEmitter implements GameControls {
@@ -30,23 +31,23 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 			}
 			return;
 		}
-		if (!this.glow) {
-			const basicMaterial = new MeshBasicMaterial({
-				color: new THREE.Color(0xffff00),
-				transparent: true,
-				opacity: 0.5,
-			});
-			let boxGeometry = new THREE.BoxGeometry(
-				this.selectControls.selectedMeshedModel.positionedModel.model.width,
-				this.selectControls.selectedMeshedModel.positionedModel.model.height,
-				this.selectControls.selectedMeshedModel.positionedModel.model.depth,
-				2,
-				2,
-				2
-			);
-			this.glow = new THREE.Mesh(boxGeometry, basicMaterial);
-			this.scene.add(this.glow);
-		}
+
+		this.scene.remove(this.glow);
+		const basicMaterial = new MeshBasicMaterial({
+			color: new THREE.Color(0xffff00),
+			transparent: true,
+			opacity: 0.5,
+		});
+		let boxGeometry = new THREE.BoxGeometry(
+			this.selectControls.selectedMeshedModel.positionedModel.model.width,
+			this.selectControls.selectedMeshedModel.positionedModel.model.height,
+			this.selectControls.selectedMeshedModel.positionedModel.model.depth,
+			2,
+			2,
+			2
+		);
+		this.glow = new THREE.Mesh(boxGeometry, basicMaterial);
+		this.scene.add(this.glow);
 
 		const boxHeight = this.selectControls.selectedMeshedModel.positionedModel.model.height;
 

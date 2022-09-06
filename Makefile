@@ -1,7 +1,7 @@
 .EXPORT_ALL_VARIABLES:
 
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
-CURRENT_UID=$(id -u):$(id -g)
+CURRENT_UID=$(shell id -u):$(shell id -g)
 
 # Builds rpgtools docker image
 build: ui-prod clean-uncompressed
@@ -22,13 +22,13 @@ clean-deps:
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
-	rm -f dist/app.bundle.js
-	rm -f dist/app.css
+	rm -f packages/frontend/dist/app.bundle.js
+	rm -f packages/frontend/dist/app.css
 
 # runs the js transpiler docker image
-ui-prod: .env
-	docker-compose build ui-builder
-	docker-compose run ui-builder npm run -w packages/frontend start
+ui-prod: .env packages/frontend/dist packages/server/dist
+	echo Current UID: ${CURRENT_UID}
+	NODE_ENV=production npm -w packages/frontend start
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
@@ -40,9 +40,16 @@ prod: build
 	docker-compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-dev: .env
-	mkdir -p packages/frontend/dist
+.PHONY: dev
+dev: .env packages/frontend/dist packages/server/dist
 	docker-compose up server ui-builder
+
+packages/frontend/dist:
+	mkdir -p packages/frontend/dist
+	chmod o+rw -R packages/frontend/dist
+
+packages/server/dist:
+	mkdir -p packages/server/dist
 
 # initializes environment file
 .env:
@@ -66,8 +73,8 @@ restart:
 # pushes built docker container to dockerhub
 publish:
 	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-	docker push zachanator070/rpgtools:latest
 	docker push zachanator070/rpgtools:${VERSION}
+	docker push zachanator070/rpgtools:latest
 
 # performs minimal install on a debian host
 install:
@@ -107,13 +114,13 @@ test-integration:
 
 test-e2e:
 	./wait_for_server.sh
-	> seed.log
+	> packages/frontend/seed.log
 	npm run -w packages/frontend test
 
 dump:
-	sudo rm -rf ./dev/mongodb-init/dump.archive
+	sudo rm -rf ./dev/mongodb-scripts/dump.archive
 	docker-compose exec mongodb mongodump --archive=/mongodb-scripts/dump.archive -d rpgtools
-	sudo chown ${USER}:${USER} ./dev/mongodb-init/dump.archive
+	sudo chown ${USER}:${USER} ./dev/mongodb-scripts/dump.archive
 
 seed:
 	npm run -w packages/frontend seed:middle_earth

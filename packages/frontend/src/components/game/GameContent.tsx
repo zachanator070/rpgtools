@@ -11,7 +11,6 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
 } from "../../rendering/GameRenderer";
-import { Progress, Modal, notification } from "antd";
 import useAddStroke from "../../hooks/game/useAddStroke";
 import useGameStrokeSubscription from "../../hooks/game/useGameStrokeSubscription";
 import GameControlsToolbar from "./GameControlsToolbar";
@@ -23,9 +22,13 @@ import useGameModelDeletedSubscription from "../../hooks/game/useGameModelDelete
 import useAddFogStroke from "../../hooks/game/useAddFogStroke";
 import useGameFogSubscription from "../../hooks/game/useGameFogSubscription";
 import GameWikiDrawer from "./GameWikiDrawer";
-import InitiativeTracker from "./InitiativeTracker";
+import InitiativeTracker from "./initiative-tracker/InitiativeTracker";
 import GameDrawer from "./GameDrawer";
 import {Game} from "../../types";
+import useModal from "../widgets/useModal";
+import FullScreenModal from "../widgets/FullScreenModal";
+import ProgressBar from "../widgets/ProgressBar";
+import useNotification from "../widgets/useNotification";
 
 interface GameContentProps {
 	currentGame: Game;
@@ -41,6 +44,9 @@ export default function GameContent({ currentGame }: GameContentProps) {
 	const { setModelPosition } = useSetModelPosition();
 	const { deletePositionedModel } = useDeletePositionedModel();
 	const { addFogStroke } = useAddFogStroke();
+
+	const {modalConfirm} = useModal();
+	const {errorNotification} = useNotification();
 
 	const [gameWikiId, setGameWikiId] = useState<string>();
 
@@ -71,7 +77,7 @@ export default function GameContent({ currentGame }: GameContentProps) {
 					},
 					setModelPosition,
 					async (positionedModel) => {
-						Modal.confirm({
+						modalConfirm({
 							title: "Confirm Delete",
 							content: (
 								<>
@@ -87,7 +93,6 @@ export default function GameContent({ currentGame }: GameContentProps) {
 									positionedModelId: positionedModel._id,
 								});
 							},
-							closable: false,
 						});
 					},
 					addFogStroke,
@@ -225,13 +230,13 @@ export default function GameContent({ currentGame }: GameContentProps) {
 				}
 				if (needsSetup) {
 					if (!currentGame.map.mapImage) {
-						notification["error"]({
+						errorNotification({
 							message: "Map Render Error",
 							description: `Location: ${currentGame.map.name} has no map image!`,
 						});
 					}
 					if (!currentGame.map.pixelsPerFoot) {
-						notification["error"]({
+						errorNotification({
 							message: "Map Render Error",
 							description: `Location: ${currentGame.map.name} has no "pixel per foot" value set!`,
 						});
@@ -268,21 +273,19 @@ export default function GameContent({ currentGame }: GameContentProps) {
 
 	return (
 		<>
-			<Modal visible={showLoading} footer={null} closable={false}>
+			<FullScreenModal title={"Game Loading"} visible={showLoading} closable={false}>
 				<div className={"margin-lg"}>
 					Loaded {urlLoading}
 					<br />
-					<Progress
+					<ProgressBar
 						strokeColor={{
 							from: "#108ee9",
 							to: "#87d068",
 						}}
 						percent={loadingProgress * 100}
-						status="active"
-						showInfo={false}
 					/>
 				</div>
-			</Modal>
+			</FullScreenModal>
 			<div
 				style={{
 					flexGrow: 1,

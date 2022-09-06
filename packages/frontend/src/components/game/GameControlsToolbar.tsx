@@ -1,18 +1,4 @@
 import React, { useState } from "react";
-import { Tooltip } from "antd";
-import {
-	CloudOutlined,
-	DeleteOutlined,
-	DragOutlined,
-	HighlightOutlined,
-	QuestionCircleOutlined,
-	RedoOutlined,
-	VideoCameraOutlined,
-	SelectOutlined,
-	EnvironmentOutlined,
-	PlusCircleOutlined,
-	TeamOutlined,
-} from "@ant-design/icons";
 import {
 	ADD_MODEL_CONTROLS,
 	CAMERA_CONTROLS,
@@ -28,6 +14,18 @@ import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LeaveGameButton from "./LeaveGameButton";
 import PermissionModal from "../modals/PermissionModal";
 import { GAME } from "@rpgtools/common/src/type-constants";
+import ToolTip from "../widgets/ToolTip";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
+import QuestionMarkIcon from "../widgets/icons/QuestionMarkIcon";
+import CloudIcon from "../widgets/icons/CloudIcon";
+import HighlightIcon from "../widgets/icons/HighlightIcon";
+import RedoIcon from "../widgets/icons/RedoIcon";
+import AddIcon from "../widgets/icons/AddIcon";
+import CameraIcon from "../widgets/icons/CameraIcon";
+import MoveIcon from "../widgets/icons/MoveIcon";
+import PeopleIcon from "../widgets/icons/PeopleIcon";
+import LocationIcon from "../widgets/icons/LocationIcon";
+import SelectIcon from "../widgets/icons/SelectIcon";
 
 interface GameControlsToolbarProps {
 	controlsMode: string;
@@ -87,15 +85,15 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	mouseOverText[SELECT_LOCATION_CONTROLS] = <>Game Location, hotkey: l</>;
 
 	const icons = {};
-	icons[CAMERA_CONTROLS] = <VideoCameraOutlined />;
-	icons[PAINT_CONTROLS] = <HighlightOutlined />;
-	icons[ADD_MODEL_CONTROLS] = <PlusCircleOutlined />;
-	icons[MOVE_MODEL_CONTROLS] = <DragOutlined />;
-	icons[ROTATE_MODEL_CONTROLS] = <RedoOutlined />;
-	icons[DELETE_CONTROLS] = <DeleteOutlined />;
-	icons[FOG_CONTROLS] = <CloudOutlined />;
-	icons[SELECT_MODEL_CONTROLS] = <SelectOutlined />;
-	icons[SELECT_LOCATION_CONTROLS] = <EnvironmentOutlined />;
+	icons[CAMERA_CONTROLS] = <CameraIcon />;
+	icons[PAINT_CONTROLS] = <HighlightIcon />;
+	icons[ADD_MODEL_CONTROLS] = <AddIcon />;
+	icons[MOVE_MODEL_CONTROLS] = <MoveIcon />;
+	icons[ROTATE_MODEL_CONTROLS] = <RedoIcon />;
+	icons[DELETE_CONTROLS] = <DeleteIcon />;
+	icons[FOG_CONTROLS] = <CloudIcon />;
+	icons[SELECT_MODEL_CONTROLS] = <SelectIcon />;
+	icons[SELECT_LOCATION_CONTROLS] = <LocationIcon />;
 
 	const permission = {};
 	permission[CAMERA_CONTROLS] = true;
@@ -109,18 +107,14 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	permission[SELECT_LOCATION_CONTROLS] = true;
 
 	const menu = [
-		<span
+		<div
 			style={{
-				display: "inline",
+				display: "flex",
 			}}
 			key={"Help Text"}
 		>
-			<Tooltip placement="top" title={toolTipText[controlsMode]}>
-				<span style={{ padding: "10px", backgroundColor: "white" }}>
-					<QuestionCircleOutlined />
-				</span>
-			</Tooltip>
-		</span>,
+			<ToolTip title={toolTipText[controlsMode]}/>
+		</div>,
 	];
 	menu.push(
 		...Object.keys(icons).map((mode) => {
@@ -128,14 +122,14 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 				return null;
 			}
 			return (
-				<span
+				<div
 					style={{
-						display: "inline",
+						display: "flex",
 					}}
 					key={mode}
 				>
-					<Tooltip placement="top" title={mouseOverText[mode]}>
-						<span
+					<ToolTip title={mouseOverText[mode]}>
+						<div
 							key={mode}
 							style={{
 								padding: "10px",
@@ -149,17 +143,17 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 							}}
 						>
 							{icons[mode]}
-						</span>
-					</Tooltip>
-				</span>
+						</div>
+					</ToolTip>
+				</div>
 			);
 		})
 	);
 
 	menu.push(
-		<span
+		<div
 			style={{
-				display: "inline",
+				display: "flex",
 			}}
 			key={"Game Permissions"}
 		>
@@ -170,38 +164,40 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 				subjectType={GAME}
 				refetch={refetchCurrentGame}
 			/>
-			<Tooltip placement="top" title={"Game Permissions"}>
-				<span style={{ padding: "10px", backgroundColor: "white" }}>
+			<ToolTip title={"Game Permissions"}>
+				<div style={{ padding: "10px", backgroundColor: "white" }}>
 					<a
 						onClick={async () => {
 							await setPermissionModalVisibility(true);
 						}}
 					>
-						<TeamOutlined style={{ fontSize: "20px" }} />
+						<PeopleIcon />
 					</a>
-				</span>
-			</Tooltip>
-		</span>
+				</div>
+			</ToolTip>
+		</div>
 	);
 
 	return (
-		<span>
-			<span
+		<div>
+			<div
 				style={{
-					padding: "7px",
+					padding: "1em",
 					position: "absolute",
 					margin: "0 auto",
 					left: 0,
 					right: 0,
 					bottom: 0,
-					width: "33%",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center'
 				}}
 			>
-				<span style={{ backgroundColor: "white" }}>{menu}</span>
-				<span className={"margin-lg-left"}>
+				<div style={{ backgroundColor: "white", display: 'flex', alignItems: 'center' }}>{menu}</div>
+				<div className={"margin-lg-left"}>
 					<LeaveGameButton />
-				</span>
-			</span>
-		</span>
+				</div>
+			</div>
+		</div>
 	);
 };

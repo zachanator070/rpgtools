@@ -1,11 +1,16 @@
 import React from "react";
-import { List, Row, Col, Form, Input, Button } from "antd";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useCreateGame from "../../hooks/game/useCreateGame";
 import useJoinGame from "../../hooks/game/useJoinGame";
 import { Link, useHistory } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
+import PasswordInput from "../widgets/input/PasswordInput";
+import TextInput from "../widgets/input/TextInput";
+import ItemList from "../widgets/ItemList";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import ColumnedContent from "../widgets/ColumnedContent";
 
 export default function GameLoginView() {
 	const history = useHistory();
@@ -13,148 +18,84 @@ export default function GameLoginView() {
 	const { currentWorld, loading } = useCurrentWorld();
 	const { myGames, loading: myGamesLoading, refetch } = useMyGames();
 
-	const { createGame, loading: createGameLoading } = useCreateGame(
+	const { createGame, loading: createGameLoading, errors: createGameErrors } = useCreateGame(
 		async (data) => {
 			await refetch();
 			history.push(`/ui/world/${currentWorld._id}/game/${data.createGame._id}`);
 		}
 	);
-	const { joinGame, loading: joinGameLoading } = useJoinGame(async (data) => {
+	const { joinGame, loading: joinGameLoading, errors: joinGameErrors } = useJoinGame(async (data) => {
 		await refetch();
 		history.push(`/ui/world/${currentWorld._id}/game/${data.joinGame._id}`);
 	});
-
-	const layout = {
-		labelCol: {
-			span: 8,
-		},
-		wrapperCol: {
-			span: 16,
-		},
-	};
-	const tailLayout = {
-		wrapperCol: {
-			offset: 8,
-			span: 16,
-		},
-	};
-
-	const onFinishFailed = (errorInfo) => {
-		console.log("Failed:", errorInfo);
-	};
 
 	if (loading || myGamesLoading) {
 		return <LoadingView />;
 	}
 
+	const links = myGames.map(game => <Link
+		key={game._id}
+		to={`/ui/world/${currentWorld._id}/game/${game._id}`}
+	>
+		${game._id}
+	</Link>);
+
 	return (
 		<>
-			<Row>
-				<Col span={8} />
-				<Col span={8}>
-					<div className={"margin-lg-top margin-lg-bottom"}>
-						<h1>My Games</h1>
-						<List
-							bordered={true}
-							dataSource={myGames}
-							renderItem={(item) => {
-								return (
-									<List.Item>
-										<Link to={`/ui/world/${currentWorld._id}/game/${item._id}`}>
-											${item._id}
-										</Link>
-									</List.Item>
-								);
-							}}
-						/>
-					</div>
-				</Col>
-				<Col span={8} />
-			</Row>
+			<ColumnedContent>
+				<div className={"margin-lg-top margin-lg-bottom"}>
+					<h1>My Games</h1>
+					<ItemList>
+						{links}
+					</ItemList>
+				</div>
+			</ColumnedContent>
 
 			{currentWorld.canHostGame && (
-				<Row>
-					<Col span={8} />
-					<Col span={8}>
+				<ColumnedContent>
+					<>
 						<h1>Create Game</h1>
-						<Form
-							{...layout}
-							name="basic"
-							initialValues={{
-								remember: true,
-							}}
-							onFinish={createGame}
-							onFinishFailed={onFinishFailed}
+						<InputForm
+							errors={createGameErrors}
+							loading={createGameLoading || joinGameLoading}
+							onSubmit={createGame}
 						>
-							<Form.Item label="Password" name="createPassword">
-								<Input.Password />
-							</Form.Item>
+							<FormItem label="Password" >
+								<PasswordInput name="createPassword" />
+							</FormItem>
 
-							<Form.Item label="Character Name" name="characterName">
-								<Input />
-							</Form.Item>
-
-							<Form.Item {...tailLayout}>
-								<Button
-									type="primary"
-									htmlType="submit"
-									disabled={createGameLoading || joinGameLoading}
-								>
-									Create Game
-								</Button>
-							</Form.Item>
-						</Form>
-					</Col>
-					<Col span={8} />
-				</Row>
+							<FormItem label="Character Name" >
+								<TextInput name="characterName"/>
+							</FormItem>
+						</InputForm>
+					</>
+				</ColumnedContent>
 			)}
-			<Row>
-				<Col span={8} />
-				<Col span={8}>
+			<ColumnedContent>
+				<>
 					<h1>Join Game</h1>
-					<Form
-						{...layout}
-						name="basic"
-						initialValues={{
-							remember: true,
-						}}
-						onFinish={joinGame}
-						onFinishFailed={onFinishFailed}
+					<InputForm
+						loading={joinGameLoading || createGameLoading}
+						errors={joinGameErrors}
+						onSubmit={async ({password, characterName, gameId}) => await joinGame({gameId, password, characterName})}
 					>
-						<Form.Item
+						<FormItem
 							label="Game ID"
-							name="gameId"
-							rules={[
-								{
-									required: true,
-									message: "Please input the game id that you wish to join!",
-								},
-							]}
+							required={true}
 						>
-							<Input />
-						</Form.Item>
+							<TextInput name="gameId"/>
+						</FormItem>
 
-						<Form.Item label="Password" name="password">
-							<Input.Password />
-						</Form.Item>
+						<FormItem label="Password">
+							<PasswordInput name="password"/>
+						</FormItem>
 
-						<Form.Item label="Character Name" name="characterName">
-							<Input />
-						</Form.Item>
-
-						<Form.Item {...tailLayout}>
-							<Button
-								type="primary"
-								htmlType="submit"
-								disabled={createGameLoading || joinGameLoading}
-							>
-								Join Game
-							</Button>
-						</Form.Item>
-					</Form>
-				</Col>
-				<Col span={8} />
-			</Row>
+						<FormItem label="Character Name">
+							<TextInput name="characterName"/>
+						</FormItem>
+					</InputForm>
+				</>
+			</ColumnedContent>
 		</>
 	);
 };

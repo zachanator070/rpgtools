@@ -1,27 +1,27 @@
 import React, {CSSProperties, useState} from "react";
-import { Button, Select, Spin } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 import useWorlds from "../../hooks/world/useWorlds";
 import {World} from "../../types";
+import DropdownSelect from "../widgets/DropdownSelect";
+import PrimaryButton from "../widgets/PrimaryButton";
+import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectWorldProps {
-	onChange: (world: World) => Promise<any>;
+	onChange?: (world: World) => any;
 	style?: CSSProperties;
 	showClear?: boolean;
 }
 export default function SelectWorld ({ onChange, style, showClear = false }: SelectWorldProps) {
-	const { refetch, worlds, loading } = useWorlds({});
+	const { refetch, worlds } = useWorlds({});
 	const [value, setValue] = useState();
 
 	const options =
-		worlds &&
+		worlds ?
 		worlds.docs.map((world) => {
-			return (
-				<Select.Option key={world._id} value={world._id}>
-					{world.name}
-				</Select.Option>
-			);
-		});
+			return {
+				label: world.name,
+				value: world._id
+			};
+		}) : [];
 
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
@@ -36,26 +36,22 @@ export default function SelectWorld ({ onChange, style, showClear = false }: Sel
 
 	return (
 		<span>
-			<Select
-				showSearch
+			<DropdownSelect
 				value={value}
 				showArrow={false}
-				filterOption={false}
-				notFoundContent={loading ? <Spin size="small" /> : null}
 				onSearch={async (term) => {
 					await refetch({ name: term });
 				}}
-				onSelect={onSelect}
-				placeholder="Search for a world"
+				onChange={onSelect}
+				helpText="Search for a world"
 				style={style ? style : { width: 200 }}
-				suffixIcon={<SearchOutlined />}
+				icon={<SearchIcon />}
 				id={'searchWorld'}
-			>
-				{options}
-			</Select>
+				options={options}
+			/>
 			{showClear && (
 				<span className={"margin-md-left"}>
-					<Button onClick={async () => await onSelect(null)}>Clear</Button>
+					<PrimaryButton onClick={async () => await onSelect(null)}>Clear</PrimaryButton>
 				</span>
 			)}
 		</span>

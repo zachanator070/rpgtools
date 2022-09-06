@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { Button, Col, Input, InputNumber, List, Row } from "antd";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import LoadingView from "../LoadingView";
 import { Link } from "react-router-dom";
-import { LeftOutlined } from "@ant-design/icons";
 import useGenerateRegisterCodes from "../../hooks/server/useGenerateRegisterCodes";
 import PermissionEditor from "../permissions/PermissionEditor";
 import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
+import PrimaryButton from "../widgets/PrimaryButton";
+import NumberInput from "../widgets/input/NumberInput";
+import ItemList from "../widgets/ItemList";
+import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
+import ColumnedContent from "../widgets/ColumnedContent";
 
 export default function ServerSettings() {
 	const { serverConfig, loading, refetch } = useServerConfig();
@@ -19,63 +22,55 @@ export default function ServerSettings() {
 
 	return (
 		<div className={"margin-lg-top margin-lg-left"}>
-			<Row>
-				<Col span={4}>
+			<div style={{display: "flex"}}>
+				<div style={{flexGrow: 4}}>
 					<Link to={`/ui/`}>
-						<LeftOutlined />
+						<LeftArrowIcon />
 						Home
 					</Link>
-				</Col>
-				<Col span={20} />
-			</Row>
+				</div>
+				<div style={{flexGrow: 20}} />
+			</div>
 			<h1>Server Settings</h1>
 			<hr />
-			<Row>
-				<Col span={4} />
-				<Col span={16}>
+			<ColumnedContent>
+				<>
 					<h2>Registration Codes</h2>
-					<List
-						bordered
-						dataSource={serverConfig.registerCodes}
-						renderItem={(item) => <List.Item>{item}</List.Item>}
+					<ItemList
 						id={"registerCodeList"}
-					/>
-				</Col>
-				<Col span={4} />
-			</Row>
+					>
+						{serverConfig.registerCodes.map(item => <>{item}</>)}
+					</ItemList>
+				</>
+			</ColumnedContent>
 			{serverConfig.canWrite && (
-				<Row className={"margin-md-top"}>
-					<Col span={4} />
-					<Col span={16}>
+				<ColumnedContent style={{ marginTop: "2em"}}>
+					<>
 						<span className={"margin-lg-right"}>Number of codes to generate:</span>
 						<span className={"margin-lg-right"}>
-							<InputNumber value={amount} onChange={async (value) => await setAmount(value)} id={"numberCodesToGenerate"}/>
+							<NumberInput value={amount} onChange={(value) => setAmount(value)} id={"numberCodesToGenerate"}/>
 						</span>
-						<Button
-							type={"primary"}
-							disabled={generateLoading}
+						<PrimaryButton
+							loading={generateLoading}
 							onClick={async () => {
 								await generateRegisterCodes({amount});
 							}}
 						>
 							Generate
-						</Button>
-					</Col>
-					<Col span={4} />
-				</Row>
+						</PrimaryButton>
+					</>
+				</ColumnedContent>
 			)}
-			<Row className={"margin-md-top"}>
-				<Col span={4} />
-				<Col span={16}>
+			<ColumnedContent style={{marginTop: "2em"}}>
+				<>
 					<h2>Server Permissions</h2>
 					<PermissionEditor
 						subject={serverConfig}
 						subjectType={SERVER_CONFIG}
 						refetch={async () => {await refetch()}}
 					/>
-				</Col>
-				<Col span={4} />
-			</Row>
+				</>
+			</ColumnedContent>
 		</div>
 	);
 };

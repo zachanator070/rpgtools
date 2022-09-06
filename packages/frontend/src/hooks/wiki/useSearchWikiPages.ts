@@ -6,8 +6,9 @@ interface SearchWikiPagesVariables {
 	worldId: string;
 	name?: string;
 	types: string[];
-	canAdmin: boolean;
+	canAdmin?: boolean;
 	page?: number;
+	hasModel?: boolean;
 }
 
 interface SearchWikiPagesResult extends GqlQueryResult<WikiPagePaginatedResult, SearchWikiPagesVariables>{

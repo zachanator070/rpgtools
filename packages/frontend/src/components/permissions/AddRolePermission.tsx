@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import { Button, Select } from "antd";
 import {ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
 import SelectRole from "../select/SelectRole";
@@ -9,6 +8,8 @@ import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermis
 import Errors from "../Errors";
 import SelectFolder from "../select/SelectFolder";
 import {Role} from "../../types";
+import DropdownSelect from "../widgets/DropdownSelect";
+import PrimaryButton from "../widgets/PrimaryButton";
 
 interface AddRolePermissionProps {
 	role: Role;
@@ -32,11 +33,9 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 	let selectSubject = null;
 	if (subjectTypeSelected === WORLD) {
 		selectSubject = (
-			<Select style={{ width: "200px" }} onChange={async (worldId: string) => setSubjectId(worldId)}>
-				{currentWorld.canAdmin && (
-					<Select.Option value={currentWorld._id}>{currentWorld.name}</Select.Option>
-				)}
-			</Select>
+			<DropdownSelect style={{ width: "200px" }} onChange={(worldId: string) => setSubjectId(worldId)} options={
+				currentWorld.canAdmin && [{value: currentWorld._id, label: currentWorld.name}]
+			}/>
 		);
 	} else if (subjectTypeSelected === WIKI_PAGE) {
 		selectSubject = (
@@ -49,9 +48,9 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 			/>
 		);
 	} else if (subjectTypeSelected === ROLE) {
-		selectSubject = <SelectRole canAdmin={true} onChange={async (roleId: string) => setSubjectId(roleId)} />;
+		selectSubject = <SelectRole canAdmin={true} onChange={(roleId: string) => setSubjectId(roleId)} />;
 	} else if (subjectTypeSelected === WIKI_FOLDER) {
-		selectSubject = <SelectFolder canAdmin={true} onChange={async (folderId: string) => setSubjectId(folderId)} />;
+		selectSubject = <SelectFolder canAdmin={true} onChange={(folder) => setSubjectId(folder._id)} />;
 	}
 
 	let availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
@@ -62,34 +61,28 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 			<Errors errors={errors} />
 			<div className={"margin-lg-top"}>
 				<span className={"margin-lg-right"}>Subject Type:</span>
-				<Select
+				<DropdownSelect
 					style={{ width: "200px" }}
-					onChange={async (value) => {
-						await setPermissionToAdd(null);
-						await setSubjectTypeSelected(value);
-						await setSubjectId(null);
+					onChange={(value) => {
+						setPermissionToAdd(null);
+						setSubjectTypeSelected(value);
+						setSubjectId(null);
 					}}
 					value={subjectTypeSelected}
-				>
-					{[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map((permission) => (
-						<Select.Option key={permission} value={permission}>{permission}</Select.Option>
-					))}
-				</Select>
+					options={[WORLD, WIKI_PAGE, ROLE, WIKI_FOLDER].map(permission => {return {label: permission, value: permission};})}
+				/>
 			</div>
 			{subjectTypeSelected && (
 				<div className={"margin-lg-top"}>
 					<span className={"margin-lg-right"}>Permission:</span>
-					<Select
+					<DropdownSelect
 						style={{ width: "200px" }}
 						onChange={async (value) => {
 							await setPermissionToAdd(value);
 						}}
 						value={permissionToAdd}
-					>
-						{availablePermissions.map((permission) => (
-							<Select.Option key={permission} value={permission}>{permission}</Select.Option>
-						))}
-					</Select>
+						options={availablePermissions.map((permission) => {return {label: permission, value: permission};})}
+					/>
 				</div>
 			)}
 			{permissionToAdd && (
@@ -99,8 +92,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 			)}
 			{subjectId && (
 				<div className={"margin-lg-top"}>
-					<Button
-						type={"primary"}
+					<PrimaryButton
 						onClick={async () =>
 							await grantRolePermission({
 								roleId: role._id,
@@ -111,7 +103,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 						}
 					>
 						Add Permission
-					</Button>
+					</PrimaryButton>
 				</div>
 			)}
 		</div>

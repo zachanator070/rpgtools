@@ -27,6 +27,7 @@ import { ServerConfig } from "../domain-entities/server-config";
 import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
+import {serverConfigMutations} from "./mutations/server-config-mutations";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
@@ -287,6 +288,9 @@ export const TypeResolvers = {
 				}
 			}
 			return returnRoles;
+		},
+		canCreateWorlds: async (server: ServerConfig, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+			return server.authorizationPolicy.canCreateWorlds(securityContext);
 		},
 		...permissionControlledInterfaceAttributes,
 	},

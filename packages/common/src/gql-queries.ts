@@ -158,6 +158,7 @@ export const GET_SERVER_CONFIG = gql`
 			_id
 			version
 			registerCodes
+			canCreateWorlds
 			...accessControlList
 			...serverConfigRoles
 		}
@@ -185,8 +186,8 @@ export const GET_WIKI = gql`
 
 export const SEARCH_WIKIS = gql`
 	${MODEL_ATTRIBUTES}
-	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean, $page: Int){
-		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin, page: $page){
+	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean, $hasModel: Boolean, $page: Int){
+		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin, hasModel: $hasModel, page: $page){
 			docs{
 				_id
 				name

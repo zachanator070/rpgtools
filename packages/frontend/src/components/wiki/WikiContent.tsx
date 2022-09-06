@@ -1,15 +1,16 @@
-import React, {ReactElement, useRef} from "react";
+import React, {ReactElement, useRef, useState} from "react";
 import Editor from "./Editor";
-import { ExportOutlined, EditOutlined } from "@ant-design/icons";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link, useHistory, useParams } from "react-router-dom";
 import LoadingView from "../LoadingView";
 import { MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
-import { Button, Tooltip } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
 import ModelViewer from "../models/ModelViewer";
 import {ModeledWiki, Place, WikiPage} from "../../types";
 import usePins from "../../hooks/map/usePins";
+import PrimaryButton from "../widgets/PrimaryButton";
+import ToolTip from "../widgets/ToolTip";
+import EditIcon from "../widgets/icons/EditIcon";
+import GotoIcon from "../widgets/icons/GotoIcon";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
@@ -25,6 +26,8 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 	const wikiView = useRef(null);
 
 	const { wiki_id } = useParams();
+
+	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	const getPinFromPageId = (pageId) => {
 		for (let pin of pins.docs) {
@@ -52,7 +55,7 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 					history.push(`/ui/world/${currentWorld._id}/map/${pin.map._id}`);
 				}}
 			>
-				See on map <ExportOutlined />
+				See on map <GotoIcon />
 			</a>
 		);
 	}
@@ -64,10 +67,10 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 
 			typeSpecificContent = (
 				<>
-					<div className="padding-md" style={{maxHeight: "100em", maxWidth: "100em"}}>
+					<div className="padding-md">
 						<img
 							alt={currentPlace.mapImage.name}
-							style={{objectFit: "contain"}}
+							style={{maxWidth: '100%'}}
 							src={`/images/${currentPlace.mapImage.icon.chunks[0].fileId}`}
 							id={'mapImage'}
 						/>
@@ -78,19 +81,17 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 									history.push(`/ui/world/${currentWorld._id}/map/${currentPlace._id}`);
 								}}
 							>
-								Go to Map <ExportOutlined/>
+								Go to Map <GotoIcon/>
 							</a>
 						</span>
 					</div>
 					<>
-						Pixels per foot: {currentPlace.pixelsPerFoot}
-						<Tooltip
+						<ToolTip
 							title={
 								"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."
 							}
-						>
-							<QuestionCircleOutlined className={"margin-lg-left"}/>
-						</Tooltip>
+						/>
+						<span>Pixels per foot: {currentPlace.pixelsPerFoot}</span>
 					</>
 				</>
 			);
@@ -98,13 +99,13 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 	} else if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
 		const currentModeledWiki = currentWiki as ModeledWiki;
 		if(currentModeledWiki.model) {
-
 			typeSpecificContent = (
-				<div className={"margin-lg"}>
+				<div className={"margin-lg"} ref={setModelViewerContainer}>
 					<ModelViewer
 					model={currentModeledWiki.model}
 					showColorControls={false}
 					defaultColor={currentModeledWiki.modelColor}
+					container={modelViewerContainer}
 					/>
 				</div>
 			);
@@ -117,14 +118,13 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
 			{currentWiki.coverImage && (
-				<div className="padding-md" style={{ maxHeight: "500em", maxWidth: "500em" }}>
-					<img
-						alt={currentWiki.coverImage.name}
-						style={{ objectFit: "contain" }}
-						src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}
-						id={'coverImage'}
-					/>
-				</div>
+				<img
+					className="padding-md"
+					alt={currentWiki.coverImage.name}
+					style={{ objectFit: "contain", maxWidth: '100%'}}
+					src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}
+					id={'coverImage'}
+				/>
 			)}
 
 			{typeSpecificContent}
@@ -137,23 +137,22 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 				{currentWiki.canWrite && (
 					<span className="margin-lg">
 						<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`}>
-							<Button type={"primary"}>
-								<EditOutlined />
+							<PrimaryButton>
+								<EditIcon />
 								Edit
-							</Button>
+							</PrimaryButton>
 						</Link>
 					</span>
 				)}
 
 				<span className={"margin-lg"}>
-					<Button
-						type="primary"
+					<PrimaryButton
 						onClick={() => {
 							window.location.href = `/export/${currentWiki.type}/${currentWiki._id}`;
 						}}
 					>
 						Export
-					</Button>
+					</PrimaryButton>
 				</span>
 			</span>
 		</div>

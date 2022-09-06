@@ -139,9 +139,9 @@ export class ExpressApiServer implements ApiServer {
 					[
 						"/graphql",
 						"/ui/setup",
-						"/app.bundle.js",
+						"/app.js",
 						"/app.css",
-						"/app.bundle.js.gz",
+						"/app.js.gz",
 						"/app.css.gz",
 						"favicon.ico",
 					].includes(req.url)

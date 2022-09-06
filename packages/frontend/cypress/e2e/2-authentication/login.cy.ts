@@ -13,13 +13,13 @@ describe("login", () => {
     it("success", () => {
         cy.get("#loginEmail").type(TEST_USER_USERNAME);
         cy.get('#loginPassword').type(TEST_USER_PASSWORD);
-        cy.get('button').contains('Login').click();
-        cy.xpath('//*[@id="app"]/div/div[2]/div[3]/span/span[1]').contains(`Hello ${TEST_USER_USERNAME}`);
+        cy.get('#submit').click();
+        cy.get('#userGreeting').contains(`Hello ${TEST_USER_USERNAME}`);
     });
 
     it("bad password", () => {
         cy.get("#loginEmail").type(TEST_USER_USERNAME);
         cy.get('#loginPassword').type("bad_password");
-        cy.get('button').contains('Login').click();
+        cy.get('#submit').click();
     });
 });

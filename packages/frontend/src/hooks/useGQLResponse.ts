@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { notification } from "antd";
-import {DocumentNode, OperationDefinitionNode, FieldNode} from "graphql";
+import {DocumentNode} from "graphql";
 import {ApolloError} from "@apollo/client/errors";
 import getQueryName from "./getQueryName";
+import useNotification from "../components/widgets/useNotification";
 
 interface GenericGqlResponse<T> {
 	data: T;
@@ -13,6 +13,7 @@ interface GenericGqlResponse<T> {
 export default function useGQLResponse
 	<T>(query: DocumentNode, data: any, error: ApolloError | undefined, displayErrors: boolean):
 		GenericGqlResponse<T> {
+	const {errorNotification} = useNotification();
 	let errors: string[] = [];
 	let errorTitle = "Server Error";
 	if (error) {
@@ -36,11 +37,9 @@ export default function useGQLResponse
 	useEffect(() => {
 		if (displayErrors) {
 			for (let message of errors) {
-				notification.error({
+				errorNotification({
 					message: errorTitle,
 					description: message,
-					placement: "topLeft",
-					duration: 0,
 				});
 			}
 		}
