@@ -11,6 +11,7 @@ import * as url from 'url';
 console.log(`building with stats=${process.env.BUILD_WITH_STATS === "true"}`);
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+console.log('Root director: ' + __dirname);
 
 export default {
 	entry: {

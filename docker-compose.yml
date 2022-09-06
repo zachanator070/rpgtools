@@ -13,6 +13,8 @@ services:
     user: ${CURRENT_UID}
     env_file:
       - .env
+    environment:
+      - NODE_ENV=development
     volumes:
       - ./packages/server/src:/home/node/app/packages/server/src
       - ./packages/server/dist:/home/node/app/packages/server/dist
@@ -51,11 +53,12 @@ services:
     user: ${CURRENT_UID}
     env_file:
       - .env
+    environment:
+      - NODE_ENV=${NODE_ENV}
     volumes:
       - ./packages/frontend/src:/home/node/app/packages/frontend/src
       - ./packages/common/src:/home/node/app/packages/common/src
       - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
-    command: "npm run -w packages/frontend start-dev"
     networks:
       - rpgtools
 

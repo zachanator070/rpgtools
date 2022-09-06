@@ -28,7 +28,7 @@ clean-uncompressed:
 # runs the js transpiler docker image
 ui-prod: .env packages/frontend/dist packages/server/dist
 	echo Current UID: ${CURRENT_UID}
-	npm run -w packages/frontend start
+	NODE_ENV=production docker-compose run ui-builder
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true

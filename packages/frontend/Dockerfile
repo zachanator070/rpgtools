@@ -18,8 +18,7 @@ ADD packages/common/tsconfig.json packages/common/tsconfig.json
 ADD packages/frontend/tsconfig.json packages/frontend/tsconfig.json
 
 WORKDIR /home/node/app/packages/frontend
-ADD packages/frontend/webpack.config.js webpack.config.js
-ADD packages/frontend/webpack-dev.config.js webpack-dev.config.js
+ADD packages/frontend/webpack.config.cjs webpack.config.cjs
 RUN mkdir -p dist
 RUN chmod o+rw dist
 

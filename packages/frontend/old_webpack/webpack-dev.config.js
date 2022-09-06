@@ -1,4 +1,4 @@
-import config from"./webpack.config.js";
+import config from "./webpack.config.js";
 
 config.mode = "development";
 config.devtool = "inline-source-map";
