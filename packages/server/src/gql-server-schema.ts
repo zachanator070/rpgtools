@@ -121,7 +121,7 @@ export const typeDefs = gql`
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
 
 		createPin(mapId: ID!, x: Float!, y: Float!, wikiId: ID): Pin!
-		updatePin(pinId: ID!, pageId: ID): Pin!
+		updatePin(pinId: ID!, pageId: ID, builtInIcon: String, color: String, size: Int, imageId: ID): Pin!
 		deletePin(pinId: ID!): Pin!
 
 		createGame(worldId: ID!, password: String, characterName: String): Game!

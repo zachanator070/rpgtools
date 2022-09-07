@@ -37,11 +37,11 @@ export const worldMutations = {
 	},
 	updatePin: async (
 		_: any,
-		{ pinId, pageId }: { pinId: string; pageId: string },
+		{ pinId, pageId, builtInIcon, color, size, imageId }: { pinId: string; pageId: string, builtInIcon: string, color: string, size: number, imageId: string },
 		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.updatePin(securityContext, pinId, pageId, unitOfWork);
+		return await service.updatePin(securityContext, pinId, pageId, builtInIcon, color, size, imageId, unitOfWork);
 	},
 	deletePin: async (_: any, { pinId }: { pinId: string }, { securityContext, unitOfWork }: SessionContext) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);

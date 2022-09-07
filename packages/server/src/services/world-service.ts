@@ -112,7 +112,7 @@ export class WorldService {
 		return newPin;
 	};
 
-	updatePin = async (context: SecurityContext, pinId: string, pageId: string, unitOfWork: UnitOfWork) => {
+	updatePin = async (context: SecurityContext, pinId: string, pageId: string, builtInIcon: string, color: string, size: number, imageId: string, unitOfWork: UnitOfWork) => {
 		const pin = await unitOfWork.pinRepository.findById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);

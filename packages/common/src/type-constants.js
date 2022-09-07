@@ -28,4 +28,3 @@ export const PERMISSION_CONTROLLED_TYPES = [
     SERVER_CONFIG,
     MODEL,
 ];
-//# sourceMappingURL=type-constants.js.map

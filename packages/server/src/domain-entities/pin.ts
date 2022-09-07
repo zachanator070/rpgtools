@@ -1,8 +1,15 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, Repository, RepositoryAccessor} from "../types";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+
+export interface PinIcon {
+	builtInIcon?: string;
+	color?: string;
+	size: number;
+	image?: string;
+}
 
 @injectable()
 export class Pin implements DomainEntity {
@@ -10,7 +17,8 @@ export class Pin implements DomainEntity {
 	public x: number;
 	public y: number;
 	public map: string;
-	public page: string | null;
+	public page?: string | null;
+	public icon?: PinIcon;
 
 	authorizationPolicy: PinAuthorizationPolicy;
 	factory: Factory<Pin>;

@@ -136,4 +136,3 @@ export const getPermissionsBySubjectType = (subjectType) => {
 };
 export const ANON_USERNAME = "Anonymous";
 export const SERVER_ADMIN_ROLE = "Server Admin";
-//# sourceMappingURL=permission-constants.js.map
