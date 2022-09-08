@@ -1,9 +1,9 @@
-import React, {CSSProperties} from 'react';
+import React, {CSSProperties, MouseEventHandler} from 'react';
 import {Button} from "antd";
 import {WidgetProps} from "./WidgetProps";
 
 interface DangerButtonProps extends WidgetProps {
-    onClick: () => any;
+    onClick: MouseEventHandler;
     children?: React.ReactNode;
     loading?: boolean;
     disabled?: boolean;

@@ -23,7 +23,8 @@ export class MongodbPinRepository
 				x: document.x,
 				y: document.y,
 				map: document.map.toString(),
-				page: document.page ? document.page.toString() : null
+				page: document.page ? document.page.toString() : null,
+				icon: document.icon
 			}
 		);
 	}

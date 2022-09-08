@@ -19,6 +19,8 @@ import { World } from "../domain-entities/world";
 import {FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {DEFAULT_PIN} from "@rpgtools/common/src/pin-constants";
+import {ImageService} from "./image-service";
 
 @injectable()
 export class WorldService {
@@ -35,6 +37,8 @@ export class WorldService {
 	placeFactory: PlaceFactory;
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
+	@inject(INJECTABLE_TYPES.ImageService)
+	imageService: ImageService;
 
 	createWorld = async (
 		name: string,
@@ -102,7 +106,7 @@ export class WorldService {
 			}
 		}
 
-		const newPin = this.pinFactory({_id: null, x, y, map: mapId, page: wikiId});
+		const newPin = this.pinFactory({_id: null, x, y, map: mapId, page: wikiId, icon: {size: 1, color: '#ff0000', builtInIcon: DEFAULT_PIN}});
 
 		if (!(await newPin.authorizationPolicy.canCreate(context, unitOfWork))) {
 			throw new Error(`You do not have permission to add pins to this map`);
@@ -130,7 +134,31 @@ export class WorldService {
 			}
 		}
 
+		let image = null;
+		if (imageId) {
+			image = await unitOfWork.imageRepository.findById(imageId);
+			if (!image) {
+				throw new Error(`Image does not exist for id ${imageId}`);
+			}
+		}
+
+		const oldImage = await unitOfWork.imageRepository.findById(pin.icon.image);
+		if (oldImage && oldImage._id !== imageId) {
+			await this.imageService.deleteImage(oldImage, unitOfWork);
+		}
+
+		if (!imageId && !builtInIcon) {
+			pin.icon.builtInIcon = DEFAULT_PIN;
+			pin.icon.size = 1;
+			pin.icon.color = '#ff0000';
+		} else {
+			pin.icon.color = color;
+			pin.icon.size = size;
+			pin.icon.builtInIcon = builtInIcon;
+		}
+
 		pin.page = pageId;
+		pin.icon.image = imageId;
 		await unitOfWork.pinRepository.update(pin);
 		return pin;
 	};

@@ -6,7 +6,7 @@ import {PIN_BUILT_IN_ICONS} from "@rpgtools/common/src/pin-constants";
 const pinIconSchema = new mongoose.Schema({
 	builtInIcon: {
 		type: String,
-		enum: PIN_BUILT_IN_ICONS
+		enum: PIN_BUILT_IN_ICONS.concat([null])
 	},
 	color: {
 		type: String

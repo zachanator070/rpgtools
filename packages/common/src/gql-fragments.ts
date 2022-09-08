@@ -395,5 +395,19 @@ export const PIN_ATTRIBUTES = gql`
         }
         x
         y
+        icon {
+            color
+            size
+            image {
+                _id
+                name
+                icon {
+                    chunks {
+                        fileId
+                    }
+                }
+            }
+            builtInIcon
+        }
     }  
 `;

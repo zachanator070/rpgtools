@@ -11,7 +11,7 @@ import {Model} from "./domain-entities/model";
 import {Monster} from "./domain-entities/monster";
 import {PermissionAssignment} from "./domain-entities/permission-assignment";
 import {Person} from "./domain-entities/person";
-import {Pin} from "./domain-entities/pin";
+import {Pin, PinIcon} from "./domain-entities/pin";
 import {Place} from "./domain-entities/place";
 import {Role} from "./domain-entities/role";
 import {ServerConfig} from "./domain-entities/server-config";
@@ -253,7 +253,7 @@ export type PersonFactory = (
 		modelColor: string
 	}
 ) => Person;
-export type PinFactory = ({_id, x, y, map, page}: {_id: string, x: number, y: number, map: string, page: string}) => Pin;
+export type PinFactory = ({_id, x, y, map, page, icon}: {_id: string, x: number, y: number, map: string, page: string, icon: PinIcon}) => Pin;
 export type PlaceFactory = (
 	{
 		_id,
@@ -534,11 +534,19 @@ export interface RoleDocument extends MongoDBEntity {
 	permissions: Schema.Types.ObjectId[];
 }
 
+export interface PinIconDocument extends MongoDBEntity {
+	builtInIcon?: string;
+	color?: string;
+	size: number;
+	image?: Schema.Types.ObjectId;
+}
+
 export interface PinDocument extends MongoDBEntity {
 	x: number;
 	y: number;
 	map: Schema.Types.ObjectId;
 	page: Schema.Types.ObjectId;
+	icon: PinIcon
 }
 
 export interface PermissionAssignmentDocument extends MongoDBEntity {

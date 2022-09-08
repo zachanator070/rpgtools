@@ -50,13 +50,14 @@ export default function ImageInput({onChange, initialImage, className, id, rever
             className={"upload-list-inline " + className}
             id={id}
         >
-            <PrimaryButton>
+            <PrimaryButton onClick={(e) => e.preventDefault()}>
                 <UploadIcon/> {buttonText}
             </PrimaryButton>
         </Upload>
         <SecondaryDangerButton
-            className={"margin-top-md margin-bottom-md"}
-            onClick={async () => {
+            className={"margin-md-top margin-md-bottom"}
+            onClick={async (e) => {
+                e.preventDefault();
                 if (initialImage) {
                     setFileList([{
                         uid: "-1",

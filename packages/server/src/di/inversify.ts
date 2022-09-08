@@ -110,7 +110,7 @@ import { Monster } from "../domain-entities/monster";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { PermissionAssignmentDataLoader } from "../dal/dataloaders/permission-assignment-data-loader";
 import { Person } from "../domain-entities/person";
-import { Pin } from "../domain-entities/pin";
+import {Pin, PinIcon} from "../domain-entities/pin";
 import { Place } from "../domain-entities/place";
 import { Role } from "../domain-entities/role";
 import { ServerConfig } from "../domain-entities/server-config";
@@ -554,8 +554,9 @@ container
 				x,
 				y,
 				map,
-				page
-			}: { _id: string | ObjectId, x: number, y: number, map: string | ObjectId, page: string | ObjectId }
+				page,
+				icon
+			}: { _id: string | ObjectId, x: number, y: number, map: string | ObjectId, page: string | ObjectId, icon: PinIcon }
 		) => {
 			const pin = context.container.get<Pin>(INJECTABLE_TYPES.Pin);
 			pin._id = _id && _id.toString();
@@ -563,6 +564,7 @@ container
 			pin.y = y;
 			pin.map = map && map.toString();
 			pin.page = page && page.toString();
+			pin.icon = icon;
 			return pin;
 	});
 container

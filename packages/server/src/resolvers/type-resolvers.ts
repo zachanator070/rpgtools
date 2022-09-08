@@ -19,7 +19,7 @@ import { Model } from "../domain-entities/model";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Role } from "../domain-entities/role";
 import { User } from "../domain-entities/user";
-import { Pin } from "../domain-entities/pin";
+import {Pin, PinIcon} from "../domain-entities/pin";
 import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { Place } from "../domain-entities/place";
 import { Chunk } from "../domain-entities/chunk";
@@ -269,6 +269,12 @@ export const TypeResolvers = {
 		},
 		canWrite: async (pin: Pin, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 			return pin.authorizationPolicy.canWrite(securityContext, unitOfWork);
+		},
+	},
+	PinIcon: {
+		image: async (icon: PinIcon, _: any, {unitOfWork}: SessionContext): Promise<Image> => {
+			const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
+			return dataLoader.getDocument(icon.image, unitOfWork);
 		},
 	},
 	ServerConfig: {

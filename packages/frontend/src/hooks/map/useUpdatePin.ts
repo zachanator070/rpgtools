@@ -6,6 +6,10 @@ import {GET_PINS} from "@rpgtools/common/src/gql-queries";
 interface UpdatePinVariables {
 	pinId: string;
 	pageId: string;
+	builtInIcon: string;
+	color: string;
+	size: number;
+	imageId: string;
 }
 
 interface UpdatePinResult extends GqlMutationResult<World, UpdatePinVariables>{

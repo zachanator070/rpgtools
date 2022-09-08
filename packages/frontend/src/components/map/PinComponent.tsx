@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {CSSProperties, useContext, useState} from "react";
 import { useHistory } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import EditPinModal from "../modals/EditPinModal";
@@ -8,6 +8,13 @@ import MapWikiContext from "../../MapWikiContext";
 
 import './PinComponent.css';
 import PopoverBubble from "../widgets/PopoverBubble";
+import {ARTICLE_PIN, ITEM_PIN, MONSTER_PIN, PERSON_PIN, PLACE_PIN} from "@rpgtools/common/src/pin-constants";
+import FileIcon from "../widgets/icons/FileIcon";
+import ItemIcon from "../widgets/icons/ItemIcon";
+import MonsterIcon from "../widgets/icons/MonsterIcon";
+import PlaceIcon from "../widgets/icons/PlaceIcon";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import BuiltInPinIcon from "./BuiltInPinIcon";
 
 interface PinComponentProps {
 	pin: Pin;
@@ -75,12 +82,23 @@ export default function PinComponent({ pin, translate }: PinComponentProps) {
 
 	const coordinates = translate(pin.x, pin.y);
 
+	let pinIcon = null;
+	if (pin.icon.image) {
+		pinIcon = <img
+			style={{width: pin.icon.size + 'em', height: pin.icon.size + 'em'}}
+			alt={pin.icon.image.name}
+			src={`/images/${pin.icon.image.icon.chunks[0].fileId}`}
+		/>;
+	} else {
+		pinIcon = <BuiltInPinIcon type={pin.icon.builtInIcon} size={pin.icon.size} color={pin.icon.color}/>;
+	}
+
 	return (
 		<div>
 			<EditPinModal
 				visibility={editPinModalVisibility}
 				setVisibility={async (visible) => setEditPinModalVisibility(visible)}
-				pinId={pin._id}
+				pin={pin}
 			/>
 			<PopoverBubble
 				content={pinPopupContent}
@@ -92,9 +110,11 @@ export default function PinComponent({ pin, translate }: PinComponentProps) {
 					className={'mapPin'}
 					style={{
 						left: coordinates[0] - 5,
-						top: coordinates[1] - 5
+						top: coordinates[1] - 5,
 					}}
-				/>
+				>
+					{pinIcon}
+				</div>
 			</PopoverBubble>
 		</div>
 	);

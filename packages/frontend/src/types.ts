@@ -243,6 +243,14 @@ export interface Pin {
     y: number;
     page: WikiPage;
     canWrite: boolean;
+    icon: PinIcon;
+}
+
+export interface PinIcon {
+    builtInIcon?: string;
+    color?: string;
+    size: number;
+    image?: Image;
 }
 
 export interface ServerConfig extends PermissionControlled {

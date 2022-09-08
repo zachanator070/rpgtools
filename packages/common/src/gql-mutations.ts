@@ -312,8 +312,8 @@ export const DELETE_PIN = gql`
 `;
 export const UPDATE_PIN = gql`
 	${PIN_ATTRIBUTES}
-	mutation updatePin($pinId: ID!, $pageId: ID){
-		updatePin(pinId: $pinId, pageId: $pageId){
+	mutation updatePin($pinId: ID!, $pageId: ID, $builtInIcon: String, $color: String, $size: Float, $imageId: ID){
+		updatePin(pinId: $pinId, pageId: $pageId, builtInIcon: $builtInIcon, color: $color, size: $size, imageId: $imageId){
 			_id
 			...pinAttributes
 		}

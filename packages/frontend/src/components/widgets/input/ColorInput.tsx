@@ -1,10 +1,10 @@
-import React, {CSSProperties} from 'react';
+import React, {ChangeEventHandler, SyntheticEvent} from 'react';
 import {Input} from "antd";
 import {WidgetProps} from "../WidgetProps";
 
 interface ColorInputProps extends WidgetProps {
     value: string;
-    onChange: (string) => any;
+    onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function ColorInput({style, value, onChange}: ColorInputProps) {

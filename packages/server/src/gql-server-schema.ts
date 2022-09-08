@@ -121,7 +121,7 @@ export const typeDefs = gql`
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
 
 		createPin(mapId: ID!, x: Float!, y: Float!, wikiId: ID): Pin!
-		updatePin(pinId: ID!, pageId: ID, builtInIcon: String, color: String, size: Int, imageId: ID): Pin!
+		updatePin(pinId: ID!, pageId: ID, builtInIcon: String, color: String, size: Float, imageId: ID): Pin!
 		deletePin(pinId: ID!): Pin!
 
 		createGame(worldId: ID!, password: String, characterName: String): Game!
@@ -431,6 +431,13 @@ export const typeDefs = gql`
 		users: [User!]!
 		roles: [Role!]!
 	}
+	
+	type PinIcon {
+	    color: String
+	    builtInIcon: String
+	    size: Float!
+	    image: Image
+	}
 
 	type Pin {
 		_id: ID!
@@ -439,6 +446,7 @@ export const typeDefs = gql`
 		y: Float!
 		page: WikiPage
 		canWrite: Boolean!
+		icon: PinIcon!
 	}
 
 	type ServerConfig implements PermissionControlled {
