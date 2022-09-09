@@ -1,16 +1,25 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {
+	AclEntry,
+	DomainEntity,
+	Factory,
+	PermissionControlledEntity,
+	Repository,
+	RepositoryAccessor,
+	UnitOfWork
+} from "../types";
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class WikiFolder implements DomainEntity {
+export class WikiFolder implements DomainEntity, PermissionControlledEntity {
 	public _id: string;
 	public name: string;
 	public world: string;
 	public pages: string[];
 	public children: string[];
+	public acl: AclEntry[];
 
 	authorizationPolicy: WikiFolderAuthorizationPolicy;
 	factory: Factory<WikiFolder>;

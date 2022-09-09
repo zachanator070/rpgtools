@@ -9,7 +9,6 @@ import {Image} from "./domain-entities/image";
 import {Item} from "./domain-entities/item";
 import {Model} from "./domain-entities/model";
 import {Monster} from "./domain-entities/monster";
-import {PermissionAssignment} from "./domain-entities/permission-assignment";
 import {Person} from "./domain-entities/person";
 import {Pin} from "./domain-entities/pin";
 import {Place} from "./domain-entities/place";
@@ -23,6 +22,8 @@ import {Readable, Writable} from "stream";
 import {PaginatedResult} from "./dal/paginated-result";
 import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
 import {DocumentNode} from "graphql";
+import {AclEntryDocument} from "./dal/mongodb/models/acl-entry";
+
 export interface DomainEntity {
 	_id: string;
 	type: string;
@@ -30,6 +31,16 @@ export interface DomainEntity {
 	factory: Factory<DomainEntity>;
 
 	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
+}
+
+export interface AclEntry {
+	permission: string;
+	principal: User | Role;
+	principalType: 'User' | 'Role';
+}
+
+export interface PermissionControlledEntity {
+	acl: AclEntry[]
 }
 
 export interface Repository<Type extends DomainEntity> {
@@ -54,7 +65,6 @@ export type ImageRepository = Repository<Image>;
 export type ItemRepository = Repository<Item>;
 export type ModelRepository = Repository<Model>;
 export type MonsterRepository = Repository<Monster>;
-export type PermissionAssignmentRepository = Repository<PermissionAssignment>;
 export type PersonRepository = Repository<Person>;
 export type PinRepository = Repository<Pin>;
 export type PlaceRepository = Repository<Place>;
@@ -221,19 +231,6 @@ export type MonsterFactory = (
 		modelColor: string
 	}
 ) => Monster;
-export type PermissionAssignmentFactory = (
-	{
-		_id,
-		permission,
-		subject,
-		subjectType
-	}:{
-		_id: string,
-		permission: string,
-		subject: string,
-		subjectType: string
-	}
-) => PermissionAssignment;
 export type PersonFactory = (
 	{
 		_id,
@@ -354,7 +351,7 @@ export type WorldFactory = (
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DatabaseEntity {}
 
-export interface MongoDBEntity extends DatabaseEntity, Document {
+export interface MongoDBDocument extends DatabaseEntity, Document {
 	_id: Schema.Types.ObjectId;
 }
 
@@ -399,7 +396,6 @@ export interface RepositoryAccessor {
 	itemRepository: ItemRepository;
 	modelRepository: ModelRepository;
 	monsterRepository: MonsterRepository;
-	permissionAssignmentRepository: PermissionAssignmentRepository;
 	personRepository: PersonRepository;
 	pinRepository: PinRepository;
 	placeRepository: PlaceRepository;
@@ -471,7 +467,11 @@ export interface ApiServer {
 	) => Promise<GraphQLResponse>;
 }
 
-export interface WikiPageDocument extends MongoDBEntity {
+export interface PermissionControlledDocument {
+	acl: AclEntryDocument<any>[];
+}
+
+export interface WikiPageDocument extends MongoDBDocument, PermissionControlledDocument {
 	type: string;
 	name: string;
 	world: Schema.Types.ObjectId;
@@ -484,7 +484,7 @@ export interface ModeledWikiDocument extends WikiPageDocument {
 	modelColor: string;
 }
 
-export interface ChunkDocument extends MongoDBEntity {
+export interface ChunkDocument extends MongoDBDocument {
 	image: Schema.Types.ObjectId;
 	x: number;
 	y: number;
@@ -504,14 +504,14 @@ export interface PlaceDocument extends WikiPageDocument {
 
 export interface MonsterDocument extends ModeledWikiDocument {}
 
-export interface WikiFolderDocument extends MongoDBEntity {
+export interface WikiFolderDocument extends MongoDBDocument, PermissionControlledDocument {
 	name: string;
 	world: Schema.Types.ObjectId;
 	pages: Schema.Types.ObjectId[];
 	children: Schema.Types.ObjectId[];
 }
 
-export interface UserDocument extends MongoDBEntity {
+export interface UserDocument extends MongoDBDocument {
 	email: string;
 	username: string;
 	password: string;
@@ -521,33 +521,27 @@ export interface UserDocument extends MongoDBEntity {
 	permissions: Schema.Types.ObjectId[];
 }
 
-export interface ServerConfigDocument extends MongoDBEntity {
+export interface ServerConfigDocument extends MongoDBDocument, PermissionControlledDocument {
 	version: string;
 	registerCodes: string[];
 	adminUsers: Schema.Types.ObjectId[];
 	unlockCode: string;
 }
 
-export interface RoleDocument extends MongoDBEntity {
+export interface RoleDocument extends MongoDBDocument, PermissionControlledDocument {
 	name: string;
 	world: Schema.Types.ObjectId;
 	permissions: Schema.Types.ObjectId[];
 }
 
-export interface PinDocument extends MongoDBEntity {
+export interface PinDocument extends MongoDBDocument {
 	x: number;
 	y: number;
 	map: Schema.Types.ObjectId;
 	page: Schema.Types.ObjectId;
 }
 
-export interface PermissionAssignmentDocument extends MongoDBEntity {
-	permission: string;
-	subject: Schema.Types.ObjectId;
-	subjectType: string;
-}
-
-export interface ModelDocument extends MongoDBEntity {
+export interface ModelDocument extends MongoDBDocument, PermissionControlledDocument {
 	world: Schema.Types.ObjectId;
 	name: string;
 	depth: number;
@@ -558,7 +552,7 @@ export interface ModelDocument extends MongoDBEntity {
 	notes: string;
 }
 
-export interface ImageDocument extends MongoDBEntity {
+export interface ImageDocument extends MongoDBDocument {
 	world: Schema.Types.ObjectId;
 	width: number;
 	height: number;
@@ -569,12 +563,12 @@ export interface ImageDocument extends MongoDBEntity {
 	name: string;
 }
 
-export interface PathNodeDocument extends MongoDBEntity {
+export interface PathNodeDocument extends MongoDBDocument {
 	x: number;
 	y: number;
 }
 
-export interface StrokeDocument extends MongoDBEntity {
+export interface StrokeDocument extends MongoDBDocument {
 	path: PathNodeDocument[];
 	color: string;
 	size: number;
@@ -582,13 +576,13 @@ export interface StrokeDocument extends MongoDBEntity {
 	type: string;
 }
 
-export interface FogStrokeDocument extends MongoDBEntity {
+export interface FogStrokeDocument extends MongoDBDocument {
 	path: PathNodeDocument[];
 	size: number;
 	type: string;
 }
 
-export interface GameDocument extends MongoDBEntity {
+export interface GameDocument extends MongoDBDocument, PermissionControlledDocument {
 	passwordHash: string;
 	world: Schema.Types.ObjectId;
 	map: Schema.Types.ObjectId;
@@ -600,19 +594,19 @@ export interface GameDocument extends MongoDBEntity {
 	messages: MessageDocument[];
 }
 
-export interface CharacterDocument extends MongoDBEntity {
+export interface CharacterDocument extends MongoDBDocument {
 	name: string;
 	player: Schema.Types.ObjectId;
 	color: string;
 	attributes: CharacterAttributeDocument[];
 }
 
-export interface CharacterAttributeDocument extends MongoDBEntity {
+export interface CharacterAttributeDocument extends MongoDBDocument {
 	name: string;
 	value: number;
 }
 
-export interface MessageDocument extends MongoDBEntity {
+export interface MessageDocument extends MongoDBDocument {
 	sender: string;
 	senderUser: string;
 	receiver: string;
@@ -621,7 +615,7 @@ export interface MessageDocument extends MongoDBEntity {
 	timestamp: number;
 }
 
-export interface InGameModelDocument extends MongoDBEntity {
+export interface InGameModelDocument extends MongoDBDocument {
 	model: Schema.Types.ObjectId;
 	x: number;
 	z: number;
@@ -631,7 +625,7 @@ export interface InGameModelDocument extends MongoDBEntity {
 	wiki: Schema.Types.ObjectId;
 }
 
-export interface WorldDocument extends MongoDBEntity {
+export interface WorldDocument extends MongoDBDocument, PermissionControlledDocument {
 	name: string;
 	wikiPage: Schema.Types.ObjectId;
 	rootFolder: Schema.Types.ObjectId;

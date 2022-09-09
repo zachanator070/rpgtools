@@ -10,7 +10,6 @@ import {
 	ItemRepository,
 	ModelRepository,
 	MonsterRepository,
-	PermissionAssignmentRepository,
 	PersonRepository,
 	PinRepository,
 	PlaceRepository,
@@ -35,7 +34,6 @@ import {
 	PlaceFactory,
 	PinFactory,
 	PersonFactory,
-	PermissionAssignmentFactory,
 	MonsterFactory,
 	ModelFactory,
 	ItemFactory,
@@ -58,7 +56,6 @@ import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-
 import { MongodbPlaceRepository } from "../dal/mongodb/repositories/mongodb-place-repository";
 import { MongodbPinRepository } from "../dal/mongodb/repositories/mongodb-pin-repository";
 import { MongodbPersonRepository } from "../dal/mongodb/repositories/mongodb-person-repository";
-import { MongodbPermissionAssignmentRepository } from "../dal/mongodb/repositories/mongodb-permission-assignment-repository";
 import { MongodbMonsterRepository } from "../dal/mongodb/repositories/mongodb-monster-repository";
 import { MongodbModelRepository } from "../dal/mongodb/repositories/mongodb-model-repository";
 import { MongodbImageRepository } from "../dal/mongodb/repositories/mongodb-image-repository";
@@ -69,7 +66,6 @@ import { InMemoryImageRepository } from "../dal/in-memory/repositories/in-memory
 import { InMemoryItemRepository } from "../dal/in-memory/repositories/in-memory-item-repository";
 import { InMemoryModelRepository } from "../dal/in-memory/repositories/in-memory-model-repository";
 import { InMemoryMonsterRepository } from "../dal/in-memory/repositories/in-memory-monster-repository";
-import { InMemoryPermissionAssignmentRepository } from "../dal/in-memory/repositories/in-memory-permission-assignment-repository";
 import { InMemoryPersonRepository } from "../dal/in-memory/repositories/in-memory-person-repository";
 import { InMemoryPinRepository } from "../dal/in-memory/repositories/in-memory-pin-repository";
 import { InMemoryPlaceRepository } from "../dal/in-memory/repositories/in-memory-place-repository";
@@ -107,8 +103,6 @@ import { Image } from "../domain-entities/image";
 import { Item } from "../domain-entities/item";
 import { Model } from "../domain-entities/model";
 import { Monster } from "../domain-entities/monster";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { PermissionAssignmentDataLoader } from "../dal/dataloaders/permission-assignment-data-loader";
 import { Person } from "../domain-entities/person";
 import { Pin } from "../domain-entities/pin";
 import { Place } from "../domain-entities/place";
@@ -178,9 +172,6 @@ container.bind<Image>(INJECTABLE_TYPES.Image).to(Image);
 container.bind<Item>(INJECTABLE_TYPES.Item).to(Item);
 container.bind<Model>(INJECTABLE_TYPES.Model).to(Model);
 container.bind<Monster>(INJECTABLE_TYPES.Monster).to(Monster);
-container
-	.bind<PermissionAssignment>(INJECTABLE_TYPES.PermissionAssignment)
-	.to(PermissionAssignment);
 container.bind<Person>(INJECTABLE_TYPES.Person).to(Person);
 container.bind<Pin>(INJECTABLE_TYPES.Pin).to(Pin);
 container.bind<Place>(INJECTABLE_TYPES.Place).to(Place);
@@ -198,7 +189,6 @@ container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Image);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Item);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Model);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Monster);
-container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(PermissionAssignment);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Person);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Pin);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Place);
@@ -485,33 +475,6 @@ container
 			}
 	);
 container
-	.bind<PermissionAssignmentFactory>(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	.toFactory(
-		(context): PermissionAssignmentFactory =>
-			(
-				{
-					_id,
-					permission,
-					subject,
-					subjectType
-				}:{
-					_id: string | ObjectId,
-					permission: string,
-					subject: string | ObjectId,
-					subjectType: string
-				}
-			) => {
-				const permissionAssignment = context.container.get<PermissionAssignment>(
-					INJECTABLE_TYPES.PermissionAssignment
-				);
-				permissionAssignment._id = _id && _id.toString();
-				permissionAssignment.permission = permission;
-				permissionAssignment.subject = subject && subject.toString();
-				permissionAssignment.subjectType = subjectType;
-				return permissionAssignment;
-			}
-	);
-container
 	.bind<PersonFactory>(INJECTABLE_TYPES.PersonFactory)
 	.toFactory(
 		(context): PersonFactory =>
@@ -750,9 +713,6 @@ container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(MongodbImag
 container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(MongodbItemRepository);
 container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(MongodbModelRepository);
 container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(MongodbMonsterRepository);
-container
-	.bind<PermissionAssignmentRepository>(INJECTABLE_TYPES.PermissionAssignmentRepository)
-	.to(MongodbPermissionAssignmentRepository);
 container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(MongodbPersonRepository);
 container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(MongodbPinRepository);
 container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(MongodbPlaceRepository);
@@ -846,9 +806,6 @@ container
 container
 	.bind<MonsterRepository>(INJECTABLE_TYPES.ArchiveMonsterRepository)
 	.to(InMemoryMonsterRepository);
-container
-	.bind<PermissionAssignmentRepository>(INJECTABLE_TYPES.ArchivePermissionAssignmentRepository)
-	.to(InMemoryPermissionAssignmentRepository);
 container
 	.bind<PersonRepository>(INJECTABLE_TYPES.ArchivePersonRepository)
 	.to(InMemoryPersonRepository);
@@ -948,9 +905,6 @@ container.bind<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader).to(ImageData
 container.bind<DataLoader<Item>>(INJECTABLE_TYPES.ItemDataLoader).to(ItemDataLoader);
 container.bind<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader).to(ModelDataLoader);
 container.bind<DataLoader<Monster>>(INJECTABLE_TYPES.MonsterDataLoader).to(MonsterDataLoader);
-container
-	.bind<DataLoader<PermissionAssignment>>(INJECTABLE_TYPES.PermissionAssignmentDataLoader)
-	.to(PermissionAssignmentDataLoader);
 container.bind<DataLoader<Person>>(INJECTABLE_TYPES.PersonDataLoader).to(PersonDataLoader);
 container.bind<DataLoader<Pin>>(INJECTABLE_TYPES.PinDataLoader).to(PinDataLoader);
 container.bind<DataLoader<Place>>(INJECTABLE_TYPES.PlaceDataLoader).to(PlaceDataLoader);

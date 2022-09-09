@@ -1,16 +1,17 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {AclEntry, DomainEntity, Factory, PermissionControlledEntity, Repository, RepositoryAccessor} from "../types";
 import { RoleAuthorizationPolicy } from "../security/policy/role-authorization-policy";
 import { ROLE } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class Role implements DomainEntity {
+export class Role implements DomainEntity, PermissionControlledEntity {
 	public _id: string;
 	public name: string;
 	// world will be null for server only roles
 	public world: string | null;
 	public permissions: string[];
+	public acl: AclEntry[];
 
 	authorizationPolicy: RoleAuthorizationPolicy;
 	factory: Factory<Role>;

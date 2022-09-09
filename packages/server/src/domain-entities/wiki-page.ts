@@ -1,10 +1,18 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {
+	AclEntry,
+	DomainEntity,
+	Factory,
+	PermissionControlledEntity,
+	Repository,
+	RepositoryAccessor,
+	UnitOfWork
+} from "../types";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export abstract class WikiPage implements DomainEntity {
+export abstract class WikiPage implements DomainEntity, PermissionControlledEntity {
 
 	public _id: string;
 	public name: string;
@@ -12,6 +20,7 @@ export abstract class WikiPage implements DomainEntity {
 	public coverImage: string | null;
 	public contentId: string | null;
 	public content: string | null;
+	public acl: AclEntry[];
 
 	authorizationPolicy: WikiPageAuthorizationPolicy;
 
