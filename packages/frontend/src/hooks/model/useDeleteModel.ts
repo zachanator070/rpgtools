@@ -1,5 +1,4 @@
 import useGetModels from "./useGetModels";
-import useMyPermissions from "../authorization/useMyPermissions";
 import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {useParams} from "react-router-dom";
 import useCurrentWorld from "../world/useCurrentWorld";
@@ -16,7 +15,6 @@ interface DeleteModelResult {
 
 export default function useDeleteModel(callback: (data: Model) => Promise<void>): DeleteModelResult {
 	const { refetch } = useGetModels();
-	const { refetch: refetchPermissions } = useMyPermissions();
 	const {currentWorld} = useCurrentWorld();
 	const params = useParams();
 
@@ -26,7 +24,6 @@ export default function useDeleteModel(callback: (data: Model) => Promise<void>)
 		{
 			onCompleted: async (data: Model) => {
 				await refetch();
-				await refetchPermissions({worldId: currentWorld._id});
 				await callback(data);
 			},
 			displayErrors: true,

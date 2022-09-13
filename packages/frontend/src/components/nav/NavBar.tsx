@@ -76,16 +76,6 @@ export default function NavBar() {
 								</Link>
 							</span>
 						)}
-						{currentWorld && (
-							<span className={"margin-lg-left"}>
-								<Link
-									to={`/ui/world/${currentWorld._id}/myPermissions`}
-									title="My permissions on this world"
-								>
-									<PersonIcon />
-								</Link>
-							</span>
-						)}
 					</div>
 
 					{currentWorld &&

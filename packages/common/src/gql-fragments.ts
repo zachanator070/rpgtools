@@ -10,32 +10,7 @@ export const WIKIS_IN_FOLDER_ATTRIBUTES = `
 		_id
 	}
 `;
-export const PERMISSIONS_GRANTED = gql`
-    fragment permissionsGranted on Role {
-        permissions{
-            _id
-            permission
-            canWrite
-            subjectType
-            subject {
-                _id
-                ... on World{
-                    name
-                }
-                ... on WikiPage{
-                    name
-                }
-                ... on WikiFolder{
-                    name
-                }
-                ... on Role{
-                    name
-                }
-                canAdmin
-            }
-        }
-    }
-`;
+
 export const ACCESS_CONTROL_LIST = gql`
     fragment accessControlList on PermissionControlled {
         ... on PermissionControlled {
@@ -109,7 +84,6 @@ export const CURRENT_WORLD_FOLDERS = gql`
 	}
 `;
 export const CURRENT_WORLD_ROLES = gql`
-    ${PERMISSIONS_GRANTED}
     ${ACCESS_CONTROL_LIST}
     fragment currentWorldRoles on Role {
         _id
@@ -119,7 +93,6 @@ export const CURRENT_WORLD_ROLES = gql`
         world{
             _id
         }
-        ...permissionsGranted
         members{
             _id
             username
@@ -128,7 +101,6 @@ export const CURRENT_WORLD_ROLES = gql`
     }
 `;
 export const SERVER_CONFIG_ROLES = gql`
-    ${PERMISSIONS_GRANTED}
     ${ACCESS_CONTROL_LIST}
     fragment serverConfigRoles on ServerConfig {
         roles{
@@ -139,7 +111,6 @@ export const SERVER_CONFIG_ROLES = gql`
             world{
                 _id
             }
-            ...permissionsGranted
             members{
                 _id
                 username

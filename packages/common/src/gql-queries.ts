@@ -42,33 +42,6 @@ export const SEARCH_USERS = gql`
 `;
 //endregion
 
-//region Permissions
-export const MY_PERMISSIONS = gql`
-	query myPermissions($worldId: ID!) {
-		myPermissions(worldId: $worldId) {
-			_id
-			permission
-			subject {
-				_id
-				... on World {
-					name
-				}
-				... on WikiPage {
-					name
-				}
-				... on WikiFolder {
-					name
-				}
-				... on Role {
-					name
-				}
-			}
-			subjectType
-		}
-	}
-`;
-//endregion
-
 //region Roles
 export const SEARCH_ROLES = gql`
 	${CURRENT_WORLD_ROLES}
