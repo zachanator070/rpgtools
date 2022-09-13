@@ -26,7 +26,6 @@ export interface World extends PermissionControlled {
     canAddRoles: boolean;
     canHostGame: boolean;
     canAddModels: boolean;
-    currentUserPermissions: PermissionAssignment[];
     folders: WikiFolder[];
 }
 

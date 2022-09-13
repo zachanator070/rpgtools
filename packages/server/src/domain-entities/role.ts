@@ -5,12 +5,11 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class Role implements DomainEntity, PermissionControlledEntity {
+export class Role implements PermissionControlledEntity {
 	public _id: string;
 	public name: string;
 	// world will be null for server only roles
 	public world: string | null;
-	public permissions: string[];
 	public acl: AclEntry[];
 
 	authorizationPolicy: RoleAuthorizationPolicy;

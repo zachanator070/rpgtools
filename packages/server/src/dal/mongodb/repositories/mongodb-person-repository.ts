@@ -1,10 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Person } from "../../../domain-entities/person";
 import { inject, injectable } from "inversify";
-import { PersonDocument, PersonFactory, PersonRepository } from "../../../types";
+import { PersonFactory, PersonRepository } from "../../../types";
 import mongoose from "mongoose";
-import { PersonModel } from "../models/person";
+import {PersonDocument, PersonModel} from "../models/person";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbPersonRepository
@@ -25,7 +26,8 @@ export class MongodbPersonRepository
 				coverImage: document.coverImage ? document.coverImage.toString() : null,
 				contentId: document.contentId ? document.contentId.toString() : null,
 				pageModel: document.pageModel ? document.pageModel.toString() : null,
-				modelColor: document.modelColor
+				modelColor: document.modelColor,
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

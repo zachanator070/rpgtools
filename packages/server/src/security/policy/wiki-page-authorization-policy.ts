@@ -21,10 +21,11 @@ export class WikiPageAuthorizationPolicy
 
 	entity: WikiPage;
 
-	canAdmin = async (context: SecurityContext): Promise<boolean> => {
+	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
 		return (
-			context.hasPermission(WIKI_ADMIN, this.entity._id) ||
-			context.hasPermission(WIKI_ADMIN_ALL, this.entity.world)
+			context.hasPermission(WIKI_ADMIN, this.entity) ||
+			context.hasPermission(WIKI_ADMIN_ALL, world)
 		);
 	};
 
@@ -50,9 +51,9 @@ export class WikiPageAuthorizationPolicy
 			new FilterCondition("pages", this.entity._id),
 		]);
 		return (
-			context.hasPermission(FOLDER_READ_ALL_PAGES, parentFolder._id) ||
-			context.hasPermission(WIKI_READ, this.entity._id) ||
-			context.hasPermission(WIKI_READ_ALL, world._id) ||
+			context.hasPermission(FOLDER_READ_ALL_PAGES, parentFolder) ||
+			context.hasPermission(WIKI_READ, this.entity) ||
+			context.hasPermission(WIKI_READ_ALL, world) ||
 			(await this.canWrite(context, unitOfWork))
 		);
 	};
@@ -61,10 +62,11 @@ export class WikiPageAuthorizationPolicy
 		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("pages", this.entity._id),
 		]);
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
 		return (
-			context.hasPermission(FOLDER_RW_ALL_PAGES, parentFolder._id) ||
-			context.hasPermission(WIKI_RW, this.entity._id) ||
-			context.hasPermission(WIKI_RW_ALL, this.entity.world)
+			context.hasPermission(FOLDER_RW_ALL_PAGES, parentFolder) ||
+			context.hasPermission(WIKI_RW, this.entity) ||
+			context.hasPermission(WIKI_RW_ALL, world)
 		);
 	};
 }

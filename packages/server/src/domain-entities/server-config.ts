@@ -5,7 +5,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class ServerConfig implements DomainEntity, PermissionControlledEntity {
+export class ServerConfig implements PermissionControlledEntity {
 	public _id: string;
 	public version: string;
 	public registerCodes: string[];

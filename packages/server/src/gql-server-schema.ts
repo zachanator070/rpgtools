@@ -57,11 +57,6 @@ export const typeDefs = gql`
 		Get all models for a world
 		"""
 		models(worldId: ID!): [Model!]!
-
-		"""
-		Get permissions for the current authenticated user for a particular world
-		"""
-		myPermissions(worldId: ID!): [PermissionAssignment!]!
 		
 		pins(worldId: ID!, page: Int): PinPaginatedResult!
 	}
@@ -90,14 +85,14 @@ export const typeDefs = gql`
 			subjectId: ID!
 			subjectType: String!
 		): PermissionControlled!
-		revokeUserPermission(userId: ID!, permission: String!, subjectId: ID!): PermissionControlled!
+		revokeUserPermission(userId: ID!, permission: String!, subjectId: ID!, subjectType: String!): PermissionControlled!
 		grantRolePermission(
 			roleId: ID!
 			permission: String!
 			subjectId: ID!
 			subjectType: String!
 		): Role!
-		revokeRolePermission(roleId: ID!, permission: String!, subjectId: ID!): Role!
+		revokeRolePermission(roleId: ID!, permission: String!, subjectId: ID!, subjectType: String!): Role!
 
 		createFolder(name: String!, parentFolderId: ID!): WikiFolder!
 		renameFolder(folderId: ID!, name: String!): WikiFolder!
@@ -201,11 +196,10 @@ export const typeDefs = gql`
 		email: String
 		currentWorld: World
 		roles: [Role!]!
-		permissions: [PermissionAssignment!]!
 	}
 
 	interface PermissionControlled {
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		_id: ID!
@@ -217,13 +211,12 @@ export const typeDefs = gql`
 		wikiPage: Place
 		rootFolder: WikiFolder
 		pins: [Pin!]!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		canAddRoles: Boolean!
 		canHostGame: Boolean!
 		canAddModels: Boolean!
-		currentUserPermissions: [PermissionAssignment!]!
 	}
 
 	type WorldPaginatedResult {
@@ -314,7 +307,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		folder: WikiFolder!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}
@@ -329,7 +322,7 @@ export const typeDefs = gql`
 		pixelsPerFoot: Int
 		type: String!
 		folder: WikiFolder!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}
@@ -342,7 +335,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		folder: WikiFolder!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		model: Model
@@ -357,7 +350,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		folder: WikiFolder!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		model: Model
@@ -372,7 +365,7 @@ export const typeDefs = gql`
 		coverImage: Image
 		type: String!
 		folder: WikiFolder!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		model: Model
@@ -384,7 +377,7 @@ export const typeDefs = gql`
 		name: String!
 		world: World!
 		children: [WikiFolder!]!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}
@@ -414,22 +407,21 @@ export const typeDefs = gql`
 	type Role implements PermissionControlled {
 		_id: ID!
 		name: String!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		members: [User!]!
 		world: World
-		permissions: [PermissionAssignment!]!
+		permissions: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}
 
-	type PermissionAssignment {
+    union AclPrincipal = User | Role
+
+	type AclEntry {
 		_id: ID!
 		permission: String!
-		subject: PermissionControlled!
-		subjectType: String!
-		canWrite: Boolean!
-		users: [User!]!
-		roles: [Role!]!
+		principal: AclPrincipal!
+		principalType: String!
 	}
 
 	type Pin {
@@ -445,7 +437,7 @@ export const typeDefs = gql`
 		_id: ID!
 		version: String!
 		registerCodes: [String!]!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 		canCreateWorlds: Boolean!
@@ -466,7 +458,7 @@ export const typeDefs = gql`
 		characters: [GameCharacter!]!
 		messages: [GameMessage!]!
 		host: User!
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canPaint: Boolean!
 		canModel: Boolean!
 		canWriteFog: Boolean!
@@ -538,7 +530,7 @@ export const typeDefs = gql`
 		fileName: String!
 		fileId: ID!
 		notes: String
-		accessControlList: [PermissionAssignment!]!
+		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}

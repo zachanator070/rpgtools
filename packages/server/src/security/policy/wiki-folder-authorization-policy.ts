@@ -21,27 +21,30 @@ export class WikiFolderAuthorizationPolicy
 
 	entity: WikiFolder;
 
-	canAdmin = async (context: SecurityContext): Promise<boolean> =>
-		(await context.hasPermission(FOLDER_ADMIN, this.entity._id)) ||
-		(await context.hasPermission(FOLDER_ADMIN_ALL, this.entity.world));
+	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		return context.hasPermission(FOLDER_ADMIN, this.entity) ||
+		context.hasPermission(FOLDER_ADMIN_ALL, world);
+	}
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
 		return this.canWrite(context, unitOfWork);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
 		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
 			new FilterCondition("children", this.entity._id),
 		]);
 		let parentReadAll = false;
 		if (parentFolder) {
-			parentReadAll = await context.hasPermission(FOLDER_READ_ALL_CHILDREN, parentFolder._id);
+			parentReadAll = context.hasPermission(FOLDER_READ_ALL_CHILDREN, parentFolder);
 		}
 		return (
 			parentReadAll ||
-			(await context.hasPermission(FOLDER_READ, this.entity._id)) ||
-			(await context.hasPermission(FOLDER_READ_ALL, this.entity.world)) ||
-			(await this.canWrite(context, unitOfWork))
+			context.hasPermission(FOLDER_READ, this.entity) ||
+			 context.hasPermission(FOLDER_READ_ALL, world) ||
+			await this.canWrite(context, unitOfWork)
 		);
 	};
 
@@ -51,12 +54,13 @@ export class WikiFolderAuthorizationPolicy
 		]);
 		let parentWriteAll = false;
 		if (parentFolder) {
-			parentWriteAll = context.hasPermission(FOLDER_RW_ALL_CHILDREN, parentFolder._id);
+			parentWriteAll = context.hasPermission(FOLDER_RW_ALL_CHILDREN, parentFolder);
 		}
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
 		return (
 			parentWriteAll ||
-			(await context.hasPermission(FOLDER_RW, this.entity._id)) ||
-			(await context.hasPermission(FOLDER_RW_ALL, this.entity.world))
+			context.hasPermission(FOLDER_RW, this.entity) ||
+			context.hasPermission(FOLDER_RW_ALL, world)
 		);
 	};
 }

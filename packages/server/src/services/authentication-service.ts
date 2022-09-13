@@ -163,7 +163,7 @@ export class AuthenticationService {
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
-		const newUser = this.userFactory({_id: "", email, username, password, tokenVersion: null, currentWorld: null, roles: [], permissions: []});
+		const newUser = this.userFactory({_id: "", email, username, password, tokenVersion: null, currentWorld: null, roles: []});
 		await unitOfWork.userRepository.create(newUser);
 		return newUser;
 	};

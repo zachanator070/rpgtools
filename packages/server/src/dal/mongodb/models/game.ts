@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
-import { GAME, MODEL, PLACE, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
-import { GameDocument } from "../../../types";
+import mongoose, {Schema} from "mongoose";
+import {GAME, MODEL, PLACE, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
+import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
+import {AclEntry} from "./acl-entry";
 
 const pathNode = new mongoose.Schema({
 	x: Number,
@@ -156,6 +157,69 @@ const gameSchema = new mongoose.Schema({
 			},
 		}),
 	],
+	acl: [AclEntry],
 });
+
+export interface GameDocument extends MongoDBDocument, PermissionControlledDocument {
+	passwordHash: string;
+	world: Schema.Types.ObjectId;
+	map: Schema.Types.ObjectId;
+	characters: CharacterDocument[];
+	host: Schema.Types.ObjectId;
+	strokes: StrokeDocument[];
+	fog: FogStrokeDocument[];
+	models: InGameModelDocument[];
+	messages: MessageDocument[];
+}
+
+export interface PathNodeDocument extends MongoDBDocument {
+    x: number;
+    y: number;
+}
+
+export interface StrokeDocument extends MongoDBDocument {
+    path: PathNodeDocument[];
+    color: string;
+    size: number;
+    fill: boolean;
+    type: string;
+}
+
+export interface FogStrokeDocument extends MongoDBDocument {
+    path: PathNodeDocument[];
+    size: number;
+    type: string;
+}
+
+export interface CharacterDocument extends MongoDBDocument {
+    name: string;
+    player: Schema.Types.ObjectId;
+    color: string;
+    attributes: CharacterAttributeDocument[];
+}
+
+export interface CharacterAttributeDocument extends MongoDBDocument {
+    name: string;
+    value: number;
+}
+
+export interface MessageDocument extends MongoDBDocument {
+    sender: string;
+    senderUser: string;
+    receiver: string;
+    receiverUser: string;
+    message: string;
+    timestamp: number;
+}
+
+export interface InGameModelDocument extends MongoDBDocument {
+    model: Schema.Types.ObjectId;
+    x: number;
+    z: number;
+    lookAtX: number;
+    lookAtZ: number;
+    color: string;
+    wiki: Schema.Types.ObjectId;
+}
 
 export const GameModel = mongoose.model<GameDocument>(GAME, gameSchema);

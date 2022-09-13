@@ -12,7 +12,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export abstract class WikiPage implements DomainEntity, PermissionControlledEntity {
+export abstract class WikiPage implements PermissionControlledEntity {
 
 	public _id: string;
 	public name: string;

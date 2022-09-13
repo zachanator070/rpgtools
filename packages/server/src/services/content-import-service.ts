@@ -1,6 +1,5 @@
 import { SecurityContext } from "../security/security-context";
 import { FileUpload } from "graphql-upload";
-import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
 import {
 	Archive,
@@ -171,7 +170,8 @@ export class ContentImportService {
 						name: path[0].name,
 						world: destinationRootFolder.world,
 						pages: [],
-						children: []
+						children: [],
+						acl: []
 					}
 				);
 				await unitOfWork.wikiFolderRepository.create(newFolder);

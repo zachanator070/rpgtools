@@ -13,7 +13,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class Game implements DomainEntity, PermissionControlledEntity {
+export class Game implements PermissionControlledEntity {
 	public _id: string;
 	public passwordHash: string;
 	public world: string;

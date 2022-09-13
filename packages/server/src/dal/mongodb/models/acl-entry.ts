@@ -5,9 +5,9 @@ import {User} from "../../../domain-entities/user";
 import {Role} from "../../../domain-entities/role";
 
 
-export interface AclEntryDocument<T extends User | Role> {
+export interface AclEntryDocument {
     permission: string;
-    principal: T;
+    principal: mongoose.Schema.Types.ObjectId;
     principalType: "User" | "Role";
 }
 

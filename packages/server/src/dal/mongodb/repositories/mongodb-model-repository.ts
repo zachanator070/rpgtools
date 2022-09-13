@@ -1,10 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Model } from "../../../domain-entities/model";
 import mongoose from "mongoose";
-import { ModelModel } from "../models/model";
-import { ModelDocument, ModelFactory, ModelRepository } from "../../../types";
+import {ModelDocument, ModelModel} from "../models/model";
+import { ModelFactory, ModelRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbModelRepository
@@ -27,7 +28,8 @@ export class MongodbModelRepository
 				height: document.height,
 				fileName: document.fileName,
 				fileId: document.fileId,
-				notes: document.notes
+				notes: document.notes,
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

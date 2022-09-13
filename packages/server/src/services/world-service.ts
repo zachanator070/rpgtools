@@ -1,5 +1,4 @@
 import {
-	PermissionAssignmentFactory,
 	PinFactory,
 	PlaceFactory,
 	RoleFactory,
@@ -13,7 +12,7 @@ import {
 	WORLD_PERMISSIONS,
 } from "@rpgtools/common/src/permission-constants";
 import { SecurityContext } from "../security/security-context";
-import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
+import {PLACE, ROLE} from "@rpgtools/common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import { World } from "../domain-entities/world";
 import {FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
@@ -23,8 +22,6 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 @injectable()
 export class WorldService {
 
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
 	@inject(INJECTABLE_TYPES.PinFactory)
@@ -46,7 +43,7 @@ export class WorldService {
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
 		}
-		if (!(await securityContext.hasPermission(WORLD_CREATE, server._id))) {
+		if (!securityContext.hasPermission(WORLD_CREATE, server)) {
 			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
 		}
 		return  this.makeWorld(name, isPublic, securityContext, unitOfWork);
@@ -184,15 +181,15 @@ export class WorldService {
 		context: SecurityContext,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null});
+		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null, acl: []});
 		await unitOfWork.worldRepository.create(world);
-		const rootWiki = this.placeFactory({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0});
+		const rootWiki = this.placeFactory({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: []});
 		await unitOfWork.placeRepository.create(rootWiki);
-		const rootFolder = this.wikiFolderFactory({_id: null, name, world: world._id, pages: [], children: []});
+		const rootFolder = this.wikiFolderFactory({_id: null, name, world: world._id, pages: [], children: [], acl: []});
 		await unitOfWork.wikiFolderRepository.create(rootFolder);
-		const placeFolder = this.wikiFolderFactory({_id: null, name: "Places", world: world._id, pages: [rootWiki._id], children: []});
+		const placeFolder = this.wikiFolderFactory({_id: null, name: "Places", world: world._id, pages: [rootWiki._id], children: [], acl: []});
 		await unitOfWork.wikiFolderRepository.create(placeFolder);
-		const peopleFolder = this.wikiFolderFactory({_id: null, name: "People", world:  world._id, pages: [], children: []});
+		const peopleFolder = this.wikiFolderFactory({_id: null, name: "People", world:  world._id, pages: [], children: [], acl: []});
 		await unitOfWork.wikiFolderRepository.create(peopleFolder);
 		rootFolder.children.push(placeFolder._id, peopleFolder._id);
 		await unitOfWork.wikiFolderRepository.update(rootFolder);
@@ -200,46 +197,28 @@ export class WorldService {
 		world.rootFolder = rootFolder._id;
 		world.wikiPage = rootWiki._id;
 
-		const ownerPermissions = [];
-		for (const permission of WORLD_PERMISSIONS) {
-			const permissionAssignment = this.permissionAssignmentFactory(
-				{
-					_id: null,
-					permission,
-					subject: world._id,
-					subjectType: WORLD
-				}
-			);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-			ownerPermissions.push(permissionAssignment._id);
-			context.permissions.push(permissionAssignment);
-		}
-		const ownerRole = this.roleFactory({_id: null, name: WORLD_OWNER, world: world._id, permissions: ownerPermissions});
+		const ownerRole = this.roleFactory({_id: null, name: WORLD_OWNER, world: world._id, acl: []});
 		await unitOfWork.roleRepository.create(ownerRole);
+
+		for (const permission of WORLD_PERMISSIONS) {
+			world.acl.push({
+				permission: permission,
+				principal: ownerRole._id,
+				principalType: ROLE
+			});
+		}
+
 		context.user.roles.push(ownerRole._id);
 		await unitOfWork.userRepository.update(context.user);
 
 		const everyoneRole = await unitOfWork.roleRepository.findOne([new FilterCondition("name", EVERYONE)]);
 		if (isPublic) {
 			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
-				let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-					new FilterCondition("permission", permission),
-					new FilterCondition("subjectId", world._id),
-					new FilterCondition("subjectType", WORLD),
-				]);
-				if (!permissionAssignment) {
-					permissionAssignment = this.permissionAssignmentFactory(
-						{
-							_id: null,
-							permission,
-							subject: world._id,
-							subjectType: WORLD
-						}
-					);
-					await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-				}
-				everyoneRole.permissions.push(permissionAssignment._id);
-				context.permissions.push(permissionAssignment);
+				world.acl.push({
+					permission: permission,
+					principal: ownerRole._id,
+					principalType: ROLE
+				});
 			}
 		}
 		await unitOfWork.roleRepository.update(everyoneRole);

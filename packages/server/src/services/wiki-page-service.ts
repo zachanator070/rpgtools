@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { SecurityContext } from "../security/security-context";
-import { ARTICLE } from "@rpgtools/common/src/type-constants";
+import {USER} from "@rpgtools/common/src/type-constants";
 import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { Readable } from "stream";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
@@ -9,7 +9,6 @@ import {
 	FileFactory,
 	ItemFactory,
 	MonsterFactory,
-	PermissionAssignmentFactory,
 	PersonFactory,
 	PlaceFactory, UnitOfWork,
 } from "../types";
@@ -37,8 +36,6 @@ export class WikiPageService {
 	personFactory: PersonFactory;
 	@inject(INJECTABLE_TYPES.PlaceFactory)
 	placeFactory: PlaceFactory;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
 
@@ -55,26 +52,22 @@ export class WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const newPage = this.articleFactory({_id: null, name, world: folder.world, coverImage: null, contentId: null});
+		const newPage = this.articleFactory({_id: null, name, world: folder.world, coverImage: null, contentId: null, acl: []});
 		await unitOfWork.articleRepository.create(newPage);
 		folder.pages.push(newPage._id);
 		await unitOfWork.wikiFolderRepository.update(folder);
 
-		const readPermission = this.permissionAssignmentFactory({_id: null, permission: WIKI_RW, subject: newPage._id, subjectType: ARTICLE});
-		await unitOfWork.permissionAssignmentRepository.create(readPermission);
-		context.user.permissions.push(readPermission._id);
-		context.permissions.push(readPermission);
-		const adminPermission = this.permissionAssignmentFactory(
-			{
-				_id: null,
-				permission: WIKI_ADMIN,
-				subject: newPage._id,
-				subjectType: ARTICLE
-			}
-		);
-		await unitOfWork.permissionAssignmentRepository.create(adminPermission);
-		context.user.permissions.push(adminPermission._id);
-		context.permissions.push(adminPermission);
+		newPage.acl.push({
+			permission: WIKI_RW,
+			principal: context.user._id,
+			principalType: USER
+		});
+		newPage.acl.push({
+			permission: WIKI_ADMIN,
+			principal: context.user._id,
+			principalType: USER
+		});
+
 		await unitOfWork.userRepository.update(context.user);
 		return folder;
 	};
@@ -129,12 +122,6 @@ export class WikiPageService {
 		wikiPage.coverImage = coverImageId;
 
 		if (type && type !== wikiPage.type) {
-			// update old permissions to have the right subject type
-			const currentPermissions = await unitOfWork.permissionAssignmentRepository.find([new FilterCondition('subject', wikiPage._id)]);
-			for (const oldPermission of currentPermissions) {
-				oldPermission.subjectType = type;
-				await unitOfWork.permissionAssignmentRepository.update(oldPermission);
-			}
 			// recreate the wiki page with the right default values
 			const newType = this.entityMapper.map(type);
 			wikiPage = newType.factory(wikiPage) as WikiPage;
@@ -170,7 +157,6 @@ export class WikiPageService {
 			await unitOfWork.wikiFolderRepository.update(parentFolder);
 		}
 
-		await this.authorizationService.cleanUpPermissions(wikiPage._id, unitOfWork);
 		await unitOfWork.wikiPageRepository.delete(wikiPage);
 		return parentFolder;
 	};
@@ -290,7 +276,7 @@ export class WikiPageService {
 
 		const docs = [];
 		for (let doc of results.docs) {
-			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context))) {
+			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context, unitOfWork))) {
 				continue;
 			}
 			if (hasModel !== undefined) {

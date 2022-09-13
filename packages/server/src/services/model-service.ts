@@ -3,10 +3,10 @@ import {
 	EventPublisher,
 	FileFactory,
 	ModelFactory,
-	PermissionAssignmentFactory, UnitOfWork,
+	UnitOfWork,
 } from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants";
-import { MODEL } from "@rpgtools/common/src/type-constants";
+import {USER} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { SecurityContext } from "../security/security-context";
@@ -31,8 +31,6 @@ export class ModelService {
 	fileFactory: FileFactory;
 	@inject(INJECTABLE_TYPES.ModelFactory)
 	modelFactory: ModelFactory;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 
 	updateModel = async (
 		context: SecurityContext,
@@ -49,7 +47,7 @@ export class ModelService {
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
-		if (!(await model.authorizationPolicy.canWrite(context))) {
+		if (!(await model.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to edit this model");
 		}
 		if (file) {
@@ -103,11 +101,12 @@ export class ModelService {
 				height,
 				fileName: null,
 				fileId: null,
-				notes
+				notes,
+				acl: []
 			}
 		);
 
-		if (!(await model.authorizationPolicy.canCreate(context))) {
+		if (!(await model.authorizationPolicy.canCreate(context, unitOfWork))) {
 			throw new Error("You do not have permission to add models to this world");
 		}
 
@@ -119,17 +118,11 @@ export class ModelService {
 		model.fileId = file._id;
 		await unitOfWork.modelRepository.create(model);
 		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
-			const permissionAssignment = this.permissionAssignmentFactory(
-				{
-					_id: null,
-					permission,
-					subject: model._id,
-					subjectType: MODEL
-				}
-			);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-			context.user.permissions.push(permissionAssignment._id);
-			context.permissions.push(permissionAssignment);
+			model.acl.push({
+				permission,
+				principal: context.user._id,
+				principalType: USER
+			});
 		}
 		await unitOfWork.userRepository.update(context.user);
 		return model;
@@ -140,7 +133,7 @@ export class ModelService {
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
-		if (!(await model.authorizationPolicy.canWrite(context))) {
+		if (!(await model.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to delete this model");
 		}
 		const games = await unitOfWork.gameRepository.find([new FilterCondition("models", {_id: modelId})]);
@@ -157,7 +150,6 @@ export class ModelService {
 		if (await this.cache.exists(model.fileName)) {
 			await this.cache.delete(model.fileName);
 		}
-		await this.authorizationService.cleanUpPermissions(modelId, unitOfWork);
 		return model;
 	};
 
@@ -165,17 +157,10 @@ export class ModelService {
 		const models = await unitOfWork.modelRepository.find([new FilterCondition("world", worldId)]);
 		const returnModels = [];
 		for (let model of models) {
-			if (await model.authorizationPolicy.canRead(context)) {
+			if (await model.authorizationPolicy.canRead(context, unitOfWork)) {
 				returnModels.push(model);
 			}
 		}
 		return returnModels;
-	};
-
-	private filenameExists = async (filename: string, unitOfWork: UnitOfWork) => {
-		const models = await unitOfWork.modelRepository.find([
-			new FilterCondition("filename", filename),
-		]);
-		return models.length > 1;
 	};
 }

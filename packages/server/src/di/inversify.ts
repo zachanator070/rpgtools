@@ -38,7 +38,7 @@ import {
 	ModelFactory,
 	ItemFactory,
 	ImageFactory,
-	GameFactory, FileFactory, ChunkFactory, ArticleFactory
+	GameFactory, FileFactory, ChunkFactory, ArticleFactory, AclEntry
 } from "../types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "../dal/mongodb/repositories/mongodb-article-repository";
@@ -140,7 +140,6 @@ import { ImageAuthorizationPolicy } from "../security/policy/image-authorization
 import { ItemAuthorizationPolicy } from "../security/policy/item-authorization-policy";
 import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy";
 import { MonsterAuthorizationPolicy } from "../security/policy/monster-authorization-policy";
-import { PermissionAssignmentAuthorizationPolicy } from "../security/policy/permission-assignment-authorization-policy";
 import { PersonAuthorizationPolicy } from "../security/policy/person-authorization-policy";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PlaceAuthorizationPolicy } from "../security/policy/place-authorization-policy";
@@ -570,19 +569,19 @@ container
 				_id,
 				name,
 				world,
-				permissions
+				acl
 			}:{
 				_id: string | ObjectId,
 				name: string,
 				world: string | ObjectId,
-				permissions: string[] | ObjectId[]
+				acl: AclEntry[]
 			}
 		) => {
 			const role = context.container.get<Role>(INJECTABLE_TYPES.Role);
 			role._id = _id && _id.toString();
 			role.name = name;
 			role.world = world && world.toString();
-			role.permissions = permissions.map(permission => permission.toString());
+			role.acl = acl;
 			return role;
 		});
 container
@@ -626,7 +625,6 @@ container
 					tokenVersion,
 					currentWorld,
 					roles,
-					permissions
 				}:{
 					_id: string | ObjectId,
 					email: string,
@@ -635,7 +633,6 @@ container
 					tokenVersion: string,
 					currentWorld: string | ObjectId,
 					roles: string[] | ObjectId[],
-					permissions: string[] | ObjectId[]
 				}
 			) => {
 				const user = context.container.get<User>(INJECTABLE_TYPES.User);
@@ -646,7 +643,6 @@ container
 				user.tokenVersion = tokenVersion;
 				user.currentWorld = currentWorld && currentWorld.toString();
 				user.roles = roles.map(role => role.toString());
-				user.permissions = permissions.map(permission => permission.toString());
 				return user;
 			}
 	);
@@ -754,11 +750,6 @@ container
 container
 	.bind<MonsterAuthorizationPolicy>(INJECTABLE_TYPES.MonsterAuthorizationPolicy)
 	.to(MonsterAuthorizationPolicy);
-container
-	.bind<PermissionAssignmentAuthorizationPolicy>(
-		INJECTABLE_TYPES.PermissionAssignmentAuthorizationPolicy
-	)
-	.to(PermissionAssignmentAuthorizationPolicy);
 container
 	.bind<PersonAuthorizationPolicy>(INJECTABLE_TYPES.PersonAuthorizationPolicy)
 	.to(PersonAuthorizationPolicy);

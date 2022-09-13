@@ -1,4 +1,4 @@
-import {EntityAuthorizationPolicy, Repository, UnitOfWork} from "../../types";
+import {EntityAuthorizationPolicy, UnitOfWork} from "../../types";
 import { World } from "../../domain-entities/world";
 import { SecurityContext } from "../security-context";
 import { ServerConfig } from "../../domain-entities/server-config";
@@ -20,25 +20,25 @@ export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy<World
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
 		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne([]);
 		return (
-			context.hasPermission(WORLD_ADMIN, this.entity._id) ||
-			context.hasPermission(WORLD_ADMIN_ALL, serverConfig._id)
+			context.hasPermission(WORLD_ADMIN, this.entity) ||
+			context.hasPermission(WORLD_ADMIN_ALL, serverConfig)
 		);
 	};
 
 	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(WORLD_CREATE, this.entity._id);
+		return context.hasPermission(WORLD_CREATE, this.entity);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
 		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne([]);
 		return (
-			(await context.hasPermission(WORLD_READ, this.entity._id)) ||
-			context.hasPermission(WORLD_READ_ALL, serverConfig._id) ||
+			context.hasPermission(WORLD_READ, this.entity) ||
+			context.hasPermission(WORLD_READ_ALL, serverConfig) ||
 			(await this.canWrite(context))
 		);
 	};
 
 	canWrite = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(WORLD_RW, this.entity._id);
+		return context.hasPermission(WORLD_RW, this.entity);
 	};
 }

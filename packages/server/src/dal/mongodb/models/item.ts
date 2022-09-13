@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
-import { ITEM, MODEL } from "@rpgtools/common/src/type-constants";
-import { WikiPageModel } from "./wiki-page";
-import { ItemDocument } from "../../../types";
+import {ITEM, MODEL} from "@rpgtools/common/src/type-constants";
+import {WikiPageModel} from "./wiki-page";
+import {ModeledWikiDocument} from "../../../types";
+
+export interface ItemDocument extends ModeledWikiDocument {
+}
 
 const itemSchema = new mongoose.Schema<ItemDocument, mongoose.Model<ItemDocument>>({
 	pageModel: {

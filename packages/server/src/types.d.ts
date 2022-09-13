@@ -35,11 +35,11 @@ export interface DomainEntity {
 
 export interface AclEntry {
 	permission: string;
-	principal: User | Role;
+	principal: string;
 	principalType: 'User' | 'Role';
 }
 
-export interface PermissionControlledEntity {
+export interface PermissionControlledEntity extends DomainEntity{
 	acl: AclEntry[]
 }
 
@@ -87,7 +87,8 @@ export type ArticleFactory = (
 		name: string,
 		world: string,
 		coverImage: string,
-		contentId: string
+		contentId: string,
+		acl: AclEntry[]
 	}
 ) => Article;
 export type ChunkFactory = (
@@ -144,7 +145,8 @@ export type GameFactory = (
 		fog: FogStroke[],
 		messages: Message[],
 		models: InGameModel[],
-		host: string
+		host: string,
+		acl: AclEntry[]
 	}
 ) => Game;
 export type ImageFactory = (
@@ -186,7 +188,8 @@ export type ItemFactory = (
 		coverImage: string,
 		content: string,
 		pageModel: string,
-		modelColor: string
+		modelColor: string,
+		acl: AclEntry[]
 	}
 ) => Item;
 export type ModelFactory = (
@@ -209,7 +212,8 @@ export type ModelFactory = (
 		height: number,
 		fileName: string,
 		fileId: string,
-		notes: string
+		notes: string,
+		acl: AclEntry[]
 	}
 ) => Model;
 export type MonsterFactory = (
@@ -228,7 +232,8 @@ export type MonsterFactory = (
 		coverImage: string,
 		contentId: string,
 		pageModel: string,
-		modelColor: string
+		modelColor: string,
+		acl: AclEntry[]
 	}
 ) => Monster;
 export type PersonFactory = (
@@ -247,7 +252,8 @@ export type PersonFactory = (
 		coverImage: string,
 		contentId: string,
 		pageModel: string,
-		modelColor: string
+		modelColor: string,
+		acl: AclEntry[]
 	}
 ) => Person;
 export type PinFactory = ({_id, x, y, map, page}: {_id: string, x: number, y: number, map: string, page: string}) => Pin;
@@ -267,7 +273,8 @@ export type PlaceFactory = (
 		coverImage: string,
 		contentId: string,
 		mapImage: string,
-		pixelsPerFoot: number
+		pixelsPerFoot: number,
+		acl: AclEntry[]
 	}
 ) => Place;
 export type RoleFactory = (
@@ -275,12 +282,12 @@ export type RoleFactory = (
 		_id,
 		name,
 		world,
-		permissions
+		acl
 	}:{
 		_id: string,
 		name: string,
 		world: string,
-		permissions: string[]
+		acl: AclEntry[]
 	}
 ) => Role;
 export type ServerConfigFactory = (
@@ -295,7 +302,8 @@ export type ServerConfigFactory = (
 		version: string,
 		registerCodes: string[],
 		adminUsers: string[],
-		unlockCode: string
+		unlockCode: string,
+		acl: AclEntry[]
 	}
 ) => ServerConfig;
 export type UserFactory = (
@@ -307,7 +315,6 @@ export type UserFactory = (
 		tokenVersion,
 		currentWorld,
 		roles,
-		permissions
 	}:{
 		_id: string,
 		email: string,
@@ -315,8 +322,7 @@ export type UserFactory = (
 		password: string,
 		tokenVersion: string,
 		currentWorld: string,
-		roles: string[],
-		permissions: string[]
+		roles: string[]
 	}
 ) => User;
 export type WikiFolderFactory = (
@@ -331,7 +337,8 @@ export type WikiFolderFactory = (
 		name: string,
 		world: string,
 		pages: string[],
-		children: string[]
+		children: string[],
+		acl: AclEntry[]
 	}
 ) => WikiFolder;
 export type WorldFactory = (
@@ -345,6 +352,7 @@ export type WorldFactory = (
 		name: string,
 		wikiPage: string,
 		rootFolder: string,
+		acl: AclEntry[]
 	}
 ) => World;
 
@@ -468,7 +476,7 @@ export interface ApiServer {
 }
 
 export interface PermissionControlledDocument {
-	acl: AclEntryDocument<any>[];
+	acl: AclEntryDocument[];
 }
 
 export interface WikiPageDocument extends MongoDBDocument, PermissionControlledDocument {
@@ -482,152 +490,4 @@ export interface WikiPageDocument extends MongoDBDocument, PermissionControlledD
 export interface ModeledWikiDocument extends WikiPageDocument {
 	pageModel: Schema.Types.ObjectId;
 	modelColor: string;
-}
-
-export interface ChunkDocument extends MongoDBDocument {
-	image: Schema.Types.ObjectId;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	fileId: string;
-}
-
-export interface ItemDocument extends ModeledWikiDocument {}
-
-export interface PersonDocument extends ModeledWikiDocument {}
-
-export interface PlaceDocument extends WikiPageDocument {
-	mapImage: Schema.Types.ObjectId;
-	pixelsPerFoot: number;
-}
-
-export interface MonsterDocument extends ModeledWikiDocument {}
-
-export interface WikiFolderDocument extends MongoDBDocument, PermissionControlledDocument {
-	name: string;
-	world: Schema.Types.ObjectId;
-	pages: Schema.Types.ObjectId[];
-	children: Schema.Types.ObjectId[];
-}
-
-export interface UserDocument extends MongoDBDocument {
-	email: string;
-	username: string;
-	password: string;
-	tokenVersion: string;
-	currentWorld: Schema.Types.ObjectId;
-	roles: Schema.Types.ObjectId[];
-	permissions: Schema.Types.ObjectId[];
-}
-
-export interface ServerConfigDocument extends MongoDBDocument, PermissionControlledDocument {
-	version: string;
-	registerCodes: string[];
-	adminUsers: Schema.Types.ObjectId[];
-	unlockCode: string;
-}
-
-export interface RoleDocument extends MongoDBDocument, PermissionControlledDocument {
-	name: string;
-	world: Schema.Types.ObjectId;
-	permissions: Schema.Types.ObjectId[];
-}
-
-export interface PinDocument extends MongoDBDocument {
-	x: number;
-	y: number;
-	map: Schema.Types.ObjectId;
-	page: Schema.Types.ObjectId;
-}
-
-export interface ModelDocument extends MongoDBDocument, PermissionControlledDocument {
-	world: Schema.Types.ObjectId;
-	name: string;
-	depth: number;
-	width: number;
-	height: number;
-	fileName: string;
-	fileId: string;
-	notes: string;
-}
-
-export interface ImageDocument extends MongoDBDocument {
-	world: Schema.Types.ObjectId;
-	width: number;
-	height: number;
-	chunkWidth: number;
-	chunkHeight: number;
-	chunks: Schema.Types.ObjectId[];
-	icon: Schema.Types.ObjectId;
-	name: string;
-}
-
-export interface PathNodeDocument extends MongoDBDocument {
-	x: number;
-	y: number;
-}
-
-export interface StrokeDocument extends MongoDBDocument {
-	path: PathNodeDocument[];
-	color: string;
-	size: number;
-	fill: boolean;
-	type: string;
-}
-
-export interface FogStrokeDocument extends MongoDBDocument {
-	path: PathNodeDocument[];
-	size: number;
-	type: string;
-}
-
-export interface GameDocument extends MongoDBDocument, PermissionControlledDocument {
-	passwordHash: string;
-	world: Schema.Types.ObjectId;
-	map: Schema.Types.ObjectId;
-	characters: CharacterDocument[];
-	host: Schema.Types.ObjectId;
-	strokes: StrokeDocument[];
-	fog: FogStrokeDocument[];
-	models: InGameModelDocument[];
-	messages: MessageDocument[];
-}
-
-export interface CharacterDocument extends MongoDBDocument {
-	name: string;
-	player: Schema.Types.ObjectId;
-	color: string;
-	attributes: CharacterAttributeDocument[];
-}
-
-export interface CharacterAttributeDocument extends MongoDBDocument {
-	name: string;
-	value: number;
-}
-
-export interface MessageDocument extends MongoDBDocument {
-	sender: string;
-	senderUser: string;
-	receiver: string;
-	receiverUser: string;
-	message: string;
-	timestamp: number;
-}
-
-export interface InGameModelDocument extends MongoDBDocument {
-	model: Schema.Types.ObjectId;
-	x: number;
-	z: number;
-	lookAtX: number;
-	lookAtZ: number;
-	color: string;
-	wiki: Schema.Types.ObjectId;
-}
-
-export interface WorldDocument extends MongoDBDocument, PermissionControlledDocument {
-	name: string;
-	wikiPage: Schema.Types.ObjectId;
-	rootFolder: Schema.Types.ObjectId;
-	pins: Schema.Types.ObjectId[];
 }
