@@ -132,6 +132,7 @@ export const GET_SERVER_CONFIG = gql`
 			version
 			registerCodes
 			canCreateWorlds
+			serverNeedsSetup
 			...accessControlList
 			...serverConfigRoles
 		}

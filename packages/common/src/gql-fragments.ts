@@ -17,33 +17,18 @@ export const ACCESS_CONTROL_LIST = gql`
             canWrite
             canAdmin
             accessControlList {
-                _id
                 permission
-                canWrite
-                subjectType
-                subject {
-                    _id
-                    ... on World{
-                        name
+                principal {
+                    ... on User {
+                        _id
+                        name: username
                     }
-                    ... on WikiPage{
-                        name
-                    }
-                    ... on WikiFolder{
-                        name
-                    }
-                    ... on Role{
+                    ... on Role {
+                        _id
                         name
                     }
                 }
-                users{
-                    _id
-                    username
-                }
-                roles{
-                    _id
-                    name
-                }
+                principalType
             }
         }
     }

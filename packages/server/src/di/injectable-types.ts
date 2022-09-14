@@ -139,6 +139,8 @@ export const INJECTABLE_TYPES = {
 	// server
 	ApiServer: Symbol.for("ApiServer"),
 	ServerProperties: Symbol.for("ServerProperties"),
+	RpgToolsServer: Symbol.for('RpgToolsServer'),
+	DbEngine: Symbol.for("DbEngine"),
 
 	// data loaders
 	ArticleDataLoader: Symbol.for("ArticleDataLoader"),
@@ -173,4 +175,5 @@ export const INJECTABLE_TYPES = {
 
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),
+	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
 };

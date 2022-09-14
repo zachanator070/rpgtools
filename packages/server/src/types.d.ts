@@ -462,17 +462,19 @@ export interface DataLoader<T extends DomainEntity> {
 
 export interface ApiServer {
 	start: () => Promise<void>;
-	checkConfig: () => Promise<boolean>;
-	initDb: () => Promise<void>;
-	setDbHost: (host: string) => void;
-	setDbName: (name: string) => void;
-	clearDb: () => Promise<void>;
-	serverNeedsSetup: () => Promise<boolean>;
 	executeGraphQLQuery: (
 		request: Omit<GraphQLRequest, 'query'> & {
 			query?: string | DocumentNode;
 		},
 	) => Promise<GraphQLResponse>;
+}
+
+export interface DbEngine {
+	connect: () => Promise<void>;
+	clearDb: () => Promise<void>;
+	disconnect: () => Promise<void>;
+	setDbHost: (host: string) => void;
+	setDbName: (name: string) => void;
 }
 
 export interface PermissionControlledDocument {

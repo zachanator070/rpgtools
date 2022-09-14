@@ -27,6 +27,7 @@ import { ServerConfig } from "../domain-entities/server-config";
 import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
+import {ServerConfigService} from "../services/server-config-service";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
@@ -261,6 +262,10 @@ export const TypeResolvers = {
 		canCreateWorlds: async (server: ServerConfig, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 			return server.authorizationPolicy.canCreateWorlds(securityContext);
 		},
+		serverNeedsSetup: async (server: ServerConfig, _: any, { unitOfWork }: SessionContext): Promise<boolean> => {
+			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+			return service.serverNeedsSetup(unitOfWork);
+		},
 		...permissionControlledInterfaceAttributes,
 	},
 	AclEntry: {
@@ -269,6 +274,11 @@ export const TypeResolvers = {
 			const repo = entityMapper.map(entry.principalType).getRepository(unitOfWork);
 			return repo.findById(entry.principal);
 		}
+	},
+	AclPrincipal: {
+		__resolveType: async (subject: DomainEntity): Promise<string> => {
+			return subject.type;
+		},
 	},
 	Game: {
 		world: async (game: Game, _: any, { securityContext, unitOfWork }: SessionContext): Promise<World> => {

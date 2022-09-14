@@ -38,7 +38,7 @@ import {
 	ModelFactory,
 	ItemFactory,
 	ImageFactory,
-	GameFactory, FileFactory, ChunkFactory, ArticleFactory, AclEntry
+	GameFactory, FileFactory, ChunkFactory, ArticleFactory, AclEntry, DbEngine
 } from "../types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "../dal/mongodb/repositories/mongodb-article-repository";
@@ -159,6 +159,9 @@ import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {ObjectId} from "mongoose";
+import RpgToolsServer from "../server/rpgtools-server";
+import MongodbDbEngine from "../dal/mongodb/mongodb-db-engine";
+import MongoDbMigrationV40 from "../dal/mongodb/migrations/mongodb-migration-v40";
 
 const container = new Container();
 
@@ -203,17 +206,19 @@ container
 	.toFactory(
 		(context): ArticleFactory =>
 			({
-				 _id,
-				 name,
-				 world,
-				 coverImage,
-				 contentId
-			 }:{
+				_id,
+				name,
+				world,
+				coverImage,
+				contentId,
+				acl
+			}:{
 				_id: string | ObjectId,
 				name: string,
 				world: string | ObjectId,
 				coverImage: string | ObjectId,
-				contentId: string | ObjectId
+				contentId: string | ObjectId,
+				acl: AclEntry[]
 			}) => {
 				const article = context.container.get<Article>(INJECTABLE_TYPES.Article);
 				article._id = _id && _id.toString();
@@ -221,6 +226,7 @@ container
 				article.world = world && world.toString();
 				article.coverImage = coverImage && coverImage.toString();
 				article.contentId = contentId && contentId.toString();
+				article.acl = acl;
 				return article;
 			}
 	);
@@ -296,7 +302,8 @@ container
 					fog,
 					messages,
 					models,
-					host
+					host,
+					acl
 				}:{
 					_id: string | ObjectId,
 					passwordHash: string,
@@ -307,7 +314,8 @@ container
 					fog: FogStroke[],
 					messages: Message[],
 					models: InGameModel[],
-					host: string | ObjectId
+					host: string | ObjectId,
+					acl: AclEntry[]
 				}
 			) => {
 				const game = context.container.get<Game>(INJECTABLE_TYPES.Game);
@@ -321,6 +329,7 @@ container
 				game.messages = messages;
 				game.models = models;
 				game.host = host && host.toString();
+				game.acl = acl;
 				return game;
 			}
 	);
@@ -376,7 +385,8 @@ container
 					coverImage,
 					content,
 					pageModel,
-					modelColor
+					modelColor,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -384,7 +394,8 @@ container
 					coverImage: string | ObjectId,
 					content: string,
 					pageModel: string | ObjectId,
-					modelColor: string
+					modelColor: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const item = context.container.get<Item>(INJECTABLE_TYPES.Item);
@@ -395,6 +406,7 @@ container
 				item.contentId = content;
 				item.pageModel = pageModel && pageModel.toString();
 				item.modelColor = modelColor;
+				item.acl = acl;
 				return item;
 			}
 	);
@@ -413,7 +425,8 @@ container
 					height,
 					fileName,
 					fileId,
-					notes
+					notes,
+					acl
 				}:{
 					_id: string | ObjectId,
 					world: string | ObjectId,
@@ -423,7 +436,8 @@ container
 					height: number,
 					fileName: string,
 					fileId: string | ObjectId,
-					notes: string
+					notes: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const model = context.container.get<Model>(INJECTABLE_TYPES.Model);
@@ -436,6 +450,7 @@ container
 				model.fileName = fileName;
 				model.fileId = fileId && fileId.toString();
 				model.notes = notes;
+				model.acl = acl;
 				return model;
 			}
 	);
@@ -451,7 +466,8 @@ container
 					coverImage,
 					contentId,
 					pageModel,
-					modelColor
+					modelColor,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -459,7 +475,8 @@ container
 					coverImage: string | ObjectId,
 					contentId: string | ObjectId,
 					pageModel: string | ObjectId,
-					modelColor: string
+					modelColor: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const monster = context.container.get<Monster>(INJECTABLE_TYPES.Monster);
@@ -470,6 +487,7 @@ container
 				monster.contentId = contentId && contentId.toString();
 				monster.pageModel = pageModel && pageModel.toString();
 				monster.modelColor = modelColor;
+				monster.acl = acl;
 				return monster;
 			}
 	);
@@ -485,7 +503,8 @@ container
 					coverImage,
 					contentId,
 					pageModel,
-					modelColor
+					modelColor,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -493,7 +512,8 @@ container
 					coverImage: string | ObjectId,
 					contentId: string | ObjectId,
 					pageModel: string | ObjectId,
-					modelColor: string
+					modelColor: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const person = context.container.get<Person>(INJECTABLE_TYPES.Person);
@@ -504,6 +524,7 @@ container
 				person.contentId = contentId && contentId.toString();
 				person.pageModel = pageModel && pageModel.toString();
 				person.modelColor = modelColor;
+				person.acl = acl;
 				return person;
 			}
 	);
@@ -539,7 +560,8 @@ container
 					coverImage,
 					contentId,
 					mapImage,
-					pixelsPerFoot
+					pixelsPerFoot,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -547,7 +569,8 @@ container
 					coverImage: string | ObjectId,
 					contentId: string | ObjectId,
 					mapImage: string | ObjectId,
-					pixelsPerFoot: number
+					pixelsPerFoot: number,
+					acl: AclEntry[]
 				}
 			) => {
 				const place = context.container.get<Place>(INJECTABLE_TYPES.Place);
@@ -558,6 +581,7 @@ container
 				place.contentId = contentId && contentId.toString();
 				place.mapImage = mapImage && mapImage.toString();
 				place.pixelsPerFoot = pixelsPerFoot;
+				place.acl = acl;
 				return place;
 			}
 	);
@@ -594,13 +618,15 @@ container
 					version,
 					registerCodes,
 					adminUsers,
-					unlockCode
+					unlockCode,
+					acl
 				}:{
 					_id: string | ObjectId,
 					version: string,
 					registerCodes: string[],
 					adminUsers: string[] | ObjectId[],
-					unlockCode: string
+					unlockCode: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const serverConfig = context.container.get<ServerConfig>(INJECTABLE_TYPES.ServerConfig);
@@ -609,6 +635,7 @@ container
 				serverConfig.registerCodes = registerCodes;
 				serverConfig.adminUsers = adminUsers.map(user => user.toString());
 				serverConfig.unlockCode = unlockCode;
+				serverConfig.acl = acl;
 				return serverConfig;
 			}
 	);
@@ -684,11 +711,13 @@ container
 					name,
 					wikiPage,
 					rootFolder,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
 					wikiPage: string | ObjectId,
 					rootFolder: string | ObjectId,
+					acl: AclEntry[]
 				}
 			) => {
 				const world = context.container.get<World>(INJECTABLE_TYPES.World);
@@ -696,6 +725,7 @@ container
 				world.name = name;
 				world.wikiPage = wikiPage && wikiPage.toString();
 				world.rootFolder = rootFolder && rootFolder.toString();
+				world.acl = acl;
 				return world;
 			}
 	);
@@ -886,6 +916,8 @@ container
 // not a singleton so tests can run concurrently and have multiple server instances
 container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer);
 container.bind<ServerProperties>(INJECTABLE_TYPES.ServerProperties).to(ServerProperties).inSingletonScope();
+container.bind<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer).to(RpgToolsServer).inSingletonScope();
+container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(MongodbDbEngine).inSingletonScope();
 
 // data loaders
 container.bind<DataLoader<Article>>(INJECTABLE_TYPES.ArticleDataLoader).to(ArticleDataLoader);
@@ -923,6 +955,8 @@ container
 // mappers
 container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);
 
+// mongodb
 container.bind<FilterFactory>(INJECTABLE_TYPES.FilterFactory).to(FilterFactory);
+container.bind<MongoDbMigrationV40>(INJECTABLE_TYPES.MongoDbMigrationV40).to(MongoDbMigrationV40);
 
 export { container };

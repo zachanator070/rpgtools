@@ -1,11 +1,10 @@
-version: "3.4"
 services:
 
   ##########
   # SERVER #
   ##########
 
-  server:
+  server_base:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
@@ -23,12 +22,25 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
       - "9229:9229"
+    networks:
+      - rpgtools
+
+  server:
+    extends:
+      service: server_base
     depends_on:
       - mongodb
       - redis
       - ui-builder
-    networks:
-      - rpgtools
+
+  server-brk:
+    extends:
+      service: server_base
+    command: "npm run --workspace=packages/server dev-brk"
+    depends_on:
+      - mongodb
+      - redis
+      - ui-builder
 
   prod:
     image: zachanator070/rpgtools:latest

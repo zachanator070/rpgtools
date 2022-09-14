@@ -1,8 +1,9 @@
 import {container} from "./di/inversify";
 import {INJECTABLE_TYPES} from "./di/injectable-types";
 import {ApiServer} from "./types";
+import RpgToolsServer from "./server/rpgtools-server";
 
-const server = container.get<ApiServer>(INJECTABLE_TYPES.ApiServer);
+const server = container.get<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer);
 
 (async () => {
 	await server.start();

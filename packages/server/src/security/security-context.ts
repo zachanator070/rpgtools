@@ -13,6 +13,9 @@ export class SecurityContext {
 	}
 
 	hasPermission = (permission: string, entity: PermissionControlledEntity): boolean => {
+		if (!entity) {
+			return false;
+		}
 		for (let entry of entity.acl) {
 			if (entry.permission === permission) {
 				if (entry.principalType === ROLE) {

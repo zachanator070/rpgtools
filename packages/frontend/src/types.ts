@@ -235,6 +235,7 @@ export interface ServerConfig extends PermissionControlled {
     registerCodes: string[];
     canCreateWorlds: boolean;
     roles: Role[];
+    serverNeedsSetup: boolean;
 }
 
 export interface GameMessage {

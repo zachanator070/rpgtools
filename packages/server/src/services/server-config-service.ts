@@ -10,6 +10,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { SecurityContext } from "../security/security-context";
 import {AuthenticationService} from "./authentication-service";
+import {FilterCondition} from "../dal/filter-condition";
 
 @injectable()
 export class ServerConfigService {
@@ -22,12 +23,29 @@ export class ServerConfigService {
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
 
+	serverNeedsSetup = async (unitOfWork: UnitOfWork): Promise<boolean> => {
+		let adminRole = await unitOfWork.roleRepository.findOne([
+			new FilterCondition("name", SERVER_ADMIN_ROLE),
+		]);
+
+		if (!adminRole) {
+			return true;
+		}
+
+		const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		if (!serverConfig) {
+			throw new Error("No server config exists! Did the seeders run correctly?");
+		}
+
+		return serverConfig.adminUsers.length === 0;
+	};
+
 	unlockServer = async (unlockCode: string, email: string, username: string, password: string, unitOfWork: UnitOfWork) => {
 		const server = await unitOfWork.serverConfigRepository.findOne([]);
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
 		}
-		if (!await this.server.serverNeedsSetup()) {
+		if (!await this.serverNeedsSetup(unitOfWork)) {
 			throw new Error("Server already unlocked!");
 		}
 		if (server.unlockCode !== unlockCode) {
@@ -43,20 +61,19 @@ export class ServerConfigService {
 			unitOfWork
 		);
 		const adminRole = this.roleFactory({_id: null, name: SERVER_ADMIN_ROLE, world: null, acl: []});
+		await unitOfWork.roleRepository.create(adminRole);
 		for (let permission of SERVER_PERMISSIONS) {
+
 			server.acl.push({
 				permission,
 				principal: adminRole._id,
 				principalType: ROLE
 			});
-
 		}
-		await unitOfWork.roleRepository.create(adminRole);
 		admin.roles.push(adminRole._id);
 		await unitOfWork.userRepository.update(admin);
 		server.adminUsers.push(admin._id);
 		await unitOfWork.serverConfigRepository.update(server);
-		await this.server.checkConfig();
 		return true;
 	};
 
