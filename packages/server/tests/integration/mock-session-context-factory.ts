@@ -32,7 +32,7 @@ export class MockSessionContextFactory implements SessionContextFactory {
 	}
 
 	getAnon = (): User => {
-		return this.userFactory({_id: null, email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: [], permissions: []});
+		return this.userFactory({_id: null, email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: []});
 	};
 
 	setCurrentUser = (user: User) => {

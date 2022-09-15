@@ -12,7 +12,7 @@ describe("AuthenticationApplicationService test", () => {
     const unitOfWorkFactory = container.get<Factory<UnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
     const unitOfWork = unitOfWorkFactory({});
     test("decode token", async () => {
-        const user = userFactory({_id: null, email: "user email", username: "username", password: "password", tokenVersion: "1234", currentWorld: null, roles: [], permissions: []});
+        const user = userFactory({_id: null, email: "user email", username: "username", password: "password", tokenVersion: "1234", currentWorld: null, roles: []});
         await unitOfWork.userRepository.create(user);
         const tokens = await service.createTokens(user, "1234", unitOfWork);
         const decodedUser = await service.getUserFromAccessToken(tokens.accessToken, unitOfWork);

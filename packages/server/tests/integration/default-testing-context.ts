@@ -21,6 +21,9 @@ import {Role} from "../../src/domain-entities/role";
 import {WikiFolder} from "../../src/domain-entities/wiki-folder";
 import {WikiPage} from "../../src/domain-entities/wiki-page";
 import {Pin} from "../../src/domain-entities/pin";
+import {ROLE_ADD} from "@rpgtools/common/src/permission-constants";
+import {ServerConfig} from "../../src/domain-entities/server-config";
+import {SERVER_CONFIG} from "@rpgtools/common/src/type-constants";
 
 @injectable()
 export class DefaultTestingContext {
@@ -62,7 +65,7 @@ export class DefaultTestingContext {
 	async reset() {
 		const unitOfWork = this.unitOfWorkFactory({});
 		this.currentUser = await unitOfWork.userRepository.findOne([new FilterCondition("username", "tester")]);
-		this.otherUser = this.userFactory({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: [], permissions: []});
+		this.otherUser = this.userFactory({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
 		await unitOfWork.userRepository.create(this.otherUser);
 		this.testerSecurityContext = await this.securityContextFactory.create(this.currentUser);
 		this.otherUserSecurityContext = await this.securityContextFactory.create(this.otherUser);
