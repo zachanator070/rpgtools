@@ -6,6 +6,7 @@ interface RevokeUserPermissionVariables {
 	userId: string;
 	permission: string;
 	subjectId: string;
+	subjectType: string;
 }
 
 interface RevokeUserPermissionResult extends GqlMutationResult<World, RevokeUserPermissionVariables>{

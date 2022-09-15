@@ -683,13 +683,15 @@ container
 					name,
 					world,
 					pages,
-					children
+					children,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
 					world: string | ObjectId,
 					pages: string[] | ObjectId[],
-					children: string[] | ObjectId[]
+					children: string[] | ObjectId[],
+					acl: AclEntry[]
 				}
 			) => {
 				const folder = context.container.get<WikiFolder>(INJECTABLE_TYPES.WikiFolder);
@@ -698,6 +700,7 @@ container
 				folder.world = world && world.toString();
 				folder.pages = pages.map(page => page.toString());
 				folder.children = children.map(child => child.toString());
+				folder.acl = acl;
 				return folder;
 			}
 	);

@@ -71,8 +71,8 @@ export const REMOVE_USER_ROLE = gql`
 	}
 `;
 export const GRANT_ROLE_PERMISSION = gql`
-	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
-		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
+	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!, $subjectType: String!){
+		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType, subjectType: $subjectType){
 			_id
 		}
 	}
@@ -123,8 +123,8 @@ export const GRANT_USER_PERMISSION = gql`
 `;
 export const REVOKE_USER_PERMISSION = gql`
 	${ACCESS_CONTROL_LIST}
-	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!){
-		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId){
+	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
 			...accessControlList
 		}

@@ -1,6 +1,5 @@
 import {
 	DomainEntity, PermissionControlledEntity,
-	Repository,
 	RoleFactory,
 	UnitOfWork,
 } from "../types";
@@ -44,7 +43,6 @@ export class AuthorizationService {
 			subjectType,
 			user,
 			USER,
-			unitOfWork.userRepository
 		);
 		return this.mapper.map(subjectType).getRepository(unitOfWork).findById(subjectId);
 	};
@@ -69,7 +67,6 @@ export class AuthorizationService {
 			subjectType,
 			user,
 			USER,
-			unitOfWork.userRepository
 		);
 	};
 
@@ -93,7 +90,6 @@ export class AuthorizationService {
 			subjectType,
 			role,
 			ROLE,
-			unitOfWork.roleRepository
 		);
 		return role;
 	};
@@ -119,7 +115,6 @@ export class AuthorizationService {
 			subjectType,
 			role,
 			ROLE,
-			unitOfWork.roleRepository
 		);
 		return role;
 	};
@@ -231,21 +226,22 @@ export class AuthorizationService {
 		entityId: string,
 		entityType: string,
 		principal: User | Role,
-		principalType: "User" | "Role",
-		entityRepository: Repository<any>
+		principalType: "User" | "Role"
 	) => {
-		const subject: DomainEntity = await this.mapper.map(entityType).getRepository(unitOfWork).findById(entityId);
-		if (!(await subject.authorizationPolicy.canAdmin(context, unitOfWork))) {
+		const entityRepository = this.mapper.map(entityType).getRepository(unitOfWork);
+		const entity: DomainEntity = await entityRepository.findById(entityId);
+		if (!(await entity.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to assign the permission "${permission}" for this subject`
 			);
 		}
-		(subject as PermissionControlledEntity).acl.push({
+		(entity as PermissionControlledEntity).acl.push({
 			permission,
 			principal: principal._id,
 			principalType: principalType
 		})
-		await entityRepository.update(principal);
+		await entityRepository.update(entity);
+
 	};
 
 	private revokeEntityPermission = async (
@@ -255,11 +251,10 @@ export class AuthorizationService {
 		entityId: string,
 		entityType: string,
 		principal: User | Role,
-		principalType: 'User' | 'Role',
-		entityRepository: Repository<any>
+		principalType: 'User' | 'Role'
 	): Promise<PermissionControlledEntity> => {
-
-		const entity: DomainEntity = await this.mapper.map(entityType).getRepository(unitOfWork).findById(entityId);
+		const entityRepository = this.mapper.map(entityType).getRepository(unitOfWork);
+		const entity: DomainEntity = await entityRepository.findById(entityId);
 		if (!(await entity.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to revoke the permission "${permission}"`
@@ -268,7 +263,7 @@ export class AuthorizationService {
 
 		(entity as PermissionControlledEntity).acl = (entity as PermissionControlledEntity).acl.filter(entry => entry.principalType !== principalType || entry.principal === principal._id)
 
-		await entityRepository.update(principal);
+		await entityRepository.update(entity);
 		return (entity as PermissionControlledEntity);
 	};
 }

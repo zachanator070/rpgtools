@@ -14,7 +14,7 @@ import TabCollection from "../widgets/TabCollection";
 import RadioButtonGroup from "../widgets/RadioButtonGroup";
 import RadioButton from "../widgets/RadioButton";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
-import {USER} from "@rpgtools/common/src/type-constants";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 
 interface PermissionEditorProps {
 	subject: PermissionControlled;
@@ -42,7 +42,9 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 	useEffect(() => {
 		if (selectedPermission) {
 			setSelectedPermissionPrincipals(
-				subject.accessControlList.map(entry => entry.permission === selectedPermission && entry.principalType === principalType)
+				subject.accessControlList
+					.filter(entry => entry.permission === selectedPermission && entry.principalType === principalType)
+					.map(entry => entry.principal)
 			);
 		}
 	}, [selectedPermission, principalType])
@@ -61,7 +63,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 					defaultValue={USER}
 				>
 					<RadioButton value={USER}>Users</RadioButton>
-					<RadioButton id="rolesPermissionTab" value="roles">Roles</RadioButton>
+					<RadioButton id="rolesPermissionTab" value={ROLE}>Roles</RadioButton>
 				</RadioButtonGroup>
 			</div>
 			<div className="margin-md-top">
@@ -92,14 +94,15 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 															await revokeUserPermission({
 																userId: principal._id,
 																permission: selectedPermission,
-																subjectId: subject._id
-
+																subjectId: subject._id,
+																subjectType
 															});
 														} else {
 															await revokeRolePermission({
 																roleId: principal._id,
 																permission: selectedPermission,
-																subjectId: subject._id
+																subjectId: subject._id,
+																subjectType
 															});
 														}
 													}}
