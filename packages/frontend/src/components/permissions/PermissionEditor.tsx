@@ -24,9 +24,9 @@ interface PermissionEditorProps {
 
 export default function PermissionEditor({ subject, subjectType, refetch }: PermissionEditorProps) {
 	const [principalType, setPrincipalType] = useState<string>(USER);
-	const { grantUserPermission } = useGrantUserPermission();
+	const { grantUserPermission } = useGrantUserPermission({callback: refetch});
 	const { grantRolePermission } = useGrantRolePermission({callback: refetch});
-	const { revokeUserPermission } = useRevokeUserPermission();
+	const { revokeUserPermission } = useRevokeUserPermission({callback: refetch});
 	const { revokeRolePermission } = useRevokeRolePermission({callback: refetch});
 	const [permissionAssigneeId, setPermissionAssigneeId] = useState<string>(null);
 	const possiblePermissions = getPermissionsBySubjectType(subjectType);
@@ -47,7 +47,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 					.map(entry => entry.principal)
 			);
 		}
-	}, [selectedPermission, principalType])
+	}, [selectedPermission, principalType, subject])
 
 	if (subject === null || subjectType === null) {
 		return <></>;

@@ -26,8 +26,9 @@ export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> 
 		);
 	};
 
-	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(ROLE_ADD, this.entity);
+	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		return context.hasPermission(ROLE_ADD, world);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {

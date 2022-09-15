@@ -25,8 +25,9 @@ export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy<World
 		);
 	};
 
-	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(WORLD_CREATE, this.entity);
+	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		return context.hasPermission(WORLD_CREATE, serverConfig);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {

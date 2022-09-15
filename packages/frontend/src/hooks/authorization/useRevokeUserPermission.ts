@@ -13,8 +13,10 @@ interface RevokeUserPermissionResult extends GqlMutationResult<World, RevokeUser
 	revokeUserPermission: MutationMethod<World, RevokeUserPermissionVariables>
 }
 
-export default function useRevokeUserPermission(): RevokeUserPermissionResult {
-	const result = useGQLMutation<World, RevokeUserPermissionVariables>(REVOKE_USER_PERMISSION);
+export default function useRevokeUserPermission({callback}: {callback: () => Promise<void>}): RevokeUserPermissionResult {
+	const result = useGQLMutation<World, RevokeUserPermissionVariables>(REVOKE_USER_PERMISSION, {}, {
+		onCompleted: callback
+	});
 	return {
 		...result,
 		revokeUserPermission: result.mutate

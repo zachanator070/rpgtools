@@ -1,4 +1,3 @@
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { GraphQLUpload } from "graphql-upload";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -102,10 +101,10 @@ export const TypeResolvers = {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
 			return dataLoader.getDocument(world.wikiPage, unitOfWork);
 		},
-		canAddRoles: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+		canAddRoles: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 			const roleFactory = container.get<RoleFactory>(INJECTABLE_TYPES.RoleFactory);
 			const testRole = roleFactory({_id: null, name: "test role", world: world._id, acl: []});
-			return testRole.authorizationPolicy.canCreate(securityContext);
+			return testRole.authorizationPolicy.canCreate(securityContext, unitOfWork);
 		},
 		canHostGame: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 			const gameFactory = container.get<GameFactory>(INJECTABLE_TYPES.GameFactory);

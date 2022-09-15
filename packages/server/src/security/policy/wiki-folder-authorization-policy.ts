@@ -28,7 +28,13 @@ export class WikiFolderAuthorizationPolicy
 	}
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		return this.canWrite(context, unitOfWork);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
+			new FilterCondition("children", this.entity._id),
+		]);
+		if (!parentFolder) {
+			return false;
+		}
+		return parentFolder.authorizationPolicy.canWrite(context, unitOfWork);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {

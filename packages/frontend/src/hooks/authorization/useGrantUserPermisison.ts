@@ -12,8 +12,10 @@ interface GrantUserPermissionVariables {
 interface GrantUserPermissionResult extends GqlMutationResult<World, GrantUserPermissionVariables> {
 	grantUserPermission: MutationMethod<World, GrantUserPermissionVariables>;
 }
-export default function useGrantUserPermission(): GrantUserPermissionResult {
-	const result = useGQLMutation<World, GrantUserPermissionVariables>(GRANT_USER_PERMISSION);
+export default function useGrantUserPermission({callback}: {callback: () => Promise<void>}): GrantUserPermissionResult {
+	const result = useGQLMutation<World, GrantUserPermissionVariables>(GRANT_USER_PERMISSION, {}, {
+		onCompleted: callback
+	});
 	return {
 		...result,
 		grantUserPermission: result.mutate

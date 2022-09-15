@@ -71,15 +71,15 @@ export const REMOVE_USER_ROLE = gql`
 	}
 `;
 export const GRANT_ROLE_PERMISSION = gql`
-	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!, $subjectType: String!){
-		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType, subjectType: $subjectType){
+	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
 		}
 	}
 `;
 export const REVOKE_ROLE_PERMISSION = gql`
-	mutation revokeRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!){
-		revokeRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId){
+	mutation revokeRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		revokeRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
 		}
 	}

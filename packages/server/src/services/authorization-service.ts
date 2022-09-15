@@ -261,7 +261,7 @@ export class AuthorizationService {
 			);
 		}
 
-		(entity as PermissionControlledEntity).acl = (entity as PermissionControlledEntity).acl.filter(entry => entry.principalType !== principalType || entry.principal === principal._id)
+		(entity as PermissionControlledEntity).acl = (entity as PermissionControlledEntity).acl.filter(entry => entry.principalType !== principalType || entry.principal !== principal._id)
 
 		await entityRepository.update(entity);
 		return (entity as PermissionControlledEntity);
