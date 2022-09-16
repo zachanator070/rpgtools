@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`authorization-mutations with tester logged in and world created addUserRole 1`] = `
-Object {
-  "data": Object {
-    "addUserRole": Object {
+{
+  "data": {
+    "addUserRole": {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
@@ -23,40 +23,40 @@ Object {
         },
       ],
       "name": "other role",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created addUserRole permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to manage this role],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created createRole 1`] = `
-Object {
-  "data": Object {
-    "createRole": Object {
+{
+  "data": {
+    "createRole": {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
@@ -72,103 +72,103 @@ Object {
       "canWrite": true,
       "members": Any<Array>,
       "name": "new role",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created createRole permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to add roles to this world],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created deleteRole 1`] = `
-Object {
-  "data": Object {
-    "deleteRole": Object {
+{
+  "data": {
+    "deleteRole": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created deleteRole permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have write permissions for this role],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created grantRolePermission 1`] = `
-Object {
-  "data": Object {
-    "grantRolePermission": Object {
+{
+  "data": {
+    "grantRolePermission": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created grantRolePermission permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to assign the permission "Read access to a single wiki page" for this subject],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created grantUserPermission 1`] = `
-Object {
-  "data": Object {
+{
+  "data": {
     "grantUserPermission": ObjectContaining {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
@@ -185,33 +185,33 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created grantUserPermission permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to assign the permission "See this world in search results" for this subject],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created removeUserRole 1`] = `
-Object {
-  "data": Object {
-    "removeUserRole": Object {
+{
+  "data": {
+    "removeUserRole": {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
@@ -227,98 +227,98 @@ Object {
       "canWrite": true,
       "members": Any<Array>,
       "name": "other role",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created removeUserRole permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to manage this role],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created revokeRolePermission 1`] = `
-Object {
-  "data": Object {
-    "revokeRolePermission": Object {
+{
+  "data": {
+    "revokeRolePermission": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created revokeRolePermission permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to revoke the permission "Read access to a single wiki page"],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created revokeUserPermission 1`] = `
-Object {
-  "data": Object {
-    "revokeUserPermission": Object {
+{
+  "data": {
+    "revokeUserPermission": {
       "_id": Any<String>,
-      "accessControlList": Array [],
+      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`authorization-mutations with tester logged in and world created revokeUserPermission permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to revoke the permission "See this world in search results"],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }

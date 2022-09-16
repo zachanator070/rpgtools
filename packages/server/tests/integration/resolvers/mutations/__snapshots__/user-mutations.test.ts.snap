@@ -1,34 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`user mutations with world and not logged in set current world not logged in 1`] = `
-Object {
-  "data": Object {
-    "setCurrentWorld": Object {
+{
+  "data": {
+    "setCurrentWorld": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`user mutations with world and not logged in with authenticated user set current world 1`] = `
-Object {
-  "data": Object {
-    "setCurrentWorld": Object {
+{
+  "data": {
+    "setCurrentWorld": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }

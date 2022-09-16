@@ -1,24 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`server mutations generate register codes no permission 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission to call this method],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`server mutations with authenticated user generate register codes 1`] = `
-Object {
-  "data": Object {
-    "generateRegisterCodes": Object {
+{
+  "data": {
+    "generateRegisterCodes": {
       "_id": Any<String>,
       "registerCodes": ArrayContaining [
         Any<String>,
@@ -27,41 +27,41 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`server mutations with locked server unlock 1`] = `
-Object {
-  "data": Object {
+{
+  "data": {
     "unlockServer": true,
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`server mutations with locked server unlock twice 1`] = `
-Object {
-  "data": Object {
+{
+  "data": {
     "unlockServer": null,
   },
-  "errors": Array [
+  "errors": [
     [GraphQLError: Registration Error: Email already used],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
