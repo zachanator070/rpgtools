@@ -14,7 +14,7 @@
 		"build": "tsc",
 		"dev": "nodemon --watch src -e ts,ejs --exec npm-run-all build dev:start",
 		"dev-brk": "nodemon --watch src -e ts,ejs --exec npm-run-all build dev:start-brk",
-		"test:integration": "jest --config jest.config.integration.cjs -i",
+		"test:integration": "jest --config jest.config.integration.cjs -i ${JEST_OPTIONS}",
 		"test:unit": "jest --config jest.config.unit.cjs"
 	},
 	"dependencies": {
@@ -75,10 +75,10 @@
 		"@types/unzipper": "^0.10.4",
 		"@types/uuid": "^8.3.1",
 		"@types/ws": "^8.5.3",
-		"babel-jest": "^27.0.6",
+		"babel-jest": "^29.0.1",
 		"eslint": "^8.23.0",
 		"is-typedarray": "^1.0.0",
-		"ts-jest": "^27.1.4",
+		"ts-jest": "^29.0.1",
 		"typedarray-to-buffer": "^4.0.0"
 	}
 }

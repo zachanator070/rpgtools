@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`world-mutations with world and logged in create pin 1`] = `
-Object {
-  "data": Object {
-    "createPin": Object {
+{
+  "data": {
+    "createPin": {
       "_id": Any<String>,
       "canWrite": true,
-      "map": Object {
+      "map": {
         "_id": Any<String>,
         "name": "Earth",
       },
-      "page": Object {
+      "page": {
         "_id": Any<String>,
         "name": "Earth",
         "type": "Place",
@@ -21,45 +21,45 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in create world 1`] = `
-Object {
-  "data": Object {
-    "createWorld": Object {
+{
+  "data": {
+    "createWorld": {
       "_id": Any<String>,
-      "wikiPage": Object {
+      "wikiPage": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in delete pin 1`] = `
-Object {
-  "data": Object {
-    "deletePin": Object {
+{
+  "data": {
+    "deletePin": {
       "_id": Any<String>,
       "canWrite": true,
-      "map": Object {
+      "map": {
         "_id": Any<String>,
         "name": "Earth",
       },
-      "page": Object {
+      "page": {
         "_id": Any<String>,
         "name": "other page",
         "type": "Article",
@@ -70,118 +70,118 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in not logged in create pin no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in not logged in create world no permissions 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in not logged in delete pin no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in not logged in rename world no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in not logged in update pin no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in rename world 1`] = `
-Object {
-  "data": Object {
-    "renameWorld": Object {
+{
+  "data": {
+    "renameWorld": {
       "_id": Any<String>,
       "name": "Azeroth",
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`world-mutations with world and logged in update pin 1`] = `
-Object {
-  "data": Object {
-    "updatePin": Object {
+{
+  "data": {
+    "updatePin": {
       "_id": Any<String>,
       "canWrite": true,
-      "map": Object {
+      "map": {
         "_id": Any<String>,
         "name": "Earth",
       },
-      "page": Object {
+      "page": {
         "_id": Any<String>,
         "name": "other page",
         "type": "Article",
@@ -192,9 +192,9 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }

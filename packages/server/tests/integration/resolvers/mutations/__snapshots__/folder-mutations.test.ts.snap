@@ -1,38 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`folder-mutations with tester logged in and world created as other user no permission to child 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
-    Object {
-      "extensions": Object {
+  "errors": [
+    {
+      "extensions": {
         "code": "INTERNAL_SERVER_ERROR",
       },
-      "locations": Array [
-        Object {
+      "locations": [
+        {
           "column": 3,
           "line": 2,
         },
       ],
       "message": Any<String>,
-      "path": Array [
+      "path": [
         "deleteFolder",
       ],
     },
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created create folder 1`] = `
-Object {
-  "data": Object {
-    "createFolder": Object {
+{
+  "data": {
+    "createFolder": {
       "_id": Any<String>,
       "children": ArrayContaining [
         ObjectContaining {
@@ -44,17 +44,17 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created delete folder 1`] = `
-Object {
-  "data": Object {
+{
+  "data": {
     "deleteFolder": ObjectContaining {
       "_id": Any<String>,
       "children": ArrayContaining [
@@ -67,101 +67,101 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created delete root folder 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You cannot delete the root folder of a world],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created rename folder 1`] = `
-Object {
-  "data": Object {
-    "renameFolder": Object {
+{
+  "data": {
+    "renameFolder": {
       "_id": Any<String>,
       "name": "new folder",
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created with unauthenticated user create folder permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission for this folder],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created with unauthenticated user delete folder permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
-    Object {
-      "extensions": Object {
+  "errors": [
+    {
+      "extensions": {
         "code": "INTERNAL_SERVER_ERROR",
       },
-      "locations": Array [
-        Object {
+      "locations": [
+        {
           "column": 3,
           "line": 2,
         },
       ],
       "message": Any<String>,
-      "path": Array [
+      "path": [
         "deleteFolder",
       ],
     },
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`folder-mutations with tester logged in and world created with unauthenticated user rename folder permission denied 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You do not have permission for this folder],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }

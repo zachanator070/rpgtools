@@ -1,122 +1,122 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`model mutations with world create model no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world delete model no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world update model no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world with authenticated user create model 1`] = `
-Object {
-  "data": Object {
-    "createModel": Object {
+{
+  "data": {
+    "createModel": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world with authenticated user create two models with same filename 1`] = `
-Object {
-  "data": Object {
-    "createModel": Object {
+{
+  "data": {
+    "createModel": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world with authenticated user create two models with same filename 2`] = `
-Object {
-  "data": Object {
-    "createModel": Object {
+{
+  "data": {
+    "createModel": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world with authenticated user delete model 1`] = `
-Object {
-  "data": Object {
-    "deleteModel": Object {
+{
+  "data": {
+    "deleteModel": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`model mutations with world with authenticated user update model 1`] = `
-Object {
-  "data": Object {
-    "updateModel": Object {
+{
+  "data": {
+    "updateModel": {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
@@ -141,9 +141,9 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }

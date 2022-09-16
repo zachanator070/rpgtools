@@ -1,86 +1,86 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`wiki page mutations with world create wiki no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world delete wiki no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world update cover image no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world update place no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world update wiki no permission 1`] = `
-Object {
+{
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user create wiki 1`] = `
-Object {
-  "data": Object {
-    "createWiki": Object {
+{
+  "data": {
+    "createWiki": {
       "_id": Any<String>,
-      "accessControlList": Array [],
+      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
       "children": ArrayContaining [
@@ -93,146 +93,146 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user delete wiki 1`] = `
-Object {
-  "data": Object {
-    "deleteWiki": Object {
+{
+  "data": {
+    "deleteWiki": {
       "_id": Any<String>,
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user delete wiki root wiki 1`] = `
-Object {
+{
   "data": null,
-  "errors": Array [
+  "errors": [
     [GraphQLError: You cannot delete the main page of a world],
   ],
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user update type 1`] = `
-Object {
-  "data": Object {
-    "updateWiki": Object {
+{
+  "data": {
+    "updateWiki": {
       "_id": Any<String>,
       "canAdmin": true,
       "canWrite": true,
       "content": null,
       "coverImage": null,
-      "folder": Object {
+      "folder": {
         "_id": Any<String>,
       },
       "name": "Earth",
       "type": "Article",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user update wiki just content 1`] = `
-Object {
-  "data": Object {
-    "updateWiki": Object {
+{
+  "data": {
+    "updateWiki": {
       "_id": Any<String>,
       "canAdmin": true,
       "canWrite": true,
       "content": Any<String>,
       "coverImage": null,
-      "folder": Object {
+      "folder": {
         "_id": Any<String>,
       },
       "mapImage": null,
       "name": "Earth",
       "pixelsPerFoot": 0,
       "type": "Place",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user update wiki just name 1`] = `
-Object {
-  "data": Object {
-    "updateWiki": Object {
+{
+  "data": {
+    "updateWiki": {
       "_id": Any<String>,
       "canAdmin": true,
       "canWrite": true,
       "content": null,
       "coverImage": null,
-      "folder": Object {
+      "folder": {
         "_id": Any<String>,
       },
       "mapImage": null,
       "name": "new name",
       "pixelsPerFoot": 0,
       "type": "Place",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user with image update cover image 1`] = `
-Object {
-  "data": Object {
-    "updateWiki": Object {
+{
+  "data": {
+    "updateWiki": {
       "_id": Any<String>,
       "canAdmin": true,
       "canWrite": true,
       "content": null,
-      "coverImage": Object {
+      "coverImage": {
         "_id": Any<String>,
         "chunks": ArrayContaining [
           ObjectContaining {
@@ -241,7 +241,7 @@ Object {
           },
         ],
         "height": 830,
-        "icon": Object {
+        "icon": {
           "_id": Any<String>,
           "chunks": ArrayContaining [
             ObjectContaining {
@@ -253,34 +253,34 @@ Object {
         "name": "tests/integration/resolvers/mutations/testmap.png",
         "width": 1000,
       },
-      "folder": Object {
+      "folder": {
         "_id": Any<String>,
       },
       "mapImage": null,
       "name": "Earth",
       "pixelsPerFoot": 0,
       "type": "Place",
-      "world": Object {
+      "world": {
         "_id": Any<String>,
       },
     },
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
 `;
 
 exports[`wiki page mutations with world with authenticated user with image update place 1`] = `
-Object {
-  "data": Object {
-    "updatePlace": Object {
+{
+  "data": {
+    "updatePlace": {
       "_id": Any<String>,
-      "mapImage": Object {
+      "mapImage": {
         "_id": Any<String>,
         "chunks": ArrayContaining [
           ObjectContaining {
@@ -289,7 +289,7 @@ Object {
           },
         ],
         "height": 830,
-        "icon": Object {
+        "icon": {
           "_id": Any<String>,
           "chunks": ArrayContaining [
             ObjectContaining {
@@ -306,9 +306,9 @@ Object {
   },
   "errors": undefined,
   "extensions": undefined,
-  "http": Object {
+  "http": {
     "headers": Headers {
-      Symbol(map): Object {},
+      Symbol(map): {},
     },
   },
 }
