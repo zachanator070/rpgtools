@@ -1,10 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Item } from "../../../domain-entities/item";
 import { inject, injectable } from "inversify";
-import { ItemDocument, ItemFactory, ItemRepository } from "../../../types";
+import { ItemFactory, ItemRepository } from "../../../types";
 import mongoose from "mongoose";
-import { ItemModel } from "../models/item";
+import {ItemDocument, ItemModel} from "../models/item";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbItemRepository
@@ -25,7 +26,8 @@ export class MongodbItemRepository
 				coverImage: document.coverImage ? document.coverImage.toString() : null,
 				content: document.contentId ? document.contentId.toString() : null,
 				pageModel: document.pageModel ? document.pageModel.toString() : null,
-				modelColor: document.modelColor
+				modelColor: document.modelColor,
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

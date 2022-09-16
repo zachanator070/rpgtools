@@ -22,28 +22,6 @@ describe("roles", () => {
             cy.get('div').contains('test role').click();
         });
 
-        describe('with permissions selected', () => {
-            beforeEach(() => {
-                cy.get('div').contains('Permissions in this role').click();
-            });
-
-            it('remove permission', () => {
-                cy.get(':nth-child(4) > .ant-btn').click();
-                cy.get('.ant-empty-image');
-            });
-
-            it('add permission', () => {
-                cy.get('.margin-lg-top > .ant-select > .ant-select-selector').click();
-                cy.get(':nth-child(3) > :nth-child(1) > .ant-select-dropdown > :nth-child(1) > .rc-virtual-list > .rc-virtual-list-holder > :nth-child(1) > .rc-virtual-list-holder-inner > .ant-select-item-option-active').click();
-                cy.get(':nth-child(3) > .ant-select > .ant-select-selector').click();
-                cy.get('[title="Able to change permissions for this world"]').click();
-                cy.get(':nth-child(4) > .ant-select > .ant-select-selector').click();
-                cy.get(':nth-child(5) > :nth-child(1) > .ant-select-dropdown > :nth-child(1) > .rc-virtual-list > .rc-virtual-list-holder > :nth-child(1) > .rc-virtual-list-holder-inner > .ant-select-item').click();
-                cy.get('button').contains('Add Permission').click();
-                cy.get('.ant-table-cell').should('contain.text', WORLD_ADMIN);
-            });
-        });
-
         describe('with users tab selected', () => {
             beforeEach(() => {
                 cy.get('div').contains('Users with this role').click();

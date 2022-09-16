@@ -8,6 +8,7 @@ import {CREATE_MODEL, DELETE_MODEL, UPDATE_MODEL} from "@rpgtools/common/src/gql
 import {Factory} from "../../../../src/types";
 import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import {accessControlList} from "../common-testing-assertions";
 
 process.env.TEST_SUITE = "model-mutations-test";
 
@@ -49,7 +50,7 @@ describe("model mutations", () => {
 
         test("update model no permission", async () => {
             const unitOfWork = unitOfWorkFactory({});
-            const model = await modelApplicationService.createModel(testingContext.testerSecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
+            const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
             await unitOfWork.commit();
             const result = await testingContext.server.executeGraphQLQuery({
                 query: UPDATE_MODEL,
@@ -62,7 +63,7 @@ describe("model mutations", () => {
 
         test("delete model no permission", async () => {
             const unitOfWork = unitOfWorkFactory({});
-            const model = await modelApplicationService.createModel(testingContext.testerSecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
+            const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
             await unitOfWork.commit();
             const result = await testingContext.server.executeGraphQLQuery({
                 query: DELETE_MODEL,
@@ -122,7 +123,7 @@ describe("model mutations", () => {
 
             test("update model", async () => {
                 const unitOfWork = unitOfWorkFactory({});
-                const model = await modelApplicationService.createModel(testingContext.testerSecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
+                const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
                 await unitOfWork.commit();
                 const result = await testingContext.server.executeGraphQLQuery({
                     query: UPDATE_MODEL,
@@ -133,19 +134,7 @@ describe("model mutations", () => {
                         updateModel: {
                             _id: expect.any(String),
                             fileId: expect.any(String),
-                            accessControlList: expect.arrayContaining([
-                                expect.objectContaining({
-                                    _id: expect.any(String),
-                                    subject: {
-                                        _id: expect.any(String),
-                                    },
-                                    users: expect.arrayContaining([
-                                        expect.objectContaining({
-                                            _id: expect.any(String),
-                                        })
-                                    ]),
-                                })
-                            ])
+                            accessControlList: accessControlList
                         }
                     },
                     errors: undefined
@@ -154,7 +143,7 @@ describe("model mutations", () => {
 
             test("delete model", async () => {
                 const unitOfWork = unitOfWorkFactory({});
-                const model = await modelApplicationService.createModel(testingContext.testerSecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
+                const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", unitOfWork);
                 await unitOfWork.commit();
                 const result = await testingContext.server.executeGraphQLQuery({
                     query: DELETE_MODEL,

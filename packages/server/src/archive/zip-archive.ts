@@ -9,7 +9,6 @@ import {
 	ItemRepository,
 	ModelRepository,
 	MonsterRepository,
-	PermissionAssignmentRepository,
 	PersonRepository,
 	PinRepository,
 	PlaceRepository,
@@ -63,8 +62,6 @@ export class ZipArchive implements Archive {
 	modelRepository: ModelRepository;
 	@inject(INJECTABLE_TYPES.ArchiveMonsterRepository)
 	monsterRepository: MonsterRepository;
-	@inject(INJECTABLE_TYPES.ArchivePermissionAssignmentRepository)
-	permissionAssignmentRepository: PermissionAssignmentRepository;
 	@inject(INJECTABLE_TYPES.ArchivePersonRepository)
 	personRepository: PersonRepository;
 	@inject(INJECTABLE_TYPES.ArchivePinRepository)

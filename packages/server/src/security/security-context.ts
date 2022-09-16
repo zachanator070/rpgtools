@@ -1,26 +1,30 @@
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { Role } from "../domain-entities/role";
 import { User } from "../domain-entities/user";
+import {PermissionControlledEntity} from "../types";
+import {ROLE} from "@rpgtools/common/src/type-constants";
 
 export class SecurityContext {
-	permissions: PermissionAssignment[];
 	roles: Role[];
 	user: User;
 
-	constructor(user: User, permissions: PermissionAssignment[], roles: Role[]) {
+	constructor(user: User, roles: Role[]) {
 		this.user = user;
-		this.permissions = permissions;
 		this.roles = roles;
 	}
 
-	hasPermission = (permission: string, subjectId?: string): boolean => {
-		for (let assignment of this.permissions) {
-			if (assignment.permission === permission) {
-				if (subjectId) {
-					if (subjectId === assignment.subject) {
-						return true;
+	hasPermission = (permission: string, entity: PermissionControlledEntity): boolean => {
+		if (!entity) {
+			return false;
+		}
+		for (let entry of entity.acl) {
+			if (entry.permission === permission) {
+				if (entry.principalType === ROLE) {
+					for (let role of this.roles) {
+						if (entry.principal === role._id) {
+							return true;
+						}
 					}
-				} else {
+				} else if(entry.principal === this.user._id) {
 					return true;
 				}
 			}
@@ -35,11 +39,5 @@ export class SecurityContext {
 			}
 		}
 		return false;
-	};
-
-	getEntityPermissions = (id: string, type: string) => {
-		return this.permissions.filter(
-			(permission) => permission.subject === id && permission.subjectType === type
-		);
 	};
 }

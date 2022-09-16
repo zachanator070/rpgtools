@@ -4,7 +4,7 @@ exports[`query resolver with world no current user 1`] = `
 Object {
   "data": Object {
     "currentUser": Object {
-      "_id": null,
+      "_id": Any<String>,
       "currentWorld": null,
       "email": null,
       "roles": Array [],
@@ -97,7 +97,6 @@ Object {
           "_id": Any<String>,
           "accessControlList": Any<Array>,
           "members": Any<Array>,
-          "permissions": Any<Array>,
           "world": Object {
             "_id": Any<String>,
           },
@@ -191,15 +190,12 @@ Object {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
-          "_id": Any<String>,
-          "roles": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-            },
-          ],
-          "subject": ObjectContaining {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
             "_id": Any<String>,
+            "name": Any<String>,
           },
+          "principalType": Any<String>,
         },
       ],
       "canAddModels": true,

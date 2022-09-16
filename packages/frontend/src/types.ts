@@ -4,11 +4,10 @@ export interface User {
     email: string;
     currentWorld: World;
     roles: Role[];
-    permissions: PermissionAssignment[];
 }
 
 export interface PermissionControlled {
-    accessControlList: PermissionAssignment[];
+    accessControlList: AclEntry[];
     canWrite: boolean;
     canAdmin: boolean;
     name: string;
@@ -20,13 +19,9 @@ export interface World extends PermissionControlled {
     name: string;
     wikiPage: Place;
     rootFolder: WikiFolder;
-    accessControlList: PermissionAssignment[];
-    canWrite: boolean;
-    canAdmin: boolean;
     canAddRoles: boolean;
     canHostGame: boolean;
     canAddModels: boolean;
-    currentUserPermissions: PermissionAssignment[];
     folders: WikiFolder[];
 }
 
@@ -118,7 +113,7 @@ export interface Article extends WikiPage {
     coverImage: Image;
     type: string;
     folder: WikiFolder;
-    accessControlList: PermissionAssignment[];
+    accessControlList: AclEntry[];
     canWrite: boolean;
     canAdmin: boolean;
 }
@@ -133,7 +128,7 @@ export interface Place extends WikiPage {
     pixelsPerFoot: number;
     type: string;
     folder: WikiFolder;
-    accessControlList: PermissionAssignment[];
+    accessControlList: AclEntry[];
     canWrite: boolean;
     canAdmin: boolean;
 }
@@ -146,7 +141,7 @@ export interface Person extends WikiPage, ModeledWiki {
     coverImage: Image;
     type: string;
     folder: WikiFolder;
-    accessControlList: PermissionAssignment[];
+    accessControlList: AclEntry[];
     canWrite: boolean;
     canAdmin: boolean;
     model: Model;
@@ -161,7 +156,7 @@ export interface Item extends WikiPage, ModeledWiki {
     coverImage: Image;
     type: string;
     folder: WikiFolder;
-    accessControlList: PermissionAssignment[];
+    accessControlList: AclEntry[];
     canWrite: boolean;
     canAdmin: boolean;
     model: Model;
@@ -176,7 +171,7 @@ export interface Monster extends WikiPage, ModeledWiki {
     coverImage: Image;
     type: string;
     folder: WikiFolder;
-    accessControlList: PermissionAssignment[];
+    accessControlList: AclEntry[];
     canWrite: boolean;
     canAdmin: boolean;
     model: Model;
@@ -188,9 +183,6 @@ export interface WikiFolder extends PermissionControlled {
     name: string;
     world: World;
     children: WikiFolder[];
-    accessControlList: PermissionAssignment[];
-    canWrite: boolean;
-    canAdmin: boolean;
 }
 
 export interface Image {
@@ -218,22 +210,14 @@ export interface Chunk {
 export interface Role extends PermissionControlled {
     _id: string;
     name: string;
-    accessControlList: PermissionAssignment[];
     members: User[];
     world: World;
-    permissions: PermissionAssignment[];
-    canWrite: boolean;
-    canAdmin: boolean;
 }
 
-export interface PermissionAssignment {
-    _id: string;
+export interface AclEntry {
     permission: string;
-    subject: PermissionControlled;
-    subjectType: string;
-    canWrite: boolean;
-    users: User[];
-    roles: Role[];
+    principal: User | Role;
+    principalType: 'User' | 'Role';
 }
 
 export interface Pin {
@@ -249,11 +233,9 @@ export interface ServerConfig extends PermissionControlled {
     _id: string;
     version: string;
     registerCodes: string[];
-    accessControlList: PermissionAssignment[];
-    canWrite: boolean;
-    canAdmin: boolean;
     canCreateWorlds: boolean;
     roles: Role[];
+    serverNeedsSetup: boolean;
 }
 
 export interface GameMessage {
@@ -270,12 +252,9 @@ export interface Game extends PermissionControlled {
     characters: GameCharacter[];
     messages: GameMessage[];
     host: User;
-    accessControlList: PermissionAssignment[];
     canPaint: boolean;
     canModel: boolean;
     canWriteFog: boolean;
-    canWrite: boolean;
-    canAdmin: boolean;
     strokes: Stroke[];
     fog: FogStroke[];
     models: PositionedModel[];
@@ -326,9 +305,6 @@ export interface Model extends PermissionControlled {
     fileName: string;
     fileId: string;
     notes: string;
-    accessControlList: PermissionAssignment[];
-    canWrite: boolean;
-    canAdmin: boolean;
 }
 
 export interface PositionedModel {

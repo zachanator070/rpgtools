@@ -30,7 +30,6 @@ export const INJECTABLE_TYPES = {
 	ItemFactory: Symbol.for("ItemFactory"),
 	ModelFactory: Symbol.for("ModelFactory"),
 	MonsterFactory: Symbol.for("MonsterFactory"),
-	PermissionAssignmentFactory: Symbol.for("PermissionAssignmentFactory"),
 	PersonFactory: Symbol.for("PersonFactory"),
 	PinFactory: Symbol.for("PinFactory"),
 	PlaceFactory: Symbol.for("PlaceFactory"),
@@ -49,7 +48,6 @@ export const INJECTABLE_TYPES = {
 	ItemRepository: Symbol.for("ItemRepository"),
 	ModelRepository: Symbol.for("ModelRepository"),
 	MonsterRepository: Symbol.for("MonsterRepository"),
-	PermissionAssignmentRepository: Symbol.for("PermissionAssignmentRepository"),
 	PersonRepository: Symbol.for("PersonRepository"),
 	PinRepository: Symbol.for("PinRepository"),
 	PlaceRepository: Symbol.for("PlaceRepository"),
@@ -69,7 +67,6 @@ export const INJECTABLE_TYPES = {
 	ItemAuthorizationPolicy: Symbol.for("ItemAuthorizationPolicy"),
 	ModelAuthorizationPolicy: Symbol.for("ModelAuthorizationPolicy"),
 	MonsterAuthorizationPolicy: Symbol.for("MonsterAuthorizationPolicy"),
-	PermissionAssignmentAuthorizationPolicy: Symbol.for("PermissionAssignmentAuthorizationPolicy"),
 	PersonAuthorizationPolicy: Symbol.for("PersonAuthorizationPolicy"),
 	PinAuthorizationPolicy: Symbol.for("PinAuthorizationPolicy"),
 	PlaceAuthorizationPolicy: Symbol.for("PlaceAuthorizationPolicy"),
@@ -142,6 +139,8 @@ export const INJECTABLE_TYPES = {
 	// server
 	ApiServer: Symbol.for("ApiServer"),
 	ServerProperties: Symbol.for("ServerProperties"),
+	RpgToolsServer: Symbol.for('RpgToolsServer'),
+	DbEngine: Symbol.for("DbEngine"),
 
 	// data loaders
 	ArticleDataLoader: Symbol.for("ArticleDataLoader"),
@@ -176,4 +175,5 @@ export const INJECTABLE_TYPES = {
 
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),
+	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
 };

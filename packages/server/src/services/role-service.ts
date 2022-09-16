@@ -38,10 +38,10 @@ export class RoleService {
 
 		const roles = [];
 		for (let role of results.docs) {
-			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context))) {
+			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context, unitOfWork))) {
 				continue;
 			}
-			if (await role.authorizationPolicy.canRead(context)) {
+			if (await role.authorizationPolicy.canRead(context, unitOfWork)) {
 				roles.push(role);
 			}
 		}

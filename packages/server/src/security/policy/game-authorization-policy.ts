@@ -1,4 +1,4 @@
-import {EntityAuthorizationPolicy} from "../../types";
+import {EntityAuthorizationPolicy, UnitOfWork} from "../../types";
 import { Game } from "../../domain-entities/game";
 import { SecurityContext } from "../security-context";
 import {
@@ -17,34 +17,36 @@ export class GameAuthorizationPolicy implements EntityAuthorizationPolicy<Game> 
 
 	entity: Game;
 
-	canAdmin = async (context: SecurityContext): Promise<boolean> => {
+	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
 		return (
-			context.hasPermission(GAME_ADMIN, this.entity._id) ||
-			context.hasPermission(GAME_ADMIN_ALL, this.entity.world)
+			context.hasPermission(GAME_ADMIN, this.entity) ||
+			context.hasPermission(GAME_ADMIN_ALL, world)
 		);
 	};
 
-	canCreate = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(GAME_HOST, this.entity.world);
+	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
+		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		return context.hasPermission(GAME_HOST, world);
 	};
 
 	canRead = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(GAME_READ, this.entity._id) || this.canWrite(context);
+		return context.hasPermission(GAME_READ, this.entity) || this.canWrite(context);
 	};
 
 	canWrite = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(GAME_RW, this.entity._id);
+		return context.hasPermission(GAME_RW, this.entity);
 	};
 
 	userCanPaint = async (context: SecurityContext) => {
-		return context.hasPermission(GAME_PAINT, this.entity._id);
+		return context.hasPermission(GAME_PAINT, this.entity);
 	};
 
 	userCanModel = async (context: SecurityContext) => {
-		return context.hasPermission(GAME_MODEL, this.entity._id);
+		return context.hasPermission(GAME_MODEL, this.entity);
 	};
 
 	userCanWriteFog = async (context: SecurityContext) => {
-		return context.hasPermission(GAME_FOG_WRITE, this.entity._id);
+		return context.hasPermission(GAME_FOG_WRITE, this.entity);
 	};
 }

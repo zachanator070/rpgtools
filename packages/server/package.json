@@ -10,8 +10,10 @@
 		"start": "node --experimental-specifier-resolution=node .",
 		"prestart": "tsc",
 		"dev:start": "node --experimental-specifier-resolution=node --inspect=0.0.0.0 --enable-source-maps .",
+		"dev:start-brk": "node --experimental-specifier-resolution=node --inspect-brk=0.0.0.0 --enable-source-maps .",
 		"build": "tsc",
 		"dev": "nodemon --watch src -e ts,ejs --exec npm-run-all build dev:start",
+		"dev-brk": "nodemon --watch src -e ts,ejs --exec npm-run-all build dev:start-brk",
 		"test:integration": "jest --config jest.config.integration.cjs -i",
 		"test:unit": "jest --config jest.config.unit.cjs"
 	},

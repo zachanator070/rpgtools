@@ -50,13 +50,6 @@ export default {
 		const service = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
 		return service.getModels(securityContext, worldId, unitOfWork);
 	},
-	myPermissions: async (
-		_: any,
-		{ worldId }: { worldId: string },
-		{ securityContext }: SessionContext
-	) => {
-		return securityContext.permissions;
-	},
 	wikisInFolder: async (
 		_: any,
 		{ folderId, page = 1 }: { folderId: string; page: number },

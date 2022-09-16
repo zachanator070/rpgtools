@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import { PERMISSION_ASSIGNMENT, ROLE, USER, WORLD } from "@rpgtools/common/src/type-constants";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { UserDocument } from "../../../types";
+import mongoose, {Schema} from "mongoose";
+import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "@rpgtools/common/src/type-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
+import {MongoDBDocument} from "../../../types";
 
 const userSchema = new mongoose.Schema({
 	email: {
@@ -33,13 +33,15 @@ const userSchema = new mongoose.Schema({
 			ref: ROLE,
 		},
 	],
-	permissions: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: PERMISSION_ASSIGNMENT,
-			index: true,
-		},
-	],
 });
+
+export interface UserDocument extends MongoDBDocument {
+    email: string;
+    username: string;
+    password: string;
+    tokenVersion: string;
+    currentWorld: Schema.Types.ObjectId;
+    roles: Schema.Types.ObjectId[];
+}
 
 export const UserModel = mongoose.model<UserDocument>(USER, userSchema);

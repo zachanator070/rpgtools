@@ -5,6 +5,7 @@ import { ArticleDocument, ArticleModel } from "../models/article";
 import mongoose from "mongoose";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbArticleRepository
@@ -23,7 +24,8 @@ export class MongodbArticleRepository
 				name: document.name,
 				world: document.world.toString(),
 				coverImage: document.coverImage ? document.coverImage.toString() : null,
-				contentId: document.contentId ? document.contentId.toString() : null
+				contentId: document.contentId ? document.contentId.toString() : null,
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

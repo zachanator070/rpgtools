@@ -1,10 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Monster } from "../../../domain-entities/monster";
-import { MonsterModel } from "../models/monster";
+import {MonsterDocument, MonsterModel} from "../models/monster";
 import mongoose from "mongoose";
-import { MonsterDocument, MonsterFactory, MonsterRepository } from "../../../types";
+import { MonsterFactory, MonsterRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbMonsterRepository
@@ -25,7 +26,8 @@ export class MongodbMonsterRepository
 				coverImage: document.coverImage ? document.coverImage.toString() : null,
 				contentId: document.contentId ? document.contentId.toString() : null,
 				pageModel: document.pageModel ? document.pageModel.toString() : null,
-				modelColor: document.modelColor
+				modelColor: document.modelColor,
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

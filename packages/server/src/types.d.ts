@@ -9,7 +9,6 @@ import {Image} from "./domain-entities/image";
 import {Item} from "./domain-entities/item";
 import {Model} from "./domain-entities/model";
 import {Monster} from "./domain-entities/monster";
-import {PermissionAssignment} from "./domain-entities/permission-assignment";
 import {Person} from "./domain-entities/person";
 import {Pin} from "./domain-entities/pin";
 import {Place} from "./domain-entities/place";
@@ -23,6 +22,8 @@ import {Readable, Writable} from "stream";
 import {PaginatedResult} from "./dal/paginated-result";
 import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
 import {DocumentNode} from "graphql";
+import {AclEntryDocument} from "./dal/mongodb/models/acl-entry";
+
 export interface DomainEntity {
 	_id: string;
 	type: string;
@@ -30,6 +31,16 @@ export interface DomainEntity {
 	factory: Factory<DomainEntity>;
 
 	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
+}
+
+export interface AclEntry {
+	permission: string;
+	principal: string;
+	principalType: 'User' | 'Role';
+}
+
+export interface PermissionControlledEntity extends DomainEntity{
+	acl: AclEntry[]
 }
 
 export interface Repository<Type extends DomainEntity> {
@@ -54,7 +65,6 @@ export type ImageRepository = Repository<Image>;
 export type ItemRepository = Repository<Item>;
 export type ModelRepository = Repository<Model>;
 export type MonsterRepository = Repository<Monster>;
-export type PermissionAssignmentRepository = Repository<PermissionAssignment>;
 export type PersonRepository = Repository<Person>;
 export type PinRepository = Repository<Pin>;
 export type PlaceRepository = Repository<Place>;
@@ -77,7 +87,8 @@ export type ArticleFactory = (
 		name: string,
 		world: string,
 		coverImage: string,
-		contentId: string
+		contentId: string,
+		acl: AclEntry[]
 	}
 ) => Article;
 export type ChunkFactory = (
@@ -134,7 +145,8 @@ export type GameFactory = (
 		fog: FogStroke[],
 		messages: Message[],
 		models: InGameModel[],
-		host: string
+		host: string,
+		acl: AclEntry[]
 	}
 ) => Game;
 export type ImageFactory = (
@@ -176,7 +188,8 @@ export type ItemFactory = (
 		coverImage: string,
 		content: string,
 		pageModel: string,
-		modelColor: string
+		modelColor: string,
+		acl: AclEntry[]
 	}
 ) => Item;
 export type ModelFactory = (
@@ -199,7 +212,8 @@ export type ModelFactory = (
 		height: number,
 		fileName: string,
 		fileId: string,
-		notes: string
+		notes: string,
+		acl: AclEntry[]
 	}
 ) => Model;
 export type MonsterFactory = (
@@ -218,22 +232,10 @@ export type MonsterFactory = (
 		coverImage: string,
 		contentId: string,
 		pageModel: string,
-		modelColor: string
+		modelColor: string,
+		acl: AclEntry[]
 	}
 ) => Monster;
-export type PermissionAssignmentFactory = (
-	{
-		_id,
-		permission,
-		subject,
-		subjectType
-	}:{
-		_id: string,
-		permission: string,
-		subject: string,
-		subjectType: string
-	}
-) => PermissionAssignment;
 export type PersonFactory = (
 	{
 		_id,
@@ -250,7 +252,8 @@ export type PersonFactory = (
 		coverImage: string,
 		contentId: string,
 		pageModel: string,
-		modelColor: string
+		modelColor: string,
+		acl: AclEntry[]
 	}
 ) => Person;
 export type PinFactory = ({_id, x, y, map, page}: {_id: string, x: number, y: number, map: string, page: string}) => Pin;
@@ -270,7 +273,8 @@ export type PlaceFactory = (
 		coverImage: string,
 		contentId: string,
 		mapImage: string,
-		pixelsPerFoot: number
+		pixelsPerFoot: number,
+		acl: AclEntry[]
 	}
 ) => Place;
 export type RoleFactory = (
@@ -278,12 +282,12 @@ export type RoleFactory = (
 		_id,
 		name,
 		world,
-		permissions
+		acl
 	}:{
 		_id: string,
 		name: string,
 		world: string,
-		permissions: string[]
+		acl: AclEntry[]
 	}
 ) => Role;
 export type ServerConfigFactory = (
@@ -298,7 +302,8 @@ export type ServerConfigFactory = (
 		version: string,
 		registerCodes: string[],
 		adminUsers: string[],
-		unlockCode: string
+		unlockCode: string,
+		acl: AclEntry[]
 	}
 ) => ServerConfig;
 export type UserFactory = (
@@ -310,7 +315,6 @@ export type UserFactory = (
 		tokenVersion,
 		currentWorld,
 		roles,
-		permissions
 	}:{
 		_id: string,
 		email: string,
@@ -318,8 +322,7 @@ export type UserFactory = (
 		password: string,
 		tokenVersion: string,
 		currentWorld: string,
-		roles: string[],
-		permissions: string[]
+		roles: string[]
 	}
 ) => User;
 export type WikiFolderFactory = (
@@ -334,7 +337,8 @@ export type WikiFolderFactory = (
 		name: string,
 		world: string,
 		pages: string[],
-		children: string[]
+		children: string[],
+		acl: AclEntry[]
 	}
 ) => WikiFolder;
 export type WorldFactory = (
@@ -348,13 +352,14 @@ export type WorldFactory = (
 		name: string,
 		wikiPage: string,
 		rootFolder: string,
+		acl: AclEntry[]
 	}
 ) => World;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DatabaseEntity {}
 
-export interface MongoDBEntity extends DatabaseEntity, Document {
+export interface MongoDBDocument extends DatabaseEntity, Document {
 	_id: Schema.Types.ObjectId;
 }
 
@@ -399,7 +404,6 @@ export interface RepositoryAccessor {
 	itemRepository: ItemRepository;
 	modelRepository: ModelRepository;
 	monsterRepository: MonsterRepository;
-	permissionAssignmentRepository: PermissionAssignmentRepository;
 	personRepository: PersonRepository;
 	pinRepository: PinRepository;
 	placeRepository: PlaceRepository;
@@ -458,12 +462,6 @@ export interface DataLoader<T extends DomainEntity> {
 
 export interface ApiServer {
 	start: () => Promise<void>;
-	checkConfig: () => Promise<boolean>;
-	initDb: () => Promise<void>;
-	setDbHost: (host: string) => void;
-	setDbName: (name: string) => void;
-	clearDb: () => Promise<void>;
-	serverNeedsSetup: () => Promise<boolean>;
 	executeGraphQLQuery: (
 		request: Omit<GraphQLRequest, 'query'> & {
 			query?: string | DocumentNode;
@@ -471,7 +469,19 @@ export interface ApiServer {
 	) => Promise<GraphQLResponse>;
 }
 
-export interface WikiPageDocument extends MongoDBEntity {
+export interface DbEngine {
+	connect: () => Promise<void>;
+	clearDb: () => Promise<void>;
+	disconnect: () => Promise<void>;
+	setDbHost: (host: string) => void;
+	setDbName: (name: string) => void;
+}
+
+export interface PermissionControlledDocument {
+	acl: AclEntryDocument[];
+}
+
+export interface WikiPageDocument extends MongoDBDocument, PermissionControlledDocument {
 	type: string;
 	name: string;
 	world: Schema.Types.ObjectId;
@@ -482,158 +492,4 @@ export interface WikiPageDocument extends MongoDBEntity {
 export interface ModeledWikiDocument extends WikiPageDocument {
 	pageModel: Schema.Types.ObjectId;
 	modelColor: string;
-}
-
-export interface ChunkDocument extends MongoDBEntity {
-	image: Schema.Types.ObjectId;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	fileId: string;
-}
-
-export interface ItemDocument extends ModeledWikiDocument {}
-
-export interface PersonDocument extends ModeledWikiDocument {}
-
-export interface PlaceDocument extends WikiPageDocument {
-	mapImage: Schema.Types.ObjectId;
-	pixelsPerFoot: number;
-}
-
-export interface MonsterDocument extends ModeledWikiDocument {}
-
-export interface WikiFolderDocument extends MongoDBEntity {
-	name: string;
-	world: Schema.Types.ObjectId;
-	pages: Schema.Types.ObjectId[];
-	children: Schema.Types.ObjectId[];
-}
-
-export interface UserDocument extends MongoDBEntity {
-	email: string;
-	username: string;
-	password: string;
-	tokenVersion: string;
-	currentWorld: Schema.Types.ObjectId;
-	roles: Schema.Types.ObjectId[];
-	permissions: Schema.Types.ObjectId[];
-}
-
-export interface ServerConfigDocument extends MongoDBEntity {
-	version: string;
-	registerCodes: string[];
-	adminUsers: Schema.Types.ObjectId[];
-	unlockCode: string;
-}
-
-export interface RoleDocument extends MongoDBEntity {
-	name: string;
-	world: Schema.Types.ObjectId;
-	permissions: Schema.Types.ObjectId[];
-}
-
-export interface PinDocument extends MongoDBEntity {
-	x: number;
-	y: number;
-	map: Schema.Types.ObjectId;
-	page: Schema.Types.ObjectId;
-}
-
-export interface PermissionAssignmentDocument extends MongoDBEntity {
-	permission: string;
-	subject: Schema.Types.ObjectId;
-	subjectType: string;
-}
-
-export interface ModelDocument extends MongoDBEntity {
-	world: Schema.Types.ObjectId;
-	name: string;
-	depth: number;
-	width: number;
-	height: number;
-	fileName: string;
-	fileId: string;
-	notes: string;
-}
-
-export interface ImageDocument extends MongoDBEntity {
-	world: Schema.Types.ObjectId;
-	width: number;
-	height: number;
-	chunkWidth: number;
-	chunkHeight: number;
-	chunks: Schema.Types.ObjectId[];
-	icon: Schema.Types.ObjectId;
-	name: string;
-}
-
-export interface PathNodeDocument extends MongoDBEntity {
-	x: number;
-	y: number;
-}
-
-export interface StrokeDocument extends MongoDBEntity {
-	path: PathNodeDocument[];
-	color: string;
-	size: number;
-	fill: boolean;
-	type: string;
-}
-
-export interface FogStrokeDocument extends MongoDBEntity {
-	path: PathNodeDocument[];
-	size: number;
-	type: string;
-}
-
-export interface GameDocument extends MongoDBEntity {
-	passwordHash: string;
-	world: Schema.Types.ObjectId;
-	map: Schema.Types.ObjectId;
-	characters: CharacterDocument[];
-	host: Schema.Types.ObjectId;
-	strokes: StrokeDocument[];
-	fog: FogStrokeDocument[];
-	models: InGameModelDocument[];
-	messages: MessageDocument[];
-}
-
-export interface CharacterDocument extends MongoDBEntity {
-	name: string;
-	player: Schema.Types.ObjectId;
-	color: string;
-	attributes: CharacterAttributeDocument[];
-}
-
-export interface CharacterAttributeDocument extends MongoDBEntity {
-	name: string;
-	value: number;
-}
-
-export interface MessageDocument extends MongoDBEntity {
-	sender: string;
-	senderUser: string;
-	receiver: string;
-	receiverUser: string;
-	message: string;
-	timestamp: number;
-}
-
-export interface InGameModelDocument extends MongoDBEntity {
-	model: Schema.Types.ObjectId;
-	x: number;
-	z: number;
-	lookAtX: number;
-	lookAtZ: number;
-	color: string;
-	wiki: Schema.Types.ObjectId;
-}
-
-export interface WorldDocument extends MongoDBEntity {
-	name: string;
-	wikiPage: Schema.Types.ObjectId;
-	rootFolder: Schema.Types.ObjectId;
-	pins: Schema.Types.ObjectId[];
 }

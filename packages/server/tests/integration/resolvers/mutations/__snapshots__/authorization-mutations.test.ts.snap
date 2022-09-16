@@ -5,7 +5,16 @@ Object {
   "data": Object {
     "addUserRole": Object {
       "_id": Any<String>,
-      "accessControlList": Any<Array>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
       "canAdmin": true,
       "canWrite": true,
       "members": ArrayContaining [
@@ -14,7 +23,6 @@ Object {
         },
       ],
       "name": "other role",
-      "permissions": Any<Array>,
       "world": Object {
         "_id": Any<String>,
       },
@@ -50,12 +58,20 @@ Object {
   "data": Object {
     "createRole": Object {
       "_id": Any<String>,
-      "accessControlList": Any<Array>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
       "canAdmin": true,
       "canWrite": true,
       "members": Any<Array>,
       "name": "new role",
-      "permissions": Any<Array>,
       "world": Object {
         "_id": Any<String>,
       },
@@ -123,19 +139,6 @@ Object {
   "data": Object {
     "grantRolePermission": Object {
       "_id": Any<String>,
-      "permissions": Array [
-        Object {
-          "_id": Any<String>,
-          "canWrite": false,
-          "permission": "Read access to a single wiki page",
-          "subject": Object {
-            "_id": Any<String>,
-            "canAdmin": true,
-            "name": "Earth",
-          },
-          "subjectType": "Place",
-        },
-      ],
     },
   },
   "errors": undefined,
@@ -170,13 +173,12 @@ Object {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
-          "_id": Any<String>,
-          "canWrite": Any<Boolean>,
           "permission": Any<String>,
-          "subject": ObjectContaining {
+          "principal": ObjectContaining {
             "_id": Any<String>,
             "name": Any<String>,
           },
+          "principalType": Any<String>,
         },
       ],
     },
@@ -213,14 +215,18 @@ Object {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
-          "_id": Any<String>,
+          "permission": Any<String>,
+          "principal": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
         },
       ],
       "canAdmin": true,
       "canWrite": true,
       "members": Any<Array>,
       "name": "other role",
-      "permissions": Any<Array>,
       "world": Object {
         "_id": Any<String>,
       },
@@ -256,7 +262,6 @@ Object {
   "data": Object {
     "revokeRolePermission": Object {
       "_id": Any<String>,
-      "permissions": Array [],
     },
   },
   "errors": undefined,
@@ -289,20 +294,7 @@ Object {
   "data": Object {
     "revokeUserPermission": Object {
       "_id": Any<String>,
-      "accessControlList": Array [
-        Object {
-          "_id": Any<String>,
-          "canWrite": false,
-          "permission": "Read access to a single wiki page",
-          "roles": Array [],
-          "subject": Object {
-            "_id": Any<String>,
-            "name": "Earth",
-          },
-          "subjectType": "Place",
-          "users": Array [],
-        },
-      ],
+      "accessControlList": Array [],
       "canAdmin": true,
       "canWrite": true,
     },

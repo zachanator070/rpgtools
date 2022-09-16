@@ -113,7 +113,8 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 				name,
 				world: null,
 				pages: [],
-				children: []
+				children: [],
+				acl: []
 			}
 		);
 		await archive.wikiFolderRepository.create(newFolder);

@@ -9,22 +9,23 @@ import {
 	Stroke,
 } from "../../../domain-entities/game";
 import {
-	CharacterAttributeDocument,
-	CharacterDocument,
-	FogStrokeDocument,
-	GameDocument,
 	GameFactory,
 	GameRepository,
-	InGameModelDocument,
-	MessageDocument,
-	PathNodeDocument,
-	StrokeDocument,
+
+
 } from "../../../types";
 import mongoose from "mongoose";
-import { GameModel } from "../models/game";
+import {
+	CharacterAttributeDocument,
+	CharacterDocument, FogStrokeDocument, GameDocument,
+	GameModel,
+	InGameModelDocument,
+	MessageDocument, PathNodeDocument, StrokeDocument
+} from "../models/game";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import {ObjectId} from "bson";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbGameRepository
@@ -48,7 +49,8 @@ export class MongodbGameRepository
 				fog: this.buildFogStrokes(document.fog),
 				messages: this.buildMessages(document.messages),
 				models: this.buildModels(document.models),
-				host: document.host.toString()
+				host: document.host.toString(),
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

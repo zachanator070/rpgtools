@@ -120,15 +120,12 @@ Object {
       "_id": Any<String>,
       "accessControlList": ArrayContaining [
         ObjectContaining {
-          "_id": Any<String>,
-          "subject": Object {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
             "_id": Any<String>,
+            "name": Any<String>,
           },
-          "users": ArrayContaining [
-            ObjectContaining {
-              "_id": Any<String>,
-            },
-          ],
+          "principalType": Any<String>,
         },
       ],
       "canAdmin": true,
