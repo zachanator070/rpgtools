@@ -1,4 +1,4 @@
-import redis from "redis";
+import {createClient, RedisClientType} from "redis";
 import { promisify } from "util";
 import { Cache } from "../../types";
 import { Readable, Writable } from "stream";
@@ -8,15 +8,15 @@ import { injectable } from "inversify";
 
 @injectable()
 export class RedisClient implements Cache {
-	client: redis.RedisClient;
+	client: RedisClientType;
 	DEFAULT_TIMEOUT = 360;
 
 	constructor() {
 		if (!process.env.REDIS_URL) {
 			throw new Error("REDIS_URL not set! Unable to connect to redis");
 		}
-		this.client = redis.createClient(process.env.REDIS_URL, {
-			return_buffers: true,
+		this.client = createClient({
+			url: process.env.REDIS_URL,
 		});
 		this.client.on("connect", () => {
 			console.log(`Connected to ${process.env.REDIS_URL}`);
