@@ -22,7 +22,7 @@
 		"@rpgtools/common": "*",
 		"@types/bson": "^4.2.0",
 		"apollo-server": "^3.1.2",
-		"apollo-server-express": "^3.1.2",
+		"apollo-server-express": "^3.10.2",
 		"archiver": "^5.3.0",
 		"ascii-table": "^0.0.9",
 		"async-mutex": "^0.3.1",
