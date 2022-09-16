@@ -1,6 +1,6 @@
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import React, { useState } from "react";
 import PermissionModal from "../modals/PermissionModal";
 import WikiEdit from "./WikiEdit";
@@ -13,7 +13,6 @@ import PeopleIcon from "../widgets/icons/PeopleIcon";
 export default function WikView() {
 	const { currentWiki, loading: wikiLoading, refetch } = useCurrentWiki();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
-	const match = useRouteMatch();
 
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(
 		false
@@ -45,20 +44,20 @@ export default function WikView() {
 					/>
 				</div>
 				<div className="padding-md" >
-					<Switch>
-						<Route path={`${match.path}/edit`}>
+					<Route>
+						<Route path={`edit`}>
 							<WikiEdit />
 						</Route>
-						<Route path={`${match.path}/view`}>
+						<Route path={`view`}>
 							<WikiContent
 								currentWiki={currentWiki}
 								wikiLoading={wikiLoading}
 							/>
 						</Route>
-					</Switch>
+					</Route>
 				</div>
 				<div className="padding-md">
-					<Route path={`${match.path}/view`}>
+					<Route path={`view`}>
 						{currentWiki && (
 							<a
 								title={"View permissions for this page"}

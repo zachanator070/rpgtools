@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useDeleteWiki from "../../hooks/wiki/useDeleteWiki";
 import useCreateImage from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
@@ -30,7 +30,7 @@ import FormItem from "../widgets/input/FormItem";
 import SecondaryDangerButton from "../widgets/SecondaryDangerButton";
 
 export default function WikiEdit() {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { currentWiki, loading } = useCurrentWiki();
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();
 
@@ -135,7 +135,7 @@ export default function WikiEdit() {
 			});
 		}
 		await refetchWorld();
-		history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
+		navigate(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 	};
 
 	if (saving) {
@@ -243,7 +243,7 @@ export default function WikiEdit() {
 					<SecondaryDangerButton
 						disabled={saving}
 						onClick={() => {
-							history.push(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
+							navigate(`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/view`);
 						}}
 					>
 						<UndoIcon />
@@ -260,7 +260,7 @@ export default function WikiEdit() {
 								content: `Are you sure you want to delete the wiki page ${currentWiki.name}?`,
 								onOk: async () => {
 									await deleteWiki({wikiId: currentWiki._id});
-									history.push(
+									navigate(
 										`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
 									);
 								},
