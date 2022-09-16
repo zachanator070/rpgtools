@@ -5,6 +5,7 @@ import { SecurityContextFactory } from "../../src/security/security-context-fact
 import { User } from "../../src/domain-entities/user";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import {Factory} from "../../src/types";
+import {v4 as uuidv4} from 'uuid';
 
 class MockCookieManager implements CookieManager {
 	clearCookie(cookie: string): void {}
@@ -32,7 +33,7 @@ export class MockSessionContextFactory implements SessionContextFactory {
 	}
 
 	getAnon = (): User => {
-		return this.userFactory({_id: null, email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: []});
+		return this.userFactory({_id: uuidv4(), email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: []});
 	};
 
 	setCurrentUser = (user: User) => {

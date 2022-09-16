@@ -48,7 +48,7 @@ export class WikiPageService {
 			throw new Error("Folder does not exist");
 		}
 
-		if (!(await folder.authorizationPolicy.canCreate(context, unitOfWork))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 

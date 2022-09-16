@@ -54,6 +54,7 @@ export class WikiFolderService {
 			})
 		}
 		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.wikiFolderRepository.update(newFolder);
 		return parentFolder;
 	};
 

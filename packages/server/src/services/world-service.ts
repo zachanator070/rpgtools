@@ -208,6 +208,7 @@ export class WorldService {
 			});
 		}
 
+		context.roles.push(ownerRole);
 		context.user.roles.push(ownerRole._id);
 		await unitOfWork.userRepository.update(context.user);
 
@@ -216,7 +217,7 @@ export class WorldService {
 			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
 				world.acl.push({
 					permission: permission,
-					principal: ownerRole._id,
+					principal: everyoneRole._id,
 					principalType: ROLE
 				});
 			}

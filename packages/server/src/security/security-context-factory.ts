@@ -5,6 +5,8 @@ import { Repository } from "../types";
 import { FilterCondition } from "../dal/filter-condition";
 import { Role } from "../domain-entities/role";
 import { SecurityContext } from "./security-context";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 
 @injectable()
 export class SecurityContextFactory {
@@ -17,6 +19,10 @@ export class SecurityContextFactory {
 		for (let roleId of user.roles) {
 			roles.push(await this.roleRepository.findOne([new FilterCondition("_id", roleId)]));
 		}
+		if (user.username !== ANON_USERNAME) {
+			roles.push(await this.roleRepository.findOne([new FilterCondition('name', LOGGED_IN)]));
+		}
+		roles.push(await this.roleRepository.findOne([new FilterCondition('name', EVERYONE)]));
 		return roles;
 	};
 

@@ -136,7 +136,7 @@ export class AuthorizationService {
 				principalType: USER
 			});
 		}
-		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.roleRepository.update(newRole);
 		return newRole;
 	};
 
@@ -182,6 +182,7 @@ export class AuthorizationService {
 
 		user.roles.push(role._id);
 		await unitOfWork.userRepository.update(user);
+		context.roles.push(role);
 		return role;
 	};
 
@@ -216,6 +217,7 @@ export class AuthorizationService {
 
 		user.roles = user.roles.filter((userRole) => userRole !== role._id);
 		await unitOfWork.userRepository.update(user);
+		context.roles = context.roles.filter(contextRole => contextRole._id !== role._id);
 		return role;
 	};
 

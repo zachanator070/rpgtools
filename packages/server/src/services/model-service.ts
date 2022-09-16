@@ -125,6 +125,7 @@ export class ModelService {
 			});
 		}
 		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.modelRepository.update(model);
 		return model;
 	};
 

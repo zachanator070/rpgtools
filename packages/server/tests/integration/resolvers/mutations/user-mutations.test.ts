@@ -19,7 +19,14 @@ describe("user mutations", () => {
 				query: SET_CURRENT_WORLD,
 				variables: { worldId: testingContext.world._id.toString() },
 			});
-			expect(result).toMatchSnapshot();
+			expect(result).toMatchSnapshot({
+				data: {
+					setCurrentWorld: {
+						_id: expect.any(String),
+					},
+				},
+				errors: undefined,
+			});
 		});
 
 		describe("with authenticated user", () => {
@@ -38,6 +45,7 @@ describe("user mutations", () => {
 							_id: expect.any(String),
 						},
 					},
+					errors: undefined,
 				});
 			});
 		});
