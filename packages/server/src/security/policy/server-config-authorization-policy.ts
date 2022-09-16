@@ -11,7 +11,7 @@ export class ServerConfigAuthorizationPolicy
 	entity: ServerConfig;
 
 	canAdmin = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(SERVER_ADMIN, this.entity._id);
+		return context.hasPermission(SERVER_ADMIN, this.entity);
 	};
 
 	canCreate = async (context: SecurityContext): Promise<boolean> => {
@@ -24,10 +24,10 @@ export class ServerConfigAuthorizationPolicy
 	};
 
 	canWrite = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(SERVER_RW, this.entity._id);
+		return context.hasPermission(SERVER_RW, this.entity);
 	};
 
 	canCreateWorlds = async (context: SecurityContext): Promise<boolean> => {
-		return context.hasPermission(WORLD_CREATE, this.entity._id);
+		return context.hasPermission(WORLD_CREATE, this.entity);
 	};
 }

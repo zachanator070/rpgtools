@@ -49,38 +49,44 @@ export class DefaultTestingContext {
 	@inject(INJECTABLE_TYPES.ApiServer)
 	server: ApiServer;
 
-	otherUser: User;
-	otherUserSecurityContext: SecurityContext;
+	currentUser: User;
+	currentUserSecurityContext: SecurityContext;
+	tester1: User;
+	tester1SecurityContext: SecurityContext;
+	tester2: User;
+	tester2SecurityContext: SecurityContext;
+
 	world: World;
 	testRole: Role;
-	currentUser: User;
-	testerSecurityContext: SecurityContext;
 	newFolder: WikiFolder;
 	otherPage: WikiPage;
 	pin: Pin;
 
 	async reset() {
 		const unitOfWork = this.unitOfWorkFactory({});
-		this.currentUser = await unitOfWork.userRepository.findOne([new FilterCondition("username", "tester")]);
-		this.otherUser = this.userFactory({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: [], permissions: []});
-		await unitOfWork.userRepository.create(this.otherUser);
-		this.testerSecurityContext = await this.securityContextFactory.create(this.currentUser);
-		this.otherUserSecurityContext = await this.securityContextFactory.create(this.otherUser);
+
+		this.tester1 = await unitOfWork.userRepository.findOne([new FilterCondition("username", "tester")]);
+		this.tester1SecurityContext = await this.securityContextFactory.create(this.tester1);
+
+		this.currentUser = this.tester1;
+		this.currentUserSecurityContext = this.tester1SecurityContext;
+
+		this.tester2 = this.userFactory({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
+		await unitOfWork.userRepository.create(this.tester2);
+		this.tester2SecurityContext = await this.securityContextFactory.create(this.tester2);
+
 		this.mockSessionContextFactory.setCurrentUser(this.currentUser);
+
 		const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		this.world = await worldService.createWorld("Earth", false, this.testerSecurityContext, unitOfWork);
-		await this.authorizationService.createRole(
-			this.testerSecurityContext,
+		this.world = await worldService.createWorld("Earth", false, this.tester1SecurityContext, unitOfWork);
+		this.testRole = await this.authorizationService.createRole(
+			this.tester1SecurityContext,
 			this.world._id,
 			"other role",
 			unitOfWork
 		);
-		this.testRole = await unitOfWork.roleRepository.findOne([
-			new FilterCondition("name", "other role"),
-			new FilterCondition("world", this.world._id),
-		]);
 		await this.wikiFolderService.createFolder(
-			this.testerSecurityContext,
+			this.tester1SecurityContext,
 			"new folder",
 			this.world.rootFolder,
 			unitOfWork
@@ -89,9 +95,9 @@ export class DefaultTestingContext {
 			new FilterCondition("name", "new folder"),
 			new FilterCondition("world", this.world._id),
 		]);
-		await this.wikiPageService.createWiki(this.testerSecurityContext, "new page", this.newFolder._id, unitOfWork);
+		await this.wikiPageService.createWiki(this.tester1SecurityContext, "new page", this.newFolder._id, unitOfWork);
 		await this.wikiPageService.createWiki(
-			this.testerSecurityContext,
+			this.tester1SecurityContext,
 			"other page",
 			this.world.rootFolder,
 			unitOfWork
@@ -101,7 +107,7 @@ export class DefaultTestingContext {
 			new FilterCondition("world", this.world._id),
 		]);
 		await worldService.createPin(
-			this.testerSecurityContext,
+			this.tester1SecurityContext,
 			this.world.wikiPage,
 			this.otherPage._id,
 			0,

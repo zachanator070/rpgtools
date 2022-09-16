@@ -140,19 +140,19 @@ describe("folder-mutations", () => {
 		describe("as other user", () => {
 			beforeEach(async () => {
 				await testingContext.reset();
-				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.otherUser);
+				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 				const unitOfWork = unitOfWorkFactory({});
-				await wikiPageService.createWiki(testingContext.testerSecurityContext, "new page", testingContext.newFolder._id, unitOfWork);
+				await wikiPageService.createWiki(testingContext.tester1SecurityContext, "new page", testingContext.newFolder._id, unitOfWork);
 				await authorizationService.grantUserPermission(
-					testingContext.testerSecurityContext,
+					testingContext.tester1SecurityContext,
 					WIKI_RW,
 					testingContext.newFolder._id,
 					WIKI_FOLDER,
-					testingContext.otherUser._id,
+					testingContext.tester2._id,
 					unitOfWork
 				);
 				await unitOfWork.commit();
-				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.otherUser);
+				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 			});
 
 			test("no permission to child", async () => {

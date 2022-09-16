@@ -14,7 +14,7 @@ import {
 	GAME_MODELS,
 	GAME_STROKES,
 	MODEL_ATTRIBUTES,
-	PERMISSIONS_GRANTED, PIN_ATTRIBUTES,
+	PIN_ATTRIBUTES,
 	WIKIS_IN_FOLDER_ATTRIBUTES
 } from "./gql-fragments";
 
@@ -71,20 +71,16 @@ export const REMOVE_USER_ROLE = gql`
 	}
 `;
 export const GRANT_ROLE_PERMISSION = gql`
-	${PERMISSIONS_GRANTED}
 	mutation grantRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
 		grantRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
-			...permissionsGranted
 		}
 	}
 `;
 export const REVOKE_ROLE_PERMISSION = gql`
-	${PERMISSIONS_GRANTED}
-	mutation revokeRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!){
-		revokeRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId){
+	mutation revokeRolePermission($roleId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		revokeRolePermission(roleId: $roleId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
-			...permissionsGranted		
 		}
 	}
 `;
@@ -127,8 +123,8 @@ export const GRANT_USER_PERMISSION = gql`
 `;
 export const REVOKE_USER_PERMISSION = gql`
 	${ACCESS_CONTROL_LIST}
-	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!){
-		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId){
+	mutation revokeUserPermission($userId: ID!, $permission: String!, $subjectId: ID!, $subjectType: String!){
+		revokeUserPermission(userId: $userId, permission: $permission, subjectId: $subjectId, subjectType: $subjectType){
 			_id
 			...accessControlList
 		}

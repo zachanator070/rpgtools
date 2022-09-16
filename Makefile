@@ -44,6 +44,11 @@ prod: build
 dev: .env packages/frontend/dist packages/server/dist
 	docker-compose up server ui-builder
 
+# same as the dev target but makes the server wait for a debug connection before it starts the application
+.PHONY: dev-brk
+dev-brk: .env packages/frontend/dist packages/server/dist
+	docker-compose up server-brk ui-builder
+
 packages/frontend/dist:
 	mkdir -p packages/frontend/dist
 	chmod o+rw -R packages/frontend/dist
@@ -125,7 +130,7 @@ dump:
 seed:
 	npm run -w packages/frontend seed:middle_earth
 
-seed_new:
+seed-new:
 	npm run -w packages/frontend seed:new
 
 cypress:

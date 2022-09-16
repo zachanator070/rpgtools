@@ -39,7 +39,7 @@ export default function ServerSettings() {
 					<ItemList
 						id={"registerCodeList"}
 					>
-						{serverConfig.registerCodes.map(item => <>{item}</>)}
+						{serverConfig.registerCodes.map(item => <div key={item}>{item}</div>)}
 					</ItemList>
 				</>
 			</ColumnedContent>

@@ -1,6 +1,5 @@
 import {
 	ArticleFactory,
-	PermissionAssignmentFactory,
 	UnitOfWork,
 	WikiFolderFactory,
 } from "../types";
@@ -12,7 +11,7 @@ import {
 	FilterCondition,
 } from "../dal/filter-condition";
 import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
-import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import {USER} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {AuthorizationService} from "./authorization-service";
@@ -25,8 +24,6 @@ export class WikiFolderService {
 
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 	@inject(INJECTABLE_TYPES.ArticleFactory)
 	articleFactory: ArticleFactory;
 
@@ -44,24 +41,20 @@ export class WikiFolderService {
 		if (!(await parentFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
-		const newFolder = this.wikiFolderFactory({_id: null, name, world: parentFolder.world, pages: [], children: []});
+		const newFolder = this.wikiFolderFactory({_id: null, name, world: parentFolder.world, pages: [], children: [], acl: []});
 		await unitOfWork.wikiFolderRepository.create(newFolder);
 		parentFolder.children.push(newFolder._id);
 		await unitOfWork.wikiFolderRepository.update(parentFolder);
 
 		for (let permission of [FOLDER_RW, FOLDER_ADMIN]) {
-			const newPermission = this.permissionAssignmentFactory(
-				{
-					_id: null,
-					permission,
-					subject: newFolder._id,
-					subjectType: WIKI_FOLDER
-				}
-			);
-			await unitOfWork.permissionAssignmentRepository.create(newPermission);
-			context.user.permissions.push(newPermission._id);
+			newFolder.acl.push({
+				permission,
+				principal: context.user._id,
+				principalType: USER
+			})
 		}
 		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.wikiFolderRepository.update(newFolder);
 		return parentFolder;
 	};
 
@@ -171,7 +164,7 @@ export class WikiFolderService {
 		for (let doc of results) {
 			if (
 				canAdmin !== undefined &&
-				!(await doc.authorizationPolicy.canAdmin(context))
+				!(await doc.authorizationPolicy.canAdmin(context, unitOfWork))
 			) {
 				continue;
 			}
@@ -203,12 +196,10 @@ export class WikiFolderService {
 		}
 
 		for (let pageId of folder.pages) {
-			await this.authorizationService.cleanUpPermissions(pageId, unitOfWork);
 			const page = await unitOfWork.wikiPageRepository.findById(pageId);
 			await unitOfWork.wikiPageRepository.delete(page);
 		}
 
-		await this.authorizationService.cleanUpPermissions(folder._id, unitOfWork);
 		await unitOfWork.wikiFolderRepository.delete(folder);
 	};
 

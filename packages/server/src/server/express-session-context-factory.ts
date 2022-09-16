@@ -6,13 +6,10 @@ import {
 	UnitOfWork,
 	UserFactory,
 } from "../types";
-import { Request, Response } from "express";
-import { ExpressContext } from "apollo-server-express/src/ApolloServer";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { v4 as uuidv4 } from "uuid";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { ExpressCookieManager } from "./express-cookie-manager";
 import { SecurityContextFactory } from "../security/security-context-factory";
 import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import {
@@ -21,11 +18,6 @@ import {
 	REFRESH_TOKEN,
 	REFRESH_TOKEN_MAX_AGE,
 } from "../services/authentication-service";
-
-export class ExpressSessionContextParameters implements ExpressContext {
-	req: Request;
-	res: Response;
-}
 
 @injectable()
 export class ExpressSessionContextFactory implements SessionContextFactory {
@@ -78,7 +70,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					}
 				}
 			} else {
-				currentUser = this.userFactory({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: [], permissions: []});
+				currentUser = this.userFactory({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});
 			}
 		}
 

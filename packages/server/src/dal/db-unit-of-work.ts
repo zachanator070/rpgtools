@@ -7,7 +7,6 @@ import {
 	ItemRepository,
 	ModelRepository,
 	MonsterRepository,
-	PermissionAssignmentRepository,
 	PersonRepository,
 	PinRepository,
 	PlaceRepository,
@@ -40,8 +39,6 @@ export class DbUnitOfWork implements UnitOfWork {
 	modelRepository: ModelRepository;
 	@inject(INJECTABLE_TYPES.MonsterRepository)
 	monsterRepository: MonsterRepository;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentRepository)
-	permissionAssignmentRepository: PermissionAssignmentRepository;
 	@inject(INJECTABLE_TYPES.PersonRepository)
 	personRepository: PersonRepository;
 	@inject(INJECTABLE_TYPES.PinRepository)

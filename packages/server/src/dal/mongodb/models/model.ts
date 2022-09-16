@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
-import { MODEL, WORLD } from "@rpgtools/common/src/type-constants";
-import { ModelDocument } from "../../../types";
+import mongoose, {Schema} from "mongoose";
+import {MODEL, WORLD} from "@rpgtools/common/src/type-constants";
+import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
+import {AclEntry} from "./acl-entry";
 
 const modelSchema = new mongoose.Schema({
 	world: {
@@ -33,6 +34,18 @@ const modelSchema = new mongoose.Schema({
 	notes: {
 		type: String,
 	},
+	acl: [AclEntry],
 });
+
+export interface ModelDocument extends MongoDBDocument, PermissionControlledDocument {
+    world: Schema.Types.ObjectId;
+    name: string;
+    depth: number;
+    width: number;
+    height: number;
+    fileName: string;
+    fileId: string;
+    notes: string;
+}
 
 export const ModelModel = mongoose.model<ModelDocument>(MODEL, modelSchema);

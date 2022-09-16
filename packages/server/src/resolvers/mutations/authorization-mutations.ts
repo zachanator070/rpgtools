@@ -28,7 +28,7 @@ export const authorizationMutations = {
 	},
 	revokeUserPermission: async (
 		_: any,
-		{ userId, permission, subjectId }: { userId: string; permission: string; subjectId: string },
+		{ userId, permission, subjectId, subjectType }: { userId: string; permission: string; subjectId: string, subjectType: string},
 		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
@@ -38,6 +38,7 @@ export const authorizationMutations = {
 			securityContext,
 			permission,
 			subjectId,
+			subjectType,
 			userId,
 			unitOfWork
 		);
@@ -66,7 +67,7 @@ export const authorizationMutations = {
 	},
 	revokeRolePermission: async (
 		_: any,
-		{ roleId, permission, subjectId }: { roleId: string; permission: string; subjectId: string },
+		{ roleId, permission, subjectId, subjectType }: { roleId: string; permission: string; subjectId: string, subjectType: string },
 		{ securityContext, unitOfWork }: SessionContext
 	) => {
 		const authorizationService = container.get<AuthorizationService>(
@@ -77,6 +78,7 @@ export const authorizationMutations = {
 			roleId,
 			permission,
 			subjectId,
+			subjectType,
 			unitOfWork
 		);
 	},

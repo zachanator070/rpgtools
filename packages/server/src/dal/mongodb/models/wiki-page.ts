@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { IMAGE, WIKI_PAGE, WORLD } from "@rpgtools/common/src/type-constants";
 import { WikiPageDocument } from "../../../types";
+import {AclEntry} from "./acl-entry";
 
 const wikiPageSchema = new mongoose.Schema(
 	{
@@ -14,6 +15,7 @@ const wikiPageSchema = new mongoose.Schema(
 			required: [true, "world field required"],
 			ref: WORLD,
 		},
+		acl: [AclEntry],
 		coverImage: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: IMAGE,

@@ -1,14 +1,13 @@
-import { PermissionAssignmentFactory, RoleFactory, Seeder } from "../types";
+import { RoleFactory, Seeder } from "../types";
 import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { WORLD_CREATE } from "@rpgtools/common/src/permission-constants";
-import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
+import {ROLE} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { MongodbUserRepository } from "../dal/mongodb/repositories/mongodb-user-repository";
 import { FilterCondition } from "../dal/filter-condition";
 import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongodb-server-config-repository";
 import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-repository";
-import { MongodbPermissionAssignmentRepository } from "../dal/mongodb/repositories/mongodb-permission-assignment-repository";
 import { Role } from "../domain-entities/role";
 
 @injectable()
@@ -22,10 +21,6 @@ export class RoleSeeder implements Seeder {
 	@inject(INJECTABLE_TYPES.RoleRepository)
 	roleRepository: MongodbRoleRepository;
 
-	@inject(INJECTABLE_TYPES.PermissionAssignmentRepository)
-	permissionAssignmentRepository: MongodbPermissionAssignmentRepository;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
 
@@ -38,7 +33,7 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			allUsersRole = this.roleFactory({_id: null, name: EVERYONE, world: null, permissions: []});
+			allUsersRole = this.roleFactory({_id: null, name: EVERYONE, world: null, acl: []});
 			await this.roleRepository.create(allUsersRole);
 			console.log(`Created default role "${EVERYONE}"`);
 		}
@@ -50,25 +45,13 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			loggedInRole = this.roleFactory({_id: null, name: LOGGED_IN, world: null, permissions: []});
+			loggedInRole = this.roleFactory({_id: null, name: LOGGED_IN, world: null, acl: []});
 			await this.roleRepository.create(loggedInRole);
-			let createWorldPermission = await this.permissionAssignmentRepository.findOne([
-				new FilterCondition("permission", WORLD_CREATE),
-				new FilterCondition("subject", server._id),
-				new FilterCondition("subjectType", SERVER_CONFIG),
-			]);
-			if (!createWorldPermission) {
-				createWorldPermission = this.permissionAssignmentFactory(
-					{
-						_id: null,
-						permission: WORLD_CREATE,
-						subject: server._id,
-						subjectType: SERVER_CONFIG
-					}
-				);
-				await this.permissionAssignmentRepository.create(createWorldPermission);
-			}
-			loggedInRole.permissions.push(createWorldPermission._id);
+			server.acl.push({
+				permission: WORLD_CREATE,
+				principal: loggedInRole._id,
+				principalType: ROLE
+			});
 			await this.roleRepository.update(loggedInRole);
 			console.log(`Created default role "${LOGGED_IN}"`);
 		}

@@ -133,7 +133,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = false
 	) => {
-		if (!(await page.authorizationPolicy.canRead(context))) {
+		if (!(await page.authorizationPolicy.canRead(context, unitOfWork))) {
 			if (errorOut) {
 				return new ReadPermissionDeniedError(page._id, MODEL);
 			}

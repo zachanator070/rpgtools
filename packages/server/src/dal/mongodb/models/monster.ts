@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
-import { MODEL, MONSTER } from "@rpgtools/common/src/type-constants";
-import { WikiPageModel } from "./wiki-page";
-import { MonsterDocument } from "../../../types";
+import {MODEL, MONSTER} from "@rpgtools/common/src/type-constants";
+import {WikiPageModel} from "./wiki-page";
+import {ModeledWikiDocument} from "../../../types";
+
+export interface MonsterDocument extends ModeledWikiDocument {
+}
 
 const monsterSchema = new mongoose.Schema<MonsterDocument, mongoose.Model<MonsterDocument>>({
 	pageModel: {

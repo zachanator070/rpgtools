@@ -3,11 +3,9 @@ import LoadingView from "../LoadingView";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateRole from "../../hooks/authorization/useCreateRole";
 import useDeleteRole from "../../hooks/authorization/useDeleteRole";
-import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission";
 import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
 import SelectUser from "../select/SelectUser";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole";
-import AddRolePermission from "./AddRolePermission";
 import {Role, User} from "../../types";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 import ColumnedContent from "../widgets/ColumnedContent";
@@ -17,15 +15,13 @@ import TextInput from "../widgets/input/TextInput";
 import ItemList from "../widgets/ItemList";
 import DropdownSelect from "../widgets/DropdownSelect";
 import TabCollection, {TabPaneProps} from "../widgets/TabCollection";
-import FormattedTable from "../widgets/FormattedTable";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
 
 
 export default function RolesView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
-	const {roles, loading: rolesLoading, refetch} = useSearchRoles({});
+	const {roles, loading: rolesLoading} = useSearchRoles({});
 	const { createRole, loading: createRoleLoading } = useCreateRole();
-	const { revokeRolePermission, loading: revokeRolePermissionLoading } = useRevokeRolePermission({callback: async () => {await refetch()}});
 	const { deleteRole, loading: deleteRoleLoading } = useDeleteRole();
 	const { removeUserRole, loading: removeUserRoleLoading } = useRemoveUserRole();
 	const [newRoleName, setNewRoleName] = useState<string>();
@@ -48,45 +44,6 @@ export default function RolesView() {
 
 	const getTabs = (role: Role): TabPaneProps[] => {
 		const tabs: TabPaneProps[] = [
-			{
-				title: "Permissions in this role",
-				children: <>
-					<FormattedTable
-						headers={[
-							"Permission",
-							"Subject Type",
-							"Subject Name",
-							"Remove Permission",
-						]}
-						data={
-							role.permissions.map(assignment => [
-								assignment.permission,
-								assignment.subjectType,
-								assignment.subject.name,
-								assignment.subject.canAdmin ? (
-									<PrimaryDangerButton
-										loading={revokeRolePermissionLoading}
-										className={"margin-md-left"}
-										onClick={async () => {
-											await revokeRolePermission({
-												roleId: role._id,
-												permission: assignment.permission,
-												subjectId: assignment.subject._id
-											});
-										}}
-									>
-										<DeleteIcon />
-									</PrimaryDangerButton>
-								) : (
-									<></>
-								)
-							])
-						}
-						scrollHeight={250}
-					/>
-					<AddRolePermission role={role} refetch={async () => {await refetch()}}/>
-				</>
-			},
 			{
 				title: "Users with this role",
 				children: <>

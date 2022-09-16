@@ -1,10 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Role } from "../../../domain-entities/role";
 import { inject, injectable } from "inversify";
-import { RoleDocument, RoleFactory, RoleRepository } from "../../../types";
+import { RoleFactory, RoleRepository } from "../../../types";
 import mongoose from "mongoose";
-import { RoleModel } from "../models/role";
+import {RoleDocument, RoleModel} from "../models/role";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbRoleRepository
@@ -22,7 +23,7 @@ export class MongodbRoleRepository
 				_id: document._id.toString(),
 				name: document.name,
 				world: document.world ? document.world.toString() : null,
-				permissions: document.permissions.map((id) => id.toString())
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

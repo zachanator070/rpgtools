@@ -1,16 +1,17 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {AclEntry, DomainEntity, Factory, PermissionControlledEntity, Repository, RepositoryAccessor} from "../types";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class World implements DomainEntity {
+export class World implements PermissionControlledEntity {
 	public _id: string;
 	public name: string;
 	public wikiPage: string | null;
 	public rootFolder: string | null;
 	public type: string = WORLD;
+	public acl: AclEntry[];
 
 	authorizationPolicy: WorldAuthorizationPolicy;
 	factory: Factory<World>

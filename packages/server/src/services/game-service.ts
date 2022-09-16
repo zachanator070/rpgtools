@@ -1,7 +1,7 @@
 import {
 	EventPublisher,
 	GameFactory,
-	PermissionAssignmentFactory, UnitOfWork,
+	UnitOfWork,
 } from "../types";
 import {
 	ANON_USERNAME,
@@ -11,7 +11,7 @@ import {
 } from "@rpgtools/common/src/permission-constants";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
-import { GAME } from "@rpgtools/common/src/type-constants";
+import {USER} from "@rpgtools/common/src/type-constants";
 import { SecurityContext } from "../security/security-context";
 import {
 	Character, CharacterAttribute,
@@ -58,8 +58,6 @@ export class GameService {
 
 	@inject(INJECTABLE_TYPES.GameFactory)
 	gameFactory: GameFactory;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 
 	createGame = async (
 		context: SecurityContext,
@@ -68,7 +66,11 @@ export class GameService {
 		characterName: string,
 		unitOfWork: UnitOfWork
 	) => {
-		if (!(await context.hasPermission(GAME_HOST, worldId))) {
+		const world = await unitOfWork.worldRepository.findById(worldId);
+		if (!world) {
+			throw new Error(`World with id ${worldId} does not exist`);
+		}
+		if (!context.hasPermission(GAME_HOST, world)) {
 			throw new Error("You do not have permission to host games on this world");
 		}
 		const game = this.gameFactory(
@@ -90,23 +92,18 @@ export class GameService {
 				fog: [],
 				messages: [],
 				models: [],
-				host: context.user._id
+				host: context.user._id,
+				acl: []
 			}
 		);
 
 		await unitOfWork.gameRepository.create(game);
 		for (let permission of GAME_PERMISSIONS) {
-			const permissionAssignment = this.permissionAssignmentFactory(
-				{
-					_id: null,
-					permission,
-					subject: game._id,
-					subjectType: GAME
-				}
-			);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-			context.user.permissions.push(permissionAssignment._id);
-			context.permissions.push(permissionAssignment);
+			game.acl.push({
+				permission,
+				principal: context.user._id,
+				principalType: USER
+			})
 		}
 		await unitOfWork.userRepository.update(context.user);
 		return game;
@@ -126,16 +123,11 @@ export class GameService {
 		if (game.passwordHash && !bcrypt.compareSync(password, game.passwordHash)) {
 			throw new Error("Password is incorrect");
 		}
-		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", GAME_READ),
-			new FilterCondition("subjectId", game._id),
-			new FilterCondition("subjectType", GAME),
-		]);
-		if (!permissionAssignment) {
-			permissionAssignment = this.permissionAssignmentFactory({_id: null, permission: GAME_READ, subject: game._id, subjectType: GAME});
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-		}
-		context.user.permissions.push(permissionAssignment._id);
+		game.acl.push({
+			permission: GAME_READ,
+			principal: context.user._id,
+			principalType: USER
+		});
 		await unitOfWork.userRepository.update(context.user);
 		game.characters.push(
 			new Character(
@@ -164,22 +156,8 @@ export class GameService {
 
 		if (game.host === context.user._id) {
 			await unitOfWork.gameRepository.delete(game);
-			await this.authorizationService.cleanUpPermissions(game._id, unitOfWork);
 		} else {
-			for (let permission of GAME_PERMISSIONS) {
-				const foundPermission = context.permissions.find(
-					(assignment) => assignment.permission === permission && assignment.subject === game._id
-				);
-				if (foundPermission) {
-					context.permissions = context.permissions.filter(
-						(assignment) => assignment._id === foundPermission._id
-					);
-					context.user.permissions = context.user.permissions.filter(
-						(assignment) => assignment === foundPermission._id
-					);
-					await unitOfWork.userRepository.update(context.user);
-				}
-			}
+			game.acl = game.acl.filter(entry => entry.principalType !== USER || entry.principal === context.user._id);
 		}
 
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });

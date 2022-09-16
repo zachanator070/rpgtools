@@ -21,7 +21,6 @@ describe("server mutations", () => {
 			serverConfig.unlockCode = "asdf";
 			serverConfig.adminUsers = [];
 			await unitOfWork.serverConfigRepository.update(serverConfig);
-			await testingContext.server.checkConfig();
 		};
 		beforeEach(async () => {
 			await resetConfig();

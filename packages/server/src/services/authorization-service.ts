@@ -1,17 +1,13 @@
 import {
-	DomainEntity,
-	PermissionAssignmentFactory,
-	Repository,
+	DomainEntity, PermissionControlledEntity,
 	RoleFactory,
 	UnitOfWork,
 } from "../types";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { SecurityContext } from "../security/security-context";
 import { FilterCondition } from "../dal/filter-condition";
 import { Role } from "../domain-entities/role";
-import { World } from "../domain-entities/world";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
-import { ROLE } from "@rpgtools/common/src/type-constants";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -23,8 +19,6 @@ export class AuthorizationService {
 
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
-	@inject(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	permissionAssignmentFactory: PermissionAssignmentFactory;
 
 	@inject(INJECTABLE_TYPES.EntityMapper)
 	mapper: EntityMapper;
@@ -48,7 +42,7 @@ export class AuthorizationService {
 			subjectId,
 			subjectType,
 			user,
-			unitOfWork.userRepository
+			USER,
 		);
 		return this.mapper.map(subjectType).getRepository(unitOfWork).findById(subjectId);
 	};
@@ -57,6 +51,7 @@ export class AuthorizationService {
 		context: SecurityContext,
 		permission: string,
 		subjectId: string,
+		subjectType: string,
 		userId: string,
 		unitOfWork: UnitOfWork
 	): Promise<DomainEntity> => {
@@ -64,15 +59,15 @@ export class AuthorizationService {
 		if (!user) {
 			throw new Error("User does not exist");
 		}
-		const permissionAssignment = await this.revokeEntityPermission(
+		return await this.revokeEntityPermission(
 			unitOfWork,
 			context,
 			permission,
 			subjectId,
+			subjectType,
 			user,
-			unitOfWork.userRepository
+			USER,
 		);
-		return this.mapper.map(permissionAssignment.subjectType).getRepository(unitOfWork).findById(subjectId);
 	};
 
 	grantRolePermission = async (
@@ -94,7 +89,7 @@ export class AuthorizationService {
 			subjectId,
 			subjectType,
 			role,
-			unitOfWork.roleRepository
+			ROLE,
 		);
 		return role;
 	};
@@ -104,6 +99,7 @@ export class AuthorizationService {
 		roleId: string,
 		permission: string,
 		subjectId: string,
+		subjectType: string,
 		unitOfWork: UnitOfWork
 	): Promise<Role> => {
 		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
@@ -116,8 +112,9 @@ export class AuthorizationService {
 			context,
 			permission,
 			subjectId,
+			subjectType,
 			role,
-			unitOfWork.roleRepository
+			ROLE,
 		);
 		return role;
 	};
@@ -127,24 +124,19 @@ export class AuthorizationService {
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
-		if (!(await context.hasPermission(ROLE_ADD, worldId))) {
+		if (!context.hasPermission(ROLE_ADD, world)) {
 			throw new Error(`You do not have permission to add roles to this world`);
 		}
-		const newRole = this.roleFactory({_id: null, name, world: worldId, permissions: []});
+		const newRole = this.roleFactory({_id: null, name, world: worldId, acl: []});
 		await unitOfWork.roleRepository.create(newRole);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
-			const permissionAssignment = this.permissionAssignmentFactory(
-				{
-					_id: null,
-					permission,
-					subject: newRole._id,
-					subjectType: ROLE
-				}
-			);
-			await unitOfWork.permissionAssignmentRepository.create(permissionAssignment);
-			context.user.permissions.push(permissionAssignment._id);
+			newRole.acl.push({
+				permission,
+				principal: context.user._id,
+				principalType: USER
+			});
 		}
-		await unitOfWork.userRepository.update(context.user);
+		await unitOfWork.roleRepository.update(newRole);
 		return newRole;
 	};
 
@@ -153,13 +145,12 @@ export class AuthorizationService {
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
-		if (!(await role.authorizationPolicy.canWrite(context))) {
+		if (!(await role.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have write permissions for this role`);
 		}
 		if (role.name === WORLD_OWNER || role.name === EVERYONE || role.name === LOGGED_IN) {
 			throw new Error("You cannot delete this role");
 		}
-		await this.cleanUpPermissions(role._id, unitOfWork);
 		const usersWithRole = await unitOfWork.userRepository.find([new FilterCondition('role', role._id)]);
 		for(let user of usersWithRole) {
 			user.roles = user.roles.filter(id => id !== role._id);
@@ -167,34 +158,6 @@ export class AuthorizationService {
 		}
 		await unitOfWork.roleRepository.delete(role);
 		return role;
-	};
-
-	// deletes permissions of a subject that has been delete
-	cleanUpPermissions = async (subjectId: string, unitOfWork: UnitOfWork) => {
-		const assignments = await unitOfWork.permissionAssignmentRepository.find([
-			new FilterCondition("subject", subjectId),
-		]);
-		for (let assignment of assignments) {
-			const roles = await unitOfWork.roleRepository.find([
-				new FilterCondition("permissions", assignment._id),
-			]);
-			for (let role of roles) {
-				role.permissions = role.permissions.filter((permission) => {
-					return permission !== assignment._id;
-				});
-				await unitOfWork.roleRepository.update(role);
-			}
-			const users = await unitOfWork.userRepository.find([
-				new FilterCondition("permissions", assignment._id),
-			]);
-			for (let user of users) {
-				user.permissions = user.permissions.filter((permission) => {
-					return permission !== assignment._id;
-				});
-				await unitOfWork.userRepository.update(user);
-			}
-			await unitOfWork.permissionAssignmentRepository.delete(assignment);
-		}
 	};
 
 	addUserRole = async (
@@ -213,12 +176,13 @@ export class AuthorizationService {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
 
-		if (!(await role.authorizationPolicy.canWrite(context))) {
+		if (!(await role.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to manage this role`);
 		}
 
 		user.roles.push(role._id);
 		await unitOfWork.userRepository.update(user);
+		context.roles.push(role);
 		return role;
 	};
 
@@ -238,7 +202,7 @@ export class AuthorizationService {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
 
-		if (!(await role.authorizationPolicy.canWrite(context))) {
+		if (!(await role.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to manage this role`);
 		}
 
@@ -253,6 +217,7 @@ export class AuthorizationService {
 
 		user.roles = user.roles.filter((userRole) => userRole !== role._id);
 		await unitOfWork.userRepository.update(user);
+		context.roles = context.roles.filter(contextRole => contextRole._id !== role._id);
 		return role;
 	};
 
@@ -260,67 +225,47 @@ export class AuthorizationService {
 		unitOfWork: UnitOfWork,
 		context: SecurityContext,
 		permission: string,
-		subjectId: string,
-		subjectType: string,
+		entityId: string,
+		entityType: string,
 		principal: User | Role,
-		entityRepository: Repository<any>
+		principalType: "User" | "Role"
 	) => {
-		let assignment: PermissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", permission),
-			new FilterCondition("subject", subjectId),
-			new FilterCondition("subjectType", subjectType),
-		]);
-		let needsCreation = false;
-		if (!assignment) {
-			assignment = this.permissionAssignmentFactory({_id: null, permission, subject: subjectId, subjectType});
-			needsCreation = true;
-		}
-		const subject: DomainEntity = await this.mapper.map(subjectType).getRepository(unitOfWork).findById(subjectId);
-		if (!(await subject.authorizationPolicy.canAdmin(context, unitOfWork))) {
+		const entityRepository = this.mapper.map(entityType).getRepository(unitOfWork);
+		const entity: DomainEntity = await entityRepository.findById(entityId);
+		if (!(await entity.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to assign the permission "${permission}" for this subject`
 			);
 		}
-		if (needsCreation) {
-			await unitOfWork.permissionAssignmentRepository.create(assignment);
-		}
-		// check if entity already has that permission
-		for (let entityPermission of principal.permissions) {
-			if (entityPermission === assignment._id) {
-				return;
-			}
-		}
-		principal.permissions.push(assignment._id);
-		await entityRepository.update(principal);
+		(entity as PermissionControlledEntity).acl.push({
+			permission,
+			principal: principal._id,
+			principalType: principalType
+		})
+		await entityRepository.update(entity);
+
 	};
 
 	private revokeEntityPermission = async (
 		unitOfWork: UnitOfWork,
 		context: SecurityContext,
 		permission: string,
-		subjectId: string,
-		entity: User | Role,
-		entityRepository: Repository<any>
-	) => {
-		let permissionAssignment = await unitOfWork.permissionAssignmentRepository.findOne([
-			new FilterCondition("permission", permission),
-			new FilterCondition("subject", subjectId),
-		]);
-		if (!permissionAssignment) {
+		entityId: string,
+		entityType: string,
+		principal: User | Role,
+		principalType: 'User' | 'Role'
+	): Promise<PermissionControlledEntity> => {
+		const entityRepository = this.mapper.map(entityType).getRepository(unitOfWork);
+		const entity: DomainEntity = await entityRepository.findById(entityId);
+		if (!(await entity.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
-				`Permission assignment does not exist for permission '${permission}'`
+				`You do not have permission to revoke the permission "${permission}"`
 			);
 		}
-		const subject: DomainEntity = await this.mapper.map(permissionAssignment.subjectType).getRepository(unitOfWork).findById(subjectId);
-		if (!(await subject.authorizationPolicy.canAdmin(context, unitOfWork))) {
-			throw new Error(
-				`You do not have permission to revoke the permission "${permissionAssignment.permission}"`
-			);
-		}
-		entity.permissions = entity.permissions.filter(
-			(entityPermission) => entityPermission !== permissionAssignment._id
-		);
+
+		(entity as PermissionControlledEntity).acl = (entity as PermissionControlledEntity).acl.filter(entry => entry.principalType !== principalType || entry.principal !== principal._id)
+
 		await entityRepository.update(entity);
-		return permissionAssignment;
+		return (entity as PermissionControlledEntity);
 	};
 }

@@ -1,23 +1,17 @@
 import {
 	EntityAuthorizationPolicy,
-	PlaceRepository, UnitOfWork,
-	WikiPageRepository,
-	WorldRepository,
+	UnitOfWork,
 } from "../../types";
 import { Pin } from "../../domain-entities/pin";
 import { SecurityContext } from "../security-context";
-import { WikiPageAuthorizationPolicy } from "./wiki-page-authorization-policy";
-import { PlaceAuthorizationPolicy } from "./place-authorization-policy";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import { Place } from "../../domain-entities/place";
+import { injectable } from "inversify";
 
 @injectable()
 export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
 
 	entity: Pin;
 
-	canAdmin(context: SecurityContext): Promise<boolean> {
+	canAdmin(_: SecurityContext): Promise<boolean> {
 		// pins are not permission controlled yet
 		return Promise.resolve(false);
 	}

@@ -15,6 +15,7 @@ import {WikiFolderService} from "../../../src/services/wiki-folder-service";
 import {TEST_INJECTABLE_TYPES} from "../injectable-types";
 import {Factory} from "../../../src/types";
 import {DbUnitOfWork} from "../../../src/dal/db-unit-of-work";
+import {accessControlList} from "./common-testing-assertions";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
@@ -35,6 +36,7 @@ describe("query resolver", () => {
 			expect(result).toMatchSnapshot({
 				data: {
 					currentUser: {
+						_id: expect.any(String),
 						username: ANON_USERNAME,
 					},
 				},
@@ -71,7 +73,7 @@ describe("query resolver", () => {
 
 		test("worlds with one private and one public world", async () => {
 			const unitOfWork = unitOfWorkFactory({});
-			await worldService.createWorld("Azeroth", true, testingContext.testerSecurityContext, unitOfWork);
+			await worldService.createWorld("Azeroth", true, testingContext.tester1SecurityContext, unitOfWork);
 			await unitOfWork.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_WORLDS,
@@ -150,19 +152,7 @@ describe("query resolver", () => {
 							wikiPage: {
 								_id: expect.any(String),
 							},
-							accessControlList: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-									subject: expect.objectContaining({
-										_id: expect.any(String),
-									}),
-									roles: expect.arrayContaining([
-										expect.objectContaining({
-											_id: expect.any(String),
-										}),
-									]),
-								}),
-							]),
+							accessControlList: accessControlList
 						},
 					},
 					errors: undefined,
@@ -171,7 +161,7 @@ describe("query resolver", () => {
 
 			test("worlds with one private and one public world", async () => {
 				const unitOfWork = unitOfWorkFactory({});
-				await worldService.createWorld("Azeroth", false, testingContext.testerSecurityContext, unitOfWork);
+				await worldService.createWorld("Azeroth", false, testingContext.tester1SecurityContext, unitOfWork);
 				await unitOfWork.commit();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: GET_WORLDS,
@@ -217,7 +207,7 @@ describe("query resolver", () => {
 
 			test("wikis in folder", async () => {
 				const unitOfWork = unitOfWorkFactory({});
-				const placesFolder = (await wikiFolderService.getFolders(testingContext.testerSecurityContext, testingContext.world._id, "Places", undefined, unitOfWork)).filter(folder => folder.name === "Places");
+				const placesFolder = (await wikiFolderService.getFolders(testingContext.tester1SecurityContext, testingContext.world._id, "Places", undefined, unitOfWork)).filter(folder => folder.name === "Places");
 				await unitOfWork.commit();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: WIKIS_IN_FOLDER,
@@ -253,7 +243,6 @@ describe("query resolver", () => {
 									_id: expect.any(String),
 									accessControlList: expect.any(Array),
 									members: expect.any(Array),
-									permissions: expect.any(Array),
 									world: {
 										_id: expect.any(String)
 									}

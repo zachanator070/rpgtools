@@ -1,11 +1,19 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {
+	AclEntry,
+	DomainEntity,
+	Factory,
+	PermissionControlledEntity,
+	Repository,
+	RepositoryAccessor,
+	UnitOfWork
+} from "../types";
 import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 
 @injectable()
-export class Game implements DomainEntity {
+export class Game implements PermissionControlledEntity {
 	public _id: string;
 	public passwordHash: string;
 	public world: string;
@@ -16,6 +24,7 @@ export class Game implements DomainEntity {
 	public messages: Message[];
 	public models: InGameModel[];
 	public host: string;
+	public acl: AclEntry[];
 
 	authorizationPolicy: GameAuthorizationPolicy;
 	factory: Factory<Game>;

@@ -10,7 +10,6 @@ import {
 	ItemRepository,
 	ModelRepository,
 	MonsterRepository,
-	PermissionAssignmentRepository,
 	PersonRepository,
 	PinRepository,
 	PlaceRepository,
@@ -35,12 +34,11 @@ import {
 	PlaceFactory,
 	PinFactory,
 	PersonFactory,
-	PermissionAssignmentFactory,
 	MonsterFactory,
 	ModelFactory,
 	ItemFactory,
 	ImageFactory,
-	GameFactory, FileFactory, ChunkFactory, ArticleFactory
+	GameFactory, FileFactory, ChunkFactory, ArticleFactory, AclEntry, DbEngine
 } from "../types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "../dal/mongodb/repositories/mongodb-article-repository";
@@ -58,7 +56,6 @@ import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-
 import { MongodbPlaceRepository } from "../dal/mongodb/repositories/mongodb-place-repository";
 import { MongodbPinRepository } from "../dal/mongodb/repositories/mongodb-pin-repository";
 import { MongodbPersonRepository } from "../dal/mongodb/repositories/mongodb-person-repository";
-import { MongodbPermissionAssignmentRepository } from "../dal/mongodb/repositories/mongodb-permission-assignment-repository";
 import { MongodbMonsterRepository } from "../dal/mongodb/repositories/mongodb-monster-repository";
 import { MongodbModelRepository } from "../dal/mongodb/repositories/mongodb-model-repository";
 import { MongodbImageRepository } from "../dal/mongodb/repositories/mongodb-image-repository";
@@ -69,7 +66,6 @@ import { InMemoryImageRepository } from "../dal/in-memory/repositories/in-memory
 import { InMemoryItemRepository } from "../dal/in-memory/repositories/in-memory-item-repository";
 import { InMemoryModelRepository } from "../dal/in-memory/repositories/in-memory-model-repository";
 import { InMemoryMonsterRepository } from "../dal/in-memory/repositories/in-memory-monster-repository";
-import { InMemoryPermissionAssignmentRepository } from "../dal/in-memory/repositories/in-memory-permission-assignment-repository";
 import { InMemoryPersonRepository } from "../dal/in-memory/repositories/in-memory-person-repository";
 import { InMemoryPinRepository } from "../dal/in-memory/repositories/in-memory-pin-repository";
 import { InMemoryPlaceRepository } from "../dal/in-memory/repositories/in-memory-place-repository";
@@ -107,8 +103,6 @@ import { Image } from "../domain-entities/image";
 import { Item } from "../domain-entities/item";
 import { Model } from "../domain-entities/model";
 import { Monster } from "../domain-entities/monster";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
-import { PermissionAssignmentDataLoader } from "../dal/dataloaders/permission-assignment-data-loader";
 import { Person } from "../domain-entities/person";
 import { Pin } from "../domain-entities/pin";
 import { Place } from "../domain-entities/place";
@@ -146,7 +140,6 @@ import { ImageAuthorizationPolicy } from "../security/policy/image-authorization
 import { ItemAuthorizationPolicy } from "../security/policy/item-authorization-policy";
 import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy";
 import { MonsterAuthorizationPolicy } from "../security/policy/monster-authorization-policy";
-import { PermissionAssignmentAuthorizationPolicy } from "../security/policy/permission-assignment-authorization-policy";
 import { PersonAuthorizationPolicy } from "../security/policy/person-authorization-policy";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PlaceAuthorizationPolicy } from "../security/policy/place-authorization-policy";
@@ -166,6 +159,9 @@ import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {ObjectId} from "mongoose";
+import RpgToolsServer from "../server/rpgtools-server";
+import MongodbDbEngine from "../dal/mongodb/mongodb-db-engine";
+import MongoDbMigrationV40 from "../dal/mongodb/migrations/mongodb-migration-v40";
 
 const container = new Container();
 
@@ -178,9 +174,6 @@ container.bind<Image>(INJECTABLE_TYPES.Image).to(Image);
 container.bind<Item>(INJECTABLE_TYPES.Item).to(Item);
 container.bind<Model>(INJECTABLE_TYPES.Model).to(Model);
 container.bind<Monster>(INJECTABLE_TYPES.Monster).to(Monster);
-container
-	.bind<PermissionAssignment>(INJECTABLE_TYPES.PermissionAssignment)
-	.to(PermissionAssignment);
 container.bind<Person>(INJECTABLE_TYPES.Person).to(Person);
 container.bind<Pin>(INJECTABLE_TYPES.Pin).to(Pin);
 container.bind<Place>(INJECTABLE_TYPES.Place).to(Place);
@@ -198,7 +191,6 @@ container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Image);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Item);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Model);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Monster);
-container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(PermissionAssignment);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Person);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Pin);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Place);
@@ -214,17 +206,19 @@ container
 	.toFactory(
 		(context): ArticleFactory =>
 			({
-				 _id,
-				 name,
-				 world,
-				 coverImage,
-				 contentId
-			 }:{
+				_id,
+				name,
+				world,
+				coverImage,
+				contentId,
+				acl
+			}:{
 				_id: string | ObjectId,
 				name: string,
 				world: string | ObjectId,
 				coverImage: string | ObjectId,
-				contentId: string | ObjectId
+				contentId: string | ObjectId,
+				acl: AclEntry[]
 			}) => {
 				const article = context.container.get<Article>(INJECTABLE_TYPES.Article);
 				article._id = _id && _id.toString();
@@ -232,6 +226,7 @@ container
 				article.world = world && world.toString();
 				article.coverImage = coverImage && coverImage.toString();
 				article.contentId = contentId && contentId.toString();
+				article.acl = acl;
 				return article;
 			}
 	);
@@ -307,7 +302,8 @@ container
 					fog,
 					messages,
 					models,
-					host
+					host,
+					acl
 				}:{
 					_id: string | ObjectId,
 					passwordHash: string,
@@ -318,7 +314,8 @@ container
 					fog: FogStroke[],
 					messages: Message[],
 					models: InGameModel[],
-					host: string | ObjectId
+					host: string | ObjectId,
+					acl: AclEntry[]
 				}
 			) => {
 				const game = context.container.get<Game>(INJECTABLE_TYPES.Game);
@@ -332,6 +329,7 @@ container
 				game.messages = messages;
 				game.models = models;
 				game.host = host && host.toString();
+				game.acl = acl;
 				return game;
 			}
 	);
@@ -387,7 +385,8 @@ container
 					coverImage,
 					content,
 					pageModel,
-					modelColor
+					modelColor,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -395,7 +394,8 @@ container
 					coverImage: string | ObjectId,
 					content: string,
 					pageModel: string | ObjectId,
-					modelColor: string
+					modelColor: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const item = context.container.get<Item>(INJECTABLE_TYPES.Item);
@@ -406,6 +406,7 @@ container
 				item.contentId = content;
 				item.pageModel = pageModel && pageModel.toString();
 				item.modelColor = modelColor;
+				item.acl = acl;
 				return item;
 			}
 	);
@@ -424,7 +425,8 @@ container
 					height,
 					fileName,
 					fileId,
-					notes
+					notes,
+					acl
 				}:{
 					_id: string | ObjectId,
 					world: string | ObjectId,
@@ -434,7 +436,8 @@ container
 					height: number,
 					fileName: string,
 					fileId: string | ObjectId,
-					notes: string
+					notes: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const model = context.container.get<Model>(INJECTABLE_TYPES.Model);
@@ -447,6 +450,7 @@ container
 				model.fileName = fileName;
 				model.fileId = fileId && fileId.toString();
 				model.notes = notes;
+				model.acl = acl;
 				return model;
 			}
 	);
@@ -462,7 +466,8 @@ container
 					coverImage,
 					contentId,
 					pageModel,
-					modelColor
+					modelColor,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -470,7 +475,8 @@ container
 					coverImage: string | ObjectId,
 					contentId: string | ObjectId,
 					pageModel: string | ObjectId,
-					modelColor: string
+					modelColor: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const monster = context.container.get<Monster>(INJECTABLE_TYPES.Monster);
@@ -481,34 +487,8 @@ container
 				monster.contentId = contentId && contentId.toString();
 				monster.pageModel = pageModel && pageModel.toString();
 				monster.modelColor = modelColor;
+				monster.acl = acl;
 				return monster;
-			}
-	);
-container
-	.bind<PermissionAssignmentFactory>(INJECTABLE_TYPES.PermissionAssignmentFactory)
-	.toFactory(
-		(context): PermissionAssignmentFactory =>
-			(
-				{
-					_id,
-					permission,
-					subject,
-					subjectType
-				}:{
-					_id: string | ObjectId,
-					permission: string,
-					subject: string | ObjectId,
-					subjectType: string
-				}
-			) => {
-				const permissionAssignment = context.container.get<PermissionAssignment>(
-					INJECTABLE_TYPES.PermissionAssignment
-				);
-				permissionAssignment._id = _id && _id.toString();
-				permissionAssignment.permission = permission;
-				permissionAssignment.subject = subject && subject.toString();
-				permissionAssignment.subjectType = subjectType;
-				return permissionAssignment;
 			}
 	);
 container
@@ -523,7 +503,8 @@ container
 					coverImage,
 					contentId,
 					pageModel,
-					modelColor
+					modelColor,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -531,7 +512,8 @@ container
 					coverImage: string | ObjectId,
 					contentId: string | ObjectId,
 					pageModel: string | ObjectId,
-					modelColor: string
+					modelColor: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const person = context.container.get<Person>(INJECTABLE_TYPES.Person);
@@ -542,6 +524,7 @@ container
 				person.contentId = contentId && contentId.toString();
 				person.pageModel = pageModel && pageModel.toString();
 				person.modelColor = modelColor;
+				person.acl = acl;
 				return person;
 			}
 	);
@@ -577,7 +560,8 @@ container
 					coverImage,
 					contentId,
 					mapImage,
-					pixelsPerFoot
+					pixelsPerFoot,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
@@ -585,7 +569,8 @@ container
 					coverImage: string | ObjectId,
 					contentId: string | ObjectId,
 					mapImage: string | ObjectId,
-					pixelsPerFoot: number
+					pixelsPerFoot: number,
+					acl: AclEntry[]
 				}
 			) => {
 				const place = context.container.get<Place>(INJECTABLE_TYPES.Place);
@@ -596,6 +581,7 @@ container
 				place.contentId = contentId && contentId.toString();
 				place.mapImage = mapImage && mapImage.toString();
 				place.pixelsPerFoot = pixelsPerFoot;
+				place.acl = acl;
 				return place;
 			}
 	);
@@ -607,19 +593,19 @@ container
 				_id,
 				name,
 				world,
-				permissions
+				acl
 			}:{
 				_id: string | ObjectId,
 				name: string,
 				world: string | ObjectId,
-				permissions: string[] | ObjectId[]
+				acl: AclEntry[]
 			}
 		) => {
 			const role = context.container.get<Role>(INJECTABLE_TYPES.Role);
 			role._id = _id && _id.toString();
 			role.name = name;
 			role.world = world && world.toString();
-			role.permissions = permissions.map(permission => permission.toString());
+			role.acl = acl;
 			return role;
 		});
 container
@@ -632,13 +618,15 @@ container
 					version,
 					registerCodes,
 					adminUsers,
-					unlockCode
+					unlockCode,
+					acl
 				}:{
 					_id: string | ObjectId,
 					version: string,
 					registerCodes: string[],
 					adminUsers: string[] | ObjectId[],
-					unlockCode: string
+					unlockCode: string,
+					acl: AclEntry[]
 				}
 			) => {
 				const serverConfig = context.container.get<ServerConfig>(INJECTABLE_TYPES.ServerConfig);
@@ -647,6 +635,7 @@ container
 				serverConfig.registerCodes = registerCodes;
 				serverConfig.adminUsers = adminUsers.map(user => user.toString());
 				serverConfig.unlockCode = unlockCode;
+				serverConfig.acl = acl;
 				return serverConfig;
 			}
 	);
@@ -663,7 +652,6 @@ container
 					tokenVersion,
 					currentWorld,
 					roles,
-					permissions
 				}:{
 					_id: string | ObjectId,
 					email: string,
@@ -672,7 +660,6 @@ container
 					tokenVersion: string,
 					currentWorld: string | ObjectId,
 					roles: string[] | ObjectId[],
-					permissions: string[] | ObjectId[]
 				}
 			) => {
 				const user = context.container.get<User>(INJECTABLE_TYPES.User);
@@ -683,7 +670,6 @@ container
 				user.tokenVersion = tokenVersion;
 				user.currentWorld = currentWorld && currentWorld.toString();
 				user.roles = roles.map(role => role.toString());
-				user.permissions = permissions.map(permission => permission.toString());
 				return user;
 			}
 	);
@@ -697,13 +683,15 @@ container
 					name,
 					world,
 					pages,
-					children
+					children,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
 					world: string | ObjectId,
 					pages: string[] | ObjectId[],
-					children: string[] | ObjectId[]
+					children: string[] | ObjectId[],
+					acl: AclEntry[]
 				}
 			) => {
 				const folder = context.container.get<WikiFolder>(INJECTABLE_TYPES.WikiFolder);
@@ -712,6 +700,7 @@ container
 				folder.world = world && world.toString();
 				folder.pages = pages.map(page => page.toString());
 				folder.children = children.map(child => child.toString());
+				folder.acl = acl;
 				return folder;
 			}
 	);
@@ -725,11 +714,13 @@ container
 					name,
 					wikiPage,
 					rootFolder,
+					acl
 				}:{
 					_id: string | ObjectId,
 					name: string,
 					wikiPage: string | ObjectId,
 					rootFolder: string | ObjectId,
+					acl: AclEntry[]
 				}
 			) => {
 				const world = context.container.get<World>(INJECTABLE_TYPES.World);
@@ -737,6 +728,7 @@ container
 				world.name = name;
 				world.wikiPage = wikiPage && wikiPage.toString();
 				world.rootFolder = rootFolder && rootFolder.toString();
+				world.acl = acl;
 				return world;
 			}
 	);
@@ -750,9 +742,6 @@ container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(MongodbImag
 container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(MongodbItemRepository);
 container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(MongodbModelRepository);
 container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(MongodbMonsterRepository);
-container
-	.bind<PermissionAssignmentRepository>(INJECTABLE_TYPES.PermissionAssignmentRepository)
-	.to(MongodbPermissionAssignmentRepository);
 container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(MongodbPersonRepository);
 container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(MongodbPinRepository);
 container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(MongodbPlaceRepository);
@@ -794,11 +783,6 @@ container
 container
 	.bind<MonsterAuthorizationPolicy>(INJECTABLE_TYPES.MonsterAuthorizationPolicy)
 	.to(MonsterAuthorizationPolicy);
-container
-	.bind<PermissionAssignmentAuthorizationPolicy>(
-		INJECTABLE_TYPES.PermissionAssignmentAuthorizationPolicy
-	)
-	.to(PermissionAssignmentAuthorizationPolicy);
 container
 	.bind<PersonAuthorizationPolicy>(INJECTABLE_TYPES.PersonAuthorizationPolicy)
 	.to(PersonAuthorizationPolicy);
@@ -846,9 +830,6 @@ container
 container
 	.bind<MonsterRepository>(INJECTABLE_TYPES.ArchiveMonsterRepository)
 	.to(InMemoryMonsterRepository);
-container
-	.bind<PermissionAssignmentRepository>(INJECTABLE_TYPES.ArchivePermissionAssignmentRepository)
-	.to(InMemoryPermissionAssignmentRepository);
 container
 	.bind<PersonRepository>(INJECTABLE_TYPES.ArchivePersonRepository)
 	.to(InMemoryPersonRepository);
@@ -938,6 +919,8 @@ container
 // not a singleton so tests can run concurrently and have multiple server instances
 container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer);
 container.bind<ServerProperties>(INJECTABLE_TYPES.ServerProperties).to(ServerProperties).inSingletonScope();
+container.bind<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer).to(RpgToolsServer).inSingletonScope();
+container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(MongodbDbEngine).inSingletonScope();
 
 // data loaders
 container.bind<DataLoader<Article>>(INJECTABLE_TYPES.ArticleDataLoader).to(ArticleDataLoader);
@@ -948,9 +931,6 @@ container.bind<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader).to(ImageData
 container.bind<DataLoader<Item>>(INJECTABLE_TYPES.ItemDataLoader).to(ItemDataLoader);
 container.bind<DataLoader<Model>>(INJECTABLE_TYPES.ModelDataLoader).to(ModelDataLoader);
 container.bind<DataLoader<Monster>>(INJECTABLE_TYPES.MonsterDataLoader).to(MonsterDataLoader);
-container
-	.bind<DataLoader<PermissionAssignment>>(INJECTABLE_TYPES.PermissionAssignmentDataLoader)
-	.to(PermissionAssignmentDataLoader);
 container.bind<DataLoader<Person>>(INJECTABLE_TYPES.PersonDataLoader).to(PersonDataLoader);
 container.bind<DataLoader<Pin>>(INJECTABLE_TYPES.PinDataLoader).to(PinDataLoader);
 container.bind<DataLoader<Place>>(INJECTABLE_TYPES.PlaceDataLoader).to(PlaceDataLoader);
@@ -978,6 +958,8 @@ container
 // mappers
 container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);
 
+// mongodb
 container.bind<FilterFactory>(INJECTABLE_TYPES.FilterFactory).to(FilterFactory);
+container.bind<MongoDbMigrationV40>(INJECTABLE_TYPES.MongoDbMigrationV40).to(MongoDbMigrationV40);
 
 export { container };

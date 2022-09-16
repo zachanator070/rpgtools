@@ -5,7 +5,6 @@ import MapView from "./map/MapView";
 import React from "react";
 import WorldSettings from "./WorldSettings";
 import RolesView from "./permissions/RolesView";
-import MyPermissionsView from "./permissions/MyPermissionsView";
 import GameView from "./game/GameView";
 import GameLoginView from "./game/GameLoginView";
 import WikView from "./wiki/WikiView";
@@ -27,9 +26,6 @@ export default function AppContent(){
 		<Switch>
 			<Route path={`${match.path}/settings`}>
 				<WorldSettings />
-			</Route>
-			<Route path={`${match.path}/myPermissions`}>
-				<MyPermissionsView />
 			</Route>
 			<Route path={`${match.path}/roles`}>
 				<RolesView />

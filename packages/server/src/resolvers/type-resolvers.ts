@@ -1,11 +1,11 @@
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { GraphQLUpload } from "graphql-upload";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { World } from "../domain-entities/world";
 import {
+	AclEntry,
 	DataLoader,
-	DomainEntity, FileRepository, GameFactory, ModelFactory, PermissionAssignmentRepository, RoleFactory,
+	DomainEntity, FileRepository, GameFactory, ModelFactory, PermissionControlledEntity, RoleFactory,
 	RoleRepository,
 	SessionContext,
 	UserRepository,
@@ -20,14 +20,13 @@ import { ModeledPage } from "../domain-entities/modeled-page";
 import { Role } from "../domain-entities/role";
 import { User } from "../domain-entities/user";
 import { Pin } from "../domain-entities/pin";
-import { PermissionAssignment } from "../domain-entities/permission-assignment";
 import { Place } from "../domain-entities/place";
 import { Chunk } from "../domain-entities/chunk";
 import { ServerConfig } from "../domain-entities/server-config";
 import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
-import {serverConfigMutations} from "./mutations/server-config-mutations";
+import {ServerConfigService} from "../services/server-config-service";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
@@ -47,12 +46,11 @@ const wikiPageInterfaceAttributes = {
 	canWrite: async (page: WikiPage, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 		return page.authorizationPolicy.canWrite(securityContext, unitOfWork);
 	},
-	canAdmin: async (page: WikiPage, _: any, { securityContext }: SessionContext): Promise<boolean> => {
-		return page.authorizationPolicy.canAdmin(securityContext);
+	canAdmin: async (page: WikiPage, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
+		return page.authorizationPolicy.canAdmin(securityContext, unitOfWork);
 	},
-	content: async (page: WikiPage, _: any, {securityContext}: SessionContext): Promise<String> => {
+	content: async (page: WikiPage, _: any, __: SessionContext): Promise<String> => {
 		if(page.contentId){
-			// const contentFile = await dataLoader.getDocument(page.contentId);
 			const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
 			const contentFile = await fileRepository.findById(page.contentId);
 			const buffer: string[] = []
@@ -70,17 +68,9 @@ const permissionControlledInterfaceAttributes = {
 	accessControlList: async (
 		document: DomainEntity,
 		_: any,
-		{ securityContext, unitOfWork }: SessionContext
-	): Promise<PermissionAssignment[]> => {
-		let permissions: PermissionAssignment[] = [];
-		const permissionAssignmentRepository: PermissionAssignmentRepository = container.get<PermissionAssignmentRepository>(INJECTABLE_TYPES.PermissionAssignmentRepository);
-		if (await document.authorizationPolicy.canAdmin(securityContext, unitOfWork)) {
-			permissions = await permissionAssignmentRepository.find([new FilterCondition('subjectType', document.type),
-				new FilterCondition('subject', document._id)]);
-		} else {
-			permissions = securityContext.getEntityPermissions(document._id, document.type);
-		}
-		return permissions;
+		__: SessionContext
+	): Promise<AclEntry[]> => {
+		return (document as PermissionControlledEntity).acl;
 	},
 	canWrite: async (document: DomainEntity, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 		return await document.authorizationPolicy.canWrite(securityContext, unitOfWork);
@@ -111,20 +101,20 @@ export const TypeResolvers = {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
 			return dataLoader.getDocument(world.wikiPage, unitOfWork);
 		},
-		canAddRoles: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+		canAddRoles: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 			const roleFactory = container.get<RoleFactory>(INJECTABLE_TYPES.RoleFactory);
-			const testRole = roleFactory({_id: null, name: "test role", world: world._id, permissions: []});
-			return testRole.authorizationPolicy.canCreate(securityContext);
+			const testRole = roleFactory({_id: null, name: "test role", world: world._id, acl: []});
+			return testRole.authorizationPolicy.canCreate(securityContext, unitOfWork);
 		},
-		canHostGame: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+		canHostGame: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 			const gameFactory = container.get<GameFactory>(INJECTABLE_TYPES.GameFactory);
-			const testGame = gameFactory({_id: null, passwordHash: "password", world: world._id, map: null, characters: [], strokes: [], fog: [], messages: [], models: [], host: null});
-			return testGame.authorizationPolicy.canCreate(securityContext);
+			const testGame = gameFactory({_id: null, passwordHash: "password", world: world._id, map: null, characters: [], strokes: [], fog: [], messages: [], models: [], host: null, acl: []});
+			return testGame.authorizationPolicy.canCreate(securityContext, unitOfWork);
 		},
-		canAddModels: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+		canAddModels: async (world: World, _: any, { securityContext, unitOfWork }: SessionContext): Promise<boolean> => {
 			const modelFactory = container.get<ModelFactory>(INJECTABLE_TYPES.ModelFactory);
-			const testModel = modelFactory({_id: null, world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: ""});
-			return testModel.authorizationPolicy.canCreate(securityContext);
+			const testModel = modelFactory({_id: null, world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: "", acl: []});
+			return testModel.authorizationPolicy.canCreate(securityContext, unitOfWork);
 		},
 		...permissionControlledInterfaceAttributes,
 	},
@@ -144,12 +134,6 @@ export const TypeResolvers = {
 			const dataLoader = container.get<DataLoader<Role>>(INJECTABLE_TYPES.RoleDataLoader);
 			return dataLoader.getPermissionControlledDocuments(securityContext, user.roles, unitOfWork);
 		},
-		permissions: async (user: User, _: any, { securityContext, unitOfWork }: SessionContext): Promise<PermissionAssignment[]> => {
-			const dataLoader = container.get<DataLoader<PermissionAssignment>>(
-				INJECTABLE_TYPES.PermissionAssignmentDataLoader
-			);
-			return dataLoader.getPermissionControlledDocuments(securityContext, user.permissions, unitOfWork);
-		},
 		currentWorld: async (user: User, _: any, { securityContext, unitOfWork }: SessionContext): Promise<World> => {
 			if (user._id !== securityContext.user._id) {
 				return null;
@@ -167,24 +151,9 @@ export const TypeResolvers = {
 				return dataLoader.getDocument(role.world, unitOfWork);
 			}
 		},
-		permissions: async (role: Role, _: any, { securityContext, unitOfWork }: SessionContext): Promise<PermissionAssignment[]> => {
-			const dataLoader = container.get<DataLoader<PermissionAssignment>>(
-				INJECTABLE_TYPES.PermissionAssignmentDataLoader
-			);
+		members: async (role: Role, _: any, { securityContext, unitOfWork }: SessionContext): Promise<User[]> => {
 			if (
-				role.name === EVERYONE ||
-				role.name === LOGGED_IN ||
-				(await role.authorizationPolicy.canWrite(securityContext)) ||
-				(await securityContext.hasRole(role.name))
-			) {
-				return dataLoader.getDocuments(role.permissions, unitOfWork);
-			} else {
-				return dataLoader.getPermissionControlledDocuments(securityContext, role.permissions, unitOfWork);
-			}
-		},
-		members: async (role: Role, _: any, { securityContext }: SessionContext): Promise<User[]> => {
-			if (
-				!(await role.authorizationPolicy.canWrite(securityContext)) &&
+				!(await role.authorizationPolicy.canWrite(securityContext, unitOfWork)) &&
 				!(await securityContext.hasRole(role.name))
 			) {
 				return [];
@@ -278,12 +247,12 @@ export const TypeResolvers = {
 			}
 			return server.registerCodes;
 		},
-		roles: async (server: ServerConfig, _: any, { securityContext }: SessionContext): Promise<Role[]> => {
+		roles: async (server: ServerConfig, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Role[]> => {
 			const repository = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
 			const roles = await repository.find([]);
 			const returnRoles = [];
 			for (let role of roles) {
-				if (await role.authorizationPolicy.canAdmin(securityContext)) {
+				if (await role.authorizationPolicy.canAdmin(securityContext, unitOfWork)) {
 					returnRoles.push(role);
 				}
 			}
@@ -292,43 +261,22 @@ export const TypeResolvers = {
 		canCreateWorlds: async (server: ServerConfig, _: any, { securityContext }: SessionContext): Promise<boolean> => {
 			return server.authorizationPolicy.canCreateWorlds(securityContext);
 		},
+		serverNeedsSetup: async (server: ServerConfig, _: any, { unitOfWork }: SessionContext): Promise<boolean> => {
+			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+			return service.serverNeedsSetup(unitOfWork);
+		},
 		...permissionControlledInterfaceAttributes,
 	},
-	PermissionAssignment: {
-		subject: async (assignment: PermissionAssignment, _: any, {unitOfWork}: SessionContext): Promise<DomainEntity> => {
-			const mapper = container.get<EntityMapper>(INJECTABLE_TYPES.EntityMapper);
-			const repository = mapper.map(assignment.subjectType).getRepository(unitOfWork);
-			const subject = await repository.findById(assignment.subject);
-			return subject;
-		},
-		canWrite: async (
-			assignment: PermissionAssignment,
-			_: any,
-			{ securityContext }: SessionContext
-		): Promise<boolean> => {
-			return await assignment.authorizationPolicy.canWrite(securityContext);
-		},
-		users: async (
-			assignment: PermissionAssignment,
-			_: any,
-			{ securityContext }: SessionContext
-		): Promise<User[]> => {
-			if (!(await assignment.authorizationPolicy.canRead(securityContext))) {
-				return [];
-			}
-			const repository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
-			return repository.find([new FilterCondition("permissions", assignment._id)]);
-		},
-		roles: async (
-			assignment: PermissionAssignment,
-			_: any,
-			{ securityContext }: SessionContext
-		): Promise<Role[]> => {
-			if (!(await assignment.authorizationPolicy.canRead(securityContext))) {
-				return [];
-			}
-			const repository = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
-			return repository.find([new FilterCondition("permissions", assignment._id)]);
+	AclEntry: {
+		principal: async (entry: AclEntry, _: any, { unitOfWork }: SessionContext): Promise<DomainEntity> => {
+			const entityMapper = container.get<EntityMapper>(INJECTABLE_TYPES.EntityMapper);
+			const repo = entityMapper.map(entry.principalType).getRepository(unitOfWork);
+			return repo.findById(entry.principal);
+		}
+	},
+	AclPrincipal: {
+		__resolveType: async (subject: DomainEntity): Promise<string> => {
+			return subject.type;
 		},
 	},
 	Game: {

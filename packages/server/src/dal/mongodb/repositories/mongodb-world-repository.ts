@@ -1,10 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { World } from "../../../domain-entities/world";
 import { inject, injectable } from "inversify";
-import { WorldDocument, WorldFactory, WorldRepository } from "../../../types";
+import { WorldFactory, WorldRepository } from "../../../types";
 import mongoose from "mongoose";
-import { WorldModel } from "../models/world";
+import {WorldDocument, WorldModel} from "../models/world";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import AclFactory from "./acl-factory";
 
 @injectable()
 export class MongodbWorldRepository
@@ -22,7 +23,8 @@ export class MongodbWorldRepository
 				_id: document._id.toString(),
 				name: document.name,
 				wikiPage: document.wikiPage?.toString(),
-				rootFolder: document.rootFolder?.toString()
+				rootFolder: document.rootFolder?.toString(),
+				acl: AclFactory(document.acl)
 			}
 		);
 	}

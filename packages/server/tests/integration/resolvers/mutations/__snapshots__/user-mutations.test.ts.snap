@@ -4,7 +4,7 @@ exports[`user mutations with world and not logged in set current world not logge
 Object {
   "data": Object {
     "setCurrentWorld": Object {
-      "_id": null,
+      "_id": Any<String>,
     },
   },
   "errors": undefined,

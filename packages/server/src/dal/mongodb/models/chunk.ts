@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import { CHUNK, IMAGE } from "@rpgtools/common/src/type-constants";
-import { ChunkDocument } from "../../../types";
+import mongoose, {Schema} from "mongoose";
+import {CHUNK, IMAGE} from "@rpgtools/common/src/type-constants";
+import {MongoDBDocument} from "../../../types";
 
 const chunkSchema = new mongoose.Schema({
 	image: {
@@ -29,5 +29,14 @@ const chunkSchema = new mongoose.Schema({
 		required: [true, "fileId required"],
 	},
 });
+
+export interface ChunkDocument extends MongoDBDocument {
+    image: Schema.Types.ObjectId;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fileId: string;
+}
 
 export const ChunkModel = mongoose.model<ChunkDocument>(CHUNK, chunkSchema);

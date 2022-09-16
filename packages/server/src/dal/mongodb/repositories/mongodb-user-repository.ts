@@ -1,7 +1,7 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { User } from "../../../domain-entities/user";
-import { UserModel } from "../models/user";
-import { UserDocument, UserFactory, UserRepository } from "../../../types";
+import {UserDocument, UserModel} from "../models/user";
+import { UserFactory, UserRepository } from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 
@@ -24,8 +24,7 @@ export class MongodbUserRepository
 				password: document.password,
 				tokenVersion: document.tokenVersion,
 				currentWorld: document.currentWorld ? document.currentWorld.toString() : null,
-				roles: document.roles.map((roleId) => roleId.toString()),
-				permissions: document.permissions.map((permissionId) => permissionId.toString())
+				roles: document.roles.map((roleId) => roleId.toString())
 			}
 		);
 	}
