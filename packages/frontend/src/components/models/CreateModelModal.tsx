@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useCreateModel from "../../hooks/model/useCreateModel";
 import ModelForm from "./ModelForm";
@@ -15,11 +15,11 @@ export default function CreateModelModal({ visibility, setVisibility }: CreateMo
 
 	const { createModel, loading, errors } = useCreateModel(async (data) => {
 		await setVisibility(false);
-		history.push(
+		navigate(
 			`/ui/world/${currentWorld._id}/model/${data._id}/view`
 		);
 	});
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	return (
 		<FullScreenModal

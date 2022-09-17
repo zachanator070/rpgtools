@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import ModelViewer from "./ModelViewer";
@@ -15,7 +15,7 @@ interface ModelContentProps {
 }
 
 export default function ModelContent({ model }: ModelContentProps) {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { currentWorld, loading } = useCurrentWorld();
 
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
@@ -61,7 +61,7 @@ export default function ModelContent({ model }: ModelContentProps) {
 						<span className={"margin-lg"}>
 							<PrimaryButton
 								onClick={() =>
-									history.push(
+									navigate(
 										`/ui/world/${currentWorld._id}/model/${model._id}/edit`
 									)
 								}

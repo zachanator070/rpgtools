@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import SelectWorld from "../select/SelectWorld";
@@ -18,7 +18,7 @@ export default function SelectWorldModal({ visibility, setVisibility }: SelectWo
 	const { currentUser } = useCurrentUser();
 	const [selectedWorld, setSelectedWorld] = useState<World>(null);
 
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	return (
 		<FullScreenModal
@@ -31,8 +31,8 @@ export default function SelectWorldModal({ visibility, setVisibility }: SelectWo
 					if (currentUser) {
 						await setCurrentWorld({worldId: selectedWorld._id});
 					}
-					history.push(
-						`/ui/world/${selectedWorld._id}`
+					navigate(
+						`/ui/world/${selectedWorld._id}/map/${selectedWorld.wikiPage._id}`
 					);
 					setVisibility(false);
 				}}
