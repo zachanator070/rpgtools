@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import useCreateWorld from "../../hooks/world/useCreateWorld";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
 import ToolTip from "../widgets/ToolTip";
@@ -16,14 +16,14 @@ interface CreateWorldModalProps {
 }
 
 export default function CreateWorldModal({ visibility, setVisibility }: CreateWorldModalProps) {
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const { setCurrentWorld } = useSetCurrentWorld();
 	const [isPublic, setIsPublic] = useState(false);
 
 	const { createWorld, loading, errors } = useCreateWorld(async (data) => {
 		await setCurrentWorld({worldId: data.createWorld._id});
-		history.push(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
+		navigate(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 	});
 
 	return (

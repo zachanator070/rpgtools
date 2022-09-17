@@ -1,6 +1,6 @@
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import React, { useState } from "react";
 import PermissionModal from "../modals/PermissionModal";
 import WikiEdit from "./WikiEdit";
@@ -44,31 +44,36 @@ export default function WikView() {
 					/>
 				</div>
 				<div className="padding-md" >
-					<Route>
-						<Route path={`edit`}>
-							<WikiEdit />
-						</Route>
-						<Route path={`view`}>
-							<WikiContent
+					<Routes>
+						<Route path={`edit`} element={<WikiEdit />}/>
+						<Route
+							path={`view`}
+							element={<WikiContent
 								currentWiki={currentWiki}
 								wikiLoading={wikiLoading}
-							/>
-						</Route>
-					</Route>
+							/>}
+						/>
+
+					</Routes>
 				</div>
 				<div className="padding-md">
-					<Route path={`view`}>
-						{currentWiki && (
-							<a
-								title={"View permissions for this page"}
-								onClick={async () => {
-									await setPermissionModalVisibility(true);
-								}}
-							>
-								<PeopleIcon/>
-							</a>
-						)}
-					</Route>
+					<Routes>
+						{currentWiki &&
+							<Route
+								path={`view`}
+								element={
+									<a
+										title={"View permissions for this page"}
+										onClick={async () => {
+											await setPermissionModalVisibility(true);
+										}}
+									>
+										<PeopleIcon/>
+									</a>
+								}
+							/>
+						}
+					</Routes>
 				</div>
 			</ColumnedContent>
 		</>

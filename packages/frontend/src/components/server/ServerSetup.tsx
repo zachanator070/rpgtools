@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import useUnlockServer from "../../hooks/server/useUnlockServer";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useLogin from "../../hooks/authentication/useLogin";
 import ColumnedContent from "../widgets/ColumnedContent";
 import InputForm from "../widgets/input/InputForm";
@@ -11,13 +11,15 @@ import KeyIcon from "../widgets/icons/KeyIcon";
 import MailIcon from "../widgets/icons/MailIcon";
 import PersonIcon from "../widgets/icons/PersonIcon";
 import InlineMargin from "../widgets/InlineMargin";
+import useServerConfig from "../../hooks/server/useServerConfig";
 
 export default function ServerSetup() {
 	const { unlockServer, loading, errors } = useUnlockServer();
-	const history = useHistory();
-
-	const { login } = useLogin(() => {
-		history.push("/");
+	const navigate = useNavigate();
+	const {refetch} = useServerConfig();
+	const { login } = useLogin(async () => {
+		await refetch();
+		navigate('/');
 	});
 
 	return <ColumnedContent>
@@ -37,8 +39,13 @@ export default function ServerSetup() {
 					errors={errors}
 					loading={loading}
 					onSubmit={async ({unlockCode, email, username, password}) => {
-						await unlockServer({unlockCode, email, username, password});
-						await login({username, password});
+						await unlockServer(
+							{unlockCode, email, username, password},
+							{
+								onCompleted: async () => {
+									await login({username, password})
+								}
+							});
 					}}
 					buttonText={'Unlock'}
 				>

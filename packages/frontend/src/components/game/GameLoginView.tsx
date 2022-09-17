@@ -3,7 +3,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useCreateGame from "../../hooks/game/useCreateGame";
 import useJoinGame from "../../hooks/game/useJoinGame";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
 import PasswordInput from "../widgets/input/PasswordInput";
 import TextInput from "../widgets/input/TextInput";
@@ -13,7 +13,7 @@ import FormItem from "../widgets/input/FormItem";
 import ColumnedContent from "../widgets/ColumnedContent";
 
 export default function GameLoginView() {
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const { currentWorld, loading } = useCurrentWorld();
 	const { myGames, loading: myGamesLoading, refetch } = useMyGames();
@@ -21,12 +21,12 @@ export default function GameLoginView() {
 	const { createGame, loading: createGameLoading, errors: createGameErrors } = useCreateGame(
 		async (data) => {
 			await refetch();
-			history.push(`/ui/world/${currentWorld._id}/game/${data.createGame._id}`);
+			navigate(`/ui/world/${currentWorld._id}/game/${data.createGame._id}`);
 		}
 	);
 	const { joinGame, loading: joinGameLoading, errors: joinGameErrors } = useJoinGame(async (data) => {
 		await refetch();
-		history.push(`/ui/world/${currentWorld._id}/game/${data.joinGame._id}`);
+		navigate(`/ui/world/${currentWorld._id}/game/${data.joinGame._id}`);
 	});
 
 	if (loading || myGamesLoading) {

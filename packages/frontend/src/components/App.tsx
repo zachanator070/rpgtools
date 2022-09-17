@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "@babel/polyfill";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, useNavigate, useLocation, Routes } from "react-router-dom";
 import "../css/index.css";
 import "antd/dist/antd.css";
 import NavBar from "./nav/NavBar";
@@ -16,20 +16,17 @@ export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();
 	const [showMapDrawer, setShowMapDrawer] = useState<boolean>(false);
 	const {serverConfig, loading} = useServerConfig();
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	useEffect(() => {
+		if(location.pathname !== '/ui/setup' && serverConfig && serverConfig.serverNeedsSetup) {
+			navigate('/ui/setup')
+		}
+	}, [location, serverConfig]);
 
 	if (loading) {
 		return <LoadingView/>;
-	}
-
-	if (serverConfig.serverNeedsSetup) {
-		return <Switch>
-			<Route path="/ui/setup">
-				<ServerSetup />
-			</Route>
-			<Route>
-				<Redirect to={"/ui/setup"} />
-			</Route>
-		</Switch>;
 	}
 
 	return (
@@ -40,23 +37,28 @@ export default function App() {
 				showMapDrawer,
 				setShowMapDrawer
 		}}>
-			<Switch>
-				<Route path="/ui/world/:world_id">
-					<NavBar />
-					<AppContent />
-				</Route>
-
-				<Route path={`/ui/serverSettings`}>
-					<ServerSettings />
-				</Route>
-				<Route exact path={"/"}>
-					<NavBar />
-					<DefaultView />
-				</Route>
-				<Route>
-					<Redirect to={"/"} />
-				</Route>
-			</Switch>
+			<Routes>
+				<Route
+					path="/ui/world/:world_id/*"
+					element={<>
+						<NavBar />
+						<AppContent />
+					</>}/>
+				<Route
+					path={`/ui/serverSettings`}
+					element={<ServerSettings />}
+				/>
+				<Route
+					path={"/"}
+					element={<>
+						<NavBar />
+						<DefaultView />
+					</>}
+				/>
+				{serverConfig.serverNeedsSetup &&
+					<Route path="/ui/setup" element={<ServerSetup />}/>
+				}
+			</Routes>
 		</MapWikiContext.Provider>
 	);
 };

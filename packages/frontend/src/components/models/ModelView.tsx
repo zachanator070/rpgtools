@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useGetModels from "../../hooks/model/useGetModels";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import PermissionModal from "../modals/PermissionModal";
 import { MODEL } from "@rpgtools/common/src/type-constants";
 import LoadingView from "../LoadingView";
@@ -8,7 +8,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import CreateModelModal from "./CreateModelModal";
 import ModelEdit from "./ModelEdit";
 import ModelContent from "./ModelContent";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {Model} from "../../types";
 import ColumnedContent from "../widgets/ColumnedContent";
 import PrimaryButton from "../widgets/PrimaryButton";
@@ -20,11 +20,10 @@ export default function ModelView() {
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 
 	const [selectedModel, setSelectedModel] = useState<Model>();
-	const match = useRouteMatch();
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 	const [createModelModalVisibility, setCreateModelModalVisibility] = useState(false);
 	const params = useParams();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		(async () => {
@@ -69,7 +68,7 @@ export default function ModelView() {
 								<a
 									key={model._id}
 									onClick={async () =>
-										history.push(`/ui/world/${currentWorld._id}/model/${model._id}/view`)
+										navigate(`/ui/world/${currentWorld._id}/model/${model._id}/view`)
 									}
 								>
 									{model.name}
@@ -84,24 +83,16 @@ export default function ModelView() {
 				{selectedModel && (
 					<>
 						<div className={"margin-lg"}>
-							<Switch>
-								<Route path={`${match.path}/edit`}>
-									<h1>Edit {selectedModel.name}</h1>
-								</Route>
-								<Route path={`${match.path}/view`}>
-									<h1>{selectedModel.name}</h1>
-								</Route>
-							</Switch>
+							<Routes>
+								<Route path={`edit`} element={<h1>Edit {selectedModel.name}</h1>}/>
+								<Route path={`view`} element={<h1>{selectedModel.name}</h1>}/>
+							</Routes>
 
 						</div>
-						<Switch>
-							<Route path={`${match.path}/edit`}>
-								<ModelEdit model={selectedModel} />
-							</Route>
-							<Route path={`${match.path}/view`}>
-								<ModelContent model={selectedModel} />
-							</Route>
-						</Switch>
+						<Routes>
+							<Route path={`edit`} element={<ModelEdit model={selectedModel} />}/>
+							<Route path={`view`} element={<ModelContent model={selectedModel} />}/>
+						</Routes>
 					</>
 				)}
 			</div>

@@ -2,7 +2,7 @@ import React from "react";
 import ModelForm from "./ModelForm";
 import Errors from "../Errors";
 import useUpdateModel from "../../hooks/model/useUpdateModel";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useDeleteModel from "../../hooks/model/useDeleteModel";
@@ -18,9 +18,9 @@ interface ModelEditProps {
 export default function ModelEdit({ model }: ModelEditProps) {
 	const { updateModel, loading, errors } = useUpdateModel();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { deleteModel } = useDeleteModel(async (data) => {
-		history.push(`/ui/world/${currentWorld._id}/model`);
+		navigate(`/ui/world/${currentWorld._id}/model`);
 	});
 
 	const { model_id } = useParams();
@@ -62,7 +62,7 @@ export default function ModelEdit({ model }: ModelEditProps) {
 							height: parseFloat(values.height),
 							notes: values.notes
 						});
-						history.push(
+						navigate(
 							`/ui/world/${currentWorld._id}/model/${model._id}/view`
 						);
 					}}
