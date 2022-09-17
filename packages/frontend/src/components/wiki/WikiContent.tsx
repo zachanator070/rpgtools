@@ -1,7 +1,7 @@
 import React, {ReactElement, useRef, useState} from "react";
 import Editor from "./Editor";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import LoadingView from "../LoadingView";
 import { MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
 import ModelViewer from "../models/ModelViewer";
@@ -18,7 +18,7 @@ interface WikiContentProps {
 }
 
 export default function WikiContent({ currentWiki, wikiLoading }: WikiContentProps) {
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const { currentWorld, loading } = useCurrentWorld();
 	const {pins, loading: pinsLoading} = usePins({});
@@ -52,7 +52,7 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 			<a
 				href="#"
 				onClick={() => {
-					history.push(`/ui/world/${currentWorld._id}/map/${pin.map._id}`);
+					navigate(`/ui/world/${currentWorld._id}/map/${pin.map._id}`);
 				}}
 			>
 				See on map <GotoIcon />
@@ -78,7 +78,7 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 							<a
 								href="#"
 								onClick={() => {
-									history.push(`/ui/world/${currentWorld._id}/map/${currentPlace._id}`);
+									navigate(`/ui/world/${currentWorld._id}/map/${currentPlace._id}`);
 								}}
 							>
 								Go to Map <GotoIcon/>

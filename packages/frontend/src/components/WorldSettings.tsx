@@ -5,7 +5,7 @@ import useRenameWorld from "../hooks/world/useRenameWorld";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import LoadingView from "./LoadingView";
 import useLoad5eContent from "../hooks/world/useLoad5eContent";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PrimaryButton from "./widgets/PrimaryButton";
 import TextInput from "./widgets/input/TextInput";
 import FullScreenModal from "./widgets/FullScreenModal";
@@ -19,7 +19,7 @@ export default function WorldSettings() {
 	const { load5eContent, loading: contentLoading } = useLoad5eContent();
 	const [getCC, setGetCC] = useState<boolean>();
 	const [getTob, setGetTob] = useState<boolean>();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	if (currentWorldLoading) {
 		return <LoadingView />;
@@ -91,7 +91,7 @@ export default function WorldSettings() {
 												creatureCodex: getCC,
 												tomeOfBeasts: getTob,
 											});
-											history.push(
+											navigate(
 												`/ui/world/${currentWorld._id}/wiki/${currentWorld.wikiPage._id}/view`
 											);
 										}}

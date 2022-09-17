@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.7.0",
-		"@apollo/client": "^3.2.1",
+		"@apollo/client": "^3.6.9",
 		"@babel/core": "^7.19.0",
 		"@babel/plugin-proposal-class-properties": "^7.10.4",
 		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.10.4",
@@ -44,7 +44,7 @@
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^5.2.0",
+		"react-router-dom": "^6.4.0",
 		"regenerator-runtime": "^0.13.7",
 		"stats-webpack-plugin": "^0.7.0",
 		"three": "^0.129.0",

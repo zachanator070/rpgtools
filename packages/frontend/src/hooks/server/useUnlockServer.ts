@@ -1,5 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
+import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries";
 
 interface UnlockServerVariables {
 	unlockCode: string;
@@ -12,12 +13,13 @@ interface UnlockServerResult extends GqlMutationResult<boolean, UnlockServerVari
 	unlockServer: MutationMethod<boolean, UnlockServerVariables>
 }
 
-export default function useUnlockServer(callback?: (data: boolean) => Promise<void>): UnlockServerResult {
+export default function useUnlockServer(callback?: (data: any) => Promise<void>): UnlockServerResult {
 	const result = useGQLMutation<boolean, UnlockServerVariables>(
 		UNLOCK_SERVER,
 		{},
 		{
-			onCompleted: callback
+			onQueryUpdated: callback,
+			refetchQueries: [GET_SERVER_CONFIG]
 		}
 	);
 

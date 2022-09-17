@@ -2,7 +2,7 @@ import React, { useEffect} from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LoadingView from "../LoadingView";
 import GameContent from "./GameContent";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
 import useMyGames from "../../hooks/game/useMyGames";
@@ -18,7 +18,7 @@ export default function GameView() {
 
 	const {modalWarning} = useModal();
 
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (currentGame) {
@@ -38,7 +38,7 @@ export default function GameView() {
 					),
 					onOk: async () => {
 						await refetch();
-						history.push(`/ui/world/${currentWorld._id}/gameLogin`);
+						navigate(`/ui/world/${currentWorld._id}/gameLogin`);
 					},
 				});
 			}

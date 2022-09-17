@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import EditPinModal from "../modals/EditPinModal";
 import { PLACE } from "@rpgtools/common/src/type-constants";
@@ -15,7 +15,7 @@ interface PinComponentProps {
 }
 
 export default function PinComponent({ pin, translate }: PinComponentProps) {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { currentWorld } = useCurrentWorld();
 	const [editPinModalVisibility, setEditPinModalVisibility] = useState(false);
 
@@ -62,7 +62,7 @@ export default function PinComponent({ pin, translate }: PinComponentProps) {
 						className="margin-md-left"
 						href="#"
 						onClick={() => {
-							history.push(`/ui/world/${currentWorld._id}/map/${pin.page._id}`);
+							navigate(`/ui/world/${currentWorld._id}/map/${pin.page._id}`);
 						}}
 					>
 						Open Map
