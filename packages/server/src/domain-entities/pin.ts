@@ -1,8 +1,9 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, RepositoryAccessor, UnitOfWork} from "../types";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export class Pin implements DomainEntity {

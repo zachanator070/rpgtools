@@ -1,4 +1,4 @@
-import { DomainEntity, Repository } from "../../../types";
+import { DomainEntity} from "../../../types";
 import {
 	FILTER_CONDITION_OPERATOR_EQUALS,
 	FILTER_CONDITION_OPERATOR_IN,
@@ -7,6 +7,7 @@ import {
 import { PaginatedResult } from "../../paginated-result";
 import {injectable} from "inversify";
 import { v4 as uuidv4 } from 'uuid';
+import {Repository} from "../../repository/repository";
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
@@ -35,6 +36,10 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 		results = this.filter(conditions, results);
 		return results;
 	};
+
+	findAll() {
+		return this.find([]);
+	}
 
 	findById = async (id: string): Promise<Type> => {
 		return this.items.get(id) ?? null;

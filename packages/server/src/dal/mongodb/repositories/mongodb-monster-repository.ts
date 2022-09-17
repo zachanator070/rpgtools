@@ -2,10 +2,11 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Monster } from "../../../domain-entities/monster";
 import {MonsterDocument, MonsterModel} from "../models/monster";
 import mongoose from "mongoose";
-import { MonsterFactory, MonsterRepository } from "../../../types";
+import { MonsterFactory} from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {MonsterRepository} from "../../repository/monster-repository";
 
 @injectable()
 export class MongodbMonsterRepository

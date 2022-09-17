@@ -5,11 +5,9 @@ import { World } from "../domain-entities/world";
 import {
 	AclEntry,
 	DataLoader,
-	DomainEntity, FileRepository, GameFactory, ModelFactory, PermissionControlledEntity, RoleFactory,
-	RoleRepository,
+	DomainEntity, GameFactory, ModelFactory, PermissionControlledEntity, RoleFactory,
 	SessionContext,
-	UserRepository,
-	WikiFolderRepository,
+
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { FilterCondition } from "../dal/filter-condition";
@@ -27,6 +25,10 @@ import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
 import {ServerConfigService} from "../services/server-config-service";
+import {FileRepository} from "../dal/repository/file-repository";
+import {RoleRepository} from "../dal/repository/role-repository";
+import {UserRepository} from "../dal/repository/user-repository";
+import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {

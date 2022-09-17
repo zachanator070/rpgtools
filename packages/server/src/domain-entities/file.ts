@@ -1,9 +1,10 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, RepositoryAccessor, UnitOfWork} from "../types";
 import { Readable } from "stream";
 import { FILE } from "@rpgtools/common/src/type-constants";
 import { FileAuthorizationPolicy } from "../security/policy/file-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export class File implements DomainEntity {

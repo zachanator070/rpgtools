@@ -1,11 +1,13 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { WikiFolder } from "../../../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
-import { WikiFolderFactory, WikiFolderRepository } from "../../../types";
+import { WikiFolderFactory} from "../../../types";
 import mongoose from "mongoose";
 import {WikiFolderDocument, WikiFolderModel} from "../models/wiki-folder";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {WikiFolderRepository} from "../../repository/wiki-folder-repository";
+import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition";
 
 @injectable()
 export class MongodbWikiFolderRepository
@@ -28,5 +30,17 @@ export class MongodbWikiFolderRepository
 				acl: AclFactory(document.acl)
 			}
 		);
+	}
+
+	findAll(): Promise<WikiFolder[]> {
+		return this.find([]);
+	}
+
+	findOneWithPage(pageId: string): Promise<WikiFolder> {
+		return this.findOne([new FilterCondition("pages", pageId, FILTER_CONDITION_OPERATOR_IN)]);
+	}
+
+	findOneWithChild(wikiFolderId: string): Promise<WikiFolder> {
+		return this.findOne([new FilterCondition("children", wikiFolderId, FILTER_CONDITION_OPERATOR_IN)]);
 	}
 }

@@ -2,15 +2,15 @@ import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import {
     DomainEntity,
-    PermissionControlledEntity, Repository,
-    ServerConfigRepository,
-    UnitOfWork,
+    PermissionControlledEntity, UnitOfWork,
 } from "../../../types";
 import {MongoClient} from 'mongodb';
 import MongodbDbEngine from "../mongodb-db-engine";
 import EntityMapper from "../../../domain-entities/entity-mapper";
 import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
+import {Repository} from "../../repository/repository";
+import {ServerConfigRepository} from "../../repository/server-config-repository";
 
 @injectable()
 export default class MongoDbMigrationV40 {

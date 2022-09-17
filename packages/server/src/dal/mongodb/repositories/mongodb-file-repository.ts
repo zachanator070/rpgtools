@@ -1,4 +1,4 @@
-import { FileFactory, FileRepository } from "../../../types";
+import { FileFactory} from "../../../types";
 import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { File } from "../../../domain-entities/file";
@@ -10,9 +10,11 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
 import {ObjectId} from 'bson';
+import {FileRepository} from "../../repository/file-repository";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
+
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
 
@@ -87,4 +89,8 @@ export class MongodbFileRepository implements FileRepository {
 	): Promise<PaginatedResult<File>> => {
 		throw new Error("Files cannot be paginated in mongodb");
 	};
+
+	findAll() {
+		return this.find([]);
+	}
 }

@@ -1,4 +1,4 @@
-import { DomainEntity, DatabaseEntity, Repository } from "../../../types";
+import { DomainEntity, DatabaseEntity} from "../../../types";
 import {
 	FilterCondition,
 } from "../../filter-condition";
@@ -7,6 +7,7 @@ import { PaginatedResult } from "../../paginated-result";
 import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
+import {Repository} from "../../repository/repository";
 
 @injectable()
 export abstract class AbstractMongodbRepository<
@@ -114,4 +115,8 @@ export abstract class AbstractMongodbRepository<
 	abstract buildEntity(document: DocumentType): EntityType;
 
 	hydrateEmbeddedIds(entity: EntityType) {}
+
+	findAll(): Promise<EntityType[]> {
+		return this.find([]);
+	}
 }

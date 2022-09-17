@@ -1,4 +1,4 @@
-import {useParams, Route, Routes, useLocation} from "react-router-dom";
+import {useParams, Route, Routes} from "react-router-dom";
 import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import LoadingView from "./LoadingView";
 import MapView from "./map/MapView";
@@ -14,7 +14,6 @@ import DefaultView from "./DefaultView";
 export default function AppContent(){
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 	const params = useParams();
-	const location = useLocation();
 
 	if (worldLoading) {
 		return <LoadingView />;

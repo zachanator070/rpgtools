@@ -10,7 +10,7 @@ import {
 } from "../../../domain-entities/game";
 import {
 	GameFactory,
-	GameRepository,
+
 
 
 } from "../../../types";
@@ -26,6 +26,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import {ObjectId} from "bson";
 import AclFactory from "./acl-factory";
+import {GameRepository} from "../../repository/game-repository";
 
 @injectable()
 export class MongodbGameRepository

@@ -1,8 +1,9 @@
 import e from "express";
-import { FileRepository, Cache } from "../types";
+import { Cache } from "../types";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
+import {FileRepository} from "../dal/repository/file-repository";
 
 export const gridFsRedisMiddleware = (key: string) => async (
 	req: e.Request,

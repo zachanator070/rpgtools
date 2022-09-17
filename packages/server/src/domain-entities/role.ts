@@ -1,8 +1,9 @@
-import {AclEntry, DomainEntity, Factory, PermissionControlledEntity, Repository, RepositoryAccessor} from "../types";
+import {AclEntry, DomainEntity, Factory, PermissionControlledEntity, RepositoryAccessor} from "../types";
 import { RoleAuthorizationPolicy } from "../security/policy/role-authorization-policy";
 import { ROLE } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export class Role implements PermissionControlledEntity {

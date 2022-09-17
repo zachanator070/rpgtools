@@ -1,27 +1,9 @@
 import {
 	Archive,
-	ArticleRepository,
-	ChunkRepository,
 	DomainEntity,
-	FileRepository,
-	GameRepository,
-	ImageRepository,
-	ItemRepository,
-	ModelRepository,
-	MonsterRepository,
-	PersonRepository,
-	PinRepository,
-	PlaceRepository,
-	Repository,
-	RoleRepository,
-	ServerConfigRepository,
-	UserRepository,
-	WikiFolderRepository,
-	WikiPageRepository,
-	WorldRepository,
+
 } from "../types";
 import { WikiPage } from "../domain-entities/wiki-page";
-import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../dal/filter-condition";
 import archiver from "archiver";
 import { Readable, Writable } from "stream";
 import {
@@ -43,6 +25,24 @@ import { Article } from "../domain-entities/article";
 import { Image } from "../domain-entities/image";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
+import {ChunkRepository} from "../dal/repository/chunk-repository";
+import {FileRepository} from "../dal/repository/file-repository";
+import {GameRepository} from "../dal/repository/game-repository";
+import {ImageRepository} from "../dal/repository/image-repository";
+import {ItemRepository} from "../dal/repository/item-repository";
+import {ModelRepository} from "../dal/repository/model-repository";
+import {MonsterRepository} from "../dal/repository/monster-repository";
+import {PersonRepository} from "../dal/repository/person-repository";
+import {PinRepository} from "../dal/repository/pin-repository";
+import {PlaceRepository} from "../dal/repository/place-repository";
+import {RoleRepository} from "../dal/repository/role-repository";
+import {ServerConfigRepository} from "../dal/repository/server-config-repository";
+import {UserRepository} from "../dal/repository/user-repository";
+import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
+import {WikiPageRepository} from "../dal/repository/wiki-page-repository";
+import {WorldRepository} from "../dal/repository/world-repository";
+import {ArticleRepository} from "../dal/repository/article-repository";
 
 @injectable()
 export class ZipArchive implements Archive {
@@ -104,7 +104,7 @@ export class ZipArchive implements Archive {
 		this.archive.pipe(output);
 		await this.dumpRepo<Article>(this.articleRepository, ARTICLE, this.getWikiPagePath);
 		await this.dumpRepo(this.chunkRepository, CHUNK, async (entity: Chunk) => "chunks");
-		for (let file of await this.fileRepository.find([])) {
+		for (let file of await this.fileRepository.findAll()) {
 			await this.addArchiveEntry(file.readStream, `files/${FILE}.${file._id}.json`);
 		}
 		await this.dumpRepo(this.itemRepository, ITEM, this.getWikiPagePath);
@@ -120,12 +120,10 @@ export class ZipArchive implements Archive {
 
 	private getWikiPagePath = async (page: WikiPage): Promise<string> => {
 		let path = "";
-		let parent = await this.wikiFolderRepository.findOne([new FilterCondition("pages", page._id, FILTER_CONDITION_OPERATOR_IN)]);
+		let parent = await this.wikiFolderRepository.findOneWithPage(page._id);
 		while (parent) {
 			path = parent.name + '/' + path;
-			parent = await this.wikiFolderRepository.findOne([
-				new FilterCondition("children", parent._id, FILTER_CONDITION_OPERATOR_IN),
-			]);
+			parent = await this.wikiFolderRepository.findOneWithChild(parent._id);
 		}
 		path = path.substring(0, path.length - 1 );
 		return 'wikis/' + path;
@@ -140,7 +138,7 @@ export class ZipArchive implements Archive {
 		entityType: string,
 		getPath: (entity: T) => Promise<string>
 	): Promise<void> => {
-		for (let page of await repo.find([])) {
+		for (let page of await repo.findAll()) {
 			const path: string = await getPath(page);
 			delete page.authorizationPolicy;
 			await this.addArchiveEntry(

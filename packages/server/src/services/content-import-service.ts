@@ -4,7 +4,6 @@ import { inject, injectable } from "inversify";
 import {
 	Archive,
 	AbstractArchiveFactory,
-	Repository,
 	UnitOfWork,
 	WikiFolderFactory,
 } from "../types";
@@ -16,6 +15,7 @@ import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-con
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Place } from "../domain-entities/place";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 
 @injectable()

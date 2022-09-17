@@ -1,25 +1,26 @@
 import {
-	ArticleRepository,
-	ChunkRepository,
-	FileRepository,
-	GameRepository,
-	ImageRepository,
-	ItemRepository,
-	ModelRepository,
-	MonsterRepository,
-	PersonRepository,
-	PinRepository,
-	PlaceRepository,
-	RoleRepository,
-	ServerConfigRepository,
 	UnitOfWork,
-	UserRepository,
-	WikiFolderRepository,
-	WikiPageRepository,
-	WorldRepository,
+
 } from "../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {ChunkRepository} from "./repository/chunk-repository";
+import {FileRepository} from "./repository/file-repository";
+import {GameRepository} from "./repository/game-repository";
+import {ImageRepository} from "./repository/image-repository";
+import {ItemRepository} from "./repository/item-repository";
+import {ModelRepository} from "./repository/model-repository";
+import {MonsterRepository} from "./repository/monster-repository";
+import {PersonRepository} from "./repository/person-repository";
+import {PinRepository} from "./repository/pin-repository";
+import {PlaceRepository} from "./repository/place-repository";
+import {RoleRepository} from "./repository/role-repository";
+import {ServerConfigRepository} from "./repository/server-config-repository";
+import {UserRepository} from "./repository/user-repository";
+import {WikiFolderRepository} from "./repository/wiki-folder-repository";
+import {WikiPageRepository} from "./repository/wiki-page-repository";
+import {WorldRepository} from "./repository/world-repository";
+import {ArticleRepository} from "./repository/article-repository";
 
 @injectable()
 export class DbUnitOfWork implements UnitOfWork {

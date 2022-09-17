@@ -1,7 +1,8 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Monster } from "../../domain-entities/monster";
 import {injectable } from "inversify";
-import {Repository, UnitOfWork} from "../../types";
+import {UnitOfWork} from "../../types";
+import {Repository} from "../repository/repository";
 
 @injectable()
 export class MonsterDataLoader extends GraphqlDataloader<Monster> {

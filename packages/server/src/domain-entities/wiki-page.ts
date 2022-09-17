@@ -3,13 +3,13 @@ import {
 	DomainEntity,
 	Factory,
 	PermissionControlledEntity,
-	Repository,
 	RepositoryAccessor,
 	UnitOfWork
 } from "../types";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export abstract class WikiPage implements PermissionControlledEntity {

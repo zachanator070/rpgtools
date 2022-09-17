@@ -3,12 +3,13 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import {
 	DomainEntity,
 	WikiPageDocument,
-	WikiPageRepository,
+
 } from "../../../types";
 import mongoose from "mongoose";
 import { WikiPage } from "../../../domain-entities/wiki-page";
 import { WikiPageModel } from "../models/wiki-page";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import {WikiPageRepository} from "../../repository/wiki-page-repository";
 
 
 @injectable()

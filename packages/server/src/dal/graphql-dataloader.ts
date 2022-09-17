@@ -1,13 +1,13 @@
 import {
 	DataLoader as DataLoaderInt,
 	DomainEntity,
-	EntityAuthorizationPolicy,
-	Repository, UnitOfWork,
+	UnitOfWork,
 } from "../types";
 import DataLoader from "dataloader";
 import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "./filter-condition";
 import { SecurityContext } from "../security/security-context";
 import { injectable } from "inversify";
+import {Repository} from "./repository/repository";
 
 @injectable()
 export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
