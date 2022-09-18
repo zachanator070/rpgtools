@@ -10,7 +10,6 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { SecurityContext } from "../security/security-context";
 import {AuthenticationService} from "./authentication-service";
-import {FilterCondition} from "../dal/filter-condition";
 
 @injectable()
 export class ServerConfigService {
@@ -24,15 +23,13 @@ export class ServerConfigService {
 	roleFactory: RoleFactory;
 
 	serverNeedsSetup = async (unitOfWork: UnitOfWork): Promise<boolean> => {
-		let adminRole = await unitOfWork.roleRepository.findOne([
-			new FilterCondition("name", SERVER_ADMIN_ROLE),
-		]);
+		let adminRole = await unitOfWork.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
 
 		if (!adminRole) {
 			return true;
 		}
 
-		const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		const serverConfig = await unitOfWork.serverConfigRepository.findOne();
 		if (!serverConfig) {
 			throw new Error("No server config exists! Did the seeders run correctly?");
 		}
@@ -41,7 +38,7 @@ export class ServerConfigService {
 	};
 
 	unlockServer = async (unlockCode: string, email: string, username: string, password: string, unitOfWork: UnitOfWork) => {
-		const server = await unitOfWork.serverConfigRepository.findOne([]);
+		const server = await unitOfWork.serverConfigRepository.findOne();
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
 		}
@@ -78,7 +75,7 @@ export class ServerConfigService {
 	};
 
 	generateRegisterCodes = async (context: SecurityContext, amount: number, unitOfWork: UnitOfWork) => {
-		const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		const serverConfig = await unitOfWork.serverConfigRepository.findOne();
 		if (!serverConfig) {
 			throw new Error("Server config doesnt exist!");
 		}
@@ -94,6 +91,6 @@ export class ServerConfigService {
 	};
 
 	getServerConfig = async (unitOfWork: UnitOfWork) => {
-		return unitOfWork.serverConfigRepository.findOne([]);
+		return unitOfWork.serverConfigRepository.findOne();
 	};
 }

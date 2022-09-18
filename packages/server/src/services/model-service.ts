@@ -12,7 +12,6 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { SecurityContext } from "../security/security-context";
 import { FileUpload } from "graphql-upload";
 import { Model } from "../domain-entities/model";
-import { FilterCondition } from "../dal/filter-condition";
 import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
 import {AuthorizationService} from "./authorization-service";
 
@@ -43,7 +42,7 @@ export class ModelService {
 		unitOfWork: UnitOfWork,
 		file?: FileUpload
 	) => {
-		const model = await unitOfWork.modelRepository.findById(modelId);
+		const model = await unitOfWork.modelRepository.findOneById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
@@ -56,7 +55,7 @@ export class ModelService {
 			}
 
 			if (model.fileId) {
-				const file = await unitOfWork.fileRepository.findById(model.fileId);
+				const file = await unitOfWork.fileRepository.findOneById(model.fileId);
 				await unitOfWork.fileRepository.delete(file);
 			}
 			file = await file;
@@ -86,7 +85,7 @@ export class ModelService {
 		notes: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} does not exist`);
 		}
@@ -130,14 +129,14 @@ export class ModelService {
 	};
 
 	deleteModel = async (context: SecurityContext, modelId: string, unitOfWork: UnitOfWork) => {
-		const model = await unitOfWork.modelRepository.findById(modelId);
+		const model = await unitOfWork.modelRepository.findOneById(modelId);
 		if (!model) {
 			throw new Error(`Model with id ${modelId} does not exist`);
 		}
 		if (!(await model.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to delete this model");
 		}
-		const games = await unitOfWork.gameRepository.find([new FilterCondition("models", {_id: modelId})]);
+		const games = await unitOfWork.gameRepository.findWithModel(modelId);
 		for (let game of games) {
 			const positionedModel = game.models.find((otherModel) => otherModel.model === model._id);
 			game.models = game.models.filter((positionedModel) => positionedModel.model !== model._id);
@@ -155,7 +154,7 @@ export class ModelService {
 	};
 
 	getModels = async (context: SecurityContext, worldId: string, unitOfWork: UnitOfWork): Promise<Model[]> => {
-		const models = await unitOfWork.modelRepository.find([new FilterCondition("world", worldId)]);
+		const models = await unitOfWork.modelRepository.findByWorld(worldId);
 		const returnModels = [];
 		for (let model of models) {
 			if (await model.authorizationPolicy.canRead(context, unitOfWork)) {

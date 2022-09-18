@@ -18,7 +18,7 @@ export class GameAuthorizationPolicy implements EntityAuthorizationPolicy<Game> 
 	entity: Game;
 
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(GAME_ADMIN, this.entity) ||
 			context.hasPermission(GAME_ADMIN_ALL, world)
@@ -26,7 +26,7 @@ export class GameAuthorizationPolicy implements EntityAuthorizationPolicy<Game> 
 	};
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return context.hasPermission(GAME_HOST, world);
 	};
 

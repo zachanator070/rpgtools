@@ -43,7 +43,7 @@ export class WikiPageService {
 	entityMapper: EntityMapper;
 
 	createWiki = async (context: SecurityContext, name: string, folderId: string, unitOfWork: UnitOfWork): Promise<WikiFolder> => {
-		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
+		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
@@ -81,7 +81,7 @@ export class WikiPageService {
 		coverImageId?: string,
 		type?: string
 	): Promise<WikiPage> => {
-		let wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
+		let wikiPage = await unitOfWork.wikiPageRepository.findOneById(wikiId);
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
@@ -90,7 +90,7 @@ export class WikiPageService {
 		}
 
 		if (readStream) {
-			let contentFile = await unitOfWork.fileRepository.findById(wikiPage.contentId);
+			let contentFile = await unitOfWork.fileRepository.findOneById(wikiPage.contentId);
 
 			if (contentFile) {
 				await unitOfWork.fileRepository.delete(contentFile);
@@ -114,7 +114,7 @@ export class WikiPageService {
 		}
 
 		if (coverImageId) {
-			const image = await unitOfWork.imageRepository.findById(coverImageId);
+			const image = await unitOfWork.imageRepository.findOneById(coverImageId);
 			if (!image) {
 				throw new Error(`No image exists with id ${coverImageId}`);
 			}
@@ -132,7 +132,7 @@ export class WikiPageService {
 	};
 
 	deleteWiki = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork): Promise<WikiFolder> => {
-		const wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
+		const wikiPage = await unitOfWork.wikiPageRepository.findOneById(wikiId);
 		if (!wikiPage) {
 			throw new Error("Page does not exist");
 		}
@@ -141,16 +141,12 @@ export class WikiPageService {
 			throw new Error("You do not have permission to write to this page");
 		}
 
-		const world = await unitOfWork.worldRepository.findOne([
-			new FilterCondition("wikiPage", wikiId),
-		]);
+		const world = await unitOfWork.worldRepository.findOneByWikiPage(wikiId);
 		if (world) {
 			throw new Error("You cannot delete the main page of a world");
 		}
 
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("pages", wikiPage._id),
-		]);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithPage(wikiPage._id);
 
 		if (parentFolder) {
 			parentFolder.pages = parentFolder.pages.filter((page) => page !== wikiPage._id);
@@ -168,7 +164,7 @@ export class WikiPageService {
 		unitOfWork: UnitOfWork,
 		mapImageId?: string
 	) => {
-		const place = await unitOfWork.placeRepository.findById(placeId);
+		const place = await unitOfWork.placeRepository.findOneById(placeId);
 		if (!place) {
 			throw new Error(`Place ${placeId} does not exist`);
 		}
@@ -178,7 +174,7 @@ export class WikiPageService {
 		}
 
 		if (mapImageId) {
-			const image = await unitOfWork.imageRepository.findById(mapImageId);
+			const image = await unitOfWork.imageRepository.findOneById(mapImageId);
 			if (!image) {
 				throw new Error(`Image with id ${mapImageId} does not exist`);
 			}
@@ -197,14 +193,14 @@ export class WikiPageService {
 		color: string,
 		unitOfWork: UnitOfWork
 	) => {
-		let wikiPage: ModeledPage = await unitOfWork.wikiPageRepository.findById(wikiId) as ModeledPage;
+		let wikiPage: ModeledPage = await unitOfWork.wikiPageRepository.findOneById(wikiId) as ModeledPage;
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to write to this page");
 		}
-		const foundModel = await unitOfWork.modelRepository.findById(model);
+		const foundModel = await unitOfWork.modelRepository.findOneById(model);
 		if (model && !foundModel) {
 			throw new Error(`Model ${model} does not exist`);
 		}
@@ -215,7 +211,7 @@ export class WikiPageService {
 	};
 
 	moveWiki = async (context: SecurityContext, wikiId: string, folderId: string, unitOfWork: UnitOfWork): Promise<WikiPage> => {
-		const wikiPage = await unitOfWork.wikiPageRepository.findById(wikiId);
+		const wikiPage = await unitOfWork.wikiPageRepository.findOneById(wikiId);
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
@@ -223,7 +219,7 @@ export class WikiPageService {
 			throw new Error("You do not have permission to write to this page");
 		}
 
-		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
+		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
@@ -231,9 +227,7 @@ export class WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const oldFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("pages", wikiId),
-		]);
+		const oldFolder = await unitOfWork.wikiFolderRepository.findOneWithPage(wikiId);
 		if (oldFolder && !(await oldFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error(`You do not have permission to write to the folder ${oldFolder._id}`);
 		}
@@ -246,18 +240,18 @@ export class WikiPageService {
 	};
 
 	getWiki = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork): Promise<WikiPage> => {
-		let foundWiki = await unitOfWork.wikiPageRepository.findById(wikiId);
+		let foundWiki = await unitOfWork.wikiPageRepository.findOneById(wikiId);
 		if (foundWiki && !(await foundWiki.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error(`You do not have permission to read wiki ${wikiId}`);
 		}
 
-		foundWiki = (await foundWiki.getRepository(unitOfWork).findById(foundWiki._id)) as WikiPage;
+		foundWiki = (await foundWiki.getRepository(unitOfWork).findOneById(foundWiki._id)) as WikiPage;
 
 		return foundWiki;
 	};
 
 	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean, hasModel: boolean, page: number, unitOfWork: UnitOfWork): Promise<PaginatedResult<WikiPage>>  => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");
 		}
@@ -265,14 +259,7 @@ export class WikiPageService {
 			throw new Error("You do not have permission to read this World");
 		}
 
-		const conditions = [];
-		if(name ) {
-			conditions.push(new FilterCondition('name', name, FILTER_CONDITION_REGEX));
-		}
-		if(types && types.length > 0){
-			conditions.push(new FilterCondition('type', types, FILTER_CONDITION_OPERATOR_IN));
-		}
-		const results = await unitOfWork.wikiPageRepository.findPaginated(conditions, page);
+		const results = await unitOfWork.wikiPageRepository.findByNameAndTypesPaginated(page, name, types);
 
 		const docs = [];
 		for (let doc of results.docs) {
@@ -300,18 +287,14 @@ export class WikiPageService {
 		page: number,
 		unitOfWork: UnitOfWork
 	): Promise<PaginatedResult<WikiPage>> => {
-		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
+		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
 		if (!(await folder.authorizationPolicy.canRead(context, unitOfWork))) {
 			throw new Error("You do not have permission to read this folder");
 		}
-		const results = await unitOfWork.wikiPageRepository.findPaginated(
-			[new FilterCondition("_id", folder.pages, FILTER_CONDITION_OPERATOR_IN)],
-			page,
-			"name"
-		);
+		const results = await unitOfWork.wikiPageRepository.findByIdsPaginated(folder.pages, page,"name");
 		const docs = [];
 		for (let doc of results.docs) {
 			if (await doc.authorizationPolicy.canRead(context, unitOfWork)) {

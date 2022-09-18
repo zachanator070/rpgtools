@@ -66,7 +66,7 @@ export class GameService {
 		characterName: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} does not exist`);
 		}
@@ -116,7 +116,7 @@ export class GameService {
 		characterName: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -143,7 +143,7 @@ export class GameService {
 		return game;
 	};
 	leaveGame = async (context: SecurityContext, gameId: string, unitOfWork: UnitOfWork) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -164,7 +164,7 @@ export class GameService {
 		return true;
 	};
 	gameChat = async (context: SecurityContext, gameId: string, message: string, unitOfWork: UnitOfWork) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -196,28 +196,28 @@ export class GameService {
 		setFog: boolean,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
-		const place = await unitOfWork.placeRepository.findById(placeId);
+		const place = await unitOfWork.placeRepository.findOneById(placeId);
 		if (!place) {
 			throw new Error("Place does not exist");
 		}
 		if (!place.mapImage) {
 			throw new Error("Cannot use a location in game that does not have a map image");
 		}
-		const newMap = await unitOfWork.imageRepository.findById(place.mapImage);
+		const newMap = await unitOfWork.imageRepository.findOneById(place.mapImage);
 		if (!place.pixelsPerFoot) {
 			throw new Error("Place needs to have pixels per foot defined");
 		}
 
 		if (clearPaint && game.map && game.strokes.length > 0) {
-			const oldPlace = await unitOfWork.placeRepository.findById(game.map);
-			const oldMap = await unitOfWork.imageRepository.findById(oldPlace.mapImage);
+			const oldPlace = await unitOfWork.placeRepository.findOneById(game.map);
+			const oldMap = await unitOfWork.imageRepository.findOneById(oldPlace.mapImage);
 			const oldMapSize = Math.max(oldMap.height, oldMap.width);
 
 			game.strokes = [
@@ -270,7 +270,7 @@ export class GameService {
 		strokeId: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -295,7 +295,7 @@ export class GameService {
 		strokeId: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -319,14 +319,14 @@ export class GameService {
 		color: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
-		const model = await unitOfWork.modelRepository.findById(modelId);
+		const model = await unitOfWork.modelRepository.findOneById(modelId);
 		if (!model) {
 			throw new Error("Model does not exist");
 		}
@@ -353,7 +353,7 @@ export class GameService {
 		lookAtZ: number,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -389,7 +389,7 @@ export class GameService {
 		color: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -421,7 +421,7 @@ export class GameService {
 		positionedModelId: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -452,7 +452,7 @@ export class GameService {
 		wikiId: string,
 		unitOfWork: UnitOfWork
 	) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -468,7 +468,7 @@ export class GameService {
 		if (!positionedModel) {
 			throw new Error(`Model with id ${positionedModelId} does not exist`);
 		}
-		const wiki = await unitOfWork.wikiPageRepository.findById(wikiId);
+		const wiki = await unitOfWork.wikiPageRepository.findOneById(wikiId);
 		if (!wiki) {
 			throw new Error(`Cannot find wiki with ID ${wikiId}`);
 		}
@@ -481,7 +481,7 @@ export class GameService {
 		return positionedModel;
 	};
 	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[], unitOfWork: UnitOfWork) => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -508,7 +508,7 @@ export class GameService {
 		attributes: CharacterAttribute[],
 		unitOfWork: UnitOfWork
 	): Promise<Game> => {
-		const game = await unitOfWork.gameRepository.findById(gameId);
+		const game = await unitOfWork.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -529,7 +529,7 @@ export class GameService {
 	};
 
 	getGame = async (context: SecurityContext, gameId: string, unitOfWork: UnitOfWork): Promise<Game> => {
-		const foundGame = await unitOfWork.gameRepository.findById(gameId);
+		const foundGame = await unitOfWork.gameRepository.findOneById(gameId);
 		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this game");
 		}
@@ -540,7 +540,7 @@ export class GameService {
 		if (context.user.username === ANON_USERNAME) {
 			return [];
 		}
-		return unitOfWork.gameRepository.find([new FilterCondition("characters.player", context.user._id)]);
+		return unitOfWork.gameRepository.findByPlayer(context.user._id);
 	};
 
 	private genColor = () => '#' + (Math.random()*0xFFFFFF<<0).toString(16);

@@ -89,7 +89,7 @@ export class AuthenticationService {
 		if(accessToken){
 			let data: any = await this.decodeAccessToken(accessToken);
 			if(data) {
-				return await unitOfWork.userRepository.findById(data.userId);
+				return await unitOfWork.userRepository.findOneById(data.userId);
 			}
 		}
 	};
@@ -98,7 +98,7 @@ export class AuthenticationService {
 		if(refreshToken){
 			let data: any = await this.decodeRefreshToken(refreshToken);
 			if(data) {
-				return await unitOfWork.userRepository.findById(data.userId);
+				return await unitOfWork.userRepository.findOneById(data.userId);
 			}
 		}
 	};
@@ -109,9 +109,7 @@ export class AuthenticationService {
 		cookieManager: CookieManager,
 		unitOfWork: UnitOfWork
 	): Promise<User> => {
-		const user = await unitOfWork.userRepository.findOne([
-			new FilterCondition("username", username),
-		]);
+		const user = await unitOfWork.userRepository.findOneByUsername(username);
 		if (!user || !bcrypt.compareSync(password, user.password)) {
 			throw Error("Login failure: username or password are incorrect");
 		}
@@ -136,7 +134,7 @@ export class AuthenticationService {
 		password: string,
 		unitOfWork: UnitOfWork
 	): Promise<User> => {
-		const config = await unitOfWork.serverConfigRepository.findOne([]);
+		const config = await unitOfWork.serverConfigRepository.findOne();
 		if (!config.registerCodes.includes(registerCode)) {
 			throw new Error("Register code not valid");
 		}
@@ -153,13 +151,11 @@ export class AuthenticationService {
 		unitOfWork: UnitOfWork
 	): Promise<User> => {
 		password = bcrypt.hashSync(password, this.SALT_ROUNDS);
-		let existingUsers = await unitOfWork.userRepository.find([new FilterCondition("email", email)]);
+		let existingUsers = await unitOfWork.userRepository.findByEmail(email);
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Email already used");
 		}
-		existingUsers = await unitOfWork.userRepository.find([
-			new FilterCondition("username", username),
-		]);
+		existingUsers = await unitOfWork.userRepository.findByUsername(username);
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}

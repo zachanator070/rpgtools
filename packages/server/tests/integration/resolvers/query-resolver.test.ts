@@ -28,7 +28,7 @@ describe("query resolver", () => {
 	describe("with world", () => {
 		beforeEach(async () => {
 			await testingContext.reset();
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 		});
 
 		test("no current user", async () => {
@@ -254,7 +254,7 @@ describe("query resolver", () => {
 			});
 
 			it("get roles permission denied", async () => {
-				testingContext.mockSessionContextFactory.resetCurrentUser();
+				testingContext.mockSessionContextFactory.useAnonUser();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: SEARCH_ROLES,
 					variables: {

@@ -4,7 +4,6 @@ import { inject, injectable } from "inversify";
 import {
 	Archive,
 	AbstractArchiveFactory,
-	Repository,
 	UnitOfWork,
 	WikiFolderFactory,
 } from "../types";
@@ -12,10 +11,10 @@ import { Model } from "../domain-entities/model";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Image } from "../domain-entities/image";
 import { WikiPage } from "../domain-entities/wiki-page";
-import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Place } from "../domain-entities/place";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 
 @injectable()
@@ -33,7 +32,7 @@ export class ContentImportService {
 		zipFile: FileUpload,
 		unitOfWork: UnitOfWork
 	): Promise<WikiFolder> => {
-		const folder = await unitOfWork.wikiFolderRepository.findById(folderId);
+		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
@@ -60,7 +59,7 @@ export class ContentImportService {
 		destinationFolder: WikiFolder,
 		unitOfWork: UnitOfWork
 	) => {
-		for (let page of await archive.articleRepository.find([])) {
+		for (let page of await archive.articleRepository.findAll()) {
 			await this.importWikiPage(
 				page,
 				archive,
@@ -69,7 +68,7 @@ export class ContentImportService {
 				unitOfWork
 			);
 		}
-		for (let page of await archive.itemRepository.find([])) {
+		for (let page of await archive.itemRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
@@ -78,7 +77,7 @@ export class ContentImportService {
 				unitOfWork
 			);
 		}
-		for (let page of await archive.monsterRepository.find([])) {
+		for (let page of await archive.monsterRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
@@ -87,7 +86,7 @@ export class ContentImportService {
 				unitOfWork
 			);
 		}
-		for (let page of await archive.personRepository.find([])) {
+		for (let page of await archive.personRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
@@ -96,10 +95,10 @@ export class ContentImportService {
 				unitOfWork
 			);
 		}
-		for (let page of await archive.placeRepository.find([])) {
+		for (let page of await archive.placeRepository.findAll()) {
 			await this.importPlace(page, archive, destinationFolder, unitOfWork);
 		}
-		for (let model of await archive.modelRepository.find([])) {
+		for (let model of await archive.modelRepository.findAll()) {
 			await this.importModel(model, archive, destinationFolder, unitOfWork);
 		}
 	};
@@ -114,14 +113,14 @@ export class ContentImportService {
 		image.chunks = [];
 		image.world = destinationFolder.world;
 		if (image.icon) {
-			const icon: Image = await archive.imageRepository.findById(image.icon);
+			const icon: Image = await archive.imageRepository.findOneById(image.icon);
 			await this.importImage(icon, destinationFolder, archive, unitOfWork);
 			image.icon = icon._id;
 		}
 		await unitOfWork.imageRepository.create(image);
 		for (let chunkId of chunks) {
-			const chunk = await archive.chunkRepository.findById(chunkId);
-			const file = await archive.fileRepository.findById(chunk.fileId);
+			const chunk = await archive.chunkRepository.findOneById(chunkId);
+			const file = await archive.fileRepository.findOneById(chunk.fileId);
 			await unitOfWork.fileRepository.create(file);
 			chunk.fileId = file._id;
 			chunk.image = image._id;
@@ -139,23 +138,17 @@ export class ContentImportService {
 		unitOfWork: UnitOfWork
 	) => {
 		let path: WikiFolder[] = [];
-		let currentFolder: WikiFolder = await archive.wikiFolderRepository.findOne([
-			new FilterCondition("pages", page._id, FILTER_CONDITION_OPERATOR_IN),
-		]);
+		let currentFolder: WikiFolder = await archive.wikiFolderRepository.findOneWithPage(page._id);
 		while (currentFolder) {
 			path.push(currentFolder);
-			currentFolder = await archive.wikiFolderRepository.findOne([
-				new FilterCondition("children", currentFolder._id, FILTER_CONDITION_OPERATOR_IN),
-			]);
+			currentFolder = await archive.wikiFolderRepository.findOneWithChild(currentFolder._id);
 		}
 
 		path = path.reverse();
 
 		while (path.length > 0) {
 			let foundChild = false;
-			const children: WikiFolder[] = await unitOfWork.wikiFolderRepository.find([
-				new FilterCondition("_id", destinationRootFolder.children, FILTER_CONDITION_OPERATOR_IN),
-			]);
+			const children: WikiFolder[] = await unitOfWork.wikiFolderRepository.findByIds(destinationRootFolder.children);
 			for (let child of children) {
 				if (child.name === path[0].name) {
 					foundChild = true;
@@ -182,12 +175,12 @@ export class ContentImportService {
 			}
 		}
 		if (page.coverImage) {
-			const coverImage = await archive.imageRepository.findById(page.coverImage);
+			const coverImage = await archive.imageRepository.findOneById(page.coverImage);
 			await this.importImage(coverImage, destinationRootFolder, archive, unitOfWork);
 			page.coverImage = coverImage._id;
 		}
 		if (page.contentId) {
-			const contentFile = await archive.fileRepository.findById(page.contentId);
+			const contentFile = await archive.fileRepository.findOneById(page.contentId);
 			await unitOfWork.fileRepository.create(contentFile);
 			page.contentId = contentFile._id;
 		}
@@ -204,7 +197,7 @@ export class ContentImportService {
 		unitOfWork: UnitOfWork
 	) => {
 		if (page.pageModel) {
-			const model = await archive.modelRepository.findById(page.pageModel);
+			const model = await archive.modelRepository.findOneById(page.pageModel);
 			// delete from the source so its not recreated later
 			await archive.modelRepository.delete(model);
 			await this.importModel(model, archive, destinationRootFolder, unitOfWork);
@@ -220,7 +213,7 @@ export class ContentImportService {
 		unitOfWork: UnitOfWork
 	) => {
 		if (page.mapImage) {
-			const mapImage: Image = await archive.imageRepository.findById(page.mapImage);
+			const mapImage: Image = await archive.imageRepository.findOneById(page.mapImage);
 			await this.importImage(mapImage, destinationRootFolder, archive, unitOfWork);
 			page.mapImage = mapImage._id;
 		}
@@ -241,7 +234,7 @@ export class ContentImportService {
 	) => {
 		model.world = destinationRootFolder.world;
 		if (model.fileId) {
-			const file = await archive.fileRepository.findById(model.fileId);
+			const file = await archive.fileRepository.findOneById(model.fileId);
 			await unitOfWork.fileRepository.create(file);
 			model.fileId = file._id;
 		}

@@ -1,7 +1,8 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { File } from "../../domain-entities/file";
 import {injectable } from "inversify";
-import {Repository, UnitOfWork} from "../../types";
+import {UnitOfWork} from "../../types";
+import {Repository} from "../repository/repository";
 
 @injectable()
 export class FileDataLoader extends GraphqlDataloader<File> {

@@ -22,15 +22,13 @@ export class WikiFolderAuthorizationPolicy
 	entity: WikiFolder;
 
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return context.hasPermission(FOLDER_ADMIN, this.entity) ||
 		context.hasPermission(FOLDER_ADMIN_ALL, world);
 	}
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("children", this.entity._id),
-		]);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithChild(this.entity._id);
 		if (!parentFolder) {
 			return false;
 		}
@@ -38,10 +36,8 @@ export class WikiFolderAuthorizationPolicy
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("children", this.entity._id),
-		]);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithChild(this.entity._id);
 		let parentReadAll = false;
 		if (parentFolder) {
 			parentReadAll = context.hasPermission(FOLDER_READ_ALL_CHILDREN, parentFolder);
@@ -55,14 +51,12 @@ export class WikiFolderAuthorizationPolicy
 	};
 
 	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("children", this.entity._id),
-		]);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithChild(this.entity._id);
 		let parentWriteAll = false;
 		if (parentFolder) {
 			parentWriteAll = context.hasPermission(FOLDER_RW_ALL_CHILDREN, parentFolder);
 		}
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			parentWriteAll ||
 			context.hasPermission(FOLDER_RW, this.entity) ||

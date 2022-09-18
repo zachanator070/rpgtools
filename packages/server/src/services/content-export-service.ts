@@ -10,7 +10,6 @@ import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { Image } from "../domain-entities/image";
 import { Chunk } from "../domain-entities/chunk";
-import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Model } from "../domain-entities/model";
 import { File } from "../domain-entities/file";
@@ -26,12 +25,12 @@ export class ContentExportService {
 		archive: Archive,
 		unitOfWork: UnitOfWork
 	): Promise<string> => {
-		let page = await unitOfWork.wikiPageRepository.findById(docId);
+		let page = await unitOfWork.wikiPageRepository.findOneById(docId);
 		if (!page) {
 			throw new EntityNotFoundError(docId, WIKI_PAGE);
 		}
 		const repo = page.getRepository(unitOfWork);
-		page = await repo.findById(docId) as WikiPage;
+		page = await repo.findOneById(docId) as WikiPage;
 		if (!await page.authorizationPolicy.canRead(context, unitOfWork)) {
 			return;
 		}
@@ -50,7 +49,7 @@ export class ContentExportService {
 	};
 
 	public exportModel = async (context: SecurityContext, docId: string, archive: Archive, unitOfWork: UnitOfWork): Promise<string> => {
-		const model = await unitOfWork.modelRepository.findById(docId);
+		const model = await unitOfWork.modelRepository.findOneById(docId);
 		if (!model) {
 			throw new EntityNotFoundError(docId, MODEL);
 		}
@@ -65,12 +64,12 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork,
 		errorOut = true
 	): Promise<string> => {
-		const folder = await unitOfWork.wikiFolderRepository.findById(docId);
+		const folder = await unitOfWork.wikiFolderRepository.findOneById(docId);
 		if (!folder) {
 			throw new EntityNotFoundError(docId, WIKI_FOLDER);
 		}
 
-		const world = await unitOfWork.worldRepository.findById(folder.world);
+		const world = await unitOfWork.worldRepository.findOneById(folder.world);
 		await archive.worldRepository.create(world);
 
 		await this.addWikiFolder(context, folder, archive, unitOfWork, errorOut);
@@ -93,12 +92,12 @@ export class ContentExportService {
 		}
 
 		for (let pageId of folder.pages) {
-			const page = await unitOfWork.wikiPageRepository.findById(pageId);
+			const page = await unitOfWork.wikiPageRepository.findOneById(pageId);
 			await this.exportWikiPage(context, pageId, page.type, archive, unitOfWork);
 		}
 
 		for (let childId of folder.children) {
-			const child = await unitOfWork.wikiFolderRepository.findById(childId);
+			const child = await unitOfWork.wikiFolderRepository.findOneById(childId);
 			await this.addWikiFolder(context, child, archive, unitOfWork, false);
 		}
 
@@ -112,15 +111,13 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork
 	) => {
 		if (image.icon) {
-			const icon = await unitOfWork.imageRepository.findById(image.icon);
+			const icon = await unitOfWork.imageRepository.findOneById(image.icon);
 			await this.addImage(context, icon, archive, unitOfWork);
 		}
-		const chunks: Chunk[] = await unitOfWork.chunkRepository.find([
-			new FilterCondition("_id", image.chunks, FILTER_CONDITION_OPERATOR_IN),
-		]);
+		const chunks: Chunk[] = await unitOfWork.chunkRepository.findByIds(image.chunks);
 		for (let chunk of chunks) {
 			await archive.chunkRepository.create(chunk);
-			const file = await unitOfWork.fileRepository.findById(chunk.fileId);
+			const file = await unitOfWork.fileRepository.findOneById(chunk.fileId);
 			await this.addFile(file, archive);
 		}
 		await archive.imageRepository.create(image);
@@ -141,7 +138,7 @@ export class ContentExportService {
 		}
 		await archive.modelRepository.create(page);
 		if (page.fileId) {
-			const file = await unitOfWork.fileRepository.findById(page.fileId);
+			const file = await unitOfWork.fileRepository.findOneById(page.fileId);
 			await this.addFile(file, archive);
 		}
 	};
@@ -157,7 +154,7 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork
 	) => {
 		if (page.pageModel) {
-			const model = await unitOfWork.modelRepository.findById(page.pageModel);
+			const model = await unitOfWork.modelRepository.findOneById(page.pageModel);
 			await this.addModel(context, model, archive, unitOfWork);
 		}
 	};
@@ -169,14 +166,14 @@ export class ContentExportService {
 		unitOfWork: UnitOfWork
 	) => {
 		if (page.coverImage) {
-			const image = await unitOfWork.imageRepository.findById(page.coverImage);
+			const image = await unitOfWork.imageRepository.findOneById(page.coverImage);
 			await this.addImage(context, image, archive, unitOfWork);
 		}
 		if (page.contentId) {
-			const file = await unitOfWork.fileRepository.findById(page.contentId);
+			const file = await unitOfWork.fileRepository.findOneById(page.contentId);
 			await this.addFile(file, archive);
 		}
-		const world = await unitOfWork.worldRepository.findById(page.world);
+		const world = await unitOfWork.worldRepository.findOneById(page.world);
 		await archive.worldRepository.create(world);
 	};
 }

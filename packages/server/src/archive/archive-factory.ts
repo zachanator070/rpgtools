@@ -94,7 +94,7 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 
 	private async addPath(path: string,  currentFolder: WikiFolder, archive: Archive): Promise<WikiFolder> {
 		const nextFolderName = path.split('/')[0];
-		const currentFolderChildren = currentFolder ? await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findById(child))) : [];
+		const currentFolderChildren = currentFolder ? await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findOneById(child))) : [];
 		let nextFolder = currentFolderChildren.find(folder => folder.name === nextFolderName);
 		if (!nextFolder) {
 			nextFolder = await this.addFolder(nextFolderName, currentFolder, archive);

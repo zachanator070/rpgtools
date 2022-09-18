@@ -54,7 +54,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("grantUserPermission permission denied", async () => {
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GRANT_USER_PERMISSION,
 				variables: {
@@ -99,7 +99,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeUserPermission permission denied", async () => {
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_USER_PERMISSION,
 				variables: {
@@ -133,7 +133,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("grantRolePermission permission denied", async () => {
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GRANT_ROLE_PERMISSION,
 				variables: {
@@ -177,7 +177,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeRolePermission permission denied", async () => {
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const unitOfWork = unitOfWorkFactory({});
 			await authorizationService.grantRolePermission(
 				testingContext.tester1SecurityContext,
@@ -249,7 +249,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("deleteRole permission denied", async () => {
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const role = roleFactory({_id: null, name: "other role", world: testingContext.world._id, acl: []});
 			const unitOfWork = unitOfWorkFactory({});
 			await unitOfWork.roleRepository.create(role);
@@ -289,7 +289,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("addUserRole permission denied", async () => {
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: ADD_USER_ROLE,
 				variables: {
@@ -327,7 +327,7 @@ describe("authorization-mutations", () => {
 			const unitOfWork = unitOfWorkFactory({});
 			await authorizationService.addUserRole(testingContext.tester1SecurityContext, testingContext.tester2._id, testingContext.testRole._id, unitOfWork);
 			await unitOfWork.commit();
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: REMOVE_USER_ROLE,
 				variables: {

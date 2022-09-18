@@ -2,10 +2,12 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Model } from "../../../domain-entities/model";
 import mongoose from "mongoose";
 import {ModelDocument, ModelModel} from "../models/model";
-import { ModelFactory, ModelRepository } from "../../../types";
+import { ModelFactory} from "../../../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {ModelRepository} from "../../repository/model-repository";
+import {FilterCondition} from "../../filter-condition";
 
 @injectable()
 export class MongodbModelRepository
@@ -32,5 +34,9 @@ export class MongodbModelRepository
 				acl: AclFactory(document.acl)
 			}
 		);
+	}
+
+	findByWorld(worldId: string): Promise<Model[]> {
+		return this.find([new FilterCondition("world", worldId)]);
 	}
 }

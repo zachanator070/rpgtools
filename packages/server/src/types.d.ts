@@ -1,4 +1,3 @@
-import {FilterCondition} from "./dal/filter-condition";
 import {Document, Schema} from "mongoose";
 import {User} from "./domain-entities/user";
 import {SecurityContext} from "./security/security-context";
@@ -15,14 +14,30 @@ import {Place} from "./domain-entities/place";
 import {Role} from "./domain-entities/role";
 import {ServerConfig} from "./domain-entities/server-config";
 import {WikiFolder} from "./domain-entities/wiki-folder";
-import {WikiPage} from "./domain-entities/wiki-page";
 import {World} from "./domain-entities/world";
 import {File} from "./domain-entities/file";
 import {Readable, Writable} from "stream";
-import {PaginatedResult} from "./dal/paginated-result";
 import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
 import {DocumentNode} from "graphql";
 import {AclEntryDocument} from "./dal/mongodb/models/acl-entry";
+import {Repository} from "./dal/repository/repository";
+import {ChunkRepository} from "./dal/repository/chunk-repository";
+import {FileRepository} from "./dal/repository/file-repository";
+import {GameRepository} from "./dal/repository/game-repository";
+import {ImageRepository} from "./dal/repository/image-repository";
+import {ItemRepository} from "./dal/repository/item-repository";
+import {ModelRepository} from "./dal/repository/model-repository";
+import {MonsterRepository} from "./dal/repository/monster-repository";
+import {PersonRepository} from "./dal/repository/person-repository";
+import {PinRepository} from "./dal/repository/pin-repository";
+import {PlaceRepository} from "./dal/repository/place-repository";
+import {RoleRepository} from "./dal/repository/role-repository";
+import {ServerConfigRepository} from "./dal/repository/server-config-repository";
+import {UserRepository} from "./dal/repository/user-repository";
+import {WikiFolderRepository} from "./dal/repository/wiki-folder-repository";
+import {WikiPageRepository} from "./dal/repository/wiki-page-repository";
+import {WorldRepository} from "./dal/repository/world-repository";
+import {ArticleRepository} from "./dal/repository/article-repository";
 
 export interface DomainEntity {
 	_id: string;
@@ -42,38 +57,6 @@ export interface AclEntry {
 export interface PermissionControlledEntity extends DomainEntity{
 	acl: AclEntry[]
 }
-
-export interface Repository<Type extends DomainEntity> {
-	create: (entity: Type) => Promise<void>;
-	find: (conditions: FilterCondition[]) => Promise<Type[]>;
-	update: (entity: Type) => Promise<void>;
-	delete: (entity: Type) => Promise<void>;
-	findOne: (conditions?: FilterCondition[]) => Promise<Type>;
-	findById: (id: string) => Promise<Type>;
-	findPaginated: (
-		conditions: FilterCondition[],
-		page: number,
-		sort?: string
-	) => Promise<PaginatedResult<Type>>;
-}
-
-export type ArticleRepository = Repository<Article>;
-export type ChunkRepository = Repository<Chunk>;
-export type FileRepository = Repository<File>;
-export type GameRepository = Repository<Game>;
-export type ImageRepository = Repository<Image>;
-export type ItemRepository = Repository<Item>;
-export type ModelRepository = Repository<Model>;
-export type MonsterRepository = Repository<Monster>;
-export type PersonRepository = Repository<Person>;
-export type PinRepository = Repository<Pin>;
-export type PlaceRepository = Repository<Place>;
-export type RoleRepository = Repository<Role>;
-export type ServerConfigRepository = Repository<ServerConfig>;
-export type UserRepository = Repository<User>;
-export type WikiFolderRepository = Repository<WikiFolder>;
-export type WikiPageRepository = Repository<WikiPage>;
-export type WorldRepository = Repository<World>;
 
 export type ArticleFactory = (
 	{

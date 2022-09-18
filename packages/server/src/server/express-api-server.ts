@@ -11,10 +11,7 @@ import { inject, injectable } from "inversify";
 import {
 	ApiServer,
 	CookieManager,
-	RoleRepository,
-	ServerConfigRepository,
-	SessionContextFactory,
-	UserRepository
+	SessionContextFactory
 } from "../types";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ModelRouter } from "../routers/model-router";
@@ -29,6 +26,9 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import { GraphQLRequest } from "apollo-server-types";
 import cors from "cors";
 import {ExpressCookieManager} from "./express-cookie-manager";
+import {RoleRepository} from "../dal/repository/role-repository";
+import {ServerConfigRepository} from "../dal/repository/server-config-repository";
+import {UserRepository} from "../dal/repository/user-repository";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {

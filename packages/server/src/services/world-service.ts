@@ -15,9 +15,9 @@ import { SecurityContext } from "../security/security-context";
 import {PLACE, ROLE} from "@rpgtools/common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import { World } from "../domain-entities/world";
-import {FILTER_CONDITION_REGEX, FilterCondition} from "../dal/filter-condition";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {PaginatedResult} from "../dal/paginated-result";
 
 @injectable()
 export class WorldService {
@@ -39,7 +39,7 @@ export class WorldService {
 		securityContext: SecurityContext,
 		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const server = await unitOfWork.serverConfigRepository.findOne([]);
+		const server = await unitOfWork.serverConfigRepository.findOne();
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
 		}
@@ -50,7 +50,7 @@ export class WorldService {
 	};
 
 	renameWorld = async (context: SecurityContext, worldId: string, newName: string, unitOfWork: UnitOfWork) => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
@@ -68,7 +68,7 @@ export class WorldService {
 		page: number,
 		unitOfWork: UnitOfWork
 	) => {
-		const pinsPage = await unitOfWork.pinRepository.findPaginated([new FilterCondition('worldId', worldId)], page);
+		const pinsPage = await unitOfWork.pinRepository.findByWorldPaginated(worldId, page);
 		const results = [];
 		for (let pin of pinsPage.docs) {
 			if (await pin.authorizationPolicy.canRead(context, unitOfWork)) {
@@ -86,13 +86,13 @@ export class WorldService {
 		y: number,
 		unitOfWork: UnitOfWork
 	) => {
-		const map = await unitOfWork.placeRepository.findById(mapId);
+		const map = await unitOfWork.placeRepository.findOneById(mapId);
 		if (!map) {
 			throw new Error(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
 		}
 
 		if (wikiId) {
-			const wiki = await unitOfWork.wikiPageRepository.findById(wikiId);
+			const wiki = await unitOfWork.wikiPageRepository.findOneById(wikiId);
 
 			if (!wiki) {
 				throw new Error(`Wiki with id ${wikiId} does not exist`);
@@ -110,7 +110,7 @@ export class WorldService {
 	};
 
 	updatePin = async (context: SecurityContext, pinId: string, pageId: string, unitOfWork: UnitOfWork) => {
-		const pin = await unitOfWork.pinRepository.findById(pinId);
+		const pin = await unitOfWork.pinRepository.findOneById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
@@ -121,7 +121,7 @@ export class WorldService {
 
 		let page = null;
 		if (pageId) {
-			page = await unitOfWork.wikiPageRepository.findById(pageId);
+			page = await unitOfWork.wikiPageRepository.findOneById(pageId);
 			if (!page) {
 				throw new Error(`Wiki page does not exist for id ${pageId}`);
 			}
@@ -133,7 +133,7 @@ export class WorldService {
 	};
 
 	deletePin = async (context: SecurityContext, pinId: string, unitOfWork: UnitOfWork) => {
-		const pin = await unitOfWork.pinRepository.findById(pinId);
+		const pin = await unitOfWork.pinRepository.findOneById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
@@ -147,7 +147,7 @@ export class WorldService {
 	};
 
 	getWorld = async (context: SecurityContext, worldId: string, unitOfWork: UnitOfWork) => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 
 		if (!world) {
 			return null;
@@ -160,11 +160,12 @@ export class WorldService {
 	};
 
 	getWorlds = async (context: SecurityContext, name: string, page: number, unitOfWork: UnitOfWork) => {
-		const conditions = [];
+		let results: PaginatedResult<World>;
 		if (name) {
-			conditions.push(new FilterCondition('name', name, FILTER_CONDITION_REGEX));
+			results = await unitOfWork.worldRepository.findByNamePaginated(name, page);
+		} else {
+			results = await unitOfWork.worldRepository.findAllPaginated(page);
 		}
-		const results = await unitOfWork.worldRepository.findPaginated(conditions, page);
 		const docs = [];
 		for (let world of results.docs) {
 			if (await world.authorizationPolicy.canRead(context, unitOfWork)) {
@@ -212,7 +213,7 @@ export class WorldService {
 		context.user.roles.push(ownerRole._id);
 		await unitOfWork.userRepository.update(context.user);
 
-		const everyoneRole = await unitOfWork.roleRepository.findOne([new FilterCondition("name", EVERYONE)]);
+		const everyoneRole = await unitOfWork.roleRepository.findOneByName(EVERYONE);
 		if (isPublic) {
 			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
 				world.acl.push({

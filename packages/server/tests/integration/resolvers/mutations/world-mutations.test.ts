@@ -116,7 +116,7 @@ describe("world-mutations", () => {
 
 		describe("not logged in", () => {
 			beforeEach(() => {
-				testingContext.mockSessionContextFactory.resetCurrentUser();
+				testingContext.mockSessionContextFactory.useAnonUser();
 			});
 			test("create world no permissions", async () => {
 				const result = await testingContext.server.executeGraphQLQuery({

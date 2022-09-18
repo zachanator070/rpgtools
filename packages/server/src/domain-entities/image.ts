@@ -1,8 +1,9 @@
-import {DomainEntity, Factory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, RepositoryAccessor, UnitOfWork} from "../types";
 import { IMAGE } from "@rpgtools/common/src/type-constants";
 import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export class Image implements DomainEntity {

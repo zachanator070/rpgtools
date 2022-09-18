@@ -1,11 +1,12 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Place } from "../../../domain-entities/place";
 import { inject, injectable } from "inversify";
-import { PlaceFactory, PlaceRepository } from "../../../types";
+import { PlaceFactory} from "../../../types";
 import mongoose from "mongoose";
 import {PlaceDocument, PlaceModel} from "../models/place";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {PlaceRepository} from "../../repository/place-repository";
 
 @injectable()
 export class MongodbPlaceRepository

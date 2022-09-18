@@ -2,7 +2,6 @@ import { markdownToDelta } from "./markdown-to-delta";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {UnitOfWork} from "../types";
-import { FilterCondition } from "../dal/filter-condition";
 import {
 	Open5eApiClient,
 	Open5eClass,
@@ -81,10 +80,7 @@ export class DeltaFactory {
 				ops.push({ insert: "\n", attributes: { header: 2 } });
 				ops.push({ insert: "\n" });
 				for (let spell of classSpells[level]) {
-					const article = await unitOfWork.articleRepository.findOne([
-						new FilterCondition("name", spell.name),
-						new FilterCondition("world", worldId),
-					]);
+					const article = await unitOfWork.articleRepository.findOneByNameAndWorld(spell.name, worldId);
 					if (!article) {
 						console.warn(`Could not find spell for ${spell.name}`);
 					}

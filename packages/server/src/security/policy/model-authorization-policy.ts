@@ -16,7 +16,7 @@ import { injectable } from "inversify";
 export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy<Model> {
 	entity: Model;
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(MODEL_ADMIN, this.entity) ||
 			context.hasPermission(MODEL_ADMIN_ALL, world)
@@ -24,12 +24,12 @@ export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy<Model
 	};
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return context.hasPermission(MODEL_ADD, world);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(MODEL_READ, this.entity) ||
 			context.hasPermission(MODEL_READ_ALL, world) ||
@@ -38,7 +38,7 @@ export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy<Model
 	};
 
 	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(MODEL_RW, this.entity) ||
 			context.hasPermission(MODEL_RW_ALL, world)

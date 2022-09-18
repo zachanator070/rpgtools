@@ -1,6 +1,7 @@
 import { Place } from "../../../domain-entities/place";
 import { injectable } from "inversify";
 import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
+import {PlaceRepository} from "../../repository/place-repository";
 
 @injectable()
-export class InMemoryPlaceRepository extends AbstractInMemoryRepository<Place> {}
+export class InMemoryPlaceRepository extends AbstractInMemoryRepository<Place> implements PlaceRepository {}

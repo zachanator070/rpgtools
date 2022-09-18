@@ -1,4 +1,4 @@
-import { DomainEntity, Repository } from "../../../types";
+import { DomainEntity} from "../../../types";
 import {
 	FILTER_CONDITION_OPERATOR_EQUALS,
 	FILTER_CONDITION_OPERATOR_IN,
@@ -7,6 +7,7 @@ import {
 import { PaginatedResult } from "../../paginated-result";
 import {injectable} from "inversify";
 import { v4 as uuidv4 } from 'uuid';
+import {Repository} from "../../repository/repository";
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
@@ -30,15 +31,26 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 		this.items.delete(entity._id);
 	};
 
-	find = async (conditions: FilterCondition[]): Promise<Type[]> => {
+	find = async (conditions: FilterCondition[], sort?: string): Promise<Type[]> => {
 		let results: Type[] = Array.from(this.items.values());
+		if (sort) {
+			results = results.sort((a: any, b: any) => a[sort].compare(b[sort]));
+		}
 		results = this.filter(conditions, results);
 		return results;
 	};
 
-	findById = async (id: string): Promise<Type> => {
+	findAll() {
+		return this.find([]);
+	}
+
+	findOneById = async (id: string): Promise<Type> => {
 		return this.items.get(id) ?? null;
 	};
+
+	findByIds(ids: string[]): Promise<Type[]> {
+		return this.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)]);
+	}
 
 	findOne = async (conditions: FilterCondition[] = []): Promise<Type> => {
 		const results = await this.find(conditions);
@@ -56,9 +68,10 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 
 	findPaginated = async (
 		conditions: FilterCondition[],
-		page: number
+		page: number,
+		sort?: string
 	): Promise<PaginatedResult<Type>> => {
-		let results = await this.find(conditions);
+		let results = await this.find(conditions, sort);
 		const count = results.length;
 		const startIndex = (page - 1) * this.PAGE_LIMIT;
 		results = results.slice(startIndex, startIndex + 100 + 1);

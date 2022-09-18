@@ -1,5 +1,6 @@
-import { DomainEntity, DatabaseEntity, Repository } from "../../../types";
+import { DomainEntity, DatabaseEntity} from "../../../types";
 import {
+	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
 } from "../../filter-condition";
 import mongoose from "mongoose";
@@ -7,6 +8,7 @@ import { PaginatedResult } from "../../paginated-result";
 import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
+import {Repository} from "../../repository/repository";
 
 @injectable()
 export abstract class AbstractMongodbRepository<
@@ -44,6 +46,7 @@ export abstract class AbstractMongodbRepository<
 		} catch (e) {
 			console.error(e);
 		}
+		return [];
 	};
 
 	findOne = async (conditions: FilterCondition[] = []): Promise<EntityType> => {
@@ -54,8 +57,12 @@ export abstract class AbstractMongodbRepository<
 		return null;
 	};
 
-	findById(id: string): Promise<EntityType> {
+	findOneById(id: string): Promise<EntityType> {
 		return this.findOne([new FilterCondition("_id", id)]);
+	}
+
+	findByIds(ids: string[]): Promise<EntityType[]> {
+		return this.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)]);
 	}
 
 	update = async (entity: EntityType): Promise<void> => {
@@ -114,4 +121,8 @@ export abstract class AbstractMongodbRepository<
 	abstract buildEntity(document: DocumentType): EntityType;
 
 	hydrateEmbeddedIds(entity: EntityType) {}
+
+	findAll(): Promise<EntityType[]> {
+		return this.find([]);
+	}
 }

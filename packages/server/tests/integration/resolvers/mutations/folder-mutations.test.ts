@@ -97,7 +97,7 @@ describe("folder-mutations", () => {
 
 		describe("with unauthenticated user", () => {
 			beforeEach(async () => {
-				testingContext.mockSessionContextFactory.resetCurrentUser();
+				testingContext.mockSessionContextFactory.useAnonUser();
 			});
 
 			test("create folder permission denied", async () => {

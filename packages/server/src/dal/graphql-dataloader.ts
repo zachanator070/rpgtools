@@ -1,13 +1,12 @@
 import {
 	DataLoader as DataLoaderInt,
 	DomainEntity,
-	EntityAuthorizationPolicy,
-	Repository, UnitOfWork,
+	UnitOfWork,
 } from "../types";
 import DataLoader from "dataloader";
-import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "./filter-condition";
 import { SecurityContext } from "../security/security-context";
 import { injectable } from "inversify";
+import {Repository} from "./repository/repository";
 
 @injectable()
 export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
@@ -56,7 +55,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 
 	private getDataLoader = (unitOfWork: UnitOfWork) => {
 		return new DataLoader((ids: string[]) =>
-			this.getRepository(unitOfWork).find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)])
+			this.getRepository(unitOfWork).findByIds(ids)
 		);
 	};
 

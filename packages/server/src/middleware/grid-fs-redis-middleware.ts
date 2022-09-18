@@ -1,26 +1,24 @@
 import e from "express";
-import { FileRepository, Cache } from "../types";
+import { Cache } from "../types";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { FilterCondition } from "../dal/filter-condition";
+import {FileRepository} from "../dal/repository/file-repository";
 
-export const gridFsRedisMiddleware = (key: string) => async (
+export const gridFsRedisMiddleware = (lookupKeyName: string) => async (
 	req: e.Request,
 	res: e.Response,
 	next: e.NextFunction
 ) => {
 	const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
-	const lookupKey = req.params[key];
+	const lookupKey = req.params[lookupKeyName];
 
-	const searchParams: FilterCondition[] = [];
-	if (key === "id") {
-		searchParams.push(new FilterCondition("_id", req.params.id));
-	} else {
-		searchParams.push(new FilterCondition(key, req.params[key]));
+	if (!lookupKey) {
+		return res.status(400).send('No id given');
 	}
-	const file = await fileRepository.findOne(searchParams);
+	// for now always assume id is _id and the _id is formatted properly
+	const file = await fileRepository.findOneById(lookupKey);
 	if (!file) {
-		return res.status(404).send();
+		return res.status(404).send('File not found');
 	}
 	const readStream = file.readStream;
 	res.set("Content-Type", file.mimeType);

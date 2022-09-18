@@ -19,7 +19,7 @@ export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> 
 	entity: Role;
 
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(ROLE_ADMIN, this.entity) ||
 			context.hasPermission(ROLE_ADMIN_ALL, world)
@@ -27,12 +27,12 @@ export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> 
 	};
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return context.hasPermission(ROLE_ADD, world);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			(await this.canWrite(context, unitOfWork)) ||
 			context.hasPermission(ROLE_READ, this.entity) ||
@@ -44,7 +44,7 @@ export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> 
 	};
 
 	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(ROLE_RW, this.entity) || context.hasPermission(ROLE_RW_ALL, world)
 		);

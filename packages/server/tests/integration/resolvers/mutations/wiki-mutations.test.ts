@@ -22,7 +22,7 @@ describe("wiki page mutations", () => {
 	describe("with world", () => {
 		beforeEach(async () => {
 			await testingContext.reset();
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 		});
 
 		test("create wiki no permission", async () => {

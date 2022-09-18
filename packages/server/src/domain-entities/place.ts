@@ -1,8 +1,9 @@
 import { WikiPage } from "./wiki-page";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import {inject, injectable} from "inversify";
-import {DomainEntity, Factory, PlaceFactory, Repository, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, PlaceFactory, RepositoryAccessor, UnitOfWork} from "../types";
 import {INJECTABLE_TYPES} from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export class Place extends WikiPage {
