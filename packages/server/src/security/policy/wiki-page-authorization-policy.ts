@@ -22,7 +22,7 @@ export class WikiPageAuthorizationPolicy
 	entity: WikiPage;
 
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(WIKI_ADMIN, this.entity) ||
 			context.hasPermission(WIKI_ADMIN_ALL, world)
@@ -30,9 +30,7 @@ export class WikiPageAuthorizationPolicy
 	};
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("pages", this.entity._id),
-		]);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithPage(this.entity._id);
 		if (!parentFolder) {
 			return false;
 		}
@@ -41,15 +39,13 @@ export class WikiPageAuthorizationPolicy
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
 		// if this wiki page is the main page of a world
-		let world = await unitOfWork.worldRepository.findOne([new FilterCondition("wikiPage", this.entity._id)]);
+		let world = await unitOfWork.worldRepository.findOneByWikiPage(this.entity._id);
 		if (world) {
 			return world.authorizationPolicy.canRead(context, unitOfWork);
 		} else {
-			world = await unitOfWork.worldRepository.findById(this.entity.world);
+			world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		}
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("pages", this.entity._id),
-		]);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithPage(this.entity._id);
 		return (
 			context.hasPermission(FOLDER_READ_ALL_PAGES, parentFolder) ||
 			context.hasPermission(WIKI_READ, this.entity) ||
@@ -59,10 +55,8 @@ export class WikiPageAuthorizationPolicy
 	};
 
 	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("pages", this.entity._id),
-		]);
-		const world = await unitOfWork.worldRepository.findById(this.entity.world);
+		const parentFolder = await unitOfWork.wikiFolderRepository.findOneWithPage(this.entity._id);
+		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(FOLDER_RW_ALL_PAGES, parentFolder) ||
 			context.hasPermission(WIKI_RW, this.entity) ||

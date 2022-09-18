@@ -18,7 +18,7 @@ export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy<World
 	entity: World;
 
 	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne();
 		return (
 			context.hasPermission(WORLD_ADMIN, this.entity) ||
 			context.hasPermission(WORLD_ADMIN_ALL, serverConfig)
@@ -26,12 +26,12 @@ export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy<World
 	};
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne();
 		return context.hasPermission(WORLD_CREATE, serverConfig);
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne([]);
+		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne();
 		return (
 			context.hasPermission(WORLD_READ, this.entity) ||
 			context.hasPermission(WORLD_READ_ALL, serverConfig) ||

@@ -1,11 +1,12 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Item } from "../../../domain-entities/item";
 import { inject, injectable } from "inversify";
-import { ItemFactory, ItemRepository } from "../../../types";
+import { ItemFactory} from "../../../types";
 import mongoose from "mongoose";
 import {ItemDocument, ItemModel} from "../models/item";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {ItemRepository} from "../../repository/item-repository";
 
 @injectable()
 export class MongodbItemRepository

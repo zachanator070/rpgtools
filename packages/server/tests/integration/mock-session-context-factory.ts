@@ -28,8 +28,7 @@ export class MockSessionContextFactory implements SessionContextFactory {
 		userFactory: UserFactory
 	) {
 		this.userFactory = userFactory;
-		this.currentUser = this.getAnon();
-		this.resetCurrentUser();
+		this.useAnonUser();
 	}
 
 	getAnon = (): User => {
@@ -39,7 +38,8 @@ export class MockSessionContextFactory implements SessionContextFactory {
 	setCurrentUser = (user: User) => {
 		this.currentUser = user;
 	};
-	resetCurrentUser = () => {
+
+	useAnonUser = () => {
 		this.currentUser = this.getAnon();
 	};
 

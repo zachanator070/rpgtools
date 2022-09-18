@@ -4,7 +4,6 @@ import {
 	UnitOfWork,
 } from "../types";
 import { SecurityContext } from "../security/security-context";
-import { FilterCondition } from "../dal/filter-condition";
 import { Role } from "../domain-entities/role";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
@@ -31,7 +30,7 @@ export class AuthorizationService {
 		userId: string,
 		unitOfWork: UnitOfWork
 	): Promise<DomainEntity> => {
-		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
+		const user = await unitOfWork.userRepository.findOneById(userId);
 		if (!user) {
 			throw new Error(`User with id ${userId} does not exist`);
 		}
@@ -44,7 +43,7 @@ export class AuthorizationService {
 			user,
 			USER,
 		);
-		return this.mapper.map(subjectType).getRepository(unitOfWork).findById(subjectId);
+		return this.mapper.map(subjectType).getRepository(unitOfWork).findOneById(subjectId);
 	};
 
 	revokeUserPermission = async (
@@ -55,7 +54,7 @@ export class AuthorizationService {
 		userId: string,
 		unitOfWork: UnitOfWork
 	): Promise<DomainEntity> => {
-		const user = await unitOfWork.userRepository.findOne([new FilterCondition("_id", userId)]);
+		const user = await unitOfWork.userRepository.findOneById(userId);
 		if (!user) {
 			throw new Error("User does not exist");
 		}
@@ -78,7 +77,7 @@ export class AuthorizationService {
 		roleId: string,
 		unitOfWork: UnitOfWork
 	): Promise<Role> => {
-		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
+		const role = await unitOfWork.roleRepository.findOneById(roleId);
 		if (!role) {
 			throw new Error(`Role with id ${roleId} does not exist`);
 		}
@@ -102,7 +101,7 @@ export class AuthorizationService {
 		subjectType: string,
 		unitOfWork: UnitOfWork
 	): Promise<Role> => {
-		const role = await unitOfWork.roleRepository.findOne([new FilterCondition("_id", roleId)]);
+		const role = await unitOfWork.roleRepository.findOneById(roleId);
 		if (!role) {
 			throw new Error("Role does not exist");
 		}
@@ -120,7 +119,7 @@ export class AuthorizationService {
 	};
 
 	createRole = async (context: SecurityContext, worldId: string, name: string, unitOfWork: UnitOfWork): Promise<Role> => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
@@ -141,7 +140,7 @@ export class AuthorizationService {
 	};
 
 	deleteRole = async (context: SecurityContext, roleId: string, unitOfWork: UnitOfWork): Promise<Role> => {
-		const role = await unitOfWork.roleRepository.findById(roleId);
+		const role = await unitOfWork.roleRepository.findOneById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
@@ -151,7 +150,7 @@ export class AuthorizationService {
 		if (role.name === WORLD_OWNER || role.name === EVERYONE || role.name === LOGGED_IN) {
 			throw new Error("You cannot delete this role");
 		}
-		const usersWithRole = await unitOfWork.userRepository.find([new FilterCondition('role', role._id)]);
+		const usersWithRole = await unitOfWork.userRepository.findWithRole(role._id);
 		for(let user of usersWithRole) {
 			user.roles = user.roles.filter(id => id !== role._id);
 			await unitOfWork.userRepository.update(user);
@@ -166,12 +165,12 @@ export class AuthorizationService {
 		roleId: string,
 		unitOfWork: UnitOfWork
 	): Promise<Role> => {
-		const role = await unitOfWork.roleRepository.findById(roleId);
+		const role = await unitOfWork.roleRepository.findOneById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
 
-		const user = await unitOfWork.userRepository.findById(userId);
+		const user = await unitOfWork.userRepository.findOneById(userId);
 		if (!user) {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
@@ -192,12 +191,12 @@ export class AuthorizationService {
 		roleId: string,
 		unitOfWork: UnitOfWork
 	): Promise<Role> => {
-		const role = await unitOfWork.roleRepository.findById(roleId);
+		const role = await unitOfWork.roleRepository.findOneById(roleId);
 		if (!role) {
 			throw new Error(`Role ${roleId} doesn't exist`);
 		}
 
-		const user = await unitOfWork.userRepository.findById(userId);
+		const user = await unitOfWork.userRepository.findOneById(userId);
 		if (!user) {
 			throw new Error(`Role ${userId} doesn't exist`);
 		}
@@ -207,9 +206,7 @@ export class AuthorizationService {
 		}
 
 		if (role.name === WORLD_OWNER) {
-			const otherOwners = await unitOfWork.userRepository.find([
-				new FilterCondition("roles", role._id),
-			]);
+			const otherOwners = await unitOfWork.userRepository.findWithRole(role._id);
 			if (otherOwners.length === 1) {
 				throw new Error("World must have at least one owner");
 			}
@@ -231,7 +228,7 @@ export class AuthorizationService {
 		principalType: "User" | "Role"
 	) => {
 		const entityRepository = this.mapper.map(entityType).getRepository(unitOfWork);
-		const entity: DomainEntity = await entityRepository.findById(entityId);
+		const entity: DomainEntity = await entityRepository.findOneById(entityId);
 		if (!(await entity.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to assign the permission "${permission}" for this subject`
@@ -256,7 +253,7 @@ export class AuthorizationService {
 		principalType: 'User' | 'Role'
 	): Promise<PermissionControlledEntity> => {
 		const entityRepository = this.mapper.map(entityType).getRepository(unitOfWork);
-		const entity: DomainEntity = await entityRepository.findById(entityId);
+		const entity: DomainEntity = await entityRepository.findOneById(entityId);
 		if (!(await entity.authorizationPolicy.canAdmin(context, unitOfWork))) {
 			throw new Error(
 				`You do not have permission to revoke the permission "${permission}"`

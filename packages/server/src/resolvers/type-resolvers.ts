@@ -5,14 +5,11 @@ import { World } from "../domain-entities/world";
 import {
 	AclEntry,
 	DataLoader,
-	DomainEntity, FileRepository, GameFactory, ModelFactory, PermissionControlledEntity, RoleFactory,
-	RoleRepository,
+	DomainEntity, GameFactory, ModelFactory, PermissionControlledEntity, RoleFactory,
 	SessionContext,
-	UserRepository,
-	WikiFolderRepository,
+
 } from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
-import { FilterCondition } from "../dal/filter-condition";
 import { WikiPage } from "../domain-entities/wiki-page";
 import { Image } from "../domain-entities/image";
 import { Model } from "../domain-entities/model";
@@ -27,6 +24,10 @@ import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
 import {ServerConfigService} from "../services/server-config-service";
+import {FileRepository} from "../dal/repository/file-repository";
+import {RoleRepository} from "../dal/repository/role-repository";
+import {UserRepository} from "../dal/repository/user-repository";
+import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<World> => {
@@ -35,7 +36,7 @@ const wikiPageInterfaceAttributes = {
 	},
 	folder: async (page: WikiPage): Promise<WikiFolder> => {
 		const repository = container.get<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository);
-		return repository.findOne([new FilterCondition("pages", page._id)]);
+		return repository.findOneWithPage(page._id);
 	},
 	coverImage: async (page: WikiPage, _: any, {unitOfWork}: SessionContext): Promise<Image> => {
 		const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
@@ -52,7 +53,7 @@ const wikiPageInterfaceAttributes = {
 	content: async (page: WikiPage, _: any, __: SessionContext): Promise<String> => {
 		if(page.contentId){
 			const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
-			const contentFile = await fileRepository.findById(page.contentId);
+			const contentFile = await fileRepository.findOneById(page.contentId);
 			const buffer: string[] = []
 			const contents = new Promise<String>((resolve, reject) => {
 				contentFile.readStream.on('data', (chunk) => { buffer.push(chunk.toString())});
@@ -159,7 +160,7 @@ export const TypeResolvers = {
 				return [];
 			}
 			const repository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
-			return repository.find([new FilterCondition("roles", role._id)]);
+			return repository.findWithRole(role._id);
 		},
 		...permissionControlledInterfaceAttributes,
 	},
@@ -249,7 +250,7 @@ export const TypeResolvers = {
 		},
 		roles: async (server: ServerConfig, _: any, { securityContext, unitOfWork }: SessionContext): Promise<Role[]> => {
 			const repository = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
-			const roles = await repository.find([]);
+			const roles = await repository.findAll();
 			const returnRoles = [];
 			for (let role of roles) {
 				if (await role.authorizationPolicy.canAdmin(securityContext, unitOfWork)) {
@@ -271,7 +272,7 @@ export const TypeResolvers = {
 		principal: async (entry: AclEntry, _: any, { unitOfWork }: SessionContext): Promise<DomainEntity> => {
 			const entityMapper = container.get<EntityMapper>(INJECTABLE_TYPES.EntityMapper);
 			const repo = entityMapper.map(entry.principalType).getRepository(unitOfWork);
-			return repo.findById(entry.principal);
+			return repo.findOneById(entry.principal);
 		}
 	},
 	AclPrincipal: {

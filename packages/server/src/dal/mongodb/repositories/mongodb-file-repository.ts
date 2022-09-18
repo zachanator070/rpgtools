@@ -1,8 +1,9 @@
-import { FileFactory, FileRepository } from "../../../types";
+import { FileFactory} from "../../../types";
 import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { File } from "../../../domain-entities/file";
 import {
+	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
 } from "../../filter-condition";
 import { PaginatedResult } from "../../paginated-result";
@@ -10,9 +11,11 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
 import {ObjectId} from 'bson';
+import {FileRepository} from "../../repository/file-repository";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
+
 	@inject(INJECTABLE_TYPES.FileFactory)
 	fileFactory: FileFactory;
 
@@ -64,8 +67,8 @@ export class MongodbFileRepository implements FileRepository {
 		return results;
 	};
 
-	findById = async (id: string): Promise<File> => {
-		return this.findOne([new FilterCondition("_id", new ObjectId(id))]);
+	findOneById = async (id: string): Promise<File> => {
+		return this.findOne([new FilterCondition("_id", id)]);
 	};
 
 	findOne = async (conditions: FilterCondition[]): Promise<File> => {
@@ -87,4 +90,12 @@ export class MongodbFileRepository implements FileRepository {
 	): Promise<PaginatedResult<File>> => {
 		throw new Error("Files cannot be paginated in mongodb");
 	};
+
+	findAll() {
+		return this.find([]);
+	}
+
+	findByIds(ids: string[]): Promise<File[]> {
+		return this.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)]);
+	}
 }

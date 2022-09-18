@@ -1,11 +1,14 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { World } from "../../../domain-entities/world";
 import { inject, injectable } from "inversify";
-import { WorldFactory, WorldRepository } from "../../../types";
+import { WorldFactory} from "../../../types";
 import mongoose from "mongoose";
 import {WorldDocument, WorldModel} from "../models/world";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {WorldRepository} from "../../repository/world-repository";
+import {PaginatedResult} from "../../paginated-result";
+import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
 
 @injectable()
 export class MongodbWorldRepository
@@ -27,5 +30,25 @@ export class MongodbWorldRepository
 				acl: AclFactory(document.acl)
 			}
 		);
+	}
+
+	findAllPaginated(page: number): Promise<PaginatedResult<World>> {
+		return this.findPaginated([], page);
+	}
+
+	findByNamePaginated(name: string, page: number): Promise<PaginatedResult<World>> {
+		return this.findPaginated([new FilterCondition("name", name, FILTER_CONDITION_REGEX)], page);
+	}
+
+	findOneByWikiPage(pageId: string): Promise<World> {
+		return this.findOne([
+			new FilterCondition("wikiPage", pageId),
+		]);
+	}
+
+	findByRootFolder(folderId: string): Promise<World[]> {
+		return this.find([
+			new FilterCondition("rootFolder", folderId),
+		]);
 	}
 }

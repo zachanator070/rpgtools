@@ -17,7 +17,7 @@ export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
 	}
 
 	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const map = await unitOfWork.placeRepository.findById(this.entity.map);
+		const map = await unitOfWork.placeRepository.findOneById(this.entity.map);
 		if (!map) {
 			return false;
 		}
@@ -25,8 +25,8 @@ export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
 	};
 
 	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const map = await unitOfWork.placeRepository.findById(this.entity.map);
-		const page = await unitOfWork.wikiPageRepository.findById(this.entity.page);
+		const map = await unitOfWork.placeRepository.findOneById(this.entity.map);
+		const page = await unitOfWork.wikiPageRepository.findOneById(this.entity.page);
 		return (
 			(await map.authorizationPolicy.canRead(context, unitOfWork)) &&
 			(page ? await page.authorizationPolicy.canRead(context, unitOfWork) : true)
@@ -34,7 +34,7 @@ export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
 	};
 
 	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const map = await unitOfWork.placeRepository.findById(this.entity.map);
+		const map = await unitOfWork.placeRepository.findOneById(this.entity.map);
 		return await map.authorizationPolicy.canWrite(context, unitOfWork);
 	};
 }

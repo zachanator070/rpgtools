@@ -1,10 +1,13 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Pin } from "../../../domain-entities/pin";
 import { inject, injectable } from "inversify";
-import { PinFactory, PinRepository } from "../../../types";
+import { PinFactory} from "../../../types";
 import mongoose from "mongoose";
 import {PinDocument, PinModel} from "../models/pin";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
+import {PinRepository} from "../../repository/pin-repository";
+import {PaginatedResult} from "../../paginated-result";
+import {FilterCondition} from "../../filter-condition";
 
 @injectable()
 export class MongodbPinRepository
@@ -26,5 +29,16 @@ export class MongodbPinRepository
 				page: document.page ? document.page.toString() : null
 			}
 		);
+	}
+
+	findByWorldPaginated(worldId: string, page: number = 0): Promise<PaginatedResult<Pin>> {
+		return this.findPaginated([new FilterCondition('worldId', worldId)], page);
+	}
+
+	findOneByMapAndPage(mapId: string, pageId: string): Promise<Pin> {
+		return this.findOne([
+			new FilterCondition("map", mapId),
+			new FilterCondition("page", pageId),
+		]);
 	}
 }

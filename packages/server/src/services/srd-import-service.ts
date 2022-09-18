@@ -15,7 +15,6 @@ import fetch from "node-fetch";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { FILTER_CONDITION_OPERATOR_IN, FilterCondition } from "../dal/filter-condition";
 import { SecurityContext } from "../security/security-context";
 import { File } from "../domain-entities/file";
 import { DeltaFactory } from "../five-e-import/delta-factory";
@@ -50,11 +49,11 @@ export class SrdImportService {
 		importTomeOfBeasts: boolean,
 		unitOfWork: UnitOfWork
 	): Promise<World> => {
-		const world = await unitOfWork.worldRepository.findById(worldId);
+		const world = await unitOfWork.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		const rootFolder = await unitOfWork.wikiFolderRepository.findById(world.rootFolder);
+		const rootFolder = await unitOfWork.wikiFolderRepository.findOneById(world.rootFolder);
 		if (!(await rootFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
@@ -75,9 +74,7 @@ export class SrdImportService {
 				await this.importAdventurePages(topFolder, unitOfWork);
 				// adventure pages creates a rules folder that importRules needs
 				const rulesFolder = (
-					await unitOfWork.wikiFolderRepository.find([
-						new FilterCondition("_id", topFolder.children, FILTER_CONDITION_OPERATOR_IN),
-					])
+					await unitOfWork.wikiFolderRepository.findByIds(topFolder.children)
 				).find((folder) => folder.name === "Rules");
 				await this.importRules(rulesFolder, unitOfWork);
 			})(),

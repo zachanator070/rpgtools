@@ -65,7 +65,7 @@ export class DefaultTestingContext {
 	async reset() {
 		const unitOfWork = this.unitOfWorkFactory({});
 
-		this.tester1 = await unitOfWork.userRepository.findOne([new FilterCondition("username", "tester")]);
+		this.tester1 = await unitOfWork.userRepository.findOneByUsername("tester");
 		this.tester1SecurityContext = await this.securityContextFactory.create(this.tester1);
 
 		this.currentUser = this.tester1;
@@ -91,10 +91,7 @@ export class DefaultTestingContext {
 			this.world.rootFolder,
 			unitOfWork
 		);
-		this.newFolder = await unitOfWork.wikiFolderRepository.findOne([
-			new FilterCondition("name", "new folder"),
-			new FilterCondition("world", this.world._id),
-		]);
+		this.newFolder = await unitOfWork.wikiFolderRepository.findOneByNameAndWorld('new folder', this.world._id);
 		await this.wikiPageService.createWiki(this.tester1SecurityContext, "new page", this.newFolder._id, unitOfWork);
 		await this.wikiPageService.createWiki(
 			this.tester1SecurityContext,
@@ -102,10 +99,7 @@ export class DefaultTestingContext {
 			this.world.rootFolder,
 			unitOfWork
 		);
-		this.otherPage = await unitOfWork.wikiPageRepository.findOne([
-			new FilterCondition("name", "other page"),
-			new FilterCondition("world", this.world._id),
-		]);
+		this.otherPage = await unitOfWork.wikiPageRepository.findOneByNameAndWorld('other page', this.world._id);
 		await worldService.createPin(
 			this.tester1SecurityContext,
 			this.world.wikiPage,
@@ -114,10 +108,10 @@ export class DefaultTestingContext {
 			0,
 			unitOfWork
 		);
-		this.pin = await unitOfWork.pinRepository.findOne([
-			new FilterCondition("map", this.world.wikiPage),
-			new FilterCondition("page", this.otherPage._id),
-		]);
+		this.pin = await unitOfWork.pinRepository.findOneByMapAndPage(
+			this.world.wikiPage,
+			this.otherPage._id
+		);
 		await unitOfWork.commit();
 		return this;
 	};

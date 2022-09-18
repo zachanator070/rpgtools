@@ -10,7 +10,7 @@ import {
 } from "../../../domain-entities/game";
 import {
 	GameFactory,
-	GameRepository,
+
 
 
 } from "../../../types";
@@ -26,6 +26,8 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import {ObjectId} from "bson";
 import AclFactory from "./acl-factory";
+import {GameRepository} from "../../repository/game-repository";
+import {FilterCondition} from "../../filter-condition";
 
 @injectable()
 export class MongodbGameRepository
@@ -173,5 +175,13 @@ export class MongodbGameRepository
 				}
 			}
 		}
+	}
+
+	findWithModel(modelId: string): Promise<Game[]> {
+		return this.find([new FilterCondition("models", {_id: modelId})])
+	}
+
+	findByPlayer(userId: string): Promise<Game[]> {
+		return this.find([new FilterCondition("characters.player", userId)]);
 	}
 }

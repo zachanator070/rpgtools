@@ -35,7 +35,7 @@ describe("model mutations", () => {
 
         beforeEach(async () => {
             await testingContext.reset();
-            testingContext.mockSessionContextFactory.resetCurrentUser();
+            testingContext.mockSessionContextFactory.useAnonUser();
         });
 
         test("create model no permission", async () => {

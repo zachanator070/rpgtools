@@ -1,11 +1,13 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Article } from "../../../domain-entities/article";
-import { ArticleFactory, ArticleRepository } from "../../../types";
+import { ArticleFactory} from "../../../types";
 import { ArticleDocument, ArticleModel } from "../models/article";
 import mongoose from "mongoose";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {ArticleRepository} from "../../repository/article-repository";
+import {FilterCondition} from "../../filter-condition";
 
 @injectable()
 export class MongodbArticleRepository
@@ -28,5 +30,12 @@ export class MongodbArticleRepository
 				acl: AclFactory(document.acl)
 			}
 		);
+	}
+
+	findOneByNameAndWorld(name: string, worldId: string): Promise<Article> {
+		return this.findOne([
+			new FilterCondition("name", name),
+			new FilterCondition("world", worldId),
+		]);
 	}
 }

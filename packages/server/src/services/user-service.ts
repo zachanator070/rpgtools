@@ -1,7 +1,6 @@
 import { SecurityContext } from "../security/security-context";
 import { injectable } from "inversify";
 import { User } from "../domain-entities/user";
-import { FILTER_CONDITION_REGEX, FilterCondition } from "../dal/filter-condition";
 import {PaginatedResult} from "../dal/paginated-result";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {UnitOfWork} from "../types";
@@ -19,8 +18,6 @@ export class UserService {
 	};
 
 	getUsers = async (context: SecurityContext, username: string, page: number, unitOfWork: UnitOfWork): Promise<PaginatedResult<User>> => {
-		return unitOfWork.userRepository.findPaginated([
-			new FilterCondition("username", `^${username}*`, FILTER_CONDITION_REGEX),
-		], page || 1);
+		return unitOfWork.userRepository.findByUsernamePaginated(username, page);
 	};
 }

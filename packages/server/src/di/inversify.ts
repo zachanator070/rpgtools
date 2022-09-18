@@ -1,25 +1,8 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import {
-	ArticleRepository,
-	ChunkRepository,
 	EventPublisher,
-	FileRepository,
-	GameRepository,
-	ImageRepository,
-	ItemRepository,
-	ModelRepository,
-	MonsterRepository,
-	PersonRepository,
-	PinRepository,
-	PlaceRepository,
-	RoleRepository,
-	ServerConfigRepository,
 	SessionContextFactory,
-	UserRepository,
-	WikiFolderRepository,
-	WikiPageRepository,
-	WorldRepository,
 	Cache,
 	AbstractArchiveFactory,
 	ApiServer,
@@ -162,6 +145,23 @@ import {ObjectId} from "mongoose";
 import RpgToolsServer from "../server/rpgtools-server";
 import MongodbDbEngine from "../dal/mongodb/mongodb-db-engine";
 import MongoDbMigrationV40 from "../dal/mongodb/migrations/mongodb-migration-v40";
+import {ChunkRepository} from "../dal/repository/chunk-repository";
+import {FileRepository} from "../dal/repository/file-repository";
+import {GameRepository} from "../dal/repository/game-repository";
+import {ImageRepository} from "../dal/repository/image-repository";
+import {ItemRepository} from "../dal/repository/item-repository";
+import {ModelRepository} from "../dal/repository/model-repository";
+import {MonsterRepository} from "../dal/repository/monster-repository";
+import {PersonRepository} from "../dal/repository/person-repository";
+import {PinRepository} from "../dal/repository/pin-repository";
+import {PlaceRepository} from "../dal/repository/place-repository";
+import {RoleRepository} from "../dal/repository/role-repository";
+import {ServerConfigRepository} from "../dal/repository/server-config-repository";
+import {UserRepository} from "../dal/repository/user-repository";
+import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
+import {WikiPageRepository} from "../dal/repository/wiki-page-repository";
+import {WorldRepository} from "../dal/repository/world-repository";
+import {ArticleRepository} from "../dal/repository/article-repository";
 
 const container = new Container();
 

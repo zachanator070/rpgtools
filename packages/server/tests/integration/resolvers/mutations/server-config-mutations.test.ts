@@ -17,7 +17,7 @@ describe("server mutations", () => {
 	describe("with locked server", () => {
 		const resetConfig = async () => {
 			const unitOfWork = unitOfWorkFactory({});
-			const serverConfig = await unitOfWork.serverConfigRepository.findOne([]);
+			const serverConfig = await unitOfWork.serverConfigRepository.findOne();
 			serverConfig.unlockCode = "asdf";
 			serverConfig.adminUsers = [];
 			await unitOfWork.serverConfigRepository.update(serverConfig);
@@ -83,7 +83,7 @@ describe("server mutations", () => {
 		beforeEach(async () => {
 			const unitOfWork = unitOfWorkFactory({});
 			testingContext.mockSessionContextFactory.setCurrentUser(
-				await unitOfWork.userRepository.findOne([new FilterCondition("username", "tester")])
+				await unitOfWork.userRepository.findOneByUsername("tester")
 			);
 			await unitOfWork.commit();
 		});

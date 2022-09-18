@@ -11,7 +11,7 @@ describe("user mutations", () => {
 	describe("with world and not logged in", () => {
 		beforeEach(async () => {
 			await testingContext.reset();
-			testingContext.mockSessionContextFactory.resetCurrentUser();
+			testingContext.mockSessionContextFactory.useAnonUser();
 		});
 
 		test("set current world not logged in", async () => {

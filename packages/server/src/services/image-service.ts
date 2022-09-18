@@ -90,13 +90,13 @@ export class ImageService {
 	public deleteImage = async (image: Image, unitOfWork: UnitOfWork): Promise<void> => {
 		console.log(`deleting image ${image._id}`);
 		for (let chunkId of image.chunks) {
-			const chunk: Chunk = await unitOfWork.chunkRepository.findById(chunkId);
-			const file: File = await unitOfWork.fileRepository.findById(chunk.fileId);
+			const chunk: Chunk = await unitOfWork.chunkRepository.findOneById(chunkId);
+			const file: File = await unitOfWork.fileRepository.findOneById(chunk.fileId);
 			await unitOfWork.fileRepository.delete(file);
 			await unitOfWork.chunkRepository.delete(chunk);
 		}
 		if (image.icon) {
-			const icon = await unitOfWork.imageRepository.findById(image.icon);
+			const icon = await unitOfWork.imageRepository.findOneById(image.icon);
 			await this.deleteImage(icon, unitOfWork);
 		}
 		await unitOfWork.imageRepository.delete(image);

@@ -2,15 +2,15 @@ import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import {
     DomainEntity,
-    PermissionControlledEntity, Repository,
-    ServerConfigRepository,
-    UnitOfWork,
+    PermissionControlledEntity, UnitOfWork,
 } from "../../../types";
 import {MongoClient} from 'mongodb';
 import MongodbDbEngine from "../mongodb-db-engine";
 import EntityMapper from "../../../domain-entities/entity-mapper";
 import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
+import {Repository} from "../../repository/repository";
+import {ServerConfigRepository} from "../../repository/server-config-repository";
 
 @injectable()
 export default class MongoDbMigrationV40 {
@@ -30,7 +30,7 @@ export default class MongoDbMigrationV40 {
                 const permissionAssignments = await client.db(dbEngine.mongodb_db_name).collection('permissionassignments').find({}).toArray();
                 for (let permissionAssignment of permissionAssignments) {
                     const repo: Repository<DomainEntity> = this.entityMapper.map(permissionAssignment.subjectType).getRepository(unitOfWork);
-                    const entity: PermissionControlledEntity = await repo.findById(permissionAssignment.subject.toString()) as PermissionControlledEntity;
+                    const entity: PermissionControlledEntity = await repo.findOneById(permissionAssignment.subject.toString()) as PermissionControlledEntity;
                     const usersWithPermission = await client.db(dbEngine.mongodb_db_name).collection('users').find({permissions: permissionAssignment._id}).toArray();
                     for (let user of usersWithPermission) {
                         entity.acl.push({

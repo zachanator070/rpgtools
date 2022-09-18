@@ -3,7 +3,6 @@ import {
 	DomainEntity,
 	Factory,
 	PermissionControlledEntity,
-	Repository,
 	RepositoryAccessor,
 	UnitOfWork
 } from "../types";
@@ -11,6 +10,7 @@ import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-au
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {Repository} from "../dal/repository/repository";
 
 @injectable()
 export class WikiFolder implements PermissionControlledEntity {
