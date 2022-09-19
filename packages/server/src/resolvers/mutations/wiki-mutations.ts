@@ -8,10 +8,10 @@ export const wikiMutations = {
 	createWiki: async (
 		_: any,
 		{ name, folderId }: { name: string; folderId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.createWiki(securityContext, name, folderId, unitOfWork);
+		return await service.createWiki(securityContext, name, folderId, databaseContext);
 	},
 	updateWiki: async (
 		_: any,
@@ -22,14 +22,14 @@ export const wikiMutations = {
 			coverImageId,
 			type,
 		}: { wikiId: string; name: string; content: FileUpload; coverImageId: string; type: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 		content = await content;
 		return await service.updateWiki(
 			securityContext,
 			wikiId,
-			unitOfWork,
+			databaseContext,
 			content && content.createReadStream(),
 			name,
 			coverImageId,
@@ -39,10 +39,10 @@ export const wikiMutations = {
 	deleteWiki: async (
 		_: any,
 		{ wikiId }: { wikiId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.deleteWiki(securityContext, wikiId, unitOfWork);
+		return await service.deleteWiki(securityContext, wikiId, databaseContext);
 	},
 	updatePlace: async (
 		_: any,
@@ -51,25 +51,25 @@ export const wikiMutations = {
 			mapImageId,
 			pixelsPerFoot,
 		}: { placeId: string; mapImageId: string; pixelsPerFoot: number },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.updatePlace(securityContext, placeId, pixelsPerFoot, unitOfWork, mapImageId);
+		return await service.updatePlace(securityContext, placeId, pixelsPerFoot, databaseContext, mapImageId);
 	},
 	updateModeledWiki: async (
 		_: any,
 		{ wikiId, model, color }: { wikiId: string; model: string; color: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.updateModeledWiki(securityContext, wikiId, model, color, unitOfWork);
+		return await service.updateModeledWiki(securityContext, wikiId, model, color, databaseContext);
 	},
 	moveWiki: async (
 		_: any,
 		{ wikiId, folderId }: { wikiId: string; folderId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.moveWiki(securityContext, wikiId, folderId, unitOfWork);
+		return await service.moveWiki(securityContext, wikiId, folderId, databaseContext);
 	},
 };

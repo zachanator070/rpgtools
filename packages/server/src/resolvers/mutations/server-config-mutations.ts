@@ -12,18 +12,18 @@ export const serverConfigMutations = {
 			username,
 			password,
 		}: { unlockCode: string; email: string; username: string; password: string },
-		{unitOfWork}: SessionContext
+		{databaseContext}: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await service.unlockServer(unlockCode, email, username, password, unitOfWork);
+		return await service.unlockServer(unlockCode, email, username, password, databaseContext);
 	},
 	generateRegisterCodes: async (
 		_: any,
 		{ amount }: { amount: number },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		const serverConfig = await service.generateRegisterCodes(securityContext, amount, unitOfWork);
+		const serverConfig = await service.generateRegisterCodes(securityContext, amount, databaseContext);
 		return serverConfig;
 	},
 };

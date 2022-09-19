@@ -7,15 +7,16 @@ import {Image} from "../../../../src/domain-entities/image";
 import {FileUpload, Upload} from "graphql-upload";
 import {CREATE_WIKI, DELETE_WIKI, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 import {ImageService} from "../../../../src/services/image-service";
-import {Factory} from "../../../../src/types";
-import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {DbEngine, Factory} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import {DatabaseContext} from "../../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
 describe("wiki page mutations", () => {
 	const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
-	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
+	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 
@@ -224,9 +225,10 @@ describe("wiki page mutations", () => {
 				};
 				let image: Image = null;
 				beforeAll(async () => {
-					const unitOfWork = unitOfWorkFactory({});
-					image = await imageService.createImage(testingContext.world._id, false, testFile.filename, testFile.createReadStream(), unitOfWork);
-					await unitOfWork.commit();
+					const session = await dbEngine.createDatabaseSession();
+					const databaseContext = databaseContextFactory({session});
+					image = await imageService.createImage(testingContext.world._id, false, testFile.filename, testFile.createReadStream(), databaseContext);
+					await session.commit();
 				});
 
 				test("update place", async () => {

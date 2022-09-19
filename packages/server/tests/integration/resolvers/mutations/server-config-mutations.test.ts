@@ -1,26 +1,28 @@
 import { container } from "../../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import {Factory} from "../../../../src/types";
-import { FilterCondition } from "../../../../src/dal/filter-condition";
+import {DbEngine, Factory} from "../../../../src/types";
 import {DefaultTestingContext} from "../../default-testing-context";
 import {GENERATE_REGISTER_CODES, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
-import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import {DatabaseContext} from "../../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
 describe("server mutations", () => {
-	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
+	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 
 	describe("with locked server", () => {
 		const resetConfig = async () => {
-			const unitOfWork = unitOfWorkFactory({});
-			const serverConfig = await unitOfWork.serverConfigRepository.findOne();
+			const session = await dbEngine.createDatabaseSession();
+			const databaseContext = databaseContextFactory({session});
+			const serverConfig = await databaseContext.serverConfigRepository.findOne();
 			serverConfig.unlockCode = "asdf";
 			serverConfig.adminUsers = [];
-			await unitOfWork.serverConfigRepository.update(serverConfig);
+			await databaseContext.serverConfigRepository.update(serverConfig);
+			await session.commit();
 		};
 		beforeEach(async () => {
 			await resetConfig();
@@ -81,11 +83,12 @@ describe("server mutations", () => {
 
 	describe("with authenticated user", () => {
 		beforeEach(async () => {
-			const unitOfWork = unitOfWorkFactory({});
+			const session = await dbEngine.createDatabaseSession();
+			const databaseContext = databaseContextFactory({session});
 			testingContext.mockSessionContextFactory.setCurrentUser(
-				await unitOfWork.userRepository.findOneByUsername("tester")
+				await databaseContext.userRepository.findOneByUsername("tester")
 			);
-			await unitOfWork.commit();
+			await session.commit();
 		});
 
 		test("generate register codes", async () => {

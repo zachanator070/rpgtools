@@ -38,6 +38,8 @@ import {WikiFolderRepository} from "./dal/repository/wiki-folder-repository";
 import {WikiPageRepository} from "./dal/repository/wiki-page-repository";
 import {WorldRepository} from "./dal/repository/world-repository";
 import {ArticleRepository} from "./dal/repository/article-repository";
+import {DatabaseContext} from "./dal/database-context";
+import {DatabaseSession} from "./dal/database-session";
 
 export interface DomainEntity {
 	_id: string;
@@ -360,7 +362,7 @@ export interface CookieManager {
 
 export interface SessionContext {
 	cookieManager: CookieManager;
-	unitOfWork: UnitOfWork;
+	databaseContext: DatabaseContext;
 	securityContext: SecurityContext;
 }
 
@@ -373,10 +375,10 @@ export interface Seeder {
 }
 
 export interface EntityAuthorizationPolicy<Type extends DomainEntity> {
-	canRead: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
-	canWrite: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
-	canAdmin: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
-	canCreate: (context: SecurityContext, unitOfWork: UnitOfWork) => Promise<boolean>;
+	canRead: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
+	canWrite: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
+	canAdmin: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
+	canCreate: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
 }
 
 export interface RepositoryAccessor {
@@ -397,12 +399,6 @@ export interface RepositoryAccessor {
 	wikiPageRepository: WikiPageRepository;
 	worldRepository: WorldRepository;
 	fileRepository: FileRepository;
-}
-
-export interface UnitOfWork extends RepositoryAccessor {
-
-	commit: () => Promise<void>;
-	rollback: () => Promise<void>;
 }
 
 export type Factory<T> = (args: any) => T;
@@ -437,10 +433,10 @@ export interface EventPublisher {
 }
 
 export interface DataLoader<T extends DomainEntity> {
-	getDocument: (id: string, unitOfWork:UnitOfWork) => Promise<T>;
-	getDocuments: (ids: string[], unitOfWork:UnitOfWork) => Promise<T[]>;
-	getPermissionControlledDocument: (context: SecurityContext, id: string, unitOfWork:UnitOfWork) => Promise<T>;
-	getPermissionControlledDocuments: (context: SecurityContext, ids: string[], unitOfWork:UnitOfWork) => Promise<T[]>;
+	getDocument: (id: string, databaseContext: DatabaseContext) => Promise<T>;
+	getDocuments: (ids: string[], databaseContext: DatabaseContext) => Promise<T[]>;
+	getPermissionControlledDocument: (context: SecurityContext, id: string, databaseContext: DatabaseContext) => Promise<T>;
+	getPermissionControlledDocuments: (context: SecurityContext, ids: string[], databaseContext: DatabaseContext) => Promise<T[]>;
 }
 
 export interface ApiServer {
@@ -458,6 +454,8 @@ export interface DbEngine {
 	disconnect: () => Promise<void>;
 	setDbHost: (host: string) => void;
 	setDbName: (name: string) => void;
+
+	createDatabaseSession(): Promise<DatabaseSession>;
 }
 
 export interface PermissionControlledDocument {

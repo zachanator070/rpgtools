@@ -1,13 +1,13 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { Image } from "../../domain-entities/image";
 import {injectable } from "inversify";
-import {UnitOfWork} from "../../types";
 import {Repository} from "../repository/repository";
+import {DatabaseContext} from "../database-context";
 
 @injectable()
 export class ImageDataLoader extends GraphqlDataloader<Image> {
-	getRepository(unitOfWork: UnitOfWork): Repository<Image> {
-		return unitOfWork.imageRepository;
+	getRepository(databaseContext: DatabaseContext): Repository<Image> {
+		return databaseContext.imageRepository;
 	}
 
 }

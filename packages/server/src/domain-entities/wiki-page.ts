@@ -3,8 +3,7 @@ import {
 	DomainEntity,
 	Factory,
 	PermissionControlledEntity,
-	RepositoryAccessor,
-	UnitOfWork
+	RepositoryAccessor
 } from "../types";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { inject, injectable } from "inversify";

@@ -1,4 +1,4 @@
-import { FileFactory} from "../../../types";
+import {FileFactory} from "../../../types";
 import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { File } from "../../../domain-entities/file";
@@ -10,8 +10,8 @@ import { PaginatedResult } from "../../paginated-result";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
-import {ObjectId} from 'bson';
 import {FileRepository} from "../../repository/file-repository";
+import {DatabaseSession} from "../../database-session";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
@@ -21,6 +21,9 @@ export class MongodbFileRepository implements FileRepository {
 
 	@inject(INJECTABLE_TYPES.FilterFactory)
 	filterFactory: FilterFactory;
+
+	setDatabaseSession(session: DatabaseSession) {
+	}
 
 	create = async (entity: File): Promise<void> => {
 		entity._id = await new Promise((resolve, reject) => {

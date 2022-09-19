@@ -1,3 +1,5 @@
+import {DatabaseContext} from "../dal/database-context";
+
 export const INJECTABLE_TYPES = {
 
 	DomainEntity: Symbol.for("DomainEntity"),
@@ -166,9 +168,9 @@ export const INJECTABLE_TYPES = {
 	RoleSeeder: Symbol.for("RoleSeeder"),
 	ServerConfigSeeder: Symbol.for("ServerConfigSeeder"),
 
-	// unit of work
-	DbUnitOfWork: Symbol.for("DbUnitOfWork"),
-	DbUnitOfWorkFactory: Symbol.for("DbUnitOfWorkFactory"),
+	// database context
+	DatabaseContext: Symbol.for("DatabaseContext"),
+	DatabaseContextFactory: Symbol.for("DatabaseContextFactory"),
 
 	// repo mapper
 	EntityMapper: Symbol.for("EntityMapper"),

@@ -3,16 +3,21 @@ import mongoose from "mongoose";
 import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import MongoDbMigrationV40 from "./migrations/mongodb-migration-v40";
-import {DbUnitOfWork} from "../db-unit-of-work";
+import {DatabaseContext} from "../database-context";
+import { DatabaseSession } from "../database-session";
 
 @injectable()
 export default class MongodbDbEngine implements DbEngine {
 
+    async createDatabaseSession(): Promise<DatabaseSession> {
+        return new DatabaseSession( await mongoose.startSession(), null);
+    }
+
     @inject(INJECTABLE_TYPES.MongoDbMigrationV40)
     mongoDbMigrationV40: MongoDbMigrationV40;
 
-    @inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-    dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+    @inject(INJECTABLE_TYPES.DatabaseContextFactory)
+    databaseContextFactory: Factory<DatabaseContext>;
 
     mongodb_host = process.env.MONGODB_HOST || "mongodb";
     mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
@@ -78,6 +83,6 @@ export default class MongodbDbEngine implements DbEngine {
     }
 
     async migrate() {
-        await this.mongoDbMigrationV40.migrate(this, this.dbUnitOfWorkFactory({}));
+        await this.mongoDbMigrationV40.migrate(this, this.databaseContextFactory({}));
     }
 }

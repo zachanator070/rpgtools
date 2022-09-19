@@ -1,7 +1,6 @@
 import {
 	EventPublisher,
 	GameFactory,
-	UnitOfWork,
 } from "../types";
 import {
 	ANON_USERNAME,
@@ -43,6 +42,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { FilterCondition } from "../dal/filter-condition";
 import {AuthorizationService} from "./authorization-service";
+import {DatabaseContext} from "../dal/database-context";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -64,9 +64,9 @@ export class GameService {
 		worldId: string,
 		password: string,
 		characterName: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const world = await unitOfWork.worldRepository.findOneById(worldId);
+		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} does not exist`);
 		}
@@ -97,7 +97,7 @@ export class GameService {
 			}
 		);
 
-		await unitOfWork.gameRepository.create(game);
+		await databaseContext.gameRepository.create(game);
 		for (let permission of GAME_PERMISSIONS) {
 			game.acl.push({
 				permission,
@@ -105,7 +105,7 @@ export class GameService {
 				principalType: USER
 			})
 		}
-		await unitOfWork.userRepository.update(context.user);
+		await databaseContext.userRepository.update(context.user);
 		return game;
 	};
 
@@ -114,9 +114,9 @@ export class GameService {
 		gameId: string,
 		password: string,
 		characterName: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -128,7 +128,7 @@ export class GameService {
 			principal: context.user._id,
 			principalType: USER
 		});
-		await unitOfWork.userRepository.update(context.user);
+		await databaseContext.userRepository.update(context.user);
 		game.characters.push(
 			new Character(
 				null,
@@ -138,12 +138,12 @@ export class GameService {
 				[]
 			)
 		);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });
 		return game;
 	};
-	leaveGame = async (context: SecurityContext, gameId: string, unitOfWork: UnitOfWork) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+	leaveGame = async (context: SecurityContext, gameId: string, databaseContext: DatabaseContext) => {
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -152,10 +152,10 @@ export class GameService {
 		}
 
 		game.characters = game.characters.filter((character) => character.player !== context.user._id);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 
 		if (game.host === context.user._id) {
-			await unitOfWork.gameRepository.delete(game);
+			await databaseContext.gameRepository.delete(game);
 		} else {
 			game.acl = game.acl.filter(entry => entry.principalType !== USER || entry.principal === context.user._id);
 		}
@@ -163,8 +163,8 @@ export class GameService {
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });
 		return true;
 	};
-	gameChat = async (context: SecurityContext, gameId: string, message: string, unitOfWork: UnitOfWork) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+	gameChat = async (context: SecurityContext, gameId: string, message: string, databaseContext: DatabaseContext) => {
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -181,7 +181,7 @@ export class GameService {
 			messages.push(userMessage);
 		}
 		game.messages = game.messages.concat(messages);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 
 		for (let message of messages) {
 			await this.eventPublisher.publish(GAME_CHAT_EVENT, { gameId, gameChat: message });
@@ -194,30 +194,30 @@ export class GameService {
 		placeId: string,
 		clearPaint: boolean,
 		setFog: boolean,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
-		const place = await unitOfWork.placeRepository.findOneById(placeId);
+		const place = await databaseContext.placeRepository.findOneById(placeId);
 		if (!place) {
 			throw new Error("Place does not exist");
 		}
 		if (!place.mapImage) {
 			throw new Error("Cannot use a location in game that does not have a map image");
 		}
-		const newMap = await unitOfWork.imageRepository.findOneById(place.mapImage);
+		const newMap = await databaseContext.imageRepository.findOneById(place.mapImage);
 		if (!place.pixelsPerFoot) {
 			throw new Error("Place needs to have pixels per foot defined");
 		}
 
 		if (clearPaint && game.map && game.strokes.length > 0) {
-			const oldPlace = await unitOfWork.placeRepository.findOneById(game.map);
-			const oldMap = await unitOfWork.imageRepository.findOneById(oldPlace.mapImage);
+			const oldPlace = await databaseContext.placeRepository.findOneById(game.map);
+			const oldMap = await databaseContext.imageRepository.findOneById(oldPlace.mapImage);
 			const oldMapSize = Math.max(oldMap.height, oldMap.width);
 
 			game.strokes = [
@@ -255,7 +255,7 @@ export class GameService {
 
 		game.map = place._id;
 
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MAP_CHANGE, { gameMapChange: game });
 		return game;
 	};
@@ -268,9 +268,9 @@ export class GameService {
 		color: string,
 		fill: boolean,
 		strokeId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -279,7 +279,7 @@ export class GameService {
 		}
 		const newStroke = new Stroke(strokeId, path, color, size, fill, type);
 		game.strokes.push(newStroke);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_STROKE_EVENT, {
 			gameId,
 			gameStrokeAdded: newStroke,
@@ -293,9 +293,9 @@ export class GameService {
 		type: string,
 		size: number,
 		strokeId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -304,7 +304,7 @@ export class GameService {
 		}
 		const newStroke = new FogStroke(strokeId, path, size, type);
 		game.fog.push(newStroke);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_FOG_STROKE_ADDED, {
 			gameId,
 			gameFogStrokeAdded: newStroke,
@@ -317,16 +317,16 @@ export class GameService {
 		modelId: string,
 		wikiId: string,
 		color: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
-		const model = await unitOfWork.modelRepository.findOneById(modelId);
+		const model = await databaseContext.modelRepository.findOneById(modelId);
 		if (!model) {
 			throw new Error("Model does not exist");
 		}
@@ -336,7 +336,7 @@ export class GameService {
 		}
 		const positionedModel = new InGameModel(uuidv4(), modelId, 0, 0, 0, 1, color, wikiId);
 		game.models.push(positionedModel);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MODEL_ADDED, {
 			gameId,
 			gameModelAdded: positionedModel,
@@ -351,9 +351,9 @@ export class GameService {
 		z: number,
 		lookAtX: number,
 		lookAtZ: number,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -373,7 +373,7 @@ export class GameService {
 		positionedModel.z = z;
 		positionedModel.lookAtX = lookAtX;
 		positionedModel.lookAtZ = lookAtZ;
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 
 		await this.eventPublisher.publish(GAME_MODEL_POSITIONED, {
 			gameId,
@@ -387,9 +387,9 @@ export class GameService {
 		gameId: string,
 		positionedModelId: string,
 		color: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -406,7 +406,7 @@ export class GameService {
 			throw new Error(`Model with id ${positionedModelId} does not exist`);
 		}
 		positionedModel.color = color;
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 
 		await this.eventPublisher.publish(GAME_MODEL_POSITIONED, {
 			gameId,
@@ -419,9 +419,9 @@ export class GameService {
 		context: SecurityContext,
 		gameId: string,
 		positionedModelId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -438,7 +438,7 @@ export class GameService {
 			throw new Error(`Model with id ${positionedModelId} does not exist`);
 		}
 		game.models = game.models.filter((model) => model._id !== positionedModelId);
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MODEL_DELETED, {
 			gameId,
 			gameModelDeleted: positionedModel,
@@ -450,9 +450,9 @@ export class GameService {
 		gameId: string,
 		positionedModelId: string,
 		wikiId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -468,20 +468,20 @@ export class GameService {
 		if (!positionedModel) {
 			throw new Error(`Model with id ${positionedModelId} does not exist`);
 		}
-		const wiki = await unitOfWork.wikiPageRepository.findOneById(wikiId);
+		const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (!wiki) {
 			throw new Error(`Cannot find wiki with ID ${wikiId}`);
 		}
 		positionedModel.wiki = wiki._id;
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MODEL_POSITIONED, {
 			gameId,
 			gameModelPositioned: positionedModel,
 		});
 		return positionedModel;
 	};
-	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[], unitOfWork: UnitOfWork) => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[], databaseContext: DatabaseContext) => {
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -498,7 +498,7 @@ export class GameService {
 			}
 		}
 		game.characters = newOrder;
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(ROSTER_CHANGE_EVENT, { gameRosterChange: game });
 		return game;
 	};
@@ -506,9 +506,9 @@ export class GameService {
 		context: SecurityContext,
 		gameId: string,
 		attributes: CharacterAttribute[],
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<Game> => {
-		const game = await unitOfWork.gameRepository.findOneById(gameId);
+		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
 			throw new Error("Game does not exist");
 		}
@@ -524,23 +524,23 @@ export class GameService {
 		}
 		userCharacter.attributes = attributes;
 
-		await unitOfWork.gameRepository.update(game);
+		await databaseContext.gameRepository.update(game);
 		return game;
 	};
 
-	getGame = async (context: SecurityContext, gameId: string, unitOfWork: UnitOfWork): Promise<Game> => {
-		const foundGame = await unitOfWork.gameRepository.findOneById(gameId);
+	getGame = async (context: SecurityContext, gameId: string, databaseContext: DatabaseContext): Promise<Game> => {
+		const foundGame = await databaseContext.gameRepository.findOneById(gameId);
 		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
 			throw new Error("You do not have permission to read this game");
 		}
 		return foundGame;
 	};
 
-	getMyGames = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<Game[]> => {
+	getMyGames = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<Game[]> => {
 		if (context.user.username === ANON_USERNAME) {
 			return [];
 		}
-		return unitOfWork.gameRepository.findByPlayer(context.user._id);
+		return databaseContext.gameRepository.findByPlayer(context.user._id);
 	};
 
 	private genColor = () => '#' + (Math.random()*0xFFFFFF<<0).toString(16);

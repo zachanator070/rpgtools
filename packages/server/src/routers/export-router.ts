@@ -29,11 +29,11 @@ ExportRouter.get("/:model/:id", async (req, res) => {
 	try {
 		let filename = null;
 		if (ALL_WIKI_TYPES.includes(modelName)) {
-			filename = await service.exportWikiPage(sessionContext.securityContext, docId, modelName, archive, sessionContext.unitOfWork);
+			filename = await service.exportWikiPage(sessionContext.securityContext, docId, modelName, archive, sessionContext.databaseContext);
 		} else if (modelName === MODEL) {
-			filename = await service.exportModel(sessionContext.securityContext, docId, archive, sessionContext.unitOfWork);
+			filename = await service.exportModel(sessionContext.securityContext, docId, archive, sessionContext.databaseContext);
 		} else if (modelName === WIKI_FOLDER) {
-			filename = await service.exportWikiFolder(sessionContext.securityContext, docId, archive, sessionContext.unitOfWork);
+			filename = await service.exportWikiFolder(sessionContext.securityContext, docId, archive, sessionContext.databaseContext);
 		} else {
 			return res.status(400).send(`Export type ${modelName} not supported`);
 		}

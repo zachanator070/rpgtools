@@ -113,7 +113,6 @@ import { WorldDataLoader } from "../dal/dataloaders/world-data-loader";
 import { UserDataLoader } from "../dal/dataloaders/user-data-loader";
 import { RoleSeeder } from "../seeders/role-seeder";
 import { ServerConfigSeeder } from "../seeders/server-config-seeder";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
 import { SecurityContextFactory } from "../security/security-context-factory";
 import { ArticleAuthorizationPolicy } from "../security/policy/article-authorization-policy";
 import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy";
@@ -162,6 +161,8 @@ import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 import {WikiPageRepository} from "../dal/repository/wiki-page-repository";
 import {WorldRepository} from "../dal/repository/world-repository";
 import {ArticleRepository} from "../dal/repository/article-repository";
+import {DatabaseContext} from "../dal/database-context";
+import {DatabaseSession} from "../dal/database-session";
 
 const container = new Container();
 
@@ -949,11 +950,30 @@ container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldData
 container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);
 container.bind<ServerConfigSeeder>(INJECTABLE_TYPES.ServerConfigSeeder).to(ServerConfigSeeder);
 
-// unit of work
-container.bind<DbUnitOfWork>(INJECTABLE_TYPES.DbUnitOfWork).to(DbUnitOfWork);
-container
-	.bind<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	.toFactory((context) => () => context.container.get<DbUnitOfWork>(INJECTABLE_TYPES.DbUnitOfWork));
+// database context
+container.bind<DatabaseContext>(INJECTABLE_TYPES.DatabaseContext).to(DatabaseContext);
+container.bind<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory).toFactory((context) => ({session}: {session: DatabaseSession}) => {
+	const databaseContext = context.container.get<DatabaseContext>(INJECTABLE_TYPES.DatabaseContext);
+	databaseContext.articleRepository.setDatabaseSession(session);
+	databaseContext.chunkRepository.setDatabaseSession(session);
+	databaseContext.fileRepository.setDatabaseSession(session);
+	databaseContext.gameRepository.setDatabaseSession(session);
+	databaseContext.imageRepository.setDatabaseSession(session);
+	databaseContext.itemRepository.setDatabaseSession(session);
+	databaseContext.modelRepository.setDatabaseSession(session);
+	databaseContext.monsterRepository.setDatabaseSession(session);
+	databaseContext.personRepository.setDatabaseSession(session);
+	databaseContext.pinRepository.setDatabaseSession(session);
+	databaseContext.placeRepository.setDatabaseSession(session);
+	databaseContext.roleRepository.setDatabaseSession(session);
+	databaseContext.serverConfigRepository.setDatabaseSession(session);
+	databaseContext.userRepository.setDatabaseSession(session);
+	databaseContext.wikiFolderRepository.setDatabaseSession(session);
+	databaseContext.wikiPageRepository.setDatabaseSession(session);
+	databaseContext.worldRepository.setDatabaseSession(session);
+	databaseContext.databaseSession = session;
+	return databaseContext;
+})
 
 // mappers
 container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);

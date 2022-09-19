@@ -2,15 +2,15 @@ import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import {
     DomainEntity,
-    PermissionControlledEntity, UnitOfWork,
+    PermissionControlledEntity,
 } from "../../../types";
 import {MongoClient} from 'mongodb';
 import MongodbDbEngine from "../mongodb-db-engine";
 import EntityMapper from "../../../domain-entities/entity-mapper";
-import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {Repository} from "../../repository/repository";
 import {ServerConfigRepository} from "../../repository/server-config-repository";
+import {DatabaseContext} from "../../database-context";
 
 @injectable()
 export default class MongoDbMigrationV40 {
@@ -20,7 +20,7 @@ export default class MongoDbMigrationV40 {
     @inject(INJECTABLE_TYPES.EntityMapper)
     entityMapper: EntityMapper;
 
-    async migrate(dbEngine: MongodbDbEngine, unitOfWork: UnitOfWork) {
+    async migrate(dbEngine: MongodbDbEngine, databaseContext: DatabaseContext) {
         let serverConfig = await this.serverConfigRepository.findOne();
         if (serverConfig && serverConfig.version < '4.0') {
             console.log('Migrating mongodb schema to version 4.0');
@@ -29,7 +29,7 @@ export default class MongoDbMigrationV40 {
                 await client.connect();
                 const permissionAssignments = await client.db(dbEngine.mongodb_db_name).collection('permissionassignments').find({}).toArray();
                 for (let permissionAssignment of permissionAssignments) {
-                    const repo: Repository<DomainEntity> = this.entityMapper.map(permissionAssignment.subjectType).getRepository(unitOfWork);
+                    const repo: Repository<DomainEntity> = this.entityMapper.map(permissionAssignment.subjectType).getRepository(databaseContext);
                     const entity: PermissionControlledEntity = await repo.findOneById(permissionAssignment.subject.toString()) as PermissionControlledEntity;
                     const usersWithPermission = await client.db(dbEngine.mongodb_db_name).collection('users').find({permissions: permissionAssignment._id}).toArray();
                     for (let user of usersWithPermission) {
@@ -55,7 +55,7 @@ export default class MongoDbMigrationV40 {
             // refresh config after permissions have changed above
             serverConfig = await this.serverConfigRepository.findOne();
             serverConfig.version = '4.0';
-            await unitOfWork.serverConfigRepository.update(serverConfig);
+            await databaseContext.serverConfigRepository.update(serverConfig);
         }
     }
 }

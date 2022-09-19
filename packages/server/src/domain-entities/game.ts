@@ -4,7 +4,6 @@ import {
 	Factory,
 	PermissionControlledEntity,
 	RepositoryAccessor,
-	UnitOfWork
 } from "../types";
 import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
 import { GAME } from "@rpgtools/common/src/type-constants";

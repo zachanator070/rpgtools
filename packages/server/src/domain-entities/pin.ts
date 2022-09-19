@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, RepositoryAccessor} from "../types";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";

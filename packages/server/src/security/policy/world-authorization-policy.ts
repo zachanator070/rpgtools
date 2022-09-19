@@ -1,4 +1,4 @@
-import {EntityAuthorizationPolicy, UnitOfWork} from "../../types";
+import {EntityAuthorizationPolicy} from "../../types";
 import { World } from "../../domain-entities/world";
 import { SecurityContext } from "../security-context";
 import { ServerConfig } from "../../domain-entities/server-config";
@@ -11,27 +11,28 @@ import {
 	WORLD_RW,
 } from "@rpgtools/common/src/permission-constants";
 import { injectable } from "inversify";
+import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
 export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy<World> {
 
 	entity: World;
 
-	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne();
+	canAdmin = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const serverConfig: ServerConfig = await databaseContext.serverConfigRepository.findOne();
 		return (
 			context.hasPermission(WORLD_ADMIN, this.entity) ||
 			context.hasPermission(WORLD_ADMIN_ALL, serverConfig)
 		);
 	};
 
-	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne();
+	canCreate = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const serverConfig: ServerConfig = await databaseContext.serverConfigRepository.findOne();
 		return context.hasPermission(WORLD_CREATE, serverConfig);
 	};
 
-	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const serverConfig: ServerConfig = await unitOfWork.serverConfigRepository.findOne();
+	canRead = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const serverConfig: ServerConfig = await databaseContext.serverConfigRepository.findOne();
 		return (
 			context.hasPermission(WORLD_READ, this.entity) ||
 			context.hasPermission(WORLD_READ_ALL, serverConfig) ||

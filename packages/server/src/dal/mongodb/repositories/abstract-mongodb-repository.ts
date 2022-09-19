@@ -1,4 +1,4 @@
-import { DomainEntity, DatabaseEntity} from "../../../types";
+import {DomainEntity, DatabaseEntity} from "../../../types";
 import {
 	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
@@ -9,6 +9,7 @@ import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
 import {Repository} from "../../repository/repository";
+import {DatabaseSession} from "../../database-session";
 
 @injectable()
 export abstract class AbstractMongodbRepository<
@@ -22,6 +23,9 @@ export abstract class AbstractMongodbRepository<
 
 	@inject(INJECTABLE_TYPES.FilterFactory)
 	filterFactory: FilterFactory;
+
+	setDatabaseSession(session: DatabaseSession) {
+	}
 
 	create = async (entity: EntityType): Promise<void> => {
 		delete entity._id;

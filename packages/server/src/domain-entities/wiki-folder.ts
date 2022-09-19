@@ -3,8 +3,7 @@ import {
 	DomainEntity,
 	Factory,
 	PermissionControlledEntity,
-	RepositoryAccessor,
-	UnitOfWork
+	RepositoryAccessor
 } from "../types";
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";

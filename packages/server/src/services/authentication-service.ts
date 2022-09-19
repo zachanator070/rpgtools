@@ -1,17 +1,16 @@
 import {
 	AuthenticationTokens,
 	CookieManager,
-	UnitOfWork,
 	UserFactory,
 } from "../types";
 import { User } from "../domain-entities/user";
 import bcrypt from "bcrypt";
-import { FilterCondition } from "../dal/filter-condition";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {ServerProperties} from "../server/server-properties";
+import {DatabaseContext} from "../dal/database-context";
 
 export interface CookieConstants {
 	string: string;
@@ -35,7 +34,7 @@ export class AuthenticationService {
 	createTokens = async (
 		user: User,
 		version: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<AuthenticationTokens> => {
 		const accessToken = jwt.sign({ userId: user._id }, this.serverProperties.accessTokenSecret, {
 			expiresIn: ACCESS_TOKEN_MAX_AGE.string,
@@ -53,7 +52,7 @@ export class AuthenticationService {
 		);
 		if (version !== user.tokenVersion) {
 			user.tokenVersion = version;
-			await unitOfWork.userRepository.update(user);
+			await databaseContext.userRepository.update(user);
 		}
 		return { accessToken, refreshToken };
 	};
@@ -85,20 +84,20 @@ export class AuthenticationService {
 		}
 	};
 
-	getUserFromAccessToken = async (accessToken: string, unitOfWork: UnitOfWork): Promise<User> => {
+	getUserFromAccessToken = async (accessToken: string, databaseContext: DatabaseContext): Promise<User> => {
 		if(accessToken){
 			let data: any = await this.decodeAccessToken(accessToken);
 			if(data) {
-				return await unitOfWork.userRepository.findOneById(data.userId);
+				return await databaseContext.userRepository.findOneById(data.userId);
 			}
 		}
 	};
 
-	getUserFromRefreshToken = async (refreshToken: string, unitOfWork: UnitOfWork): Promise<User> => {
+	getUserFromRefreshToken = async (refreshToken: string, databaseContext: DatabaseContext): Promise<User> => {
 		if(refreshToken){
 			let data: any = await this.decodeRefreshToken(refreshToken);
 			if(data) {
-				return await unitOfWork.userRepository.findOneById(data.userId);
+				return await databaseContext.userRepository.findOneById(data.userId);
 			}
 		}
 	};
@@ -107,23 +106,23 @@ export class AuthenticationService {
 		username: string,
 		password: string,
 		cookieManager: CookieManager,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<User> => {
-		const user = await unitOfWork.userRepository.findOneByUsername(username);
+		const user = await databaseContext.userRepository.findOneByUsername(username);
 		if (!user || !bcrypt.compareSync(password, user.password)) {
 			throw Error("Login failure: username or password are incorrect");
 		}
-		let tokens = await this.createTokens(user, null, unitOfWork);
+		let tokens = await this.createTokens(user, null, databaseContext);
 		cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
 		cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
 		return user;
 	};
 
-	logout = async (currentUser: User, cookieManager: CookieManager, unitOfWork: UnitOfWork): Promise<string> => {
+	logout = async (currentUser: User, cookieManager: CookieManager, databaseContext: DatabaseContext): Promise<string> => {
 		cookieManager.clearCookie(ACCESS_TOKEN);
 		cookieManager.clearCookie(REFRESH_TOKEN);
 		currentUser.tokenVersion = uuidv4();
-		await unitOfWork.userRepository.update(currentUser);
+		await databaseContext.userRepository.update(currentUser);
 		return "success";
 	};
 
@@ -132,15 +131,15 @@ export class AuthenticationService {
 		email: string,
 		username: string,
 		password: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<User> => {
-		const config = await unitOfWork.serverConfigRepository.findOne();
+		const config = await databaseContext.serverConfigRepository.findOne();
 		if (!config.registerCodes.includes(registerCode)) {
 			throw new Error("Register code not valid");
 		}
-		const newUser = await this.registerUser(email, username, password, unitOfWork)
+		const newUser = await this.registerUser(email, username, password, databaseContext)
 		config.registerCodes = config.registerCodes.filter((code) => code !== registerCode);
-		await unitOfWork.serverConfigRepository.update(config);
+		await databaseContext.serverConfigRepository.update(config);
 		return newUser;
 	};
 
@@ -148,19 +147,19 @@ export class AuthenticationService {
 		email: string,
 		username: string,
 		password: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<User> => {
 		password = bcrypt.hashSync(password, this.SALT_ROUNDS);
-		let existingUsers = await unitOfWork.userRepository.findByEmail(email);
+		let existingUsers = await databaseContext.userRepository.findByEmail(email);
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Email already used");
 		}
-		existingUsers = await unitOfWork.userRepository.findByUsername(username);
+		existingUsers = await databaseContext.userRepository.findByUsername(username);
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
 		const newUser = this.userFactory({_id: "", email, username, password, tokenVersion: null, currentWorld: null, roles: []});
-		await unitOfWork.userRepository.create(newUser);
+		await databaseContext.userRepository.create(newUser);
 		return newUser;
 	};
 }

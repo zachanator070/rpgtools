@@ -1,4 +1,4 @@
-import {DomainEntity, Factory, RepositoryAccessor, UnitOfWork} from "../types";
+import {DomainEntity, Factory, RepositoryAccessor} from "../types";
 import { Readable } from "stream";
 import { FILE } from "@rpgtools/common/src/type-constants";
 import { FileAuthorizationPolicy } from "../security/policy/file-authorization-policy";

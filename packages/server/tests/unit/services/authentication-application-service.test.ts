@@ -1,22 +1,26 @@
 import {container} from "../../../src/di/inversify";
-import {UnitOfWork, UserFactory} from "../../../src/types";
+import {DbEngine, UserFactory} from "../../../src/types";
 import {INJECTABLE_TYPES} from "../../../src/di/injectable-types";
 import {InMemoryUserRepository} from "../../../src/dal/in-memory/repositories/in-memory-user-repository";
 import {Factory} from "../../../src/types";
 import {AuthenticationService} from "../../../src/services/authentication-service";
 import {UserRepository} from "../../../src/dal/repository/user-repository";
+import {DatabaseContext} from "../../../src/dal/database-context";
 
 describe("AuthenticationApplicationService test", () => {
     const service = container.get<AuthenticationService>(INJECTABLE_TYPES.AuthenticationService);
     const userFactory = container.get<UserFactory>(INJECTABLE_TYPES.UserFactory);
     container.rebind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(InMemoryUserRepository);
-    const unitOfWorkFactory = container.get<Factory<UnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
-    const unitOfWork = unitOfWorkFactory({});
+    const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
+    const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     test("decode token", async () => {
         const user = userFactory({_id: null, email: "user email", username: "username", password: "password", tokenVersion: "1234", currentWorld: null, roles: []});
-        await unitOfWork.userRepository.create(user);
-        const tokens = await service.createTokens(user, "1234", unitOfWork);
-        const decodedUser = await service.getUserFromAccessToken(tokens.accessToken, unitOfWork);
+        const session = await dbEngine.createDatabaseSession();
+        const databaseContext = databaseContextFactory({session});
+        await databaseContext.userRepository.create(user);
+        const tokens = await service.createTokens(user, "1234", databaseContext);
+        const decodedUser = await service.getUserFromAccessToken(tokens.accessToken, databaseContext);
+        await session.commit();
         expect(decodedUser).not.toBeNull();
         expect(decodedUser._id).toBe(user._id);
     });
