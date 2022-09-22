@@ -19,8 +19,8 @@ export default class MongodbDbEngine implements DbEngine {
     @inject(INJECTABLE_TYPES.DatabaseContextFactory)
     databaseContextFactory: Factory<DatabaseContext>;
 
-    mongodb_host = process.env.MONGODB_HOST || "mongodb";
-    mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
+    host = process.env.MONGODB_HOST || "mongodb";
+    dbName = process.env.MONGODB_DB_NAME || "rpgtools";
 
     MAX_ATTEMPTS = 10;
 
@@ -30,7 +30,7 @@ export default class MongodbDbEngine implements DbEngine {
     }
 
     getConnectionString(): string {
-        return `mongodb://${this.mongodb_host}/${this.mongodb_db_name}`;
+        return `mongodb://${this.host}:27017/${this.dbName}`;
     }
 
     private async attemptConnection(attempt: number = 0) {
@@ -44,7 +44,7 @@ export default class MongodbDbEngine implements DbEngine {
                     })
                     .then(async () => {
                         console.log(
-                            `Connected to mongodb at mongodb://${this.mongodb_host}/${this.mongodb_db_name}`
+                            `Connected to mongodb at ${this.getConnectionString()}`
                         );
                         resolve();
                     });
@@ -75,11 +75,11 @@ export default class MongodbDbEngine implements DbEngine {
     }
 
     setDbHost(host: string): void {
-        this.mongodb_host = host;
+        this.host = host;
     }
 
     setDbName(name: string): void {
-        this.mongodb_db_name = name;
+        this.dbName = name;
     }
 
     async migrate() {

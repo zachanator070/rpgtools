@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import {PERMISSION_ASSIGNMENT, ROLE, USER, WORLD} from "@rpgtools/common/src/type-constants";
+import {ROLE, USER, WORLD} from "@rpgtools/common/src/type-constants";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {MongoDBDocument} from "../../../types";
 

@@ -27,7 +27,7 @@ const server = container.get<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer);
 const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 
 beforeAll(async () => {
-	dbEngine.setDbHost("localhost:27017");
+	dbEngine.setDbHost("localhost");
 	dbEngine.setDbName(process.env.TEST_SUITE);
 	await dbEngine.connect();
 	await server.seedDB();

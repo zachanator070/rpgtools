@@ -27,11 +27,11 @@ export default class MongoDbMigrationV40 {
             const client = new MongoClient(dbEngine.getConnectionString());
             try {
                 await client.connect();
-                const permissionAssignments = await client.db(dbEngine.mongodb_db_name).collection('permissionassignments').find({}).toArray();
+                const permissionAssignments = await client.db(dbEngine.dbName).collection('permissionassignments').find({}).toArray();
                 for (let permissionAssignment of permissionAssignments) {
                     const repo: Repository<DomainEntity> = this.entityMapper.map(permissionAssignment.subjectType).getRepository(databaseContext);
                     const entity: PermissionControlledEntity = await repo.findOneById(permissionAssignment.subject.toString()) as PermissionControlledEntity;
-                    const usersWithPermission = await client.db(dbEngine.mongodb_db_name).collection('users').find({permissions: permissionAssignment._id}).toArray();
+                    const usersWithPermission = await client.db(dbEngine.dbName).collection('users').find({permissions: permissionAssignment._id}).toArray();
                     for (let user of usersWithPermission) {
                         entity.acl.push({
                             permission: permissionAssignment.permission,
@@ -39,7 +39,7 @@ export default class MongoDbMigrationV40 {
                             principalType: USER
                         });
                     }
-                    const rolesWithPermission = await client.db(dbEngine.mongodb_db_name).collection('roles').find({permissions: permissionAssignment._id}).toArray();
+                    const rolesWithPermission = await client.db(dbEngine.dbName).collection('roles').find({permissions: permissionAssignment._id}).toArray();
                     for (let role of rolesWithPermission) {
                         entity.acl.push({
                             permission: permissionAssignment.permission,

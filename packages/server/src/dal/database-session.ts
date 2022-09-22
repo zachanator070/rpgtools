@@ -17,6 +17,8 @@ export class DatabaseSession {
         if (this.mongodbSession) {
             this.mongodbSession.commitTransaction();
             this.mongodbSession.endSession();
+        } else if (this.sqlSession) {
+            await this.sqlSession.commit();
         }
     }
 }
