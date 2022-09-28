@@ -29,7 +29,7 @@ services:
     extends:
       service: server_base
     depends_on:
-      - mongodb
+      - postgres
       - redis
       - ui-builder
 
@@ -87,6 +87,17 @@ services:
       - ./dev/mongodb-scripts:/mongodb-scripts
     ports:
       - "27017:27017"
+    networks:
+      rpgtools:
+
+  postgres:
+    image: "postgres:latest"
+    environment:
+      POSTGRES_USER: "rpgtools"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "rpgtools"
+    ports:
+      - "5432:5432"
     networks:
       rpgtools:
 

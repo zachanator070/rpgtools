@@ -1,32 +1,32 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
+import {defaultAttributes} from "../default-attributes";
+import PathNodeModel from "./path-node-model";
 
 
 export default class StrokeModel extends Model {
-    static connect(connection: Sequelize) {
-        StrokeModel.init({
-            _id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true
-            },
-            color: {
-                type: DataTypes.STRING,
-            },
-            size: {
-                type: DataTypes.FLOAT,
-            },
-            fill: {
-                type: DataTypes.BOOLEAN
-            },
-            type: {
-                type: DataTypes.STRING,
-                validate: {
-                    isIn: {
-                        args: [["circle", "square", "erase", "line"]],
-                        msg: `type is not one of the following values: ${["circle", "square", "erase", "line"]}`
-                    }
+
+    static attributes = Object.assign({}, defaultAttributes, {
+        color: {
+            type: DataTypes.STRING,
+        },
+        size: {
+            type: DataTypes.FLOAT,
+        },
+        fill: {
+            type: DataTypes.BOOLEAN
+        },
+        type: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: {
+                    args: [["circle", "square", "erase", "line"]],
+                    msg: `type is not one of the following values: ${["circle", "square", "erase", "line"]}`
                 }
             }
-        }, {sequelize: connection});
+        }
+    });
+
+    static connect() {
+        StrokeModel.hasMany(PathNodeModel);
     }
 }

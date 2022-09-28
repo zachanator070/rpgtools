@@ -1,9 +1,10 @@
-import {DomainEntity, Factory, RepositoryAccessor} from "../types";
+import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-policy";
 import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import {PinDocument} from "../dal/mongodb/models/pin";
 
 @injectable()
 export class Pin implements DomainEntity {
@@ -14,16 +15,17 @@ export class Pin implements DomainEntity {
 	public page: string | null;
 
 	authorizationPolicy: PinAuthorizationPolicy;
-	factory: Factory<Pin>;
+	factory: EntityFactory<Pin, PinDocument>;
 
 	type: string = PIN;
 
 	constructor(@inject(INJECTABLE_TYPES.PinAuthorizationPolicy)
 					authorizationPolicy: PinAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.PinFactory)
-					factory: Factory<Pin>) {
+					factory: EntityFactory<Pin, PinDocument>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
+		this.factory = factory;
 	}
 
 	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {

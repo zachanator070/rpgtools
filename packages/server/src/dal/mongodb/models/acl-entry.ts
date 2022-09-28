@@ -3,9 +3,10 @@ import {ALL_PERMISSIONS} from "@rpgtools/common/src/permission-constants";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {User} from "../../../domain-entities/user";
 import {Role} from "../../../domain-entities/role";
+import {MongoDBDocument} from "../../../types";
 
 
-export interface AclEntryDocument {
+export interface AclEntryDocument extends MongoDBDocument {
     permission: string;
     principal: mongoose.Schema.Types.ObjectId;
     principalType: "User" | "Role";

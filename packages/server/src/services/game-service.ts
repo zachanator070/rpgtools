@@ -1,6 +1,5 @@
 import {
 	EventPublisher,
-	GameFactory,
 } from "../types";
 import {
 	ANON_USERNAME,
@@ -40,9 +39,9 @@ import { AbstractGameCommand } from "../domain-entities/game-commands/abstract-g
 import { User } from "../domain-entities/user";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { FilterCondition } from "../dal/filter-condition";
 import {AuthorizationService} from "./authorization-service";
 import {DatabaseContext} from "../dal/database-context";
+import GameFactory from "../domain-entities/factory/game-factory";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -73,7 +72,7 @@ export class GameService {
 		if (!context.hasPermission(GAME_HOST, world)) {
 			throw new Error("You do not have permission to host games on this world");
 		}
-		const game = this.gameFactory(
+		const game = this.gameFactory.build(
 			{
 				_id: null,
 				passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS),

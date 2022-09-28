@@ -1,4 +1,3 @@
-import {FileFactory} from "../../../types";
 import { GridFSBucket } from "mongodb";
 import mongoose from "mongoose";
 import { File } from "../../../domain-entities/file";
@@ -12,6 +11,7 @@ import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import FilterFactory from "../FilterFactory";
 import {FileRepository} from "../../repository/file-repository";
 import {DatabaseSession} from "../../database-session";
+import FileFactory from "../../../domain-entities/factory/file-factory";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
@@ -65,7 +65,7 @@ export class MongodbFileRepository implements FileRepository {
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];
 		for (let doc of docs) {
-			results.push(this.fileFactory({_id: doc._id, filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
+			results.push(this.fileFactory.build({_id: doc._id.toString(), filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
 		}
 		return results;
 	};

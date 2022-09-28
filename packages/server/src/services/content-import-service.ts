@@ -4,7 +4,6 @@ import { inject, injectable } from "inversify";
 import {
 	Archive,
 	AbstractArchiveFactory,
-	WikiFolderFactory,
 } from "../types";
 import { Model } from "../domain-entities/model";
 import { WikiFolder } from "../domain-entities/wiki-folder";
@@ -15,6 +14,7 @@ import { Place } from "../domain-entities/place";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {DatabaseContext} from "../dal/database-context";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 
 
 @injectable()
@@ -157,7 +157,7 @@ export class ContentImportService {
 				}
 			}
 			if (!foundChild) {
-				const newFolder = this.wikiFolderFactory(
+				const newFolder = this.wikiFolderFactory.build(
 					{
 						_id: null,
 						name: path[0].name,

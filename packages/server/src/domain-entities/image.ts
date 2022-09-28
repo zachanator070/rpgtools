@@ -1,9 +1,10 @@
-import {DomainEntity, Factory, RepositoryAccessor} from "../types";
+import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import { IMAGE } from "@rpgtools/common/src/type-constants";
 import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import {ImageDocument} from "../dal/mongodb/models/image";
 
 @injectable()
 export class Image implements DomainEntity {
@@ -18,14 +19,14 @@ export class Image implements DomainEntity {
 	public icon: string | null;
 
 	authorizationPolicy: ImageAuthorizationPolicy;
-	factory: Factory<Image>;
+	factory: EntityFactory<Image, ImageDocument>;
 
 	type: string = IMAGE;
 
 	constructor(@inject(INJECTABLE_TYPES.ImageAuthorizationPolicy)
 					authorizationPolicy: ImageAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ImageFactory)
-					factory: Factory<Image>) {
+					factory: EntityFactory<Image, ImageDocument>) {
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;
 	}

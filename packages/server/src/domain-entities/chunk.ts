@@ -1,9 +1,10 @@
-import {ChunkFactory, DomainEntity, RepositoryAccessor, } from "../types";
+import {DomainEntity, EntityFactory, RepositoryAccessor,} from "../types";
 import { CHUNK } from "@rpgtools/common/src/type-constants";
 import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import {ChunkDocument} from "../dal/mongodb/models/chunk";
 
 @injectable()
 export class Chunk implements DomainEntity {
@@ -16,14 +17,14 @@ export class Chunk implements DomainEntity {
 	public image: string;
 
 	authorizationPolicy: ChunkAuthorizationPolicy;
-	factory: ChunkFactory;
+	factory: EntityFactory<Chunk, ChunkDocument>;
 	type: string = CHUNK;
 
 	constructor(
 		@inject(INJECTABLE_TYPES.ChunkAuthorizationPolicy)
 		authorizationPolicy: ChunkAuthorizationPolicy,
 		@inject(INJECTABLE_TYPES.ChunkFactory)
-		factory: ChunkFactory
+		factory: EntityFactory<Chunk, ChunkDocument>
 	) {
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

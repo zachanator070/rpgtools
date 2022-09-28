@@ -1,4 +1,4 @@
-import {DomainEntity, DatabaseEntity} from "../../../types";
+import {DomainEntity, EntityFactory, MongoDBDocument} from "../../../types";
 import {
 	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
@@ -14,7 +14,7 @@ import {DatabaseSession} from "../../database-session";
 @injectable()
 export abstract class AbstractMongodbRepository<
 	EntityType extends DomainEntity,
-	DocumentType extends DatabaseEntity
+	DocumentType extends MongoDBDocument
 > implements Repository<EntityType>
 {
 	PAGE_LIMIT = 10;
@@ -24,6 +24,8 @@ export abstract class AbstractMongodbRepository<
 	@inject(INJECTABLE_TYPES.FilterFactory)
 	filterFactory: FilterFactory;
 
+	entityFactory: EntityFactory<EntityType, DocumentType>;
+
 	setDatabaseSession(session: DatabaseSession) {
 	}
 
@@ -31,7 +33,7 @@ export abstract class AbstractMongodbRepository<
 		delete entity._id;
 		this.hydrateEmbeddedIds(entity);
 		const result = await this.model.create(entity);
-		Object.assign(entity, this.buildEntity(result));
+		Object.assign(entity, this.entityFactory.fromMongodbDocument(result));
 	};
 
 	delete = async (entity: EntityType): Promise<void> => {
@@ -44,7 +46,7 @@ export abstract class AbstractMongodbRepository<
 			const docs: DocumentType[] = await this.model.find(filter).exec();
 			const results: EntityType[] = [];
 			for (let doc of docs) {
-				results.push(this.buildEntity(doc));
+				results.push(this.entityFactory.fromMongodbDocument(doc));
 			}
 			return results;
 		} catch (e) {
@@ -102,7 +104,7 @@ export abstract class AbstractMongodbRepository<
 			.exec();
 		const results: EntityType[] = [];
 		for (let doc of docs) {
-			results.push(this.buildEntity(doc));
+			results.push(this.entityFactory.fromMongodbDocument(doc));
 		}
 		const count = await this.model.find(filter).count();
 		const totalPages = Math.ceil(count / this.PAGE_LIMIT);
@@ -122,8 +124,7 @@ export abstract class AbstractMongodbRepository<
 		);
 	};
 
-	abstract buildEntity(document: DocumentType): EntityType;
-
+	// TODO: Should this be moved elsewhere? Maybe in the factory classes?
 	hydrateEmbeddedIds(entity: EntityType) {}
 
 	findAll(): Promise<EntityType[]> {

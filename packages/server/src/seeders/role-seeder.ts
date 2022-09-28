@@ -1,4 +1,4 @@
-import { RoleFactory, Seeder } from "../types";
+import { Seeder } from "../types";
 import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
 import { WORLD_CREATE } from "@rpgtools/common/src/permission-constants";
 import {ROLE} from "@rpgtools/common/src/type-constants";
@@ -9,6 +9,7 @@ import { FilterCondition } from "../dal/filter-condition";
 import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongodb-server-config-repository";
 import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-repository";
 import { Role } from "../domain-entities/role";
+import RoleFactory from "../domain-entities/factory/role-factory";
 
 @injectable()
 export class RoleSeeder implements Seeder {
@@ -33,7 +34,7 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			allUsersRole = this.roleFactory({_id: null, name: EVERYONE, world: null, acl: []});
+			allUsersRole = this.roleFactory.build({_id: null, name: EVERYONE, world: null, acl: []});
 			await this.roleRepository.create(allUsersRole);
 			console.log(`Created default role "${EVERYONE}"`);
 		}
@@ -45,7 +46,7 @@ export class RoleSeeder implements Seeder {
 			if (!server) {
 				throw new Error("Server needs to exist!");
 			}
-			loggedInRole = this.roleFactory({_id: null, name: LOGGED_IN, world: null, acl: []});
+			loggedInRole = this.roleFactory.build({_id: null, name: LOGGED_IN, world: null, acl: []});
 			await this.roleRepository.create(loggedInRole);
 			server.acl.push({
 				permission: WORLD_CREATE,

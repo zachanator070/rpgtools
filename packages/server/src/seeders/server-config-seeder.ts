@@ -1,8 +1,9 @@
-import { Seeder, ServerConfigFactory } from "../types";
+import { Seeder } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongodb-server-config-repository";
+import ServerConfigFactory from "../domain-entities/factory/server-config-factory";
 
 @injectable()
 export class ServerConfigSeeder implements Seeder {
@@ -19,7 +20,7 @@ export class ServerConfigSeeder implements Seeder {
 			if (process.env.REGISTER_CODES) {
 				registerCodes = process.env.REGISTER_CODES.split(',');
 			}
-			server = this.serverConfigFactory({_id: null, version: "1.0", registerCodes, adminUsers: [], unlockCode, acl: []});
+			server = this.serverConfigFactory.build({_id: null, version: "1.0", registerCodes, adminUsers: [], unlockCode, acl: []});
 			await this.serverConfigRepository.create(server);
 		}
 	};

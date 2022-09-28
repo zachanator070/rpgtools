@@ -1,13 +1,12 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { WikiFolder } from "../../../domain-entities/wiki-folder";
 import { inject, injectable } from "inversify";
-import { WikiFolderFactory} from "../../../types";
 import mongoose from "mongoose";
 import {WikiFolderDocument, WikiFolderModel} from "../models/wiki-folder";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
-import AclFactory from "./acl-factory";
 import {WikiFolderRepository} from "../../repository/wiki-folder-repository";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
+import WikiFolderFactory from "../../../domain-entities/factory/wiki-folder-factory";
 
 @injectable()
 export class MongodbWikiFolderRepository
@@ -18,19 +17,6 @@ export class MongodbWikiFolderRepository
 	wikiFolderFactory: WikiFolderFactory;
 
 	model: mongoose.Model<any> = WikiFolderModel;
-
-	buildEntity(document: WikiFolderDocument): WikiFolder {
-		return this.wikiFolderFactory(
-			{
-				_id: document._id.toString(),
-				name: document.name,
-				world: document.world.toString(),
-				pages: document.pages.map((id) => id.toString()),
-				children: document.children.map((id) => id.toString()),
-				acl: AclFactory(document.acl)
-			}
-		);
-	}
 
 	findOneWithPage(pageId: string): Promise<WikiFolder> {
 		return this.findOne([new FilterCondition("pages", pageId, FILTER_CONDITION_OPERATOR_IN)]);

@@ -1,12 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { ServerConfig } from "../../../domain-entities/server-config";
 import { inject, injectable } from "inversify";
-import { ServerConfigFactory} from "../../../types";
 import mongoose from "mongoose";
 import {ServerConfigDocument, ServerConfigModel} from "../models/server-config";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
-import AclFactory from "./acl-factory";
 import {ServerConfigRepository} from "../../repository/server-config-repository";
+import ServerConfigFactory from "../../../domain-entities/factory/server-config-factory";
 
 @injectable()
 export class MongodbServerConfigRepository
@@ -18,16 +17,4 @@ export class MongodbServerConfigRepository
 
 	model: mongoose.Model<any> = ServerConfigModel;
 
-	buildEntity(document: ServerConfigDocument): ServerConfig {
-		return this.serverConfigFactory(
-			{
-				_id: document._id.toString(),
-				version: document.version,
-				registerCodes: document.registerCodes,
-				adminUsers: document.adminUsers.map((id) => id.toString()),
-				unlockCode: document.unlockCode,
-				acl: AclFactory(document.acl)
-			}
-		);
-	}
 }

@@ -1,8 +1,3 @@
-import {
-	ChunkFactory,
-	FileFactory,
-	ImageFactory,
-} from "../types";
 import { Image } from "../domain-entities/image";
 import { File } from "../domain-entities/file";
 import { Chunk } from "../domain-entities/chunk";
@@ -11,6 +6,9 @@ import { Readable } from "stream";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {DatabaseContext} from "../dal/database-context";
+import ImageFactory from "../domain-entities/factory/image-factory";
+import ChunkFactory from "../domain-entities/factory/chunk-factory";
+import FileFactory from "../domain-entities/factory/file-factory";
 
 @injectable()
 export class ImageService {
@@ -49,7 +47,7 @@ export class ImageService {
 		});
 
 		const image = await Jimp.read(Buffer.concat(rawData));
-		const newImage = this.imageFactory(
+		const newImage = this.imageFactory.build(
 			{
 				_id: null,
 				name: filename,
@@ -106,7 +104,7 @@ export class ImageService {
 		return new Promise((resolve, reject) => {
 			Jimp.read(jimpImage)
 				.then(async (image) => {
-					const iconImage = this.imageFactory(
+					const iconImage = this.imageFactory.build(
 						{
 							_id: null,
 							name: "icon." +newImage.name,
@@ -188,9 +186,9 @@ export class ImageService {
 				const newFilename = `${parentImage._id}.chunk.${x}.${y}.${jimpImage.getExtension()}`;
 				const buffer: Buffer = await copy.getBufferAsync(jimpImage.getMIME());
 				const stream = Readable.from(buffer);
-				const file = this.fileFactory({_id: null, filename: newFilename, readStream: stream, mimeType: jimpImage.getMIME()});
+				const file = this.fileFactory.build({_id: null, filename: newFilename, readStream: stream, mimeType: jimpImage.getMIME()});
 				await databaseContext.fileRepository.create(file);
-				const chunk = this.chunkFactory({_id: null, x, y, width, height, fileId: file._id, image: parentImage._id});
+				const chunk = this.chunkFactory.build({_id: null, x, y, width, height, fileId: file._id, image: parentImage._id});
 				await databaseContext.chunkRepository.create(chunk);
 				resolve(chunk);
 			});

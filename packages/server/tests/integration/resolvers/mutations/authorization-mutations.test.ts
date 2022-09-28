@@ -1,7 +1,7 @@
 import { WIKI_READ, WORLD_READ} from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
 import { container } from "../../../../src/di/inversify";
-import {DbEngine, Factory, RoleFactory} from "../../../../src/types";
+import {DbEngine, Factory} from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import {
 	ADD_USER_ROLE,
@@ -15,6 +15,7 @@ import {DefaultTestingContext} from "../../default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {accessControlList} from "../common-testing-assertions";
 import {DatabaseContext} from "../../../../src/dal/database-context";
+import RoleFactory from "../../../../src/domain-entities/factory/role-factory";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 
@@ -234,7 +235,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("deleteRole", async () => {
-			const role = roleFactory({_id: null, name: "other delete role", world: testingContext.world._id, acl: []});
+			const role = roleFactory.build({_id: null, name: "other delete role", world: testingContext.world._id, acl: []});
 			const session = await dbEngine.createDatabaseSession();
 			const databaseContext = databaseContextFactory({session});
 			await databaseContext.roleRepository.create(role);
@@ -255,7 +256,7 @@ describe("authorization-mutations", () => {
 
 		test("deleteRole permission denied", async () => {
 			testingContext.mockSessionContextFactory.useAnonUser();
-			const role = roleFactory({_id: null, name: "other role", world: testingContext.world._id, acl: []});
+			const role = roleFactory.build({_id: null, name: "other role", world: testingContext.world._id, acl: []});
 			const session = await dbEngine.createDatabaseSession();
 			const databaseContext = databaseContextFactory({session});
 			await databaseContext.roleRepository.create(role);

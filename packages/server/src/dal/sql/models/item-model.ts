@@ -1,14 +1,9 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {Model, Sequelize} from "sequelize";
+import configModeledWikiModel, {modeledWikiAttributes} from "./config-modeled-wiki-model";
 
 
 export default class ItemModel extends Model {
-    static connect(connection: Sequelize) {
-        ItemModel.init({
-            _id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true
-            },
-        }, {sequelize: connection});
+    static connect() {
+        configModeledWikiModel(ItemModel);
     }
 }

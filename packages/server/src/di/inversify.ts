@@ -9,19 +9,7 @@ import {
 	DataLoader,
 	Factory,
 	DomainEntity,
-	WorldFactory,
-	WikiFolderFactory,
-	UserFactory,
-	ServerConfigFactory,
-	RoleFactory,
-	PlaceFactory,
-	PinFactory,
-	PersonFactory,
-	MonsterFactory,
-	ModelFactory,
-	ItemFactory,
-	ImageFactory,
-	GameFactory, FileFactory, ChunkFactory, ArticleFactory, AclEntry, DbEngine
+	DbEngine
 } from "../types";
 import { INJECTABLE_TYPES } from "./injectable-types";
 import { MongodbArticleRepository } from "../dal/mongodb/repositories/mongodb-article-repository";
@@ -81,7 +69,7 @@ import { Article } from "../domain-entities/article";
 import { ArticleDataLoader } from "../dal/dataloaders/article-data-loader";
 import { Chunk } from "../domain-entities/chunk";
 import { File } from "../domain-entities/file";
-import { Character, FogStroke, Game, InGameModel, Message, Stroke } from "../domain-entities/game";
+import { Game} from "../domain-entities/game";
 import { Image } from "../domain-entities/image";
 import { Item } from "../domain-entities/item";
 import { Model } from "../domain-entities/model";
@@ -131,7 +119,6 @@ import { UserAuthorizationPolicy } from "../security/policy/user-authorization-p
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
-import { Readable } from "stream";
 import {ServerProperties} from "../server/server-properties";
 import FilterFactory from "../dal/mongodb/FilterFactory";
 import {NoCacheClient} from "../dal/cache/no-cache-client";
@@ -140,7 +127,6 @@ import {Dnd5eApiClient} from "../five-e-import/dnd-5e-api-client";
 import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
 import EntityMapper from "../domain-entities/entity-mapper";
-import {ObjectId} from "mongoose";
 import RpgToolsServer from "../server/rpgtools-server";
 import MongodbDbEngine from "../dal/mongodb/mongodb-db-engine";
 import MongoDbMigrationV40 from "../dal/mongodb/migrations/mongodb-migration-v40";
@@ -163,6 +149,24 @@ import {WorldRepository} from "../dal/repository/world-repository";
 import {ArticleRepository} from "../dal/repository/article-repository";
 import {DatabaseContext} from "../dal/database-context";
 import {DatabaseSession} from "../dal/database-session";
+import PostgresDbEngine from "../dal/sql/postgres-db-engine";
+import ArticleFactory from "../domain-entities/factory/article-factory";
+import ChunkFactory from "../domain-entities/factory/chunk-factory";
+import FileFactory from "../domain-entities/factory/file-factory";
+import GameFactory from "../domain-entities/factory/game-factory";
+import ImageFactory from "../domain-entities/factory/image-factory";
+import ItemFactory from "../domain-entities/factory/item-factory";
+import ModelFactory from "../domain-entities/factory/model-factory";
+import MonsterFactory from "../domain-entities/factory/monster-factory";
+import PersonFactory from "../domain-entities/factory/person-factory";
+import PinFactory from "../domain-entities/factory/pin-factory";
+import PlaceFactory from "../domain-entities/factory/place-factory";
+import RoleFactory from "../domain-entities/factory/role-factory";
+import ServerConfigFactory from "../domain-entities/factory/server-config-factory";
+import UserFactory from "../domain-entities/factory/user-factory";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import WorldFactory from "../domain-entities/factory/world-factory";
+import AclFactory from "../domain-entities/factory/acl-factory";
 
 const container = new Container();
 
@@ -202,537 +206,56 @@ container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(WikiFolder);
 container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
 
 // entity factories
+container.bind<AclFactory>(INJECTABLE_TYPES.AclFactory).to(AclFactory);
 container
 	.bind<ArticleFactory>(INJECTABLE_TYPES.ArticleFactory)
-	.toFactory(
-		(context): ArticleFactory =>
-			({
-				_id,
-				name,
-				world,
-				coverImage,
-				contentId,
-				acl
-			}:{
-				_id: string | ObjectId,
-				name: string,
-				world: string | ObjectId,
-				coverImage: string | ObjectId,
-				contentId: string | ObjectId,
-				acl: AclEntry[]
-			}) => {
-				const article = context.container.get<Article>(INJECTABLE_TYPES.Article);
-				article._id = _id && _id.toString();
-				article.name = name;
-				article.world = world && world.toString();
-				article.coverImage = coverImage && coverImage.toString();
-				article.contentId = contentId && contentId.toString();
-				article.acl = acl;
-				return article;
-			}
-	);
+	.to(ArticleFactory);
 container
 	.bind<ChunkFactory>(INJECTABLE_TYPES.ChunkFactory)
-	.toFactory(
-		(context): ChunkFactory =>
-			(
-				{
-					_id,
-					x,
-					y,
-					width,
-					height,
-					fileId,
-					image
-				}:{
-					_id: string | ObjectId,
-					x: number,
-					y: number,
-					width: number,
-					height: number,
-					fileId: string | ObjectId,
-					image: string | ObjectId
-				}
-			) => {
-				const chunk = context.container.get<Chunk>(INJECTABLE_TYPES.Chunk);
-				chunk._id = _id && _id.toString();
-				chunk.x = x;
-				chunk.y = y;
-				chunk.width = width;
-				chunk.height = height;
-				chunk.fileId = fileId && fileId.toString();
-				chunk.image = image && image.toString();
-				return chunk;
-			}
-	);
+	.to(ChunkFactory);
 container
 	.bind<FileFactory>(INJECTABLE_TYPES.FileFactory)
-	.toFactory((context): FileFactory =>
-		(
-			{
-				 _id,
-				 filename,
-				 readStream,
-				 mimeType
-			}:{
-				_id: string | ObjectId,
-				filename: string,
-				readStream: Readable,
-				mimeType: string
-			}
-		) => {
-		const file = context.container.get<File>(INJECTABLE_TYPES.File);
-		file._id = _id && _id.toString();
-		file.filename = filename;
-		file.readStream = readStream;
-		file.mimeType = mimeType;
-		return file;
-	});
+	.to(FileFactory);
 container
 	.bind<GameFactory>(INJECTABLE_TYPES.GameFactory)
-	.toFactory(
-		(context): GameFactory =>
-			(
-				{
-					_id,
-					passwordHash,
-					world,
-					map,
-					characters,
-					strokes,
-					fog,
-					messages,
-					models,
-					host,
-					acl
-				}:{
-					_id: string | ObjectId,
-					passwordHash: string,
-					world: string | ObjectId,
-					map: string | ObjectId,
-					characters: Character[],
-					strokes: Stroke[],
-					fog: FogStroke[],
-					messages: Message[],
-					models: InGameModel[],
-					host: string | ObjectId,
-					acl: AclEntry[]
-				}
-			) => {
-				const game = context.container.get<Game>(INJECTABLE_TYPES.Game);
-				game._id = _id && _id.toString();
-				game.passwordHash = passwordHash;
-				game.world = world && world.toString();
-				game.map = map && map.toString();
-				game.characters = characters;
-				game.strokes = strokes;
-				game.fog = fog;
-				game.messages = messages;
-				game.models = models;
-				game.host = host && host.toString();
-				game.acl = acl;
-				return game;
-			}
-	);
+	.to(GameFactory);
 container
 	.bind<ImageFactory>(INJECTABLE_TYPES.ImageFactory)
-	.toFactory(
-		(context): ImageFactory =>
-			(
-				{
-					_id,
-					name,
-					world,
-					width,
-					height,
-					chunkWidth,
-					chunkHeight,
-					chunks,
-					icon
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					world: string | ObjectId,
-					width: number,
-					height: number,
-					chunkWidth: number,
-					chunkHeight: number,
-					chunks: string[] | ObjectId[],
-					icon: string | ObjectId
-				}
-			) => {
-				const image = context.container.get<Image>(INJECTABLE_TYPES.Image);
-				image._id = _id && _id.toString();
-				image.name = name;
-				image.world = world && world.toString();
-				image.width = width;
-				image.height = height;
-				image.chunkWidth = chunkWidth;
-				image.chunkHeight = chunkHeight;
-				image.chunks = chunks.map(chunk => chunk.toString());
-				image.icon = icon && icon.toString();
-				return image;
-			}
-	);
+	.to(ImageFactory);
 container
 	.bind<ItemFactory>(INJECTABLE_TYPES.ItemFactory)
-	.toFactory(
-		(context): ItemFactory =>
-			(
-				{
-					_id,
-					name,
-					world,
-					coverImage,
-					content,
-					pageModel,
-					modelColor,
-					acl
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					world: string | ObjectId,
-					coverImage: string | ObjectId,
-					content: string,
-					pageModel: string | ObjectId,
-					modelColor: string,
-					acl: AclEntry[]
-				}
-			) => {
-				const item = context.container.get<Item>(INJECTABLE_TYPES.Item);
-				item._id = _id && _id.toString();
-				item.name = name;
-				item.world = world && world.toString();
-				item.coverImage = coverImage && coverImage.toString();
-				item.contentId = content;
-				item.pageModel = pageModel && pageModel.toString();
-				item.modelColor = modelColor;
-				item.acl = acl;
-				return item;
-			}
-	);
+	.to(ItemFactory);
 
 container
 	.bind<ModelFactory>(INJECTABLE_TYPES.ModelFactory)
-	.toFactory(
-		(context): ModelFactory =>
-			(
-				{
-					_id,
-					world,
-					name,
-					depth,
-					width,
-					height,
-					fileName,
-					fileId,
-					notes,
-					acl
-				}:{
-					_id: string | ObjectId,
-					world: string | ObjectId,
-					name: string,
-					depth: number,
-					width: number,
-					height: number,
-					fileName: string,
-					fileId: string | ObjectId,
-					notes: string,
-					acl: AclEntry[]
-				}
-			) => {
-				const model = context.container.get<Model>(INJECTABLE_TYPES.Model);
-				model._id = _id && _id.toString();
-				model.world = world && world.toString();
-				model.name = name;
-				model.depth = depth;
-				model.width = width;
-				model.height = height;
-				model.fileName = fileName;
-				model.fileId = fileId && fileId.toString();
-				model.notes = notes;
-				model.acl = acl;
-				return model;
-			}
-	);
+	.to(ModelFactory);
 container
 	.bind<MonsterFactory>(INJECTABLE_TYPES.MonsterFactory)
-	.toFactory(
-		(context): MonsterFactory =>
-			(
-				{
-					_id,
-					name,
-					world,
-					coverImage,
-					contentId,
-					pageModel,
-					modelColor,
-					acl
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					world: string | ObjectId,
-					coverImage: string | ObjectId,
-					contentId: string | ObjectId,
-					pageModel: string | ObjectId,
-					modelColor: string,
-					acl: AclEntry[]
-				}
-			) => {
-				const monster = context.container.get<Monster>(INJECTABLE_TYPES.Monster);
-				monster._id = _id && _id.toString();
-				monster.name = name;
-				monster.world = world && world.toString();
-				monster.coverImage = coverImage && coverImage.toString();
-				monster.contentId = contentId && contentId.toString();
-				monster.pageModel = pageModel && pageModel.toString();
-				monster.modelColor = modelColor;
-				monster.acl = acl;
-				return monster;
-			}
-	);
+	.to(MonsterFactory);
 container
 	.bind<PersonFactory>(INJECTABLE_TYPES.PersonFactory)
-	.toFactory(
-		(context): PersonFactory =>
-			(
-				{
-					_id,
-					name,
-					world,
-					coverImage,
-					contentId,
-					pageModel,
-					modelColor,
-					acl
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					world: string | ObjectId,
-					coverImage: string | ObjectId,
-					contentId: string | ObjectId,
-					pageModel: string | ObjectId,
-					modelColor: string,
-					acl: AclEntry[]
-				}
-			) => {
-				const person = context.container.get<Person>(INJECTABLE_TYPES.Person);
-				person._id = _id && _id.toString();
-				person.name = name;
-				person.world = world && world.toString();
-				person.coverImage = coverImage && coverImage.toString();
-				person.contentId = contentId && contentId.toString();
-				person.pageModel = pageModel && pageModel.toString();
-				person.modelColor = modelColor;
-				person.acl = acl;
-				return person;
-			}
-	);
+	.to(PersonFactory);
 container
 	.bind<PinFactory>(INJECTABLE_TYPES.PinFactory)
-	.toFactory((context): PinFactory =>
-		(
-			{
-				_id,
-				x,
-				y,
-				map,
-				page
-			}: { _id: string | ObjectId, x: number, y: number, map: string | ObjectId, page: string | ObjectId }
-		) => {
-			const pin = context.container.get<Pin>(INJECTABLE_TYPES.Pin);
-			pin._id = _id && _id.toString();
-			pin.x = x;
-			pin.y = y;
-			pin.map = map && map.toString();
-			pin.page = page && page.toString();
-			return pin;
-	});
+	.to(PinFactory);
 container
 	.bind<PlaceFactory>(INJECTABLE_TYPES.PlaceFactory)
-	.toFactory(
-		(context) =>
-			(
-				{
-					_id,
-					name,
-					world,
-					coverImage,
-					contentId,
-					mapImage,
-					pixelsPerFoot,
-					acl
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					world: string | ObjectId,
-					coverImage: string | ObjectId,
-					contentId: string | ObjectId,
-					mapImage: string | ObjectId,
-					pixelsPerFoot: number,
-					acl: AclEntry[]
-				}
-			) => {
-				const place = context.container.get<Place>(INJECTABLE_TYPES.Place);
-				place._id = _id && _id.toString();
-				place.name = name;
-				place.world = world && world.toString();
-				place.coverImage = coverImage && coverImage.toString();
-				place.contentId = contentId && contentId.toString();
-				place.mapImage = mapImage && mapImage.toString();
-				place.pixelsPerFoot = pixelsPerFoot;
-				place.acl = acl;
-				return place;
-			}
-	);
+	.to(PlaceFactory);
 container
 	.bind<RoleFactory>(INJECTABLE_TYPES.RoleFactory)
-	.toFactory((context): RoleFactory =>
-		(
-			{
-				_id,
-				name,
-				world,
-				acl
-			}:{
-				_id: string | ObjectId,
-				name: string,
-				world: string | ObjectId,
-				acl: AclEntry[]
-			}
-		) => {
-			const role = context.container.get<Role>(INJECTABLE_TYPES.Role);
-			role._id = _id && _id.toString();
-			role.name = name;
-			role.world = world && world.toString();
-			role.acl = acl;
-			return role;
-		});
+	.to(RoleFactory);
 container
 	.bind<ServerConfigFactory>(INJECTABLE_TYPES.ServerConfigFactory)
-	.toFactory(
-		(context):ServerConfigFactory =>
-			(
-				{
-					_id,
-					version,
-					registerCodes,
-					adminUsers,
-					unlockCode,
-					acl
-				}:{
-					_id: string | ObjectId,
-					version: string,
-					registerCodes: string[],
-					adminUsers: string[] | ObjectId[],
-					unlockCode: string,
-					acl: AclEntry[]
-				}
-			) => {
-				const serverConfig = context.container.get<ServerConfig>(INJECTABLE_TYPES.ServerConfig);
-				serverConfig._id = _id && _id.toString();
-				serverConfig.version = version;
-				serverConfig.registerCodes = registerCodes;
-				serverConfig.adminUsers = adminUsers.map(user => user.toString());
-				serverConfig.unlockCode = unlockCode;
-				serverConfig.acl = acl;
-				return serverConfig;
-			}
-	);
+	.to(ServerConfigFactory);
 container
 	.bind<UserFactory>(INJECTABLE_TYPES.UserFactory)
-	.toFactory(
-		(context) =>
-			(
-				{
-					_id,
-					email,
-					username,
-					password,
-					tokenVersion,
-					currentWorld,
-					roles,
-				}:{
-					_id: string | ObjectId,
-					email: string,
-					username: string,
-					password: string,
-					tokenVersion: string,
-					currentWorld: string | ObjectId,
-					roles: string[] | ObjectId[],
-				}
-			) => {
-				const user = context.container.get<User>(INJECTABLE_TYPES.User);
-				user._id = _id && _id.toString();
-				user.email = email;
-				user.username = username;
-				user.password = password;
-				user.tokenVersion = tokenVersion;
-				user.currentWorld = currentWorld && currentWorld.toString();
-				user.roles = roles.map(role => role.toString());
-				return user;
-			}
-	);
+	.to(UserFactory);
 container
 	.bind<WikiFolderFactory>(INJECTABLE_TYPES.WikiFolderFactory)
-	.toFactory(
-		(context): WikiFolderFactory =>
-			(
-				{
-					_id,
-					name,
-					world,
-					pages,
-					children,
-					acl
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					world: string | ObjectId,
-					pages: string[] | ObjectId[],
-					children: string[] | ObjectId[],
-					acl: AclEntry[]
-				}
-			) => {
-				const folder = context.container.get<WikiFolder>(INJECTABLE_TYPES.WikiFolder);
-				folder._id = _id && _id.toString();
-				folder.name = name;
-				folder.world = world && world.toString();
-				folder.pages = pages.map(page => page.toString());
-				folder.children = children.map(child => child.toString());
-				folder.acl = acl;
-				return folder;
-			}
-	);
+	.to(WikiFolderFactory);
 container
 	.bind<WorldFactory>(INJECTABLE_TYPES.WorldFactory)
-	.toFactory(
-		(context): WorldFactory =>
-			(
-				{
-					_id,
-					name,
-					wikiPage,
-					rootFolder,
-					acl
-				}:{
-					_id: string | ObjectId,
-					name: string,
-					wikiPage: string | ObjectId,
-					rootFolder: string | ObjectId,
-					acl: AclEntry[]
-				}
-			) => {
-				const world = context.container.get<World>(INJECTABLE_TYPES.World);
-				world._id = _id && _id.toString();
-				world.name = name;
-				world.wikiPage = wikiPage && wikiPage.toString();
-				world.rootFolder = rootFolder && rootFolder.toString();
-				world.acl = acl;
-				return world;
-			}
-	);
+	.to(WorldFactory);
 
 // db repositories
 container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
@@ -921,7 +444,13 @@ container
 container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer);
 container.bind<ServerProperties>(INJECTABLE_TYPES.ServerProperties).to(ServerProperties).inSingletonScope();
 container.bind<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer).to(RpgToolsServer).inSingletonScope();
-container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(MongodbDbEngine).inSingletonScope();
+if(process.env.MONGODB_HOST) {
+	container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(MongodbDbEngine).inSingletonScope();
+} else if (process.env.POSTGRES_HOST) {
+	container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(PostgresDbEngine).inSingletonScope();
+} else {
+	throw Error('No database host provided. Please define a POSTGRES_HOST or MONGODB_HOST environment variable!')
+}
 
 // data loaders
 container.bind<DataLoader<Article>>(INJECTABLE_TYPES.ArticleDataLoader).to(ArticleDataLoader);

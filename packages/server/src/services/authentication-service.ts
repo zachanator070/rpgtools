@@ -1,7 +1,6 @@
 import {
 	AuthenticationTokens,
 	CookieManager,
-	UserFactory,
 } from "../types";
 import { User } from "../domain-entities/user";
 import bcrypt from "bcrypt";
@@ -11,6 +10,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {ServerProperties} from "../server/server-properties";
 import {DatabaseContext} from "../dal/database-context";
+import UserFactory from "../domain-entities/factory/user-factory";
 
 export interface CookieConstants {
 	string: string;
@@ -158,7 +158,7 @@ export class AuthenticationService {
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
-		const newUser = this.userFactory({_id: "", email, username, password, tokenVersion: null, currentWorld: null, roles: []});
+		const newUser = this.userFactory.build({_id: "", email, username, password, tokenVersion: null, currentWorld: null, roles: []});
 		await databaseContext.userRepository.create(newUser);
 		return newUser;
 	};

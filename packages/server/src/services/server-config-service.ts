@@ -4,12 +4,12 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {
 	ApiServer,
-	RoleFactory,
 } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { SecurityContext } from "../security/security-context";
 import {AuthenticationService} from "./authentication-service";
 import {DatabaseContext} from "../dal/database-context";
+import RoleFactory from "../domain-entities/factory/role-factory";
 
 @injectable()
 export class ServerConfigService {
@@ -57,7 +57,7 @@ export class ServerConfigService {
 			password,
 			databaseContext
 		);
-		const adminRole = this.roleFactory({_id: null, name: SERVER_ADMIN_ROLE, world: null, acl: []});
+		const adminRole = this.roleFactory.build({_id: null, name: SERVER_ADMIN_ROLE, world: null, acl: []});
 		await databaseContext.roleRepository.create(adminRole);
 		for (let permission of SERVER_PERMISSIONS) {
 

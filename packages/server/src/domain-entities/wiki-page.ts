@@ -1,14 +1,15 @@
 import {
 	AclEntry,
-	DomainEntity,
+	DomainEntity, EntityFactory,
 	Factory,
 	PermissionControlledEntity,
-	RepositoryAccessor
+	RepositoryAccessor, WikiPageDocument
 } from "../types";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import ItemFactory from "./factory/item-factory";
 
 @injectable()
 export abstract class WikiPage implements PermissionControlledEntity {
@@ -30,7 +31,7 @@ export abstract class WikiPage implements PermissionControlledEntity {
 	}
 
 	abstract type: string;
-	abstract factory: Factory<WikiPage>;
+	abstract factory: EntityFactory<WikiPage, WikiPageDocument>;
 
 	abstract getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }

@@ -2,7 +2,6 @@ import { container } from "../../src/di/inversify";
 import {
 	ApiServer, DbEngine,
 	Factory,
-	UserFactory,
 } from "../../src/types";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { SecurityContextFactory } from "../../src/security/security-context-factory";
@@ -20,6 +19,7 @@ import {WikiFolder} from "../../src/domain-entities/wiki-folder";
 import {WikiPage} from "../../src/domain-entities/wiki-page";
 import {Pin} from "../../src/domain-entities/pin";
 import {DatabaseContext} from "../../src/dal/database-context";
+import UserFactory from "../../src/domain-entities/factory/user-factory";
 
 @injectable()
 export class DefaultTestingContext {
@@ -74,7 +74,7 @@ export class DefaultTestingContext {
 		this.currentUser = this.tester1;
 		this.currentUserSecurityContext = this.tester1SecurityContext;
 
-		this.tester2 = this.userFactory({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
+		this.tester2 = this.userFactory.build({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
 		await databaseContext.userRepository.create(this.tester2);
 		this.tester2SecurityContext = await this.securityContextFactory.create(this.tester2);
 

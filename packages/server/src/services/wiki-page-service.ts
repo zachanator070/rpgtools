@@ -3,14 +3,6 @@ import { SecurityContext } from "../security/security-context";
 import {USER} from "@rpgtools/common/src/type-constants";
 import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { Readable } from "stream";
-import {
-	ArticleFactory,
-	FileFactory,
-	ItemFactory,
-	MonsterFactory,
-	PersonFactory,
-	PlaceFactory,
-} from "../types";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { ModeledPage } from "../domain-entities/modeled-page";
 import { WikiPage } from "../domain-entities/wiki-page";
@@ -19,6 +11,12 @@ import {AuthorizationService} from "./authorization-service";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {WikiFolder} from "../domain-entities/wiki-folder";
 import {DatabaseContext} from "../dal/database-context";
+import ArticleFactory from "../domain-entities/factory/article-factory";
+import ItemFactory from "../domain-entities/factory/item-factory";
+import MonsterFactory from "../domain-entities/factory/monster-factory";
+import PersonFactory from "../domain-entities/factory/person-factory";
+import PlaceFactory from "../domain-entities/factory/place-factory";
+import FileFactory from "../domain-entities/factory/file-factory";
 
 @injectable()
 export class WikiPageService {
@@ -52,7 +50,7 @@ export class WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const newPage = this.articleFactory({_id: null, name, world: folder.world, coverImage: null, contentId: null, acl: []});
+		const newPage = this.articleFactory.build({_id: null, name, world: folder.world, coverImage: null, contentId: null, acl: []});
 		await databaseContext.articleRepository.create(newPage);
 		folder.pages.push(newPage._id);
 		await databaseContext.wikiFolderRepository.update(folder);
@@ -96,7 +94,7 @@ export class WikiPageService {
 				await databaseContext.fileRepository.delete(contentFile);
 			}
 
-			contentFile = this.fileFactory(
+			contentFile = this.fileFactory.build(
 				{
 					_id: null,
 					filename: `wikiContent.${wikiPage._id}.json`,
@@ -124,7 +122,7 @@ export class WikiPageService {
 		if (type && type !== wikiPage.type) {
 			// recreate the wiki page with the right default values
 			const newType = this.entityMapper.map(type);
-			wikiPage = newType.factory(wikiPage) as WikiPage;
+			wikiPage = newType.factory.build(wikiPage) as WikiPage;
 		}
 
 		await databaseContext.wikiPageRepository.update(wikiPage);

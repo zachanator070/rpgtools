@@ -1,20 +1,21 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
-import {WORLD} from "@rpgtools/common/src/type-constants";
+import {defaultAttributes} from "./default-attributes";
+import ArticleModel from "./article-model";
+import WikiFolderModel from "./wiki-folder-model";
+import configPermissionControlledModel from "./config-permission-controlled-model";
 
 
-export default class World extends Model {
-    static connect(connection: Sequelize) {
-        World.init({
-            _id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            
-        }, {sequelize: connection, modelName: WORLD});
+export default class WorldModel extends Model {
+    static attributes = Object.assign({}, defaultAttributes, {
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+    });
+    
+    static connect() {
+        WorldModel.belongsTo(ArticleModel, {foreignKey: 'wikiPage', constraints: false});
+        WorldModel.belongsTo(WikiFolderModel, {foreignKey: 'rootFolder'});
+        configPermissionControlledModel(WorldModel);
     }
 }

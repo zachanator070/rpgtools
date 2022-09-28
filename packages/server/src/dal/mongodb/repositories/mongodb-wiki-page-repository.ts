@@ -1,9 +1,8 @@
-import {inject, injectable, multiInject} from "inversify";
+import {injectable, multiInject} from "inversify";
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import {
 	DomainEntity,
 	WikiPageDocument,
-
 } from "../../../types";
 import mongoose from "mongoose";
 import { WikiPage } from "../../../domain-entities/wiki-page";
@@ -23,15 +22,6 @@ export class MongodbWikiPageRepository
 
 	@multiInject(INJECTABLE_TYPES.DomainEntity)
 	domainEntities: DomainEntity[];
-
-	buildEntity(document: WikiPageDocument): WikiPage {
-		const name = document.type;
-		for (let entity of this.domainEntities) {
-			if(entity.type === name) {
-				return entity.factory(document) as WikiPage;
-			}
-		}
-	}
 
 	findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>> {
 		return this.findPaginated([new FilterCondition('_id', ids, FILTER_CONDITION_OPERATOR_IN)], page, sort);

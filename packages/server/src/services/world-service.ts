@@ -1,11 +1,4 @@
 import {
-	PinFactory,
-	PlaceFactory,
-	RoleFactory,
-	WikiFolderFactory,
-	WorldFactory,
-} from "../types";
-import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
@@ -18,6 +11,11 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {PaginatedResult} from "../dal/paginated-result";
 import {DatabaseContext} from "../dal/database-context";
+import RoleFactory from "../domain-entities/factory/role-factory";
+import PinFactory from "../domain-entities/factory/pin-factory";
+import WorldFactory from "../domain-entities/factory/world-factory";
+import PlaceFactory from "../domain-entities/factory/place-factory";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 
 @injectable()
 export class WorldService {
@@ -99,7 +97,7 @@ export class WorldService {
 			}
 		}
 
-		const newPin = this.pinFactory({_id: null, x, y, map: mapId, page: wikiId});
+		const newPin = this.pinFactory.build({_id: null, x, y, map: mapId, page: wikiId});
 
 		if (!(await newPin.authorizationPolicy.canCreate(context, databaseContext))) {
 			throw new Error(`You do not have permission to add pins to this map`);
@@ -182,15 +180,15 @@ export class WorldService {
 		context: SecurityContext,
 		databaseContext: DatabaseContext
 	) => {
-		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null, acl: []});
+		const world = this.worldFactory.build({_id: null, name, wikiPage: null, rootFolder: null, acl: []});
 		await databaseContext.worldRepository.create(world);
-		const rootWiki = this.placeFactory({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: []});
+		const rootWiki = this.placeFactory.build({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: []});
 		await databaseContext.placeRepository.create(rootWiki);
-		const rootFolder = this.wikiFolderFactory({_id: null, name, world: world._id, pages: [], children: [], acl: []});
+		const rootFolder = this.wikiFolderFactory.build({_id: null, name, world: world._id, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(rootFolder);
-		const placeFolder = this.wikiFolderFactory({_id: null, name: "Places", world: world._id, pages: [rootWiki._id], children: [], acl: []});
+		const placeFolder = this.wikiFolderFactory.build({_id: null, name: "Places", world: world._id, pages: [rootWiki._id], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(placeFolder);
-		const peopleFolder = this.wikiFolderFactory({_id: null, name: "People", world:  world._id, pages: [], children: [], acl: []});
+		const peopleFolder = this.wikiFolderFactory.build({_id: null, name: "People", world:  world._id, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(peopleFolder);
 		rootFolder.children.push(placeFolder._id, peopleFolder._id);
 		await databaseContext.wikiFolderRepository.update(rootFolder);
@@ -198,7 +196,7 @@ export class WorldService {
 		world.rootFolder = rootFolder._id;
 		world.wikiPage = rootWiki._id;
 
-		const ownerRole = this.roleFactory({_id: null, name: WORLD_OWNER, world: world._id, acl: []});
+		const ownerRole = this.roleFactory.build({_id: null, name: WORLD_OWNER, world: world._id, acl: []});
 		await databaseContext.roleRepository.create(ownerRole);
 
 		for (const permission of WORLD_PERMISSIONS) {

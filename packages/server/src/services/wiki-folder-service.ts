@@ -1,7 +1,3 @@
-import {
-	ArticleFactory,
-	WikiFolderFactory,
-} from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { SecurityContext } from "../security/security-context";
 import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
@@ -10,6 +6,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {AuthorizationService} from "./authorization-service";
 import {DatabaseContext} from "../dal/database-context";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 
 @injectable()
 export class WikiFolderService {
@@ -19,8 +16,6 @@ export class WikiFolderService {
 
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
-	@inject(INJECTABLE_TYPES.ArticleFactory)
-	articleFactory: ArticleFactory;
 
 	createFolder = async (
 		context: SecurityContext,
@@ -36,7 +31,7 @@ export class WikiFolderService {
 		if (!(await parentFolder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
-		const newFolder = this.wikiFolderFactory({_id: null, name, world: parentFolder.world, pages: [], children: [], acl: []});
+		const newFolder = this.wikiFolderFactory.build({_id: null, name, world: parentFolder.world, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(newFolder);
 		parentFolder.children.push(newFolder._id);
 		await databaseContext.wikiFolderRepository.update(parentFolder);

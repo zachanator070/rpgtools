@@ -25,6 +25,7 @@ export const INJECTABLE_TYPES = {
 
 	// entity factories
 	ArticleFactory: Symbol.for("ArticleFactory"),
+	AclFactory: Symbol.for('AclFactory'),
 	ChunkFactory: Symbol.for("ChunkFactory"),
 	FileFactory: Symbol.for("FileFactory"),
 	GameFactory: Symbol.for("GameFactory"),
@@ -178,4 +179,5 @@ export const INJECTABLE_TYPES = {
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),
 	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
+
 };

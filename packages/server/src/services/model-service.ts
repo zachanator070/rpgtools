@@ -1,8 +1,6 @@
 import {
 	Cache,
 	EventPublisher,
-	FileFactory,
-	ModelFactory,
 } from "../types";
 import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants";
 import {USER} from "@rpgtools/common/src/type-constants";
@@ -14,6 +12,8 @@ import { Model } from "../domain-entities/model";
 import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
 import {AuthorizationService} from "./authorization-service";
 import {DatabaseContext} from "../dal/database-context";
+import FileFactory from "../domain-entities/factory/file-factory";
+import ModelFactory from "../domain-entities/factory/model-factory";
 
 @injectable()
 export class ModelService {
@@ -60,7 +60,7 @@ export class ModelService {
 			}
 			file = await file;
 
-			const newFile = this.fileFactory({_id: null, filename: file.filename, readStream: file.createReadStream(), mimeType: null});
+			const newFile = this.fileFactory.build({_id: null, filename: file.filename, readStream: file.createReadStream(), mimeType: null});
 			await databaseContext.fileRepository.create(newFile);
 			model.fileId = newFile._id;
 			model.fileName = file.filename;
@@ -90,7 +90,7 @@ export class ModelService {
 			throw new Error(`World with id ${worldId} does not exist`);
 		}
 
-		const model = this.modelFactory(
+		const model = this.modelFactory.build(
 			{
 				_id: null,
 				world: worldId,
@@ -112,7 +112,7 @@ export class ModelService {
 		fileUpload = await fileUpload;
 
 		model.fileName = fileUpload.filename;
-		const file = this.fileFactory({_id: null, filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: null});
+		const file = this.fileFactory.build({_id: null, filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: null});
 		await databaseContext.fileRepository.create(file);
 		model.fileId = file._id;
 		await databaseContext.modelRepository.create(model);

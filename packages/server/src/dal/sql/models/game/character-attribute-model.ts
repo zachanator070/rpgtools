@@ -1,22 +1,20 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
+import {defaultAttributes} from "../default-attributes";
 
 
 export default class CharacterAttributeModel extends Model {
-    static connect(connection: Sequelize) {
-        CharacterAttributeModel.init({
-            _id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            value: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            }
-        }, {sequelize: connection});
+
+    static attributes = Object.assign({}, defaultAttributes, {
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        value: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        }
+    });
+
+    static connect() {
     }
 }

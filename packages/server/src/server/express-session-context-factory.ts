@@ -3,7 +3,6 @@ import {
 	Factory,
 	SessionContext,
 	SessionContextFactory,
-	UserFactory,
 } from "../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
@@ -19,6 +18,7 @@ import {
 } from "../services/authentication-service";
 import {DatabaseContext} from "../dal/database-context";
 import {DatabaseSession} from "../dal/database-session";
+import UserFactory from "../domain-entities/factory/user-factory";
 
 @injectable()
 export class ExpressSessionContextFactory implements SessionContextFactory {
@@ -77,7 +77,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					}
 				}
 			} else {
-				currentUser = this.userFactory({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});
+				currentUser = this.userFactory.build({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});
 			}
 		}
 

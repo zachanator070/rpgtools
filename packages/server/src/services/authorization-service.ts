@@ -1,6 +1,5 @@
 import {
 	DomainEntity, PermissionControlledEntity,
-	RoleFactory,
 } from "../types";
 import { SecurityContext } from "../security/security-context";
 import { Role } from "../domain-entities/role";
@@ -12,6 +11,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { User } from "../domain-entities/user";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {DatabaseContext} from "../dal/database-context";
+import RoleFactory from "../domain-entities/factory/role-factory";
 
 @injectable()
 export class AuthorizationService {
@@ -126,7 +126,7 @@ export class AuthorizationService {
 		if (!context.hasPermission(ROLE_ADD, world)) {
 			throw new Error(`You do not have permission to add roles to this world`);
 		}
-		const newRole = this.roleFactory({_id: null, name, world: worldId, acl: []});
+		const newRole = this.roleFactory.build({_id: null, name, world: worldId, acl: []});
 		await databaseContext.roleRepository.create(newRole);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
 			newRole.acl.push({

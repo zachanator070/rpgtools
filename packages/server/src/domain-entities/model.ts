@@ -1,9 +1,10 @@
-import {AclEntry, DomainEntity, Factory, PermissionControlledEntity, RepositoryAccessor} from "../types";
+import {AclEntry, DomainEntity, EntityFactory, Factory, PermissionControlledEntity, RepositoryAccessor} from "../types";
 import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy";
 import { MODEL } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import {ModelDocument} from "../dal/mongodb/models/model";
 
 @injectable()
 export class Model implements PermissionControlledEntity {
@@ -19,13 +20,13 @@ export class Model implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: ModelAuthorizationPolicy;
-	factory: Factory<Model>;
+	factory: EntityFactory<Model, ModelDocument>;
 	type: string = MODEL;
 
 	constructor(@inject(INJECTABLE_TYPES.ModelAuthorizationPolicy)
 					authorizationPolicy: ModelAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ModelFactory)
-					factory: Factory<Model>) {
+					factory: EntityFactory<Model, ModelDocument>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

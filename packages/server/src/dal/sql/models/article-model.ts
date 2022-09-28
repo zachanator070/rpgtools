@@ -1,8 +1,9 @@
-import {Model, Sequelize} from "sequelize";
+import {Model} from "sequelize";
+import configWikiPageModel from "./config-wiki-page-model";
 
 
 export default class ArticleModel extends Model {
-    static connect(connection: Sequelize) {
-        ArticleModel.init({}, {sequelize: connection});
+    static connect() {
+        configWikiPageModel(ArticleModel);
     }
 }

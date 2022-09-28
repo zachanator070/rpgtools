@@ -1,5 +1,5 @@
 import {inject, injectable} from "inversify";
-import {CookieManager, DbEngine, SessionContext, SessionContextFactory, UserFactory} from "../../src/types";
+import {CookieManager, DbEngine, SessionContext, SessionContextFactory} from "../../src/types";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { SecurityContextFactory } from "../../src/security/security-context-factory";
 import { User } from "../../src/domain-entities/user";
@@ -7,6 +7,7 @@ import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import {Factory} from "../../src/types";
 import {v4 as uuidv4} from 'uuid';
 import {DatabaseContext} from "../../src/dal/database-context";
+import UserFactory from "../../src/domain-entities/factory/user-factory";
 
 class MockCookieManager implements CookieManager {
 	clearCookie(cookie: string): void {}
@@ -35,7 +36,7 @@ export class MockSessionContextFactory implements SessionContextFactory {
 	}
 
 	getAnon = (): User => {
-		return this.userFactory({_id: uuidv4(), email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: []});
+		return this.userFactory.build({_id: uuidv4(), email: null, username: ANON_USERNAME, password: null, tokenVersion: null, currentWorld: null, roles: []});
 	};
 
 	setCurrentUser = (user: User) => {
