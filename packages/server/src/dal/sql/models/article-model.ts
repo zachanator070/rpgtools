@@ -1,8 +1,8 @@
-import {Model} from "sequelize";
-import configWikiPageModel from "./config-wiki-page-model";
+import WikiPageModel, {configWikiPageModel} from "./wiki-page-model";
 
 
-export default class ArticleModel extends Model {
+export default class ArticleModel extends WikiPageModel {
+
     static connect() {
         configWikiPageModel(ArticleModel);
     }

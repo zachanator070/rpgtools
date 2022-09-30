@@ -6,17 +6,18 @@ import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
 import {ItemDocument} from "../dal/mongodb/models/item";
+import ItemModel from "../dal/sql/models/item-model";
 
 @injectable()
 export class Item extends ModeledPage {
 
-	factory: EntityFactory<Item, ItemDocument>;
+	factory: EntityFactory<Item, ItemDocument, ItemModel>;
 
 	type: string = ITEM;
 
 	constructor(
 		@inject(INJECTABLE_TYPES.ItemFactory)
-			factory: EntityFactory<Item, ItemDocument>,
+			factory: EntityFactory<Item, ItemDocument, ItemModel>,
 		@inject(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
 			authorizationPolicy: WikiPageAuthorizationPolicy
 	) {

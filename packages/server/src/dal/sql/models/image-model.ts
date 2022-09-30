@@ -1,9 +1,22 @@
-import {DataTypes, Model} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, Model} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
+import SqlModel from "./sql-model";
 import ChunkModel from "./chunk-model";
+import WorldModel from "./world-model";
 
 
-export default class ImageModel extends Model {
+export default class ImageModel extends SqlModel {
+
+    declare width: number;
+    declare height: number;
+    declare chunkWidth: number;
+    declare chunkHeight: number;
+    declare name: string;
+    declare iconId: string;
+    declare worldId: string;
+
+    getChunks: HasManyGetAssociationsMixin<ChunkModel>;
+
     static attributes = Object.assign({}, defaultAttributes, {
         width: {
             type: DataTypes.INTEGER,
@@ -28,6 +41,8 @@ export default class ImageModel extends Model {
     });
 
     static connect()  {
-        ImageModel.belongsTo(ImageModel, {foreignKey: 'icon'});
+        ImageModel.belongsTo(WorldModel, {as: 'world'});
+        ImageModel.belongsTo(ImageModel, {as: 'icon'});
+        ImageModel.hasMany(ChunkModel, {as: 'chunks'});
     }
 }

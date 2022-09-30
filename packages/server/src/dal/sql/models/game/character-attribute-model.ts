@@ -1,8 +1,12 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
+import SqlModel from "../sql-model";
 
 
-export default class CharacterAttributeModel extends Model {
+export default class CharacterAttributeModel extends SqlModel {
+
+    declare name: string;
+    declare value: number;
 
     static attributes = Object.assign({}, defaultAttributes, {
         name: {

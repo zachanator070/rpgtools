@@ -2,9 +2,13 @@
 
 import {DataTypes, Model} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
+import SqlModel from "../sql-model";
 
 
-export default class PathNodeModel extends Model {
+export default class PathNodeModel extends SqlModel {
+
+    declare x: number;
+    declare y: number;
 
     static attributes = Object.assign({}, defaultAttributes, {
         x: {

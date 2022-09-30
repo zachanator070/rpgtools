@@ -1,11 +1,22 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import ImageModel from "./image-model";
 import FileModel from "./file-model";
 import WorldModel from "./world-model";
+import SqlModel from "./sql-model";
 
 
-export default class ChunkModel extends Model {
+export default class ChunkModel extends SqlModel {
+
+    declare x: number;
+    declare y: number;
+    declare width: number;
+    declare height: number;
+
+    declare imageId: string;
+    declare fileId: string;
+    declare worldId: string;
+
     static attributes = Object.assign({}, defaultAttributes, {
         x: {
             type: DataTypes.FLOAT,
@@ -26,8 +37,8 @@ export default class ChunkModel extends Model {
     });
 
     static connect() {
-        ChunkModel.belongsTo(ImageModel, {foreignKey: 'image'});
-        ChunkModel.belongsTo(FileModel, {foreignKey: 'fileId'});
-        ChunkModel.belongsTo(WorldModel, {foreignKey: 'world'});
+        ChunkModel.belongsTo(ImageModel, {as: 'image'});
+        ChunkModel.belongsTo(FileModel, {as: 'file'});
+        ChunkModel.belongsTo(WorldModel, {as: 'world'});
     }
 }

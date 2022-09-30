@@ -1,9 +1,17 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import PathNodeModel from "./path-node-model";
+import SqlModel from "../sql-model";
 
 
-export default class StrokeModel extends Model {
+export default class StrokeModel extends SqlModel {
+
+    declare color: string;
+    declare size: number;
+    declare fill: boolean;
+    declare type: string;
+
+    getPath: HasManyGetAssociationsMixin<PathNodeModel>;
 
     static attributes = Object.assign({}, defaultAttributes, {
         color: {
@@ -27,6 +35,6 @@ export default class StrokeModel extends Model {
     });
 
     static connect() {
-        StrokeModel.hasMany(PathNodeModel);
+        StrokeModel.hasMany(PathNodeModel, {as: 'path'});
     }
 }

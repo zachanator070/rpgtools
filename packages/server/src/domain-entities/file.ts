@@ -6,6 +6,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {FileDocument} from "../dal/mongodb/models/file";
+import FileModel from "../dal/sql/models/file-model";
 
 @injectable()
 export class File implements DomainEntity {
@@ -15,13 +16,13 @@ export class File implements DomainEntity {
 	readStream: Readable;
 
 	authorizationPolicy: FileAuthorizationPolicy;
-	factory: EntityFactory<File, FileDocument>;
+	factory: EntityFactory<File, FileDocument, FileModel>;
 	type: string = FILE;
 
 	constructor(@inject(INJECTABLE_TYPES.FileAuthorizationPolicy)
 					authorizationPolicy: FileAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.FileFactory)
-					factory: EntityFactory<File, FileDocument>) {
+					factory: EntityFactory<File, FileDocument, FileModel>) {
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;
 	}

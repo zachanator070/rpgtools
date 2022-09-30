@@ -5,6 +5,7 @@ import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {ModelDocument} from "../dal/mongodb/models/model";
+import ModelModel from "../dal/sql/models/model-model";
 
 @injectable()
 export class Model implements PermissionControlledEntity {
@@ -20,13 +21,13 @@ export class Model implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: ModelAuthorizationPolicy;
-	factory: EntityFactory<Model, ModelDocument>;
+	factory: EntityFactory<Model, ModelDocument, ModelModel>;
 	type: string = MODEL;
 
 	constructor(@inject(INJECTABLE_TYPES.ModelAuthorizationPolicy)
 					authorizationPolicy: ModelAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ModelFactory)
-					factory: EntityFactory<Model, ModelDocument>) {
+					factory: EntityFactory<Model, ModelDocument, ModelModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

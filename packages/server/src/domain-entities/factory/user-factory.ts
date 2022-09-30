@@ -3,10 +3,11 @@ import {EntityFactory} from "../../types";
 import {User} from "../user";
 import {UserDocument} from "../../dal/mongodb/models/user";
 import {UserAuthorizationPolicy} from "../../security/policy/user-authorization-policy";
+import UserModel from "../../dal/sql/models/user-model";
 
 
 @injectable()
-export default class UserFactory implements EntityFactory<User, UserDocument> {
+export default class UserFactory implements EntityFactory<User, UserDocument, UserModel> {
     build(
         {
             _id,
@@ -55,6 +56,18 @@ export default class UserFactory implements EntityFactory<User, UserDocument> {
         user.currentWorld = currentWorld && currentWorld.toString();
         user.roles = roles.map(role => role.toString());
         return user;
+    }
+
+    async fromSqlModel(model: UserModel): Promise<User> {
+        return this.build({
+            _id: model._id,
+            email: model.email,
+            username: model.username,
+            password: model.password,
+            tokenVersion: model.tokenVersion,
+            currentWorld: model.currentWorldId,
+            roles: (await model.getRoles()).map(role => role._id)
+        });
     }
 
 }

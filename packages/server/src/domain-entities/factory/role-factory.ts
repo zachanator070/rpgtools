@@ -5,10 +5,12 @@ import {RoleDocument} from "../../dal/mongodb/models/role";
 import {RoleAuthorizationPolicy} from "../../security/policy/role-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import {RoleModel} from "../../dal/sql/models/role-model";
 
 
 @injectable()
-export default class RoleFactory implements EntityFactory<Role, RoleDocument> {
+export default class RoleFactory implements EntityFactory<Role, RoleDocument, RoleModel> {
+
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -44,8 +46,16 @@ export default class RoleFactory implements EntityFactory<Role, RoleDocument> {
         role._id = _id && _id.toString();
         role.name = name;
         role.world = world && world.toString();
-        role.acl = this.aclFactory.fromMongodbDocument(acl);
+        role.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return role;
     }
 
+    async fromSqlModel(model: RoleModel): Promise<Role> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        });
+    }
 }

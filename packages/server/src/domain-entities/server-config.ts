@@ -6,6 +6,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import ServerConfigFactory from "./factory/server-config-factory";
 import {ServerConfigDocument} from "../dal/mongodb/models/server-config";
+import ServerConfigModel from "../dal/sql/models/server-config-model";
 
 @injectable()
 export class ServerConfig implements PermissionControlledEntity {
@@ -17,14 +18,14 @@ export class ServerConfig implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: ServerConfigAuthorizationPolicy;
-	factory: EntityFactory<ServerConfig, ServerConfigDocument>;
+	factory: EntityFactory<ServerConfig, ServerConfigDocument, ServerConfigModel>;
 
 	type: string = SERVER_CONFIG;
 
 	constructor(@inject(INJECTABLE_TYPES.ServerConfigAuthorizationPolicy)
 					authorizationPolicy: ServerConfigAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ServerConfigFactory)
-					factory: EntityFactory<ServerConfig, ServerConfigDocument>) {
+					factory: EntityFactory<ServerConfig, ServerConfigDocument, ServerConfigModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

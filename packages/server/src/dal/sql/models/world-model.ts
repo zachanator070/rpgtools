@@ -1,11 +1,16 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import ArticleModel from "./article-model";
 import WikiFolderModel from "./wiki-folder-model";
-import configPermissionControlledModel from "./config-permission-controlled-model";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 
 
-export default class WorldModel extends Model {
+export default class WorldModel extends PermissionControlledModel {
+
+    declare name: string;
+    declare wikiPageId: string;
+    declare rootFolderId: string;
+
     static attributes = Object.assign({}, defaultAttributes, {
         name: {
             type: DataTypes.STRING,
@@ -14,8 +19,8 @@ export default class WorldModel extends Model {
     });
     
     static connect() {
-        WorldModel.belongsTo(ArticleModel, {foreignKey: 'wikiPage', constraints: false});
-        WorldModel.belongsTo(WikiFolderModel, {foreignKey: 'rootFolder'});
+        WorldModel.belongsTo(ArticleModel, {as: 'wikiPage', constraints: false});
+        WorldModel.belongsTo(WikiFolderModel, {as: 'rootFolder'});
         configPermissionControlledModel(WorldModel);
     }
 }

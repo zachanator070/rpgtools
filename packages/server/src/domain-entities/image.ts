@@ -5,6 +5,7 @@ import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {ImageDocument} from "../dal/mongodb/models/image";
+import ImageModel from "../dal/sql/models/image-model";
 
 @injectable()
 export class Image implements DomainEntity {
@@ -19,14 +20,14 @@ export class Image implements DomainEntity {
 	public icon: string | null;
 
 	authorizationPolicy: ImageAuthorizationPolicy;
-	factory: EntityFactory<Image, ImageDocument>;
+	factory: EntityFactory<Image, ImageDocument, ImageModel>;
 
 	type: string = IMAGE;
 
 	constructor(@inject(INJECTABLE_TYPES.ImageAuthorizationPolicy)
 					authorizationPolicy: ImageAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ImageFactory)
-					factory: EntityFactory<Image, ImageDocument>) {
+					factory: EntityFactory<Image, ImageDocument, ImageModel>) {
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;
 	}

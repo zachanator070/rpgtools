@@ -3,10 +3,11 @@ import {EntityFactory} from "../../types";
 import {Pin} from "../pin";
 import {PinDocument} from "../../dal/mongodb/models/pin";
 import {PinAuthorizationPolicy} from "../../security/policy/pin-authorization-policy";
+import PinModel from "../../dal/sql/models/pin-model";
 
 
 @injectable()
-export default class PinFactory implements EntityFactory<Pin, PinDocument> {
+export default class PinFactory implements EntityFactory<Pin, PinDocument, PinModel> {
     build(
         {
             _id,
@@ -39,6 +40,16 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument> {
         pin.map = map && map.toString();
         pin.page = page && page.toString();
         return pin;
+    }
+
+    async fromSqlModel(model: PinModel): Promise<Pin> {
+        return this.build({
+            _id: model._id,
+            x: model.x,
+            y: model.y,
+            map: model.mapId,
+            page: model.pageId
+        });
     }
 
 }

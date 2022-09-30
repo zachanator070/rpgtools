@@ -1,9 +1,15 @@
-import {DataTypes, Model} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, Model} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import PathNodeModel from "./path-node-model";
+import SqlModel from "../sql-model";
 
 
-export default class FogStrokeModel extends Model {
+export default class FogStrokeModel extends SqlModel {
+
+    declare size: number;
+    declare type: string;
+
+    getPath: HasManyGetAssociationsMixin<PathNodeModel>;
 
     static attributes = Object.assign({}, defaultAttributes, {
         size: {
@@ -21,6 +27,6 @@ export default class FogStrokeModel extends Model {
     });
 
     static connect() {
-        FogStrokeModel.hasMany(PathNodeModel);
+        FogStrokeModel.hasMany(PathNodeModel, {as: 'path'});
     }
 }

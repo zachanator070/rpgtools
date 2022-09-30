@@ -2,9 +2,19 @@ import {DataTypes, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import ModelModel from "../model-model";
 import ArticleModel from "../article-model";
+import SqlModel from "../sql-model";
 
 
-export default class GameModelModel extends Model {
+export default class InGameModelModel extends SqlModel {
+
+    declare x: number;
+    declare z: number;
+    declare lookAtX: number;
+    declare lookAtZ: number;
+    declare color: string;
+
+    declare modelId: string;
+    declare wikiId: string;
 
     static attributes = Object.assign({}, defaultAttributes, {
         x: {
@@ -29,7 +39,7 @@ export default class GameModelModel extends Model {
     });
 
     static connect() {
-        GameModelModel.belongsTo(ModelModel, {foreignKey: 'model'})
-        GameModelModel.belongsTo(ArticleModel, {foreignKey: 'wiki', constraints: false});
+        InGameModelModel.belongsTo(ModelModel, {as: 'model'})
+        InGameModelModel.belongsTo(ArticleModel, {as: 'wiki', constraints: false});
     }
 }

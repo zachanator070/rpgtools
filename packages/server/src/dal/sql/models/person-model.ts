@@ -1,8 +1,7 @@
-import {Model, Sequelize} from "sequelize";
-import configModeledWikiModel, {modeledWikiAttributes} from "./config-modeled-wiki-model";
+import ModeledWikiModel, {configModeledWikiModel} from "./modeled-wiki-model";
 
 
-export default class PersonModel extends Model {
+export default class PersonModel extends ModeledWikiModel {
     static connect() {
         configModeledWikiModel(PersonModel);
     }

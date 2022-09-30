@@ -4,10 +4,11 @@ import {FileDocument} from "../../dal/mongodb/models/file";
 import {File} from "../file";
 import {FileAuthorizationPolicy} from "../../security/policy/file-authorization-policy";
 import {Readable} from "stream";
+import FileModel from "../../dal/sql/models/file-model";
 
 
 @injectable()
-export default class FileFactory implements EntityFactory<File, FileDocument> {
+export default class FileFactory implements EntityFactory<File, FileDocument, FileModel> {
     build({
             _id,
             filename,
@@ -39,6 +40,15 @@ export default class FileFactory implements EntityFactory<File, FileDocument> {
         file.readStream = readStream;
         file.mimeType = mimeType;
         return file;
+    }
+
+    async fromSqlModel(model: FileModel): Promise<File> {
+        return this.build({
+            _id: model._id,
+            filename: model.filename,
+            mimeType: model.mimeType,
+            readStream: Readable.from(model.content)
+        });
     }
 
 }

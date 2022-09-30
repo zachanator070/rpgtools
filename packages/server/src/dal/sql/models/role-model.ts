@@ -1,10 +1,14 @@
 import {DataTypes, Model} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
-import configPermissionControlledModel from "./config-permission-controlled-model";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 
 
-export class RoleModel extends Model {
+export class RoleModel extends PermissionControlledModel {
+
+    declare name: string;
+    declare worldId: string;
+
     static attributes = Object.assign({}, defaultAttributes, {
         name: {
             type: DataTypes.STRING,
@@ -13,7 +17,7 @@ export class RoleModel extends Model {
     });
 
     static connect() {
-        RoleModel.belongsTo(WorldModel, {foreignKey: 'world'});
+        RoleModel.belongsTo(WorldModel, {as: 'world'});
         configPermissionControlledModel(RoleModel);
     }
 }

@@ -1,24 +1,44 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {Character, CharacterAttribute, FogStroke, Game, InGameModel, Message, PathNode, Stroke} from "../game";
+import {Character, FogStroke, Game, InGameModel, Message, Stroke} from "../game";
 import {
-    CharacterAttributeDocument,
-    CharacterDocument,
-    FogStrokeDocument,
-    GameDocument, InGameModelDocument, MessageDocument,
-    PathNodeDocument,
-    StrokeDocument
+    GameDocument,
 } from "../../dal/mongodb/models/game";
 import {GameAuthorizationPolicy} from "../../security/policy/game-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import GameModel from "../../dal/sql/models/game-model";
+import CharacterFactory from "./game/character-factory";
+import PathNodeFactory from "./game/path-node-factory";
+import StrokeFactory from "./game/stroke-factory";
+import MessageFactory from "./game/message-factory";
+import InGameModelFactory from "./game/in-game-model-factory";
+import FogStrokeFactory from "./game/fog-stroke-factory";
 
 
 @injectable()
-export default class GameFactory implements EntityFactory<Game, GameDocument> {
+export default class GameFactory implements EntityFactory<Game, GameDocument, GameModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
-    aclFactory: AclFactory
+    aclFactory: AclFactory;
+
+    @inject(INJECTABLE_TYPES.CharacterFactory)
+    characterFactory: CharacterFactory;
+
+    @inject(INJECTABLE_TYPES.FogStrokeFactory)
+    fogStrokeFactory: FogStrokeFactory;
+
+    @inject(INJECTABLE_TYPES.InGameModelFactory)
+    inGameModelFactory: InGameModelFactory;
+
+    @inject(INJECTABLE_TYPES.MessageFactory)
+    messageFactory: MessageFactory;
+
+    @inject(INJECTABLE_TYPES.PathNodeFactory)
+    pathNodeFactory: PathNodeFactory;
+
+    @inject(INJECTABLE_TYPES.StrokeFactory)
+    strokeFactory: StrokeFactory;
 
     build(
         {
@@ -80,121 +100,30 @@ export default class GameFactory implements EntityFactory<Game, GameDocument> {
         game.passwordHash = passwordHash;
         game.world = world && world.toString();
         game.map = map && map.toString();
-        game.characters = this.buildCharacters(characters);
-        game.strokes = this.buildStrokes(strokes);
-        game.fog = this.buildFogStrokes(fog);
-        game.messages = this.buildMessages(messages);
-        game.models = this.buildModels(models);
+        game.characters = characters.map(character => this.characterFactory.fromMongodbDocument(character))
+        game.strokes = strokes.map(stroke => this.strokeFactory.fromMongodbDocument(stroke));
+        game.fog = fog.map(stroke => this.fogStrokeFactory.fromMongodbDocument(stroke));
+        game.messages = messages.map(message => this.messageFactory.fromMongodbDocument(message));
+        game.models = models.map(model => this.inGameModelFactory.fromMongodbDocument(model));
         game.host = host && host.toString();
-        game.acl = this.aclFactory.fromMongodbDocument(acl);
+        game.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return game;
     }
 
-    private buildNodePath(path: PathNodeDocument[]): PathNode[] {
-        const nodes: PathNode[] = [];
-        for (let document of path) {
-            nodes.push(new PathNode(document._id.toString(), document.x, document.y));
-        }
-        return nodes;
-    }
-
-    private buildFogStrokes(fog: FogStrokeDocument[]): FogStroke[] {
-        const strokes: FogStroke[] = [];
-        for (let fogDocument of fog) {
-            strokes.push(
-                new FogStroke(
-                    fogDocument._id.toString(),
-                    this.buildNodePath(fogDocument.path),
-                    fogDocument.size,
-                    fogDocument.type
-                )
-            );
-        }
-        return strokes;
-    }
-
-    private buildStrokes(documents: StrokeDocument[]): Stroke[] {
-        const strokes: Stroke[] = [];
-        for (let document of documents) {
-            strokes.push(
-                new Stroke(
-                    document._id.toString(),
-                    this.buildNodePath(document.path),
-                    document.color,
-                    document.size,
-                    document.fill,
-                    document.type
-                )
-            );
-        }
-        return strokes;
-    }
-
-    private buildCharacters(documents: CharacterDocument[]): Character[] {
-        const characters: Character[] = [];
-        for (let document of documents) {
-            characters.push(
-                new Character(
-                    document._id.toString(),
-                    document.name,
-                    document.player.toString(),
-                    document.color,
-                    this.buildCharacterAttributes(document.attributes)
-                )
-            );
-        }
-        return characters;
-    }
-
-    private buildCharacterAttributes(documents: CharacterAttributeDocument[]): CharacterAttribute[] {
-        const attributes: CharacterAttribute[] = [];
-        for (let document of documents) {
-            attributes.push(
-                new CharacterAttribute(
-                    document._id.toString(),
-                    document.name,
-                    document.value,
-                )
-            );
-        }
-        return attributes;
-    }
-
-    private buildMessages(documents: MessageDocument[]): Message[] {
-        const messages: Message[] = [];
-        for (let document of documents) {
-            messages.push(
-                new Message(
-                    document.sender,
-                    document.senderUser,
-                    document.receiver,
-                    document.receiverUser,
-                    document.message,
-                    document.timestamp,
-                    document._id.toString()
-                )
-            );
-        }
-        return messages;
-    }
-
-    private buildModels(documents: InGameModelDocument[]): InGameModel[] {
-        const models: InGameModel[] = [];
-        for (let document of documents) {
-            models.push(
-                new InGameModel(
-                    document._id.toString(),
-                    document.model.toString(),
-                    document.x,
-                    document.z,
-                    document.lookAtX,
-                    document.lookAtZ,
-                    document.color,
-                    document.wiki ? document.wiki.toString() : null
-                )
-            );
-        }
-        return models;
+    async fromSqlModel(model: GameModel): Promise<Game> {
+        return this.build({
+            _id: model._id,
+            passwordHash: model.passwordHash,
+            world: model.worldId,
+            map: model.mapId,
+            characters: await Promise.all((await model.getCharacters()).map(entry => this.characterFactory.fromSqlModel(entry))),
+            strokes: await Promise.all((await model.getStrokes()).map(entry => this.strokeFactory.fromSqlModel(entry))),
+            fog: await Promise.all((await model.getFog()).map(entry => this.fogStrokeFactory.fromSqlModel(entry))),
+            messages: await Promise.all((await model.getMessages()).map(entry => this.messageFactory.fromSqlModel(entry))),
+            models: await Promise.all((await model.getModels()).map(entry => this.inGameModelFactory.fromSqlModel(entry))),
+            host: model.hostId,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        });
     }
 
 }

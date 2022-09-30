@@ -1,10 +1,17 @@
-import {DataTypes, Model} from "sequelize";
+import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
-import configPermissionControlledModel from "./config-permission-controlled-model";
 import UserModel from "./user-model";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 
 
-export default class ServerConfigModel extends Model {
+export default class ServerConfigModel extends PermissionControlledModel {
+
+    declare version: string;
+    declare registerCodes: string;
+    declare unlockCode: string;
+
+    getAdmins: BelongsToManyGetAssociationsMixin<UserModel>;
+
     static attributes = Object.assign({}, defaultAttributes, {
         version: {
             type: DataTypes.STRING,
@@ -21,6 +28,6 @@ export default class ServerConfigModel extends Model {
 
     static connect() {
         configPermissionControlledModel(ServerConfigModel);
-        ServerConfigModel.belongsToMany(UserModel, {through: 'AdminUsersToServerConfig'});
+        ServerConfigModel.belongsToMany(UserModel, {as: 'admins', through: 'AdminUsersToServerConfig'});
     }
 }

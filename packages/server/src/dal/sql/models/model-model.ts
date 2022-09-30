@@ -1,9 +1,20 @@
-import {DataTypes, Model} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
-import configPermissionControlledModel from "./config-permission-controlled-model";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import FileModel from "./file-model";
 
-export default class ModelModel extends Model {
+export default class ModelModel extends PermissionControlledModel {
+
+    declare name: string;
+    declare depth: number;
+    declare width: number;
+    declare height: number;
+    declare fileName: string;
+    declare notes: string;
+    declare fileId: string;
+    declare worldId: string;
+
     static attributes = Object.assign({}, defaultAttributes, {
         name: {
             type: DataTypes.STRING,
@@ -32,7 +43,8 @@ export default class ModelModel extends Model {
     });
 
     static connect() {
-        ModelModel.belongsTo(WorldModel, {foreignKey: 'world'});
+        ModelModel.belongsTo(WorldModel, {as: 'world'});
+        ModelModel.belongsTo(FileModel, {as: 'file'});
         configPermissionControlledModel(ModelModel);
     }
 }

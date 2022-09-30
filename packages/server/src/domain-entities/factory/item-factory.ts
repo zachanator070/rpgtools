@@ -5,9 +5,10 @@ import {ItemDocument} from "../../dal/mongodb/models/item";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import ItemModel from "../../dal/sql/models/item-model";
 
 @injectable()
-export default class ItemFactory implements EntityFactory<Item, ItemDocument> {
+export default class ItemFactory implements EntityFactory<Item, ItemDocument, ItemModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -63,8 +64,21 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument> {
         item.contentId = contentId && contentId.toString();
         item.pageModel = pageModel && pageModel.toString();
         item.modelColor = modelColor;
-        item.acl = this.aclFactory.fromMongodbDocument(acl);
+        item.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return item;
+    }
+
+    async fromSqlModel(model: ItemModel): Promise<Item> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            content: model.contentId,
+            pageModel: model.pageModelId,
+            modelColor: model.modelColor,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        });
     }
 
 }

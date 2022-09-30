@@ -24,7 +24,7 @@ export abstract class AbstractMongodbRepository<
 	@inject(INJECTABLE_TYPES.FilterFactory)
 	filterFactory: FilterFactory;
 
-	entityFactory: EntityFactory<EntityType, DocumentType>;
+	entityFactory: EntityFactory<EntityType, DocumentType, any>;
 
 	setDatabaseSession(session: DatabaseSession) {
 	}

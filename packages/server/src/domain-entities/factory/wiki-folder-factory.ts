@@ -5,10 +5,11 @@ import {WikiFolderDocument} from "../../dal/mongodb/models/wiki-folder";
 import {WikiFolderAuthorizationPolicy} from "../../security/policy/wiki-folder-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import WikiFolderModel from "../../dal/sql/models/wiki-folder-model";
 
 
 @injectable()
-export default class WikiFolderFactory implements EntityFactory<WikiFolder, WikiFolderDocument> {
+export default class WikiFolderFactory implements EntityFactory<WikiFolder, WikiFolderDocument, WikiFolderModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -54,8 +55,19 @@ export default class WikiFolderFactory implements EntityFactory<WikiFolder, Wiki
         folder.world = world && world.toString();
         folder.pages = pages.map(page => page.toString());
         folder.children = children.map(child => child.toString());
-        folder.acl = this.aclFactory.fromMongodbDocument(acl);
+        folder.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return folder;
+    }
+
+    async fromSqlModel(model: WikiFolderModel): Promise<WikiFolder> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            pages: (await model.getPages()).map(page => page._id),
+            children: (await model.getChildren()).map(child => child._id),
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        });
     }
 
 }

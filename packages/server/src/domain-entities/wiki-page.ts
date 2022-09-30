@@ -9,7 +9,7 @@ import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-author
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import ItemFactory from "./factory/item-factory";
+import WikiPageModel from "../dal/sql/models/wiki-page-model";
 
 @injectable()
 export abstract class WikiPage implements PermissionControlledEntity {
@@ -31,7 +31,7 @@ export abstract class WikiPage implements PermissionControlledEntity {
 	}
 
 	abstract type: string;
-	abstract factory: EntityFactory<WikiPage, WikiPageDocument>;
+	abstract factory: EntityFactory<WikiPage, WikiPageDocument, WikiPageModel>;
 
 	abstract getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }

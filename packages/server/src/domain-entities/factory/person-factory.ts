@@ -5,10 +5,11 @@ import {PersonDocument} from "../../dal/mongodb/models/person";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
+import PersonModel from "../../dal/sql/models/person-model";
 
 
 @injectable()
-export default class PersonFactory implements EntityFactory<Person, PersonDocument> {
+export default class PersonFactory implements EntityFactory<Person, PersonDocument, PersonModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -64,8 +65,21 @@ export default class PersonFactory implements EntityFactory<Person, PersonDocume
         person.contentId = contentId && contentId.toString();
         person.pageModel = pageModel && pageModel.toString();
         person.modelColor = modelColor;
-        person.acl = this.aclFactory.fromMongodbDocument(acl);
+        person.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return person;
+    }
+
+    async fromSqlModel(model: PersonModel): Promise<Person> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            contentId: model.contentId,
+            pageModel: model.pageModelId,
+            modelColor: model.modelColor,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        })
     }
 
 }

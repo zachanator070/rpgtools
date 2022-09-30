@@ -6,18 +6,19 @@ import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
 import {MonsterDocument} from "../dal/mongodb/models/monster";
+import MonsterModel from "../dal/sql/models/monster-model";
 
 @injectable()
 export class Monster extends ModeledPage {
 
 	@inject(INJECTABLE_TYPES.MonsterFactory)
-	factory: EntityFactory<Monster, MonsterDocument>;
+	factory: EntityFactory<Monster, MonsterDocument, MonsterModel>;
 
 	type: string = MONSTER;
 
 	constructor(
 		@inject(INJECTABLE_TYPES.MonsterFactory)
-			factory: EntityFactory<Monster, MonsterDocument>,
+			factory: EntityFactory<Monster, MonsterDocument, MonsterModel>,
 		@inject(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
 			authorizationPolicy: WikiPageAuthorizationPolicy
 	) {

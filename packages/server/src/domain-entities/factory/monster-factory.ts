@@ -5,10 +5,11 @@ import {MonsterDocument} from "../../dal/mongodb/models/monster";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import MonsterModel from "../../dal/sql/models/monster-model";
 
 
 @injectable()
-export default class MonsterFactory implements EntityFactory<Monster, MonsterDocument> {
+export default class MonsterFactory implements EntityFactory<Monster, MonsterDocument, MonsterModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -64,8 +65,21 @@ export default class MonsterFactory implements EntityFactory<Monster, MonsterDoc
         monster.contentId = contentId && contentId.toString();
         monster.pageModel = pageModel && pageModel.toString();
         monster.modelColor = modelColor;
-        monster.acl = this.aclFactory.fromMongodbDocument(acl);
+        monster.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return monster;
+    }
+
+    async fromSqlModel(model: MonsterModel): Promise<Monster> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            contentId: model.contentId,
+            pageModel: model.pageModelId,
+            modelColor: model.modelColor,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        });
     }
 
 }

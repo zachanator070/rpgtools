@@ -5,10 +5,11 @@ import {ModelDocument} from "../../dal/mongodb/models/model";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
 import {ModelAuthorizationPolicy} from "../../security/policy/model-authorization-policy";
+import ModelModel from "../../dal/sql/models/model-model";
 
 
 @injectable()
-export default class ModelFactory implements EntityFactory<Model, ModelDocument> {
+export default class ModelFactory implements EntityFactory<Model, ModelDocument, ModelModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -74,8 +75,23 @@ export default class ModelFactory implements EntityFactory<Model, ModelDocument>
         model.fileName = fileName;
         model.fileId = fileId && fileId.toString();
         model.notes = notes;
-        model.acl = this.aclFactory.fromMongodbDocument(acl);
+        model.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return model;
+    }
+
+    async fromSqlModel(model: ModelModel): Promise<Model> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            depth: model.depth,
+            width: model.width,
+            height: model.height,
+            fileName: model.fileName,
+            notes: model.notes,
+            world: model.notes,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+            fileId: model.fileId
+        })
     }
 
 }

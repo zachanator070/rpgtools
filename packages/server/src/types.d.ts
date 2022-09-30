@@ -26,12 +26,14 @@ import {WorldRepository} from "./dal/repository/world-repository";
 import {ArticleRepository} from "./dal/repository/article-repository";
 import {DatabaseContext} from "./dal/database-context";
 import {DatabaseSession} from "./dal/database-session";
+import {Model} from "sequelize";
+import SqlModel from "./dal/sql/models/sql-model";
 
 export interface DomainEntity {
 	_id: string;
 	type: string;
 	authorizationPolicy: EntityAuthorizationPolicy<this>;
-	factory: EntityFactory<DomainEntity, MongoDBDocument>;
+	factory: EntityFactory<DomainEntity, MongoDBDocument, SqlModel>;
 
 	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }
@@ -46,9 +48,10 @@ export interface PermissionControlledEntity extends DomainEntity{
 	acl: AclEntry[]
 }
 
-export interface EntityFactory<T, M extends MongoDBDocument | MongoDBDocument[]> {
+export interface EntityFactory<T, D extends MongoDBDocument | MongoDBDocument[], M extends Model> {
 	build(args: any): T;
-	fromMongodbDocument(doc: M): T;
+	fromMongodbDocument(doc: D): T;
+	fromSqlModel(model: M): Promise<T>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

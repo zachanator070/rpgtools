@@ -42,6 +42,14 @@ export const INJECTABLE_TYPES = {
 	WikiFolderFactory: Symbol.for("WikiFolderFactory"),
 	WorldFactory: Symbol.for("WorldFactory"),
 
+	CharacterFactory: Symbol.for('CharacterFactory'),
+	CharacterAttributeFactory: Symbol.for('CharacterAttributeFactory'),
+	PathNodeFactory: Symbol.for('NodePathFactory'),
+	StrokeFactory: Symbol.for('StrokeFactory'),
+	FogStrokeFactory: Symbol.for('FogStrokeFactory'),
+	MessageFactory: Symbol.for('MessageFactory'),
+	InGameModelFactory: Symbol.for('InGameModelFactory'),
+
 	// repositories
 	ArticleRepository: Symbol.for("ArticleRepository"),
 	ChunkRepository: Symbol.for("ChunkRepository"),

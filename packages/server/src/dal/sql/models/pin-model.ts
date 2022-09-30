@@ -1,10 +1,17 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import ImageModel from "./image-model";
 import ArticleModel from "./article-model";
+import SqlModel from "./sql-model";
 
 
-export default class PinModel extends Model {
+export default class PinModel extends SqlModel {
+
+    declare x: number;
+    declare y: number;
+    declare mapId: string;
+    declare pageId: string;
+
     static attributes = Object.assign({}, defaultAttributes, {
         x: {
             type: DataTypes.FLOAT,
@@ -17,7 +24,7 @@ export default class PinModel extends Model {
     });
 
     static connect() {
-        PinModel.belongsTo(ImageModel, {foreignKey: 'map'});
-        PinModel.belongsTo(ArticleModel, {foreignKey: 'page', constraints: false});
+        PinModel.belongsTo(ImageModel, {as: 'map'});
+        PinModel.belongsTo(ArticleModel, {as: 'page', constraints: false});
     }
 }

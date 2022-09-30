@@ -1,9 +1,13 @@
-import {wikiPageAttributes} from "./config-wiki-page-model";
-import {DataTypes, Model, Sequelize} from "sequelize";
+import WikiPageModel, {configWikiPageModel, wikiPageAttributes} from "./wiki-page-model";
+import {DataTypes} from "sequelize";
 import ImageModel from "./image-model";
-import configWikiPageModel from "./config-wiki-page-model";
 
-export default class PlaceModel extends Model {
+
+export default class PlaceModel extends WikiPageModel {
+
+    declare pixelsPerFoot: number;
+    declare mapImageId: string;
+
     static attributes = Object.assign({}, wikiPageAttributes, {
         pixelsPerFoot: {
             type: DataTypes.INTEGER
@@ -12,6 +16,6 @@ export default class PlaceModel extends Model {
 
     static connect() {
         configWikiPageModel(PlaceModel);
-        PlaceModel.belongsTo(ImageModel, {foreignKey: 'mapImage'});
+        PlaceModel.belongsTo(ImageModel, {as: 'mapImage'});
     }
 }

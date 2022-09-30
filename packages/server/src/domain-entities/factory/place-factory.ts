@@ -5,10 +5,11 @@ import {PlaceDocument} from "../../dal/mongodb/models/place";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
+import PlaceModel from "../../dal/sql/models/place-model";
 
 
 @injectable()
-export default class PlaceFactory implements EntityFactory<Place, PlaceDocument> {
+export default class PlaceFactory implements EntityFactory<Place, PlaceDocument, PlaceModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -64,8 +65,21 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument>
         place.contentId = contentId && contentId.toString();
         place.mapImage = mapImage && mapImage.toString();
         place.pixelsPerFoot = pixelsPerFoot;
-        place.acl = this.aclFactory.fromMongodbDocument(acl);
+        place.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return place;
+    }
+
+    async fromSqlModel(model: PlaceModel): Promise<Place> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            contentId: model.contentId,
+            mapImage: model.mapImageId,
+            pixelsPerFoot: model.pixelsPerFoot,
+            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+        });
     }
 
 }

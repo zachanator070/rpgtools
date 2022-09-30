@@ -3,10 +3,11 @@ import {EntityFactory} from "../../types";
 import {Chunk} from "../chunk";
 import {ChunkDocument} from "../../dal/mongodb/models/chunk";
 import {ChunkAuthorizationPolicy} from "../../security/policy/chunk-authorization-policy";
+import ChunkModel from "../../dal/sql/models/chunk-model";
 
 
 @injectable()
-export default class ChunkFactory implements EntityFactory<Chunk, ChunkDocument> {
+export default class ChunkFactory implements EntityFactory<Chunk, ChunkDocument, ChunkModel> {
     build(
         {
             _id,
@@ -47,6 +48,18 @@ export default class ChunkFactory implements EntityFactory<Chunk, ChunkDocument>
         chunk.fileId = doc.fileId && doc.fileId.toString();
         chunk.image = doc.image && doc.image.toString();
         return chunk;
+    }
+
+    async fromSqlModel(model: ChunkModel): Promise<Chunk> {
+        return this.build({
+            _id: model._id,
+            x: model.x,
+            y: model.y,
+            width: model.width,
+            height: model.height,
+            fileId: model.fileId,
+            image: model.imageId
+        });
     }
 
 }

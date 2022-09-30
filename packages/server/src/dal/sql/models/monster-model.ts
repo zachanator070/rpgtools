@@ -1,7 +1,6 @@
-import {Model} from "sequelize";
-import configModeledWikiModel from "./config-modeled-wiki-model";
+import ModeledWikiModel, {configModeledWikiModel} from "./modeled-wiki-model";
 
-export default class MonsterModel extends Model {
+export default class MonsterModel extends ModeledWikiModel {
     static connect() {
         configModeledWikiModel(MonsterModel);
     }

@@ -1,11 +1,19 @@
-import {DataTypes, Model} from "sequelize";
+import {BelongsToManyGetAssociationsMixin, DataTypes, HasManyGetAssociationsMixin} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
 import ArticleModel from "./article-model";
-import configPermissionControlledModel from "./config-permission-controlled-model";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import WikiPageModel from "./wiki-page-model";
 
 
-export default class WikiFolderModel extends Model{
+export default class WikiFolderModel extends PermissionControlledModel {
+
+    declare name: string;
+    declare worldId: string;
+
+    getPages: BelongsToManyGetAssociationsMixin<WikiPageModel>;
+    getChildren: HasManyGetAssociationsMixin<WikiFolderModel>;
+
     static attributes = Object.assign({}, defaultAttributes, {
         name: {
             type: DataTypes.STRING,
@@ -14,9 +22,9 @@ export default class WikiFolderModel extends Model{
     });
 
     static connect() {
-        WikiFolderModel.belongsTo(WorldModel, {foreignKey: 'world'});
-        WikiFolderModel.belongsToMany(ArticleModel, {through: 'WikiFolderToWikiPage', constraints: false});
-        WikiFolderModel.hasMany(WikiFolderModel, {foreignKey: 'parentFolder'});
+        WikiFolderModel.belongsTo(WorldModel, {as: 'world'});
+        WikiFolderModel.belongsToMany(ArticleModel, {as: 'pages', through: 'WikiFolderToWikiPage', constraints: false});
+        WikiFolderModel.hasMany(WikiFolderModel, {as: 'children'});
         configPermissionControlledModel(WikiFolderModel);
     }
 }

@@ -1,10 +1,17 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import UserModel from "../user-model";
 import CharacterAttributeModel from "./character-attribute-model";
+import SqlModel from "../sql-model";
 
 
-export default class CharacterModel extends Model {
+export default class CharacterModel extends SqlModel {
+
+    declare name: string;
+    declare color: string;
+    declare playerId: string;
+
+    getAttributes: HasManyGetAssociationsMixin<CharacterAttributeModel>;
 
     static attributes = Object.assign({}, defaultAttributes, {name: {
             type: DataTypes.STRING,
@@ -16,7 +23,7 @@ export default class CharacterModel extends Model {
         },});
 
     static connect() {
-        CharacterModel.belongsTo(UserModel, {foreignKey: 'player'});
-        CharacterModel.hasMany(CharacterAttributeModel);
+        CharacterModel.belongsTo(UserModel, {as: 'player'});
+        CharacterModel.hasMany(CharacterAttributeModel, {as: 'attributes'});
     }
 }

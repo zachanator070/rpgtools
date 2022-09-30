@@ -1,8 +1,16 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
+import SqlModel from "../sql-model";
 
 
-export default class MessageModel extends Model {
+export default class MessageModel extends SqlModel {
+
+    declare sender: string;
+    declare senderUser: string;
+    declare receiver: string;
+    declare receiverUser: string;
+    declare message: string;
+    declare timestamp: number;
 
     static attributes = Object.assign({}, defaultAttributes, {
         sender: {
@@ -26,7 +34,7 @@ export default class MessageModel extends Model {
             allowNull: false
         },
         timestamp: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: false
         }
     });

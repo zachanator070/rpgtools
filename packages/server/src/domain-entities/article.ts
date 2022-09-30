@@ -6,15 +6,16 @@ import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
 import {ArticleDocument} from "../dal/mongodb/models/article";
+import ArticleModel from "../dal/sql/models/article-model";
 
 @injectable()
 export class Article extends WikiPage {
 
-	factory: EntityFactory<Article, ArticleDocument>
+	factory: EntityFactory<Article, ArticleDocument, ArticleModel>
 
 	constructor(
 		@inject(INJECTABLE_TYPES.ArticleFactory)
-		factory: EntityFactory<Article, ArticleDocument>,
+		factory: EntityFactory<Article, ArticleDocument, ArticleModel>,
 		@inject(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
 		authorizationPolicy: WikiPageAuthorizationPolicy
 	) {

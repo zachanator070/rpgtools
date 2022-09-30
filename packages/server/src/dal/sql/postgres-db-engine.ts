@@ -10,7 +10,7 @@ import GameModel from "./models/game-model";
 import CharacterAttributeModel from "./models/game/character-attribute-model";
 import CharacterModel from "./models/game/character-model";
 import FogStrokeModel from "./models/game/fog-stroke-model";
-import GameModelModel from "./models/game/game-model-model";
+import InGameModelModel from "./models/game/in-game-model-model";
 import MessageModel from "./models/game/message-model";
 import PathNodeModel from "./models/game/path-node-model";
 import StrokeModel from "./models/game/stroke-model";
@@ -26,8 +26,8 @@ import ServerConfigModel from "./models/server-config-model";
 import UserModel from "./models/user-model";
 import WikiFolderModel from "./models/wiki-folder-model";
 import WorldModel from "./models/world-model";
-import {modeledWikiAttributes} from "./models/config-modeled-wiki-model";
-import {wikiPageAttributes} from "./models/config-wiki-page-model";
+import {modeledWikiAttributes} from "./models/modeled-wiki-model";
+import {wikiPageAttributes} from "./models/wiki-page-model";
 import {
     ACL_ENTRY,
     ARTICLE,
@@ -80,7 +80,7 @@ export default class PostgresDbEngine implements DbEngine {
         GameModel.init(GameModel.attributes, {sequelize: this.connection, modelName: GAME});
         CharacterAttributeModel.init(CharacterAttributeModel.attributes, {sequelize: this.connection, modelName: CHARACTER_ATTRIBUTE});
         CharacterModel.init(CharacterModel.attributes, {sequelize: this.connection, modelName: CHARACTER});
-        GameModelModel.init(GameModelModel.attributes, {sequelize: this.connection, modelName: GAME_MODEL});
+        InGameModelModel.init(InGameModelModel.attributes, {sequelize: this.connection, modelName: GAME_MODEL});
         FogStrokeModel.init(FogStrokeModel.attributes, {sequelize: this.connection, modelName: FOG_STROKE});
         MessageModel.init(MessageModel.attributes, {sequelize: this.connection, modelName: MESSAGE});
         PathNodeModel.init(PathNodeModel.attributes, {sequelize: this.connection, modelName: PATH_NODE});
@@ -109,7 +109,7 @@ export default class PostgresDbEngine implements DbEngine {
         CharacterAttributeModel.connect();
         CharacterModel.connect();
         FogStrokeModel.connect();
-        GameModelModel.connect();
+        InGameModelModel.connect();
         MessageModel.connect();
         PathNodeModel.connect();
         StrokeModel.connect();

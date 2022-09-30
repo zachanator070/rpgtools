@@ -5,10 +5,12 @@ import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-autho
 import {ArticleDocument} from "../../dal/mongodb/models/article";
 import AclFactory from "./acl-factory";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
+import ArticleModel from "../../dal/sql/models/article-model";
+import AclEntryModel from "../../dal/sql/models/acl-entry-model";
 
 
 @injectable()
-export default class ArticleFactory implements EntityFactory<Article, ArticleDocument> {
+export default class ArticleFactory implements EntityFactory<Article, ArticleDocument, ArticleModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -45,8 +47,22 @@ export default class ArticleFactory implements EntityFactory<Article, ArticleDoc
         article.world = doc.world && doc.world.toString();
         article.coverImage = doc.coverImage && doc.coverImage.toString();
         article.contentId = doc.contentId && doc.contentId.toString();
-        article.acl = this.aclFactory.fromMongodbDocument(doc.acl);
+        article.acl = doc.acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return article;
+    }
+
+    async fromSqlModel(model: ArticleModel): Promise<Article> {
+        return this.build({
+            _id: model._id,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            contentId: model.contentId,
+            acl: await Promise.all(
+                (await AclEntryModel.findAll({where: {subject: model._id, subjectType: Article}}))
+                    .map(entry => this.aclFactory.fromSqlModel(entry))
+            )
+        });
     }
 
 }
