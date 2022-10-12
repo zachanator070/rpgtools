@@ -15,7 +15,6 @@ export default class ChunkModel extends SqlModel {
 
     declare imageId: string;
     declare fileId: string;
-    declare worldId: string;
 
     static attributes = Object.assign({}, defaultAttributes, {
         x: {
@@ -39,6 +38,5 @@ export default class ChunkModel extends SqlModel {
     static connect() {
         ChunkModel.belongsTo(ImageModel, {as: 'image'});
         ChunkModel.belongsTo(FileModel, {as: 'file'});
-        ChunkModel.belongsTo(WorldModel, {as: 'world'});
     }
 }

@@ -1,4 +1,4 @@
-import {DataTypes, HasManyGetAssociationsMixin, Model, Sequelize} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import UserModel from "../user-model";
 import CharacterAttributeModel from "./character-attribute-model";
@@ -11,7 +11,8 @@ export default class CharacterModel extends SqlModel {
     declare color: string;
     declare playerId: string;
 
-    getAttributes: HasManyGetAssociationsMixin<CharacterAttributeModel>;
+    getCharacterAttributes: HasManyGetAssociationsMixin<CharacterAttributeModel>;
+    setCharacterAttributes: HasManySetAssociationsMixin<CharacterAttributeModel, string>;
 
     static attributes = Object.assign({}, defaultAttributes, {name: {
             type: DataTypes.STRING,

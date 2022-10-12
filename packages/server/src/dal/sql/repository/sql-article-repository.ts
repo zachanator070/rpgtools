@@ -27,9 +27,6 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
         }));
     }
 
-    setDatabaseSession(session: DatabaseSession): void {
-    }
-
     async modelFactory(entity: Article): Promise<ArticleModel> {
         return ArticleModel.build({
             _id: entity._id,
