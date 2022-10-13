@@ -15,7 +15,8 @@ export default class ModelModel extends PermissionControlledModel {
     declare fileId: string;
     declare worldId: string;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -40,7 +41,7 @@ export default class ModelModel extends PermissionControlledModel {
             type: DataTypes.STRING,
             allowNull: false
         },
-    });
+    };
 
     static connect() {
         ModelModel.belongsTo(WorldModel, {as: 'world'});

@@ -14,7 +14,8 @@ export default class AclEntryModel extends SqlModel {
 
     declare principal: string;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         permission: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -35,7 +36,7 @@ export default class AclEntryModel extends SqlModel {
                 }
             }
         }
-    });
+    };
 
     static connect() {
         AclEntryModel.belongsTo(UserModel, {foreignKey: 'principal', constraints: false});

@@ -1,7 +1,6 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { World } from "../../../domain-entities/world";
 import { inject, injectable } from "inversify";
-import { } from "../../../types";
 import mongoose from "mongoose";
 import {WorldDocument, WorldModel} from "../models/world";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
@@ -16,7 +15,7 @@ export class MongodbWorldRepository
 	implements WorldRepository
 {
 	@inject(INJECTABLE_TYPES.WorldFactory)
-	worldFactory: WorldFactory;
+	entityFactory: WorldFactory;
 
 	model: mongoose.Model<any> = WorldModel;
 

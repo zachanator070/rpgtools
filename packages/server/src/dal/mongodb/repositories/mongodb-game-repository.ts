@@ -20,7 +20,7 @@ export class MongodbGameRepository
 	implements GameRepository
 {
 	@inject(INJECTABLE_TYPES.GameFactory)
-	gameFactory: GameFactory;
+	entityFactory: GameFactory;
 
 	model: mongoose.Model<any> = GameModel;
 

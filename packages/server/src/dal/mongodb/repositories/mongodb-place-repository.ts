@@ -13,7 +13,7 @@ export class MongodbPlaceRepository
 	implements PlaceRepository
 {
 	@inject(INJECTABLE_TYPES.PlaceFactory)
-	placeFactory: PlaceFactory;
+	entityFactory: PlaceFactory;
 
 	model: mongoose.Model<any> = PlaceModel;
 

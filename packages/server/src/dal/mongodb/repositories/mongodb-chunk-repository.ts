@@ -13,7 +13,7 @@ export class MongodbChunkRepository
 	implements ChunkRepository
 {
 	@inject(INJECTABLE_TYPES.ChunkFactory)
-	chunkFactory: ChunkFactory;
+	entityFactory: ChunkFactory;
 
 	model: mongoose.Model<any> = ChunkModel;
 }

@@ -14,7 +14,7 @@ export class MongodbUserRepository
 	implements UserRepository
 {
 	@inject(INJECTABLE_TYPES.UserFactory)
-	userFactory: UserFactory;
+	entityFactory: UserFactory;
 
 	model = UserModel;
 

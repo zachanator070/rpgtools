@@ -14,7 +14,7 @@ export class MongodbModelRepository
 	implements ModelRepository
 {
 	@inject(INJECTABLE_TYPES.ModelFactory)
-	modelFactory: ModelFactory;
+	entityFactory: ModelFactory;
 
 	model: mongoose.Model<any> = ModelModel;
 

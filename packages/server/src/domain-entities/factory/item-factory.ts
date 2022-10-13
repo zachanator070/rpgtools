@@ -19,7 +19,7 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, It
             name,
             world,
             coverImage,
-            content,
+            contentId,
             pageModel,
             modelColor,
             acl
@@ -28,7 +28,7 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, It
             name: string,
             world: string,
             coverImage: string,
-            content: string,
+            contentId: string,
             pageModel: string,
             modelColor: string,
             acl: AclEntry[]
@@ -39,7 +39,7 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, It
         item.name = name;
         item.world = world;
         item.coverImage = coverImage;
-        item.contentId = content;
+        item.contentId = contentId;
         item.pageModel = pageModel;
         item.modelColor = modelColor;
         item.acl = acl;
@@ -69,15 +69,18 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, It
     }
 
     async fromSqlModel(model: ItemModel): Promise<Item> {
+        const page = await model.getWikiPage();
         return this.build({
             _id: model._id,
-            name: model.name,
-            world: model.worldId,
-            coverImage: model.coverImageId,
-            content: model.contentId,
+            name: page.name,
+            world: page.worldId,
+            coverImage: page.coverImageId,
+            contentId: page.contentId,
             pageModel: model.pageModelId,
             modelColor: model.modelColor,
-            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+            acl: await Promise.all(
+                (await (await model.getWikiPage()).getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+            )
         });
     }
 

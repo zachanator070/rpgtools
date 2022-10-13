@@ -13,7 +13,7 @@ export class MongodbMonsterRepository
 	implements MonsterRepository
 {
 	@inject(INJECTABLE_TYPES.MonsterFactory)
-	monsterFactory: MonsterFactory;
+	entityFactory: MonsterFactory;
 
 	model: mongoose.Model<any> = MonsterModel;
 

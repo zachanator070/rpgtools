@@ -13,7 +13,7 @@ export class MongodbServerConfigRepository
 	implements ServerConfigRepository
 {
 	@inject(INJECTABLE_TYPES.ServerConfigFactory)
-	serverConfigFactory: ServerConfigFactory;
+	entityFactory: ServerConfigFactory;
 
 	model: mongoose.Model<any> = ServerConfigModel;
 

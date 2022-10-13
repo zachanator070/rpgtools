@@ -15,7 +15,7 @@ export class MongodbPinRepository
 	implements PinRepository
 {
 	@inject(INJECTABLE_TYPES.PinFactory)
-	pinFactory: PinFactory;
+	entityFactory: PinFactory;
 
 	model: mongoose.Model<any> = PinModel;
 

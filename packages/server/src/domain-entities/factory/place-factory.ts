@@ -70,15 +70,18 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
     }
 
     async fromSqlModel(model: PlaceModel): Promise<Place> {
+        const page = await model.getWikiPage();
         return this.build({
             _id: model._id,
-            name: model.name,
-            world: model.worldId,
-            coverImage: model.coverImageId,
-            contentId: model.contentId,
+            name: page.name,
+            world: page.worldId,
+            coverImage: page.coverImageId,
+            contentId: page.contentId,
             mapImage: model.mapImageId,
             pixelsPerFoot: model.pixelsPerFoot,
-            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+            acl: await Promise.all(
+                (await (await model.getWikiPage()).getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+            )
         });
     }
 

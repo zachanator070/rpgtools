@@ -167,6 +167,23 @@ import UserFactory from "../domain-entities/factory/user-factory";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 import WorldFactory from "../domain-entities/factory/world-factory";
 import AclFactory from "../domain-entities/factory/acl-factory";
+import SqlArticleRepository from "../dal/sql/repository/sql-article-repository";
+import SqlChunkRepository from "../dal/sql/repository/sql-chunk-repository";
+import SqlFileRepository from "../dal/sql/repository/sql-file-repository";
+import SqlGameRepository from "../dal/sql/repository/sql-game-repository";
+import SqlImageRepository from "../dal/sql/repository/sql-image-repository";
+import SqlItemRepository from "../dal/sql/repository/sql-item-repository";
+import SqlModelRepository from "../dal/sql/repository/sql-model-repository";
+import SqlMonsterRepository from "../dal/sql/repository/sql-monster-repository";
+import SqlPersonRepository from "../dal/sql/repository/sql-person-repository";
+import SqlPinRepository from "../dal/sql/repository/sql-pin-repository";
+import SqlPlaceRepository from "../dal/sql/repository/sql-place-repository";
+import SqlRoleRepository from "../dal/sql/repository/sql-role-repository";
+import SqlServerConfigRepository from "../dal/sql/repository/sql-server-config-repository";
+import SqlUserRepository from "../dal/sql/repository/sql-user-repository";
+import SqlWikiFolderRepository from "../dal/sql/repository/sql-wiki-folder-repository";
+import SqlWikiPageRepository from "../dal/sql/repository/sql-wiki-page-repository";
+import SqlWorldRepository from "../dal/sql/repository/sql-world-repository";
 
 const container = new Container();
 
@@ -258,29 +275,80 @@ container
 	.to(WorldFactory);
 
 // db repositories
-container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
-container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(MongodbChunkRepository);
-container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(MongodbFileRepository);
-container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(MongodbGameRepository);
-container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(MongodbImageRepository);
-container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(MongodbItemRepository);
-container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(MongodbModelRepository);
-container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(MongodbMonsterRepository);
-container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(MongodbPersonRepository);
-container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(MongodbPinRepository);
-container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(MongodbPlaceRepository);
-container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(MongodbRoleRepository);
-container
-	.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
-	.to(MongodbServerConfigRepository);
-container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(MongodbUserRepository);
-container
-	.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
-	.to(MongodbWikiFolderRepository);
-container
-	.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
-	.to(MongodbWikiPageRepository);
-container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
+if (process.env.MONGODB_HOST) {
+	container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
+	container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(MongodbChunkRepository);
+	container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(MongodbFileRepository);
+	container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(MongodbGameRepository);
+	container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(MongodbImageRepository);
+	container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(MongodbItemRepository);
+	container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(MongodbModelRepository);
+	container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(MongodbMonsterRepository);
+	container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(MongodbPersonRepository);
+	container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(MongodbPinRepository);
+	container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(MongodbPlaceRepository);
+	container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(MongodbRoleRepository);
+	container
+		.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
+		.to(MongodbServerConfigRepository);
+	container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(MongodbUserRepository);
+	container
+		.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
+		.to(MongodbWikiFolderRepository);
+	container
+		.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
+		.to(MongodbWikiPageRepository);
+	container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
+} else if (process.env.POSTGRES_HOST) {
+	container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(SqlArticleRepository);
+	container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(SqlChunkRepository);
+	container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(SqlFileRepository);
+	container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(SqlGameRepository);
+	container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(SqlImageRepository);
+	container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(SqlItemRepository);
+	container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(SqlModelRepository);
+	container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(SqlMonsterRepository);
+	container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(SqlPersonRepository);
+	container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(SqlPinRepository);
+	container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(SqlPlaceRepository);
+	container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(SqlRoleRepository);
+	container
+		.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
+		.to(SqlServerConfigRepository);
+	container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(SqlUserRepository);
+	container
+		.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
+		.to(SqlWikiFolderRepository);
+	container
+		.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
+		.to(SqlWikiPageRepository);
+	container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
+} else {
+	container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(InMemoryArticleRepository);
+	container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(InMemoryChunkRepository);
+	container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(InMemoryFileRepository);
+	container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(InMemoryGameRepository);
+	container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(InMemoryImageRepository);
+	container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(InMemoryItemRepository);
+	container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(InMemoryModelRepository);
+	container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(InMemoryMonsterRepository);
+	container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(InMemoryPersonRepository);
+	container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(InMemoryPinRepository);
+	container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(InMemoryPlaceRepository);
+	container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(InMemoryRoleRepository);
+	container
+		.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
+		.to(InMemoryServerConfigRepository);
+	container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(InMemoryUserRepository);
+	container
+		.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
+		.to(InMemoryWikiFolderRepository);
+	container
+		.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
+		.to(InMemoryWikiPageRepository);
+	container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
+}
+
 
 // authorization rule sets
 container

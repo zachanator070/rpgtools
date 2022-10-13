@@ -14,12 +14,13 @@ export default class WikiFolderModel extends PermissionControlledModel {
     getPages: BelongsToManyGetAssociationsMixin<WikiPageModel>;
     getChildren: HasManyGetAssociationsMixin<WikiFolderModel>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         name: {
             type: DataTypes.STRING,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
         WikiFolderModel.belongsTo(WorldModel, {as: 'world'});

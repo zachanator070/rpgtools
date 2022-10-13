@@ -32,11 +32,12 @@ export default class GameModel extends PermissionControlledModel {
     getModels: HasManyGetAssociationsMixin<InGameModelModel>;
     setModels: HasManySetAssociationsMixin<InGameModelModel, string>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         passwordHash: {
             type: DataTypes.STRING
         }
-    });
+    };
 
     static connect() {
         GameModel.belongsTo(WorldModel, {as: 'world'});

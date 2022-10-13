@@ -70,15 +70,18 @@ export default class PersonFactory implements EntityFactory<Person, PersonDocume
     }
 
     async fromSqlModel(model: PersonModel): Promise<Person> {
+        const page = await model.getWikiPage();
         return this.build({
             _id: model._id,
-            name: model.name,
-            world: model.worldId,
-            coverImage: model.coverImageId,
-            contentId: model.contentId,
+            name: page.name,
+            world: page.worldId,
+            coverImage: page.coverImageId,
+            contentId: page.contentId,
             pageModel: model.pageModelId,
             modelColor: model.modelColor,
-            acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+            acl: await Promise.all(
+                (await (await model.getWikiPage()).getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+            )
         })
     }
 

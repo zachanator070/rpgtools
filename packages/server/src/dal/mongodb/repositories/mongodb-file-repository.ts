@@ -17,7 +17,7 @@ import FileFactory from "../../../domain-entities/factory/file-factory";
 export class MongodbFileRepository implements FileRepository {
 
 	@inject(INJECTABLE_TYPES.FileFactory)
-	fileFactory: FileFactory;
+	entityFactory: FileFactory;
 
 	@inject(INJECTABLE_TYPES.FilterFactory)
 	filterFactory: FilterFactory;
@@ -65,7 +65,7 @@ export class MongodbFileRepository implements FileRepository {
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];
 		for (let doc of docs) {
-			results.push(this.fileFactory.build({_id: doc._id.toString(), filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
+			results.push(this.entityFactory.build({_id: doc._id.toString(), filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
 		}
 		return results;
 	};

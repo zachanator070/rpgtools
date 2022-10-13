@@ -16,7 +16,8 @@ export default class InGameModelModel extends SqlModel {
     declare modelId: string;
     declare wikiId: string;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         x: {
             type: DataTypes.FLOAT,
             allowNull: false
@@ -36,7 +37,7 @@ export default class InGameModelModel extends SqlModel {
         color: {
             type: DataTypes.STRING,
         }
-    });
+    };
 
     static connect() {
         InGameModelModel.belongsTo(ModelModel, {as: 'model'})

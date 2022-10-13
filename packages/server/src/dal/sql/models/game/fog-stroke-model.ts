@@ -11,7 +11,8 @@ export default class FogStrokeModel extends SqlModel {
 
     getPath: HasManyGetAssociationsMixin<PathNodeModel>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         size: {
             type: DataTypes.FLOAT,
         },
@@ -24,7 +25,7 @@ export default class FogStrokeModel extends SqlModel {
                 }
             }
         }
-    });
+    };
 
     static connect() {
         FogStrokeModel.hasMany(PathNodeModel, {as: 'path'});

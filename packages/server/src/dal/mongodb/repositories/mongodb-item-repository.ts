@@ -13,7 +13,7 @@ export class MongodbItemRepository
 	implements ItemRepository
 {
 	@inject(INJECTABLE_TYPES.ItemFactory)
-	itemFactory: ItemFactory;
+	entityFactory: ItemFactory;
 
 	model: mongoose.Model<any> = ItemModel;
 

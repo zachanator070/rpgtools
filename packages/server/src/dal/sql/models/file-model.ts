@@ -9,7 +9,8 @@ export default class FileModel extends SqlModel {
     declare filename: string;
     declare mimeType: string;
 
-    static attributes: ModelAttributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         content: {
             type: DataTypes.BLOB,
             allowNull: false
@@ -22,7 +23,7 @@ export default class FileModel extends SqlModel {
             type: DataTypes.STRING,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
     }

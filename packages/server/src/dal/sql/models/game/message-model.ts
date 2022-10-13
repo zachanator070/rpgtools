@@ -12,7 +12,8 @@ export default class MessageModel extends SqlModel {
     declare message: string;
     declare timestamp: number;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         sender: {
             type: DataTypes.STRING,
             allowNull: false
@@ -37,7 +38,7 @@ export default class MessageModel extends SqlModel {
             type: DataTypes.INTEGER,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
     }

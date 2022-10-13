@@ -13,7 +13,7 @@ export class MongodbPersonRepository
 	implements PersonRepository
 {
 	@inject(INJECTABLE_TYPES.PersonFactory)
-	personFactory: PersonFactory;
+	entityFactory: PersonFactory;
 
 	model: mongoose.Model<any> = PersonModel;
 

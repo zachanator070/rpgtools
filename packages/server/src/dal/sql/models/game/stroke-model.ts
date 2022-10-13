@@ -13,7 +13,8 @@ export default class StrokeModel extends SqlModel {
 
     getPath: HasManyGetAssociationsMixin<PathNodeModel>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         color: {
             type: DataTypes.STRING,
         },
@@ -32,7 +33,7 @@ export default class StrokeModel extends SqlModel {
                 }
             }
         }
-    });
+    };
 
     static connect() {
         StrokeModel.hasMany(PathNodeModel, {as: 'path'});

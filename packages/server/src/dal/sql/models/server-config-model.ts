@@ -12,7 +12,8 @@ export default class ServerConfigModel extends PermissionControlledModel {
 
     getAdmins: BelongsToManyGetAssociationsMixin<UserModel>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         version: {
             type: DataTypes.STRING,
             allowNull: false
@@ -24,7 +25,7 @@ export default class ServerConfigModel extends PermissionControlledModel {
             type: DataTypes.STRING,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
         configPermissionControlledModel(ServerConfigModel);

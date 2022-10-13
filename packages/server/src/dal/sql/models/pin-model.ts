@@ -12,7 +12,8 @@ export default class PinModel extends SqlModel {
     declare mapId: string;
     declare pageId: string;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         x: {
             type: DataTypes.FLOAT,
             allowNull: false
@@ -21,7 +22,7 @@ export default class PinModel extends SqlModel {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-    });
+    };
 
     static connect() {
         PinModel.belongsTo(ImageModel, {as: 'map'});

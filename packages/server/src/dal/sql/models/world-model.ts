@@ -11,12 +11,13 @@ export default class WorldModel extends PermissionControlledModel {
     declare wikiPageId: string;
     declare rootFolderId: string;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-    });
+    };
     
     static connect() {
         WorldModel.belongsTo(ArticleModel, {as: 'wikiPage', constraints: false});

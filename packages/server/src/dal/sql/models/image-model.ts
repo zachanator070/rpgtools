@@ -17,7 +17,8 @@ export default class ImageModel extends SqlModel {
 
     getChunks: HasManyGetAssociationsMixin<ChunkModel>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         width: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -38,7 +39,7 @@ export default class ImageModel extends SqlModel {
             type: DataTypes.STRING,
             allowNull: false
         }
-    });
+    };
 
     static connect()  {
         ImageModel.belongsTo(WorldModel, {as: 'world'});

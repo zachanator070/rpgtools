@@ -14,7 +14,7 @@ export class MongodbWikiFolderRepository
 	implements WikiFolderRepository
 {
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
-	wikiFolderFactory: WikiFolderFactory;
+	entityFactory: WikiFolderFactory;
 
 	model: mongoose.Model<any> = WikiFolderModel;
 

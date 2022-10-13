@@ -16,7 +16,8 @@ export default class UserModel extends SqlModel {
 
     getRoles: BelongsToManyGetAssociationsMixin<RoleModel>;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         email: {
             type: DataTypes.STRING,
             allowNull: false
@@ -36,7 +37,7 @@ export default class UserModel extends SqlModel {
             type: DataTypes.STRING,
             allowNull: false
         },
-    });
+    };
 
     static connect() {
         UserModel.belongsTo(WorldModel, {as: 'currenWorld'});

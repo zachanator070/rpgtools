@@ -15,7 +15,7 @@ export class MongodbRoleRepository
 	implements RoleRepository
 {
 	@inject(INJECTABLE_TYPES.RoleFactory)
-	roleFactory: RoleFactory;
+	entityFactory: RoleFactory;
 
 	model: mongoose.Model<any> = RoleModel;
 

@@ -10,7 +10,8 @@ export default class PathNodeModel extends SqlModel {
     declare x: number;
     declare y: number;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         x: {
             type: DataTypes.FLOAT,
             allowNull: false
@@ -19,7 +20,7 @@ export default class PathNodeModel extends SqlModel {
             type: DataTypes.FLOAT,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
     }

@@ -16,7 +16,8 @@ export default class ChunkModel extends SqlModel {
     declare imageId: string;
     declare fileId: string;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         x: {
             type: DataTypes.FLOAT,
             allowNull: false
@@ -33,7 +34,7 @@ export default class ChunkModel extends SqlModel {
             type: DataTypes.FLOAT,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
         ChunkModel.belongsTo(ImageModel, {as: 'image'});

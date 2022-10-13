@@ -14,14 +14,17 @@ export default class CharacterModel extends SqlModel {
     getCharacterAttributes: HasManyGetAssociationsMixin<CharacterAttributeModel>;
     setCharacterAttributes: HasManySetAssociationsMixin<CharacterAttributeModel, string>;
 
-    static attributes = Object.assign({}, defaultAttributes, {name: {
+    static attributes = {
+        ...defaultAttributes,
+        name: {
             type: DataTypes.STRING,
             allowNull: false
         },
         color: {
             type: DataTypes.STRING,
             allowNull: false,
-        },});
+        },
+    };
 
     static connect() {
         CharacterModel.belongsTo(UserModel, {as: 'player'});

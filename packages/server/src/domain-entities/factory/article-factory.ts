@@ -52,15 +52,15 @@ export default class ArticleFactory implements EntityFactory<Article, ArticleDoc
     }
 
     async fromSqlModel(model: ArticleModel): Promise<Article> {
+        const page = await model.getWikiPage();
         return this.build({
             _id: model._id,
-            name: model.name,
-            world: model.worldId,
-            coverImage: model.coverImageId,
-            contentId: model.contentId,
+            name: page.name,
+            world: page.worldId,
+            coverImage: page.coverImageId,
+            contentId: page.contentId,
             acl: await Promise.all(
-                (await AclEntryModel.findAll({where: {subject: model._id, subjectType: Article}}))
-                    .map(entry => this.aclFactory.fromSqlModel(entry))
+                (await (await model.getWikiPage()).getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
             )
         });
     }

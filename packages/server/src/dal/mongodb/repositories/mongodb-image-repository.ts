@@ -13,7 +13,7 @@ export class MongodbImageRepository
 	implements ImageRepository
 {
 	@inject(INJECTABLE_TYPES.ImageFactory)
-	imageFactory: ImageFactory;
+	entityFactory: ImageFactory;
 
 	model: mongoose.Model<any> = ImageModel;
 

@@ -1,4 +1,4 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import SqlModel from "../sql-model";
 
@@ -8,7 +8,8 @@ export default class CharacterAttributeModel extends SqlModel {
     declare name: string;
     declare value: number;
 
-    static attributes = Object.assign({}, defaultAttributes, {
+    static attributes = {
+        ...defaultAttributes,
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -17,7 +18,7 @@ export default class CharacterAttributeModel extends SqlModel {
             type: DataTypes.FLOAT,
             allowNull: false
         }
-    });
+    };
 
     static connect() {
     }
