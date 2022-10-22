@@ -104,7 +104,7 @@ lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
 	npx eslint packages/frontend/src --ext .ts
 
-test: test-unit db test-integration prod test-e2e down
+test: test-unit postgres test-integration prod test-e2e down
 
 JEST_OPTIONS=
 
@@ -114,6 +114,7 @@ test-unit:
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration
 
+.PHONY: test-integration
 test-integration:
 	npm run test:integration --workspace=packages/server
 
@@ -136,5 +137,8 @@ seed-new:
 cypress:
 	npm run -w packages/frontend cypress:open
 
-db:
+postgres:
+	docker-compose up -d postgres
+
+mongodb:
 	docker-compose up -d mongodb

@@ -14,5 +14,6 @@ export default class ArticleModel extends SqlModel {
 
     static connect() {
         ArticleModel.belongsTo(WikiPageModel);
+        WikiPageModel.belongsTo(ArticleModel, {foreignKey: 'wiki', constraints: false});
     }
 }

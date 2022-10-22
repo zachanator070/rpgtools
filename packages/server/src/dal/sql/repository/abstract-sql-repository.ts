@@ -3,9 +3,9 @@ import {DomainEntity, EntityFactory} from "../../../types";
 import SqlModel from "../models/sql-model";
 import {DatabaseSession} from "../../database-session";
 import {PaginatedResult} from "../../paginated-result";
-import PinModel from "../models/pin-model";
+import {injectable} from "inversify";
 
-
+@injectable()
 export default abstract class AbstractSqlRepository<T extends DomainEntity, M extends SqlModel> {
 
     abstract modelFactory(entity?: T): Promise<M>;

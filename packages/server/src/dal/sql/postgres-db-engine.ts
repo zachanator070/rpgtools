@@ -27,7 +27,7 @@ import UserModel from "./models/user-model";
 import WikiFolderModel from "./models/wiki-folder-model";
 import WorldModel from "./models/world-model";
 import {modeledWikiAttributes} from "./models/modeled-wiki-model";
-import {wikiPageAttributes} from "./models/wiki-page-model";
+import {Client} from 'pg';
 import {
     ACL_ENTRY,
     ARTICLE,
@@ -50,8 +50,9 @@ import {
     ROLE,
     SERVER_CONFIG,
     STROKE,
-    USER, WIKI_FOLDER, WORLD
+    USER, WIKI_FOLDER, WIKI_PAGE, WORLD
 } from "@rpgtools/common/src/type-constants";
+import WikiPageModel from "./models/wiki-page-model";
 
 @injectable()
 export default class PostgresDbEngine implements DbEngine {
@@ -68,12 +69,14 @@ export default class PostgresDbEngine implements DbEngine {
     }
 
     async connect(): Promise<void> {
+        await this.createDatabaseIfNeeded(this.dbName);
         this.connection = new Sequelize(this.getConnectionString());
 
         // Is there any better way to do this? How to handle a bunch of static methods with the same signature?
         // This violates the open/closed principle
         AclEntryModel.init(AclEntryModel.attributes, {sequelize: this.connection, modelName: ACL_ENTRY});
-        ArticleModel.init(wikiPageAttributes, {sequelize: this.connection, modelName: ARTICLE});
+        WikiPageModel.init(WikiPageModel.attributes, {sequelize: this.connection, modelName: WIKI_PAGE});
+        ArticleModel.init(ArticleModel.attributes, {sequelize: this.connection, modelName: ARTICLE});
         ChunkModel.init(ChunkModel.attributes, {sequelize: this.connection, modelName: CHUNK});
         FileModel.init(FileModel.attributes, {sequelize: this.connection, modelName: FILE});
 
@@ -102,6 +105,7 @@ export default class PostgresDbEngine implements DbEngine {
         AclEntryModel.connect();
 
         ArticleModel.connect();
+        WikiPageModel.connect();
         ChunkModel.connect();
         FileModel.connect();
         // all game models
@@ -147,12 +151,46 @@ export default class PostgresDbEngine implements DbEngine {
         this.host = host;
     }
 
-    setDbName(name: string): void {
+    async changeDb(name: string): Promise<void> {
         this.dbName = name;
+        if(this.connection) {
+            await this.disconnect();
+            await this.connect();
+        }
+    }
+
+    async createDatabaseIfNeeded(name: string): Promise<void> {
+        try {
+            await this.executeSQL(`CREATE DATABASE "${name}"`);
+            console.log(`Database ${this.dbName} created`);
+        } catch (e) {
+            console.log(`Database ${name} already exists`)
+        }
+    }
+
+    async executeSQL(sql: string) {
+        const client = new Client({
+            user: this.user,
+            password: this.password,
+            host: this.host,
+            database: "postgres",
+        });
+
+        await client.connect();
+
+        await new Promise((resolve, reject) => {
+            client.query(sql, (err, res) => {
+                client.end();
+                if(err) {
+                    reject(err);
+                }
+                resolve(null);
+            });
+        });
     }
 
     async createDatabaseSession(): Promise<DatabaseSession> {
-        return new DatabaseSession(null, await this.connection.transaction());
+        return new DatabaseSession(null, null);
     }
 
 }

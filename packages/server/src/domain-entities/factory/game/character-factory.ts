@@ -39,7 +39,7 @@ export default class CharacterFactory implements EntityFactory<Character, Charac
             name: model.name,
             playerId: model.playerId,
             color: model.color,
-            attributes: await Promise.all((await model.getAttributes()).map(attribute => this.characterAttributeFactory.fromSqlModel(attribute)))
+            attributes: await Promise.all((await model.getCharacterAttributes()).map(attribute => this.characterAttributeFactory.fromSqlModel(attribute)))
         });
     }
 

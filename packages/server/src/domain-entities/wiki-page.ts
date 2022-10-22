@@ -31,7 +31,7 @@ export abstract class WikiPage implements PermissionControlledEntity {
 	}
 
 	abstract type: string;
-	abstract factory: EntityFactory<WikiPage, WikiPageDocument, WikiPageModel>;
+	abstract factory: EntityFactory<WikiPage, WikiPageDocument, any>;
 
 	abstract getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }

@@ -5,7 +5,7 @@ import {PaginatedResult} from "../../paginated-result";
 import AbstractSqlRepository from "./abstract-sql-repository";
 import WikiPageModel from "../models/wiki-page-model";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import ArticleFactory from "../../../domain-entities/factory/article-factory";
+import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 
 
 @injectable()
@@ -13,8 +13,8 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
 
     staticModel = WikiPageModel;
 
-    @inject(INJECTABLE_TYPES.ArticleFactory)
-    entityFactory: ArticleFactory;
+    @inject(INJECTABLE_TYPES.WikiPageFactory)
+    entityFactory: WikiPageFactory;
 
     async modelFactory(entity: WikiPage | undefined): Promise<WikiPageModel> {
         return WikiPageModel.build({

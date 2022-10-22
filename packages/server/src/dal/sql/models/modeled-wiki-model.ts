@@ -15,6 +15,7 @@ export const modeledWikiAttributes: ModelAttributes = {
 export function configModeledWikiModel(model: ModelStatic<any>) {
     model.belongsTo(ModelModel, {as: 'pageModel'});
     model.belongsTo(WikiPageModel);
+    WikiPageModel.belongsTo(model, {foreignKey: 'wiki', constraints: false});
 }
 
 export default class ModeledWikiModel extends SqlModel {

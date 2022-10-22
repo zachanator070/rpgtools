@@ -78,7 +78,7 @@ export default class MongodbDbEngine implements DbEngine {
         this.host = host;
     }
 
-    setDbName(name: string): void {
+    async changeDb(name: string): Promise<void> {
         this.dbName = name;
     }
 

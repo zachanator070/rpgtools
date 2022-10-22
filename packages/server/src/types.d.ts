@@ -166,7 +166,7 @@ export interface DbEngine {
 	clearDb: () => Promise<void>;
 	disconnect: () => Promise<void>;
 	setDbHost: (host: string) => void;
-	setDbName: (name: string) => void;
+	changeDb: (name: string) => Promise<void>;
 
 	createDatabaseSession(): Promise<DatabaseSession>;
 }

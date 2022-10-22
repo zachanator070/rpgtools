@@ -3,7 +3,6 @@ import {ArticleRepository} from "../../repository/article-repository";
 import AbstractSqlRepository from "./abstract-sql-repository";
 import {Article} from "../../../domain-entities/article";
 import ArticleModel from "../models/article-model";
-import {DatabaseSession} from "../../database-session";
 import {Op} from "sequelize";
 import ArticleFactory from "../../../domain-entities/factory/article-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";

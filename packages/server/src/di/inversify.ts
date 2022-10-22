@@ -184,6 +184,14 @@ import SqlUserRepository from "../dal/sql/repository/sql-user-repository";
 import SqlWikiFolderRepository from "../dal/sql/repository/sql-wiki-folder-repository";
 import SqlWikiPageRepository from "../dal/sql/repository/sql-wiki-page-repository";
 import SqlWorldRepository from "../dal/sql/repository/sql-world-repository";
+import WikiPageFactory from "../domain-entities/factory/wiki-page-factory";
+import CharacterFactory from "../domain-entities/factory/game/character-factory";
+import CharacterAttributeFactory from "../domain-entities/factory/game/character-attribute-factory";
+import PathNodeFactory from "../domain-entities/factory/game/path-node-factory";
+import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
+import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
+import MessageFactory from "../domain-entities/factory/game/message-factory";
+import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory";
 
 const container = new Container();
 
@@ -242,7 +250,6 @@ container
 container
 	.bind<ItemFactory>(INJECTABLE_TYPES.ItemFactory)
 	.to(ItemFactory);
-
 container
 	.bind<ModelFactory>(INJECTABLE_TYPES.ModelFactory)
 	.to(ModelFactory);
@@ -270,9 +277,34 @@ container
 container
 	.bind<WikiFolderFactory>(INJECTABLE_TYPES.WikiFolderFactory)
 	.to(WikiFolderFactory);
+container.bind<WikiPageFactory>(INJECTABLE_TYPES.WikiPageFactory)
+	.to(WikiPageFactory);
 container
 	.bind<WorldFactory>(INJECTABLE_TYPES.WorldFactory)
 	.to(WorldFactory);
+
+container
+	.bind<CharacterFactory>(INJECTABLE_TYPES.CharacterFactory)
+	.to(CharacterFactory);
+container
+	.bind<CharacterAttributeFactory>(INJECTABLE_TYPES.CharacterAttributeFactory)
+	.to(CharacterAttributeFactory);
+container
+	.bind<PathNodeFactory>(INJECTABLE_TYPES.PathNodeFactory)
+	.to(PathNodeFactory);
+container
+	.bind<StrokeFactory>(INJECTABLE_TYPES.StrokeFactory)
+	.to(StrokeFactory);
+container
+	.bind<FogStrokeFactory>(INJECTABLE_TYPES.FogStrokeFactory)
+	.to(FogStrokeFactory);
+container
+	.bind<MessageFactory>(INJECTABLE_TYPES.MessageFactory)
+	.to(MessageFactory);
+container
+	.bind<InGameModelFactory>(INJECTABLE_TYPES.InGameModelFactory)
+	.to(InGameModelFactory);
+
 
 // db repositories
 if (process.env.MONGODB_HOST) {
@@ -348,7 +380,6 @@ if (process.env.MONGODB_HOST) {
 		.to(InMemoryWikiPageRepository);
 	container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
 }
-
 
 // authorization rule sets
 container

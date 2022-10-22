@@ -40,6 +40,7 @@ export const INJECTABLE_TYPES = {
 	ServerConfigFactory: Symbol.for("ServerConfigFactory"),
 	UserFactory: Symbol.for("UserFactory"),
 	WikiFolderFactory: Symbol.for("WikiFolderFactory"),
+	WikiPageFactory: Symbol.for("WikiPageFactory"),
 	WorldFactory: Symbol.for("WorldFactory"),
 
 	CharacterFactory: Symbol.for('CharacterFactory'),

@@ -38,7 +38,7 @@ services:
       service: server_base
     command: "npm run --workspace=packages/server dev-brk"
     depends_on:
-      - mongodb
+      - postgres
       - redis
       - ui-builder
 
@@ -49,7 +49,7 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     depends_on:
-      - mongodb
+      - postgres
       - redis
     networks:
       - rpgtools

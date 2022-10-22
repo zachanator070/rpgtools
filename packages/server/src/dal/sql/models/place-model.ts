@@ -21,6 +21,7 @@ export default class PlaceModel extends SqlModel {
 
     static connect() {
         PlaceModel.belongsTo(WikiPageModel);
+        WikiPageModel.belongsTo(PlaceModel, {foreignKey: 'wiki', constraints: false});
         PlaceModel.belongsTo(ImageModel, {as: 'mapImage'});
     }
 }

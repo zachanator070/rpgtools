@@ -28,7 +28,7 @@ const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 
 beforeAll(async () => {
 	dbEngine.setDbHost("localhost");
-	dbEngine.setDbName(process.env.TEST_SUITE);
+	await dbEngine.changeDb(process.env.TEST_SUITE);
 	await dbEngine.connect();
 	await server.seedDB();
 	const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
