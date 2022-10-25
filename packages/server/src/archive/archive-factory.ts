@@ -111,7 +111,6 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 	private async addFolder(name: string, currentFolder: WikiFolder, archive: Archive) {
 		const newFolder = this.wikiFolderFactory.build(
 			{
-				_id: null,
 				name,
 				world: null,
 				pages: [],

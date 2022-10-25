@@ -13,7 +13,7 @@ export default class StrokeFactory implements EntityFactory<Stroke, StrokeDocume
     @inject(INJECTABLE_TYPES.PathNodeFactory)
     nodePathFactory: PathNodeFactory;
 
-    build(args: {_id: string, path: PathNode[], color: string, size: number, fill: boolean, type: string}): Stroke {
+    build(args: {_id?: string, path: PathNode[], color: string, size: number, fill: boolean, type: string}): Stroke {
         return new Stroke(args._id, args.path, args.color, args.size, args.fill, args.type);
     }
 

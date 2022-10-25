@@ -108,17 +108,17 @@ export const TypeResolvers = {
 		},
 		canAddRoles: async (world: World, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 			const roleFactory = container.get<RoleFactory>(INJECTABLE_TYPES.RoleFactory);
-			const testRole = roleFactory.build({_id: null, name: "test role", world: world._id, acl: []});
+			const testRole = roleFactory.build({name: "test role", world: world._id, acl: []});
 			return testRole.authorizationPolicy.canCreate(securityContext, databaseContext);
 		},
 		canHostGame: async (world: World, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 			const gameFactory = container.get<GameFactory>(INJECTABLE_TYPES.GameFactory);
-			const testGame = gameFactory.build({_id: null, passwordHash: "password", world: world._id, map: null, characters: [], strokes: [], fog: [], messages: [], models: [], host: null, acl: []});
+			const testGame = gameFactory.build({passwordHash: "password", world: world._id, map: null, characters: [], strokes: [], fog: [], messages: [], models: [], host: null, acl: []});
 			return testGame.authorizationPolicy.canCreate(securityContext, databaseContext);
 		},
 		canAddModels: async (world: World, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 			const modelFactory = container.get<ModelFactory>(INJECTABLE_TYPES.ModelFactory);
-			const testModel = modelFactory.build({_id: null, world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: "", acl: []});
+			const testModel = modelFactory.build({world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: "", acl: []});
 			return testModel.authorizationPolicy.canCreate(securityContext, databaseContext);
 		},
 		...permissionControlledInterfaceAttributes,

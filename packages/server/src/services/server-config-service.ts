@@ -57,7 +57,7 @@ export class ServerConfigService {
 			password,
 			databaseContext
 		);
-		const adminRole = this.roleFactory.build({_id: null, name: SERVER_ADMIN_ROLE, world: null, acl: []});
+		const adminRole = this.roleFactory.build({name: SERVER_ADMIN_ROLE, world: null, acl: []});
 		await databaseContext.roleRepository.create(adminRole);
 		for (let permission of SERVER_PERMISSIONS) {
 

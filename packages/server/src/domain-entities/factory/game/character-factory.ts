@@ -14,7 +14,7 @@ export default class CharacterFactory implements EntityFactory<Character, Charac
     characterAttributeFactory: CharacterAttributeFactory
 
     build(args: {
-        _id: string,
+        _id?: string,
         name: string,
         playerId: string,
         color: string,

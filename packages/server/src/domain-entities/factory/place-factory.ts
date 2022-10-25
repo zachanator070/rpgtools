@@ -25,7 +25,7 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
             pixelsPerFoot,
             acl
         }:{
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             coverImage: string,

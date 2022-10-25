@@ -159,7 +159,6 @@ export class ContentImportService {
 			if (!foundChild) {
 				const newFolder = this.wikiFolderFactory.build(
 					{
-						_id: null,
 						name: path[0].name,
 						world: destinationRootFolder.world,
 						pages: [],

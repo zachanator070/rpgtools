@@ -49,11 +49,14 @@ export default class SqlUserRepository extends AbstractSqlRepository<User, UserM
     }
 
     async findOneByUsername(username: string): Promise<User> {
-        return this.entityFactory.fromSqlModel(await UserModel.findOne({
+        const model = await UserModel.findOne({
             where: {
                 username
             }
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
     async findWithRole(roleId: string): Promise<User[]> {

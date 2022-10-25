@@ -18,7 +18,7 @@ export default class ChunkFactory implements EntityFactory<Chunk, ChunkDocument,
             fileId,
             image
         }: {
-            _id: string,
+            _id?: string,
             x: number,
             y: number,
             width: number,

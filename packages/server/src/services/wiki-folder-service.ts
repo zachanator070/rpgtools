@@ -31,7 +31,7 @@ export class WikiFolderService {
 		if (!(await parentFolder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
-		const newFolder = this.wikiFolderFactory.build({_id: null, name, world: parentFolder.world, pages: [], children: [], acl: []});
+		const newFolder = this.wikiFolderFactory.build({name, world: parentFolder.world, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(newFolder);
 		parentFolder.children.push(newFolder._id);
 		await databaseContext.wikiFolderRepository.update(parentFolder);

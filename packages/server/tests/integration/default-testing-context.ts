@@ -74,7 +74,7 @@ export class DefaultTestingContext {
 		this.currentUser = this.tester1;
 		this.currentUserSecurityContext = this.tester1SecurityContext;
 
-		this.tester2 = this.userFactory.build({_id: null, email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
+		this.tester2 = this.userFactory.build({email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
 		await databaseContext.userRepository.create(this.tester2);
 		this.tester2SecurityContext = await this.securityContextFactory.create(this.tester2);
 

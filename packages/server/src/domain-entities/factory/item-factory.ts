@@ -24,7 +24,7 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, It
             modelColor,
             acl
         }: {
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             coverImage: string,

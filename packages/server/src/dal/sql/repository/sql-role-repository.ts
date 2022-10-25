@@ -33,11 +33,14 @@ export default class SqlRoleRepository extends AbstractSqlRepository<Role, RoleM
     }
 
     async findOneByName(name: string): Promise<Role> {
-        return this.entityFactory.fromSqlModel(await RoleModel.findOne({
+        const model = await RoleModel.findOne({
             where: {
                 name: name
             }
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
 }

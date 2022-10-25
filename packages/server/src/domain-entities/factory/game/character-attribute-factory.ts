@@ -7,7 +7,7 @@ import CharacterAttributeModel from "../../../dal/sql/models/game/character-attr
 
 @injectable()
 export default class CharacterAttributeFactory implements EntityFactory<CharacterAttribute, CharacterAttributeDocument, CharacterAttributeModel> {
-    build(args: {_id: string, name: string, value: number}): CharacterAttribute {
+    build(args: {_id?: string, name: string, value: number}): CharacterAttribute {
         return new CharacterAttribute(args._id, args.name, args.value);
     }
 

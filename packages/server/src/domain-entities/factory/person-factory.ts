@@ -25,7 +25,7 @@ export default class PersonFactory implements EntityFactory<Person, PersonDocume
             modelColor,
             acl
         }:{
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             coverImage: string,

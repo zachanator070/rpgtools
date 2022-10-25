@@ -235,7 +235,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("deleteRole", async () => {
-			const role = roleFactory.build({_id: null, name: "other delete role", world: testingContext.world._id, acl: []});
+			const role = roleFactory.build({name: "other delete role", world: testingContext.world._id, acl: []});
 			const session = await dbEngine.createDatabaseSession();
 			const databaseContext = databaseContextFactory({session});
 			await databaseContext.roleRepository.create(role);
@@ -256,7 +256,7 @@ describe("authorization-mutations", () => {
 
 		test("deleteRole permission denied", async () => {
 			testingContext.mockSessionContextFactory.useAnonUser();
-			const role = roleFactory.build({_id: null, name: "other role", world: testingContext.world._id, acl: []});
+			const role = roleFactory.build({name: "other role", world: testingContext.world._id, acl: []});
 			const session = await dbEngine.createDatabaseSession();
 			const databaseContext = databaseContextFactory({session});
 			await databaseContext.roleRepository.create(role);

@@ -22,7 +22,7 @@ export default class WorldFactory implements EntityFactory<World, WorldDocument,
             rootFolder,
             acl
         }:{
-            _id: string,
+            _id?: string,
             name: string,
             wikiPage: string,
             rootFolder: string,

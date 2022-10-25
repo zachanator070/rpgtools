@@ -19,7 +19,11 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     async create(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);
-        await model.save();
+        try {
+            await model.save();
+        } catch (e) {
+            console.error(`Error while saving to database ${e.message()}`);
+        }
         entity._id = model._id;
     }
 
@@ -29,8 +33,12 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
     }
 
     async update(entity: T): Promise<void> {
-        const model = await this.modelFactory(entity);
-        await model.save();
+        const model = await this.staticModel.findOne({where: {_id: entity._id}});
+        try {
+            await model.update(this.modelFactory(entity), {where: {_id: entity._id}});
+        } catch (e) {
+            console.error(`Error while updating to database ${e.message()}`);
+        }
     }
 
     async findAll(): Promise<T[]> {
@@ -53,7 +61,9 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
                 _id: id
             }
         });
-        return this.entityFactory.fromSqlModel(result);
+        if(result) {
+            return this.entityFactory.fromSqlModel(result);
+        }
     }
 
     async buildResults(models: M[]){

@@ -27,7 +27,7 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
               contentId,
               acl
           }: {
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             coverImage: string,

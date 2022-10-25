@@ -13,7 +13,7 @@ export default class FogStrokeFactory implements EntityFactory<FogStroke, FogStr
     @inject(INJECTABLE_TYPES.PathNodeFactory)
     nodePathFactory: PathNodeFactory;
 
-    build(args: {_id: string, path: PathNode[], size: number, type: string}): FogStroke {
+    build(args: {_id?: string, path: PathNode[], size: number, type: string}): FogStroke {
         return new FogStroke(args._id, args.path, args.size, args.type);
     }
 

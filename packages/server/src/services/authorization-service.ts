@@ -126,7 +126,7 @@ export class AuthorizationService {
 		if (!context.hasPermission(ROLE_ADD, world)) {
 			throw new Error(`You do not have permission to add roles to this world`);
 		}
-		const newRole = this.roleFactory.build({_id: null, name, world: worldId, acl: []});
+		const newRole = this.roleFactory.build({name, world: worldId, acl: []});
 		await databaseContext.roleRepository.create(newRole);
 		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
 			newRole.acl.push({

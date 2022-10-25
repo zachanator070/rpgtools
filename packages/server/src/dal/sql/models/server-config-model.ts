@@ -1,4 +1,7 @@
-import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from "sequelize";
+import {
+    BelongsToManyGetAssociationsMixin,
+    DataTypes,
+} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import UserModel from "./user-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";

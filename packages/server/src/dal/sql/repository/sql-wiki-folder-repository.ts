@@ -37,34 +37,43 @@ export default class SqlWikiFolderRepository extends AbstractSqlRepository<WikiF
     }
 
     async findOneByNameAndWorld(name: string, worldId: string): Promise<WikiFolder> {
-        return this.entityFactory.fromSqlModel(await WikiFolderModel.findOne({
+        const model = await WikiFolderModel.findOne({
             where: {
                 name,
                 worldId
             }
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
     async findOneWithChild(wikiFolderId: string): Promise<WikiFolder> {
-        return this.entityFactory.fromSqlModel(await WikiFolderModel.findOne({
+        const model = await WikiFolderModel.findOne({
             include: [{
                 model: WikiFolderModel,
                 where: {
                     _id: wikiFolderId
                 }
             }]
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
     async findOneWithPage(pageId: string): Promise<WikiFolder> {
-        return this.entityFactory.fromSqlModel(await WikiFolderModel.findOne({
+        const model = await WikiFolderModel.findOne({
             include: [{
                 model: ArticleModel,
                 where: {
                     _id: pageId
                 }
             }]
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
 }

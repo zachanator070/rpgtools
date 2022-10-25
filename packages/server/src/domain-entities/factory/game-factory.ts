@@ -54,7 +54,7 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
             host,
             acl
         }: {
-            _id: string,
+            _id?: string,
             passwordHash: string,
             world: string,
             map: string,

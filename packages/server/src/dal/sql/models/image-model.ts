@@ -1,4 +1,4 @@
-import {DataTypes, HasManyGetAssociationsMixin, Model} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import SqlModel from "./sql-model";
 import ChunkModel from "./chunk-model";

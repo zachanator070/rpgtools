@@ -50,7 +50,7 @@ export class WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const newPage = this.articleFactory.build({_id: null, name, world: folder.world, coverImage: null, contentId: null, acl: []});
+		const newPage = this.articleFactory.build({name, world: folder.world, coverImage: null, contentId: null, acl: []});
 		await databaseContext.articleRepository.create(newPage);
 		folder.pages.push(newPage._id);
 		await databaseContext.wikiFolderRepository.update(folder);
@@ -96,7 +96,6 @@ export class WikiPageService {
 
 			contentFile = this.fileFactory.build(
 				{
-					_id: null,
 					filename: `wikiContent.${wikiPage._id}.json`,
 					readStream: readStream,
 					mimeType: "application/json"

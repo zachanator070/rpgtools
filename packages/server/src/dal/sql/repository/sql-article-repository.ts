@@ -16,14 +16,17 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
     entityFactory: ArticleFactory;
 
     async findOneByNameAndWorld(name: string, worldId: string): Promise<Article> {
-        return this.entityFactory.fromSqlModel(await ArticleModel.findOne({
+        const model = await ArticleModel.findOne({
             where: {
                 [Op.and]: {
                     name: name,
                     worldId: worldId
                 }
             }
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
     async modelFactory(entity: Article): Promise<ArticleModel> {

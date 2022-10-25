@@ -19,13 +19,16 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
         return ServerConfigModel.build({
             _id: entity._id,
             version: entity.version,
-            registerCodes: entity.registerCodes,
+            registerCodes: entity.registerCodes.join(','),
             unlockCode: entity.unlockCode
         });
     }
 
     async findOne(): Promise<ServerConfig> {
-        return this.entityFactory.fromSqlModel(await ServerConfigModel.findOne());
+        const model = await ServerConfigModel.findOne();
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
 }

@@ -23,7 +23,7 @@ export default class ArticleFactory implements EntityFactory<Article, ArticleDoc
           contentId,
           acl
       }: {
-        _id: string,
+        _id?: string,
         name: string,
         world: string,
         coverImage: string,

@@ -8,7 +8,7 @@ import PathNodeModel from "../../../dal/sql/models/game/path-node-model";
 @injectable()
 export default class PathNodeFactory implements EntityFactory<PathNode, PathNodeDocument, PathNodeModel> {
 
-    build({_id, x, y}: {_id: string, x: number, y: number}): PathNode {
+    build({_id, x, y}: {_id?: string, x: number, y: number}): PathNode {
         return new PathNode(_id, x, y);
     }
 

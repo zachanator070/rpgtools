@@ -15,7 +15,7 @@ export default class FileFactory implements EntityFactory<File, FileDocument, Fi
             readStream,
             mimeType
     }: {
-        _id: string,
+        _id?: string,
         filename: string,
         readStream: Readable,
         mimeType: string

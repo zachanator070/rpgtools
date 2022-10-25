@@ -36,12 +36,15 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     }
 
     async findOneByNameAndWorld(name: string, worldId: string): Promise<WikiPage> {
-        return this.entityFactory.fromSqlModel(await WikiPageModel.findOne({
+        const model = await WikiPageModel.findOne({
             where: {
                 name,
                 worldId
             }
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
 }

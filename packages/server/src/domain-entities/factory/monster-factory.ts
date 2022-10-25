@@ -25,7 +25,7 @@ export default class MonsterFactory implements EntityFactory<Monster, MonsterDoc
             modelColor,
             acl
         }: {
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             coverImage: string,

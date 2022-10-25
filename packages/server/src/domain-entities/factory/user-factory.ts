@@ -18,7 +18,7 @@ export default class UserFactory implements EntityFactory<User, UserDocument, Us
             currentWorld,
             roles,
         }: {
-            _id: string,
+            _id?: string,
             email: string,
             username: string,
             password: string,

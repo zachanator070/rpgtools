@@ -55,7 +55,7 @@ export class SrdImportService {
 		if (!(await rootFolder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error("You do not have permission to add a top level folder");
 		}
-		const topFolder = this.wikiFolderFactory.build({_id: null, name: "5e", world: worldId, pages: [], children: [], acl: []});
+		const topFolder = this.wikiFolderFactory.build({name: "5e", world: worldId, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(topFolder);
 		rootFolder.children.push(topFolder._id);
 		await databaseContext.wikiFolderRepository.update(rootFolder);
@@ -95,7 +95,7 @@ export class SrdImportService {
 		world: World,
 		databaseContext: DatabaseContext
 	) => {
-		const subFolder = this.wikiFolderFactory.build({_id: null, name, world: world._id, pages: [], children: [], acl: []});
+		const subFolder = this.wikiFolderFactory.build({name, world: world._id, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(subFolder);
 		topFolder.children.push(subFolder._id);
 		await databaseContext.wikiFolderRepository.update(topFolder);
@@ -109,7 +109,7 @@ export class SrdImportService {
 	): Promise<File> => {
 		const readStream = Readable.from(content);
 		const filename = `wikiContent.${wikiId}`;
-		const file = this.fileFactory.build({_id: null, filename, readStream, mimeType: null});
+		const file = this.fileFactory.build({filename, readStream, mimeType: null});
 		await databaseContext.fileRepository.create(file);
 		return file;
 	};
@@ -130,7 +130,6 @@ export class SrdImportService {
 			}
 			const monsterPage = this.monsterFactory.build(
 				{
-					_id: null,
 					name: monster.name,
 					world: containingFolder.world,
 					coverImage: null,
@@ -168,7 +167,7 @@ export class SrdImportService {
 	importAdventurePages = async (topFolder: WikiFolder, databaseContext: DatabaseContext) => {
 		const folders: WikiFolder[] = [];
 		for await (let article of this.open5eApiClient.getAdventuringSections()) {
-			const page = this.articleFactory.build({_id: null, name: article.name, world: topFolder.world, coverImage: null, contentId: null, acl: []});
+			const page = this.articleFactory.build({name: article.name, world: topFolder.world, coverImage: null, contentId: null, acl: []});
 			await databaseContext.articleRepository.create(page);
 			const content = this.deltaFactory.fromSection(article);
 			const contentFile = await this.createWikiContentFile(
@@ -182,7 +181,6 @@ export class SrdImportService {
 			if (!containingFolder) {
 				containingFolder = this.wikiFolderFactory.build(
 					{
-						_id: "",
 						name: article.parent,
 						world: topFolder.world,
 						pages: [],
@@ -202,7 +200,7 @@ export class SrdImportService {
 
 	importRaces = async (containingFolder: WikiFolder, databaseContext: DatabaseContext) => {
 		for await (let article of this.open5eApiClient.getRaces()) {
-			const page = this.articleFactory.build({_id: null, name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
+			const page = this.articleFactory.build({name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
 			await databaseContext.articleRepository.create(page);
 			const content = this.deltaFactory.fromRace(article);
 			const contentFile = await this.createWikiContentFile(
@@ -219,7 +217,7 @@ export class SrdImportService {
 
 	importClasses = async (containingFolder: WikiFolder, databaseContext: DatabaseContext) => {
 		for await (let article of this.open5eApiClient.getClasses()) {
-			const page = this.articleFactory.build({_id: null, name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
+			const page = this.articleFactory.build({name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
 			await databaseContext.articleRepository.create(page);
 			const content = this.deltaFactory.fromCharacterClass(article, containingFolder.world, databaseContext);
 			const contentFile = await this.createWikiContentFile(
@@ -236,7 +234,7 @@ export class SrdImportService {
 
 	importSpells = async (containingFolder: WikiFolder, databaseContext: DatabaseContext) => {
 		for await (let article of this.open5eApiClient.getSpells()) {
-			const page = this.articleFactory.build({_id: null, name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
+			const page = this.articleFactory.build({name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
 			await databaseContext.articleRepository.create(page);
 			const content = this.deltaFactory.fromSpell(article);
 			const contentFile = await this.createWikiContentFile(
@@ -253,7 +251,7 @@ export class SrdImportService {
 
 	importRules = async (containingFolder: WikiFolder, databaseContext: DatabaseContext) => {
 		for (let rule of await this.dnd5eApiClient.getRules()) {
-			const page = this.articleFactory.build({_id: "", name: rule.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
+			const page = this.articleFactory.build({name: rule.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
 			await databaseContext.articleRepository.create(page);
 			const content = this.deltaFactory.fromRule(rule);
 			const contentFile = await this.createWikiContentFile(

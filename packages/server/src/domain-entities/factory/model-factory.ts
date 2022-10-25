@@ -27,7 +27,7 @@ export default class ModelFactory implements EntityFactory<Model, ModelDocument,
             notes,
             acl
         }:{
-            _id: string,
+            _id?: string,
             world: string,
             name: string,
             depth: number,

@@ -15,7 +15,7 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
             y,
             map,
             page
-        }: { _id: string , x: number, y: number, map: string , page: string  }
+        }: { _id?: string , x: number, y: number, map: string , page: string  }
     ) {
         const pin: Pin = new Pin(new PinAuthorizationPolicy(), this);
         pin._id = _id;

@@ -14,7 +14,7 @@ export default class InGameModelFactory implements EntityFactory<InGameModel, In
     modelFactory: ModelFactory;
 
     build(args: {
-        _id: string,
+        _id?: string,
         modelId: string,
         x: number,
         z: number,

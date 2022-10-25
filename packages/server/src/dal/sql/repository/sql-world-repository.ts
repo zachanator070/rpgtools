@@ -42,11 +42,14 @@ export default class SqlWorldRepository extends AbstractSqlRepository<World, Wor
     }
 
     async findOneByWikiPage(pageId: string): Promise<World> {
-        return this.entityFactory.fromSqlModel(await WorldModel.findOne({
+        const model = await WorldModel.findOne({
             where: {
                 wikiPageId: pageId
             }
-        }));
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
 }

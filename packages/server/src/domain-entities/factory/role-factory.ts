@@ -22,7 +22,7 @@ export default class RoleFactory implements EntityFactory<Role, RoleDocument, Ro
             world,
             acl
         }: {
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             acl: AclEntry[]

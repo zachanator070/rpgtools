@@ -20,7 +20,7 @@ export default class ImageFactory implements EntityFactory<Image, ImageDocument,
             chunks,
             icon
         }: {
-            _id: string | ObjectId,
+            _id?: string | ObjectId,
             name: string,
             world: string | ObjectId,
             width: number,

@@ -23,7 +23,7 @@ export default class WikiFolderFactory implements EntityFactory<WikiFolder, Wiki
             children,
             acl
         }:{
-            _id: string,
+            _id?: string,
             name: string,
             world: string,
             pages: string[],

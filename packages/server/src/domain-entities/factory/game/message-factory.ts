@@ -9,7 +9,7 @@ import {Message} from "../../game";
 export default class MessageFactory implements EntityFactory<Message, MessageDocument, MessageModel> {
 
     build(args: {
-        _id: string,
+        _id?: string,
         sender: string,
         senderUser: string,
         receiver: string,

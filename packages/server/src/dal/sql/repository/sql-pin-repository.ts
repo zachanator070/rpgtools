@@ -31,12 +31,15 @@ export default class SqlPinRepository extends AbstractSqlRepository<Pin, PinMode
     }
 
     async findOneByMapAndPage(mapId: string, pageId: string): Promise<Pin> {
-        return this.entityFactory.fromSqlModel(await PinModel.findOne({
+        const model = await PinModel.findOne({
             where: {
                 mapId,
                 pageId
             }
-        }))
+        });
+        if(model) {
+            return this.entityFactory.fromSqlModel(model);
+        }
     }
 
 }

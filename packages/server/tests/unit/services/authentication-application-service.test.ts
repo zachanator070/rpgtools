@@ -15,7 +15,7 @@ describe("AuthenticationApplicationService test", () => {
     const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
     const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     test("decode token", async () => {
-        const user = userFactory.build({_id: null, email: "user email", username: "username", password: "password", tokenVersion: "1234", currentWorld: null, roles: []});
+        const user = userFactory.build({email: "user email", username: "username", password: "password", tokenVersion: "1234", currentWorld: null, roles: []});
         const session = await dbEngine.createDatabaseSession();
         const databaseContext = databaseContextFactory({session});
         await databaseContext.userRepository.create(user);

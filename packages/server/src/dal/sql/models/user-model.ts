@@ -35,7 +35,6 @@ export default class UserModel extends SqlModel {
         },
         tokenVersion: {
             type: DataTypes.STRING,
-            allowNull: false
         },
     };
 

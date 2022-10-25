@@ -74,7 +74,6 @@ export class GameService {
 		}
 		const game = this.gameFactory.build(
 			{
-				_id: null,
 				passwordHash: password && bcrypt.hashSync(password, SALT_ROUNDS),
 				world: worldId,
 				map: null,

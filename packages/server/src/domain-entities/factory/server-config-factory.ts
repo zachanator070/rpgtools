@@ -22,7 +22,7 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
             unlockCode,
             acl
         }: {
-            _id: string,
+            _id?: string,
             version: string,
             registerCodes: string[],
             adminUsers: string[],

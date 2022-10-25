@@ -49,7 +49,6 @@ export class ImageService {
 		const image = await Jimp.read(Buffer.concat(rawData));
 		const newImage = this.imageFactory.build(
 			{
-				_id: null,
 				name: filename,
 				world: worldId,
 				width: image.bitmap.width,
@@ -106,7 +105,6 @@ export class ImageService {
 				.then(async (image) => {
 					const iconImage = this.imageFactory.build(
 						{
-							_id: null,
 							name: "icon." +newImage.name,
 							world: newImage.world,
 							width: this.chunkSize,
@@ -186,9 +184,9 @@ export class ImageService {
 				const newFilename = `${parentImage._id}.chunk.${x}.${y}.${jimpImage.getExtension()}`;
 				const buffer: Buffer = await copy.getBufferAsync(jimpImage.getMIME());
 				const stream = Readable.from(buffer);
-				const file = this.fileFactory.build({_id: null, filename: newFilename, readStream: stream, mimeType: jimpImage.getMIME()});
+				const file = this.fileFactory.build({filename: newFilename, readStream: stream, mimeType: jimpImage.getMIME()});
 				await databaseContext.fileRepository.create(file);
-				const chunk = this.chunkFactory.build({_id: null, x, y, width, height, fileId: file._id, image: parentImage._id});
+				const chunk = this.chunkFactory.build({x, y, width, height, fileId: file._id, image: parentImage._id});
 				await databaseContext.chunkRepository.create(chunk);
 				resolve(chunk);
 			});

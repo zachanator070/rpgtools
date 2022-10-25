@@ -96,11 +96,27 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
     }
 
     async findByPlayer(userId: string): Promise<Game[]> {
-        return Promise.resolve([]);
+        const games = await GameModel.findAll({
+            include: {
+                association: 'characters',
+                where: {
+                    playerId: userId
+                }
+            }
+        });
+        return this.buildResults(games);
     }
 
     async findWithModel(modelId: string): Promise<Game[]> {
-        return Promise.resolve([]);
+        const games = await GameModel.findAll({
+            include: {
+                association: 'models',
+                where: {
+                    modelId
+                }
+            }
+        });
+        return this.buildResults(games);
     }
 
 }

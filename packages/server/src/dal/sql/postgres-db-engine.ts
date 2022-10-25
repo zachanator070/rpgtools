@@ -27,7 +27,7 @@ import UserModel from "./models/user-model";
 import WikiFolderModel from "./models/wiki-folder-model";
 import WorldModel from "./models/world-model";
 import {modeledWikiAttributes} from "./models/modeled-wiki-model";
-import {Client} from 'pg';
+import pg from 'pg';
 import {
     ACL_ENTRY,
     ARTICLE,
@@ -169,7 +169,7 @@ export default class PostgresDbEngine implements DbEngine {
     }
 
     async executeSQL(sql: string) {
-        const client = new Client({
+        const client = new pg.Client({
             user: this.user,
             password: this.password,
             host: this.host,
