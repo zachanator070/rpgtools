@@ -66,7 +66,7 @@ export class WikiPageService {
 			principalType: USER
 		});
 
-		await databaseContext.userRepository.update(context.user);
+		await databaseContext.articleRepository.update(newPage);
 		return folder;
 	};
 

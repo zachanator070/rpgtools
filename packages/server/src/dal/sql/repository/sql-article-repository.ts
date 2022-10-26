@@ -6,6 +6,9 @@ import ArticleModel from "../models/article-model";
 import {Op} from "sequelize";
 import ArticleFactory from "../../../domain-entities/factory/article-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {WikiPage} from "../../../domain-entities/wiki-page";
+import WikiPageModel from "../models/wiki-page-model";
+import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 
 @injectable()
 export default class SqlArticleRepository extends AbstractSqlRepository<Article, ArticleModel> implements ArticleRepository {
@@ -14,6 +17,9 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
 
     @inject(INJECTABLE_TYPES.ArticleFactory)
     entityFactory: ArticleFactory;
+
+    @inject(INJECTABLE_TYPES.WikiPageFactory)
+    wikiPageFactory: WikiPageFactory;
 
     async findOneByNameAndWorld(name: string, worldId: string): Promise<Article> {
         const model = await ArticleModel.findOne({
@@ -38,6 +44,14 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
             type: entity.type,
             coverImageId: entity.coverImage
         });
+    }
+
+    async updateAssociations(entity: Article, model: ArticleModel) {
+        let parent = await model.getWikiPage();
+        if(!parent) {
+            parent = await model.createWikiPage({...entity, worldId: entity.world, wiki: model._id});
+        }
+
     }
 
 }

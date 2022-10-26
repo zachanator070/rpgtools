@@ -48,7 +48,7 @@ export class RoleSeeder implements Seeder {
 				principal: loggedInRole._id,
 				principalType: ROLE
 			});
-			await this.roleRepository.update(loggedInRole);
+			await this.serverConfigRepository.update(server);
 			console.log(`Created default role "${LOGGED_IN}"`);
 		}
 	};

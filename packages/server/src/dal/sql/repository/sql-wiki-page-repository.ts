@@ -6,6 +6,9 @@ import AbstractSqlRepository from "./abstract-sql-repository";
 import WikiPageModel from "../models/wiki-page-model";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
+import {ServerConfig} from "../../../domain-entities/server-config";
+import ServerConfigModel from "../models/server-config-model";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 
 @injectable()
@@ -16,6 +19,9 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     @inject(INJECTABLE_TYPES.WikiPageFactory)
     entityFactory: WikiPageFactory;
 
+    @inject(INJECTABLE_TYPES.SqlPermissionControlledRepository)
+    sqlPermissionControlledRepository: SqlPermissionControlledRepository;
+
     async modelFactory(entity: WikiPage | undefined): Promise<WikiPageModel> {
         return WikiPageModel.build({
             _id: entity._id,
@@ -25,6 +31,10 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
             worldId: entity.world,
             coverImageId: entity.coverImage
         });
+    }
+
+    async updateAssociations(entity: WikiPage, model: WikiPageModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
     async findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>> {

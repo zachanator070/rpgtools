@@ -58,9 +58,7 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
         }
         const wiki = await model.getWiki();
         // this should be a safe cast b/c of the type checking above
-        return (await this.entityMapper.map(model.type).factory.fromSqlModel({
-            ...wiki
-        })) as WikiPage;
+        return (await this.entityMapper.map(model.type).factory.fromSqlModel(wiki)) as WikiPage;
     }
 
 }

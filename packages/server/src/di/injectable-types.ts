@@ -70,6 +70,8 @@ export const INJECTABLE_TYPES = {
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
 
+	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
+
 	// authorization policies
 	ArticleAuthorizationPolicy: Symbol.for("ArticleAuthorizationPolicy"),
 	ChunkAuthorizationPolicy: Symbol.for("ChunkAuthorizationPolicy"),

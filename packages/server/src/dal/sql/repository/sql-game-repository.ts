@@ -12,6 +12,7 @@ import StrokeModel from "../models/game/stroke-model";
 import PathNodeModel from "../models/game/path-node-model";
 import FogStrokeModel from "../models/game/fog-stroke-model";
 import InGameModelModel from "../models/game/in-game-model-model";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 
 @injectable()
@@ -20,6 +21,9 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
 
     @inject(INJECTABLE_TYPES.GameFactory)
     entityFactory: GameFactory;
+
+    @inject(INJECTABLE_TYPES.SqlPermissionControlledRepository)
+    sqlPermissionControlledRepository: SqlPermissionControlledRepository;
 
     async modelFactory(entity: Game | undefined): Promise<GameModel> {
         return GameModel.build({
@@ -93,6 +97,10 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         }))));
         await model.save();
         entity._id = model._id;
+    }
+
+    async updateAssociations(entity: Game, model: GameModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
     async findByPlayer(userId: string): Promise<Game[]> {

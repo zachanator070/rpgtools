@@ -40,6 +40,6 @@ export default class UserModel extends SqlModel {
 
     static connect() {
         UserModel.belongsTo(WorldModel, {as: 'currenWorld'});
-        RoleModel.belongsToMany(UserModel, {as: 'roles', through: 'UserToRole'});
+        UserModel.belongsToMany(RoleModel, {as: 'roles', through: 'UserToRole'});
     }
 }

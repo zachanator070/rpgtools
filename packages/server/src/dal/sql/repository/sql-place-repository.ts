@@ -14,7 +14,6 @@ export default class SqlPlaceRepository extends AbstractSqlRepository<Place, Pla
 
     @inject(INJECTABLE_TYPES.PlaceFactory)
     entityFactory: PlaceFactory;
-
     async modelFactory(entity: Place | undefined): Promise<PlaceModel> {
         return PlaceModel.build({
             _id: entity._id,

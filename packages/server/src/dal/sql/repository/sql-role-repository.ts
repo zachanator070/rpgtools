@@ -6,6 +6,9 @@ import {RoleRepository} from "../../repository/role-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import {PaginatedResult} from "../../paginated-result";
 import RoleFactory from "../../../domain-entities/factory/role-factory";
+import {ServerConfig} from "../../../domain-entities/server-config";
+import ServerConfigModel from "../models/server-config-model";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 
 @injectable()
@@ -16,12 +19,19 @@ export default class SqlRoleRepository extends AbstractSqlRepository<Role, RoleM
     @inject(INJECTABLE_TYPES.RoleFactory)
     entityFactory: RoleFactory;
 
+    @inject(INJECTABLE_TYPES.SqlPermissionControlledRepository)
+    sqlPermissionControlledRepository: SqlPermissionControlledRepository;
+
     async modelFactory(entity: Role | undefined): Promise<RoleModel> {
         return RoleModel.build({
             _id: entity._id,
             name: entity.name,
             worldId: entity.world,
-        })
+        });
+    }
+
+    async updateAssociations(entity: Role, model: RoleModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
     async findByWorldAndNamePaginated(worldId: string, page: number, name?: string): Promise<PaginatedResult<Role>> {

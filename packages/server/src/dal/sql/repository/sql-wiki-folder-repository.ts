@@ -6,6 +6,9 @@ import {WikiFolderRepository} from "../../repository/wiki-folder-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiFolderFactory from "../../../domain-entities/factory/wiki-folder-factory";
 import ArticleModel from "../models/article-model";
+import {ServerConfig} from "../../../domain-entities/server-config";
+import ServerConfigModel from "../models/server-config-model";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 
 @injectable()
@@ -16,12 +19,19 @@ export default class SqlWikiFolderRepository extends AbstractSqlRepository<WikiF
 
     staticModel = WikiFolderModel;
 
+    @inject(INJECTABLE_TYPES.SqlPermissionControlledRepository)
+    sqlPermissionControlledRepository: SqlPermissionControlledRepository;
+
     async modelFactory(entity: WikiFolder | undefined): Promise<WikiFolderModel> {
         return WikiFolderModel.build({
             _id: entity._id,
             name: entity.name,
             worldId: entity.world
         });
+    }
+
+    async updateAssociations(entity: WikiFolder, model: WikiFolderModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
     async findByWorldAndName(worldId: string, name?: string): Promise<WikiFolder[]> {
@@ -51,6 +61,7 @@ export default class SqlWikiFolderRepository extends AbstractSqlRepository<WikiF
     async findOneWithChild(wikiFolderId: string): Promise<WikiFolder> {
         const model = await WikiFolderModel.findOne({
             include: [{
+                as: 'children',
                 model: WikiFolderModel,
                 where: {
                     _id: wikiFolderId

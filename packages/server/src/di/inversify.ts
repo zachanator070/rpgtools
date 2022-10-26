@@ -192,6 +192,7 @@ import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
 import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
 import MessageFactory from "../domain-entities/factory/game/message-factory";
 import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory";
+import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permission-controlled-repository";
 
 const container = new Container();
 
@@ -355,6 +356,8 @@ if (process.env.MONGODB_HOST) {
 		.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 		.to(SqlWikiPageRepository);
 	container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
+
+	container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 } else {
 	container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(InMemoryArticleRepository);
 	container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(InMemoryChunkRepository);

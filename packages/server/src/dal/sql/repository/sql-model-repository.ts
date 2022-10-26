@@ -5,6 +5,7 @@ import {Model} from "../../../domain-entities/model";
 import {ModelRepository} from "../../repository/model-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import ModelFactory from "../../../domain-entities/factory/model-factory";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 
 @injectable()
@@ -14,6 +15,9 @@ export default class SqlModelRepository extends AbstractSqlRepository<Model, Mod
 
     @inject(INJECTABLE_TYPES.ModelFactory)
     entityFactory: ModelFactory;
+
+    @inject(INJECTABLE_TYPES.SqlPermissionControlledRepository)
+    sqlPermissionControlledRepository: SqlPermissionControlledRepository;
 
     async modelFactory(entity: Model | undefined): Promise<ModelModel> {
         return ModelModel.build({
@@ -27,6 +31,10 @@ export default class SqlModelRepository extends AbstractSqlRepository<Model, Mod
             worldId: entity.world,
             fileId: entity.fileId
         });
+    }
+
+    async updateAssociations(entity: Model, model: ModelModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
     async findByWorld(worldId: string): Promise<Model[]> {

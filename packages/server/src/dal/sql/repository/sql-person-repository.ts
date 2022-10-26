@@ -5,7 +5,6 @@ import PersonModel from "../models/person-model";
 import {PersonRepository} from "../../repository/person-repository";
 import PersonFactory from "../../../domain-entities/factory/person-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import ItemModel from "../models/item-model";
 
 
 @injectable()

@@ -1,4 +1,4 @@
-import {HasManyGetAssociationsMixin, ModelStatic} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, ModelStatic} from "sequelize";
 import AclEntryModel from "./acl-entry-model";
 import SqlModel from "./sql-model";
 
@@ -9,4 +9,5 @@ export function configPermissionControlledModel(model: ModelStatic<any>) {
 
 export default class PermissionControlledModel extends SqlModel {
     getAcl: HasManyGetAssociationsMixin<AclEntryModel>;
+    setAcl: HasManySetAssociationsMixin<AclEntryModel, string>;
 }

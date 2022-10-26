@@ -1,7 +1,7 @@
 import WikiPageModel from "./wiki-page-model";
 import SqlModel from "./sql-model";
 import {defaultAttributes} from "./default-attributes";
-import {BelongsToGetAssociationMixin} from "sequelize";
+import {BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin} from "sequelize";
 
 
 export default class ArticleModel extends SqlModel {
@@ -11,9 +11,10 @@ export default class ArticleModel extends SqlModel {
     };
 
     getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
+    createWikiPage: BelongsToCreateAssociationMixin<WikiPageModel>;
 
     static connect() {
-        ArticleModel.belongsTo(WikiPageModel);
+        ArticleModel.hasOne(WikiPageModel, {foreignKey: 'wiki', constraints: false, scope: {type: 'Article'}});
         WikiPageModel.belongsTo(ArticleModel, {foreignKey: 'wiki', constraints: false});
     }
 }
