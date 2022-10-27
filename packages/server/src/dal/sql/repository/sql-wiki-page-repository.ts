@@ -6,10 +6,17 @@ import AbstractSqlRepository from "./abstract-sql-repository";
 import WikiPageModel from "../models/wiki-page-model";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
-import {ServerConfig} from "../../../domain-entities/server-config";
-import ServerConfigModel from "../models/server-config-model";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import WikiPageChild from "../models/wiki-page-child";
 
+
+export async function updateWikiPageAssociations(entity: WikiPage, model: WikiPageChild) {
+    let parent = await model.getWikiPage();
+    if(!parent) {
+        parent = await WikiPageModel.create({_id: entity._id, ...entity, worldId: entity.world, wiki: model._id});
+        await model.setWikiPage(parent);
+    }
+}
 
 @injectable()
 export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPage, WikiPageModel> implements WikiPageRepository {

@@ -60,7 +60,7 @@ export default class ArticleFactory implements EntityFactory<Article, ArticleDoc
             coverImage: page.coverImageId,
             contentId: page.contentId,
             acl: await Promise.all(
-                (await (await model.getWikiPage()).getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+                (await page.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
             )
         });
     }

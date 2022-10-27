@@ -1,20 +1,17 @@
-import WikiPageModel from "./wiki-page-model";
+import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
 import SqlModel from "./sql-model";
 import {defaultAttributes} from "./default-attributes";
 import {BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin} from "sequelize";
+import WikiPageChild from "./wiki-page-child";
 
 
-export default class ArticleModel extends SqlModel {
+export default class ArticleModel extends WikiPageChild {
 
     static attributes = {
         ...defaultAttributes
     };
 
-    getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
-    createWikiPage: BelongsToCreateAssociationMixin<WikiPageModel>;
-
     static connect() {
-        ArticleModel.hasOne(WikiPageModel, {foreignKey: 'wiki', constraints: false, scope: {type: 'Article'}});
-        WikiPageModel.belongsTo(ArticleModel, {foreignKey: 'wiki', constraints: false});
+        setupWikiPageAssociations(ArticleModel, 'Article');
     }
 }

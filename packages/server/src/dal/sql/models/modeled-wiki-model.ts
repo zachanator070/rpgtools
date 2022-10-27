@@ -1,8 +1,9 @@
 import {BelongsToGetAssociationMixin, DataTypes, ModelAttributes, ModelStatic} from "sequelize";
-import WikiPageModel from "./wiki-page-model";
+import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
 import ModelModel from "./model-model";
 import SqlModel from "./sql-model";
 import {defaultAttributes} from "./default-attributes";
+import WikiPageChild from "./wiki-page-child";
 
 export const modeledWikiAttributes: ModelAttributes = {
     ...defaultAttributes,
@@ -12,13 +13,12 @@ export const modeledWikiAttributes: ModelAttributes = {
     }
 };
 
-export function configModeledWikiModel(model: ModelStatic<any>) {
+export function configModeledWikiModel(model: ModelStatic<any>, type: string) {
     model.belongsTo(ModelModel, {as: 'pageModel'});
-    model.belongsTo(WikiPageModel);
-    WikiPageModel.belongsTo(model, {foreignKey: 'wiki', constraints: false});
+    setupWikiPageAssociations(model, type)
 }
 
-export default class ModeledWikiModel extends SqlModel {
+export default class ModeledWikiModel extends WikiPageChild {
     declare modelColor: string;
     declare pageModelId: string;
 

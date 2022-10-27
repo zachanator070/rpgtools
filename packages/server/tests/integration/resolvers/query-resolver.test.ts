@@ -253,7 +253,8 @@ describe("query resolver", () => {
 								}),
 							])
 						}
-					}
+					},
+					errors: undefined
 				});
 			});
 

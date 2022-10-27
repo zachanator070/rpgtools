@@ -5,6 +5,7 @@ import ItemModel from "../models/item-model";
 import {ItemRepository} from "../../repository/item-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import ItemFactory from "../../../domain-entities/factory/item-factory";
+import {updateWikiPageAssociations} from "./sql-wiki-page-repository";
 
 
 @injectable()
@@ -26,6 +27,10 @@ export default class SqlItemRepository extends AbstractSqlRepository<Item, ItemM
             type: entity.type,
             coverImageId: entity.coverImage
         });
+    }
+
+    async updateAssociations(entity: Item, model: ItemModel) {
+        await updateWikiPageAssociations(entity, model);
     }
 
 }

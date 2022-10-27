@@ -62,6 +62,7 @@ export default class SqlUserRepository extends AbstractSqlRepository<User, UserM
     async findWithRole(roleId: string): Promise<User[]> {
         return this.buildResults(await UserModel.findAll({
             include: [{
+                as: 'roles',
                 model: RoleModel,
                 where: {_id: roleId}
             }]

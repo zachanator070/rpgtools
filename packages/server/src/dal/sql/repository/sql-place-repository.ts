@@ -5,6 +5,7 @@ import PlaceModel from "../models/place-model";
 import {PlaceRepository} from "../../repository/place-repository";
 import PlaceFactory from "../../../domain-entities/factory/place-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {updateWikiPageAssociations} from "./sql-wiki-page-repository";
 
 
 @injectable()
@@ -25,6 +26,10 @@ export default class SqlPlaceRepository extends AbstractSqlRepository<Place, Pla
             pixelsPerFoot: entity.pixelsPerFoot,
             mapImageId: entity.mapImage
         });
+    }
+
+    async updateAssociations(entity: Place, model: PlaceModel) {
+        await updateWikiPageAssociations(entity, model);
     }
 
 }

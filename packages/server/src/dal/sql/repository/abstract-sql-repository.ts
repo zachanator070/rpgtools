@@ -21,11 +21,11 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
         const model = await this.modelFactory(entity);
         try {
             await model.save();
+            entity._id = model._id;
             await this.updateAssociations(entity, model);
         } catch (e) {
-            console.error(`Error while saving to database ${e.message()}`);
+            console.error(`Error while saving to database ${e.message}`);
         }
-        entity._id = model._id;
     }
 
     async delete(entity: T): Promise<void> {
@@ -34,13 +34,13 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
     }
 
     async update(entity: T): Promise<void> {
-        const model = await this.staticModel.findOne({where: {_id: entity._id}});
+        const model = await this.modelFactory(entity);
+        model.isNewRecord = false;
         try {
-            model.set(entity);
-            await model.update();
+            await model.save();
             await this.updateAssociations(entity, model);
         } catch (e) {
-            console.error(`Error while updating to database ${e.message()}`);
+            console.error(`Error while updating to database ${e.message}`);
         }
     }
 
@@ -84,14 +84,14 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
         const results = await this.staticModel.findAll({
             where: filter,
             limit: this.PAGE_LIMIT,
-            offset: page * this.PAGE_LIMIT,
+            offset: (page - 1) * this.PAGE_LIMIT,
         });
 
         const count = await this.staticModel.count({
             where: filter
         });
 
-        const totalPages = count / this.PAGE_LIMIT;
+        const totalPages = Math.ceil(count / this.PAGE_LIMIT);
 
         return {
             totalDocs: count,

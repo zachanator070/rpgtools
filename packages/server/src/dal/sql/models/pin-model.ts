@@ -3,6 +3,7 @@ import {defaultAttributes} from "./default-attributes";
 import ImageModel from "./image-model";
 import ArticleModel from "./article-model";
 import SqlModel from "./sql-model";
+import WikiPageModel from "./wiki-page-model";
 
 
 export default class PinModel extends SqlModel {
@@ -25,7 +26,7 @@ export default class PinModel extends SqlModel {
     };
 
     static connect() {
-        PinModel.belongsTo(ImageModel, {as: 'map'});
-        PinModel.belongsTo(ArticleModel, {as: 'page', constraints: false});
+        PinModel.belongsTo(WikiPageModel, {as: 'map'});
+        PinModel.belongsTo(WikiPageModel, {as: 'page', constraints: false});
     }
 }

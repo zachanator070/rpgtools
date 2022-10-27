@@ -5,6 +5,7 @@ import MonsterModel from "../models/monster-model";
 import {MonsterRepository} from "../../repository/monster-repository";
 import MonsterFactory from "../../../domain-entities/factory/monster-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {updateWikiPageAssociations} from "./sql-wiki-page-repository";
 
 
 @injectable()
@@ -26,5 +27,9 @@ export default class SqlMonsterRepository extends AbstractSqlRepository<Monster,
             type: entity.type,
             coverImageId: entity.coverImage
         });
+    }
+
+    async updateAssociations(entity: Monster, model: MonsterModel) {
+        await updateWikiPageAssociations(entity, model);
     }
 }

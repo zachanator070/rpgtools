@@ -9,6 +9,6 @@ export default class ItemModel extends ModeledWikiModel {
     };
 
     static connect() {
-        configModeledWikiModel(ItemModel);
+        configModeledWikiModel(ItemModel, 'Item');
     }
 }

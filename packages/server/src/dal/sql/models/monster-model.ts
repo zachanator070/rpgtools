@@ -7,6 +7,6 @@ export default class MonsterModel extends ModeledWikiModel {
     };
 
     static connect() {
-        configModeledWikiModel(MonsterModel);
+        configModeledWikiModel(MonsterModel, 'Monster');
     }
 }

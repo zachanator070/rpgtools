@@ -8,6 +8,6 @@ export default class PersonModel extends ModeledWikiModel {
     };
 
     static connect() {
-        configModeledWikiModel(PersonModel);
+        configModeledWikiModel(PersonModel, 'Person');
     }
 }

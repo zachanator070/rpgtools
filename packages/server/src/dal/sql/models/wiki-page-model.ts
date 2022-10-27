@@ -1,9 +1,13 @@
-import {BelongsToGetAssociationMixin, BelongsToManyOptions, DataTypes} from "sequelize";
+import {BelongsToGetAssociationMixin, BelongsToManyOptions, DataTypes, ModelStatic} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import WorldModel from "./world-model";
 import ImageModel from "./image-model";
 
+export function setupWikiPageAssociations(model: ModelStatic<any>, type: string) {
+    model.hasOne(WikiPageModel, {foreignKey: 'wiki', constraints: false, scope: {type}});
+    WikiPageModel.belongsTo(model, {foreignKey: 'wiki', constraints: false});
+}
 
 export default class WikiPageModel extends PermissionControlledModel {
 

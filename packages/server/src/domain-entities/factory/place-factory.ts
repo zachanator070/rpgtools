@@ -80,7 +80,7 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
             mapImage: model.mapImageId,
             pixelsPerFoot: model.pixelsPerFoot,
             acl: await Promise.all(
-                (await (await model.getWikiPage()).getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+                (await page.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
             )
         });
     }

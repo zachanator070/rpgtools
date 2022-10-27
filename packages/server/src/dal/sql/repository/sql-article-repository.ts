@@ -6,9 +6,8 @@ import ArticleModel from "../models/article-model";
 import {Op} from "sequelize";
 import ArticleFactory from "../../../domain-entities/factory/article-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import {WikiPage} from "../../../domain-entities/wiki-page";
-import WikiPageModel from "../models/wiki-page-model";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
+import {updateWikiPageAssociations} from "./sql-wiki-page-repository";
 
 @injectable()
 export default class SqlArticleRepository extends AbstractSqlRepository<Article, ArticleModel> implements ArticleRepository {
@@ -47,11 +46,7 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
     }
 
     async updateAssociations(entity: Article, model: ArticleModel) {
-        let parent = await model.getWikiPage();
-        if(!parent) {
-            parent = await model.createWikiPage({...entity, worldId: entity.world, wiki: model._id});
-        }
-
+        await updateWikiPageAssociations(entity, model);
     }
 
 }

@@ -5,6 +5,7 @@ import PersonModel from "../models/person-model";
 import {PersonRepository} from "../../repository/person-repository";
 import PersonFactory from "../../../domain-entities/factory/person-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {updateWikiPageAssociations} from "./sql-wiki-page-repository";
 
 
 @injectable()
@@ -26,6 +27,10 @@ export default class SqlPersonRepository extends AbstractSqlRepository<Person, P
             type: entity.type,
             coverImageId: entity.coverImage
         });
+    }
+
+    async updateAssociations(entity: Person, model: PersonModel) {
+        await updateWikiPageAssociations(entity, model);
     }
 
 }
