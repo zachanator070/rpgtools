@@ -1,10 +1,11 @@
 import {
-    BelongsToManyGetAssociationsMixin,
+    BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin,
     DataTypes,
 } from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import UserModel from "./user-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import {User} from "../../../domain-entities/user";
 
 
 export default class ServerConfigModel extends PermissionControlledModel {
@@ -14,6 +15,7 @@ export default class ServerConfigModel extends PermissionControlledModel {
     declare unlockCode: string;
 
     getAdmins: BelongsToManyGetAssociationsMixin<UserModel>;
+    setAdmins: BelongsToManySetAssociationsMixin<UserModel, string>;
 
     static attributes = {
         ...defaultAttributes,

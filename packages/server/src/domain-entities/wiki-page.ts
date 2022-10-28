@@ -1,7 +1,6 @@
 import {
 	AclEntry,
 	DomainEntity, EntityFactory,
-	Factory,
 	PermissionControlledEntity,
 	RepositoryAccessor, WikiPageDocument
 } from "../types";
@@ -9,7 +8,6 @@ import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-author
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import WikiPageModel from "../dal/sql/models/wiki-page-model";
 
 @injectable()
 export abstract class WikiPage implements PermissionControlledEntity {

@@ -28,6 +28,11 @@ export default class SqlUserRepository extends AbstractSqlRepository<User, UserM
         });
     }
 
+    async updateAssociations(entity: User, model: UserModel) {
+        const roleModels = await RoleModel.findAll({where: {_id: entity.roles}});
+        await model.setRoles(roleModels);
+    }
+
     async findByEmail(email: string): Promise<User[]> {
         return this.buildResults(await UserModel.findAll({
             where: {

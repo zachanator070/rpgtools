@@ -1,4 +1,4 @@
-import {DataTypes, ModelAttributes} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import SqlModel from "./sql-model";
 

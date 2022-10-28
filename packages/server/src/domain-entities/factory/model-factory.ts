@@ -88,7 +88,7 @@ export default class ModelFactory implements EntityFactory<Model, ModelDocument,
             height: model.height,
             fileName: model.fileName,
             notes: model.notes,
-            world: model.notes,
+            world: model.worldId,
             acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
             fileId: model.fileId
         })

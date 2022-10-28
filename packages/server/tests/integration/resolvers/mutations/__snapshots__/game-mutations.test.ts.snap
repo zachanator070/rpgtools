@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`game mutations with world as anon create game 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`game mutations with world as tester1 user create game 1`] = `
+{
+  "data": {
+    "createGame": ObjectContaining {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;

@@ -60,7 +60,7 @@ export class ModelService {
 			}
 			file = await file;
 
-			const newFile = this.fileFactory.build({filename: file.filename, readStream: file.createReadStream(), mimeType: null});
+			const newFile = this.fileFactory.build({filename: file.filename, readStream: file.createReadStream(), mimeType: 'application/octet-stream'});
 			await databaseContext.fileRepository.create(newFile);
 			model.fileId = newFile._id;
 			model.fileName = file.filename;
@@ -111,7 +111,7 @@ export class ModelService {
 		fileUpload = await fileUpload;
 
 		model.fileName = fileUpload.filename;
-		const file = this.fileFactory.build({filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: null});
+		const file = this.fileFactory.build({filename: fileUpload.filename, readStream: fileUpload.createReadStream(), mimeType: 'application/octet-stream'});
 		await databaseContext.fileRepository.create(file);
 		model.fileId = file._id;
 		await databaseContext.modelRepository.create(model);

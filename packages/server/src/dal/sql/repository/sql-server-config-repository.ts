@@ -6,6 +6,7 @@ import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import ServerConfigFactory from "../../../domain-entities/factory/server-config-factory";
 import AbstractSqlRepository from "./abstract-sql-repository";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import UserModel from "../models/user-model";
 
 
 @injectable()
@@ -30,6 +31,8 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
 
     async updateAssociations(entity: ServerConfig, model: ServerConfigModel) {
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
+        const adminUserModels = await UserModel.findAll({where: {_id: entity.adminUsers}});
+        await model.setAdmins(adminUserModels);
     }
 
     async findOne(): Promise<ServerConfig> {

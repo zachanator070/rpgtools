@@ -5,11 +5,7 @@ import WikiFolderModel from "../models/wiki-folder-model";
 import {WikiFolderRepository} from "../../repository/wiki-folder-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiFolderFactory from "../../../domain-entities/factory/wiki-folder-factory";
-import ArticleModel from "../models/article-model";
-import {ServerConfig} from "../../../domain-entities/server-config";
-import ServerConfigModel from "../models/server-config-model";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-import {WikiPage} from "../../../domain-entities/wiki-page";
 import WikiPageModel from "../models/wiki-page-model";
 
 
@@ -35,16 +31,10 @@ export default class SqlWikiFolderRepository extends AbstractSqlRepository<WikiF
     async updateAssociations(entity: WikiFolder, model: WikiFolderModel) {
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
 
-        const childrenModels: WikiFolderModel[] = [];
-        for(let child of entity.children) {
-            childrenModels.push(await WikiFolderModel.findByPk(child));
-        }
+        const childrenModels = await WikiFolderModel.findAll({where: {_id: entity.children}});
         await model.setChildren(childrenModels);
 
-        const pageModels: WikiPageModel[] = [];
-        for(let page of entity.pages) {
-            pageModels.push(await WikiPageModel.findByPk(page));
-        }
+        const pageModels = await WikiPageModel.findAll({where: {_id: entity.pages}});
         await model.setPages(pageModels);
     }
 

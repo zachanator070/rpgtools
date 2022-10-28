@@ -5,10 +5,13 @@ import ImageModel from "../models/image-model";
 import {ImageRepository} from "../../repository/image-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import ImageFactory from "../../../domain-entities/factory/image-factory";
+import ChunkModel from "../models/chunk-model";
 
 
 @injectable()
 export default class SqlImageRepository extends AbstractSqlRepository<Image, ImageModel> implements ImageRepository {
+
+    staticModel = ImageModel;
 
     @inject(INJECTABLE_TYPES.ImageFactory)
     entityFactory: ImageFactory;
@@ -26,6 +29,9 @@ export default class SqlImageRepository extends AbstractSqlRepository<Image, Ima
         });
     }
 
-    staticModel = ImageModel;
+    async updateAssociations(entity: Image, model: ImageModel) {
+        const chunkModels = await ChunkModel.findAll({where: {_id: entity.chunks}});
+        await model.setChunks(chunkModels);
+    }
 
 }

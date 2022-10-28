@@ -35,12 +35,8 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         });
     }
 
-    async create(entity: Game): Promise<void> {
-        await this.update(entity);
-    }
-
-    async update(entity: Game) {
-        const model = await this.modelFactory(entity);
+    async updateAssociations(entity: Game, model: GameModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
         await model.setCharacters(await Promise.all(entity.characters.map(character => CharacterModel.create({
             _id: character._id,
             name: character.name,
@@ -95,12 +91,6 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
             modelId: inGameModel.model,
             wikiId: inGameModel.wiki
         }))));
-        await model.save();
-        entity._id = model._id;
-    }
-
-    async updateAssociations(entity: Game, model: GameModel) {
-        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
     async findByPlayer(userId: string): Promise<Game[]> {

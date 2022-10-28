@@ -79,7 +79,7 @@ export class GameService {
 				map: null,
 				characters: [
 					new Character(
-						null,
+						undefined,
 						characterName || context.user.username,
 						context.user._id,
 						this.genColor(),
@@ -129,7 +129,7 @@ export class GameService {
 		await databaseContext.userRepository.update(context.user);
 		game.characters.push(
 			new Character(
-				null,
+				undefined,
 				characterName || context.user.username,
 				context.user._id,
 				this.genColor(),

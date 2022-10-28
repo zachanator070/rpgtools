@@ -1,4 +1,10 @@
-import {BelongsToManyGetAssociationsMixin, DataTypes, Model, Sequelize} from "sequelize";
+import {
+    BelongsToManyGetAssociationsMixin,
+    BelongsToManySetAssociationsMixin,
+    DataTypes,
+    Model,
+    Sequelize
+} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import WorldModel from "./world-model";
@@ -15,6 +21,7 @@ export default class UserModel extends SqlModel {
     declare currentWorldId: string;
 
     getRoles: BelongsToManyGetAssociationsMixin<RoleModel>;
+    setRoles: BelongsToManySetAssociationsMixin<RoleModel, string>;
 
     static attributes = {
         ...defaultAttributes,

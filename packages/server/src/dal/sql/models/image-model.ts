@@ -1,4 +1,4 @@
-import {DataTypes, HasManyGetAssociationsMixin} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import SqlModel from "./sql-model";
 import ChunkModel from "./chunk-model";
@@ -16,6 +16,7 @@ export default class ImageModel extends SqlModel {
     declare worldId: string;
 
     getChunks: HasManyGetAssociationsMixin<ChunkModel>;
+    setChunks: HasManySetAssociationsMixin<ChunkModel, string>;
 
     static attributes = {
         ...defaultAttributes,
