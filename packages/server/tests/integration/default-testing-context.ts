@@ -20,6 +20,9 @@ import {WikiPage} from "../../src/domain-entities/wiki-page";
 import {Pin} from "../../src/domain-entities/pin";
 import {DatabaseContext} from "../../src/dal/database-context";
 import UserFactory from "../../src/domain-entities/factory/user-factory";
+import {ImageService} from "../../src/services/image-service";
+import fs from "fs";
+import {Image} from "../../src/domain-entities/image";
 
 @injectable()
 export class DefaultTestingContext {
@@ -35,6 +38,9 @@ export class DefaultTestingContext {
 
 	@inject(INJECTABLE_TYPES.WikiPageService)
 	wikiPageService: WikiPageService;
+
+	@inject(INJECTABLE_TYPES.ImageService)
+	imageService: ImageService;
 
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory
@@ -59,6 +65,7 @@ export class DefaultTestingContext {
 	tester2SecurityContext: SecurityContext;
 
 	world: World;
+	mapImage: Image;
 	testRole: Role;
 	newFolder: WikiFolder;
 	otherPage: WikiPage;
@@ -82,6 +89,9 @@ export class DefaultTestingContext {
 
 		const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 		this.world = await worldService.createWorld("Earth", false, this.tester1SecurityContext, databaseContext);
+		const filename = "tests/integration/resolvers/mutations/testmap.png";
+		this.mapImage = await this.imageService.createImage(this.world._id, true, filename, fs.createReadStream(filename), databaseContext);
+		await this.wikiPageService.updatePlace(this.tester1SecurityContext, this.world.wikiPage, 50, databaseContext, this.mapImage._id);
 		this.testRole = await this.authorizationService.createRole(
 			this.tester1SecurityContext,
 			this.world._id,

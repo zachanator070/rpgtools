@@ -5,7 +5,7 @@ import {DatabaseContext} from "../../../../src/dal/database-context";
 import {DefaultTestingContext} from "../../default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {GameService} from "../../../../src/services/game-service";
-import {CREATE_GAME, JOIN_GAME} from "@rpgtools/common/src/gql-mutations";
+import {CREATE_GAME, GAME_CHAT, JOIN_GAME, LEAVE_GAME, SET_GAME_MAP} from "@rpgtools/common/src/gql-mutations";
 import {Game} from "../../../../src/domain-entities/game";
 
 process.env.TEST_SUITE = "game-mutations-test";
@@ -57,17 +57,68 @@ describe("game mutations", () => {
                     errors: undefined
                 });
             });
+
+            describe('with hosted game', () => {
+                let testGame: Game = null;
+                const testGamePassword = 'tester1password';
+                beforeEach(async () => {
+                    const session = await dbEngine.createDatabaseSession();
+                    const databaseContext = databaseContextFactory({session});
+                    testGame = await gameService.createGame(
+                        testingContext.tester1SecurityContext,
+                        testingContext.world._id,
+                        testGamePassword,
+                        'Tester1',
+                        databaseContext
+                    );
+                    await session.commit();
+                });
+
+                test('set game map', async () => {
+                    const result = await testingContext.server.executeGraphQLQuery({
+                        query: SET_GAME_MAP,
+                        variables: { gameId: testGame._id, placeId: testingContext.world.wikiPage},
+                    });
+                    expect(result).toMatchSnapshot({
+                        data: {
+                            setGameMap: expect.objectContaining({
+                                _id: expect.any(String),
+                                map: {
+                                    _id: expect.any(String),
+                                    name: testingContext.world.name,
+                                    pixelsPerFoot: expect.any(Number),
+                                    mapImage: {
+                                        _id: expect.any(String),
+                                        width: expect.any(Number),
+                                        height: expect.any(Number),
+                                        chunks: expect.arrayContaining([
+                                            {
+                                                _id: expect.any(String),
+                                                x: expect.any(Number),
+                                                y: expect.any(Number),
+                                                fileId: expect.any(String),
+                                            }
+                                        ])
+                                    }
+                                }
+                            })
+                        },
+                        errors: undefined
+                    });
+                });
+            });
         });
 
-        describe('with game hosted by tester1', () => {
+        describe('while joined in game hosted by tester1', () => {
             let testGame: Game = null;
+            const testGamePassword = 'tester1password';
             beforeEach(async () => {
                 const session = await dbEngine.createDatabaseSession();
                 const databaseContext = databaseContextFactory({session});
                 testGame = await gameService.createGame(
                     testingContext.tester1SecurityContext,
                     testingContext.world._id,
-                    'tester1password',
+                    testGamePassword,
                     'Tester1',
                     databaseContext
                 );
@@ -82,13 +133,13 @@ describe("game mutations", () => {
                 test('join existing game', async () => {
                     const result = await testingContext.server.executeGraphQLQuery({
                         query: JOIN_GAME,
-                        variables: { gameId: testGame._id, password: 'tester1password', username: 'Tester2' },
+                        variables: { gameId: testGame._id, password: testGamePassword, characterName: 'Tester2' },
                     });
                     expect(result).toMatchSnapshot({
                         data: {
                             joinGame: expect.objectContaining({
                                 _id: expect.any(String),
-                                characters: [
+                                characters: expect.arrayContaining([
                                     expect.objectContaining({
                                         _id: expect.any(String),
                                         name: 'Tester1'
@@ -97,10 +148,57 @@ describe("game mutations", () => {
                                         _id: expect.any(String),
                                         name: 'Tester2'
                                     }),
-                                ]
+                                ])
                             })
                         },
                         errors: undefined
+                    });
+                });
+
+                describe('while having joined a game', () => {
+                    beforeEach(async () => {
+                        const session = await dbEngine.createDatabaseSession();
+                        const databaseContext = databaseContextFactory({session});
+                        await gameService.joinGame(testingContext.tester2SecurityContext, testGame._id, testGamePassword, 'Tester2', databaseContext);
+                        await session.commit();
+                    });
+
+                    test('leave game', async () => {
+                        const result = await testingContext.server.executeGraphQLQuery({
+                            query: LEAVE_GAME,
+                            variables: { gameId: testGame._id},
+                        });
+                        expect(result).toMatchSnapshot({
+                            data: {
+                                leaveGame: true
+                            },
+                            errors: undefined
+                        });
+                    });
+
+                    test('game chat', async () => {
+                        const result = await testingContext.server.executeGraphQLQuery({
+                            query: GAME_CHAT,
+                            variables: { gameId: testGame._id, message: 'Hello World!'},
+                        });
+                        expect(result).toMatchSnapshot({
+                            data: {
+                                gameChat: expect.objectContaining({
+                                    _id: expect.any(String)
+                                })
+                            },
+                            errors: undefined
+                        });
+                    });
+
+                    test('set game map permission denied', async () => {
+                        const result = await testingContext.server.executeGraphQLQuery({
+                            query: SET_GAME_MAP,
+                            variables: { gameId: testGame._id, placeId: testingContext.world.wikiPage},
+                        });
+                        expect(result).toMatchSnapshot({
+                            errors: expect.any(Array)
+                        });
                     });
                 });
             })

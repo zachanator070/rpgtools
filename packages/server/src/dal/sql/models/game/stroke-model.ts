@@ -36,6 +36,6 @@ export default class StrokeModel extends SqlModel {
     };
 
     static connect() {
-        StrokeModel.hasMany(PathNodeModel, {as: 'path'});
+        StrokeModel.hasMany(PathNodeModel, {as: 'path', onDelete: 'CASCADE'});
     }
 }

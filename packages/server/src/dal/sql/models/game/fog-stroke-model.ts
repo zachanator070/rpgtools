@@ -28,6 +28,6 @@ export default class FogStrokeModel extends SqlModel {
     };
 
     static connect() {
-        FogStrokeModel.hasMany(PathNodeModel, {as: 'path'});
+        FogStrokeModel.hasMany(PathNodeModel, {as: 'path', onDelete: 'CASCADE'});
     }
 }

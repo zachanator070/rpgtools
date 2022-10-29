@@ -28,6 +28,6 @@ export default class CharacterModel extends SqlModel {
 
     static connect() {
         CharacterModel.belongsTo(UserModel, {as: 'player'});
-        CharacterModel.hasMany(CharacterAttributeModel, {as: 'characterAttributes'});
+        CharacterModel.hasMany(CharacterAttributeModel, {as: 'characterAttributes', onDelete: 'CASCADE'});
     }
 }

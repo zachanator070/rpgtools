@@ -103,7 +103,7 @@ export class GameService {
 				principalType: USER
 			})
 		}
-		await databaseContext.userRepository.update(context.user);
+		await databaseContext.gameRepository.update(game);
 		return game;
 	};
 
