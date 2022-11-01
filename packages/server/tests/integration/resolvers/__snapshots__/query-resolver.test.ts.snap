@@ -142,9 +142,28 @@ exports[`query resolver with world with authenticated user wiki 1`] = `
       "folder": {
         "_id": Any<String>,
       },
-      "mapImage": null,
+      "mapImage": ObjectContaining {
+        "_id": Any<String>,
+        "chunks": ArrayContaining [
+          {
+            "_id": Any<String>,
+            "fileId": Any<String>,
+          },
+        ],
+        "height": Any<Number>,
+        "icon": {
+          "_id": Any<String>,
+          "chunks": [
+            {
+              "_id": Any<String>,
+              "fileId": Any<String>,
+            },
+          ],
+        },
+        "width": Any<Number>,
+      },
       "name": "Earth",
-      "pixelsPerFoot": 0,
+      "pixelsPerFoot": 50,
       "type": "Place",
       "world": {
         "_id": Any<String>,
@@ -218,7 +237,11 @@ exports[`query resolver with world with authenticated user world 1`] = `
       },
       "wikiPage": {
         "_id": Any<String>,
-        "mapImage": null,
+        "mapImage": ObjectContaining {
+          "_id": Any<String>,
+          "chunkHeight": Any<Number>,
+          "chunkWidth": Any<Number>,
+        },
         "name": "Earth",
       },
     },

@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv'
+dotenv.config({path: './jest.env'});
+
 import { container } from "../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import {DbEngine, SessionContextFactory} from "../../src/types";

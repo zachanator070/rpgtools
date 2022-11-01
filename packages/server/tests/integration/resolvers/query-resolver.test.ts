@@ -153,6 +153,11 @@ describe("query resolver", () => {
 							},
 							wikiPage: {
 								_id: expect.any(String),
+								mapImage: expect.objectContaining({
+									_id: expect.any(String),
+									chunkWidth: expect.any(Number),
+									chunkHeight: expect.any(Number),
+								})
 							},
 							accessControlList: accessControlList
 						},
@@ -202,6 +207,20 @@ describe("query resolver", () => {
 							folder: {
 								_id: expect.any(String),
 							},
+							mapImage: expect.objectContaining({
+								_id: expect.any(String),
+								width: expect.any(Number),
+								height: expect.any(Number),
+								chunks: expect.arrayContaining([
+									{_id: expect.any(String), fileId: expect.any(String)}
+								]),
+								icon: {
+									_id: expect.any(String),
+									chunks: [
+										{_id: expect.any(String), fileId: expect.any(String)}
+									]
+								}
+							})
 						},
 					},
 					errors: undefined,

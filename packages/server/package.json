@@ -79,6 +79,7 @@
 		"@types/uuid": "^8.3.1",
 		"@types/ws": "^8.5.3",
 		"babel-jest": "^29.0.1",
+		"dotenv": "^16.0.3",
 		"eslint": "^8.23.0",
 		"is-typedarray": "^1.0.0",
 		"ts-jest": "^29.0.1",
