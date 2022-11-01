@@ -31,7 +31,6 @@ import {
 	ROSTER_CHANGE_EVENT,
 } from "../resolvers/subscription-resolvers";
 import { v4 as uuidv4 } from "uuid";
-import { WikiPageModel } from "../dal/mongodb/models/wiki-page";
 import { HelpGameCommand } from "../domain-entities/game-commands/help-game-command";
 import { RollGameCommand } from "../domain-entities/game-commands/roll-game-command";
 import { WhisperGameCommand } from "../domain-entities/game-commands/whisper-game-command";
@@ -328,11 +327,11 @@ export class GameService {
 		if (!model) {
 			throw new Error("Model does not exist");
 		}
-		const wiki = await WikiPageModel.findById(wikiId);
+		const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (wikiId && !wiki) {
 			throw new Error(`Cannot find wiki with ID ${wikiId}`);
 		}
-		const positionedModel = new InGameModel(uuidv4(), modelId, 0, 0, 0, 1, color, wikiId);
+		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId);
 		game.models.push(positionedModel);
 		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MODEL_ADDED, {

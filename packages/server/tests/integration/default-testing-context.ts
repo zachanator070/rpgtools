@@ -23,6 +23,13 @@ import UserFactory from "../../src/domain-entities/factory/user-factory";
 import {ImageService} from "../../src/services/image-service";
 import fs from "fs";
 import {Image} from "../../src/domain-entities/image";
+import {FileUpload} from "graphql-upload";
+import { Model } from "../../src/domain-entities/model";
+import {Game} from "../../src/domain-entities/game";
+import {ModelService} from "../../src/services/model-service";
+import {GameService} from "../../src/services/game-service";
+
+export const testGamePassword = 'tester1password';
 
 @injectable()
 export class DefaultTestingContext {
@@ -42,8 +49,14 @@ export class DefaultTestingContext {
 	@inject(INJECTABLE_TYPES.ImageService)
 	imageService: ImageService;
 
+	@inject(INJECTABLE_TYPES.ModelService)
+	modelService: ModelService;
+
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory
+
+	@inject(INJECTABLE_TYPES.GameService)
+	gameService: GameService;
 
 	@inject(INJECTABLE_TYPES.DatabaseContextFactory)
 	databaseContextFactory: Factory<DatabaseContext>;
@@ -70,6 +83,9 @@ export class DefaultTestingContext {
 	newFolder: WikiFolder;
 	otherPage: WikiPage;
 	pin: Pin;
+
+	model: Model;
+	game: Game;
 
 	async reset() {
 		const session = await this.dbEngine.createDatabaseSession();
@@ -125,5 +141,51 @@ export class DefaultTestingContext {
 		await session.commit();
 		return this;
 	};
+
+	async setupGame() {
+
+		const session = await this.dbEngine.createDatabaseSession();
+		const databaseContext = this.databaseContextFactory({session});
+
+		this.game = await this.gameService.createGame(
+			this.tester1SecurityContext,
+			this.world._id,
+			testGamePassword,
+			this.tester1.username,
+			databaseContext
+		);
+
+		const filename = "tests/integration/resolvers/mutations/pikachu.glb";
+		const testFile: FileUpload = {
+			encoding: "binary",
+			mimetype: "application/gltf",
+			filename: filename,
+			createReadStream: () => fs.createReadStream(filename),
+		};
+
+		this.model = await this.modelService.createModel(
+			this.tester1SecurityContext,
+			this.world._id,
+			'test model',
+			testFile,
+			2,
+			1,
+			1,
+			"some notes",
+			databaseContext
+		);
+
+		await this.gameService.addModel(
+			this.tester1SecurityContext,
+			this.game._id,
+			this.model._id,
+			this.otherPage._id,
+			'#ffffff',
+			databaseContext
+		);
+
+		this.game = await this.gameService.getGame(this.tester1SecurityContext, this.game._id, databaseContext);
+		await session.commit();
+	}
 
 }
