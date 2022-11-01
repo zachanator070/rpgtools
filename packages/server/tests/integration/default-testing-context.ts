@@ -89,9 +89,6 @@ export class DefaultTestingContext {
 
 		const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 		this.world = await worldService.createWorld("Earth", false, this.tester1SecurityContext, databaseContext);
-		const filename = "tests/integration/resolvers/mutations/testmap.png";
-		this.mapImage = await this.imageService.createImage(this.world._id, true, filename, fs.createReadStream(filename), databaseContext);
-		await this.wikiPageService.updatePlace(this.tester1SecurityContext, this.world.wikiPage, 50, databaseContext, this.mapImage._id);
 		this.testRole = await this.authorizationService.createRole(
 			this.tester1SecurityContext,
 			this.world._id,

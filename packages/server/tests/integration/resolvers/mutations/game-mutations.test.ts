@@ -7,6 +7,9 @@ import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {GameService} from "../../../../src/services/game-service";
 import {CREATE_GAME, GAME_CHAT, JOIN_GAME, LEAVE_GAME, SET_GAME_MAP} from "@rpgtools/common/src/gql-mutations";
 import {Game} from "../../../../src/domain-entities/game";
+import fs from "fs";
+import {ImageService} from "../../../../src/services/image-service";
+import {WikiPageService} from "../../../../src/services/wiki-page-service";
 
 process.env.TEST_SUITE = "game-mutations-test";
 
@@ -15,7 +18,8 @@ describe("game mutations", () => {
     const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
     const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
-
+    const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
+    const wikiPageService = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 
     describe("with world", () => {
         beforeEach(async () => {
@@ -71,6 +75,9 @@ describe("game mutations", () => {
                         'Tester1',
                         databaseContext
                     );
+                    const filename = "tests/integration/resolvers/mutations/testmap.png";
+                    const mapImage = await imageService.createImage(testingContext.world._id, true, filename, fs.createReadStream(filename), databaseContext);
+                    await wikiPageService.updatePlace(testingContext.tester1SecurityContext, testingContext.world.wikiPage, 50, databaseContext, mapImage._id);
                     await session.commit();
                 });
 

@@ -67,6 +67,65 @@ exports[`game mutations with world as tester1 user with hosted game set game map
 }
 `;
 
+exports[`game mutations with world while joined in game hosted by tester1 as tester2 user join existing game 1`] = `
+{
+  "data": {
+    "joinGame": ObjectContaining {
+      "_id": Any<String>,
+      "characters": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "name": "Tester1",
+        },
+        ObjectContaining {
+          "_id": Any<String>,
+          "name": "Tester2",
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`game mutations with world while joined in game hosted by tester1 as tester2 user while having joined a game game chat 1`] = `
+{
+  "data": {
+    "gameChat": ObjectContaining {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`game mutations with world while joined in game hosted by tester1 as tester2 user while having joined a game leave game 1`] = `
+{
+  "data": {
+    "leaveGame": true,
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`game mutations with world while joined in game hosted by tester1 as tester2 user while having joined a game set game map permission denied 1`] = `
 {
   "data": null,
