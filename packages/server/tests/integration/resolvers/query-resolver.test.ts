@@ -8,7 +8,7 @@ import {
 	GET_CURRENT_WORLD,
 	GET_WORLDS, SEARCH_ROLES,
 	SEARCH_USERS,
-	WIKIS_IN_FOLDER
+	WIKIS_IN_FOLDER, GET_GAME, MY_GAMES
 } from "@rpgtools/common/src/gql-queries";
 import {WorldService} from "../../../src/services/world-service";
 import {WikiFolderService} from "../../../src/services/wiki-folder-service";
@@ -92,6 +92,7 @@ describe("query resolver", () => {
 								}),
 							}),
 						]),
+						totalDocs: 1
 					},
 				},
 				errors: undefined,
@@ -109,6 +110,25 @@ describe("query resolver", () => {
 						message: expect.any(String),
 					}),
 				]),
+			});
+		});
+
+		describe('with hosted game', () => {
+
+			beforeEach(async () => {
+				await testingContext.setupGame();
+			});
+
+			it('get a game permission denied', async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: GET_GAME,
+					variables: {
+						gameId: testingContext.game._id,
+					},
+				});
+				expect(result).toMatchSnapshot({
+					errors: expect.any(Array)
+				});
 			});
 		});
 
@@ -268,6 +288,52 @@ describe("query resolver", () => {
 				});
 				expect(result).toMatchSnapshot();
 			});
+
+			describe('with hosted game', () => {
+
+				beforeEach(async () => {
+					await testingContext.setupGame();
+				});
+
+				it('get a game', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: GET_GAME,
+						variables: {
+							gameId: testingContext.game._id,
+						},
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							game: expect.objectContaining({
+								_id: expect.any(String),
+								characters: expect.arrayContaining([
+									expect.objectContaining({
+										_id: expect.any(String),
+										name: testingContext.tester1.username
+									}),
+								])
+							})
+						},
+						errors: undefined
+					});
+				});
+
+				it('get my games', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: MY_GAMES,
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							myGames: expect.arrayContaining([
+								expect.objectContaining({
+									_id: expect.any(String),
+								}),
+							])
+						},
+						errors: undefined
+					});
+				});
+			})
 		});
 	});
 });

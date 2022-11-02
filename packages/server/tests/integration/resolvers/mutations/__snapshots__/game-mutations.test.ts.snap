@@ -32,113 +32,6 @@ exports[`game mutations with world as tester1 user create game 1`] = `
 }
 `;
 
-exports[`game mutations with world as tester1 user with hosted game set game map 1`] = `
-{
-  "data": {
-    "setGameMap": ObjectContaining {
-      "_id": Any<String>,
-      "map": {
-        "_id": Any<String>,
-        "mapImage": {
-          "_id": Any<String>,
-          "chunks": ArrayContaining [
-            {
-              "_id": Any<String>,
-              "fileId": Any<String>,
-              "x": Any<Number>,
-              "y": Any<Number>,
-            },
-          ],
-          "height": Any<Number>,
-          "width": Any<Number>,
-        },
-        "name": "Earth",
-        "pixelsPerFoot": Any<Number>,
-      },
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world while joined in game hosted by tester1 as tester2 user join existing game 1`] = `
-{
-  "data": {
-    "joinGame": ObjectContaining {
-      "_id": Any<String>,
-      "characters": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "name": "Tester1",
-        },
-        ObjectContaining {
-          "_id": Any<String>,
-          "name": "Tester2",
-        },
-      ],
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world while joined in game hosted by tester1 as tester2 user while having joined a game game chat 1`] = `
-{
-  "data": {
-    "gameChat": ObjectContaining {
-      "_id": Any<String>,
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world while joined in game hosted by tester1 as tester2 user while having joined a game leave game 1`] = `
-{
-  "data": {
-    "leaveGame": true,
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world while joined in game hosted by tester1 as tester2 user while having joined a game set game map permission denied 1`] = `
-{
-  "data": null,
-  "errors": Any<Array>,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
 exports[`game mutations with world with a game hosted by tester1 as tester1 add fog 1`] = `
 {
   "data": {
@@ -160,15 +53,15 @@ exports[`game mutations with world with a game hosted by tester1 as tester1 add 
 {
   "data": {
     "addModel": {
-      "_id": "08cb9011-b4b7-460b-a447-61092e862fa7",
+      "_id": Any<String>,
       "models": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
           "model": ObjectContaining {
-            "_id": "fcc3bcc0-7515-4f63-8e86-ede8b5911f72",
+            "_id": Any<String>,
           },
           "wiki": ObjectContaining {
-            "_id": "4b813250-f5ab-4bf7-b6e7-d7046911157d",
+            "_id": Any<String>,
           },
         },
       ],
@@ -207,6 +100,36 @@ exports[`game mutations with world with a game hosted by tester1 as tester1 dele
     "deletePositionedModel": ObjectContaining {
       "_id": Any<String>,
       "models": [],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`game mutations with world with a game hosted by tester1 as tester1 set character attributes 1`] = `
+{
+  "data": {
+    "setCharacterAttributes": ObjectContaining {
+      "_id": Any<String>,
+      "characters": [
+        ObjectContaining {
+          "_id": Any<String>,
+          "attributes": [
+            {
+              "_id": Any<String>,
+              "name": "str",
+              "value": 1,
+            },
+          ],
+          "name": "tester",
+        },
+      ],
     },
   },
   "errors": undefined,
@@ -287,10 +210,10 @@ exports[`game mutations with world with a game hosted by tester1 as tester1 set 
     "setModelColor": ObjectContaining {
       "_id": Any<String>,
       "model": ObjectContaining {
-        "_id": "32c2628c-e7cb-412f-a8e1-69eb979d6376",
+        "_id": Any<String>,
       },
       "wiki": ObjectContaining {
-        "_id": "45a380d4-a69b-40d2-9877-c51a8106ea01",
+        "_id": Any<String>,
       },
     },
   },
@@ -310,10 +233,10 @@ exports[`game mutations with world with a game hosted by tester1 as tester1 set 
     "setModelPosition": ObjectContaining {
       "_id": Any<String>,
       "model": ObjectContaining {
-        "_id": "1627987f-4bfa-4083-804a-eba03d344cac",
+        "_id": Any<String>,
       },
       "wiki": ObjectContaining {
-        "_id": "4bbd1487-ef6a-429a-8c3a-85860560cca9",
+        "_id": Any<String>,
       },
     },
   },
@@ -333,7 +256,7 @@ exports[`game mutations with world with a game hosted by tester1 as tester1 set 
     "setPositionedModelWiki": ObjectContaining {
       "_id": Any<String>,
       "wiki": {
-        "_id": "8383b085-7973-405f-81cb-5b535581630f",
+        "_id": Any<String>,
         "name": "Earth",
       },
     },
@@ -356,7 +279,7 @@ exports[`game mutations with world with a game hosted by tester1 as tester2 user
       "characters": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
-          "name": "Tester1",
+          "name": "tester",
         },
         ObjectContaining {
           "_id": Any<String>,
@@ -459,6 +382,36 @@ exports[`game mutations with world with a game hosted by tester1 as tester2 user
 }
 `;
 
+exports[`game mutations with world with a game hosted by tester1 as tester2 user while having joined a game set character attributes 1`] = `
+{
+  "data": {
+    "setCharacterAttributes": ObjectContaining {
+      "_id": Any<String>,
+      "characters": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "attributes": [
+            {
+              "_id": Any<String>,
+              "name": "str",
+              "value": 1,
+            },
+          ],
+          "name": "tester2",
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`game mutations with world with a game hosted by tester1 as tester2 user while having joined a game set character order permission denied 1`] = `
 {
   "data": null,
@@ -515,65 +468,6 @@ exports[`game mutations with world with a game hosted by tester1 as tester2 user
 {
   "data": null,
   "errors": Any<Array>,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world with game hosted by tester1 as tester2 user join existing game 1`] = `
-{
-  "data": {
-    "joinGame": ObjectContaining {
-      "_id": Any<String>,
-      "characters": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-          "name": "Tester1",
-        },
-        ObjectContaining {
-          "_id": Any<String>,
-          "name": "Tester2",
-        },
-      ],
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world with game hosted by tester1 as tester2 user while having joined a game game chat 1`] = `
-{
-  "data": {
-    "gameChat": ObjectContaining {
-      "_id": Any<String>,
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`game mutations with world with game hosted by tester1 as tester2 user while having joined a game leave game 1`] = `
-{
-  "data": {
-    "leaveGame": true,
-  },
-  "errors": undefined,
   "extensions": undefined,
   "http": {
     "headers": Headers {

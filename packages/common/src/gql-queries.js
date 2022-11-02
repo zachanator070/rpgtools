@@ -258,6 +258,7 @@ export const GET_WORLDS = gql `
 					type
 				}
 			}
+			totalDocs
 			totalPages
 		}
 	}

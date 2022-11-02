@@ -11,7 +11,7 @@ import {
     CREATE_GAME, DELETE_POSITIONED_MODEL,
     GAME_CHAT,
     JOIN_GAME,
-    LEAVE_GAME, SET_CHARACTER_ORDER,
+    LEAVE_GAME, SET_CHARACTER_ATTRIBUTES, SET_CHARACTER_ORDER,
     SET_GAME_MAP, SET_MODEL_COLOR, SET_MODEL_POSITION, SET_POSITIONED_MODEL_WIKI
 } from "@rpgtools/common/src/gql-mutations";
 import fs from "fs";
@@ -163,15 +163,15 @@ describe("game mutations", () => {
                     expect(result).toMatchSnapshot({
                         data: {
                             addModel: {
-                                _id: testingContext.game._id,
+                                _id: expect.any(String),
                                 models: expect.arrayContaining([
                                     expect.objectContaining({
                                         _id: expect.any(String),
                                         model: expect.objectContaining({
-                                            _id: testingContext.model._id
+                                            _id: expect.any(String)
                                         }),
                                         wiki: expect.objectContaining({
-                                            _id: testingContext.otherPage._id
+                                            _id: expect.any(String)
                                         })
                                     })
                                 ])
@@ -199,10 +199,10 @@ describe("game mutations", () => {
                             setModelPosition: expect.objectContaining({
                                 _id: expect.any(String),
                                 model: expect.objectContaining({
-                                    _id: testingContext.model._id
+                                    _id: expect.any(String)
                                 }),
                                 wiki: expect.objectContaining({
-                                    _id: testingContext.otherPage._id
+                                    _id: expect.any(String)
                                 })
                             })
                         },
@@ -225,10 +225,10 @@ describe("game mutations", () => {
                             setModelColor: expect.objectContaining({
                                 _id: expect.any(String),
                                 model: expect.objectContaining({
-                                    _id: testingContext.model._id
+                                    _id: expect.any(String)
                                 }),
                                 wiki: expect.objectContaining({
-                                    _id: testingContext.otherPage._id
+                                    _id: expect.any(String)
                                 })
                             })
                         },
@@ -271,7 +271,7 @@ describe("game mutations", () => {
                             setPositionedModelWiki: expect.objectContaining({
                                 _id: expect.any(String),
                                 wiki: {
-                                    _id: testingContext.world.wikiPage,
+                                    _id: expect.any(String),
                                     name: testingContext.world.name
                                 }
                             })
@@ -313,6 +313,38 @@ describe("game mutations", () => {
                         errors: undefined
                     });
                 });
+
+                test('set character attributes', async () => {
+                    const result = await testingContext.server.executeGraphQLQuery({
+                        query: SET_CHARACTER_ATTRIBUTES,
+                        variables: {
+                            gameId: testingContext.game._id,
+                            attributes:[{name: 'str', value: 1}]
+                        },
+                    });
+
+                    expect(result).toMatchSnapshot({
+                        data: {
+                            setCharacterAttributes: expect.objectContaining({
+                                _id: expect.any(String),
+                                characters: [
+                                    expect.objectContaining({
+                                        _id: expect.any(String),
+                                        name: testingContext.tester1.username,
+                                        attributes: [
+                                            {
+                                                _id: expect.any(String),
+                                                name: 'str',
+                                                value: 1
+                                            }
+                                        ]
+                                    }),
+                                ]
+                            })
+                        },
+                        errors: undefined
+                    });
+                });
             });
 
             describe('as tester2 user', () => {
@@ -332,7 +364,7 @@ describe("game mutations", () => {
                                 characters: expect.arrayContaining([
                                     expect.objectContaining({
                                         _id: expect.any(String),
-                                        name: 'Tester1'
+                                        name: testingContext.tester1.username
                                     }),
                                     expect.objectContaining({
                                         _id: expect.any(String),
@@ -522,6 +554,38 @@ describe("game mutations", () => {
 
                         expect(result).toMatchSnapshot({
                             errors: expect.any(Array)
+                        });
+                    });
+
+                    test('set character attributes', async () => {
+                        const result = await testingContext.server.executeGraphQLQuery({
+                            query: SET_CHARACTER_ATTRIBUTES,
+                            variables: {
+                                gameId: testingContext.game._id,
+                                attributes:[{name: 'str', value: 1}]
+                            },
+                        });
+
+                        expect(result).toMatchSnapshot({
+                            data: {
+                                setCharacterAttributes: expect.objectContaining({
+                                    _id: expect.any(String),
+                                    characters: expect.arrayContaining([
+                                        expect.objectContaining({
+                                            _id: expect.any(String),
+                                            name: testingContext.tester2.username,
+                                            attributes: [
+                                                {
+                                                    _id: expect.any(String),
+                                                    name: 'str',
+                                                    value: 1
+                                                }
+                                            ]
+                                        }),
+                                    ])
+                                })
+                            },
+                            errors: undefined
                         });
                     });
                 });
