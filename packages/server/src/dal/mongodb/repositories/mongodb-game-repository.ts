@@ -35,6 +35,12 @@ export class MongodbGameRepository
 				}
 			}
 		}
+
+		for(let model of entity.models) {
+			if(!model._id) {
+				model._id = (new ObjectId()).toString();
+			}
+		}
 	}
 
 	findWithModel(modelId: string): Promise<Game[]> {

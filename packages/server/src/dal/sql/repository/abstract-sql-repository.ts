@@ -19,13 +19,9 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     async create(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);
-        try {
-            await model.save();
-            entity._id = model._id;
-            await this.updateAssociations(entity, model);
-        } catch (e) {
-            console.error(`Error while saving to database ${e.message}`);
-        }
+        await model.save();
+        entity._id = model._id;
+        await this.updateAssociations(entity, model);
     }
 
     async delete(entity: T): Promise<void> {
@@ -36,12 +32,8 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
     async update(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);
         model.isNewRecord = false;
-        try {
-            await model.save();
-            await this.updateAssociations(entity, model);
-        } catch (e) {
-            console.error(`Error while updating to database ${e.message}`);
-        }
+        await model.save();
+        await this.updateAssociations(entity, model);
     }
 
     async updateAssociations(entity: T, model: M) {

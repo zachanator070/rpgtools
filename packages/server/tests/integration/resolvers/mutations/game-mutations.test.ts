@@ -19,6 +19,7 @@ import {ImageService} from "../../../../src/services/image-service";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
 import {ModelService} from "../../../../src/services/model-service";
 import {FileUpload} from "graphql-upload";
+import {v4 as uuidv4} from 'uuid';
 
 process.env.TEST_SUITE = "game-mutations-test";
 
@@ -125,7 +126,7 @@ describe("game mutations", () => {
                 test('add stroke', async () => {
                     const result = await testingContext.server.executeGraphQLQuery({
                         query: ADD_STROKE,
-                        variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: 'asdf'}], type: 'line', size: 5, color: '#ffffff', fill: true, strokeId: 'asdf'},
+                        variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: uuidv4()}], type: 'line', size: 5, color: '#ffffff', fill: true, strokeId: uuidv4()},
                     });
                     expect(result).toMatchSnapshot({
                         data: {
@@ -140,7 +141,7 @@ describe("game mutations", () => {
                 test('add fog', async () => {
                     const result = await testingContext.server.executeGraphQLQuery({
                         query: ADD_FOG_STROKE,
-                        variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: 'asdf'}], type: 'line', size: 5, color: '#ffffff', strokeId: 'asdf'},
+                        variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: uuidv4()}], type: 'fog', size: 5, color: '#ffffff', strokeId: uuidv4()},
                     });
                     expect(result).toMatchSnapshot({
                         data: {
@@ -426,7 +427,7 @@ describe("game mutations", () => {
                     test('add stroke permission denied', async () => {
                         const result = await testingContext.server.executeGraphQLQuery({
                             query: ADD_STROKE,
-                            variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: 'asdf'}], type: 'line', size: 5, color: '#ffffff', fill: true, strokeId: 'asdf'},
+                            variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: uuidv4()}], type: 'line', size: 5, color: '#ffffff', fill: true, strokeId: uuidv4()},
                         });
                         expect(result).toMatchSnapshot({
                             errors: expect.any(Array)
@@ -436,7 +437,7 @@ describe("game mutations", () => {
                     test('add fog permission denied', async () => {
                         const result = await testingContext.server.executeGraphQLQuery({
                             query: ADD_FOG_STROKE,
-                            variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: 'asdf'}], type: 'line', size: 5, color: '#ffffff', strokeId: 'asdf'},
+                            variables: { gameId: testingContext.game._id, path: [{x:1, y:2, _id: uuidv4()}], type: 'line', size: 5, color: '#ffffff', strokeId: uuidv4()},
                         });
                         expect(result).toMatchSnapshot({
                             errors: expect.any(Array)

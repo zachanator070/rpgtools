@@ -69,8 +69,14 @@ export default class PostgresDbEngine implements DbEngine {
     }
 
     async connect(): Promise<void> {
+        console.log(`Connecting to postgres database ${this.getRedactedConnectionString()}`)
         await this.createDatabaseIfNeeded(this.dbName);
-        this.connection = new Sequelize(this.getConnectionString());
+        this.connection = new Sequelize(
+            this.getConnectionString(),
+            {
+                logging: false
+            }
+        );
 
         // Is there any better way to do this? How to handle a bunch of static methods with the same signature?
         // This violates the open/closed principle
@@ -130,9 +136,9 @@ export default class PostgresDbEngine implements DbEngine {
         WikiFolderModel.connect();
         WorldModel.connect();
 
+        console.log('Syncing table schemas')
         await this.connection.sync({alter: true});
 
-        console.log(`Connected to postgres database ${this.getRedactedConnectionString()}`)
     }
 
     getConnectionString(): string {

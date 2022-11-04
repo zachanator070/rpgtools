@@ -104,18 +104,33 @@ lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
 	npx eslint packages/frontend/src --ext .ts
 
-test: test-unit postgres test-integration prod test-e2e down
+test: test-unit test-integration-postgres prod test-e2e down
 
 JEST_OPTIONS=
 
 test-unit:
 	npm run test:unit --workspace=packages/server
 
-test-integration-update-snapshots: JEST_OPTIONS:=-u
-test-integration-update-snapshots: test-integration
+.PHONY: jest.env
+jest.env:
+	cp .env.example packages/server/jest.env
 
-.PHONY: test-integration
-test-integration:
+test-integration-update-snapshots: JEST_OPTIONS:=-u
+test-integration-update-snapshots: test-integration-postgres
+
+.PHONY: test-integration-postgres
+test-integration-postgres: POSTGRES_HOST:=localhost
+test-integration-postgres: jest.env postgres
+	sed -i 's/#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
+	npm run test:integration --workspace=packages/server
+
+postgres:
+	docker-compose up -d postgres
+
+.PHONY: test-integration-mongodb
+test-integration-mongodb: MONGODB_HOST:=localhost
+test-integration-mongodb: jest.env mongodb
+	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
 test-e2e:
@@ -136,9 +151,6 @@ seed-new:
 
 cypress:
 	npm run -w packages/frontend cypress:open
-
-postgres:
-	docker-compose up -d postgres
 
 mongodb:
 	docker-compose up -d mongodb

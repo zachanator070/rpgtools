@@ -83,7 +83,7 @@ describe("query resolver", () => {
 			});
 			expect(result).toMatchSnapshot({
 				data: {
-					worlds: {
+					worlds: expect.objectContaining({
 						docs: expect.arrayContaining([
 							expect.objectContaining({
 								_id: expect.any(String),
@@ -92,8 +92,7 @@ describe("query resolver", () => {
 								}),
 							}),
 						]),
-						totalDocs: 1
-					},
+					}),
 				},
 				errors: undefined,
 			});
@@ -192,7 +191,7 @@ describe("query resolver", () => {
 				});
 				expect(result).toMatchSnapshot({
 					data: {
-						worlds: {
+						worlds: expect.objectContaining({
 							docs: expect.arrayContaining([
 								expect.objectContaining({
 									_id: expect.any(String),
@@ -201,7 +200,7 @@ describe("query resolver", () => {
 									}),
 								}),
 							]),
-						},
+						}),
 					},
 					errors: undefined,
 				});

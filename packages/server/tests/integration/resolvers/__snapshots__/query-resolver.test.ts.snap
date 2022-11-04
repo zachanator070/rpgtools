@@ -278,7 +278,7 @@ exports[`query resolver with world with authenticated user world 1`] = `
 exports[`query resolver with world with authenticated user worlds with one private and one public world 1`] = `
 {
   "data": {
-    "worlds": {
+    "worlds": ObjectContaining {
       "docs": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
@@ -287,7 +287,6 @@ exports[`query resolver with world with authenticated user worlds with one priva
           },
         },
       ],
-      "totalPages": 1,
     },
   },
   "errors": undefined,
@@ -331,7 +330,7 @@ exports[`query resolver with world world 1`] = `
 exports[`query resolver with world worlds with one private and one public world 1`] = `
 {
   "data": {
-    "worlds": {
+    "worlds": ObjectContaining {
       "docs": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
@@ -340,7 +339,6 @@ exports[`query resolver with world worlds with one private and one public world 
           },
         },
       ],
-      "totalPages": 1,
     },
   },
   "errors": undefined,
