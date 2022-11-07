@@ -53,6 +53,7 @@ import {
     USER, WIKI_FOLDER, WIKI_PAGE, WORLD
 } from "@rpgtools/common/src/type-constants";
 import WikiPageModel from "./models/wiki-page-model";
+import RegisterCodeModel from "./models/register-code-model";
 
 @injectable()
 export default class PostgresDbEngine implements DbEngine {
@@ -104,6 +105,7 @@ export default class PostgresDbEngine implements DbEngine {
         PlaceModel.init(PlaceModel.attributes, {sequelize: this.connection, modelName: PLACE});
         RoleModel.init(RoleModel.attributes, {sequelize: this.connection, modelName: ROLE});
         ServerConfigModel.init(ServerConfigModel.attributes, {sequelize: this.connection, modelName: SERVER_CONFIG});
+        RegisterCodeModel.init(RegisterCodeModel.attributes, {sequelize: this.connection, modelName: 'RegisterCode'});
         UserModel.init(UserModel.attributes, {sequelize: this.connection, modelName: USER});
         WikiFolderModel.init(WikiFolderModel.attributes, {sequelize: this.connection, modelName: WIKI_FOLDER});
         WorldModel.init(WorldModel.attributes, {sequelize: this.connection, modelName: WORLD});
@@ -132,6 +134,7 @@ export default class PostgresDbEngine implements DbEngine {
         PlaceModel.connect();
         RoleModel.connect();
         ServerConfigModel.connect();
+        RegisterCodeModel.connect();
         UserModel.connect();
         WikiFolderModel.connect();
         WorldModel.connect();

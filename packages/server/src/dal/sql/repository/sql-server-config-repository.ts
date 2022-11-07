@@ -7,6 +7,7 @@ import ServerConfigFactory from "../../../domain-entities/factory/server-config-
 import AbstractSqlRepository from "./abstract-sql-repository";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 import UserModel from "../models/user-model";
+import RegisterCodeModel from "../models/register-code-model";
 
 
 @injectable()
@@ -24,7 +25,6 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
         return ServerConfigModel.build({
             _id: entity._id,
             version: entity.version,
-            registerCodes: entity.registerCodes.join(','),
             unlockCode: entity.unlockCode
         });
     }
@@ -33,6 +33,38 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
         const adminUserModels = await UserModel.findAll({where: {_id: entity.adminUsers}});
         await model.setAdmins(adminUserModels);
+
+        const codesToSet = [];
+
+        const currentCodes = await model.getCodes();
+        for(let currentCode of currentCodes) {
+            let found = false;
+            for(let newCode of entity.registerCodes) {
+                if(currentCode.code === newCode) {
+                    found = true;
+                    codesToSet.push(currentCode);
+                }
+            }
+            if(!found) {
+                await currentCode.destroy();
+            }
+        }
+
+        for(let newCode of entity.registerCodes) {
+            let found = false;
+            for(let currentCode of currentCodes) {
+                if(currentCode.code === newCode) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                codesToSet.push(await RegisterCodeModel.create({
+                    code: newCode
+                }));
+            }
+        }
+
+        await model.setCodes(codesToSet);
     }
 
     async findOne(): Promise<ServerConfig> {

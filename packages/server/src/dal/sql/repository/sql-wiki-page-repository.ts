@@ -34,7 +34,7 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
             _id: entity._id,
             name: entity.name,
             contentId: entity.contentId,
-            type: entity.contentId,
+            type: entity.type,
             worldId: entity.world,
             coverImageId: entity.coverImage
         });

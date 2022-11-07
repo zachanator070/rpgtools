@@ -224,7 +224,7 @@ describe("wiki page mutations", () => {
 						fs.createReadStream(filename),
 				};
 				let image: Image = null;
-				beforeAll(async () => {
+				beforeEach(async () => {
 					const session = await dbEngine.createDatabaseSession();
 					const databaseContext = databaseContextFactory({session});
 					image = await imageService.createImage(testingContext.world._id, false, testFile.filename, testFile.createReadStream(), databaseContext);
