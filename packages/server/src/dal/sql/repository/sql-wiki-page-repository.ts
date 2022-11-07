@@ -49,7 +49,14 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     }
 
     async findByNameAndTypesPaginated(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
-        return this.buildPaginatedResult(page, {name});
+        const filter: any = {};
+        if(name) {
+            filter.name = name;
+        }
+        if(types) {
+            filter.types = types;
+        }
+        return this.buildPaginatedResult(page, filter);
     }
 
     async findOneByNameAndWorld(name: string, worldId: string): Promise<WikiPage> {

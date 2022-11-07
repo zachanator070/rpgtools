@@ -30,7 +30,7 @@ services:
       service: server_base
     depends_on:
       - postgres
-      - redis
+      - mongodb
       - ui-builder
 
   server-brk:

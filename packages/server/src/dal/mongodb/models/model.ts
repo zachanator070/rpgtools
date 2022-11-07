@@ -1,11 +1,16 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose from "mongoose";
 import {MODEL, WORLD} from "@rpgtools/common/src/type-constants";
 import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
 import {AclEntry} from "./acl-entry";
+import {v4} from "uuid";
 
 const modelSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		default: v4
+	},
 	world: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: WORLD,
 	},
 	name: {
@@ -38,7 +43,7 @@ const modelSchema = new mongoose.Schema({
 });
 
 export interface ModelDocument extends MongoDBDocument, PermissionControlledDocument {
-    world: Schema.Types.ObjectId;
+    world: string;
     name: string;
     depth: number;
     width: number;

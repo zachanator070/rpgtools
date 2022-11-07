@@ -3,7 +3,7 @@ import {ObjectId} from "mongoose";
 import {Readable} from "stream";
 
 export interface FileDocument extends MongoDBDocument {
-    _id:  ObjectId,
+    _id:  string,
     filename: string,
     readStream: Readable,
     mimeType: string

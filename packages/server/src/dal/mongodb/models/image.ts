@@ -1,10 +1,15 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose from "mongoose";
 import {CHUNK, IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import {MongoDBDocument} from "../../../types";
+import {v4} from "uuid";
 
 const imageSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		default: v4
+	},
 	world: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: WORLD,
 		required: [true, "worldId required"],
 	},
@@ -24,12 +29,12 @@ const imageSchema = new mongoose.Schema({
 	},
 	chunks: [
 		{
-			type: mongoose.Schema.Types.ObjectId,
+			type: String,
 			ref: CHUNK,
 		},
 	],
 	icon: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: IMAGE,
 	},
 	name: {
@@ -39,13 +44,13 @@ const imageSchema = new mongoose.Schema({
 });
 
 export interface ImageDocument extends MongoDBDocument {
-    world: Schema.Types.ObjectId;
+    world: string;
     width: number;
     height: number;
     chunkWidth: number;
     chunkHeight: number;
-    chunks: Schema.Types.ObjectId[];
-    icon: Schema.Types.ObjectId;
+    chunks: string[];
+    icon: string;
     name: string;
 }
 

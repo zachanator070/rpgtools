@@ -6,9 +6,9 @@ import { WikiPageDocument } from "../../../types";
 export interface ArticleDocument extends WikiPageDocument {
 	type: string;
 	name: string;
-	world: mongoose.Schema.Types.ObjectId;
-	coverImage?: mongoose.Schema.Types.ObjectId;
-	contentId?: mongoose.Schema.Types.ObjectId;
+	world: string;
+	coverImage?: string;
+	contentId?: string;
 }
 
 const articleSchema = new mongoose.Schema<ArticleDocument, mongoose.Model<ArticleDocument>>();

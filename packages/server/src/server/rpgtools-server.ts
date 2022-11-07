@@ -35,13 +35,13 @@ export default class RpgToolsServer {
 
     async start() {
         await this.dbEngine.connect();
-        // await this.seedDB();
-        // const serverConfig = await this.serverConfigService.getServerConfig(this.databaseContextFactory({}));
-        // if (await this.serverConfigService.serverNeedsSetup(this.databaseContextFactory({}))) {
-        //     console.warn(
-        //         `Server needs configuration! Use unlock code ${serverConfig.unlockCode} to unlock`
-        //     );
-        // }
-        // await this.apiServer.start();
+        await this.seedDB();
+        const serverConfig = await this.serverConfigService.getServerConfig(this.databaseContextFactory({}));
+        if (await this.serverConfigService.serverNeedsSetup(this.databaseContextFactory({}))) {
+            console.warn(
+                `Server needs configuration! Use unlock code ${serverConfig.unlockCode} to unlock`
+            );
+        }
+        await this.apiServer.start();
     }
 }

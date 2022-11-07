@@ -12,6 +12,7 @@ import FilterFactory from "../FilterFactory";
 import {FileRepository} from "../../repository/file-repository";
 import {DatabaseSession} from "../../database-session";
 import FileFactory from "../../../domain-entities/factory/file-factory";
+import {v4} from "uuid";
 
 @injectable()
 export class MongodbFileRepository implements FileRepository {
@@ -27,14 +28,18 @@ export class MongodbFileRepository implements FileRepository {
 
 	create = async (entity: File): Promise<void> => {
 		entity._id = await new Promise((resolve, reject) => {
-			// @ts-ignore
+			const _id = v4();
+
 			const gfs = new GridFSBucket(mongoose.connection.db);
 			const writeStream = gfs.openUploadStream(entity.filename, {
 				contentType: entity.mimeType,
+				metadata: {
+					_id
+				}
 			});
 
-			writeStream.on("finish", (file: mongoose.Document) => {
-				resolve(file._id.toString());
+			writeStream.on("finish", () => {
+				resolve(_id);
 			});
 
 			writeStream.on("error", (err) => {
@@ -42,30 +47,40 @@ export class MongodbFileRepository implements FileRepository {
 				throw err;
 			});
 
-			// @ts-ignore
 			entity.readStream.pipe(writeStream);
 		});
 	};
 
-	delete(entity: File): Promise<void> {
+	async delete(entity: File): Promise<void> {
 		return new Promise((resolve: (value?: any) => any, reject: (error?: any) => any) => {
-			// @ts-ignore
 			const gfs = new GridFSBucket(mongoose.connection.db);
 
-			// @ts-ignore
-			gfs.delete(new mongoose.Types.ObjectId(entity._id), (error) => {
-				resolve();
-			});
+			gfs.find({metadata:{_id: entity._id}}).toArray().then(found => {
+				for(let file of found){
+					gfs.delete(file._id, (error) => {
+						if(error){
+							reject(error);
+						}
+						resolve();
+					});
+				}
+			})
 		});
 	}
 
 	find = async (conditions: FilterCondition[]): Promise<File[]> => {
 		const filter: any = this.filterFactory.build(conditions);
 		const gfs = new GridFSBucket(mongoose.connection.db);
+		if(filter._id) {
+			filter.metadata = {
+				_id: filter._id
+			};
+			delete filter._id;
+		}
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];
 		for (let doc of docs) {
-			results.push(this.entityFactory.build({_id: doc._id.toString(), filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
+			results.push(this.entityFactory.build({_id: doc.metadata._id, filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
 		}
 		return results;
 	};

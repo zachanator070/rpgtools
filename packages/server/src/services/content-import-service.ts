@@ -45,11 +45,7 @@ export class ContentImportService {
 		// probably need to detect here what kind of file we are dealing with then create an archive based upon the file type
 		const archive = await this.archiveFactory.zipFromZipStream(archiveReadStream);
 
-		try {
-			await this.processArchive(archive, folder, databaseContext);
-		} catch (e) {
-			console.log(e.message);
-		}
+		await this.processArchive(archive, folder, databaseContext);
 
 		return folder;
 	};

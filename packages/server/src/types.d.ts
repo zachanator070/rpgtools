@@ -1,4 +1,4 @@
-import {Document, Schema} from "mongoose";
+import {Document} from "mongoose";
 import {User} from "./domain-entities/user";
 import {SecurityContext} from "./security/security-context";
 import {Role} from "./domain-entities/role";
@@ -28,6 +28,7 @@ import {DatabaseContext} from "./dal/database-context";
 import {DatabaseSession} from "./dal/database-session";
 import {Model} from "sequelize";
 import SqlModel from "./dal/sql/models/sql-model";
+import {ObjectId} from "mongoose";
 
 export interface DomainEntity {
 	_id: string;
@@ -58,14 +59,7 @@ export interface EntityFactory<T, D extends MongoDBDocument | MongoDBDocument[],
 export interface DatabaseEntity {}
 
 export interface MongoDBDocument extends DatabaseEntity, Document {
-	_id: Schema.Types.ObjectId;
-}
-
-export interface DomainEntityFactory<
-	DBType extends Document,
-	DomainType extends DomainEntity
-> {
-	build: (entity: DBType) => DomainType;
+	_id: string | ObjectId;
 }
 
 export interface CookieManager {
@@ -178,12 +172,12 @@ export interface PermissionControlledDocument {
 export interface WikiPageDocument extends MongoDBDocument, PermissionControlledDocument {
 	type: string;
 	name: string;
-	world: Schema.Types.ObjectId;
-	coverImage?: Schema.Types.ObjectId;
-	contentId?: Schema.Types.ObjectId;
+	world: string;
+	coverImage?: string;
+	contentId?: string;
 }
 
 export interface ModeledWikiDocument extends WikiPageDocument {
-	pageModel: Schema.Types.ObjectId;
+	pageModel: string;
 	modelColor: string;
 }

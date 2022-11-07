@@ -145,6 +145,9 @@ export class WorldService {
 	};
 
 	getWorld = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext) => {
+		if(!worldId) {
+			return null;
+		}
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 
 		if (!world) {

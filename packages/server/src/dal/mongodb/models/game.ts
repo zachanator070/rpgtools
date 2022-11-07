@@ -1,12 +1,16 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose from "mongoose";
 import {GAME, MODEL, PLACE, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
 import {AclEntry} from "./acl-entry";
+import {v4} from "uuid";
 
 const pathNode = new mongoose.Schema({
 	x: Number,
 	y: Number,
-	_id: String,
+	_id: {
+		type: String,
+		default: v4
+	},
 });
 
 const strokeSchema = new mongoose.Schema({
@@ -20,7 +24,10 @@ const strokeSchema = new mongoose.Schema({
 		type: String,
 		enum: ["circle", "square", "erase", "line"],
 	},
-	_id: String,
+	_id: {
+		type: String,
+		default: v4
+	},
 });
 
 const fogStrokeSchema = new mongoose.Schema({
@@ -30,33 +37,40 @@ const fogStrokeSchema = new mongoose.Schema({
 		type: String,
 		enum: ["fog", "erase"],
 	},
-	_id: String,
+	_id: {
+		type: String,
+		default: v4
+	},
 });
 
 const gameSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		default: v4
+	},
 	passwordHash: {
 		type: String,
 	},
 	world: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: WORLD,
 		required: [true, "worldId required"],
 	},
 	map: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: PLACE,
 	},
 	characters: [
 		new mongoose.Schema({
 			_id: {
 				type: String,
-				required: [true, "_id required"],
+				default: v4
 			},
 			name: {
 				type: String,
 			},
 			player: {
-				type: mongoose.Schema.Types.ObjectId,
+				type: String,
 				ref: "User",
 				required: [true, "player id required"],
 			},
@@ -68,7 +82,7 @@ const gameSchema = new mongoose.Schema({
 				new mongoose.Schema({
 					_id: {
 						type: String,
-						required: [true, "_id required"],
+						default: v4
 					},
 					name: {
 						type: String,
@@ -83,7 +97,7 @@ const gameSchema = new mongoose.Schema({
 		}),
 	],
 	host: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: "User",
 		required: [true, "host id required"],
 	},
@@ -93,7 +107,7 @@ const gameSchema = new mongoose.Schema({
 		new mongoose.Schema({
 			_id: {
 				type: String,
-				required: [true, "_id required"],
+				default: v4
 			},
 			sender: {
 				type: String,
@@ -125,10 +139,10 @@ const gameSchema = new mongoose.Schema({
 		new mongoose.Schema({
 			_id: {
 				type: String,
-				required: [true, "_id required"],
+				default: v4
 			},
 			model: {
-				type: mongoose.Schema.Types.ObjectId,
+				type: String,
 				ref: MODEL,
 				required: [true, "model required"],
 			},
@@ -152,7 +166,7 @@ const gameSchema = new mongoose.Schema({
 				type: String,
 			},
 			wiki: {
-				type: mongoose.Schema.Types.ObjectId,
+				type: String,
 				ref: WIKI_PAGE,
 			},
 		}),
@@ -162,10 +176,10 @@ const gameSchema = new mongoose.Schema({
 
 export interface GameDocument extends MongoDBDocument, PermissionControlledDocument {
 	passwordHash: string;
-	world: Schema.Types.ObjectId;
-	map: Schema.Types.ObjectId;
+	world: string;
+	map: string;
 	characters: CharacterDocument[];
-	host: Schema.Types.ObjectId;
+	host: string;
 	strokes: StrokeDocument[];
 	fog: FogStrokeDocument[];
 	models: InGameModelDocument[];
@@ -193,7 +207,7 @@ export interface FogStrokeDocument extends MongoDBDocument {
 
 export interface CharacterDocument extends MongoDBDocument {
     name: string;
-    player: Schema.Types.ObjectId;
+    player: string;
     color: string;
     attributes: CharacterAttributeDocument[];
 }
@@ -213,13 +227,13 @@ export interface MessageDocument extends MongoDBDocument {
 }
 
 export interface InGameModelDocument extends MongoDBDocument {
-    model: Schema.Types.ObjectId;
+    model: string;
     x: number;
     z: number;
     lookAtX: number;
     lookAtZ: number;
     color: string;
-    wiki: Schema.Types.ObjectId;
+    wiki: string;
 }
 
 export const GameModel = mongoose.model<GameDocument>(GAME, gameSchema);
