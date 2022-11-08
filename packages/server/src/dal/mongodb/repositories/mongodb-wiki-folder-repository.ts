@@ -31,7 +31,7 @@ export class MongodbWikiFolderRepository
 		if (name) {
 			conditions.push(new FilterCondition("name", name, FILTER_CONDITION_REGEX));
 		}
-		return this.find(conditions);
+		return this.find(conditions, 'name');
 	}
 
 	findOneByNameAndWorld(name: string, worldId: string): Promise<WikiFolder> {

@@ -40,9 +40,13 @@ export abstract class AbstractMongodbRepository<
 		await this.model.findByIdAndDelete(entity._id);
 	};
 
-	find = async (conditions: FilterCondition[]): Promise<EntityType[]> => {
+	find = async (conditions: FilterCondition[], sort?: string): Promise<EntityType[]> => {
 		const filter = this.filterFactory.build(conditions);
-		const docs: DocumentType[] = await this.model.find(filter).exec();
+		const sortOptions: any = {};
+		if (sort) {
+			sortOptions[sort] = 1;
+		}
+		const docs: DocumentType[] = await this.model.find(filter, null, {sort: sortOptions}).exec();
 		const results: EntityType[] = [];
 		for (let doc of docs) {
 			results.push(this.entityFactory.fromMongodbDocument(doc));

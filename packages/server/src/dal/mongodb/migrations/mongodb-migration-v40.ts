@@ -344,11 +344,13 @@ export default class MongoDbMigrationV40 {
                         break;
                     }
                 }
-                entity.acl.push({
-                    permission: permissionAssignment.permission,
-                    principal: role._id,
-                    principalType: ROLE
-                });
+                if(!found) {
+                    entity.acl.push({
+                        permission: permissionAssignment.permission,
+                        principal: role._id,
+                        principalType: ROLE
+                    });
+                }
             }
             await collection.updateOne({_id: entity._id}, {$set: entity});
         }
@@ -356,6 +358,8 @@ export default class MongoDbMigrationV40 {
         await db.collection('users').updateMany({}, {$unset: {permissions: ''}});
         await db.collection('roles').updateMany({}, {$unset: {permissions: ''}});
 
-        await db.collection('permissionassignments').drop();
+        if((await db.listCollections().toArray()).includes({name: 'permissionassignments'})) {
+            await db.collection('permissionassignments').drop();
+        }
     }
 }
