@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {WikiPageModel} from "./wiki-page";
-import {PLACE} from "@rpgtools/common/src/type-constants";
+import {IMAGE, PLACE} from "@rpgtools/common/src/type-constants";
 import {WikiPageDocument} from "../../../types";
 import {v4} from "uuid";
 
@@ -16,7 +16,7 @@ const placeSchema = new mongoose.Schema<PlaceDocument, mongoose.Model<PlaceDocum
 	},
 	mapImage: {
 		type: String,
-		ref: "Image",
+		ref: IMAGE,
 	},
 	pixelsPerFoot: {
 		type: Number,

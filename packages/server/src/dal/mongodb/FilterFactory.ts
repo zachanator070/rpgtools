@@ -39,6 +39,10 @@ export default class FilterFactory {
 
     private getConditionValue(condition: FilterCondition): any {
 
-        return condition.value;
+        if (Array.isArray(condition.value)) {
+            return condition.value.map(value => this.tryCastToObjectId(value));
+        }
+
+        return this.tryCastToObjectId(condition.value)
     }
 }

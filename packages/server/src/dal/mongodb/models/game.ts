@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {GAME, MODEL, PLACE, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
+import {GAME, MODEL, PLACE, USER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
 import {AclEntry} from "./acl-entry";
 import {v4} from "uuid";
@@ -71,7 +71,7 @@ const gameSchema = new mongoose.Schema({
 			},
 			player: {
 				type: String,
-				ref: "User",
+				ref: USER,
 				required: [true, "player id required"],
 			},
 			color: {

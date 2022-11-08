@@ -104,7 +104,7 @@ lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
 	npx eslint packages/frontend/src --ext .ts
 
-test: test-unit test-integration-postgres prod test-e2e down
+test: test-unit test-integration-mongodb test-integration-postgres prod test-e2e down
 
 JEST_OPTIONS=
 
@@ -129,6 +129,7 @@ postgres:
 
 .PHONY: test-integration-mongodb
 test-integration-mongodb: MONGODB_HOST:=localhost
+test-integration-mongodb: JEST_OPTIONS:=--detectOpenHandles
 test-integration-mongodb: jest.env mongodb
 	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server

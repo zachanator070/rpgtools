@@ -42,17 +42,12 @@ export abstract class AbstractMongodbRepository<
 
 	find = async (conditions: FilterCondition[]): Promise<EntityType[]> => {
 		const filter = this.filterFactory.build(conditions);
-		try {
-			const docs: DocumentType[] = await this.model.find(filter).exec();
-			const results: EntityType[] = [];
-			for (let doc of docs) {
-				results.push(this.entityFactory.fromMongodbDocument(doc));
-			}
-			return results;
-		} catch (e) {
-			console.error(e);
+		const docs: DocumentType[] = await this.model.find(filter).exec();
+		const results: EntityType[] = [];
+		for (let doc of docs) {
+			results.push(this.entityFactory.fromMongodbDocument(doc));
 		}
-		return [];
+		return results;
 	};
 
 	findOne = async (conditions: FilterCondition[] = []): Promise<EntityType> => {
