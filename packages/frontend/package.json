@@ -54,7 +54,7 @@
 	"devDependencies": {
 		"@webpack-cli/generators": "^2.5.0",
 		"css-loader": "^6.7.1",
-		"cypress": "^10.6.0",
+		"cypress": "^11.0.0",
 		"cypress-file-upload": "^5.0.8",
 		"cypress-xpath": "^1.6.2",
 		"style-loader": "^3.3.1",
