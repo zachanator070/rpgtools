@@ -57,7 +57,7 @@
 		"unist-util-visit": "^4.0.0",
 		"unzipper": "^0.10.11",
 		"uuid": "^8.3.2",
-		"ws": "^8.8.0"
+		"ws": "^8.11.0"
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.15.0",
