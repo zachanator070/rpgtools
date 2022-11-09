@@ -24,7 +24,7 @@ export default class SqlFileRepository extends AbstractSqlRepository<File, FileM
                 }
             });
             entity.readStream.on('end', () => {
-                resolve(contentChunks.map(buffer => buffer.toString()).join());
+                resolve(Buffer.concat(contentChunks));
             });
         });
 

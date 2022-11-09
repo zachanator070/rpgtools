@@ -6,8 +6,6 @@ import {WorldRepository} from "../../repository/world-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WorldFactory from "../../../domain-entities/factory/world-factory";
 import {PaginatedResult} from "../../paginated-result";
-import {ServerConfig} from "../../../domain-entities/server-config";
-import ServerConfigModel from "../models/server-config-model";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 
@@ -35,11 +33,17 @@ export default class SqlWorldRepository extends AbstractSqlRepository<World, Wor
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
-    async findAllPaginated(page: number): Promise<PaginatedResult<World>> {
+    async findAllPaginated(page?: number): Promise<PaginatedResult<World>> {
+        if(!page){
+            page = 1;
+        }
         return this.buildPaginatedResult(page, {});
     }
 
-    async findByNamePaginated(name: string, page: number): Promise<PaginatedResult<World>> {
+    async findByNamePaginated(name: string, page?: number): Promise<PaginatedResult<World>> {
+        if(!page){
+            page = 1;
+        }
         return this.buildPaginatedResult(page, {name});
     }
 
