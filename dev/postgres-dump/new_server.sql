@@ -2,31 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.0 (Debian 15.0-1.pgdg110+1)
--- Dumped by pg_dump version 15.0 (Debian 15.0-1.pgdg110+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-DROP DATABASE rpgtools;
---
--- Name: rpgtools; Type: DATABASE; Schema: -; Owner: rpgtools
---
-
-CREATE DATABASE rpgtools WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
-
-
-ALTER DATABASE rpgtools OWNER TO rpgtools;
-
-\connect rpgtools
+-- Dumped from database version 14.5 (Debian 14.5-1.pgdg110+1)
+-- Dumped by pg_dump version 14.5 (Debian 14.5-1.pgdg110+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -531,7 +508,7 @@ ALTER TABLE public."Worlds" OWNER TO rpgtools;
 --
 
 COPY public."AclEntries" (_id, permission, "principalType", "createdAt", "updatedAt", principal, subject) FROM stdin;
-18df0aae-52fd-4c9f-97cd-a103414a1eed	Create world access	Role	2022-11-08 23:41:05.764+00	2022-11-08 23:41:05.772+00	44d64af2-0ee0-40bc-9957-59b736d73a32	0fd9a54a-dd98-4d4c-9bda-b050162dff28
+e97d4bd1-325e-40a2-8abb-5c1fd5d02254	Create world access	Role	2022-11-09 01:55:19.325+00	2022-11-09 01:55:19.328+00	bb0c59f5-284e-4081-a84f-e7403a5b1a7e	9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0
 \.
 
 
@@ -692,8 +669,8 @@ COPY public."RegisterCodes" (_id, code, "createdAt", "updatedAt", "ServerConfigI
 --
 
 COPY public."Roles" (_id, name, "createdAt", "updatedAt", "worldId") FROM stdin;
-cbe4f3d5-f265-4b27-80d9-705305d72c2e	Everyone	2022-11-08 23:41:05.743+00	2022-11-08 23:41:05.743+00	\N
-44d64af2-0ee0-40bc-9957-59b736d73a32	Logged In	2022-11-08 23:41:05.754+00	2022-11-08 23:41:05.754+00	\N
+2cbc2816-9038-450c-8d24-b259e76e93eb	Everyone	2022-11-09 01:55:19.314+00	2022-11-09 01:55:19.314+00	\N
+bb0c59f5-284e-4081-a84f-e7403a5b1a7e	Logged In	2022-11-09 01:55:19.32+00	2022-11-09 01:55:19.32+00	\N
 \.
 
 
@@ -702,7 +679,7 @@ cbe4f3d5-f265-4b27-80d9-705305d72c2e	Everyone	2022-11-08 23:41:05.743+00	2022-11
 --
 
 COPY public."ServerConfigs" (_id, version, "unlockCode", "createdAt", "updatedAt") FROM stdin;
-0fd9a54a-dd98-4d4c-9bda-b050162dff28	1.0	unlock_me	2022-11-08 23:41:05.716+00	2022-11-08 23:41:05.758+00
+9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0	1.0	unlock_me	2022-11-09 01:55:19.298+00	2022-11-09 01:55:19.322+00
 \.
 
 

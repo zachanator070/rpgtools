@@ -3,12 +3,11 @@
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
-include .env
-
 ##################
 # RUN CONTAINERS #
 ##################
 
+.PHONY: prod
 # runs production version of docker image with minimal depending services
 prod: build
 	docker-compose up -d prod
@@ -31,18 +30,22 @@ mongodb:
 postgres:
 	docker-compose up -d postgres
 
+.PHONY: down
 # stops and destroys any running containers
 down: .env
 	docker-compose down
 
+.PHONY: dev-logs
 # watch logs of running docker containers
 dev-logs:
 	docker-compose logs -f server ui-builder
 
+.PHONY: restart
 # restart any running containers
 restart:
 	docker-compose restart
 
+.PHONY: build-dev
 # rebuilds local docker-compose containers, usually only used in a dev environment
 build-dev:
 	docker-compose build
@@ -51,7 +54,7 @@ build-dev:
 # TESTS #
 #########
 
-test: test-unit test-integration-mongodb test-integration-postgres prod test-e2e down
+test: test-unit test-integration-mongodb test-integration-postgres set-mongodb-env prod test-e2e down set-postgres-env prod test-e2e down
 
 JEST_OPTIONS=
 
@@ -66,18 +69,26 @@ test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
 
 .PHONY: test-integration-postgres
-test-integration-postgres: POSTGRES_HOST:=localhost
 test-integration-postgres: jest.env postgres
 	sed -i 's/#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
 .PHONY: test-integration-mongodb
-test-integration-mongodb: MONGODB_HOST:=localhost
-test-integration-mongodb: JEST_OPTIONS:=--detectOpenHandles
 test-integration-mongodb: jest.env mongodb
 	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
+.PHONY: set-postgres-env
+set-postgres-env:
+	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
+	sed -i 's/MONGODB_HOST=.*/#MONGODB_HOST=mongodb/' .env
+
+.PHONY: set-mongodb-env
+set-mongodb-env:
+	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
+	sed -i 's/POSTGRES_HOST=.*/#POSTGRES_HOST=postgres/' .env
+
+.PHONY: test-e2e
 test-e2e:
 	./wait_for_server.sh
 	> packages/frontend/seed.log

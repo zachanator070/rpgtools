@@ -4,7 +4,7 @@ import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {FileRepository} from "../dal/repository/file-repository";
 
-export const gridFsRedisMiddleware = (lookupKeyName: string) => async (
+export const redisMiddleware = (lookupKeyName: string) => async (
 	req: e.Request,
 	res: e.Response,
 	next: e.NextFunction
@@ -22,7 +22,6 @@ export const gridFsRedisMiddleware = (lookupKeyName: string) => async (
 	}
 	const readStream = file.readStream;
 	res.set("Content-Type", file.mimeType);
-	res.setHeader("Content-disposition", `attachment; filename=${file.filename}`);
 	const cache = container.get<Cache>(INJECTABLE_TYPES.Cache);
 	if (await cache.exists(lookupKey)) {
 		return cache.readStream(lookupKey).pipe(res);

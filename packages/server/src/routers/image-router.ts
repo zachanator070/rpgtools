@@ -1,8 +1,8 @@
 import {Router} from "express";
-import { gridFsRedisMiddleware } from "../middleware/grid-fs-redis-middleware";
+import { redisMiddleware } from "../middleware/redis-middleware";
 
 let ImageRouter = Router();
 
-ImageRouter.use("/:id", gridFsRedisMiddleware("id"));
+ImageRouter.use("/:id", redisMiddleware("id"));
 
 export { ImageRouter };
