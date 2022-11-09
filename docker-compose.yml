@@ -84,7 +84,7 @@ services:
       MONGO_INITDB_DATABASE: "rpgtools"
     volumes:
       - ./dev/mongodb-init:/docker-entrypoint-initdb.d
-      - ./dev/mongodb-scripts:/mongodb-scripts
+      - ./dev/mongodb-dump:/mongodb-dump
     ports:
       - "27017:27017"
     networks:
@@ -96,6 +96,8 @@ services:
       POSTGRES_USER: "rpgtools"
       POSTGRES_PASSWORD: "password"
       POSTGRES_DB: "rpgtools"
+    volumes:
+      - ./dev/postgres-dump:/postgres-dump
     ports:
       - "5432:5432"
     networks:

@@ -3,6 +3,121 @@
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
+include .env
+
+##################
+# RUN CONTAINERS #
+##################
+
+# runs production version of docker image with minimal depending services
+prod: build
+	docker-compose up -d prod
+
+# runs development docker environment with auto transpiling and restarting services upon file change
+.PHONY: dev
+dev: .env packages/frontend/dist packages/server/dist
+	docker-compose up server ui-builder
+
+# same as the `dev` target but makes the server wait for a debug connection before it starts the application
+.PHONY: dev-brk
+dev-brk: .env packages/frontend/dist packages/server/dist
+	docker-compose up server-brk ui-builder
+
+.PHONY: mongodb
+mongodb:
+	docker-compose up -d mongodb
+
+.PHONY: postgres
+postgres:
+	docker-compose up -d postgres
+
+# stops and destroys any running containers
+down: .env
+	docker-compose down
+
+# watch logs of running docker containers
+dev-logs:
+	docker-compose logs -f server ui-builder
+
+# restart any running containers
+restart:
+	docker-compose restart
+
+# rebuilds local docker-compose containers, usually only used in a dev environment
+build-dev:
+	docker-compose build
+
+#########
+# TESTS #
+#########
+
+test: test-unit test-integration-mongodb test-integration-postgres prod test-e2e down
+
+JEST_OPTIONS=
+
+test-unit:
+	npm run test:unit --workspace=packages/server
+
+.PHONY: jest.env
+jest.env:
+	cp .env.example packages/server/jest.env
+
+test-integration-update-snapshots: JEST_OPTIONS:=-u
+test-integration-update-snapshots: test-integration-postgres
+
+.PHONY: test-integration-postgres
+test-integration-postgres: POSTGRES_HOST:=localhost
+test-integration-postgres: jest.env postgres
+	sed -i 's/#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
+	npm run test:integration --workspace=packages/server
+
+.PHONY: test-integration-mongodb
+test-integration-mongodb: MONGODB_HOST:=localhost
+test-integration-mongodb: JEST_OPTIONS:=--detectOpenHandles
+test-integration-mongodb: jest.env mongodb
+	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
+	npm run test:integration --workspace=packages/server
+
+test-e2e:
+	./wait_for_server.sh
+	> packages/frontend/seed.log
+	npm run -w packages/frontend test
+
+cypress:
+	npm run -w packages/frontend cypress:open
+
+########################
+# TEST DATA MANAGEMENT #
+########################
+
+dump:.env
+	sh ./dev/scripts/dump.sh
+
+seed-middle-earth: .env
+	npm run -w packages/frontend seed:middle_earth
+
+seed-new: .env
+	npm run -w packages/frontend seed:new
+
+######
+# CI #
+######
+
+ci: .env install-deps test
+
+# installs all dependencies for dev and CI work
+install-deps:
+	# installs node modules needed by CI
+	npm install
+
+lint:
+	npx eslint packages/server/src packages/common/src --ext .ts
+	npx eslint packages/frontend/src --ext .ts
+
+#########################
+# CONTINUOUS DEPLOYMENT #
+#########################
+
 # Builds rpgtools docker image
 build: install-deps ui-prod clean-uncompressed
 	echo "Building version ${VERSION}"
@@ -35,20 +150,6 @@ build-with-stats: BUILD_WITH_STATS=true
 	export BUILD_WITH_STATS
 build-with-stats: ui-prod
 
-# runs production version of docker image with minimal depending services
-prod: build
-	docker-compose up -d prod
-
-# runs development docker environment with auto transpiling and restarting services upon file change
-.PHONY: dev
-dev: .env packages/frontend/dist packages/server/dist
-	docker-compose up server ui-builder
-
-# same as the dev target but makes the server wait for a debug connection before it starts the application
-.PHONY: dev-brk
-dev-brk: .env packages/frontend/dist packages/server/dist
-	docker-compose up server-brk ui-builder
-
 packages/frontend/dist:
 	mkdir -p packages/frontend/dist
 	chmod o+rw -R packages/frontend/dist
@@ -59,21 +160,6 @@ packages/server/dist:
 # initializes environment file
 .env:
 	cp .env.example .env
-
-build-dev:
-	docker-compose build
-
-# stops and destroys any running containers
-down: .env
-	docker-compose down
-
-# watch logs of running docker containers
-dev-logs:
-	docker-compose logs -f server ui-builder
-
-# restart any running containers
-restart:
-	docker-compose restart
 
 # pushes built docker container to dockerhub
 publish:
@@ -92,66 +178,3 @@ install:
 	sudo systemctl start rpgtools
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
-
-ci: .env install-deps test
-
-# installs all dependencies for dev and CI work
-install-deps:
-	# installs node modules needed by CI
-	npm install
-
-lint:
-	npx eslint packages/server/src packages/common/src --ext .ts
-	npx eslint packages/frontend/src --ext .ts
-
-test: test-unit test-integration-mongodb test-integration-postgres prod test-e2e down
-
-JEST_OPTIONS=
-
-test-unit:
-	npm run test:unit --workspace=packages/server
-
-.PHONY: jest.env
-jest.env:
-	cp .env.example packages/server/jest.env
-
-test-integration-update-snapshots: JEST_OPTIONS:=-u
-test-integration-update-snapshots: test-integration-postgres
-
-.PHONY: test-integration-postgres
-test-integration-postgres: POSTGRES_HOST:=localhost
-test-integration-postgres: jest.env postgres
-	sed -i 's/#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
-	npm run test:integration --workspace=packages/server
-
-postgres:
-	docker-compose up -d postgres
-
-.PHONY: test-integration-mongodb
-test-integration-mongodb: MONGODB_HOST:=localhost
-test-integration-mongodb: JEST_OPTIONS:=--detectOpenHandles
-test-integration-mongodb: jest.env mongodb
-	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
-	npm run test:integration --workspace=packages/server
-
-test-e2e:
-	./wait_for_server.sh
-	> packages/frontend/seed.log
-	npm run -w packages/frontend test
-
-dump:
-	sudo rm -rf ./dev/mongodb-scripts/dump.archive
-	docker-compose exec mongodb mongodump --archive=/mongodb-scripts/dump.archive -d rpgtools
-	sudo chown ${USER}:${USER} ./dev/mongodb-scripts/dump.archive
-
-seed:
-	npm run -w packages/frontend seed:middle_earth
-
-seed-new:
-	npm run -w packages/frontend seed:new
-
-cypress:
-	npm run -w packages/frontend cypress:open
-
-mongodb:
-	docker-compose up -d mongodb
