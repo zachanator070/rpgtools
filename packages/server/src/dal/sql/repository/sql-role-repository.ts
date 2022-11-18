@@ -35,9 +35,13 @@ export default class SqlRoleRepository extends AbstractSqlRepository<Role, RoleM
     }
 
     async findByWorldAndNamePaginated(worldId: string, page: number, name?: string): Promise<PaginatedResult<Role>> {
-        const filter: any = {worldId};
-        if (name) {
+        const filter: any = {};
+
+        if(name) {
             filter.name = name;
+        }
+        if(worldId) {
+            filter.worldId = worldId;
         }
         return this.buildPaginatedResult(page, filter);
     }
