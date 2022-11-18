@@ -7,10 +7,11 @@ import AclFactory from "./acl-factory";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import ArticleModel from "../../dal/sql/models/article-model";
 import AclEntryModel from "../../dal/sql/models/acl-entry-model";
+import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 
 
 @injectable()
-export default class ArticleFactory implements EntityFactory<Article, ArticleDocument, ArticleModel> {
+export default class ArticleFactory implements EntityFactory<Article, ArticleDocument, WikiPageModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -51,16 +52,15 @@ export default class ArticleFactory implements EntityFactory<Article, ArticleDoc
         return article;
     }
 
-    async fromSqlModel(model: ArticleModel): Promise<Article> {
-        const page = await model.getWikiPage();
+    async fromSqlModel(model?: WikiPageModel): Promise<Article> {
         return this.build({
             _id: model._id,
-            name: page.name,
-            world: page.worldId,
-            coverImage: page.coverImageId,
-            contentId: page.contentId,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            contentId: model.contentId,
             acl: await Promise.all(
-                (await page.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+                (await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
             )
         });
     }

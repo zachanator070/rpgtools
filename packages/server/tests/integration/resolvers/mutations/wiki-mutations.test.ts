@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ARTICLE } from "@rpgtools/common/src/type-constants";
+import {ARTICLE, PLACE} from "@rpgtools/common/src/type-constants";
 import {DefaultTestingContext} from "../../default-testing-context";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
@@ -175,7 +175,7 @@ describe("wiki page mutations", () => {
 			test("update type", async () => {
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPDATE_WIKI,
-					variables: { wikiId: testingContext.world.wikiPage, type: ARTICLE },
+					variables: { wikiId: testingContext.otherPage._id, type: PLACE },
 				});
 				expect(result).toMatchSnapshot({
 					data: {

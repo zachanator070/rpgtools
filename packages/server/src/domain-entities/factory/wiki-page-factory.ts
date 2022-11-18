@@ -56,9 +56,8 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
         if(!ALL_WIKI_TYPES.includes(model.type)) {
             throw new Error(`Cannot create mongodb document from wiki type ${model.type}`)
         }
-        const wiki = await model.getWiki();
         // this should be a safe cast b/c of the type checking above
-        return (await this.entityMapper.map(model.type).factory.fromSqlModel(wiki)) as WikiPage;
+        return (await this.entityMapper.map(model.type).factory.fromSqlModel(model)) as WikiPage;
     }
 
 }

@@ -1,5 +1,4 @@
-import {adminLogin, goToRoles, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
-import {WORLD_ADMIN} from "@rpgtools/common/src/permission-constants";
+import {adminLogin, goToRoles, seedMiddleEarth} from "../../util/helper";
 
 
 describe("roles", () => {

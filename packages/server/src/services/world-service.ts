@@ -44,7 +44,7 @@ export class WorldService {
 		if (!securityContext.hasPermission(WORLD_CREATE, server)) {
 			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
 		}
-		return  this.makeWorld(name, isPublic, securityContext, databaseContext);
+		return this.makeWorld(name, isPublic, securityContext, databaseContext);
 	};
 
 	renameWorld = async (context: SecurityContext, worldId: string, newName: string, databaseContext: DatabaseContext) => {
@@ -97,7 +97,7 @@ export class WorldService {
 			}
 		}
 
-		const newPin = this.pinFactory.build({x, y, map: mapId, page: wikiId});
+		const newPin = this.pinFactory.build({x, y, map: mapId, page: wikiId, world: map.world});
 
 		if (!(await newPin.authorizationPolicy.canCreate(context, databaseContext))) {
 			throw new Error(`You do not have permission to add pins to this map`);

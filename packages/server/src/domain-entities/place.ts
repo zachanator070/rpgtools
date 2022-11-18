@@ -6,7 +6,7 @@ import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
 import {PlaceDocument} from "../dal/mongodb/models/place";
-import PlaceModel from "../dal/sql/models/place-model";
+import WikiPageModel from "../dal/sql/models/wiki-page-model";
 
 @injectable()
 export class Place extends WikiPage {
@@ -14,13 +14,13 @@ export class Place extends WikiPage {
 	public pixelsPerFoot: number | null;
 
 	@inject(INJECTABLE_TYPES.PlaceFactory)
-	factory: EntityFactory<Place, PlaceDocument, PlaceModel>;
+	factory: EntityFactory<Place, PlaceDocument, WikiPageModel>;
 
 	type: string = PLACE;
 
 	constructor(
 		@inject(INJECTABLE_TYPES.ArticleFactory)
-			factory: EntityFactory<Place, PlaceDocument, PlaceModel>,
+			factory: EntityFactory<Place, PlaceDocument, WikiPageModel>,
 		@inject(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
 			authorizationPolicy: WikiPageAuthorizationPolicy
 	) {

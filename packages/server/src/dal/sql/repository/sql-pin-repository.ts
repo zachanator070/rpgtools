@@ -22,7 +22,8 @@ export default class SqlPinRepository extends AbstractSqlRepository<Pin, PinMode
             x: entity.x,
             y: entity.y,
             pageId: entity.page,
-            mapId: entity.map
+            mapId: entity.map,
+            worldId: entity.world,
         });
     }
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {PIN, PLACE, WIKI_PAGE} from "@rpgtools/common/src/type-constants";
+import {PIN, PLACE, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import {MongoDBDocument} from "../../../types";
 import {v4} from "uuid";
 
@@ -25,6 +25,11 @@ const pinSchema = new mongoose.Schema({
 		type: String,
 		ref: WIKI_PAGE,
 	},
+	world: {
+		type: String,
+		ref: WORLD,
+		required: [true, "world required"],
+	},
 });
 
 export interface PinDocument extends MongoDBDocument {
@@ -32,6 +37,7 @@ export interface PinDocument extends MongoDBDocument {
     y: number;
     map: string;
     page: string;
+	world: string;
 }
 
 export const PinModel = mongoose.model<PinDocument>(PIN, pinSchema);

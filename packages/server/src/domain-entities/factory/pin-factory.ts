@@ -14,8 +14,9 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
             x,
             y,
             map,
-            page
-        }: { _id?: string , x: number, y: number, map: string , page: string  }
+            page,
+            world
+        }: { _id?: string , x: number, y: number, map: string , page: string , world: string }
     ) {
         const pin: Pin = new Pin(new PinAuthorizationPolicy(), this);
         pin._id = _id;
@@ -23,6 +24,7 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
         pin.y = y;
         pin.map = map;
         pin.page = page;
+        pin.world = world;
         return pin;
     }
 
@@ -48,7 +50,8 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
             x: model.x,
             y: model.y,
             map: model.mapId,
-            page: model.pageId
+            page: model.pageId,
+            world: model.worldId
         });
     }
 

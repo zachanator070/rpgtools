@@ -14,6 +14,7 @@ export class Pin implements DomainEntity {
 	public y: number;
 	public map: string;
 	public page: string | null;
+	public world: string;
 
 	authorizationPolicy: PinAuthorizationPolicy;
 	factory: EntityFactory<Pin, PinDocument, PinModel>;

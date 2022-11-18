@@ -7,19 +7,20 @@ import {Repository} from "../dal/repository/repository";
 import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
 import {PersonDocument} from "../dal/mongodb/models/person";
 import PersonModel from "../dal/sql/models/person-model";
+import WikiPageModel from "../dal/sql/models/wiki-page-model";
 
 @injectable()
 export class Person extends ModeledPage {
 
 	@inject(INJECTABLE_TYPES.PersonFactory)
-	factory: EntityFactory<Person, PersonDocument, PersonModel>;
+	factory: EntityFactory<Person, PersonDocument, WikiPageModel>;
 
 	type: string = PERSON;
 
 	constructor(@inject(INJECTABLE_TYPES.WikiPageAuthorizationPolicy)
 					authorizationPolicy: WikiPageAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ModelFactory)
-					factory: EntityFactory<Person, PersonDocument, PersonModel>) {
+					factory: EntityFactory<Person, PersonDocument, WikiPageModel>) {
 		super(authorizationPolicy);
 		this.factory = factory;
 	}

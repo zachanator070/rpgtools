@@ -7,7 +7,7 @@ import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WorldFactory from "../../../domain-entities/factory/world-factory";
 import {PaginatedResult} from "../../paginated-result";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-
+import sequelize, {Op} from 'sequelize';
 
 @injectable()
 export default class SqlWorldRepository extends AbstractSqlRepository<World, WorldModel> implements WorldRepository {
@@ -44,7 +44,7 @@ export default class SqlWorldRepository extends AbstractSqlRepository<World, Wor
         if(!page){
             page = 1;
         }
-        return this.buildPaginatedResult(page, {name});
+        return this.buildPaginatedResult(page, sequelize.where(sequelize.fn('lower', sequelize.col('name')), {[Op.like]: name + '%'}));
     }
 
     async findByRootFolder(folderId: string): Promise<World[]> {

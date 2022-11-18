@@ -5,11 +5,11 @@ import {PlaceDocument} from "../../dal/mongodb/models/place";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
-import PlaceModel from "../../dal/sql/models/place-model";
+import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 
 
 @injectable()
-export default class PlaceFactory implements EntityFactory<Place, PlaceDocument, PlaceModel> {
+export default class PlaceFactory implements EntityFactory<Place, PlaceDocument, WikiPageModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -69,18 +69,18 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
         return place;
     }
 
-    async fromSqlModel(model: PlaceModel): Promise<Place> {
-        const page = await model.getWikiPage();
+    async fromSqlModel(model: WikiPageModel): Promise<Place> {
+        const page = await model.getWiki();
         return this.build({
             _id: model._id,
-            name: page.name,
-            world: page.worldId,
-            coverImage: page.coverImageId,
-            contentId: page.contentId,
-            mapImage: model.mapImageId,
-            pixelsPerFoot: model.pixelsPerFoot,
+            name: model.name,
+            world: model.worldId,
+            coverImage: model.coverImageId,
+            contentId: model.contentId,
+            mapImage: page?.mapImageId,
+            pixelsPerFoot: page?.pixelsPerFoot,
             acl: await Promise.all(
-                (await page.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
+                (await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
             )
         });
     }

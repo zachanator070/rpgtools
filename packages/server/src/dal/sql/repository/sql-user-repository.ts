@@ -7,6 +7,7 @@ import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import UserFactory from "../../../domain-entities/factory/user-factory";
 import {PaginatedResult} from "../../paginated-result";
 import {RoleModel} from "../models/role-model";
+import sequelize, {Op} from "sequelize";
 
 
 @injectable()
@@ -50,7 +51,7 @@ export default class SqlUserRepository extends AbstractSqlRepository<User, UserM
     }
 
     async findByUsernamePaginated(username: string, page: number): Promise<PaginatedResult<User>> {
-        return this.buildPaginatedResult(page, {username});
+        return this.buildPaginatedResult(page, sequelize.where(sequelize.fn('lower', sequelize.col('username')), {[Op.like]: username + '%'}));
     }
 
     async findOneByUsername(username: string): Promise<User> {

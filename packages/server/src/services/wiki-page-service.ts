@@ -150,7 +150,8 @@ export class WikiPageService {
 			await databaseContext.wikiFolderRepository.update(parentFolder);
 		}
 
-		await databaseContext.wikiPageRepository.delete(wikiPage);
+		const repo = await this.entityMapper.map(wikiPage.type).getRepository(databaseContext);
+		await repo.delete(wikiPage);
 		return parentFolder;
 	};
 

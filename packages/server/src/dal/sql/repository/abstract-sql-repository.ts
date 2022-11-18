@@ -1,4 +1,4 @@
-import {ModelStatic} from "sequelize";
+import sequelize, {ModelStatic} from "sequelize";
 import {DomainEntity, EntityFactory} from "../../../types";
 import SqlModel from "../models/sql-model";
 import {DatabaseSession} from "../../database-session";
@@ -27,6 +27,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
     async delete(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);
         await model.destroy();
+        await this.deleteAssociations(entity, model);
     }
 
     async update(entity: T): Promise<void> {
@@ -37,6 +38,9 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
     }
 
     async updateAssociations(entity: T, model: M) {
+    }
+
+    async deleteAssociations(entity: T, model: M) {
     }
 
     async findAll(): Promise<T[]> {
@@ -72,11 +76,17 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
         return results;
     }
 
-    async buildPaginatedResult(page: number, filter: any): Promise<PaginatedResult<T>> {
+    async buildPaginatedResult(page: number, filter: any, sort?: string): Promise<PaginatedResult<T>> {
+        const order = [];
+        if(sort) {
+            order.push(sequelize.col(sort));
+        }
+
         const results = await this.staticModel.findAll({
             where: filter,
             limit: this.PAGE_LIMIT,
             offset: (page - 1) * this.PAGE_LIMIT,
+            order: order
         });
 
         const count = await this.staticModel.count({

@@ -102,7 +102,7 @@ cypress:
 ########################
 
 dump:.env
-	sh ./dev/scripts/dump.sh
+	bash dev/scripts/dump.sh
 
 seed-middle-earth: .env
 	npm run -w packages/frontend seed:middle_earth

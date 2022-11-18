@@ -9,7 +9,6 @@ export const modeledWikiAttributes: ModelAttributes = {
     ...defaultAttributes,
     modelColor: {
         type: DataTypes.STRING,
-        allowNull: false
     }
 };
 

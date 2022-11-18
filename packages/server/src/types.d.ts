@@ -52,7 +52,7 @@ export interface PermissionControlledEntity extends DomainEntity{
 export interface EntityFactory<T, D extends MongoDBDocument | MongoDBDocument[], M extends Model> {
 	build(args: any): T;
 	fromMongodbDocument(doc: D): T;
-	fromSqlModel(model: M): Promise<T>;
+	fromSqlModel(model?: M): Promise<T>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

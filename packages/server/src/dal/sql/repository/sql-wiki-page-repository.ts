@@ -7,16 +7,6 @@ import WikiPageModel from "../models/wiki-page-model";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-import WikiPageChild from "../models/wiki-page-child";
-
-
-export async function updateWikiPageAssociations(entity: WikiPage, model: WikiPageChild) {
-    let parent = await model.getWikiPage();
-    if(!parent) {
-        parent = await WikiPageModel.create({_id: entity._id, ...entity, worldId: entity.world, wiki: model._id});
-        await model.setWikiPage(parent);
-    }
-}
 
 @injectable()
 export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPage, WikiPageModel> implements WikiPageRepository {
@@ -45,7 +35,7 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     }
 
     async findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>> {
-        return this.buildPaginatedResult(page, {_id: ids});
+        return this.buildPaginatedResult(page, {_id: ids}, 'name');
     }
 
     async findByNameAndTypesPaginated(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
@@ -54,11 +44,12 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
             filter.name = name;
         }
         if(types) {
-            filter.types = types;
+            filter.type = types;
         }
-        return this.buildPaginatedResult(page, filter);
+        return this.buildPaginatedResult(page, filter, 'name');
     }
 
+    // only used in testing
     async findOneByNameAndWorld(name: string, worldId: string): Promise<WikiPage> {
         const model = await WikiPageModel.findOne({
             where: {

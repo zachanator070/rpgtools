@@ -5,22 +5,20 @@ import ItemModel from "../models/item-model";
 import {ItemRepository} from "../../repository/item-repository";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import ItemFactory from "../../../domain-entities/factory/item-factory";
-import {updateWikiPageAssociations} from "./sql-wiki-page-repository";
+import WikiPageModel from "../models/wiki-page-model";
 
 
 @injectable()
-export default class SqlItemRepository extends AbstractSqlRepository<Item, ItemModel> implements ItemRepository {
+export default class SqlItemRepository extends AbstractSqlRepository<Item, WikiPageModel> implements ItemRepository {
 
-    staticModel = ItemModel;
+    staticModel = WikiPageModel;
 
     @inject(INJECTABLE_TYPES.ItemFactory)
     entityFactory: ItemFactory;
 
-    async modelFactory(entity: Item | undefined): Promise<ItemModel> {
-        return ItemModel.build({
+    async modelFactory(entity: Item): Promise<WikiPageModel> {
+        return WikiPageModel.build({
             _id: entity._id,
-            modelColor: entity.modelColor,
-            pageModelId: entity.pageModel,
             name: entity.name,
             contentId: entity.contentId,
             worldId: entity.world,
@@ -29,8 +27,27 @@ export default class SqlItemRepository extends AbstractSqlRepository<Item, ItemM
         });
     }
 
-    async updateAssociations(entity: Item, model: ItemModel) {
-        await updateWikiPageAssociations(entity, model);
+    async updateAssociations(entity: Item, model: WikiPageModel) {
+        let page = await ItemModel.findOne({where: {_id: entity._id}});
+        if(!page) {
+            page = await ItemModel.create({
+                _id: entity._id,
+                modelColor: entity.modelColor,
+                pageModelId: entity.pageModel,
+            });
+            model.wiki = page._id;
+            await model.save();
+        } else {
+            page.set({
+                modelColor: entity.modelColor,
+                pageModelId: entity.pageModel,
+            });
+            await page.save();
+        }
+    }
+
+    async deleteAssociations(entity: Item, model: WikiPageModel){
+        await ItemModel.destroy({where: {_id: entity._id}});
     }
 
 }
