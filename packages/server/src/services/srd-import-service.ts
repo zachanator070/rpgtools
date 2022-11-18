@@ -107,9 +107,9 @@ export class SrdImportService {
 		content: string,
 		databaseContext: DatabaseContext
 	): Promise<File> => {
-		const readStream = Readable.from(content);
+		const readStream = Readable.from(Buffer.from(content));
 		const filename = `wikiContent.${wikiId}`;
-		const file = this.fileFactory.build({filename, readStream, mimeType: null});
+		const file = this.fileFactory.build({filename, readStream, mimeType: 'application/json'});
 		await databaseContext.fileRepository.create(file);
 		return file;
 	};
