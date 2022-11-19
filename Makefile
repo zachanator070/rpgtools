@@ -54,27 +54,25 @@ build-dev:
 # TESTS #
 #########
 
-test: test-unit test-integration-mongodb test-integration-postgres set-mongodb-env prod test-e2e down set-postgres-env prod test-e2e down
+test: test-unit test-integration-mongodb test-integration-postgres down test-e2e-mongodb down test-e2e-postgres down
 
 JEST_OPTIONS=
 
 test-unit:
 	npm run test:unit --workspace=packages/server
 
-.PHONY: jest.env
-jest.env:
-	cp .env.example packages/server/jest.env
-
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
 
 .PHONY: test-integration-postgres
-test-integration-postgres: jest.env postgres
+test-integration-postgres: postgres
+	cp .env.example packages/server/jest.env
 	sed -i 's/#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
 .PHONY: test-integration-mongodb
-test-integration-mongodb: jest.env mongodb
+test-integration-mongodb: mongodb
+	cp .env.example packages/server/jest.env
 	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
@@ -87,6 +85,12 @@ set-postgres-env:
 set-mongodb-env:
 	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
 	sed -i 's/POSTGRES_HOST=.*/#POSTGRES_HOST=postgres/' .env
+
+.PHONY: test-e2e-mongodb
+test-e2e-mongodb: mongodb set-mongodb-env prod test-e2e
+
+.PHONY: test-e2e-postgres
+test-e2e-postgres: set-postgres-env prod test-e2e
 
 .PHONY: test-e2e
 test-e2e:

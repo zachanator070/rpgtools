@@ -33,7 +33,8 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
         x,
         y,
         map,
-        page
+        page,
+        world
     }: PinDocument): Pin {
         const pin = new Pin(new PinAuthorizationPolicy(), this);
         pin._id = _id && _id.toString();
@@ -41,6 +42,7 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
         pin.y = y;
         pin.map = map && map.toString();
         pin.page = page && page.toString();
+        pin.world = world;
         return pin;
     }
 

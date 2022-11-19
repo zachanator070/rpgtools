@@ -20,7 +20,7 @@ export class MongodbPinRepository
 	model: mongoose.Model<any> = PinModel;
 
 	findByWorldPaginated(worldId: string, page: number = 0): Promise<PaginatedResult<Pin>> {
-		return this.findPaginated([new FilterCondition('worldId', worldId)], page);
+		return this.findPaginated([new FilterCondition('world', worldId)], page);
 	}
 
 	findOneByMapAndPage(mapId: string, pageId: string): Promise<Pin> {

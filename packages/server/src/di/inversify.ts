@@ -193,6 +193,7 @@ import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory
 import MessageFactory from "../domain-entities/factory/game/message-factory";
 import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory";
 import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permission-controlled-repository";
+import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine";
 
 const container = new Container();
 
@@ -551,7 +552,7 @@ if(process.env.MONGODB_HOST) {
 } else if (process.env.POSTGRES_HOST) {
 	container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(PostgresDbEngine).inSingletonScope();
 } else {
-	throw Error('No database host provided. Please define a POSTGRES_HOST or MONGODB_HOST environment variable!')
+	container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(InMemoryDbEngine).inSingletonScope();
 }
 
 // data loaders
