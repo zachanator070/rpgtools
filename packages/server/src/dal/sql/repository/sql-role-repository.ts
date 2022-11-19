@@ -9,6 +9,7 @@ import RoleFactory from "../../../domain-entities/factory/role-factory";
 import {ServerConfig} from "../../../domain-entities/server-config";
 import ServerConfigModel from "../models/server-config-model";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import sequelize, {Op} from "sequelize";
 
 
 @injectable()
@@ -38,7 +39,7 @@ export default class SqlRoleRepository extends AbstractSqlRepository<Role, RoleM
         const filter: any = {};
 
         if(name) {
-            filter.name = name;
+            filter.name = sequelize.where(sequelize.fn('lower', sequelize.col('name')), {[Op.like]: name + '%'});
         }
         if(worldId) {
             filter.worldId = worldId;

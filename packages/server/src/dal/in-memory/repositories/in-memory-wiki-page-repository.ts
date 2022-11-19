@@ -12,7 +12,7 @@ export class InMemoryWikiPageRepository extends AbstractInMemoryRepository<WikiP
         return this.findPaginated([new FilterCondition('_id', ids, FILTER_CONDITION_OPERATOR_IN)], page, sort);
     }
 
-    findByNameAndTypesPaginated(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
+    findByNameAndTypesPaginatedSortByName(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
         const conditions = [];
         if(name) {
             conditions.push(new FilterCondition('name', name, FILTER_CONDITION_REGEX));

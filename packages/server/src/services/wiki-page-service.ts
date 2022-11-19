@@ -257,7 +257,7 @@ export class WikiPageService {
 			throw new Error("You do not have permission to read this World");
 		}
 
-		const results = await databaseContext.wikiPageRepository.findByNameAndTypesPaginated(page, name, types);
+		const results = await databaseContext.wikiPageRepository.findByNameAndTypesPaginatedSortByName(page, name, types);
 
 		const docs = [];
 		for (let doc of results.docs) {

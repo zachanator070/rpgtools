@@ -9,12 +9,12 @@ export const TEST_USER_USERNAME = "tester";
 export const TEST_USER_PASSWORD = "tester";
 export const TEST_USER_EMAIL = "tester@gmail.com";
 
-export const MIDDLE_EARTH_MAP_URL = "http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/map/988ac614-c02f-46fe-8350-6c4841895d59";
-export const MIDDLE_EARTH_WIKI_URL = 'http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/wiki/988ac614-c02f-46fe-8350-6c4841895d59/view';
-export const MIDDLE_EARTH_WIKI_EDIT_URL = 'http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/wiki/988ac614-c02f-46fe-8350-6c4841895d59/edit';
+export const MIDDLE_EARTH_MAP_URL = "http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/map/6cbf9d99-21d8-4f6f-adf3-29b00d5c0d57";
+export const MIDDLE_EARTH_WIKI_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/wiki/6cbf9d99-21d8-4f6f-adf3-29b00d5c0d57/view';
+export const MIDDLE_EARTH_WIKI_EDIT_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/wiki/6cbf9d99-21d8-4f6f-adf3-29b00d5c0d57/edit';
 
-export const MINAS_TIRITH_MAP_URL = 'http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/map/3b90cf24-d661-4462-9efd-b9095c93c9ed';
-export const MINAS_TIRITH_WIKI_URL = 'http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/wiki/3b90cf24-d661-4462-9efd-b9095c93c9ed/view';
+export const MINAS_TIRITH_MAP_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/map/8a7beb19-5236-4b4b-ac02-405362b2a07b';
+export const MINAS_TIRITH_WIKI_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/wiki/8a7beb19-5236-4b4b-ac02-405362b2a07b/view';
 
 export const TEST_IMAGE = 'boromir.jpg';
 
@@ -22,6 +22,6 @@ export const SERVER_SETTINGS_URL = "http://localhost:3000/ui/serverSettings";
 
 export const TEST_ROLE_NAME = "test role";
 
-export const WORLD_SETTINGS_URL = 'http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/settings';
+export const WORLD_SETTINGS_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/settings';
 
-export const ROLES_URL = 'http://localhost:3000/ui/world/3c890e96-d0fd-4270-9f37-9319843047db/roles';
+export const ROLES_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/roles';
