@@ -2,6 +2,7 @@ import PermissionControlledModel from "../models/permission-controlled-model";
 import {PermissionControlledEntity} from "../../../types";
 import AclEntryModel from "../models/acl-entry-model";
 import {injectable} from "inversify";
+import {v4} from "uuid";
 
 
 @injectable()
@@ -32,7 +33,7 @@ export default class SqlPermissionControlledRepository {
                 }
             }
             if(!found) {
-                aclModels.push(await AclEntryModel.create({...entry}));
+                aclModels.push(await AclEntryModel.create({_id: v4(), ...entry}));
             }
         }
         await model.setAcl(aclModels);

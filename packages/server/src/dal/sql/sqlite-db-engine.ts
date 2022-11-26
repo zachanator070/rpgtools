@@ -83,7 +83,7 @@ export default class SqliteDbEngine implements DbEngine {
     async connect(): Promise<void> {
         console.log(`Using SQLite db ${this.getDbFilePath()}`);
 
-        this.connection = new Sequelize(`sqlite:${this.getDbFilePath()}`);
+        this.connection = new Sequelize(`sqlite:${this.getDbFilePath()}`, {logging: false});
 
         // Is there any better way to do this? How to handle a bunch of static methods with the same signature?
         // This violates the open/closed principle

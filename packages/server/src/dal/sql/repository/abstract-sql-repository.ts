@@ -4,6 +4,7 @@ import SqlModel from "../models/sql-model";
 import {DatabaseSession} from "../../database-session";
 import {PaginatedResult} from "../../paginated-result";
 import {injectable} from "inversify";
+import {v4} from "uuid";
 
 @injectable()
 export default abstract class AbstractSqlRepository<T extends DomainEntity, M extends SqlModel> {
@@ -19,6 +20,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     async create(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);
+        model._id = v4();
         await model.save();
         entity._id = model._id;
         await this.updateAssociations(entity, model);

@@ -13,6 +13,7 @@ import PathNodeModel from "../models/game/path-node-model";
 import FogStrokeModel from "../models/game/fog-stroke-model";
 import InGameModelModel from "../models/game/in-game-model-model";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import {v4} from "uuid";
 
 
 @injectable()
@@ -57,6 +58,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 GameId: entity._id
             });
             if(!character._id) {
+                characterModel._id = v4();
                 await characterModel.save();
                 character._id = characterModel._id;
             }
@@ -71,6 +73,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                     value: attribute.value
                 });
                 if (!attribute._id) {
+                    attributeModel._id = v4();
                     await attributeModel.save();
                     attribute._id = attributeModel._id
                 }
@@ -112,6 +115,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 GameId: entity._id
             });
             if (!message._id) {
+                messageModel._id = v4();
                 await messageModel.save();
                 message._id = messageModel._id
             }
@@ -148,6 +152,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                     type: pathNode.type
                 });
                 if(!pathNode._id) {
+                    nodeModel._id = v4();
                     await nodeModel.save();
                     pathNode._id = nodeModel._id;
                 }
@@ -163,6 +168,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 path: pathNodeModels
             });
             if (!stroke._id) {
+                strokeModel._id = v4();
                 await strokeModel.save();
                 stroke._id = strokeModel._id
             }
@@ -199,6 +205,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                     type: pathNode.type
                 });
                 if(!pathNode._id) {
+                    nodeModel._id = v4();
                     await nodeModel.save();
                     pathNode._id = nodeModel._id;
                 }
@@ -212,6 +219,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 path: pathNodeModels
             });
             if (!fog._id) {
+                fogModel._id = v4();
                 await fogModel.save();
                 fog._id = fogModel._id
             }
@@ -252,6 +260,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 GameId: entity._id
             });
             if (!inGameModel._id) {
+                inGameModelModel._id = v4();
                 await inGameModelModel.save();
                 inGameModel._id = inGameModelModel._id
             }

@@ -8,6 +8,7 @@ import AbstractSqlRepository from "./abstract-sql-repository";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 import UserModel from "../models/user-model";
 import RegisterCodeModel from "../models/register-code-model";
+import {v4} from "uuid";
 
 
 @injectable()
@@ -59,6 +60,7 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
             }
             if(!found) {
                 codesToSet.push(await RegisterCodeModel.create({
+                    _id: v4(),
                     code: newCode
                 }));
             }

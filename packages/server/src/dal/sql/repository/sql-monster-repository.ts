@@ -6,8 +6,6 @@ import {MonsterRepository} from "../../repository/monster-repository";
 import MonsterFactory from "../../../domain-entities/factory/monster-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageModel from "../models/wiki-page-model";
-import {Person} from "../../../domain-entities/person";
-import PersonModel from "../models/person-model";
 
 
 @injectable()
