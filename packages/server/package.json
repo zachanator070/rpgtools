@@ -54,6 +54,7 @@
 		"reflect-metadata": "^0.1.13",
 		"remark-parse": "^10.0.0",
 		"sequelize": "^6.23.0",
+		"sqlite3": "^5.1.2",
 		"typescript": "^4.3.5",
 		"unified": "^10.1.0",
 		"unist-util-visit": "^4.0.0",

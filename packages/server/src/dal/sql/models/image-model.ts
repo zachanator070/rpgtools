@@ -45,6 +45,6 @@ export default class ImageModel extends SqlModel {
     static connect()  {
         ImageModel.belongsTo(WorldModel, {as: 'world'});
         ImageModel.belongsTo(ImageModel, {as: 'icon'});
-        ImageModel.hasMany(ChunkModel, {as: 'chunks'});
+        ImageModel.hasMany(ChunkModel, {as: 'chunks', foreignKey: 'imageId'});
     }
 }

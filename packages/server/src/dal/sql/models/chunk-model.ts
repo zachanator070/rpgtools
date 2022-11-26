@@ -37,7 +37,6 @@ export default class ChunkModel extends SqlModel {
     };
 
     static connect() {
-        ChunkModel.belongsTo(ImageModel, {as: 'image'});
         ChunkModel.belongsTo(FileModel, {as: 'file'});
     }
 }

@@ -14,12 +14,12 @@ prod: build
 
 # runs development docker environment with auto transpiling and restarting services upon file change
 .PHONY: dev
-dev: .env packages/frontend/dist packages/server/dist
+dev: .env packages/frontend/dist packages/server/dist db
 	docker-compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
 .PHONY: dev-brk
-dev-brk: .env packages/frontend/dist packages/server/dist
+dev-brk: .env packages/frontend/dist packages/server/dist db
 	docker-compose up server-brk ui-builder
 
 .PHONY: mongodb
@@ -67,24 +67,31 @@ test-integration-update-snapshots: test-integration-postgres
 .PHONY: test-integration-postgres
 test-integration-postgres: postgres
 	cp .env.example packages/server/jest.env
-	sed -i 's/#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
+	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
 .PHONY: test-integration-mongodb
 test-integration-mongodb: mongodb
 	cp .env.example packages/server/jest.env
-	sed -i 's/#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
+	sed -i 's/^#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
+	npm run test:integration --workspace=packages/server
+
+.PHONY: test-integration-sqlite
+test-integration-sqlite:
+	cp .env.example packages/server/jest.env
+	sed -i 's/^#SQLITE_DB_NAME=rpgtools/SQLITE_DB_NAME=rpgtools/' packages/server/jest.env
+	sed -i 's/^#SQLITE_DIRECTORY_PATH=\/opt\/rpgtools\/db/SQLITE_DIRECTORY_PATH=..\/..\/db/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 
 .PHONY: set-postgres-env
 set-postgres-env:
-	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
-	sed -i 's/MONGODB_HOST=.*/#MONGODB_HOST=mongodb/' .env
+	sed -i 's/^#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
+	sed -i 's/^MONGODB_HOST=.*/#MONGODB_HOST=mongodb/' .env
 
 .PHONY: set-mongodb-env
 set-mongodb-env:
-	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
-	sed -i 's/POSTGRES_HOST=.*/#POSTGRES_HOST=postgres/' .env
+	sed -i 's/^#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
+	sed -i 's/^POSTGRES_HOST=.*/#POSTGRES_HOST=postgres/' .env
 
 .PHONY: test-e2e-mongodb
 test-e2e-mongodb: mongodb set-mongodb-env prod test-e2e
@@ -171,6 +178,9 @@ packages/frontend/dist:
 
 packages/server/dist:
 	mkdir -p packages/server/dist
+
+db:
+	mkdir -p db
 
 # initializes environment file
 .env:
