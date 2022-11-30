@@ -2,14 +2,13 @@ import {
     BelongsToManyGetAssociationsMixin,
     BelongsToManySetAssociationsMixin,
     DataTypes,
-    Model,
-    Sequelize
 } from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import WorldModel from "./world-model";
 import {RoleModel} from "./role-model";
 import SqlModel from "./sql-model";
+import UserToRoleModel from "./user-to-role-model";
 
 
 export default class UserModel extends SqlModel {
@@ -47,6 +46,6 @@ export default class UserModel extends SqlModel {
 
     static connect() {
         UserModel.belongsTo(WorldModel, {as: 'currenWorld'});
-        UserModel.belongsToMany(RoleModel, {as: 'roles', through: 'UserToRole'});
+        UserModel.belongsToMany(RoleModel, {as: 'roles', through: UserToRoleModel});
     }
 }

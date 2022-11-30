@@ -126,10 +126,6 @@ export class ExpressApiServer implements ApiServer {
 			res.set("Content-Type", "text/css");
 			next();
 		});
-		this.expressServer.get("*favicon.ico", function (req, res, next) {
-			req.url = "/favicon.ico";
-			next();
-		});
 
 		this.expressServer.use("/images", ImageRouter);
 		this.expressServer.use("/models", ModelRouter);

@@ -209,10 +209,10 @@ COPY public."Strokes" (_id, color, size, fill, type, "createdAt", "updatedAt", "
 
 
 --
--- Data for Name: UserToRole; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: UserToRoles; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."UserToRole" ("createdAt", "updatedAt", "UserId", "RoleId") FROM stdin;
+COPY public."UserToRoles" ("createdAt", "updatedAt", "UserId", "RoleId") FROM stdin;
 \.
 
 

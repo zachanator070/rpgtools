@@ -64,7 +64,7 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 						</>
 					}
 				>
-					<PrimaryCheckbox name={"isPublic"} onChange={(checked) => setIsPublic(checked)}/>
+					<PrimaryCheckbox name={"isPublic"} checked={isPublic} onChange={(checked) => setIsPublic(checked)}/>
 				</FormItem>
 			</InputForm>
 		</FullScreenModal>
