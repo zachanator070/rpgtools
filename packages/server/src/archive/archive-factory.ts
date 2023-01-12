@@ -89,14 +89,25 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 	};
 
 	private async addWikiToFolder(wikiPage: WikiPage, path: string, archive: Archive) {
-		const wikiFolder = await this.addPath(path.split('/').slice(1, -1).join('/'), null, archive);
+		let rootFolder = await archive.wikiFolderRepository.findOneByNameAndWorld(null, null);
+		if(!rootFolder) {
+			rootFolder = await this.wikiFolderFactory.build({
+				name: null,
+				world: null,
+				pages: [],
+				children: [],
+				acl: []
+			});
+			await archive.wikiFolderRepository.create(rootFolder);
+		}
+		const wikiFolder = await this.addPath(path.split('/').slice(1, -1).join('/'), rootFolder, archive);
 		wikiFolder.pages.push(wikiPage._id);
 		await archive.wikiFolderRepository.update(wikiFolder);
 	}
 
 	private async addPath(path: string,  currentFolder: WikiFolder, archive: Archive): Promise<WikiFolder> {
 		const nextFolderName = path.split('/')[0];
-		const currentFolderChildren = currentFolder ? await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findOneById(child))) : [];
+		const currentFolderChildren = await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findOneById(child)));
 		let nextFolder = currentFolderChildren.find(folder => folder.name === nextFolderName);
 		if (!nextFolder) {
 			nextFolder = await this.addFolder(nextFolderName, currentFolder, archive);

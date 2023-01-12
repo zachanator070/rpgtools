@@ -8,7 +8,7 @@ import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 Quill.debug("error");
 
@@ -23,6 +23,7 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 	const editorCreated = useRef(false);
 	const [editor, setEditor] = useState<Quill>();
 	const params = useParams();
+	const navigate = useNavigate();
 	const { refetch, wikis, loading: wikisLoading } = useSearchWikiPages({
 		worldId: params.world_id,
 		types: null,
@@ -32,7 +33,7 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 		if (content && editor) {
 			editor.setContents(JSON.parse(content));
 			// mention links are broken. Instead, we have to use an even listener
-			window.addEventListener('mention-clicked', (event) => {window.location = (event as any).value.link;}, false);
+			window.addEventListener('mention-clicked', (event) => {navigate((event as any).value.link);}, false);
 		}
 	}, [content, editor]);
 
@@ -63,7 +64,7 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 				theme: "snow",
 				readOnly: readOnly,
 				modules: {
-					toolbar: readOnly ? ['mention'] : toolBar,
+					toolbar: readOnly ? null : toolBar,
 					mention: {
 						showDenotationChar: false,
 						source: async (searchTerm, renderList, mentionChar) => {
