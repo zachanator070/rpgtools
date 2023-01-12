@@ -15,6 +15,7 @@ export class ServerConfig implements PermissionControlledEntity {
 	public adminUsers: string[];
 	public unlockCode: string;
 	public acl: AclEntry[];
+	public defaultWorld: string;
 
 	authorizationPolicy: ServerConfigAuthorizationPolicy;
 	factory: EntityFactory<ServerConfig, ServerConfigDocument, ServerConfigModel>;

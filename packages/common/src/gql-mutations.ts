@@ -384,6 +384,20 @@ export const UNLOCK_SERVER = gql`
 		)
 	}
 `;
+export const SET_DEFAULT_WORLD = gql`
+	mutation setDefaultWorld($worldId: ID!) {
+		setDefaultWorld(worldId: $worldId) {
+			_id
+			defaultWorld {
+				_id
+				name
+				wikiPage {
+					_id
+				}
+			}
+		}
+	}
+`;
 //endregion
 
 //region Wiki Folder

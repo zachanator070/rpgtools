@@ -270,6 +270,13 @@ export const TypeResolvers = {
 			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
 			return service.serverNeedsSetup(databaseContext);
 		},
+		defaultWorld: async(server: ServerConfig, _: any, {securityContext, databaseContext}: SessionContext): Promise<World> => {
+			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
+			if(!server.defaultWorld) {
+				return null;
+			}
+			return dataLoader.getPermissionControlledDocument(securityContext, server.defaultWorld, databaseContext);
+		},
 		...permissionControlledInterfaceAttributes,
 	},
 	AclEntry: {

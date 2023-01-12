@@ -93,4 +93,23 @@ export class ServerConfigService {
 	getServerConfig = async (databaseContext: DatabaseContext) => {
 		return databaseContext.serverConfigRepository.findOne();
 	};
+
+	setDefaultWorld = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext) => {
+		const serverConfig = await databaseContext.serverConfigRepository.findOne();
+		if (!serverConfig) {
+			throw new Error("Server config doesnt exist!");
+		}
+		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
+			throw new Error("You do not have permission to call this method");
+		}
+
+		const world = await databaseContext.worldRepository.findOneById(worldId);
+		if(!world) {
+			throw new Error("World could not be found.")
+		}
+
+		serverConfig.defaultWorld = worldId;
+		await databaseContext.serverConfigRepository.update(serverConfig);
+		return serverConfig;
+	};
 }

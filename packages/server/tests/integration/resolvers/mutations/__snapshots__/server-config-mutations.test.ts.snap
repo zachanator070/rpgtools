@@ -15,6 +15,21 @@ exports[`server mutations generate register codes no permission 1`] = `
 }
 `;
 
+exports[`server mutations set default world no permission 1`] = `
+{
+  "data": null,
+  "errors": [
+    [GraphQLError: You do not have permission to call this method],
+  ],
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`server mutations with authenticated user generate register codes 1`] = `
 {
   "data": {
@@ -23,6 +38,29 @@ exports[`server mutations with authenticated user generate register codes 1`] = 
       "registerCodes": ArrayContaining [
         Any<String>,
       ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`server mutations with authenticated user set default world 1`] = `
+{
+  "data": {
+    "setDefaultWorld": {
+      "defaultWorld": {
+        "_id": Any<String>,
+        "name": Any<String>,
+        "wikiPage": {
+          "_id": Any<String>,
+        },
+      },
     },
   },
   "errors": undefined,

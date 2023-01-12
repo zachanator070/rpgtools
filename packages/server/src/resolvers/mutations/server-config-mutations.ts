@@ -23,7 +23,14 @@ export const serverConfigMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		const serverConfig = await service.generateRegisterCodes(securityContext, amount, databaseContext);
-		return serverConfig;
+		return await service.generateRegisterCodes(securityContext, amount, databaseContext);
+	},
+	setDefaultWorld: async (
+		_: any,
+		{ worldId }: { worldId: string },
+		{ securityContext, databaseContext }: SessionContext
+	) => {
+		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+		return await service.setDefaultWorld(securityContext, worldId, databaseContext);
 	},
 };

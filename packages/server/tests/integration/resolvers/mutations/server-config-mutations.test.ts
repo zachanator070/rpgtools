@@ -2,7 +2,7 @@ import { container } from "../../../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import {DbEngine, Factory} from "../../../../src/types";
 import {DefaultTestingContext} from "../../default-testing-context";
-import {GENERATE_REGISTER_CODES, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
+import {GENERATE_REGISTER_CODES, SET_DEFAULT_WORLD, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {DatabaseContext} from "../../../../src/dal/database-context";
 
@@ -13,6 +13,10 @@ describe("server mutations", () => {
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
+	beforeEach(async() => {
+		await testingContext.reset();
+		testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
+	});
 
 	describe("with locked server", () => {
 		const resetConfig = async () => {
@@ -81,6 +85,14 @@ describe("server mutations", () => {
 		expect(result).toMatchSnapshot();
 	});
 
+	test("set default world no permission", async () => {
+		const result = await testingContext.server.executeGraphQLQuery({
+			query: SET_DEFAULT_WORLD,
+			variables: { worldId: testingContext.world._id },
+		});
+		expect(result).toMatchSnapshot();
+	});
+
 	describe("with authenticated user", () => {
 		beforeEach(async () => {
 			const session = await dbEngine.createDatabaseSession();
@@ -104,6 +116,27 @@ describe("server mutations", () => {
 					},
 				},
 				errors: undefined,
+			});
+		});
+
+		test("set default world", async () => {
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: SET_DEFAULT_WORLD,
+				variables: { worldId: testingContext.world._id },
+			});
+			expect(result).toMatchSnapshot({
+				data: {
+					setDefaultWorld: {
+						defaultWorld: {
+							_id: expect.any(String),
+							name: expect.any(String),
+							wikiPage: {
+								_id: expect.any(String)
+							}
+						}
+					}
+				},
+				errors: undefined
 			});
 		});
 	});

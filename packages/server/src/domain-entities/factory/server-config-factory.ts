@@ -20,14 +20,16 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
             registerCodes,
             adminUsers,
             unlockCode,
-            acl
+            acl,
+            defaultWorld
         }: {
             _id?: string,
             version: string,
             registerCodes: string[],
             adminUsers: string[],
             unlockCode: string,
-            acl: AclEntry[]
+            acl: AclEntry[],
+            defaultWorld: string
         }
     ) {
         const serverConfig: ServerConfig = new ServerConfig(new ServerConfigAuthorizationPolicy(), this);
@@ -46,7 +48,8 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
         registerCodes,
         adminUsers,
         unlockCode,
-        acl
+        acl,
+        defaultWorld
     }: ServerConfigDocument): ServerConfig {
         const serverConfig = new ServerConfig(new ServerConfigAuthorizationPolicy(), this);
         serverConfig._id = _id && _id.toString();
@@ -55,6 +58,7 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
         serverConfig.adminUsers = adminUsers.map(user => user.toString());
         serverConfig.unlockCode = unlockCode;
         serverConfig.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
+        serverConfig.defaultWorld = defaultWorld;
         return serverConfig;
     }
 
@@ -67,6 +71,7 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
             adminUsers: (await model.getAdmins()).map(user => user._id),
             unlockCode: model.unlockCode,
             acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),
+            defaultWorld: model.defaultWorldId
         });
     }
 

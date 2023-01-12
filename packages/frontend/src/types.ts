@@ -229,6 +229,7 @@ export interface Pin {
 }
 
 export interface ServerConfig extends PermissionControlled {
+    defaultWorld: World;
     _id: string;
     version: string;
     registerCodes: string[];

@@ -22,7 +22,7 @@ export class ServerConfigSeeder implements Seeder {
 			if (process.env.REGISTER_CODES) {
 				registerCodes = process.env.REGISTER_CODES.split(',');
 			}
-			server = this.serverConfigFactory.build({version: "1.0", registerCodes, adminUsers: [], unlockCode, acl: []});
+			server = this.serverConfigFactory.build({version: "1.0", registerCodes, adminUsers: [], unlockCode, acl: [], defaultWorld: null});
 			await this.serverConfigRepository.create(server);
 		}
 	};
