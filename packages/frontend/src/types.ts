@@ -22,7 +22,6 @@ export interface World extends PermissionControlled {
     canAddRoles: boolean;
     canHostGame: boolean;
     canAddModels: boolean;
-    folders: WikiFolder[];
 }
 
 export interface WorldPaginatedResult {

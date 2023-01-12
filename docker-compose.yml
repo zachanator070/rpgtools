@@ -50,7 +50,7 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     depends_on:
-      - postgres
+      - mongodb
       - redis
     networks:
       - rpgtools

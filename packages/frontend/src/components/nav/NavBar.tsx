@@ -13,7 +13,6 @@ import VerticalBar from "../widgets/VerticalBar";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ColumnedContent from "../widgets/ColumnedContent";
 import WorldIcon from "../widgets/icons/WorldIcon";
-import PersonIcon from "../widgets/icons/PersonIcon";
 import ServerIcon from "../widgets/icons/ServerIcon";
 
 export default function NavBar() {

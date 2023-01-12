@@ -1,4 +1,4 @@
-# rpgtools [![Build Status](https://travis-ci.org/zachanator070/rpgtools.svg?branch=master)](https://travis-ci.org/zachanator070/rpgtools)
+# rpgtools ![Build Status](https://github.com/zachanator070/rpgtools/actions/workflows/cd.yml/badge.svg)
 
 Tool set for playing an RPG game
 

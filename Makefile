@@ -54,10 +54,12 @@ build-dev:
 # TESTS #
 #########
 
-test: test-unit test-integration-mongodb test-integration-postgres down test-e2e-mongodb down test-e2e-postgres down
+.PHONY: test
+test: test-unit test-integration-mongodb test-integration-postgres test-e2e-mongodb test-e2e-postgres
 
 JEST_OPTIONS=
 
+.PHONY: test-unit
 test-unit:
 	npm run test:unit --workspace=packages/server
 
@@ -66,45 +68,48 @@ test-integration-update-snapshots: test-integration-postgres
 
 .PHONY: test-integration-postgres
 test-integration-postgres: postgres
+	docker-compose up -d postgres
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
+	docker-compose down
 
 .PHONY: test-integration-mongodb
-test-integration-mongodb: mongodb
+test-integration-mongodb:
+	docker-compose up -d mongodb
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
+	docker-compose down
 
 .PHONY: test-integration-sqlite
 test-integration-sqlite:
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#SQLITE_DB_NAME=rpgtools/SQLITE_DB_NAME=rpgtools/' packages/server/jest.env
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=\/opt\/rpgtools\/db/SQLITE_DIRECTORY_PATH=..\/..\/db/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
-
-.PHONY: set-postgres-env
-set-postgres-env:
-	sed -i 's/^#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
-	sed -i 's/^MONGODB_HOST=.*/#MONGODB_HOST=mongodb/' .env
-
-.PHONY: set-mongodb-env
-set-mongodb-env:
-	sed -i 's/^#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
-	sed -i 's/^POSTGRES_HOST=.*/#POSTGRES_HOST=postgres/' .env
+	docker-compose down
 
 .PHONY: test-e2e-mongodb
-test-e2e-mongodb: mongodb set-mongodb-env prod test-e2e
-
-.PHONY: test-e2e-postgres
-test-e2e-postgres: set-postgres-env prod test-e2e
-
-.PHONY: test-e2e
-test-e2e:
+test-e2e-mongodb:
+	cp .env.example .env
+	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
+	docker-compose up -d prod mongodb
 	./wait_for_server.sh
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
+	docker-compose down
 
+.PHONY: test-e2e-postgres
+test-e2e-postgres:
+	cp .env.example .env
+	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
+	docker-compose up -d prod postgres
+	./wait_for_server.sh
+	> packages/frontend/seed.log
+	npm run -w packages/frontend test
+	docker-compose down
+
+.PHONY: cypress
 cypress:
 	npm run -w packages/frontend cypress:open
 
