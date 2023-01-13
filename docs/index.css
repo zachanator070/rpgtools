@@ -4,18 +4,21 @@ div.root {
     background-color: lightgray;
     color: darkslategrey;
     font-family: 'Work Sans', sans-serif;
+    font-size: 2em;
 }
 
 div.side {
-    flex-grow: 2;
+    flex: 1 0;
+    background-color: lightgray;
 }
 
 div.center {
+    flex: 4 2;
     text-align: center;
     background-color: white;
-    padding-bottom: 15em;
-    padding-left: 5em;
-    padding-right: 5em;
+    padding-bottom: 5em;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 p.attribution {
@@ -25,11 +28,12 @@ p.attribution {
 }
 
 h1 {
-    margin-top: 10em;
+    font-size: 2em;
 }
 
 h2 {
-    margin-top: 15em;
+    margin-top: 5em;
+    font-size: 2em;
 }
 
 .tab {
@@ -44,7 +48,7 @@ h2 {
 }
 
 video {
-    width: 85em;
+    width: 100%;
 }
 
 p.description {
