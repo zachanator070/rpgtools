@@ -127,6 +127,7 @@ describe("server mutations", () => {
 			expect(result).toMatchSnapshot({
 				data: {
 					setDefaultWorld: {
+						_id: expect.any(String),
 						defaultWorld: {
 							_id: expect.any(String),
 							name: expect.any(String),

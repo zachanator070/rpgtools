@@ -54,6 +54,7 @@ exports[`server mutations with authenticated user set default world 1`] = `
 {
   "data": {
     "setDefaultWorld": {
+      "_id": Any<String>,
       "defaultWorld": {
         "_id": Any<String>,
         "name": Any<String>,
