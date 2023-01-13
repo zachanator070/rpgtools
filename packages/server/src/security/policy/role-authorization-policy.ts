@@ -1,4 +1,4 @@
-import {EntityAuthorizationPolicy, UnitOfWork} from "../../types";
+import {EntityAuthorizationPolicy} from "../../types";
 import { Role } from "../../domain-entities/role";
 import { SecurityContext } from "../security-context";
 import {
@@ -11,30 +11,30 @@ import {
 	ROLE_RW_ALL,
 } from "@rpgtools/common/src/permission-constants";
 import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
-
 import { injectable } from "inversify";
+import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
 export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> {
 	entity: Role;
 
-	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+	canAdmin = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const world = await databaseContext.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(ROLE_ADMIN, this.entity) ||
 			context.hasPermission(ROLE_ADMIN_ALL, world)
 		);
 	};
 
-	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+	canCreate = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const world = await databaseContext.worldRepository.findOneById(this.entity.world);
 		return context.hasPermission(ROLE_ADD, world);
 	};
 
-	canRead = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+	canRead = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const world = await databaseContext.worldRepository.findOneById(this.entity.world);
 		return (
-			(await this.canWrite(context, unitOfWork)) ||
+			(await this.canWrite(context, databaseContext)) ||
 			context.hasPermission(ROLE_READ, this.entity) ||
 			context.hasPermission(ROLE_READ_ALL, world) ||
 			context.hasRole(this.entity.name) ||
@@ -43,8 +43,8 @@ export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> 
 		);
 	};
 
-	canWrite = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+	canWrite = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const world = await databaseContext.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(ROLE_RW, this.entity) || context.hasPermission(ROLE_RW_ALL, world)
 		);

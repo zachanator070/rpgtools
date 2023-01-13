@@ -55,7 +55,7 @@ export default function ImageInput({onChange, initialImage, className, id, rever
             </PrimaryButton>
         </Upload>
         <SecondaryDangerButton
-            className={"margin-top-md margin-bottom-md"}
+            className={"margin-md-top"}
             onClick={async () => {
                 if (initialImage) {
                     setFileList([{

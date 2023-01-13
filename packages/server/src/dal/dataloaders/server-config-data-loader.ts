@@ -1,13 +1,13 @@
 import { GraphqlDataloader } from "../graphql-dataloader";
 import { ServerConfig } from "../../domain-entities/server-config";
 import { injectable } from "inversify";
-import {UnitOfWork} from "../../types";
 import {Repository} from "../repository/repository";
+import {DatabaseContext} from "../database-context";
 
 @injectable()
 export class ServerConfigDataLoader extends GraphqlDataloader<ServerConfig> {
-	getRepository(unitOfWork: UnitOfWork): Repository<ServerConfig> {
-		return unitOfWork.serverConfigRepository;
+	getRepository(databaseContext: DatabaseContext): Repository<ServerConfig> {
+		return databaseContext.serverConfigRepository;
 	}
 
 }

@@ -5,7 +5,7 @@ import {SEARCH_WIKIS} from "@rpgtools/common/src/gql-queries";
 interface SearchWikiPagesVariables {
 	worldId: string;
 	name?: string;
-	types: string[];
+	types?: string[];
 	canAdmin?: boolean;
 	page?: number;
 	hasModel?: boolean;

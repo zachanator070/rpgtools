@@ -5,16 +5,17 @@ import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import {CREATE_FOLDER, DELETE_FOLDER, RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
 import {AuthorizationService} from "../../../../src/services/authorization-service";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
-import {Factory} from "../../../../src/types";
-import {DbUnitOfWork} from "../../../../src/dal/db-unit-of-work";
+import {DbEngine, Factory} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {DefaultTestingContext} from "../../default-testing-context";
+import {DatabaseContext} from "../../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "folder-mutations-test";
 
 describe("folder-mutations", () => {
 
-	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
+	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	const authorizationService = container.get<AuthorizationService>(
@@ -141,17 +142,18 @@ describe("folder-mutations", () => {
 			beforeEach(async () => {
 				await testingContext.reset();
 				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
-				const unitOfWork = unitOfWorkFactory({});
-				await wikiPageService.createWiki(testingContext.tester1SecurityContext, "new page", testingContext.newFolder._id, unitOfWork);
+				const session = await dbEngine.createDatabaseSession();
+				const databaseContext = databaseContextFactory({session});
+				await wikiPageService.createWiki(testingContext.tester1SecurityContext, "new page", testingContext.newFolder._id, databaseContext);
 				await authorizationService.grantUserPermission(
 					testingContext.tester1SecurityContext,
 					WIKI_RW,
 					testingContext.newFolder._id,
 					WIKI_FOLDER,
 					testingContext.tester2._id,
-					unitOfWork
+					databaseContext
 				);
-				await unitOfWork.commit();
+				await session.commit();
 				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 			});
 

@@ -1,17 +1,22 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose from "mongoose";
 import {WikiPageModel} from "./wiki-page";
-import {PLACE} from "@rpgtools/common/src/type-constants";
+import {IMAGE, PLACE} from "@rpgtools/common/src/type-constants";
 import {WikiPageDocument} from "../../../types";
+import {v4} from "uuid";
 
 export interface PlaceDocument extends WikiPageDocument {
-    mapImage: Schema.Types.ObjectId;
+    mapImage: string;
     pixelsPerFoot: number;
 }
 
 const placeSchema = new mongoose.Schema<PlaceDocument, mongoose.Model<PlaceDocument>>({
+	_id: {
+		type: String,
+		default: v4
+	},
 	mapImage: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Image",
+		type: String,
+		ref: IMAGE,
 	},
 	pixelsPerFoot: {
 		type: Number,

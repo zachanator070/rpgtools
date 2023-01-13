@@ -1,16 +1,21 @@
-import mongoose, {Schema} from "mongoose";
-import {PERMISSION_ASSIGNMENT, WORLD} from "@rpgtools/common/src/type-constants";
+import mongoose from "mongoose";
+import {WORLD} from "@rpgtools/common/src/type-constants";
 import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
 import {AclEntry} from "./acl-entry";
+import {v4} from "uuid";
 
 const roleSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		default: v4
+	},
 	name: {
 		type: String,
 		required: [true, "name field required"],
 		index: true,
 	},
 	world: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: String,
 		ref: WORLD,
 		index: true,
 	},
@@ -19,7 +24,7 @@ const roleSchema = new mongoose.Schema({
 
 export interface RoleDocument extends MongoDBDocument, PermissionControlledDocument {
 	name: string;
-	world: Schema.Types.ObjectId;
+	world: string;
 }
 
 export const RoleModel = mongoose.model<RoleDocument>("Role", roleSchema);

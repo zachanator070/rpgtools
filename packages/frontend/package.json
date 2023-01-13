@@ -10,8 +10,8 @@
 		"start-dev": "webpack --config old_webpack/webpack-dev.config.js -w",
 		"test": "cypress run",
 		"cypress:open": "cypress open --e2e --browser chrome",
-		"seed:new": " docker exec rpgtools_mongodb_1 /mongodb-scripts/restore.sh new_server.archive",
-		"seed:middle_earth": "docker exec rpgtools_mongodb_1 /mongodb-scripts/restore.sh middle_earth.archive"
+		"seed:new": "sh ../../dev/scripts/seed.sh new_server",
+		"seed:middle_earth": "sh ../../dev/scripts/seed.sh middle_earth"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.7.0",

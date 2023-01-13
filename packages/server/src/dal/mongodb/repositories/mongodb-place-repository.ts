@@ -1,12 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Place } from "../../../domain-entities/place";
 import { inject, injectable } from "inversify";
-import { PlaceFactory} from "../../../types";
 import mongoose from "mongoose";
 import {PlaceDocument, PlaceModel} from "../models/place";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
-import AclFactory from "./acl-factory";
 import {PlaceRepository} from "../../repository/place-repository";
+import PlaceFactory from "../../../domain-entities/factory/place-factory";
 
 @injectable()
 export class MongodbPlaceRepository
@@ -14,22 +13,8 @@ export class MongodbPlaceRepository
 	implements PlaceRepository
 {
 	@inject(INJECTABLE_TYPES.PlaceFactory)
-	placeFactory: PlaceFactory;
+	entityFactory: PlaceFactory;
 
 	model: mongoose.Model<any> = PlaceModel;
 
-	buildEntity(document: PlaceDocument): Place {
-		return this.placeFactory(
-			{
-				_id: document._id.toString(),
-				name: document.name,
-				world: document.world.toString(),
-				coverImage: document.coverImage ? document.coverImage.toString() : null,
-				contentId: document.contentId ? document.contentId.toString() : null,
-				mapImage: document.mapImage ? document.mapImage.toString() : null,
-				pixelsPerFoot: document.pixelsPerFoot,
-				acl: AclFactory(document.acl)
-			}
-		);
-	}
 }

@@ -1,16 +1,16 @@
 import {
 	AclEntry,
-	DomainEntity,
-	Factory,
+	DomainEntity, EntityFactory,
 	PermissionControlledEntity,
-	RepositoryAccessor,
-	UnitOfWork
+	RepositoryAccessor
 } from "../types";
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import {WikiFolderDocument} from "../dal/mongodb/models/wiki-folder";
+import WikiFolderModel from "../dal/sql/models/wiki-folder-model";
 
 @injectable()
 export class WikiFolder implements PermissionControlledEntity {
@@ -22,14 +22,14 @@ export class WikiFolder implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: WikiFolderAuthorizationPolicy;
-	factory: Factory<WikiFolder>;
+	factory: EntityFactory<WikiFolder, WikiFolderDocument, WikiFolderModel>;
 
 	type: string = WIKI_FOLDER;
 
 	constructor(@inject(INJECTABLE_TYPES.WikiFolderAuthorizationPolicy)
 					authorizationPolicy: WikiFolderAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.WikiFolderFactory)
-					factory: Factory<WikiFolder>) {
+					factory: EntityFactory<WikiFolder, WikiFolderDocument, WikiFolderModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

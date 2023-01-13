@@ -16,7 +16,7 @@ describe('load 5e content', () => {
         cy.location({ timeout: 120000 }).should((location) => {
             expect(location.href).eq(MIDDLE_EARTH_WIKI_URL);
         });
-        cy.get(':nth-child(3) > [style="cursor: pointer;"] > :nth-child(1) > .ant-dropdown-trigger').should('contain.text', '5e');
+        cy.get(':nth-child(1) > [style="cursor: pointer;"] > :nth-child(1) > .ant-dropdown-trigger', {timeout: 30 * 1000}).should('contain.text', '5e');
 
     });
 })

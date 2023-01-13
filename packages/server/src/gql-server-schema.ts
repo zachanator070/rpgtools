@@ -64,6 +64,7 @@ export const typeDefs = gql`
 	type Mutation {
 		unlockServer(unlockCode: String!, email: String!, username: String!, password: String!): Boolean
 		generateRegisterCodes(amount: Int!): ServerConfig!
+		setDefaultWorld(worldId: ID!): ServerConfig!
 
 		login(username: String!, password: String!): User!
 		logout: String!
@@ -453,6 +454,7 @@ export const typeDefs = gql`
 		canCreateWorlds: Boolean!
 		roles: [Role!]!
 		serverNeedsSetup: Boolean!
+		defaultWorld: World
 	}
 
 	type GameMessage {

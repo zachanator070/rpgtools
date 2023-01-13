@@ -1,4 +1,4 @@
-import { Archive, UnitOfWork } from "../types";
+import { Archive } from "../types";
 import {
 	MODEL, MODELED_WIKI_TYPES,
 	WIKI_FOLDER,
@@ -14,6 +14,7 @@ import { WikiFolder } from "../domain-entities/wiki-folder";
 import { Model } from "../domain-entities/model";
 import { File } from "../domain-entities/file";
 import { injectable } from "inversify";
+import {DatabaseContext} from "../dal/database-context";
 
 @injectable()
 export class ContentExportService {
@@ -23,37 +24,37 @@ export class ContentExportService {
 		docId: string,
 		wikiType: string,
 		archive: Archive,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<string> => {
-		let page = await unitOfWork.wikiPageRepository.findOneById(docId);
+		let page = await databaseContext.wikiPageRepository.findOneById(docId);
 		if (!page) {
 			throw new EntityNotFoundError(docId, WIKI_PAGE);
 		}
-		const repo = page.getRepository(unitOfWork);
+		const repo = page.getRepository(databaseContext);
 		page = await repo.findOneById(docId) as WikiPage;
-		if (!await page.authorizationPolicy.canRead(context, unitOfWork)) {
+		if (!await page.authorizationPolicy.canRead(context, databaseContext)) {
 			return;
 		}
 
 		if (MODELED_WIKI_TYPES.includes(wikiType)) {
-			await this.addModeledWikiPageRelationships(context, page as ModeledPage, archive, unitOfWork);
+			await this.addModeledWikiPageRelationships(context, page as ModeledPage, archive, databaseContext);
 		}
 
 		//add to archive
 		const archiveRepo = page.getRepository(archive);
 		await archiveRepo.create(page);
 
-		await this.addWikiPageRelationships(context, page, archive, unitOfWork);
+		await this.addWikiPageRelationships(context, page, archive, databaseContext);
 
 		return page.name;
 	};
 
-	public exportModel = async (context: SecurityContext, docId: string, archive: Archive, unitOfWork: UnitOfWork): Promise<string> => {
-		const model = await unitOfWork.modelRepository.findOneById(docId);
+	public exportModel = async (context: SecurityContext, docId: string, archive: Archive, databaseContext: DatabaseContext): Promise<string> => {
+		const model = await databaseContext.modelRepository.findOneById(docId);
 		if (!model) {
 			throw new EntityNotFoundError(docId, MODEL);
 		}
-		await this.addModel(context, model, archive, unitOfWork, true);
+		await this.addModel(context, model, archive, databaseContext, true);
 		return model.name;
 	};
 
@@ -61,18 +62,18 @@ export class ContentExportService {
 		context: SecurityContext,
 		docId: string,
 		archive: Archive,
-		unitOfWork: UnitOfWork,
+		databaseContext: DatabaseContext,
 		errorOut = true
 	): Promise<string> => {
-		const folder = await unitOfWork.wikiFolderRepository.findOneById(docId);
+		const folder = await databaseContext.wikiFolderRepository.findOneById(docId);
 		if (!folder) {
 			throw new EntityNotFoundError(docId, WIKI_FOLDER);
 		}
 
-		const world = await unitOfWork.worldRepository.findOneById(folder.world);
+		const world = await databaseContext.worldRepository.findOneById(folder.world);
 		await archive.worldRepository.create(world);
 
-		await this.addWikiFolder(context, folder, archive, unitOfWork, errorOut);
+		await this.addWikiFolder(context, folder, archive, databaseContext, errorOut);
 
 		return folder.name;
 	};
@@ -81,10 +82,10 @@ export class ContentExportService {
 		context: SecurityContext,
 		folder: WikiFolder,
 		archive: Archive,
-		unitOfWork: UnitOfWork,
+		databaseContext: DatabaseContext,
 		errorOut = false
 	) => {
-		if (!(await folder.authorizationPolicy.canRead(context, unitOfWork))) {
+		if (!(await folder.authorizationPolicy.canRead(context, databaseContext))) {
 			if (errorOut) {
 				throw new ReadPermissionDeniedError(folder._id, WIKI_FOLDER);
 			}
@@ -92,13 +93,13 @@ export class ContentExportService {
 		}
 
 		for (let pageId of folder.pages) {
-			const page = await unitOfWork.wikiPageRepository.findOneById(pageId);
-			await this.exportWikiPage(context, pageId, page.type, archive, unitOfWork);
+			const page = await databaseContext.wikiPageRepository.findOneById(pageId);
+			await this.exportWikiPage(context, pageId, page.type, archive, databaseContext);
 		}
 
 		for (let childId of folder.children) {
-			const child = await unitOfWork.wikiFolderRepository.findOneById(childId);
-			await this.addWikiFolder(context, child, archive, unitOfWork, false);
+			const child = await databaseContext.wikiFolderRepository.findOneById(childId);
+			await this.addWikiFolder(context, child, archive, databaseContext, false);
 		}
 
 		await archive.wikiFolderRepository.create(folder);
@@ -108,16 +109,16 @@ export class ContentExportService {
 		context: SecurityContext,
 		image: Image,
 		archive: Archive,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
 		if (image.icon) {
-			const icon = await unitOfWork.imageRepository.findOneById(image.icon);
-			await this.addImage(context, icon, archive, unitOfWork);
+			const icon = await databaseContext.imageRepository.findOneById(image.icon);
+			await this.addImage(context, icon, archive, databaseContext);
 		}
-		const chunks: Chunk[] = await unitOfWork.chunkRepository.findByIds(image.chunks);
+		const chunks: Chunk[] = await databaseContext.chunkRepository.findByIds(image.chunks);
 		for (let chunk of chunks) {
 			await archive.chunkRepository.create(chunk);
-			const file = await unitOfWork.fileRepository.findOneById(chunk.fileId);
+			const file = await databaseContext.fileRepository.findOneById(chunk.fileId);
 			await this.addFile(file, archive);
 		}
 		await archive.imageRepository.create(image);
@@ -127,10 +128,10 @@ export class ContentExportService {
 		context: SecurityContext,
 		page: Model,
 		archive: Archive,
-		unitOfWork: UnitOfWork,
+		databaseContext: DatabaseContext,
 		errorOut = false
 	) => {
-		if (!(await page.authorizationPolicy.canRead(context, unitOfWork))) {
+		if (!(await page.authorizationPolicy.canRead(context, databaseContext))) {
 			if (errorOut) {
 				return new ReadPermissionDeniedError(page._id, MODEL);
 			}
@@ -138,7 +139,7 @@ export class ContentExportService {
 		}
 		await archive.modelRepository.create(page);
 		if (page.fileId) {
-			const file = await unitOfWork.fileRepository.findOneById(page.fileId);
+			const file = await databaseContext.fileRepository.findOneById(page.fileId);
 			await this.addFile(file, archive);
 		}
 	};
@@ -151,11 +152,11 @@ export class ContentExportService {
 		context: SecurityContext,
 		page: ModeledPage,
 		archive: Archive,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
 		if (page.pageModel) {
-			const model = await unitOfWork.modelRepository.findOneById(page.pageModel);
-			await this.addModel(context, model, archive, unitOfWork);
+			const model = await databaseContext.modelRepository.findOneById(page.pageModel);
+			await this.addModel(context, model, archive, databaseContext);
 		}
 	};
 
@@ -163,17 +164,17 @@ export class ContentExportService {
 		context: SecurityContext,
 		page: WikiPage,
 		archive: Archive,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
 		if (page.coverImage) {
-			const image = await unitOfWork.imageRepository.findOneById(page.coverImage);
-			await this.addImage(context, image, archive, unitOfWork);
+			const image = await databaseContext.imageRepository.findOneById(page.coverImage);
+			await this.addImage(context, image, archive, databaseContext);
 		}
 		if (page.contentId) {
-			const file = await unitOfWork.fileRepository.findOneById(page.contentId);
+			const file = await databaseContext.fileRepository.findOneById(page.contentId);
 			await this.addFile(file, archive);
 		}
-		const world = await unitOfWork.worldRepository.findOneById(page.world);
+		const world = await databaseContext.worldRepository.findOneById(page.world);
 		await archive.worldRepository.create(world);
 	};
 }

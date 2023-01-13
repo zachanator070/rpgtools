@@ -19,7 +19,6 @@ export default function useUnlockServer(callback?: (data: any) => Promise<void>)
 		{},
 		{
 			onQueryUpdated: callback,
-			refetchQueries: [GET_SERVER_CONFIG]
 		}
 	);
 

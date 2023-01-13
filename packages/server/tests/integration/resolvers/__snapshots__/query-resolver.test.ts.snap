@@ -183,6 +183,48 @@ exports[`query resolver with world with authenticated user wikis in folder 1`] =
 }
 `;
 
+exports[`query resolver with world with authenticated user with hosted game get a game 1`] = `
+{
+  "data": {
+    "game": ObjectContaining {
+      "_id": Any<String>,
+      "characters": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "name": "tester",
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user with hosted game get my games 1`] = `
+{
+  "data": {
+    "myGames": ArrayContaining [
+      ObjectContaining {
+        "_id": Any<String>,
+      },
+    ],
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`query resolver with world with authenticated user world 1`] = `
 {
   "data": {
@@ -236,7 +278,7 @@ exports[`query resolver with world with authenticated user world 1`] = `
 exports[`query resolver with world with authenticated user worlds with one private and one public world 1`] = `
 {
   "data": {
-    "worlds": {
+    "worlds": ObjectContaining {
       "docs": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
@@ -245,10 +287,22 @@ exports[`query resolver with world with authenticated user worlds with one priva
           },
         },
       ],
-      "totalPages": 1,
     },
   },
   "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with hosted game get a game permission denied 1`] = `
+{
+  "data": null,
+  "errors": Any<Array>,
   "extensions": undefined,
   "http": {
     "headers": Headers {
@@ -276,7 +330,7 @@ exports[`query resolver with world world 1`] = `
 exports[`query resolver with world worlds with one private and one public world 1`] = `
 {
   "data": {
-    "worlds": {
+    "worlds": ObjectContaining {
       "docs": ArrayContaining [
         ObjectContaining {
           "_id": Any<String>,
@@ -285,7 +339,6 @@ exports[`query resolver with world worlds with one private and one public world 
           },
         },
       ],
-      "totalPages": 1,
     },
   },
   "errors": undefined,

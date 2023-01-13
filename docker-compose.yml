@@ -15,10 +15,11 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
-      - ./packages/server/src:/home/node/app/packages/server/src
-      - ./packages/server/dist:/home/node/app/packages/server/dist
-      - ./packages/common/src:/home/node/app/packages/common/src
-      - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
+      - ./packages/server/src:/opt/rpgtools/packages/server/src
+      - ./packages/server/dist:/opt/rpgtools/packages/server/dist
+      - ./db:/opt/rpgtools/db
+      - ./packages/common/src:/opt/rpgtools/packages/common/src
+      - ./packages/frontend/dist:/opt/rpgtools/packages/frontend/dist
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
       - "9229:9229"
@@ -29,8 +30,8 @@ services:
     extends:
       service: server_base
     depends_on:
+      - postgres
       - mongodb
-      - redis
       - ui-builder
 
   server-brk:
@@ -38,7 +39,7 @@ services:
       service: server_base
     command: "npm run --workspace=packages/server dev-brk"
     depends_on:
-      - mongodb
+      - postgres
       - redis
       - ui-builder
 
@@ -68,9 +69,9 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
     volumes:
-      - ./packages/frontend/src:/home/node/app/packages/frontend/src
-      - ./packages/common/src:/home/node/app/packages/common/src
-      - ./packages/frontend/dist:/home/node/app/packages/frontend/dist
+      - ./packages/frontend/src:/opt/rpgtools/packages/frontend/src
+      - ./packages/common/src:/opt/rpgtools/packages/common/src
+      - ./packages/frontend/dist:/opt/rpgtools/packages/frontend/dist
     networks:
       - rpgtools
 
@@ -84,9 +85,22 @@ services:
       MONGO_INITDB_DATABASE: "rpgtools"
     volumes:
       - ./dev/mongodb-init:/docker-entrypoint-initdb.d
-      - ./dev/mongodb-scripts:/mongodb-scripts
+      - ./dev/mongodb-dump:/mongodb-dump
     ports:
       - "27017:27017"
+    networks:
+      rpgtools:
+
+  postgres:
+    image: "postgres:latest"
+    environment:
+      POSTGRES_USER: "rpgtools"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "rpgtools"
+    volumes:
+      - ./dev/postgres-dump:/postgres-dump
+    ports:
+      - "5432:5432"
     networks:
       rpgtools:
 

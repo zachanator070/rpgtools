@@ -1,4 +1,5 @@
 import {adminLogin, goHome, seedMiddleEarth} from "../../util/helper";
+import {MIDDLE_EARTH_MAP_URL} from "../../util/constants";
 
 describe('select world', () => {
    beforeEach(() => {
@@ -14,7 +15,7 @@ describe('select world', () => {
         cy.get('div').contains('Middle Earth').click();
         cy.get('#submit').click();
         cy.location().should((location) => {
-            expect(location.href).eq("http://localhost:3000/ui/world/6250f18b8f489b1a4cf78360/map/6250f18b8f489b1a4cf78362");
+            expect(location.href).eq(MIDDLE_EARTH_MAP_URL);
         });
     });
 

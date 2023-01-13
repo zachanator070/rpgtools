@@ -1,26 +1,26 @@
 import {
 	DataLoader as DataLoaderInt,
-	DomainEntity,
-	UnitOfWork,
+	DomainEntity
 } from "../types";
 import DataLoader from "dataloader";
 import { SecurityContext } from "../security/security-context";
 import { injectable } from "inversify";
 import {Repository} from "./repository/repository";
+import {DatabaseContext} from "./database-context";
 
 @injectable()
 export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {
 	repository: Repository<T>;
 
-	getDocument = async (id: string, unitOfWork: UnitOfWork): Promise<T> => {
+	getDocument = async (id: string, databaseContext: DatabaseContext): Promise<T> => {
 		if (id) {
-			return this.getDataLoader(unitOfWork).load(id);
+			return this.getDataLoader(databaseContext).load(id);
 		}
 		return null;
 	};
 
-	getDocuments = async (ids: string[], unitOfWork: UnitOfWork): Promise<T[]> => {
-		const results = await this.getDataLoader(unitOfWork).loadMany(ids);
+	getDocuments = async (ids: string[], databaseContext: DatabaseContext): Promise<T[]> => {
+		const results = await this.getDataLoader(databaseContext).loadMany(ids);
 		const goodResults: T[] = [];
 		for (let result of results) {
 			if (result instanceof Error) {
@@ -31,9 +31,9 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 		return goodResults;
 	};
 
-	getPermissionControlledDocument = async (context: SecurityContext, id: string, unitOfWork: UnitOfWork): Promise<T> => {
-		const document = await this.getDocument(id, unitOfWork);
-		if (await document.authorizationPolicy.canRead(context, unitOfWork)) {
+	getPermissionControlledDocument = async (context: SecurityContext, id: string, databaseContext: DatabaseContext): Promise<T> => {
+		const document = await this.getDocument(id, databaseContext);
+		if (await document.authorizationPolicy.canRead(context, databaseContext)) {
 			return document;
 		}
 	};
@@ -41,23 +41,23 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 	getPermissionControlledDocuments = async (
 		context: SecurityContext,
 		ids: string[],
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<T[]> => {
-		const documents = await this.getDocuments(ids, unitOfWork);
+		const documents = await this.getDocuments(ids, databaseContext);
 		const readableDocuments = [];
 		for (let document of documents) {
-			if (await document.authorizationPolicy.canRead(context, unitOfWork)) {
+			if (await document.authorizationPolicy.canRead(context, databaseContext)) {
 				readableDocuments.push(document);
 			}
 		}
 		return readableDocuments;
 	};
 
-	private getDataLoader = (unitOfWork: UnitOfWork) => {
+	private getDataLoader = (databaseContext: DatabaseContext) => {
 		return new DataLoader((ids: string[]) =>
-			this.getRepository(unitOfWork).findByIds(ids)
+			this.getRepository(databaseContext).findByIds(ids)
 		);
 	};
 
-	abstract getRepository(unitOfWork: UnitOfWork): Repository<T>;
+	abstract getRepository(databaseContext: DatabaseContext): Repository<T>;
 }

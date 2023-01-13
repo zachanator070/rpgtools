@@ -1,23 +1,24 @@
 import {
-	CookieManager,
+	CookieManager, DbEngine,
 	Factory,
 	SessionContext,
 	SessionContextFactory,
-	UnitOfWork,
-	UserFactory,
 } from "../types";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { v4 as uuidv4 } from "uuid";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import { SecurityContextFactory } from "../security/security-context-factory";
-import { DbUnitOfWork } from "../dal/db-unit-of-work";
+
 import {
 	ACCESS_TOKEN,
 	ACCESS_TOKEN_MAX_AGE, AuthenticationService,
 	REFRESH_TOKEN,
 	REFRESH_TOKEN_MAX_AGE,
 } from "../services/authentication-service";
+import {DatabaseContext} from "../dal/database-context";
+import {DatabaseSession} from "../dal/database-session";
+import UserFactory from "../domain-entities/factory/user-factory";
 
 @injectable()
 export class ExpressSessionContextFactory implements SessionContextFactory {
@@ -30,13 +31,19 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory;
 
-	@inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-	dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+	@inject(INJECTABLE_TYPES.DatabaseContextFactory)
+	databaseContextFactory: Factory<DatabaseContext>
+
+	@inject(INJECTABLE_TYPES.DbEngine)
+	dbEngine: DbEngine;
 
 	create = async (accessToken: string, refreshToken: string, cookieManager?: CookieManager): Promise<SessionContext> => {
-		const unitOfWork: UnitOfWork = this.dbUnitOfWorkFactory({});
 
-		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, unitOfWork);
+		const databaseSession: DatabaseSession = await this.dbEngine.createDatabaseSession();
+
+		const databaseContext: DatabaseContext = this.databaseContextFactory({session: databaseSession});
+
+		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, databaseContext);
 
 		if (!currentUser) {
 			if (cookieManager) {
@@ -45,7 +52,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 
 			currentUser = await this.authenticationService.getUserFromRefreshToken(
 				refreshToken,
-				unitOfWork
+				databaseContext
 			);
 
 			// if refreshToken is still valid issue new access token and refresh token
@@ -57,7 +64,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					let tokens = await this.authenticationService.createTokens(
 						currentUser,
 						version,
-						unitOfWork
+						databaseContext
 					);
 					if (cookieManager) {
 						cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
@@ -70,7 +77,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					}
 				}
 			} else {
-				currentUser = this.userFactory({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});
+				currentUser = this.userFactory.build({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});
 			}
 		}
 
@@ -79,7 +86,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 		return {
 			cookieManager,
 			securityContext,
-			unitOfWork
+			databaseContext
 		};
 	};
 }

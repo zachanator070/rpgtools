@@ -20,27 +20,27 @@ export const authenticationMutations: any = {
 	login: async (
 		parent: any,
 		{ username, password }: LoginArgs,
-		{ cookieManager, unitOfWork }: SessionContext
+		{ cookieManager, databaseContext }: SessionContext
 	) => {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		return await authenticationService.login(username, password, cookieManager, unitOfWork);
+		return await authenticationService.login(username, password, cookieManager, databaseContext);
 	},
-	logout: async (parent: any, any: any, { cookieManager, securityContext, unitOfWork }: SessionContext) => {
+	logout: async (parent: any, any: any, { cookieManager, securityContext, databaseContext }: SessionContext) => {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		return await authenticationService.logout(securityContext.user, cookieManager, unitOfWork);
+		return await authenticationService.logout(securityContext.user, cookieManager, databaseContext);
 	},
 	register: async (
 		parent: any,
 		{ registerCode, email, username, password }: RegisterArgs,
-		{ unitOfWork }: SessionContext
+		{ databaseContext }: SessionContext
 	) => {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		return await authenticationService.register(registerCode, email, username, password, unitOfWork);
+		return await authenticationService.register(registerCode, email, username, password, databaseContext);
 	},
 };

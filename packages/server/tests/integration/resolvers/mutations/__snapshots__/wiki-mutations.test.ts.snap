@@ -145,8 +145,10 @@ exports[`wiki page mutations with world with authenticated user update type 1`] 
       "folder": {
         "_id": Any<String>,
       },
-      "name": "Earth",
-      "type": "Article",
+      "mapImage": null,
+      "name": "other page",
+      "pixelsPerFoot": null,
+      "type": "Place",
       "world": {
         "_id": Any<String>,
       },

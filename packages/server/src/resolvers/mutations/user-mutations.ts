@@ -7,9 +7,9 @@ export const userResolvers = {
 	setCurrentWorld: async (
 		_: any,
 		{ worldId }: { worldId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<UserService>(INJECTABLE_TYPES.UserService);
-		return service.setCurrentWorld(securityContext, worldId, unitOfWork);
+		return service.setCurrentWorld(securityContext, worldId, databaseContext);
 	},
 };
