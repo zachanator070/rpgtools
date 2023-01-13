@@ -32,7 +32,8 @@ export default function AppContent(){
 			<Route path={`roles`} element={<RolesView />}/>
 			<Route path={`map/:map_id`} element={<MapView />}/>
 			<Route path={`wiki/:wiki_id/*`} element={<WikView />}/>
-			<Route path={`model/:model_id?`} element={<ModelView />}/>
+			<Route path={`model/:model_id/*`} element={<ModelView />}/>
+			<Route path={`model`} element={<ModelView />}/>
 			<Route path={`gameLogin`} element={<GameLoginView />}/>
 			<Route path={`game/:game_id`} element={<GameView />}/>
 			<Route element={<DefaultView/>}/>

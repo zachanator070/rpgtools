@@ -22,7 +22,6 @@ export interface World extends PermissionControlled {
     canAddRoles: boolean;
     canHostGame: boolean;
     canAddModels: boolean;
-    folders: WikiFolder[];
 }
 
 export interface WorldPaginatedResult {
@@ -230,6 +229,7 @@ export interface Pin {
 }
 
 export interface ServerConfig extends PermissionControlled {
+    defaultWorld: World;
     _id: string;
     version: string;
     registerCodes: string[];

@@ -3,7 +3,6 @@ import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import {
 	DomainEntity,
 	WikiPageDocument,
-
 } from "../../../types";
 import mongoose from "mongoose";
 import { WikiPage } from "../../../domain-entities/wiki-page";
@@ -12,6 +11,7 @@ import { INJECTABLE_TYPES } from "../../../di/injectable-types";
 import {WikiPageRepository} from "../../repository/wiki-page-repository";
 import {PaginatedResult} from "../../paginated-result";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
+import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 
 
 @injectable()
@@ -19,25 +19,19 @@ export class MongodbWikiPageRepository
 	extends AbstractMongodbRepository<WikiPage, WikiPageDocument>
 	implements WikiPageRepository
 {
+	@inject(INJECTABLE_TYPES.WikiPageFactory)
+	entityFactory: WikiPageFactory;
+
 	model: mongoose.Model<any> = WikiPageModel;
 
 	@multiInject(INJECTABLE_TYPES.DomainEntity)
 	domainEntities: DomainEntity[];
 
-	buildEntity(document: WikiPageDocument): WikiPage {
-		const name = document.type;
-		for (let entity of this.domainEntities) {
-			if(entity.type === name) {
-				return entity.factory(document) as WikiPage;
-			}
-		}
-	}
-
 	findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>> {
 		return this.findPaginated([new FilterCondition('_id', ids, FILTER_CONDITION_OPERATOR_IN)], page, sort);
 	}
 
-	findByNameAndTypesPaginated(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
+	findByNameAndTypesPaginatedSortByName(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
 		const conditions = [];
 		if(name) {
 			conditions.push(new FilterCondition('name', name, FILTER_CONDITION_REGEX));
@@ -50,7 +44,7 @@ export class MongodbWikiPageRepository
 
 	findOneByNameAndWorld(name: string, worldId: string): Promise<WikiPage> {
 		return this.findOne([
-			new FilterCondition("name", "other page"),
+			new FilterCondition("name", name),
 			new FilterCondition("world", worldId),
 		]);
 	}

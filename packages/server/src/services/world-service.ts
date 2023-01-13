@@ -1,12 +1,4 @@
 import {
-	PinFactory,
-	PlaceFactory,
-	RoleFactory,
-	UnitOfWork,
-	WikiFolderFactory,
-	WorldFactory,
-} from "../types";
-import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
@@ -18,6 +10,12 @@ import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {PaginatedResult} from "../dal/paginated-result";
+import {DatabaseContext} from "../dal/database-context";
+import RoleFactory from "../domain-entities/factory/role-factory";
+import PinFactory from "../domain-entities/factory/pin-factory";
+import WorldFactory from "../domain-entities/factory/world-factory";
+import PlaceFactory from "../domain-entities/factory/place-factory";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 
 @injectable()
 export class WorldService {
@@ -37,20 +35,20 @@ export class WorldService {
 		name: string,
 		isPublic: boolean,
 		securityContext: SecurityContext,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<World> => {
-		const server = await unitOfWork.serverConfigRepository.findOne();
+		const server = await databaseContext.serverConfigRepository.findOne();
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
 		}
 		if (!securityContext.hasPermission(WORLD_CREATE, server)) {
 			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
 		}
-		return  this.makeWorld(name, isPublic, securityContext, unitOfWork);
+		return this.makeWorld(name, isPublic, securityContext, databaseContext);
 	};
 
-	renameWorld = async (context: SecurityContext, worldId: string, newName: string, unitOfWork: UnitOfWork) => {
-		const world = await unitOfWork.worldRepository.findOneById(worldId);
+	renameWorld = async (context: SecurityContext, worldId: string, newName: string, databaseContext: DatabaseContext) => {
+		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error(`World with id ${worldId} doesn't exist`);
 		}
@@ -58,7 +56,7 @@ export class WorldService {
 			throw new Error("You do not have permission to rename this world");
 		}
 		world.name = newName;
-		await unitOfWork.worldRepository.update(world);
+		await databaseContext.worldRepository.update(world);
 		return world;
 	};
 
@@ -66,12 +64,12 @@ export class WorldService {
 		context: SecurityContext,
 		worldId: string,
 		page: number,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const pinsPage = await unitOfWork.pinRepository.findByWorldPaginated(worldId, page);
+		const pinsPage = await databaseContext.pinRepository.findByWorldPaginated(worldId, page);
 		const results = [];
 		for (let pin of pinsPage.docs) {
-			if (await pin.authorizationPolicy.canRead(context, unitOfWork)) {
+			if (await pin.authorizationPolicy.canRead(context, databaseContext)) {
 				results.push(pin);
 			}
 		}
@@ -84,91 +82,94 @@ export class WorldService {
 		wikiId: string,
 		x: number,
 		y: number,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const map = await unitOfWork.placeRepository.findOneById(mapId);
+		const map = await databaseContext.placeRepository.findOneById(mapId);
 		if (!map) {
 			throw new Error(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
 		}
 
 		if (wikiId) {
-			const wiki = await unitOfWork.wikiPageRepository.findOneById(wikiId);
+			const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 
 			if (!wiki) {
 				throw new Error(`Wiki with id ${wikiId} does not exist`);
 			}
 		}
 
-		const newPin = this.pinFactory({_id: null, x, y, map: mapId, page: wikiId});
+		const newPin = this.pinFactory.build({x, y, map: mapId, page: wikiId, world: map.world});
 
-		if (!(await newPin.authorizationPolicy.canCreate(context, unitOfWork))) {
+		if (!(await newPin.authorizationPolicy.canCreate(context, databaseContext))) {
 			throw new Error(`You do not have permission to add pins to this map`);
 		}
 
-		await unitOfWork.pinRepository.create(newPin);
+		await databaseContext.pinRepository.create(newPin);
 		return newPin;
 	};
 
-	updatePin = async (context: SecurityContext, pinId: string, pageId: string, unitOfWork: UnitOfWork) => {
-		const pin = await unitOfWork.pinRepository.findOneById(pinId);
+	updatePin = async (context: SecurityContext, pinId: string, pageId: string, databaseContext: DatabaseContext) => {
+		const pin = await databaseContext.pinRepository.findOneById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
 
-		if (!(await pin.authorizationPolicy.canRead(context, unitOfWork))) {
+		if (!(await pin.authorizationPolicy.canRead(context, databaseContext))) {
 			throw new Error(`You do not have permission to update this pin`);
 		}
 
 		let page = null;
 		if (pageId) {
-			page = await unitOfWork.wikiPageRepository.findOneById(pageId);
+			page = await databaseContext.wikiPageRepository.findOneById(pageId);
 			if (!page) {
 				throw new Error(`Wiki page does not exist for id ${pageId}`);
 			}
 		}
 
 		pin.page = pageId;
-		await unitOfWork.pinRepository.update(pin);
+		await databaseContext.pinRepository.update(pin);
 		return pin;
 	};
 
-	deletePin = async (context: SecurityContext, pinId: string, unitOfWork: UnitOfWork) => {
-		const pin = await unitOfWork.pinRepository.findOneById(pinId);
+	deletePin = async (context: SecurityContext, pinId: string, databaseContext: DatabaseContext) => {
+		const pin = await databaseContext.pinRepository.findOneById(pinId);
 		if (!pin) {
 			throw new Error(`Pin ${pinId} does not exist`);
 		}
 
-		if (!(await pin.authorizationPolicy.canWrite(context, unitOfWork))) {
+		if (!(await pin.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error(`You do not have permission to delete this pin`);
 		}
 
-		await unitOfWork.pinRepository.delete(pin);
+		await databaseContext.pinRepository.delete(pin);
 		return pin;
 	};
 
-	getWorld = async (context: SecurityContext, worldId: string, unitOfWork: UnitOfWork) => {
-		const world = await unitOfWork.worldRepository.findOneById(worldId);
+	getWorld = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext) => {
+		if(!worldId) {
+			return null;
+		}
+		const world = await databaseContext.worldRepository.findOneById(worldId);
 
 		if (!world) {
 			return null;
 		}
-		if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
+		if (!(await world.authorizationPolicy.canRead(context, databaseContext))) {
 			return null;
 		}
 
 		return world;
 	};
 
-	getWorlds = async (context: SecurityContext, name: string, page: number, unitOfWork: UnitOfWork) => {
+	getWorlds = async (context: SecurityContext, name: string, page: number, databaseContext: DatabaseContext) => {
 		let results: PaginatedResult<World>;
 		if (name) {
-			results = await unitOfWork.worldRepository.findByNamePaginated(name, page);
+			results = await databaseContext.worldRepository.findByNamePaginated(name, page);
 		} else {
-			results = await unitOfWork.worldRepository.findAllPaginated(page);
+			results = await databaseContext.worldRepository.findAllPaginated(page);
 		}
 		const docs = [];
 		for (let world of results.docs) {
-			if (await world.authorizationPolicy.canRead(context, unitOfWork)) {
+			if (await world.authorizationPolicy.canRead(context, databaseContext)) {
 				docs.push(world);
 			}
 		}
@@ -180,26 +181,26 @@ export class WorldService {
 		name: string,
 		isPublic: boolean,
 		context: SecurityContext,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const world = this.worldFactory({_id: null, name, wikiPage: null, rootFolder: null, acl: []});
-		await unitOfWork.worldRepository.create(world);
-		const rootWiki = this.placeFactory({_id: null, name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: []});
-		await unitOfWork.placeRepository.create(rootWiki);
-		const rootFolder = this.wikiFolderFactory({_id: null, name, world: world._id, pages: [], children: [], acl: []});
-		await unitOfWork.wikiFolderRepository.create(rootFolder);
-		const placeFolder = this.wikiFolderFactory({_id: null, name: "Places", world: world._id, pages: [rootWiki._id], children: [], acl: []});
-		await unitOfWork.wikiFolderRepository.create(placeFolder);
-		const peopleFolder = this.wikiFolderFactory({_id: null, name: "People", world:  world._id, pages: [], children: [], acl: []});
-		await unitOfWork.wikiFolderRepository.create(peopleFolder);
+		const world = this.worldFactory.build({name, wikiPage: null, rootFolder: null, acl: []});
+		await databaseContext.worldRepository.create(world);
+		const rootWiki = this.placeFactory.build({name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: []});
+		await databaseContext.placeRepository.create(rootWiki);
+		const rootFolder = this.wikiFolderFactory.build({name, world: world._id, pages: [], children: [], acl: []});
+		await databaseContext.wikiFolderRepository.create(rootFolder);
+		const placeFolder = this.wikiFolderFactory.build({name: "Places", world: world._id, pages: [rootWiki._id], children: [], acl: []});
+		await databaseContext.wikiFolderRepository.create(placeFolder);
+		const peopleFolder = this.wikiFolderFactory.build({name: "People", world:  world._id, pages: [], children: [], acl: []});
+		await databaseContext.wikiFolderRepository.create(peopleFolder);
 		rootFolder.children.push(placeFolder._id, peopleFolder._id);
-		await unitOfWork.wikiFolderRepository.update(rootFolder);
+		await databaseContext.wikiFolderRepository.update(rootFolder);
 
 		world.rootFolder = rootFolder._id;
 		world.wikiPage = rootWiki._id;
 
-		const ownerRole = this.roleFactory({_id: null, name: WORLD_OWNER, world: world._id, acl: []});
-		await unitOfWork.roleRepository.create(ownerRole);
+		const ownerRole = this.roleFactory.build({name: WORLD_OWNER, world: world._id, acl: []});
+		await databaseContext.roleRepository.create(ownerRole);
 
 		for (const permission of WORLD_PERMISSIONS) {
 			world.acl.push({
@@ -211,9 +212,9 @@ export class WorldService {
 
 		context.roles.push(ownerRole);
 		context.user.roles.push(ownerRole._id);
-		await unitOfWork.userRepository.update(context.user);
+		await databaseContext.userRepository.update(context.user);
 
-		const everyoneRole = await unitOfWork.roleRepository.findOneByName(EVERYONE);
+		const everyoneRole = await databaseContext.roleRepository.findOneByName(EVERYONE);
 		if (isPublic) {
 			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
 				world.acl.push({
@@ -223,8 +224,8 @@ export class WorldService {
 				});
 			}
 		}
-		await unitOfWork.roleRepository.update(everyoneRole);
-		await unitOfWork.worldRepository.update(world);
+		await databaseContext.roleRepository.update(everyoneRole);
+		await databaseContext.worldRepository.update(world);
 
 		return world;
 	};

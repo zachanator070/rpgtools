@@ -179,6 +179,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 					title={"Import Content"}
 					visible={importModalVisibility}
 					setVisible={() => setImportModalVisibility(false)}
+					closable={!importLoading}
 				>
 					<div className={"margin-lg-top"}>
 						<InputForm

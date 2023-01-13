@@ -3,15 +3,21 @@ import {ALL_PERMISSIONS} from "@rpgtools/common/src/permission-constants";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {User} from "../../../domain-entities/user";
 import {Role} from "../../../domain-entities/role";
+import {MongoDBDocument} from "../../../types";
+import {v4} from 'uuid';
 
 
-export interface AclEntryDocument {
+export interface AclEntryDocument extends MongoDBDocument {
     permission: string;
-    principal: mongoose.Schema.Types.ObjectId;
+    principal: string;
     principalType: "User" | "Role";
 }
 
 export const AclEntry = new mongoose.Schema({
+    _id: {
+        type: String,
+        default: v4
+    },
     permission: {
         type: String,
         required: true,
@@ -19,7 +25,7 @@ export const AclEntry = new mongoose.Schema({
         index: true,
     },
     principal: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true,
         refPath: "principalType",
         index: true,

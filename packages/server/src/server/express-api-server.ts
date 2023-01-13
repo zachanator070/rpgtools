@@ -10,7 +10,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { inject, injectable } from "inversify";
 import {
 	ApiServer,
-	CookieManager,
+	CookieManager, SessionContext,
 	SessionContextFactory
 } from "../types";
 import { graphqlUploadExpress } from "graphql-upload";
@@ -23,12 +23,13 @@ import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { GraphQLRequest } from "apollo-server-types";
+import {GraphQLRequest, GraphQLRequestContextWillSendResponse} from "apollo-server-types";
 import cors from "cors";
 import {ExpressCookieManager} from "./express-cookie-manager";
 import {RoleRepository} from "../dal/repository/role-repository";
 import {ServerConfigRepository} from "../dal/repository/server-config-repository";
 import {UserRepository} from "../dal/repository/user-repository";
+import {ApolloServerPlugin, BaseContext, GraphQLRequestListener} from 'apollo-server-plugin-base';
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -67,18 +68,34 @@ export class ExpressApiServer implements ApiServer {
 				return this.sessionContextFactory.create(params.connectionParams.accessToken as string, params.connectionParams.refreshToken as string, null);
 			},
 		}, this.webSocketServer);
+		const closeSessionPlugin: ApolloServerPlugin = {
+			requestDidStart: async (): Promise<GraphQLRequestListener<BaseContext> | void> => {
+				return {
+					willSendResponse: async (requestContext: GraphQLRequestContextWillSendResponse<GraphQLRequestContextWillSendResponse<"response">>) => {
+						const context: SessionContext = requestContext.context as unknown as SessionContext;
+						await context.databaseContext.databaseSession.commit();
+					}
+				}
+			}
+
+		};
 		this.gqlServer = new ApolloServer({
 			schema,
-			context: ({req, res}) => {
+			context: async ({req, res}) => {
 				const cookieManager: CookieManager = new ExpressCookieManager(res);
 
 				const refreshToken: string = req?.cookies["refreshToken"];
 				const accessToken: string = req?.cookies["accessToken"];
-				return this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
+				const session = await this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
+				if (res) {
+					res.locals.session = session;
+				}
+				return session;
 			},
 			csrfPrevention: true,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
+				closeSessionPlugin,
 				{
 					async serverWillStart() {
 						return {
@@ -88,6 +105,7 @@ export class ExpressApiServer implements ApiServer {
 						};
 					},
 				},
+
 			]
 		});
 
@@ -108,10 +126,6 @@ export class ExpressApiServer implements ApiServer {
 			res.set("Content-Type", "text/css");
 			next();
 		});
-		this.expressServer.get("*favicon.ico", function (req, res, next) {
-			req.url = "/favicon.ico";
-			next();
-		});
 
 		this.expressServer.use("/images", ImageRouter);
 		this.expressServer.use("/models", ModelRouter);
@@ -128,6 +142,7 @@ export class ExpressApiServer implements ApiServer {
 			origin: ["https://studio.apollographql.com"],
 			credentials: true
 		}));
+
 		this.expressServer.set('trust proxy', process.env.NODE_ENV !== 'production')
 	}
 

@@ -133,6 +133,13 @@ export const GET_SERVER_CONFIG = gql`
 			registerCodes
 			canCreateWorlds
 			serverNeedsSetup
+			defaultWorld {
+				_id
+				name
+				wikiPage {
+					_id
+				}
+			}
 			...accessControlList
 			...serverConfigRoles
 		}
@@ -278,6 +285,7 @@ export const GET_WORLDS = gql`
 					type
 				}
 			}
+			totalDocs
 			totalPages
 		}
 	}

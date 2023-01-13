@@ -1,9 +1,3 @@
-import {
-	ChunkFactory,
-	FileFactory,
-	ImageFactory,
-	UnitOfWork,
-} from "../types";
 import { Image } from "../domain-entities/image";
 import { File } from "../domain-entities/file";
 import { Chunk } from "../domain-entities/chunk";
@@ -11,6 +5,10 @@ import Jimp from "jimp";
 import { Readable } from "stream";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {DatabaseContext} from "../dal/database-context";
+import ImageFactory from "../domain-entities/factory/image-factory";
+import ChunkFactory from "../domain-entities/factory/chunk-factory";
+import FileFactory from "../domain-entities/factory/file-factory";
 
 @injectable()
 export class ImageService {
@@ -28,7 +26,7 @@ export class ImageService {
 		chunkify: boolean,
 		filename: string,
 		readStream: Readable,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
 		// @TODO need to check a permission here
 		if (chunkify === null) {
@@ -49,9 +47,8 @@ export class ImageService {
 		});
 
 		const image = await Jimp.read(Buffer.concat(rawData));
-		const newImage = this.imageFactory(
+		const newImage = this.imageFactory.build(
 			{
-				_id: null,
 				name: filename,
 				world: worldId,
 				width: image.bitmap.width,
@@ -63,7 +60,7 @@ export class ImageService {
 			}
 		);
 
-		await unitOfWork.imageRepository.create(newImage);
+		await databaseContext.imageRepository.create(newImage);
 		if (!chunkify) {
 			const chunk = await this.createChunk(
 				0,
@@ -72,43 +69,42 @@ export class ImageService {
 				image.bitmap.width,
 				image,
 				newImage,
-				unitOfWork
+				databaseContext
 			);
 			newImage.chunks.push(chunk._id);
 			newImage.chunkHeight = 1;
 			newImage.chunkWidth = 1;
 		} else {
-			await this.createChunkRecurse(0, 0, image, newImage, unitOfWork);
+			await this.createChunkRecurse(0, 0, image, newImage, databaseContext);
 			newImage.chunkHeight = Math.ceil(image.bitmap.height / this.chunkSize);
 			newImage.chunkWidth = Math.ceil(image.bitmap.width / this.chunkSize);
 		}
-		await this.makeIcon(image, newImage, unitOfWork);
-		await unitOfWork.imageRepository.update(newImage);
+		await this.makeIcon(image, newImage, databaseContext);
+		await databaseContext.imageRepository.update(newImage);
 		return newImage;
 	};
 
-	public deleteImage = async (image: Image, unitOfWork: UnitOfWork): Promise<void> => {
+	public deleteImage = async (image: Image, databaseContext: DatabaseContext): Promise<void> => {
 		console.log(`deleting image ${image._id}`);
 		for (let chunkId of image.chunks) {
-			const chunk: Chunk = await unitOfWork.chunkRepository.findOneById(chunkId);
-			const file: File = await unitOfWork.fileRepository.findOneById(chunk.fileId);
-			await unitOfWork.fileRepository.delete(file);
-			await unitOfWork.chunkRepository.delete(chunk);
+			const chunk: Chunk = await databaseContext.chunkRepository.findOneById(chunkId);
+			const file: File = await databaseContext.fileRepository.findOneById(chunk.fileId);
+			await databaseContext.fileRepository.delete(file);
+			await databaseContext.chunkRepository.delete(chunk);
 		}
 		if (image.icon) {
-			const icon = await unitOfWork.imageRepository.findOneById(image.icon);
-			await this.deleteImage(icon, unitOfWork);
+			const icon = await databaseContext.imageRepository.findOneById(image.icon);
+			await this.deleteImage(icon, databaseContext);
 		}
-		await unitOfWork.imageRepository.delete(image);
+		await databaseContext.imageRepository.delete(image);
 	};
 
-	private makeIcon(jimpImage: Jimp, newImage: Image, unitOfWork: UnitOfWork) {
+	private makeIcon(jimpImage: Jimp, newImage: Image, databaseContext: DatabaseContext) {
 		return new Promise((resolve, reject) => {
 			Jimp.read(jimpImage)
 				.then(async (image) => {
-					const iconImage = this.imageFactory(
+					const iconImage = this.imageFactory.build(
 						{
-							_id: null,
 							name: "icon." +newImage.name,
 							world: newImage.world,
 							width: this.chunkSize,
@@ -121,7 +117,7 @@ export class ImageService {
 					);
 					image.scaleToFit(this.chunkSize, this.chunkSize, (err, scaledImage) => {
 						(async () => {
-							await unitOfWork.imageRepository.create(iconImage);
+							await databaseContext.imageRepository.create(iconImage);
 							const iconChunk = await this.createChunk(
 								0,
 								0,
@@ -129,11 +125,11 @@ export class ImageService {
 								scaledImage.bitmap.width,
 								scaledImage,
 								iconImage,
-								unitOfWork
+								databaseContext
 							);
 							iconImage.chunks = [iconChunk._id];
 							newImage.icon = iconImage._id;
-							await unitOfWork.imageRepository.update(iconImage);
+							await databaseContext.imageRepository.update(iconImage);
 							resolve(iconImage);
 						})();
 					});
@@ -149,7 +145,7 @@ export class ImageService {
 		y: number,
 		image: Jimp,
 		parentImage: Image,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) {
 		const xOk = image.bitmap.width - x * this.chunkSize > 0;
 		const yOk = image.bitmap.height - y * this.chunkSize > 0;
@@ -165,11 +161,11 @@ export class ImageService {
 			return;
 		}
 		if (xOk) {
-			const chunk = await this.createChunk(x, y, height, width, image, parentImage, unitOfWork);
+			const chunk = await this.createChunk(x, y, height, width, image, parentImage, databaseContext);
 			parentImage.chunks.push(chunk._id);
-			await this.createChunkRecurse(x + 1, y, image, parentImage, unitOfWork);
+			await this.createChunkRecurse(x + 1, y, image, parentImage, databaseContext);
 		} else if (yOk) {
-			await this.createChunkRecurse(0, y + 1, image, parentImage, unitOfWork);
+			await this.createChunkRecurse(0, y + 1, image, parentImage, databaseContext);
 		}
 	}
 
@@ -180,7 +176,7 @@ export class ImageService {
 		width: number,
 		jimpImage: Jimp,
 		parentImage: Image,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<Chunk> => {
 		return new Promise((resolve) => {
 			Jimp.read(jimpImage).then(async (copy) => {
@@ -188,10 +184,10 @@ export class ImageService {
 				const newFilename = `${parentImage._id}.chunk.${x}.${y}.${jimpImage.getExtension()}`;
 				const buffer: Buffer = await copy.getBufferAsync(jimpImage.getMIME());
 				const stream = Readable.from(buffer);
-				const file = this.fileFactory({_id: null, filename: newFilename, readStream: stream, mimeType: jimpImage.getMIME()});
-				await unitOfWork.fileRepository.create(file);
-				const chunk = this.chunkFactory({_id: null, x, y, width, height, fileId: file._id, image: parentImage._id});
-				await unitOfWork.chunkRepository.create(chunk);
+				const file = this.fileFactory.build({filename: newFilename, readStream: stream, mimeType: jimpImage.getMIME()});
+				await databaseContext.fileRepository.create(file);
+				const chunk = this.chunkFactory.build({x, y, width, height, fileId: file._id, image: parentImage._id});
+				await databaseContext.chunkRepository.create(chunk);
 				resolve(chunk);
 			});
 		});

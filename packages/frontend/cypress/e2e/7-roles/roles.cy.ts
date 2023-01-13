@@ -1,5 +1,4 @@
-import {adminLogin, goToRoles, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
-import {WORLD_ADMIN} from "@rpgtools/common/src/permission-constants";
+import {adminLogin, goToRoles, seedMiddleEarth} from "../../util/helper";
 
 
 describe("roles", () => {
@@ -29,7 +28,7 @@ describe("roles", () => {
 
             it('add and remove user', () => {
                cy.get('#selectUserInput').type('tester');
-               cy.get('div').contains('tester', {timeout: 8000}).click();
+               cy.get('div').contains('tester').click();
                cy.get('button').contains('Add User').click();
 
                 cy.get('.ant-list-items > :nth-child(2) > .ant-btn').click();

@@ -1,4 +1,4 @@
-import {EntityAuthorizationPolicy, UnitOfWork} from "../../types";
+import {EntityAuthorizationPolicy} from "../../types";
 import { Game } from "../../domain-entities/game";
 import { SecurityContext } from "../security-context";
 import {
@@ -11,22 +11,23 @@ import {
 	GAME_RW,
 } from "@rpgtools/common/src/permission-constants";
 import { injectable } from "inversify";
+import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
 export class GameAuthorizationPolicy implements EntityAuthorizationPolicy<Game> {
 
 	entity: Game;
 
-	canAdmin = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+	canAdmin = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const world = await databaseContext.worldRepository.findOneById(this.entity.world);
 		return (
 			context.hasPermission(GAME_ADMIN, this.entity) ||
 			context.hasPermission(GAME_ADMIN_ALL, world)
 		);
 	};
 
-	canCreate = async (context: SecurityContext, unitOfWork: UnitOfWork): Promise<boolean> => {
-		const world = await unitOfWork.worldRepository.findOneById(this.entity.world);
+	canCreate = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
+		const world = await databaseContext.worldRepository.findOneById(this.entity.world);
 		return context.hasPermission(GAME_HOST, world);
 	};
 

@@ -2,7 +2,7 @@ import { Role } from "../domain-entities/role";
 import {injectable} from "inversify";
 import { SecurityContext } from "../security/security-context";
 import { PaginatedResult } from "../dal/paginated-result";
-import {UnitOfWork} from "../types";
+import {DatabaseContext} from "../dal/database-context";
 
 @injectable()
 export class RoleService {
@@ -13,26 +13,26 @@ export class RoleService {
 		name: string,
 		canAdmin: boolean,
 		page: number,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<PaginatedResult<Role>> => {
 		if (worldId) {
-			const world = await unitOfWork.worldRepository.findOneById(worldId);
+			const world = await databaseContext.worldRepository.findOneById(worldId);
 			if (!world) {
 				throw new Error("World does not exist");
 			}
-			if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
+			if (!(await world.authorizationPolicy.canRead(context, databaseContext))) {
 				throw new Error("You do not have permission to read this World");
 			}
 		}
 
-		const results = await unitOfWork.roleRepository.findByWorldAndNamePaginated(worldId, page, name);
+		const results = await databaseContext.roleRepository.findByWorldAndNamePaginated(worldId, page, name);
 
 		const roles = [];
 		for (let role of results.docs) {
-			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context, unitOfWork))) {
+			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context, databaseContext))) {
 				continue;
 			}
-			if (await role.authorizationPolicy.canRead(context, unitOfWork)) {
+			if (await role.authorizationPolicy.canRead(context, databaseContext)) {
 				roles.push(role);
 			}
 		}

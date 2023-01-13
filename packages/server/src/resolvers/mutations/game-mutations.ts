@@ -12,10 +12,10 @@ export const gameMutations = {
 			password,
 			characterName,
 		}: { worldId: string; password: string; characterName: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.createGame(securityContext, worldId, password, characterName, unitOfWork);
+		return await service.createGame(securityContext, worldId, password, characterName, databaseContext);
 	},
 	joinGame: async (
 		_: any,
@@ -24,26 +24,26 @@ export const gameMutations = {
 			password,
 			characterName,
 		}: { gameId: string; password: string; characterName: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.joinGame(securityContext, gameId, password, characterName, unitOfWork);
+		return await service.joinGame(securityContext, gameId, password, characterName, databaseContext);
 	},
 	leaveGame: async (
 		_: any,
 		{ gameId }: { gameId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.leaveGame(securityContext, gameId, unitOfWork);
+		return await service.leaveGame(securityContext, gameId, databaseContext);
 	},
 	gameChat: async (
 		_: any,
 		{ gameId, message }: { gameId: string; message: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.gameChat(securityContext, gameId, message, unitOfWork);
+		return await service.gameChat(securityContext, gameId, message, databaseContext);
 	},
 	setGameMap: async (
 		_: any,
@@ -53,10 +53,10 @@ export const gameMutations = {
 			clearPaint,
 			setFog,
 		}: { gameId: string; placeId: string; clearPaint: boolean; setFog: boolean },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.setGameMap(securityContext, gameId, placeId, clearPaint, setFog, unitOfWork);
+		return await service.setGameMap(securityContext, gameId, placeId, clearPaint, setFog, databaseContext);
 	},
 	addStroke: async (
 		_: any,
@@ -77,7 +77,7 @@ export const gameMutations = {
 			fill: boolean;
 			strokeId: string;
 		},
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
 		return await service.addStroke(
@@ -89,7 +89,7 @@ export const gameMutations = {
 			color,
 			fill,
 			strokeId,
-			unitOfWork
+			databaseContext
 		);
 	},
 	addFogStroke: async (
@@ -101,10 +101,10 @@ export const gameMutations = {
 			size,
 			strokeId,
 		}: { gameId: string; path: PathNode[]; type: string; size: number; strokeId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.addFogStroke(securityContext, gameId, path, type, size, strokeId, unitOfWork);
+		return service.addFogStroke(securityContext, gameId, path, type, size, strokeId, databaseContext);
 	},
 	addModel: async (
 		_: any,
@@ -114,10 +114,10 @@ export const gameMutations = {
 			wikiId,
 			color,
 		}: { gameId: string; modelId: string; wikiId: string; color: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.addModel(securityContext, gameId, modelId, wikiId, color, unitOfWork);
+		return await service.addModel(securityContext, gameId, modelId, wikiId, color, databaseContext);
 	},
 	setModelPosition: async (
 		_: any,
@@ -136,7 +136,7 @@ export const gameMutations = {
 			lookAtX: number;
 			lookAtZ: number;
 		},
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
 		return service.setModelPosition(
@@ -147,7 +147,7 @@ export const gameMutations = {
 			z,
 			lookAtX,
 			lookAtZ,
-			unitOfWork
+			databaseContext
 		);
 	},
 	setModelColor: async (
@@ -157,18 +157,18 @@ export const gameMutations = {
 			positionedModelId,
 			color,
 		}: { gameId: string; positionedModelId: string; color: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.setModelColor(securityContext, gameId, positionedModelId, color, unitOfWork);
+		return service.setModelColor(securityContext, gameId, positionedModelId, color, databaseContext);
 	},
 	deletePositionedModel: async (
 		_: any,
 		{ gameId, positionedModelId }: { gameId: string; positionedModelId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.deletePositionedModel(securityContext, gameId, positionedModelId, unitOfWork);
+		return service.deletePositionedModel(securityContext, gameId, positionedModelId, databaseContext);
 	},
 	setPositionedModelWiki: async (
 		_: any,
@@ -177,18 +177,18 @@ export const gameMutations = {
 			positionedModelId,
 			wikiId,
 		}: { gameId: string; positionedModelId: string; wikiId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.setPositionedModelWiki(securityContext, gameId, positionedModelId, wikiId, unitOfWork);
+		return service.setPositionedModelWiki(securityContext, gameId, positionedModelId, wikiId, databaseContext);
 	},
 	setCharacterOrder: async (
 		_: any,
 		{ gameId, characters }: { gameId: string; characters: Character[] },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.setCharacterOrder(securityContext, gameId, characters, unitOfWork);
+		return service.setCharacterOrder(securityContext, gameId, characters, databaseContext);
 	},
 	setCharacterAttributes: async (
 		_: any,
@@ -199,9 +199,9 @@ export const gameMutations = {
 			gameId: string;
 			attributes: CharacterAttribute[]
 		},
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return service.setCharacterAttributes(securityContext, gameId, attributes, unitOfWork);
+		return service.setCharacterAttributes(securityContext, gameId, attributes, databaseContext);
 	},
 };

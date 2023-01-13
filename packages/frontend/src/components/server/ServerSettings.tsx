@@ -10,11 +10,15 @@ import NumberInput from "../widgets/input/NumberInput";
 import ItemList from "../widgets/ItemList";
 import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
 import ColumnedContent from "../widgets/ColumnedContent";
+import useSetDefaultWorld from "../../hooks/server/useSetDefaultWorld";
+import SelectWorld from "../select/SelectWorld";
 
 export default function ServerSettings() {
 	const { serverConfig, loading, refetch } = useServerConfig();
 	const [amount, setAmount] = useState(0);
 	const { generateRegisterCodes, loading: generateLoading } = useGenerateRegisterCodes();
+	const {setDefaultWorld, loading: setDefaultWorldLoading} = useSetDefaultWorld();
+	const [newDefaultWorldId, setNewDefaultWorldId] = useState<string>();
 
 	if (loading) {
 		return <LoadingView />;
@@ -61,6 +65,32 @@ export default function ServerSettings() {
 					</>
 				</ColumnedContent>
 			)}
+			<ColumnedContent style={{ marginTop: "2em"}}>
+				<>
+					<h2>Default World</h2>
+					{serverConfig.defaultWorld && <>
+						Current default world: <a href={`/ui/defaultWorld`}>{serverConfig.defaultWorld.name}</a>
+					</>}
+					<div className={'margin-md-top'}>
+						{serverConfig.canWrite && <>
+							Set Default World:
+							<SelectWorld
+								onChange={world => setNewDefaultWorldId(world._id)}
+							/>
+							<div>
+								<PrimaryButton
+									loading={setDefaultWorldLoading}
+									onClick={async () => {
+										await setDefaultWorld({worldId: newDefaultWorldId});
+									}}
+								>
+									Save
+								</PrimaryButton>
+							</div>
+						</>}
+					</div>
+				</>
+			</ColumnedContent>
 			<ColumnedContent style={{marginTop: "2em"}}>
 				<>
 					<h2>Server Permissions</h2>

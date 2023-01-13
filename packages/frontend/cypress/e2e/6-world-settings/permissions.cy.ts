@@ -24,7 +24,7 @@ describe("world settings permissions", () => {
            cy.get('#selectRole').click();
            cy.get('div').contains('test role').click();
            cy.get('button').contains('Add role').click();
-            cy.get('ul.ant-list-items > li').should('have.length', 2);
+           cy.get('ul.ant-list-items > li').should('have.length', 2);
         });
     });
 

@@ -4,7 +4,7 @@ import {ApiServer, DbEngine, Factory, Seeder} from "../types";
 import {RoleSeeder} from "../seeders/role-seeder";
 import {ServerConfigSeeder} from "../seeders/server-config-seeder";
 import {ServerConfigService} from "../services/server-config-service";
-import {DbUnitOfWork} from "../dal/db-unit-of-work";
+import {DatabaseContext} from "../dal/database-context";
 
 @injectable()
 export default class RpgToolsServer {
@@ -22,8 +22,8 @@ export default class RpgToolsServer {
     @inject(INJECTABLE_TYPES.ServerConfigService)
     serverConfigService: ServerConfigService;
 
-    @inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-    dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+    @inject(INJECTABLE_TYPES.DatabaseContextFactory)
+    databaseContextFactory: Factory<DatabaseContext>;
 
     async seedDB() {
         const seeders: Seeder[] = [this.serverConfigSeeder, this.roleSeeder];
@@ -36,8 +36,8 @@ export default class RpgToolsServer {
     async start() {
         await this.dbEngine.connect();
         await this.seedDB();
-        const serverConfig = await this.serverConfigService.getServerConfig(this.dbUnitOfWorkFactory({}));
-        if (await this.serverConfigService.serverNeedsSetup(this.dbUnitOfWorkFactory({}))) {
+        const serverConfig = await this.serverConfigService.getServerConfig(this.databaseContextFactory({}));
+        if (await this.serverConfigService.serverNeedsSetup(this.databaseContextFactory({}))) {
             console.warn(
                 `Server needs configuration! Use unlock code ${serverConfig.unlockCode} to unlock`
             );

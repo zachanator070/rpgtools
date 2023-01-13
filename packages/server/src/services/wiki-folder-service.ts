@@ -1,8 +1,3 @@
-import {
-	ArticleFactory,
-	UnitOfWork,
-	WikiFolderFactory,
-} from "../types";
 import { WikiFolder } from "../domain-entities/wiki-folder";
 import { SecurityContext } from "../security/security-context";
 import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
@@ -10,6 +5,8 @@ import {USER} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {AuthorizationService} from "./authorization-service";
+import {DatabaseContext} from "../dal/database-context";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 
 @injectable()
 export class WikiFolderService {
@@ -19,27 +16,25 @@ export class WikiFolderService {
 
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
-	@inject(INJECTABLE_TYPES.ArticleFactory)
-	articleFactory: ArticleFactory;
 
 	createFolder = async (
 		context: SecurityContext,
 		name: string,
 		parentFolderId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<WikiFolder> => {
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOneById(parentFolderId);
+		const parentFolder = await databaseContext.wikiFolderRepository.findOneById(parentFolderId);
 		if (!parentFolder) {
 			throw new Error("Parent folder does not exist");
 		}
 
-		if (!(await parentFolder.authorizationPolicy.canWrite(context, unitOfWork))) {
+		if (!(await parentFolder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
-		const newFolder = this.wikiFolderFactory({_id: null, name, world: parentFolder.world, pages: [], children: [], acl: []});
-		await unitOfWork.wikiFolderRepository.create(newFolder);
+		const newFolder = this.wikiFolderFactory.build({name, world: parentFolder.world, pages: [], children: [], acl: []});
+		await databaseContext.wikiFolderRepository.create(newFolder);
 		parentFolder.children.push(newFolder._id);
-		await unitOfWork.wikiFolderRepository.update(parentFolder);
+		await databaseContext.wikiFolderRepository.update(parentFolder);
 
 		for (let permission of [FOLDER_RW, FOLDER_ADMIN]) {
 			newFolder.acl.push({
@@ -48,8 +43,8 @@ export class WikiFolderService {
 				principalType: USER
 			})
 		}
-		await unitOfWork.userRepository.update(context.user);
-		await unitOfWork.wikiFolderRepository.update(newFolder);
+		await databaseContext.userRepository.update(context.user);
+		await databaseContext.wikiFolderRepository.update(newFolder);
 		return parentFolder;
 	};
 
@@ -57,39 +52,39 @@ export class WikiFolderService {
 		context: SecurityContext,
 		folderId: string,
 		name: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<WikiFolder> => {
-		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
+		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error(`You do not have permission for this folder`);
 		}
 
 		folder.name = name;
-		await unitOfWork.wikiFolderRepository.update(folder);
+		await databaseContext.wikiFolderRepository.update(folder);
 		return folder;
 	};
 
-	deleteFolder = async (context: SecurityContext, folderId: string, unitOfWork: UnitOfWork): Promise<WikiFolder> => {
-		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
+	deleteFolder = async (context: SecurityContext, folderId: string, databaseContext: DatabaseContext): Promise<WikiFolder> => {
+		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
 
-		await this.checkUserWritePermissionForFolderContents(context, folderId, unitOfWork);
+		await this.checkUserWritePermissionForFolderContents(context, folderId, databaseContext);
 
-		const worlds = await unitOfWork.worldRepository.findByRootFolder(folderId);
+		const worlds = await databaseContext.worldRepository.findByRootFolder(folderId);
 		if (worlds.length !== 0) {
 			throw new Error("You cannot delete the root folder of a world");
 		}
 
-		const parent = await unitOfWork.wikiFolderRepository.findOneWithChild(folderId);
+		const parent = await databaseContext.wikiFolderRepository.findOneWithChild(folderId);
 		parent.children = parent.children.filter((child: string) => child !== folder._id);
-		await unitOfWork.wikiFolderRepository.update(parent);
+		await databaseContext.wikiFolderRepository.update(parent);
 
-		await this.recurseDeleteFolder(folder, unitOfWork);
+		await this.recurseDeleteFolder(folder, databaseContext);
 
 		return parent;
 	};
@@ -98,13 +93,13 @@ export class WikiFolderService {
 		context: SecurityContext,
 		folderId: string,
 		parentFolderId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<WikiFolder> => {
-		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
+		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error(`Folder with id ${folderId} does not exist`);
 		}
-		const parentFolder = await unitOfWork.wikiFolderRepository.findOneById(parentFolderId);
+		const parentFolder = await databaseContext.wikiFolderRepository.findOneById(parentFolderId);
 		if (!parentFolder) {
 			throw new Error(`Folder with id ${parentFolderId} does not exist`);
 		}
@@ -112,18 +107,18 @@ export class WikiFolderService {
 			throw new Error("Folder cannot be a parent of itself");
 		}
 
-		const currentParent = await unitOfWork.wikiFolderRepository.findOneWithChild(folderId);
+		const currentParent = await databaseContext.wikiFolderRepository.findOneWithChild(folderId);
 
 		for (let folderToCheck of [folder, parentFolder, currentParent]) {
-			if (!(await folderToCheck.authorizationPolicy.canWrite(context, unitOfWork))) {
+			if (!(await folderToCheck.authorizationPolicy.canWrite(context, databaseContext))) {
 				throw new Error(`You do not have permission to edit folder ${folderToCheck.name}`);
 			}
 		}
 
 		currentParent.children = currentParent.children.filter((childId: string) => childId !== folder._id);
-		await unitOfWork.wikiFolderRepository.update(currentParent);
+		await databaseContext.wikiFolderRepository.update(currentParent);
 		parentFolder.children.push(folder._id);
-		await unitOfWork.wikiFolderRepository.update(parentFolder);
+		await databaseContext.wikiFolderRepository.update(parentFolder);
 		return parentFolder;
 	};
 
@@ -132,73 +127,73 @@ export class WikiFolderService {
 		worldId: string,
 		name: string,
 		canAdmin: boolean,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<WikiFolder[]> => {
-		const world = await unitOfWork.worldRepository.findOneById(worldId);
+		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");
 		}
-		if (!(await world.authorizationPolicy.canRead(context, unitOfWork))) {
+		if (!(await world.authorizationPolicy.canRead(context, databaseContext))) {
 			throw new Error("You do not have permission to read this World");
 		}
 
-		const results = await unitOfWork.wikiFolderRepository.findByWorldAndName(worldId, name);
+		const results = await databaseContext.wikiFolderRepository.findByWorldAndName(worldId, name);
 
 		const docs = [];
 		for (let doc of results) {
 			if (
 				canAdmin !== undefined &&
-				!(await doc.authorizationPolicy.canAdmin(context, unitOfWork))
+				!(await doc.authorizationPolicy.canAdmin(context, databaseContext))
 			) {
 				continue;
 			}
-			if (await doc.authorizationPolicy.canRead(context, unitOfWork)) {
+			if (await doc.authorizationPolicy.canRead(context, databaseContext)) {
 				docs.push(doc);
 			}
 		}
 		return docs;
 	};
 
-	getFolderPath = async (context: SecurityContext, wikiId: string, unitOfWork: UnitOfWork): Promise<WikiFolder[]> => {
+	getFolderPath = async (context: SecurityContext, wikiId: string, databaseContext: DatabaseContext): Promise<WikiFolder[]> => {
 		const path = [];
-		let folder = await unitOfWork.wikiFolderRepository.findOneWithPage(wikiId);
+		let folder = await databaseContext.wikiFolderRepository.findOneWithPage(wikiId);
 		while (folder) {
 			path.push(folder);
-			folder = await unitOfWork.wikiFolderRepository.findOneWithChild(folder._id);
+			folder = await databaseContext.wikiFolderRepository.findOneWithChild(folder._id);
 		}
 		return path;
 	};
 
-	private recurseDeleteFolder = async (folder: WikiFolder, unitOfWork: UnitOfWork) => {
-		const children = await unitOfWork.wikiFolderRepository.findByIds(folder.children);
+	private recurseDeleteFolder = async (folder: WikiFolder, databaseContext: DatabaseContext) => {
+		const children = await databaseContext.wikiFolderRepository.findByIds(folder.children);
 		for (let child of children) {
-			await this.recurseDeleteFolder(child, unitOfWork);
+			await this.recurseDeleteFolder(child, databaseContext);
 		}
 
 		for (let pageId of folder.pages) {
-			const page = await unitOfWork.wikiPageRepository.findOneById(pageId);
-			await unitOfWork.wikiPageRepository.delete(page);
+			const page = await databaseContext.wikiPageRepository.findOneById(pageId);
+			await databaseContext.wikiPageRepository.delete(page);
 		}
 
-		await unitOfWork.wikiFolderRepository.delete(folder);
+		await databaseContext.wikiFolderRepository.delete(folder);
 	};
 
 	private checkUserWritePermissionForFolderContents = async (
 		context: SecurityContext,
 		folderId: string,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	) => {
-		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
+		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 
-		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error(`You do not have write permission for the folder ${folderId}`);
 		}
 
 		// pages are auto populated
 		for (let childPage of folder.pages) {
-			const wikiPage = await unitOfWork.wikiPageRepository.findOneById(childPage);
+			const wikiPage = await databaseContext.wikiPageRepository.findOneById(childPage);
 			if (
-				!(await wikiPage.authorizationPolicy.canWrite(context, unitOfWork))
+				!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))
 			) {
 				throw new Error(`You do not have write permission for the page ${childPage}`);
 			}
@@ -206,7 +201,7 @@ export class WikiFolderService {
 
 		// children folders are not auto populated
 		for (let childFolder of folder.children) {
-			await this.checkUserWritePermissionForFolderContents(context, childFolder, unitOfWork);
+			await this.checkUserWritePermissionForFolderContents(context, childFolder, databaseContext);
 		}
 	};
 }

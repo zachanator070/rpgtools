@@ -9,43 +9,43 @@ export const wikiFolderMutations = {
 	createFolder: async (
 		_: any,
 		{ name, parentFolderId }: { name: string; parentFolderId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.createFolder(securityContext, name, parentFolderId, unitOfWork);
+		return await wikiFolderService.createFolder(securityContext, name, parentFolderId, databaseContext);
 	},
 	renameFolder: async (
 		_: any,
 		{ folderId, name }: { folderId: string; name: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.renameFolder(securityContext, folderId, name, unitOfWork);
+		return await wikiFolderService.renameFolder(securityContext, folderId, name, databaseContext);
 	},
 	deleteFolder: async (
 		_: any,
 		{ folderId }: { folderId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.deleteFolder(securityContext, folderId, unitOfWork);
+		return await wikiFolderService.deleteFolder(securityContext, folderId, databaseContext);
 	},
 	moveFolder: async (
 		_: any,
 		{ folderId, parentFolderId }: { folderId: string; parentFolderId: string },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.moveFolder(securityContext, folderId, parentFolderId, unitOfWork);
+		return await wikiFolderService.moveFolder(securityContext, folderId, parentFolderId, databaseContext);
 	},
 	importContent: async (
 		_: any,
 		{ folderId, zipFile }: { folderId: string; zipFile: FileUpload },
-		{ securityContext, unitOfWork }: SessionContext
+		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const importContentService = container.get<ContentImportService>(
 			INJECTABLE_TYPES.ContentImportService
 		);
-		return await importContentService.importContent(securityContext, folderId, zipFile, unitOfWork);
+		return await importContentService.importContent(securityContext, folderId, zipFile, databaseContext);
 	},
 };

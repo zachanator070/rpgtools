@@ -107,7 +107,7 @@ export default function FolderTree({ folder, initialExpanded, indent = 0, refetc
 
 	const childrenFolders = folder.children.map((child) =>
 		folders.find((otherFolder) => otherFolder._id === child._id)
-	);
+	).sort((a,b) => a.name < b.name ? -1 : 1);
 	// race condition where we rerender before folders have been passed to this component correctly
 	if (childrenFolders.filter((child) => child === undefined).length > 0) {
 		return <LoadingView />;

@@ -1,3 +1,5 @@
+import {DatabaseContext} from "../dal/database-context";
+
 export const INJECTABLE_TYPES = {
 
 	DomainEntity: Symbol.for("DomainEntity"),
@@ -23,6 +25,7 @@ export const INJECTABLE_TYPES = {
 
 	// entity factories
 	ArticleFactory: Symbol.for("ArticleFactory"),
+	AclFactory: Symbol.for('AclFactory'),
 	ChunkFactory: Symbol.for("ChunkFactory"),
 	FileFactory: Symbol.for("FileFactory"),
 	GameFactory: Symbol.for("GameFactory"),
@@ -37,7 +40,16 @@ export const INJECTABLE_TYPES = {
 	ServerConfigFactory: Symbol.for("ServerConfigFactory"),
 	UserFactory: Symbol.for("UserFactory"),
 	WikiFolderFactory: Symbol.for("WikiFolderFactory"),
+	WikiPageFactory: Symbol.for("WikiPageFactory"),
 	WorldFactory: Symbol.for("WorldFactory"),
+
+	CharacterFactory: Symbol.for('CharacterFactory'),
+	CharacterAttributeFactory: Symbol.for('CharacterAttributeFactory'),
+	PathNodeFactory: Symbol.for('NodePathFactory'),
+	StrokeFactory: Symbol.for('StrokeFactory'),
+	FogStrokeFactory: Symbol.for('FogStrokeFactory'),
+	MessageFactory: Symbol.for('MessageFactory'),
+	InGameModelFactory: Symbol.for('InGameModelFactory'),
 
 	// repositories
 	ArticleRepository: Symbol.for("ArticleRepository"),
@@ -57,6 +69,8 @@ export const INJECTABLE_TYPES = {
 	WikiFolderRepository: Symbol.for("WikiFolderRepository"),
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
+
+	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
 
 	// authorization policies
 	ArticleAuthorizationPolicy: Symbol.for("ArticleAuthorizationPolicy"),
@@ -166,9 +180,9 @@ export const INJECTABLE_TYPES = {
 	RoleSeeder: Symbol.for("RoleSeeder"),
 	ServerConfigSeeder: Symbol.for("ServerConfigSeeder"),
 
-	// unit of work
-	DbUnitOfWork: Symbol.for("DbUnitOfWork"),
-	DbUnitOfWorkFactory: Symbol.for("DbUnitOfWorkFactory"),
+	// database context
+	DatabaseContext: Symbol.for("DatabaseContext"),
+	DatabaseContextFactory: Symbol.for("DatabaseContextFactory"),
 
 	// repo mapper
 	EntityMapper: Symbol.for("EntityMapper"),
@@ -176,4 +190,5 @@ export const INJECTABLE_TYPES = {
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),
 	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
+
 };
