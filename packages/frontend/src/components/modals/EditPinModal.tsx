@@ -58,7 +58,7 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 					buttonText={'Save'}
 				>
 					<FormItem label="Page">
-						<SelectWiki types={[PLACE]} onChange={(page) => setPinPage(page)}/>
+						<SelectWiki types={[]} onChange={(page) => setPinPage(page)}/>
 					</FormItem>
 				</InputForm>
 				<PrimaryDangerButton
