@@ -14,7 +14,7 @@ ADD packages/server/package.json package.json
 ADD packages/server/tsconfig.json tsconfig.json
 
 WORKDIR /opt/rpgtools
-RUN npm install
+RUN npm ci
 
 ADD packages/common/src packages/common/src
 ADD packages/server/src packages/server/src

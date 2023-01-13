@@ -12,7 +12,7 @@ WORKDIR /opt/rpgtools/packages/frontend
 ADD packages/frontend/package.json package.json
 
 WORKDIR /opt/rpgtools
-RUN npm install
+RUN npm ci
 
 ADD packages/common/tsconfig.json packages/common/tsconfig.json
 ADD packages/frontend/tsconfig.json packages/frontend/tsconfig.json

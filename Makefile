@@ -90,7 +90,7 @@ test-integration-sqlite:
 	docker-compose down
 
 .PHONY: test-e2e-mongodb
-test-e2e-mongodb:
+test-e2e-mongodb: build
 	cp .env.example .env
 	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
 	docker-compose up -d prod mongodb
@@ -100,7 +100,7 @@ test-e2e-mongodb:
 	docker-compose down
 
 .PHONY: test-e2e-postgres
-test-e2e-postgres:
+test-e2e-postgres: build
 	cp .env.example .env
 	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker-compose up -d prod postgres
@@ -135,7 +135,7 @@ ci: .env install-deps test
 # installs all dependencies for dev and CI work
 install-deps:
 	# installs node modules needed by CI
-	npm install
+	npm ci
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
