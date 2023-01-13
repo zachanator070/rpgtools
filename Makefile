@@ -203,6 +203,7 @@ install:
 	sudo systemctl enable mongodb
 	sudo mkdir /etc/rpgtools
 	sudo cp .env.example /etc/rpgtools/.env
+	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=localhost/' .env
 	sudo cp rpgtools.service /lib/systemd/system
 	sudo systemctl daemon-reload
 	sudo systemctl start rpgtools
