@@ -1,5 +1,6 @@
 const { app, globalShortcut, BrowserWindow } = require('electron');
 const main = require('@electron/remote/main');
+const path = require('path');
 
 let mainWindow;
 
@@ -14,7 +15,7 @@ function createWindow() {
         autoHideMenuBar: true,
         width: 640,
         height: 480,
-        icon: "favicon.ico",
+        icon: path.join(__dirname, '..', '..', 'dist', 'frontend', 'favicon.ico'),
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,

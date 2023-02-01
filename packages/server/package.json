@@ -16,6 +16,7 @@
     "dev-brk": "nodemon --watch src -e ts,ejs --exec npm-run-all build dev:start-brk",
     "test:integration": "jest --config jest.config.integration.cjs -i ${JEST_OPTIONS}",
     "test:unit": "jest --config jest.config.unit.cjs",
+    "preelectron": "cp -R ../frontend/dist dist/frontend",
     "electron": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"

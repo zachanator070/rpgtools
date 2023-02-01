@@ -83,6 +83,7 @@ export class DeltaFactory {
 					const article = await databaseContext.articleRepository.findOneByNameAndWorld(spell.name, worldId);
 					if (!article) {
 						console.warn(`Could not find spell for ${spell.name}`);
+						continue;
 					}
 					ops.push(
 						{
