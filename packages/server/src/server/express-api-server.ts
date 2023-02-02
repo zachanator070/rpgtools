@@ -30,6 +30,7 @@ import {RoleRepository} from "../dal/repository/role-repository";
 import {ServerConfigRepository} from "../dal/repository/server-config-repository";
 import {UserRepository} from "../dal/repository/user-repository";
 import {ApolloServerPlugin, BaseContext, GraphQLRequestListener} from 'apollo-server-plugin-base';
+import * as url from 'url';
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -131,11 +132,14 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/models", ModelRouter);
 		this.expressServer.use("/export", ExportRouter);
 
+		const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+		const uiPath = path.resolve(__dirname, '..', '..', '..', 'frontend');
+
 		this.expressServer.get("/ui*", (req, res) => {
-			return res.sendFile(path.resolve("dist/frontend", "index.html"));
+			return res.sendFile(path.resolve(uiPath, "index.html"));
 		});
 
-		this.expressServer.use(express.static("dist/frontend"));
+		this.expressServer.use(express.static(uiPath));
 		this.expressServer.use(graphqlUploadExpress());
 
 		this.expressServer.use(cors({

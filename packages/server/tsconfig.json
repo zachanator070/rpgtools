@@ -5,7 +5,7 @@
     "emitDecoratorMetadata": true,
     "types": ["reflect-metadata", "jest"],
     "lib": ["es2020"],
-    "module": "es6",
+    "module": "esnext",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,
