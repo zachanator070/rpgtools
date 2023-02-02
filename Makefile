@@ -160,7 +160,7 @@ server-js:
 	npm run -w packages/server build
 
 # makes electron package artifact
-electron: ui-prod server-js
+electron: install-deps ui-prod server-js
 	npm run -w packages/server make
 
 # cleans built transpiled js and node modules
