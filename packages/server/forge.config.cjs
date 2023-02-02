@@ -11,7 +11,7 @@ module.exports = {
       fs.cpSync(path.join('.', '..', '..', 'node_modules'), path.join(options.outputPaths[0], 'resources', 'app', 'node_modules'), {recursive: true});
       fs.rmSync(rpgtoolsModuleDestination, {recursive: true});
       fs.mkdirSync(rpgtoolsModuleDestination);
-      fs.cpSync(path.join('.', '..', 'common'), rpgtoolsModuleDestination, {recursive: true});
+      fs.cpSync(path.join('.', '..', 'common'), path.join(rpgtoolsModuleDestination, 'common'), {recursive: true});
     }
   },
   makers: [
