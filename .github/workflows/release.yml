@@ -1,0 +1,60 @@
+name: Publish Release
+
+on:
+  tags:
+    - '*'
+
+jobs:
+
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install jq
+      run: sudo apt-get install -y jq
+    - name: version
+      run: jq .version package.json
+      id: version
+    - name: release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: false
+        release_name: ${{ steps.version.outputs.version }}
+        tag_name: ${{ github.ref }}
+        body_path: CHANGELOG.md
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+  linux:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
+      - uses: actions/checkout@v3
+      - name: build artifacts
+        run: make electron
+      - name: upload deb artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./packages/server/out/make/deb/x64/rpgtools-server_${{ needs.release.outputs.version }}_amd64.deb
+          asset_name: rpgtools-server_${{ needs.release.outputs.version }}_amd64.deb
+          asset_content_type: application/deb
+      - name: upload rpm artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./packages/server/out/make/rpm/x64/rpgtools-server-${{ needs.release.outputs.version }}-1.x86_64.rpm
+          asset_name: rpgtools-server-${{ needs.release.outputs.version }}-1.x86_64.rpm
+          asset_content_type: application/rpm

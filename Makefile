@@ -145,10 +145,23 @@ lint:
 # CONTINUOUS DEPLOYMENT #
 #########################
 
+# runs the js transpiler docker image
+ui-prod: .env packages/frontend/dist packages/server/dist
+	echo Current UID: ${CURRENT_UID}
+	NODE_ENV=production npm -w packages/frontend start
+
 # Builds rpgtools docker image
 build: install-deps ui-prod clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:${VERSION} -f packages/server/Dockerfile .
+
+# transpiles the server typescript to js
+server-js:
+	npm run -w packages/server build
+
+# makes electron package artifact
+electron: ui-prod server-js
+	npm run -w packages/server make
 
 # cleans built transpiled js and node modules
 clean: down clean-deps
@@ -168,11 +181,6 @@ clean-deps:
 clean-uncompressed:
 	rm -f packages/frontend/dist/app.bundle.js
 	rm -f packages/frontend/dist/app.css
-
-# runs the js transpiler docker image
-ui-prod: .env packages/frontend/dist packages/server/dist
-	echo Current UID: ${CURRENT_UID}
-	NODE_ENV=production npm -w packages/frontend start
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
