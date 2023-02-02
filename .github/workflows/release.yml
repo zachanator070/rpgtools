@@ -18,7 +18,7 @@ jobs:
     - name: Install jq
       run: sudo apt-get install -y jq
     - name: version
-      run: jq .version package.json
+      run: echo version=`jq -r .version package.json` >> $GITHUB_OUTPUT
       id: version
     - name: release
       uses: actions/create-release@v1
