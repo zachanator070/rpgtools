@@ -16,10 +16,11 @@ services:
       - NODE_ENV=development
     volumes:
       - ./packages/server/src:/opt/rpgtools/packages/server/src
-      - ./packages/server/dist:/opt/rpgtools/packages/server/dist
+      - ./packages/server/dist/server:/opt/rpgtools/packages/server/dist/server
+      - ./packages/server/dist/common:/opt/rpgtools/packages/server/dist/common
+      - ./packages/frontend/dist:/opt/rpgtools/packages/server/dist/frontend
       - ./db:/opt/rpgtools/db
       - ./packages/common/src:/opt/rpgtools/packages/common/src
-      - ./packages/frontend/dist:/opt/rpgtools/packages/frontend/dist
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
       - "9229:9229"
