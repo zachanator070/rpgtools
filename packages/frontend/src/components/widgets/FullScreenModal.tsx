@@ -23,6 +23,7 @@ export default function FullScreenModal({title, visible, closable, setVisible, c
         }}
         style={style}
         closable={closable}
+        maskClosable={closable}
         width={width}
     >
         {children && React.Children.toArray(children)}

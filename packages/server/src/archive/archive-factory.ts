@@ -1,7 +1,7 @@
 import { Readable } from "stream";
 import { ZipArchive } from "./zip-archive";
 import unzipper, { Entry } from "unzipper";
-import {Archive, AbstractArchiveFactory, FileFactory, Factory, WikiFolderFactory} from "../types";
+import {Archive, AbstractArchiveFactory, Factory} from "../types";
 import {
 	ALL_WIKI_TYPES,
 	FILE,
@@ -11,6 +11,8 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {WikiFolder} from "../domain-entities/wiki-folder";
 import {WikiPage} from "../domain-entities/wiki-page";
 import EntityMapper from "../domain-entities/entity-mapper";
+import FileFactory from "../domain-entities/factory/file-factory";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 
 class TempFolder {
 	children: TempFolder[] = [];
@@ -72,12 +74,12 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 		if (entryType === FILE) {
 			const filename: string = this.getFilenameFromPath(entry.path);
 			const id = filename.split(".")[1];
-			const newFile = this.fileFactory({_id: id, filename, readStream: await this.createReadStream(entry), mimeType: null})
+			const newFile = this.fileFactory.build({_id: id, filename, readStream: await this.createReadStream(entry), mimeType: null})
 			await archive.fileRepository.create(newFile);
 		} else {
 			const rawEntity = await this.getEntryContent(entry);
 			const sibling = this.entityMapper.map(entryType);
-			const entity = sibling.factory(rawEntity);
+			const entity = sibling.factory.build(rawEntity);
 			const repo = entity.getRepository(archive);
 			await repo.create(entity);
 			if(ALL_WIKI_TYPES.includes(entryType)) {
@@ -87,14 +89,25 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 	};
 
 	private async addWikiToFolder(wikiPage: WikiPage, path: string, archive: Archive) {
-		const wikiFolder = await this.addPath(path.split('/').slice(1, -1).join('/'), null, archive);
+		let rootFolder = await archive.wikiFolderRepository.findOneByNameAndWorld(null, null);
+		if(!rootFolder) {
+			rootFolder = await this.wikiFolderFactory.build({
+				name: null,
+				world: null,
+				pages: [],
+				children: [],
+				acl: []
+			});
+			await archive.wikiFolderRepository.create(rootFolder);
+		}
+		const wikiFolder = await this.addPath(path.split('/').slice(1, -1).join('/'), rootFolder, archive);
 		wikiFolder.pages.push(wikiPage._id);
 		await archive.wikiFolderRepository.update(wikiFolder);
 	}
 
 	private async addPath(path: string,  currentFolder: WikiFolder, archive: Archive): Promise<WikiFolder> {
 		const nextFolderName = path.split('/')[0];
-		const currentFolderChildren = currentFolder ? await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findOneById(child))) : [];
+		const currentFolderChildren = await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findOneById(child)));
 		let nextFolder = currentFolderChildren.find(folder => folder.name === nextFolderName);
 		if (!nextFolder) {
 			nextFolder = await this.addFolder(nextFolderName, currentFolder, archive);
@@ -107,9 +120,8 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 	}
 
 	private async addFolder(name: string, currentFolder: WikiFolder, archive: Archive) {
-		const newFolder = this.wikiFolderFactory(
+		const newFolder = this.wikiFolderFactory.build(
 			{
-				_id: null,
 				name,
 				world: null,
 				pages: [],

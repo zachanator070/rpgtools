@@ -8,11 +8,11 @@ export const imageMutations = {
 	createImage: async (
 		_: any,
 		{ file, worldId, chunkify }: { file: FileUpload; worldId: string; chunkify: boolean },
-		{ unitOfWork }: SessionContext
+		{ databaseContext }: SessionContext
 	) => {
 		file = await file;
 		const stream = file.createReadStream();
 		const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
-		return imageService.createImage(worldId, chunkify, file.filename, stream, unitOfWork);
+		return imageService.createImage(worldId, chunkify, file.filename, stream, databaseContext);
 	},
 };

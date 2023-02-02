@@ -1,12 +1,11 @@
 import { AbstractMongodbRepository } from "./abstract-mongodb-repository";
 import { Item } from "../../../domain-entities/item";
 import { inject, injectable } from "inversify";
-import { ItemFactory} from "../../../types";
 import mongoose from "mongoose";
 import {ItemDocument, ItemModel} from "../models/item";
 import { INJECTABLE_TYPES } from "../../../di/injectable-types";
-import AclFactory from "./acl-factory";
 import {ItemRepository} from "../../repository/item-repository";
+import ItemFactory from "../../../domain-entities/factory/item-factory";
 
 @injectable()
 export class MongodbItemRepository
@@ -14,22 +13,8 @@ export class MongodbItemRepository
 	implements ItemRepository
 {
 	@inject(INJECTABLE_TYPES.ItemFactory)
-	itemFactory: ItemFactory;
+	entityFactory: ItemFactory;
 
 	model: mongoose.Model<any> = ItemModel;
 
-	buildEntity(document: ItemDocument): Item {
-		return this.itemFactory(
-			{
-				_id: document._id.toString(),
-				name: document.name,
-				world: document.world.toString(),
-				coverImage: document.coverImage ? document.coverImage.toString() : null,
-				content: document.contentId ? document.contentId.toString() : null,
-				pageModel: document.pageModel ? document.pageModel.toString() : null,
-				modelColor: document.modelColor,
-				acl: AclFactory(document.acl)
-			}
-		);
-	}
 }

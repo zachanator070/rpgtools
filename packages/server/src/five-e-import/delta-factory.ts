@@ -1,7 +1,6 @@
 import { markdownToDelta } from "./markdown-to-delta";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {UnitOfWork} from "../types";
 import {
 	Open5eApiClient,
 	Open5eClass,
@@ -11,13 +10,14 @@ import {
 	Open5eSpell,
 } from "./open-5e-api-client";
 import {Dnd5eRule} from "./dnd-5e-api-client";
+import {DatabaseContext} from "../dal/database-context";
 
 @injectable()
 export class DeltaFactory {
 	@inject(INJECTABLE_TYPES.Open5eApiClient)
 	apiClient: Open5eApiClient;
 
-	fromCharacterClass = async (characterClass: Open5eClass, worldId: string, unitOfWork: UnitOfWork) => {
+	fromCharacterClass = async (characterClass: Open5eClass, worldId: string, databaseContext: DatabaseContext) => {
 		const ops = [];
 
 		ops.push(...this.getHeading("Hit Points"));
@@ -80,9 +80,10 @@ export class DeltaFactory {
 				ops.push({ insert: "\n", attributes: { header: 2 } });
 				ops.push({ insert: "\n" });
 				for (let spell of classSpells[level]) {
-					const article = await unitOfWork.articleRepository.findOneByNameAndWorld(spell.name, worldId);
+					const article = await databaseContext.articleRepository.findOneByNameAndWorld(spell.name, worldId);
 					if (!article) {
 						console.warn(`Could not find spell for ${spell.name}`);
+						continue;
 					}
 					ops.push(
 						{

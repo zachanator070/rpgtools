@@ -13,7 +13,6 @@ import VerticalBar from "../widgets/VerticalBar";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ColumnedContent from "../widgets/ColumnedContent";
 import WorldIcon from "../widgets/icons/WorldIcon";
-import PersonIcon from "../widgets/icons/PersonIcon";
 import ServerIcon from "../widgets/icons/ServerIcon";
 
 export default function NavBar() {
@@ -66,20 +65,18 @@ export default function NavBar() {
 				visibility={registerModalVisibility}
 			/>
 			<ColumnedContent childrenSizes={['25%', '50%', '25%']}>
-				<div style={{display: 'flex', justifyContent: 'space-between'}}>
-					<div className="margin-md-left">
+				<div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', alignItems: 'center'}}>
+					<div style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
 						<WorldMenu />
 						{currentWorld && currentWorld.canWrite && (
-							<span className="margin-lg-left">
-								<Link to={`/ui/world/${currentWorld._id}/settings`} title="World Settings">
-									<WorldIcon />
-								</Link>
-							</span>
+							<Link to={`/ui/world/${currentWorld._id}/settings`} title="World Settings">
+								<WorldIcon />
+							</Link>
 						)}
 					</div>
 
 					{currentWorld &&
-						<div className="margin-sm-top margin-lg-right">
+						<div>
 							<VerticalBar/>
 							<Link to={`/ui/world/${currentWorld._id}/map/${currentWorld.wikiPage._id}`}>
 								Map
@@ -94,6 +91,7 @@ export default function NavBar() {
 							<Link to={`/ui/world/${currentWorld._id}/roles`}>Roles</Link>
 							<VerticalBar/>
 							<Link to={`/ui/world/${currentWorld._id}/gameLogin`}>Game</Link>
+							<VerticalBar/>
 						</div>
 
 					}

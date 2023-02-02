@@ -1,12 +1,16 @@
+import * as dotenv from 'dotenv'
+dotenv.config({path: './jest.env'});
+
 import { container } from "../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
-import {DbEngine, SessionContextFactory, UnitOfWork} from "../../src/types";
+import {DbEngine, SessionContextFactory} from "../../src/types";
 import {ServerConfigService} from "../../src/services/server-config-service";
 import {Factory} from "../../src/types";
 import {MockSessionContextFactory} from "./mock-session-context-factory";
 import {DefaultTestingContext} from "./default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "./injectable-types";
 import RpgToolsServer from "../../src/server/rpgtools-server";
+import {DatabaseContext} from "../../src/dal/database-context";
 
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";
 process.env.REFRESH_TOKEN_SECRET = "asdf1234";
@@ -26,16 +30,17 @@ const server = container.get<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer);
 const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 
 beforeAll(async () => {
-	dbEngine.setDbHost("localhost:27017");
-	dbEngine.setDbName(process.env.TEST_SUITE);
+	dbEngine.setDbHost("localhost");
+	await dbEngine.changeDb(process.env.TEST_SUITE);
 	await dbEngine.connect();
 	await server.seedDB();
 	const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-	const unitOfWorkFactory = container.get<Factory<UnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
-	const unitOfWork = unitOfWorkFactory({});
-	const serverConfig = await service.getServerConfig(unitOfWork);
-	await service.unlockServer(serverConfig.unlockCode, "tester@gmail.com", "tester", "tester", unitOfWork);
-	await unitOfWork.commit();
+	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
+	const session = await dbEngine.createDatabaseSession();
+	const databaseContext = databaseContextFactory({session});
+	const serverConfig = await service.getServerConfig(databaseContext);
+	await service.unlockServer(serverConfig.unlockCode, "tester@gmail.com", "tester", "tester", databaseContext);
+	await session.commit();
 });
 
 afterAll(async function () {

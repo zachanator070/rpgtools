@@ -4,6 +4,7 @@ import FormItem, {FormItemProps} from "./FormItem";
 import PrimaryButton from "../PrimaryButton";
 import Errors from "../../Errors";
 import {WidgetProps} from "../WidgetProps";
+import LoadingIcon from "../icons/LoadingIcon";
 
 interface InputFormProps<T> extends WidgetProps {
     onSubmit: (T) => any;
@@ -52,7 +53,7 @@ export default function InputForm<T>({ onSubmit, children, loading, errors, butt
         <FormItem
             lastItem={true}
         >
-            <PrimaryButton id={'submit'} submit={true} disabled={loading || disabled}>{buttonText || 'Submit'}</PrimaryButton>
+            <PrimaryButton id={'submit'} submit={true} disabled={loading || disabled}>{loading? <LoadingIcon/> : (buttonText || 'Submit')}</PrimaryButton>
         </FormItem>
     </Form>
 }

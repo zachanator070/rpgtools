@@ -1,55 +1,53 @@
-# rpgtools [![Build Status](https://travis-ci.org/zachanator070/rpgtools.svg?branch=master)](https://travis-ci.org/zachanator070/rpgtools)
+# rpgtools ![Build Status](https://github.com/zachanator070/rpgtools/actions/workflows/cd.yml/badge.svg)
 
 Tool set for playing an RPG game
 
+See the [product page](https://zachanator070.github.io/rpgtools/) for a list of basic features.
+
+See the [rpgtools-srd](https://github.com/zachanator070/rpgtools-srd) repo for Dnd 5e content to use with RPGTools.
+
 ## Usage
 
-### Requirements
+### Desktop Environment
+Not Implemented yet
+
+This environment is designed to require no configuration and without the use of docker on any OS.
+
+### Production Server Environment
+
+#### Requirements
 
 - docker
-- docker-compose
-- make (optional)
-- jq (for prod build)
 
-### Production Environment
-
-This environment is to be used by those that wish to run rpgtools in an optimized setting
+This environment is to be used by those that wish to run rpgtools in an optimized, performant setting
 where users will interact with the service.
 
-`touch .env && docker-compose up prod-builder && docker-compose up prod-server`
-or
-`make prod`
+To run the service:
+1. Download the `.env.example` and save as `.env`
+2. Change the line with `#MONGODB_HOST=mongodb` to `MONGODB_HOST=mongodb`
+3. Download the `docker-compose.yml` file
+4. Run the command `docker-compose up -d prod`
 
 The production environment will run the following docker containers:
 
 - nodejs webserver
 - mongodb database
-- redis in-memory cache
-- webpack bundler
-
-The bundler runs once to create the website bundle that will be received via the webserver.
-After this, the bundler will immediately shutdown.
 
 ### Development Environment
+
+#### Requirements
+
+- docker
+- docker-compose
+- make
+- jq
 
 This environment is for anyone that wishes to contribute to the codebase and actively change
 the source of rpgtools while having access to debug tools.
 
-#### Prerequisites
-
-Install Prettier and ESlint plugins for your IDE and make sure it is configured to
-format on save.
-
-`touch .env && docker-compose up dev-server`
-or
+To run the development environment run the command:
 `make dev`
 
-The development environment will run the following docker containers:
-
-- nodejs webserver
-- mongodb database
-- redis in-memory cache
-- webpack bundler
 
 In this configuration, the bundler will stay running and attempt to rebuild the website bundle
 when a code change occurs.
@@ -60,18 +58,7 @@ The environment options that are supported are explained in the provided example
 
 See [.env.example](https://github.com/zachanator070/rpgtools/blob/master/.env.example)
 
-## Install
-
-If you wish to run rpgtools on a host while ensuring that the service is always up and will
-run at startup, follow the instructions below for your target operating system.
-
-### Linux
-
-#### Requirements
-
-- docker
-- docker-compose
-- make
+## Advanced Server Administration
 
 A simple make target has been provided to install on a linux debian-based host.
 This simple install will:
@@ -83,6 +70,8 @@ This simple install will:
 To run this simple install use the command:
 
 `make install`
+
+This script will set up mongodb and ensure that the RPGTools docker container is always running.
 
 #### WARNING
 
@@ -131,6 +120,3 @@ map $http_upgrade $connection_upgrade {
  }
 ```
 
-### Windows
-
-No current install method yet

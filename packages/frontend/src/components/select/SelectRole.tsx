@@ -35,7 +35,7 @@ export default function SelectRole({ onChange, style, canAdmin }: SelectRoleProp
 				}
 			}}
 			icon={<SearchIcon />}
-			helpText={"Search for a model"}
+			helpText={"Search for a role"}
 			showArrow={false}
 			style={style ? style : { width: 200 }}
 			id={'selectRole'}

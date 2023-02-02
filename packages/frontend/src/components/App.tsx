@@ -11,6 +11,7 @@ import ServerSettings from "./server/ServerSettings";
 import MapWikiContext from "../MapWikiContext";
 import useServerConfig from "../hooks/server/useServerConfig";
 import LoadingView from "./LoadingView";
+import DefaultWorld from "./DefaultWorld";
 
 export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();
@@ -47,6 +48,10 @@ export default function App() {
 				<Route
 					path={`/ui/serverSettings`}
 					element={<ServerSettings />}
+				/>
+				<Route
+					path={'/ui/defaultWorld'}
+					element={<DefaultWorld/>}
 				/>
 				<Route
 					path={"/"}

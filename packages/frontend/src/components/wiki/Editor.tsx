@@ -7,6 +7,8 @@ import "quill/dist/quill.snow.css";
 import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
+import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
+import {useNavigate, useParams} from "react-router-dom";
 
 Quill.debug("error");
 
@@ -20,21 +22,23 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 	const { currentWorld, loading } = useCurrentWorld();
 	const editorCreated = useRef(false);
 	const [editor, setEditor] = useState<Quill>();
+	const params = useParams();
+	const navigate = useNavigate();
+	const { refetch, wikis, loading: wikisLoading } = useSearchWikiPages({
+		worldId: params.world_id,
+		types: null,
+	});
 
 	useEffect(() => {
 		if (content && editor) {
 			editor.setContents(JSON.parse(content));
-			document.querySelectorAll(".ql-picker").forEach((tool) => {
-				tool.addEventListener("mousedown", function (event) {
-					event.preventDefault();
-					event.stopPropagation();
-				});
-			});
+			// mention links are broken. Instead, we have to use an even listener
+			window.addEventListener('mention-clicked', (event) => {navigate((event as any).value.link);}, false);
 		}
 	}, [content, editor]);
 
 	const toolBar = [
-		["bold", "italic", "underline", "strike"],
+		["bold", "italic", "underline", "strike", "mention"],
 		["blockquote", "code-block"],
 
 		[{ header: 1 }, { header: 2 }],
@@ -60,25 +64,22 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 				theme: "snow",
 				readOnly: readOnly,
 				modules: {
-					toolbar: readOnly ? false : toolBar,
+					toolbar: readOnly ? null : toolBar,
 					mention: {
-						dataAttributes: ["id", "value", "denotationChar", "link", "target"],
-						isolateCharacter: false,
+						showDenotationChar: false,
 						source: async (searchTerm, renderList, mentionChar) => {
 							if (searchTerm === "") {
 								return renderList([], searchTerm);
 							}
-							const allWikis = [];
-							for (let folder of currentWorld.folders) {
-								allWikis.push(...folder.children);
-							}
-							const results = allWikis.filter((wiki) =>
-								wiki.name.toLowerCase().includes(searchTerm.toLowerCase())
-							);
+							const results = await refetch({
+								worldId: params.world_id,
+								name: searchTerm,
+							});
 							renderList(
-								results.map((result) => {
-									let url = `/ui/world/${currentWorld._id}/wiki/${result._id}/view`;
-									result.value = result.name;
+								results.docs.map((wiki) => {
+									let url = `/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`;
+									const result: any = {};
+									result.value = wiki.name;
 									result.link = url;
 									result.target = "_self";
 									return result;
@@ -86,6 +87,9 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 								searchTerm
 							);
 						},
+						render: (item) => {
+							return `<a href='${item.link}'/>`;
+						}
 					},
 				},
 				placeholder: readOnly

@@ -8,21 +8,22 @@ import {
 	GET_CURRENT_WORLD,
 	GET_WORLDS, SEARCH_ROLES,
 	SEARCH_USERS,
-	WIKIS_IN_FOLDER
+	WIKIS_IN_FOLDER, GET_GAME, MY_GAMES
 } from "@rpgtools/common/src/gql-queries";
 import {WorldService} from "../../../src/services/world-service";
 import {WikiFolderService} from "../../../src/services/wiki-folder-service";
 import {TEST_INJECTABLE_TYPES} from "../injectable-types";
-import {Factory} from "../../../src/types";
-import {DbUnitOfWork} from "../../../src/dal/db-unit-of-work";
+import {DbEngine, Factory} from "../../../src/types";
 import {accessControlList} from "./common-testing-assertions";
+import {DatabaseContext} from "../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
 describe("query resolver", () => {
 	const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 	const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-	const unitOfWorkFactory = container.get<Factory<DbUnitOfWork>>(INJECTABLE_TYPES.DbUnitOfWorkFactory);
+	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
+	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	describe("with world", () => {
@@ -72,16 +73,17 @@ describe("query resolver", () => {
 		});
 
 		test("worlds with one private and one public world", async () => {
-			const unitOfWork = unitOfWorkFactory({});
-			await worldService.createWorld("Azeroth", true, testingContext.tester1SecurityContext, unitOfWork);
-			await unitOfWork.commit();
+			const session = await dbEngine.createDatabaseSession();
+			const databaseContext = databaseContextFactory({session});
+			await worldService.createWorld("Azeroth", true, testingContext.tester1SecurityContext, databaseContext);
+			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_WORLDS,
 				variables: { page: 1 },
 			});
 			expect(result).toMatchSnapshot({
 				data: {
-					worlds: {
+					worlds: expect.objectContaining({
 						docs: expect.arrayContaining([
 							expect.objectContaining({
 								_id: expect.any(String),
@@ -90,7 +92,7 @@ describe("query resolver", () => {
 								}),
 							}),
 						]),
-					},
+					}),
 				},
 				errors: undefined,
 			});
@@ -107,6 +109,25 @@ describe("query resolver", () => {
 						message: expect.any(String),
 					}),
 				]),
+			});
+		});
+
+		describe('with hosted game', () => {
+
+			beforeEach(async () => {
+				await testingContext.setupGame();
+			});
+
+			it('get a game permission denied', async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: GET_GAME,
+					variables: {
+						gameId: testingContext.game._id,
+					},
+				});
+				expect(result).toMatchSnapshot({
+					errors: expect.any(Array)
+				});
 			});
 		});
 
@@ -160,16 +181,17 @@ describe("query resolver", () => {
 			});
 
 			test("worlds with one private and one public world", async () => {
-				const unitOfWork = unitOfWorkFactory({});
-				await worldService.createWorld("Azeroth", false, testingContext.tester1SecurityContext, unitOfWork);
-				await unitOfWork.commit();
+				const session = await dbEngine.createDatabaseSession();
+				const databaseContext = databaseContextFactory({session});
+				await worldService.createWorld("Azeroth", false, testingContext.tester1SecurityContext, databaseContext);
+				await session.commit();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: GET_WORLDS,
 					variables: { page: 1 },
 				});
 				expect(result).toMatchSnapshot({
 					data: {
-						worlds: {
+						worlds: expect.objectContaining({
 							docs: expect.arrayContaining([
 								expect.objectContaining({
 									_id: expect.any(String),
@@ -178,7 +200,7 @@ describe("query resolver", () => {
 									}),
 								}),
 							]),
-						},
+						}),
 					},
 					errors: undefined,
 				});
@@ -206,9 +228,10 @@ describe("query resolver", () => {
 			});
 
 			test("wikis in folder", async () => {
-				const unitOfWork = unitOfWorkFactory({});
-				const placesFolder = (await wikiFolderService.getFolders(testingContext.tester1SecurityContext, testingContext.world._id, "Places", undefined, unitOfWork)).filter(folder => folder.name === "Places");
-				await unitOfWork.commit();
+				const session = await dbEngine.createDatabaseSession();
+				const databaseContext = databaseContextFactory({session});
+				const placesFolder = (await wikiFolderService.getFolders(testingContext.tester1SecurityContext, testingContext.world._id, "Places", undefined, databaseContext)).filter(folder => folder.name === "Places");
+				await session.commit();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: WIKIS_IN_FOLDER,
 					variables: { folderId: placesFolder[0]._id},
@@ -249,7 +272,8 @@ describe("query resolver", () => {
 								}),
 							])
 						}
-					}
+					},
+					errors: undefined
 				});
 			});
 
@@ -263,6 +287,52 @@ describe("query resolver", () => {
 				});
 				expect(result).toMatchSnapshot();
 			});
+
+			describe('with hosted game', () => {
+
+				beforeEach(async () => {
+					await testingContext.setupGame();
+				});
+
+				it('get a game', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: GET_GAME,
+						variables: {
+							gameId: testingContext.game._id,
+						},
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							game: expect.objectContaining({
+								_id: expect.any(String),
+								characters: expect.arrayContaining([
+									expect.objectContaining({
+										_id: expect.any(String),
+										name: testingContext.tester1.username
+									}),
+								])
+							})
+						},
+						errors: undefined
+					});
+				});
+
+				it('get my games', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: MY_GAMES,
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							myGames: expect.arrayContaining([
+								expect.objectContaining({
+									_id: expect.any(String),
+								}),
+							])
+						},
+						errors: undefined
+					});
+				});
+			})
 		});
 	});
 });

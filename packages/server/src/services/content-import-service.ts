@@ -4,8 +4,6 @@ import { inject, injectable } from "inversify";
 import {
 	Archive,
 	AbstractArchiveFactory,
-	UnitOfWork,
-	WikiFolderFactory,
 } from "../types";
 import { Model } from "../domain-entities/model";
 import { WikiFolder } from "../domain-entities/wiki-folder";
@@ -15,6 +13,10 @@ import { ModeledPage } from "../domain-entities/modeled-page";
 import { Place } from "../domain-entities/place";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
+import {DatabaseContext} from "../dal/database-context";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
+import {USER} from "@rpgtools/common/src/type-constants";
 
 
 @injectable()
@@ -30,13 +32,13 @@ export class ContentImportService {
 		context: SecurityContext,
 		folderId: string,
 		zipFile: FileUpload,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<WikiFolder> => {
-		const folder = await unitOfWork.wikiFolderRepository.findOneById(folderId);
+		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
 		}
-		if (!(await folder.authorizationPolicy.canWrite(context, unitOfWork))) {
+		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error("You do not have permission to add content to this folder");
 		}
 
@@ -44,12 +46,7 @@ export class ContentImportService {
 		const archiveReadStream = zipFile.createReadStream();
 		// probably need to detect here what kind of file we are dealing with then create an archive based upon the file type
 		const archive = await this.archiveFactory.zipFromZipStream(archiveReadStream);
-
-		try {
-			await this.processArchive(archive, folder, unitOfWork);
-		} catch (e) {
-			console.log(e.message);
-		}
+		await this.processArchive(archive, folder, databaseContext, context);
 
 		return folder;
 	};
@@ -57,49 +54,54 @@ export class ContentImportService {
 	private processArchive = async (
 		archive: Archive,
 		destinationFolder: WikiFolder,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext,
+		securityContext: SecurityContext
 	) => {
 		for (let page of await archive.articleRepository.findAll()) {
 			await this.importWikiPage(
 				page,
 				archive,
-				unitOfWork.articleRepository,
+				databaseContext.articleRepository,
 				destinationFolder,
-				unitOfWork
+				databaseContext,
+				securityContext
 			);
 		}
 		for (let page of await archive.itemRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
-				unitOfWork.itemRepository,
+				databaseContext.itemRepository,
 				destinationFolder,
-				unitOfWork
+				databaseContext,
+				securityContext
 			);
 		}
 		for (let page of await archive.monsterRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
-				unitOfWork.monsterRepository,
+				databaseContext.monsterRepository,
 				destinationFolder,
-				unitOfWork
+				databaseContext,
+				securityContext
 			);
 		}
 		for (let page of await archive.personRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
-				unitOfWork.personRepository,
+				databaseContext.personRepository,
 				destinationFolder,
-				unitOfWork
+				databaseContext,
+				securityContext
 			);
 		}
 		for (let page of await archive.placeRepository.findAll()) {
-			await this.importPlace(page, archive, destinationFolder, unitOfWork);
+			await this.importPlace(page, archive, destinationFolder, databaseContext, securityContext);
 		}
 		for (let model of await archive.modelRepository.findAll()) {
-			await this.importModel(model, archive, destinationFolder, unitOfWork);
+			await this.importModel(model, archive, destinationFolder, databaseContext, securityContext);
 		}
 	};
 
@@ -107,86 +109,104 @@ export class ContentImportService {
 		image: Image,
 		destinationFolder: WikiFolder,
 		archive: Archive,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext
 	): Promise<void> => {
 		const chunks = [...image.chunks];
 		image.chunks = [];
 		image.world = destinationFolder.world;
 		if (image.icon) {
 			const icon: Image = await archive.imageRepository.findOneById(image.icon);
-			await this.importImage(icon, destinationFolder, archive, unitOfWork);
+			await this.importImage(icon, destinationFolder, archive, databaseContext);
 			image.icon = icon._id;
 		}
-		await unitOfWork.imageRepository.create(image);
+		await databaseContext.imageRepository.create(image);
 		for (let chunkId of chunks) {
 			const chunk = await archive.chunkRepository.findOneById(chunkId);
 			const file = await archive.fileRepository.findOneById(chunk.fileId);
-			await unitOfWork.fileRepository.create(file);
+			await databaseContext.fileRepository.create(file);
 			chunk.fileId = file._id;
 			chunk.image = image._id;
-			await unitOfWork.chunkRepository.create(chunk);
+			await databaseContext.chunkRepository.create(chunk);
 			image.chunks.push(chunk._id);
 		}
-		await unitOfWork.imageRepository.update(image);
+		await databaseContext.imageRepository.update(image);
 	};
 
 	private importWikiPage = async <T extends WikiPage>(
 		page: T,
 		archive: Archive,
 		destinationRepo: Repository<T>,
-		destinationRootFolder: WikiFolder,
-		unitOfWork: UnitOfWork
+		destinationFolder: WikiFolder,
+		databaseContext: DatabaseContext,
+		securityContext: SecurityContext
 	) => {
 		let path: WikiFolder[] = [];
 		let currentFolder: WikiFolder = await archive.wikiFolderRepository.findOneWithPage(page._id);
 		while (currentFolder) {
 			path.push(currentFolder);
 			currentFolder = await archive.wikiFolderRepository.findOneWithChild(currentFolder._id);
+
+			// root folder has name with null value
+			if(currentFolder && !currentFolder.name) {
+				currentFolder = null;
+			}
 		}
 
 		path = path.reverse();
 
 		while (path.length > 0) {
 			let foundChild = false;
-			const children: WikiFolder[] = await unitOfWork.wikiFolderRepository.findByIds(destinationRootFolder.children);
+			const children: WikiFolder[] = await databaseContext.wikiFolderRepository.findByIds(destinationFolder.children);
 			for (let child of children) {
 				if (child.name === path[0].name) {
 					foundChild = true;
-					destinationRootFolder = child;
+					destinationFolder = child;
 					path.shift();
+					break;
 				}
 			}
 			if (!foundChild) {
-				const newFolder = this.wikiFolderFactory(
+				const newFolder = this.wikiFolderFactory.build(
 					{
-						_id: null,
 						name: path[0].name,
-						world: destinationRootFolder.world,
+						world: destinationFolder.world,
 						pages: [],
 						children: [],
 						acl: []
 					}
 				);
-				await unitOfWork.wikiFolderRepository.create(newFolder);
-				destinationRootFolder.children.push(newFolder._id);
-				await unitOfWork.wikiFolderRepository.update(destinationRootFolder);
-				destinationRootFolder = newFolder;
+				await databaseContext.wikiFolderRepository.create(newFolder);
+				destinationFolder.children.push(newFolder._id);
+				await databaseContext.wikiFolderRepository.update(destinationFolder);
+				destinationFolder = newFolder;
 				path.shift();
 			}
 		}
 		if (page.coverImage) {
 			const coverImage = await archive.imageRepository.findOneById(page.coverImage);
-			await this.importImage(coverImage, destinationRootFolder, archive, unitOfWork);
+			await this.importImage(coverImage, destinationFolder, archive, databaseContext);
 			page.coverImage = coverImage._id;
 		}
 		if (page.contentId) {
 			const contentFile = await archive.fileRepository.findOneById(page.contentId);
-			await unitOfWork.fileRepository.create(contentFile);
+			await databaseContext.fileRepository.create(contentFile);
 			page.contentId = contentFile._id;
 		}
+		page.acl = [];
+		page.acl.push({
+			permission: WIKI_RW,
+			principal: securityContext.user._id,
+			principalType: USER
+		});
+		page.acl.push({
+			permission: WIKI_ADMIN,
+			principal: securityContext.user._id,
+			principalType: USER
+		});
+		page.world = destinationFolder.world;
 		await destinationRepo.create(page);
-		destinationRootFolder.pages.push(page._id);
-		await unitOfWork.wikiFolderRepository.update(destinationRootFolder);
+		destinationFolder.pages.push(page._id);
+		await databaseContext.wikiFolderRepository.update(destinationFolder);
 	};
 
 	private importModeledWiki = async <T extends ModeledPage>(
@@ -194,35 +214,38 @@ export class ContentImportService {
 		archive: Archive,
 		destinationRepo: Repository<T>,
 		destinationRootFolder: WikiFolder,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext,
+		securityContext: SecurityContext
 	) => {
 		if (page.pageModel) {
 			const model = await archive.modelRepository.findOneById(page.pageModel);
 			// delete from the source so its not recreated later
 			await archive.modelRepository.delete(model);
-			await this.importModel(model, archive, destinationRootFolder, unitOfWork);
+			await this.importModel(model, archive, destinationRootFolder, databaseContext, securityContext);
 			page.pageModel = model._id;
 		}
-		await this.importWikiPage(page, archive, destinationRepo, destinationRootFolder, unitOfWork);
+		await this.importWikiPage(page, archive, destinationRepo, destinationRootFolder, databaseContext, securityContext);
 	};
 
 	private importPlace = async (
 		page: Place,
 		archive: Archive,
 		destinationRootFolder: WikiFolder,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext,
+		securityContext: SecurityContext
 	) => {
 		if (page.mapImage) {
 			const mapImage: Image = await archive.imageRepository.findOneById(page.mapImage);
-			await this.importImage(mapImage, destinationRootFolder, archive, unitOfWork);
+			await this.importImage(mapImage, destinationRootFolder, archive, databaseContext);
 			page.mapImage = mapImage._id;
 		}
 		await this.importWikiPage<Place>(
 			page,
 			archive,
-			unitOfWork.placeRepository,
+			databaseContext.placeRepository,
 			destinationRootFolder,
-			unitOfWork
+			databaseContext,
+			securityContext
 		);
 	};
 
@@ -230,14 +253,23 @@ export class ContentImportService {
 		model: Model,
 		archive: Archive,
 		destinationRootFolder: WikiFolder,
-		unitOfWork: UnitOfWork
+		databaseContext: DatabaseContext,
+		securityContext: SecurityContext
 	) => {
 		model.world = destinationRootFolder.world;
 		if (model.fileId) {
 			const file = await archive.fileRepository.findOneById(model.fileId);
-			await unitOfWork.fileRepository.create(file);
+			await databaseContext.fileRepository.create(file);
 			model.fileId = file._id;
 		}
-		await unitOfWork.modelRepository.create(model);
+		model.acl = [];
+		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
+			model.acl.push({
+				permission,
+				principal: securityContext.user._id,
+				principalType: USER
+			});
+		}
+		await databaseContext.modelRepository.create(model);
 	};
 }

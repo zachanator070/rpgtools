@@ -3,19 +3,24 @@ import mongoose from "mongoose";
 import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import MongoDbMigrationV40 from "./migrations/mongodb-migration-v40";
-import {DbUnitOfWork} from "../db-unit-of-work";
+import {DatabaseContext} from "../database-context";
+import { DatabaseSession } from "../database-session";
 
 @injectable()
 export default class MongodbDbEngine implements DbEngine {
 
+    async createDatabaseSession(): Promise<DatabaseSession> {
+        return new DatabaseSession( await mongoose.startSession(), null);
+    }
+
     @inject(INJECTABLE_TYPES.MongoDbMigrationV40)
     mongoDbMigrationV40: MongoDbMigrationV40;
 
-    @inject(INJECTABLE_TYPES.DbUnitOfWorkFactory)
-    dbUnitOfWorkFactory: Factory<DbUnitOfWork>;
+    @inject(INJECTABLE_TYPES.DatabaseContextFactory)
+    databaseContextFactory: Factory<DatabaseContext>;
 
-    mongodb_host = process.env.MONGODB_HOST || "mongodb";
-    mongodb_db_name = process.env.MONGODB_DB_NAME || "rpgtools";
+    host = process.env.MONGODB_HOST || "mongodb";
+    dbName = process.env.MONGODB_DB_NAME || "rpgtools";
 
     MAX_ATTEMPTS = 10;
 
@@ -25,7 +30,7 @@ export default class MongodbDbEngine implements DbEngine {
     }
 
     getConnectionString(): string {
-        return `mongodb://${this.mongodb_host}/${this.mongodb_db_name}`;
+        return `mongodb://${this.host}:27017/${this.dbName}`;
     }
 
     private async attemptConnection(attempt: number = 0) {
@@ -39,7 +44,7 @@ export default class MongodbDbEngine implements DbEngine {
                     })
                     .then(async () => {
                         console.log(
-                            `Connected to mongodb at mongodb://${this.mongodb_host}/${this.mongodb_db_name}`
+                            `Connected to mongodb at ${this.getConnectionString()}`
                         );
                         resolve();
                     });
@@ -70,14 +75,14 @@ export default class MongodbDbEngine implements DbEngine {
     }
 
     setDbHost(host: string): void {
-        this.mongodb_host = host;
+        this.host = host;
     }
 
-    setDbName(name: string): void {
-        this.mongodb_db_name = name;
+    async changeDb(name: string): Promise<void> {
+        this.dbName = name;
     }
 
     async migrate() {
-        await this.mongoDbMigrationV40.migrate(this, this.dbUnitOfWorkFactory({}));
+        await this.mongoDbMigrationV40.migrate(this, this.databaseContextFactory({}));
     }
 }

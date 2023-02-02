@@ -1,8 +1,8 @@
 import express from "express";
-import { gridFsRedisMiddleware } from "../middleware/grid-fs-redis-middleware";
+import { redisMiddleware } from "../middleware/redis-middleware";
 
 let ModelRouter = express.Router();
 
-ModelRouter.use("/:id", gridFsRedisMiddleware("id"));
+ModelRouter.use("/:id", redisMiddleware("id"));
 
 export { ModelRouter };
