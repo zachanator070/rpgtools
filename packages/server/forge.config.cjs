@@ -23,9 +23,9 @@ module.exports = {
       name: '@electron-forge/maker-deb',
       config: {bin: '@rpgtools-server'},
     },
-    // {
-    //   name: '@electron-forge/maker-rpm',
-    //   config: {bin: '@rpgtools-server'},
-    // },
+    {
+      name: '@electron-forge/maker-rpm',
+      config: {bin: '@rpgtools-server'},
+    },
   ],
 };
