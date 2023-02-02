@@ -17,7 +17,7 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {bin: '@rpgtools-server'},
+      config: {bin: '@rpgtools-server', name: '@rpgtools-server'},
     },
     {
       name: '@electron-forge/maker-zip',
