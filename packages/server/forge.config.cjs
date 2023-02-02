@@ -6,9 +6,12 @@ module.exports = {
   rebuildConfig: {},
   hooks: {
     postPackage: async (forgeConfig, options) => {
+      const rpgtoolsModuleDestination = path.join(options.outputPaths[0], 'resources', 'app', 'node_modules', '@rpgtools');
       fs.cpSync(path.join('.', '..', 'frontend', 'dist'), path.join(options.outputPaths[0], 'resources', 'app', 'dist', 'frontend',), {recursive: true});
-      fs.cpSync(path.join('.', '..', 'common', 'src'), path.join(options.outputPaths[0], 'resources', 'app', 'dist', 'common', 'src'), {recursive: true});
       fs.cpSync(path.join('.', '..', '..', 'node_modules'), path.join(options.outputPaths[0], 'resources', 'app', 'node_modules'), {recursive: true});
+      fs.rmSync(rpgtoolsModuleDestination, {recursive: true});
+      fs.mkdirSync(rpgtoolsModuleDestination);
+      fs.cpSync(path.join('.', '..', 'common'), rpgtoolsModuleDestination, {recursive: true});
     }
   },
   makers: [
