@@ -28,6 +28,7 @@ describe("roles", () => {
 
             it('add and remove user', () => {
                cy.get('#selectUserInput').type('tester');
+                cy.get('div').should('contain.text', 'tester');
                cy.get('div').contains('tester').click();
                cy.get('button').contains('Add User').click();
 

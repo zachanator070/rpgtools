@@ -132,10 +132,10 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/export", ExportRouter);
 
 		this.expressServer.get("/ui*", (req, res) => {
-			return res.sendFile(path.resolve("../frontend/dist", "index.html"));
+			return res.sendFile(path.resolve("dist/frontend", "index.html"));
 		});
 
-		this.expressServer.use(express.static("../frontend/dist"));
+		this.expressServer.use(express.static("dist/frontend"));
 		this.expressServer.use(graphqlUploadExpress());
 
 		this.expressServer.use(cors({

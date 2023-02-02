@@ -151,9 +151,11 @@ build: install-deps ui-prod clean-uncompressed
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:${VERSION} -f packages/server/Dockerfile .
 
 # cleans built transpiled js and node modules
-clean: down
+clean: down clean-deps
+	rm -rf db
 	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
+	rm -rf packages/server/out
 	-docker rmi zachanator070/rpgtools:latest
 
 clean-deps:

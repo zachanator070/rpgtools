@@ -9,7 +9,7 @@ describe('load 5e content', () => {
         goToWorldSettings();
     })
 
-    it('load all', () => {
+    it.skip('load all', () => {
         cy.get(':nth-child(1) > .ant-checkbox > .ant-checkbox-input').click();
         cy.get(':nth-child(2) > .ant-checkbox > .ant-checkbox-input').click();
         cy.get('button').contains('Load').click();

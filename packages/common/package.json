@@ -4,7 +4,9 @@
   "description": "Tool set for playing an RPG game",
   "license": "MIT",
   "repository": "https://github.com/zachanator070/rpgtools",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "type": "module",
   "dependencies": {
     "graphql-tag": "^2.12.5"
