@@ -9,9 +9,16 @@ See the [rpgtools-srd](https://github.com/zachanator070/rpgtools-srd) repo for D
 ## Usage
 
 ### Desktop Environment
-Not Implemented yet
 
 This environment is designed to require no configuration and without the use of docker on any OS.
+
+See the [releases page](https://github.com/zachanator070/rpgtools/releases) for a list of installers for Windows, MacOS, and Linux.
+
+#### Notes for Windows Users
+After running the setup application for Windows, the server is installed at `C:\Users\<your username>\AppData\Local\rpgtools-server`
+
+#### Notes for Linux Users
+After installing the .deb or .rpm, the server is installed at `/usr/lib/rpgtools-server`
 
 ### Production Server Environment
 

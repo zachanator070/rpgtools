@@ -1,6 +1,7 @@
 {
   "name": "@rpgtools/server",
   "version": "4.0.0",
+  "author": "zachanator070",
   "description": "Tool set for playing an RPG game",
   "license": "MIT",
   "repository": "https://github.com/zachanator070/rpgtools",
