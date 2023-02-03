@@ -134,7 +134,6 @@ ci: .env install-deps test
 
 # installs all dependencies for dev and CI work
 install-deps:
-	# installs node modules needed by CI
 	npm ci
 
 lint:
@@ -161,6 +160,7 @@ server-js:
 
 # makes electron package artifact
 electron: install-deps ui-prod server-js
+	rm -rf node_modules/@rpgtools
 	npm run -w packages/server make
 
 # cleans built transpiled js and node modules

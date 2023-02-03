@@ -77,6 +77,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./packages/server/out/make/exe/x64/rpgtools-server\ Setup.exe
-          asset_name: rpgtools-server\ Setup.exe
+          asset_path: ./packages/server/out/make/squirrel.windows/x64/@rpgtools-server-${{ needs.release.outputs.version }}\ Setup.exe
+          asset_name: rpgtools-server-${{ needs.release.outputs.version }}\ Setup.exe
           asset_content_type: application/exe
