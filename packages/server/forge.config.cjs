@@ -30,5 +30,9 @@ module.exports = {
       name: '@electron-forge/maker-rpm',
       config: {bin: '@rpgtools-server'},
     },
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {bin: '@rpgtools-server'}
+    }
   ],
 };

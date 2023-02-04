@@ -89,7 +89,7 @@ jobs:
       - name: list artifacts
         run: ls packages\server\out\make\squirrel.windows\x64
         continue-on-error: true
-      - name: upload msi artifact
+      - name: upload setup artifact
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -97,4 +97,26 @@ jobs:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: '.\packages\server\out\make\squirrel.windows\x64\@rpgtools-server-${{ needs.release.outputs.version }} Setup.exe'
           asset_name: rpgtools-server-${{ needs.release.outputs.version }}-Setup.exe
+          asset_content_type: application/exe
+
+  electron-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.0
+      - uses: actions/checkout@v3
+      - name: build artifacts
+        run: make electron
+      - name: list artifacts
+        run: ls -R packages/server/out/make
+        continue-on-error: true
+      - name: upload dmg artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./packages/server/out/make/dmg/x64/rpgtools-server-${{ needs.release.outputs.version }}.dmg
+          asset_name: rpgtools-server-${{ needs.release.outputs.version }}.dmg
           asset_content_type: application/exe
