@@ -13,7 +13,7 @@
 		"seed:new": "sh ../../dev/scripts/seed.sh new_server",
 		"seed:middle_earth": "sh ../../dev/scripts/seed.sh middle_earth"
 	},
-	"dependencies": {
+	"devDependencies": {
 		"@ant-design/icons": "^4.7.0",
 		"@apollo/client": "^3.6.9",
 		"@babel/core": "^7.19.0",
@@ -49,9 +49,7 @@
 		"stats-webpack-plugin": "^0.7.0",
 		"three": "^0.129.0",
 		"uuid": "latest",
-		"webpack-visualizer-plugin": "^0.1.11"
-	},
-	"devDependencies": {
+		"webpack-visualizer-plugin": "^0.1.11",
 		"@webpack-cli/generators": "^2.5.0",
 		"css-loader": "^6.7.1",
 		"cypress": "^10.6.0",

@@ -158,8 +158,13 @@ build: install-deps ui-prod clean-uncompressed
 server-js:
 	npm run -w packages/server build
 
+cache_node_modules:
+	npm ci --omit=dev
+	rm -rf node_modules/@rpgtools
+	cp -R node_modules node_modules_cache
+
 # makes electron package artifact
-electron: install-deps ui-prod server-js
+electron: cache_node_modules install-deps ui-prod server-js
 	rm -rf node_modules/@rpgtools
 	npm run -w packages/server make
 
@@ -176,6 +181,7 @@ clean-deps:
 	rm -rf packages/frontend/node_modules
 	rm -rf packages/server/node_modules
 	rm -rf packages/common/node_modules
+	-rm -rf node_modules_cache
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
