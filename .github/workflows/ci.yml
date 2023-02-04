@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  CI-Tests:
+  ci:
 
     runs-on: ubuntu-latest
 
