@@ -195,7 +195,7 @@ build-with-stats: ui-prod
 
 packages/frontend/dist:
 	mkdir -p packages/frontend/dist
-	chmod o+rw -R packages/frontend/dist
+	chmod -R o+rw packages/frontend/dist
 
 packages/server/dist:
 	mkdir -p packages/server/dist

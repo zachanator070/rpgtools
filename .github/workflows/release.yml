@@ -101,6 +101,7 @@ jobs:
 
   electron-macos:
     runs-on: macos-latest
+    needs: release
     steps:
       - uses: actions/setup-node@v3
         with:
