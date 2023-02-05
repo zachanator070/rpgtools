@@ -166,6 +166,7 @@ cache_node_modules:
 # makes electron package artifact
 electron: cache_node_modules install-deps ui-prod server-js
 	rm -rf node_modules/@rpgtools
+	cp -R node_modules_cache/* packages/server/node_modules
 	npm run -w packages/server make
 
 # cleans built transpiled js and node modules
