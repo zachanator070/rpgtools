@@ -169,6 +169,8 @@ electron: cache_node_modules install-deps ui-prod server-js
 	cp -R node_modules_cache/* packages/server/node_modules
 	mkdir packages/server/node_modules/@rpgtools
 	cp -R packages/common packages/server/node_modules/@rpgtools
+	mkdir packages/server/dist/frontend
+	cp -R packages/frontend/dist/* packages/server/dist/frontend
 	npm run -w packages/server make
 
 # cleans built transpiled js and node modules
