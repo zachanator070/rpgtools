@@ -1,4 +1,4 @@
-# rpgtools ![Build Status](https://github.com/zachanator070/rpgtools/actions/workflows/cd.yml/badge.svg)
+# rpgtools ![Build Status](https://github.com/zachanator070/rpgtools/actions/workflows/release.yml/badge.svg)
 
 Tool set for playing an RPG game
 
@@ -10,21 +10,30 @@ See the [rpgtools-srd](https://github.com/zachanator070/rpgtools-srd) repo for D
 
 ### Desktop Environment
 
-This environment is designed to require no configuration and without the use of docker on any OS.
+This environment is designed to run on any OS, requires no configuration, and doesn't require any prerequisites to be installed.
 
 See the [releases page](https://github.com/zachanator070/rpgtools/releases) for a list of installers for Windows, MacOS, and Linux.
 
+Yes I understand none of these installers are digitally signed. It's a bit of effort to do this, and it's currently not a priority.
+
 #### Notes for Windows Users
-After running the setup application for Windows, the server is installed at `C:\Users\<your username>\AppData\Local\rpgtools-server`
+- The Windows installer is not currently signed. Windows will try to block the installer, but you can click the 'Run Anyway' button to ignore the warning, and everything should work fine. 
+- After running the setup application for Windows, the server is installed at `C:\Users\<your username>\AppData\Local\rpgtools-server`
 
 #### Notes for Linux Users
-After installing the .deb or .rpm, the server is installed at `/usr/lib/rpgtools-server`
+- After installing the .deb or .rpm, the server is installed at `/usr/lib/rpgtools-server`
+
+#### Notes for Mac Users
+- The application the dmg installs is not signed. It costs $100/year for a Mac Developer license to do this, and I'm too cheap to invest.
+You can still run the application by following this guide 
+[here](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac)
 
 ### Production Server Environment
 
 #### Requirements
 
 - docker
+- docker compose plugin
 
 This environment is to be used by those that wish to run rpgtools in an optimized, performant setting
 where users will interact with the service.
@@ -33,7 +42,7 @@ To run the service:
 1. Download the `.env.example` and save as `.env`
 2. Change the line with `#MONGODB_HOST=mongodb` to `MONGODB_HOST=mongodb`
 3. Download the `docker-compose.yml` file
-4. Run the command `docker-compose up -d prod`
+4. Run the command `docker compose up -d prod`
 
 The production environment will run the following docker containers:
 
@@ -45,7 +54,7 @@ The production environment will run the following docker containers:
 #### Requirements
 
 - docker
-- docker-compose
+- docker compose plugin
 - make
 - jq
 
@@ -68,13 +77,13 @@ See [.env.example](https://github.com/zachanator070/rpgtools/blob/master/.env.ex
 ## Advanced Server Administration
 
 A simple make target has been provided to install on a linux debian-based host.
-This simple install will:
+This simple installation will:
 
 - install a systemd unit file
 - install mongodb
 - install a basic config under /etc/rpgtools
 
-To run this simple install use the command:
+To run this simple installation use the command:
 
 `make install`
 
@@ -82,7 +91,7 @@ This script will set up mongodb and ensure that the RPGTools docker container is
 
 #### WARNING
 
-This simple install is not secure. If you plan on having rpgtools accept connections from the public internet, it is recommended to tighten security in the following ways:
+This simple installation is not secure. If you plan on having rpgtools accept connections from the public internet, it is recommended to tighten security in the following ways:
 
 - replace private keys in environment file
   - /etc/rpgtools/.env for linux hosts and .env file in your home folder of this repo for windows hosts
