@@ -10,45 +10,45 @@ CURRENT_UID=$(shell id -u):$(shell id -g)
 .PHONY: prod
 # runs production version of docker image with minimal depending services
 prod: build
-	docker-compose up -d prod
+	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
 .PHONY: dev
 dev: .env packages/frontend/dist packages/server/dist db
-	docker-compose up server ui-builder
+	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
 .PHONY: dev-brk
 dev-brk: .env packages/frontend/dist packages/server/dist db
-	docker-compose up server-brk ui-builder
+	docker compose up server-brk ui-builder
 
 .PHONY: mongodb
 mongodb:
-	docker-compose up -d mongodb
+	docker compose up -d mongodb
 
 .PHONY: postgres
 postgres:
-	docker-compose up -d postgres
+	docker compose up -d postgres
 
 .PHONY: down
 # stops and destroys any running containers
 down: .env
-	docker-compose down
+	docker compose down
 
 .PHONY: dev-logs
 # watch logs of running docker containers
 dev-logs:
-	docker-compose logs -f server ui-builder
+	docker compose logs -f server ui-builder
 
 .PHONY: restart
 # restart any running containers
 restart:
-	docker-compose restart
+	docker compose restart
 
 .PHONY: build-dev
-# rebuilds local docker-compose containers, usually only used in a dev environment
+# rebuilds local docker compose containers, usually only used in a dev environment
 build-dev:
-	docker-compose build
+	docker compose build
 
 #########
 # TESTS #
@@ -68,46 +68,46 @@ test-integration-update-snapshots: test-integration-postgres
 
 .PHONY: test-integration-postgres
 test-integration-postgres: postgres
-	docker-compose up -d postgres
+	docker compose up -d postgres
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
-	docker-compose down
+	docker compose down
 
 .PHONY: test-integration-mongodb
 test-integration-mongodb:
-	docker-compose up -d mongodb
+	docker compose up -d mongodb
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
-	docker-compose down
+	docker compose down
 
 .PHONY: test-integration-sqlite
 test-integration-sqlite:
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#SQLITE_DB_NAME=rpgtools/SQLITE_DB_NAME=rpgtools/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
-	docker-compose down
+	docker compose down
 
 .PHONY: test-e2e-mongodb
 test-e2e-mongodb: build
 	cp .env.example .env
 	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
-	docker-compose up -d prod mongodb
+	docker compose up -d prod mongodb
 	./wait_for_server.sh
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
-	docker-compose down
+	docker compose down
 
 .PHONY: test-e2e-postgres
 test-e2e-postgres: build
 	cp .env.example .env
 	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
-	docker-compose up -d prod postgres
+	docker compose up -d prod postgres
 	./wait_for_server.sh
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
-	docker-compose down
+	docker compose down
 
 .PHONY: cypress
 cypress:
