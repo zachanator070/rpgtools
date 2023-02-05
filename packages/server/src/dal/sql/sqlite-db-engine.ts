@@ -55,6 +55,7 @@ import UserModel from "./models/user-model";
 import WikiFolderModel from "./models/wiki-folder-model";
 import WorldModel from "./models/world-model";
 import UserToRoleModel from "./models/user-to-role-model";
+import path from 'path';
 
 
 @injectable()
@@ -78,7 +79,7 @@ export default class SqliteDbEngine implements DbEngine {
     }
 
     getDbFilePath() {
-        return `${this.dbDirectory}/${this.dbName}.sqlite`;
+        return path.join(this.dbDirectory, `${this.dbName}.sqlite`);
     }
 
     async connect(): Promise<void> {
