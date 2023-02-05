@@ -1,4 +1,4 @@
-# rpgtools ![Build Status](https://github.com/zachanator070/rpgtools/actions/workflows/release.yml/badge.svg)
+# rpgtools ![Build Status](https://github.com/zachanator070/rpgtools/actions/workflows/release.yml/badge.svg?branch=)
 
 Tool set for playing an RPG game
 
