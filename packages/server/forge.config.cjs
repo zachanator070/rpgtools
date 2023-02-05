@@ -7,10 +7,10 @@ module.exports = {
   hooks: {
     postPackage: async (forgeConfig, options) => {
       const rpgtoolsModuleDestination = path.join(options.outputPaths[0], 'resources', 'app', 'node_modules', '@rpgtools');
-      fs.cpSync(path.join('.', '..', 'frontend', 'dist'), path.join(options.outputPaths[0], 'resources', 'app', 'dist', 'frontend',), {recursive: true});
+      fs.cpSync(path.join('.', '..', 'frontend', 'dist'), path.join(options.outputPaths[0], 'resources', 'app', 'dist', 'frontend'), {recursive: true});
       // fs.cpSync(path.join('.', '..', '..', 'node_modules_cache'), path.join(options.outputPaths[0], 'resources', 'app', 'node_modules'), {recursive: true, errorOnExist: true});
-      fs.mkdirSync(rpgtoolsModuleDestination);
-      fs.cpSync(path.join('.', '..', 'common'), path.join(rpgtoolsModuleDestination, 'common'), {recursive: true});
+      // fs.mkdirSync(rpgtoolsModuleDestination);
+      // fs.cpSync(path.join('.', '..', 'common'), path.join(rpgtoolsModuleDestination, 'common'), {recursive: true});
     }
   },
   makers: [
