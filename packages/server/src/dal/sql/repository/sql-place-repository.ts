@@ -6,9 +6,6 @@ import {PlaceRepository} from "../../repository/place-repository";
 import PlaceFactory from "../../../domain-entities/factory/place-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageModel from "../models/wiki-page-model";
-import {Person} from "../../../domain-entities/person";
-import PersonModel from "../models/person-model";
-
 
 @injectable()
 export default class SqlPlaceRepository extends AbstractSqlRepository<Place, WikiPageModel> implements PlaceRepository {
