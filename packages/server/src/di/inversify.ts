@@ -196,6 +196,10 @@ import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permiss
 import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine";
 import SqliteDbEngine from "../dal/sql/sqlite-db-engine";
 import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine";
+import {EventWiki} from "../domain-entities/event-wiki";
+import EventWikiFactory from "../domain-entities/factory/event-wiki-factory";
+import EventWikiRepository from "../dal/repository/event-wiki-repository";
+import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-repository";
 
 const container = new Container();
 
@@ -217,6 +221,7 @@ const bindAll = () => {
 	container.bind<User>(INJECTABLE_TYPES.User).to(User);
 	container.bind<WikiFolder>(INJECTABLE_TYPES.WikiFolder).to(WikiFolder);
 	container.bind<World>(INJECTABLE_TYPES.World).to(World);
+	container.bind<EventWiki>(INJECTABLE_TYPES.Event).to(EventWiki);
 
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Article);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Chunk);
@@ -287,6 +292,9 @@ const bindAll = () => {
 	container
 		.bind<WorldFactory>(INJECTABLE_TYPES.WorldFactory)
 		.to(WorldFactory);
+	container
+		.bind<EventWikiFactory>(INJECTABLE_TYPES.EventWikiFactory)
+		.to(EventWikiFactory);
 
 	container
 		.bind<CharacterFactory>(INJECTABLE_TYPES.CharacterFactory)
@@ -310,8 +318,7 @@ const bindAll = () => {
 		.bind<InGameModelFactory>(INJECTABLE_TYPES.InGameModelFactory)
 		.to(InGameModelFactory);
 
-
-// db repositories
+	// db repositories
 	if (process.env.MONGODB_HOST) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(MongodbChunkRepository);
@@ -360,6 +367,7 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(SqlWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(SqlEventWikiRepository);
 
 		container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 	} else {

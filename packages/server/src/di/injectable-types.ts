@@ -22,6 +22,7 @@ export const INJECTABLE_TYPES = {
 	User: Symbol.for("User"),
 	WikiFolder: Symbol.for("WikiFolder"),
 	World: Symbol.for("World"),
+	Event: Symbol.for("Event"),
 
 	// entity factories
 	ArticleFactory: Symbol.for("ArticleFactory"),
@@ -42,6 +43,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderFactory: Symbol.for("WikiFolderFactory"),
 	WikiPageFactory: Symbol.for("WikiPageFactory"),
 	WorldFactory: Symbol.for("WorldFactory"),
+	EventWikiFactory: Symbol.for("EventFactory"),
 
 	CharacterFactory: Symbol.for('CharacterFactory'),
 	CharacterAttributeFactory: Symbol.for('CharacterAttributeFactory'),
@@ -69,6 +71,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderRepository: Symbol.for("WikiFolderRepository"),
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
+	EventWikiRepository: Symbol.for("EventWikiRepository"),
 
 	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
 

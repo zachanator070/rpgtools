@@ -1,7 +1,7 @@
 import { WikiPage } from "./wiki-page";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import {inject, injectable} from "inversify";
-import {DomainEntity, EntityFactory, Factory, RepositoryAccessor} from "../types";
+import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
