@@ -25,6 +25,7 @@ export const WORLD = "World";
 export const MODEL = "Model";
 export const ACL_ENTRY = 'AclEntry';
 export const EVENT_WIKI = 'Event';
+export const CALENDAR = 'Calendar';
 
 export const ALL_WIKI_TYPES = [ARTICLE, PERSON, PLACE, ITEM, MONSTER, EVENT_WIKI];
 export const MODELED_WIKI_TYPES = [PERSON, ITEM, MONSTER];

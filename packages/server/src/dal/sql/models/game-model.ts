@@ -11,7 +11,6 @@ import InGameModelModel from "./game/in-game-model-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import {PLACE, USER, WORLD} from "@rpgtools/common/src/type-constants";
 
-
 export default class GameModel extends PermissionControlledModel {
 
     declare passwordHash: string;

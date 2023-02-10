@@ -69,6 +69,11 @@ export const WORLD_PERMISSIONS = [
 	WORLD_RW,
 ];
 
+// calendar permissions
+
+export const CALENDAR_RW = "Able to change this calendar definition";
+export const CALENDAR_READ = "Able to read this calendar";
+
 // role permissions
 export const ROLE_READ = "Able to see members of this role";
 export const ROLE_RW = "Able to change members of this role";

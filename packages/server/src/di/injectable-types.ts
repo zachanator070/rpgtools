@@ -23,6 +23,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolder: Symbol.for("WikiFolder"),
 	World: Symbol.for("World"),
 	Event: Symbol.for("Event"),
+	Calendar: Symbol.for("Calendar"),
 
 	// entity factories
 	ArticleFactory: Symbol.for("ArticleFactory"),
@@ -44,6 +45,7 @@ export const INJECTABLE_TYPES = {
 	WikiPageFactory: Symbol.for("WikiPageFactory"),
 	WorldFactory: Symbol.for("WorldFactory"),
 	EventWikiFactory: Symbol.for("EventFactory"),
+	CalendarFactory: Symbol.for("CalendarFactory"),
 
 	CharacterFactory: Symbol.for('CharacterFactory'),
 	CharacterAttributeFactory: Symbol.for('CharacterAttributeFactory'),
@@ -93,6 +95,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderAuthorizationPolicy: Symbol.for("WikiFolderAuthorizationPolicy"),
 	WikiPageAuthorizationPolicy: Symbol.for("WikiPageAuthorizationPolicy"),
 	WorldAuthorizationPolicy: Symbol.for("WorldAuthorizationPolicy"),
+	CalendarAuthorizationPolicy: Symbol.for("CalendarAuthorizationPolicy"),
 
 	// archive repositories
 	ArchiveArticleRepository: Symbol.for("ArchiveArticleRepository"),
