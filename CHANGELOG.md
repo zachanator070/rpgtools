@@ -1,8 +1,4 @@
- ### RPG Tools v4.0.0 Changelog
- - ACL's being kept track on objects and not in a separate collection
- - Do not fetch permissions from DB on every request
- - Get rid of generic find method on repo interface
- - Support SQL server
- - Add default world server setting
- - Redo demo videos in larger zoom
- - Fix article linking
+ ### RPG Tools v4.0.1 Changelog
+ - Fixed a bug where srd wasn't uploading due to database schema inconsistencies between MongoDB and Postgres
+ - Fixed a bug where searching for a wiki page when editing a pin didn't return results
+ - Fixed all tests to run correctly with new changes due to electron build requirements

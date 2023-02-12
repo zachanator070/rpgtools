@@ -1,4 +1,4 @@
-import {container} from "../../../src/di/inversify";
+import {container, bindAll} from "../../../src/di/inversify";
 import {DbEngine} from "../../../src/types";
 import {INJECTABLE_TYPES} from "../../../src/di/injectable-types";
 import {InMemoryUserRepository} from "../../../src/dal/in-memory/repositories/in-memory-user-repository";
@@ -7,6 +7,8 @@ import {AuthenticationService} from "../../../src/services/authentication-servic
 import {UserRepository} from "../../../src/dal/repository/user-repository";
 import {DatabaseContext} from "../../../src/dal/database-context";
 import UserFactory from "../../../src/domain-entities/factory/user-factory";
+
+bindAll()
 
 describe("AuthenticationApplicationService test", () => {
     const service = container.get<AuthenticationService>(INJECTABLE_TYPES.AuthenticationService);

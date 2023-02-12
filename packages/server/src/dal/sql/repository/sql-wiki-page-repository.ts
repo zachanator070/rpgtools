@@ -7,6 +7,7 @@ import WikiPageModel from "../models/wiki-page-model";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import {Op} from "sequelize";
 
 @injectable()
 export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPage, WikiPageModel> implements WikiPageRepository {
@@ -41,9 +42,9 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     async findByNameAndTypesPaginatedSortByName(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>> {
         const filter: any = {};
         if(name) {
-            filter.name = name;
+            filter.name = {[Op.iLike]: `%${name}%`};
         }
-        if(types) {
+        if(types && types.length > 0) {
             filter.type = types;
         }
         return this.buildPaginatedResult(page, filter, 'name');
