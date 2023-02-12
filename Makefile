@@ -4,14 +4,16 @@ VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
 NODE_MODULES=node_modules/@rpgtools/server/package.json
+PROD_NODE_MODULES_CACHE=node_modules_cache/apollo-server/package.json
 FRONTEND_JS=packages/frontend/dist/app.js
 FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=packages/server/dist/server/src/index.js
 SERVER_TS=$(shell find packages/server/src -name *.ts)
+ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
 
-##################
-# RUN CONTAINERS #
-##################
+################
+# RUN COMMANDS #
+################
 
 # runs production version of docker image with minimal depending services
 run-prod: build-prod
@@ -51,6 +53,9 @@ install:
 	sudo systemctl start rpgtools
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
+
+run-electron: $(ELECTRON_EXEC)
+	./$(ELECTRON_EXEC)
 
 #########
 # TESTS #
@@ -138,45 +143,15 @@ lint:
 # CONTINUOUS DEPLOYMENT #
 #########################
 
-# Builds rpgtools docker image
-build-prod: $(NODE_MODULES) prod-ui clean-uncompressed $(SERVER_JS)
-	echo "Building version $(VERSION)"
-	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile .
-
-node_modules_cache:
-	npm ci --omit=dev
-	rm -rf node_modules/@rpgtools
-	mv node_modules node_modules_cache
-
-# makes electron package artifact
-electron: node_modules_cache $(NODE_MODULES) prod-ui $(SERVER_JS)
-	rm -rf node_modules/@rpgtools
-	cp -R node_modules_cache/* packages/server/node_modules
-	mkdir packages/server/node_modules/@rpgtools
-	cp -R packages/common packages/server/node_modules/@rpgtools
-	mkdir packages/server/dist/frontend
-	cp -R packages/frontend/dist/* packages/server/dist/frontend
-	npm run -w packages/server make
-
-# cleans up uncompressed artifacts that bloat the built docker image
-clean-uncompressed:
-	rm -f packages/frontend/dist/app.js
-	rm -f packages/frontend/dist/app.css
-
-# builds transpiled js bundles with stats about bundle, stats end up in dist folder
-build-with-stats: BUILD_WITH_STATS=true
-build-with-stats: NODE_ENV=production
-build-with-stats: $(FRONTEND_JS)
-
 # pushes built docker container to dockerhub
 publish:
 	docker login -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)"
 	docker push zachanator070/rpgtools:$(VERSION)
 	docker push zachanator070/rpgtools:latest
 
-#########
-# BUILD #
-#########
+###############
+# BUILD CLEAN #
+###############
 
 # cleans built transpiled js and node modules
 clean: down clean-deps
@@ -193,6 +168,15 @@ clean-deps:
 	rm -rf packages/common/node_modules
 	-rm -rf node_modules_cache
 
+# cleans up uncompressed artifacts that bloat the built docker image
+clean-uncompressed:
+	rm -f packages/frontend/dist/app.js
+	rm -f packages/frontend/dist/app.css
+
+######################
+# BUILD DEPENDENCIES #
+######################
+
 dev-deps: $(NODE_MODULES)
 
 prod-deps: NODE_ENV=production
@@ -201,11 +185,29 @@ prod-deps: $(NODE_MODULES)
 $(NODE_MODULES): package-lock.json
 	npm ci
 
+$(PROD_NODE_MODULES_CACHE):
+	npm ci --omit=dev
+	rm -rf node_modules/@rpgtools
+	mv node_modules node_modules_cache
+
+################
+# BUILD SERVER #
+################
+
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
 $(SERVER_JS): $(SERVER_TS) $(NODE_MODULES)
 	npm run -w packages/server build
+
+# Builds rpgtools docker image
+build-prod: $(NODE_MODULES) prod-ui clean-uncompressed $(SERVER_JS)
+	echo "Building version $(VERSION)"
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile .
+
+############
+# BUILD UI #
+############
 
 prod-ui: NODE_ENV=production
 prod-ui: $(FRONTEND_JS)
@@ -213,6 +215,14 @@ prod-ui: $(FRONTEND_JS)
 # transpiles the frontend tsx and typescript to js
 $(FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES) .env
 	npm -w packages/frontend start
+
+# builds transpiled js bundles with stats about bundle, stats end up in dist folder
+build-with-stats: BUILD_WITH_STATS=true
+build-with-stats: prod-ui
+
+#####################
+# BUILD DIRECTORIES #
+#####################
 
 packages/frontend/dist:
 	mkdir -p packages/frontend/dist
@@ -233,3 +243,21 @@ db:
 # builds local docker compose containers, usually only used in a dev environment
 build-dev: $(FRONTEND_JS)
 	docker compose build
+
+##################
+# BUILD ELECTRON #
+##################
+
+# makes packaged electron executable
+electron-package: $(ELECTRON_EXEC)
+
+$(ELECTRON_EXEC): $(PROD_NODE_MODULES_CACHE) $(NODE_MODULES) prod-ui $(SERVER_JS)
+	rm -rf node_modules/@rpgtools
+	cp -R node_modules_cache/* packages/server/node_modules
+	mkdir -p packages/server/node_modules/@rpgtools
+	cp -R packages/common packages/server/node_modules/@rpgtools
+	mkdir -p packages/server/dist/frontend
+	cp -R packages/frontend/dist/* packages/server/dist/frontend
+	npm run -w packages/server make
+
+electron: $(ELECTRON_EXEC)
