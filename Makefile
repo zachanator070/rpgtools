@@ -14,12 +14,12 @@ prod: build
 
 # runs development docker environment with auto transpiling and restarting services upon file change
 .PHONY: dev
-dev: .env packages/frontend/dist packages/server/dist db
+dev: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
 .PHONY: dev-brk
-dev-brk: .env packages/frontend/dist packages/server/dist db
+dev-brk: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
 	docker compose up server-brk ui-builder
 
 .PHONY: mongodb
@@ -47,7 +47,7 @@ restart:
 
 .PHONY: build-dev
 # rebuilds local docker compose containers, usually only used in a dev environment
-build-dev:
+build-dev: ui-dev
 	docker compose build
 
 #########
@@ -62,6 +62,8 @@ JEST_OPTIONS=
 .PHONY: test-unit
 test-unit:
 	npm run test:unit --workspace=packages/server
+
+test-integration: test-integration-mongodb test-integration-postgres
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
@@ -130,11 +132,7 @@ seed-new: .env
 # CI #
 ######
 
-ci: .env install-deps test
-
-# installs all dependencies for dev and CI work
-install-deps:
-	npm ci
+ci: .env node_modules test
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
@@ -144,13 +142,21 @@ lint:
 # CONTINUOUS DEPLOYMENT #
 #########################
 
+node_modules: install-deps
+
+install-deps:
+	npm ci
+
 # runs the js transpiler docker image
-ui-prod: .env packages/frontend/dist packages/server/dist
+ui-prod: .env packages/frontend/dist
 	echo Current UID: ${CURRENT_UID}
 	NODE_ENV=production npm -w packages/frontend start
 
+ui-dev: .env packages/frontend/dist
+	npm -w packages/frontend start
+
 # Builds rpgtools docker image
-build: install-deps ui-prod clean-uncompressed
+build: node_modules ui-prod clean-uncompressed
 	echo "Building version ${VERSION}"
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:${VERSION} -f packages/server/Dockerfile .
 
@@ -164,7 +170,7 @@ cache_node_modules:
 	cp -R node_modules node_modules_cache
 
 # makes electron package artifact
-electron: cache_node_modules install-deps ui-prod server-js
+electron: cache_node_modules node_modules ui-prod server-js
 	rm -rf node_modules/@rpgtools
 	cp -R node_modules_cache/* packages/server/node_modules
 	mkdir packages/server/node_modules/@rpgtools
@@ -202,8 +208,11 @@ packages/frontend/dist:
 	mkdir -p packages/frontend/dist
 	chmod -R o+rw packages/frontend/dist
 
-packages/server/dist:
-	mkdir -p packages/server/dist
+packages/server/dist/common:
+	mkdir -p packages/server/dist/common
+
+packages/server/dist/server:
+	mkdir -p packages/server/dist/server
 
 db:
 	mkdir -p db

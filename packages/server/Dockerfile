@@ -1,25 +1,37 @@
 # node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
 FROM node:16.17.0-slim
 
+RUN mkdir /opt/rpgtools
+RUN chown node:node /opt/rpgtools
+
+USER node
+
 WORKDIR /opt/rpgtools
-ADD package.json .
-ADD package-lock.json .
+ADD --chown=node:node package.json .
+ADD --chown=node:node package-lock.json .
+
+RUN mkdir -p /opt/rpgtools/packages/common
 
 WORKDIR /opt/rpgtools/packages/common
-ADD packages/common/package.json package.json
-ADD packages/common/tsconfig.json tsconfig.json
+ADD --chown=node:node packages/common/package.json package.json
+ADD --chown=node:node packages/common/tsconfig.json tsconfig.json
+
+RUN mkdir -p /opt/rpgtools/packages/server
 
 WORKDIR /opt/rpgtools/packages/server
-ADD packages/server/package.json package.json
-ADD packages/server/tsconfig.json tsconfig.json
+ADD --chown=node:node packages/server/package.json package.json
+ADD --chown=node:node packages/server/tsconfig.json tsconfig.json
 
 WORKDIR /opt/rpgtools
 RUN npm ci
 
-ADD packages/common/src packages/common/src
-ADD packages/server/src packages/server/src
+ADD --chown=node:node packages/common/src packages/common/src
+ADD --chown=node:node packages/server/src packages/server/src
 
-ADD packages/frontend/dist packages/server/dist/frontend
+RUN mkdir -p packages/server/dist/common
+RUN mkdir -p packages/server/dist/server
+
+ADD --chown=node:node packages/frontend/dist packages/server/dist/frontend
 
 RUN mkdir /opt/rpgtools/db
 RUN chmod o+rw /opt/rpgtools/db

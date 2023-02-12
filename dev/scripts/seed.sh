@@ -10,12 +10,12 @@ fi
 
 if [ ! -z "$MONGODB_HOST" ]
 then
-  docker exec rpgtools_mongodb_1 mongosh /mongodb-dump/clean.js
-  docker exec rpgtools_mongodb_1 mongorestore --archive=/mongodb-dump/${DUMP_NAME}.archive --noIndexRestore
+  docker exec rpgtools-mongodb-1 mongosh /mongodb-dump/clean.js
+  docker exec rpgtools-mongodb-1 mongorestore --archive=/mongodb-dump/${DUMP_NAME}.archive --noIndexRestore
 elif [ ! -z "$POSTGRES_HOST" ]
 then
-  docker exec rpgtools_postgres_1 psql -U rpgtools -f /postgres-dump/clean.sql
-  docker exec rpgtools_postgres_1 psql -U rpgtools -f /postgres-dump/${DUMP_NAME}.sql
+  docker exec rpgtools-postgres-1 psql -U rpgtools -f /postgres-dump/clean.sql
+  docker exec rpgtools-postgres-1 psql -U rpgtools -f /postgres-dump/${DUMP_NAME}.sql
 else
   echo "Unable to detect database, check .env file for at least one database host defined"
   exit 1

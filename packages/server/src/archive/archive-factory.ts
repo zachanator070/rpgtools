@@ -74,7 +74,7 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 		if (entryType === FILE) {
 			const filename: string = this.getFilenameFromPath(entry.path);
 			const id = filename.split(".")[1];
-			const newFile = this.fileFactory.build({_id: id, filename, readStream: await this.createReadStream(entry), mimeType: null})
+			const newFile = this.fileFactory.build({_id: id, filename, readStream: await this.createReadStream(entry), mimeType: 'application/json'})
 			await archive.fileRepository.create(newFile);
 		} else {
 			const rawEntity = await this.getEntryContent(entry);
