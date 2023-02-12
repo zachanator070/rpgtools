@@ -3,63 +3,63 @@
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
+NODE_MODULES=node_modules/@rpgtools/server/package.json
+FRONTEND_JS=packages/frontend/dist/app.js
+FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
+SERVER_JS=packages/server/dist/server/src/index.js
+SERVER_TS=$(shell find packages/server/src -name *.ts)
+
 ##################
 # RUN CONTAINERS #
 ##################
 
-.PHONY: prod
 # runs production version of docker image with minimal depending services
-prod: build
+run-prod: build-prod
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-.PHONY: dev
-dev: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
+run-dev: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
-.PHONY: dev-brk
-dev-brk: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
+run-dev-brk: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
 	docker compose up server-brk ui-builder
 
-.PHONY: mongodb
-mongodb:
+run-mongodb:
 	docker compose up -d mongodb
 
-.PHONY: postgres
-postgres:
+run-postgres:
 	docker compose up -d postgres
 
-.PHONY: down
 # stops and destroys any running containers
 down: .env
 	docker compose down
 
-.PHONY: dev-logs
-# watch logs of running docker containers
-dev-logs:
-	docker compose logs -f server ui-builder
-
-.PHONY: restart
 # restart any running containers
 restart:
 	docker compose restart
 
-.PHONY: build-dev
-# rebuilds local docker compose containers, usually only used in a dev environment
-build-dev: ui-dev
-	docker compose build
+# performs minimal install on a debian host
+install:
+	sudo apt install mongodb
+	sudo systemctl enable mongodb
+	sudo mkdir /etc/rpgtools
+	sudo cp .env.example /etc/rpgtools/.env
+	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=localhost/' .env
+	sudo cp rpgtools.service /lib/systemd/system
+	sudo systemctl daemon-reload
+	sudo systemctl start rpgtools
+	sudo systemctl enable rpgtools
+	echo rpgtools is now available
 
 #########
 # TESTS #
 #########
 
-.PHONY: test
-test: test-unit test-integration-mongodb test-integration-postgres test-e2e-mongodb test-e2e-postgres
+test: test-unit test-integration test-e2e
 
 JEST_OPTIONS=
 
-.PHONY: test-unit
 test-unit:
 	npm run test:unit --workspace=packages/server
 
@@ -68,15 +68,13 @@ test-integration: test-integration-mongodb test-integration-postgres
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
 
-.PHONY: test-integration-postgres
-test-integration-postgres: postgres
+test-integration-postgres:
 	docker compose up -d postgres
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-.PHONY: test-integration-mongodb
 test-integration-mongodb:
 	docker compose up -d mongodb
 	cp .env.example packages/server/jest.env
@@ -84,15 +82,15 @@ test-integration-mongodb:
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-.PHONY: test-integration-sqlite
 test-integration-sqlite:
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#SQLITE_DB_NAME=rpgtools/SQLITE_DB_NAME=rpgtools/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-.PHONY: test-e2e-mongodb
-test-e2e-mongodb: build
+test-e2e: test-e2e-mongodb test-e2e-postgres
+
+test-e2e-mongodb: build-prod
 	cp .env.example .env
 	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
 	docker compose up -d prod mongodb
@@ -101,8 +99,7 @@ test-e2e-mongodb: build
 	npm run -w packages/frontend test
 	docker compose down
 
-.PHONY: test-e2e-postgres
-test-e2e-postgres: build
+test-e2e-postgres: build-prod
 	cp .env.example .env
 	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -111,15 +108,14 @@ test-e2e-postgres: build
 	npm run -w packages/frontend test
 	docker compose down
 
-.PHONY: cypress
-cypress:
+run-cypress:
 	npm run -w packages/frontend cypress:open
 
 ########################
 # TEST DATA MANAGEMENT #
 ########################
 
-dump:.env
+dump-db:.env
 	bash dev/scripts/dump.sh
 
 seed-middle-earth: .env
@@ -132,7 +128,7 @@ seed-new: .env
 # CI #
 ######
 
-ci: .env node_modules test
+ci: .env $(NODE_MODULES) test
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
@@ -142,35 +138,18 @@ lint:
 # CONTINUOUS DEPLOYMENT #
 #########################
 
-node_modules: install-deps
-
-install-deps:
-	npm ci
-
-# runs the js transpiler docker image
-ui-prod: .env packages/frontend/dist
-	echo Current UID: ${CURRENT_UID}
-	NODE_ENV=production npm -w packages/frontend start
-
-ui-dev: .env packages/frontend/dist
-	npm -w packages/frontend start
-
 # Builds rpgtools docker image
-build: node_modules ui-prod clean-uncompressed
-	echo "Building version ${VERSION}"
-	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:${VERSION} -f packages/server/Dockerfile .
+build-prod: $(NODE_MODULES) prod-ui clean-uncompressed $(SERVER_JS)
+	echo "Building version $(VERSION)"
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile .
 
-# transpiles the server typescript to js
-server-js:
-	npm run -w packages/server build
-
-cache_node_modules:
+node_modules_cache:
 	npm ci --omit=dev
 	rm -rf node_modules/@rpgtools
-	cp -R node_modules node_modules_cache
+	mv node_modules node_modules_cache
 
 # makes electron package artifact
-electron: cache_node_modules node_modules ui-prod server-js
+electron: node_modules_cache $(NODE_MODULES) prod-ui $(SERVER_JS)
 	rm -rf node_modules/@rpgtools
 	cp -R node_modules_cache/* packages/server/node_modules
 	mkdir packages/server/node_modules/@rpgtools
@@ -178,6 +157,26 @@ electron: cache_node_modules node_modules ui-prod server-js
 	mkdir packages/server/dist/frontend
 	cp -R packages/frontend/dist/* packages/server/dist/frontend
 	npm run -w packages/server make
+
+# cleans up uncompressed artifacts that bloat the built docker image
+clean-uncompressed:
+	rm -f packages/frontend/dist/app.js
+	rm -f packages/frontend/dist/app.css
+
+# builds transpiled js bundles with stats about bundle, stats end up in dist folder
+build-with-stats: BUILD_WITH_STATS=true
+build-with-stats: NODE_ENV=production
+build-with-stats: $(FRONTEND_JS)
+
+# pushes built docker container to dockerhub
+publish:
+	docker login -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)"
+	docker push zachanator070/rpgtools:$(VERSION)
+	docker push zachanator070/rpgtools:latest
+
+#########
+# BUILD #
+#########
 
 # cleans built transpiled js and node modules
 clean: down clean-deps
@@ -194,15 +193,26 @@ clean-deps:
 	rm -rf packages/common/node_modules
 	-rm -rf node_modules_cache
 
-# cleans up uncompressed artifacts that bloat the built docker image
-clean-uncompressed:
-	rm -f packages/frontend/dist/app.bundle.js
-	rm -f packages/frontend/dist/app.css
+dev-deps: $(NODE_MODULES)
 
-# builds transpiled js bundles with stats about bundle, stats end up in dist folder
-build-with-stats: BUILD_WITH_STATS=true
-	export BUILD_WITH_STATS
-build-with-stats: ui-prod
+prod-deps: NODE_ENV=production
+prod-deps: $(NODE_MODULES)
+
+$(NODE_MODULES): package-lock.json
+	npm ci
+
+server-js: $(SERVER_JS)
+
+# transpiles the server typescript to js
+$(SERVER_JS): $(SERVER_TS) $(NODE_MODULES)
+	npm run -w packages/server build
+
+prod-ui: NODE_ENV=production
+prod-ui: $(FRONTEND_JS)
+
+# transpiles the frontend tsx and typescript to js
+$(FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES) .env
+	npm -w packages/frontend start
 
 packages/frontend/dist:
 	mkdir -p packages/frontend/dist
@@ -217,25 +227,9 @@ packages/server/dist/server:
 db:
 	mkdir -p db
 
-# initializes environment file
 .env:
 	cp .env.example .env
 
-# pushes built docker container to dockerhub
-publish:
-	docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-	docker push zachanator070/rpgtools:${VERSION}
-	docker push zachanator070/rpgtools:latest
-
-# performs minimal install on a debian host
-install:
-	sudo apt install mongodb
-	sudo systemctl enable mongodb
-	sudo mkdir /etc/rpgtools
-	sudo cp .env.example /etc/rpgtools/.env
-	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=localhost/' .env
-	sudo cp rpgtools.service /lib/systemd/system
-	sudo systemctl daemon-reload
-	sudo systemctl start rpgtools
-	sudo systemctl enable rpgtools
-	echo rpgtools is now available
+# builds local docker compose containers, usually only used in a dev environment
+build-dev: $(FRONTEND_JS)
+	docker compose build

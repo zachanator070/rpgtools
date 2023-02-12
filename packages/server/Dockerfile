@@ -23,13 +23,12 @@ ADD --chown=node:node packages/server/package.json package.json
 ADD --chown=node:node packages/server/tsconfig.json tsconfig.json
 
 WORKDIR /opt/rpgtools
-RUN npm ci
+RUN npm ci --omit=dev
 
 ADD --chown=node:node packages/common/src packages/common/src
 ADD --chown=node:node packages/server/src packages/server/src
 
-RUN mkdir -p packages/server/dist/common
-RUN mkdir -p packages/server/dist/server
+ADD --chown=node:node packages/server/dist packages/server/dist
 
 ADD --chown=node:node packages/frontend/dist packages/server/dist/frontend
 
