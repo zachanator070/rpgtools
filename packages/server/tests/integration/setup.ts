@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
 dotenv.config({path: './jest.env'});
 
-import { container } from "../../src/di/inversify";
+import { container, bindAll } from "../../src/di/inversify";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import {DbEngine, SessionContextFactory} from "../../src/types";
 import {ServerConfigService} from "../../src/services/server-config-service";
@@ -11,11 +11,14 @@ import {DefaultTestingContext} from "./default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "./injectable-types";
 import RpgToolsServer from "../../src/server/rpgtools-server";
 import {DatabaseContext} from "../../src/dal/database-context";
+import {jest} from '@jest/globals'
 
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";
 process.env.REFRESH_TOKEN_SECRET = "asdf1234";
 
 process.env.NODE_ENV = "test";
+
+bindAll();
 
 // 5 minutes
 jest.setTimeout(1000 * 60 * 5);

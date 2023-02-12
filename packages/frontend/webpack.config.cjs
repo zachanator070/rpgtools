@@ -67,7 +67,6 @@ module.exports = () => {
     } else {
         config.mode = 'development';
         config.devtool = "inline-source-map";
-        config.watch = true;
     }
     if (process.env.BUILD_WITH_STATS === "true") {
         config.plugins = config.plugins.concat(

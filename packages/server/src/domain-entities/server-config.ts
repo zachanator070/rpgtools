@@ -1,6 +1,6 @@
 import {AclEntry, DomainEntity, EntityFactory, PermissionControlledEntity, RepositoryAccessor} from "../types";
 import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy";
-import { SERVER_CONFIG } from "../../../common/src/type-constants";
+import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";

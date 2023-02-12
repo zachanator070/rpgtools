@@ -75,6 +75,7 @@ services:
       - ./packages/frontend/dist:/opt/rpgtools/packages/frontend/dist
     networks:
       - rpgtools
+    command: "npm run --workspace=packages/frontend start-dev"
 
   ############
   # Database #

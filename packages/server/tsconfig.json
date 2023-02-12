@@ -5,13 +5,13 @@
     "emitDecoratorMetadata": true,
     "types": ["reflect-metadata", "jest"],
     "lib": ["es2020"],
-    "module": "esnext",
+    "module": "es2020",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./dist/server",
     "baseUrl": ".",
     "paths": {
       "*": [
