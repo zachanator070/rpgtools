@@ -10,6 +10,7 @@ FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=packages/server/dist/server/src/index.js
 SERVER_TS=$(shell find packages/server/src -name *.ts)
 ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
+ELECTRON_DEB=packages/server/out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 ################
 # RUN COMMANDS #
@@ -251,13 +252,17 @@ build-dev: $(FRONTEND_JS)
 # makes packaged electron executable
 electron-package: $(ELECTRON_EXEC)
 
-$(ELECTRON_EXEC): $(PROD_NODE_MODULES_CACHE) $(NODE_MODULES) prod-ui $(SERVER_JS)
-	rm -rf node_modules/@rpgtools
+electron-deps: $(PROD_NODE_MODULES_CACHE) $(NODE_MODULES) prod-ui $(SERVER_JS)
 	cp -R node_modules_cache/* packages/server/node_modules
 	mkdir -p packages/server/node_modules/@rpgtools
 	cp -R packages/common packages/server/node_modules/@rpgtools
 	mkdir -p packages/server/dist/frontend
 	cp -R packages/frontend/dist/* packages/server/dist/frontend
+
+$(ELECTRON_EXEC): electron-deps
+	npm run -w packages/server package
+
+$(ELECTRON_DEB): electron-deps
 	npm run -w packages/server make
 
-electron: $(ELECTRON_EXEC)
+electron: $(ELECTRON_DEB)
