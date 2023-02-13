@@ -155,12 +155,13 @@ publish:
 ###############
 
 # cleans built transpiled js and node modules
-clean: down clean-deps
+clean: clean-deps clean-docker
+
+clean-artifacts:
 	rm -rf db
 	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
 	rm -rf packages/server/out
-	-docker rmi zachanator070/rpgtools:latest
 
 clean-deps:
 	rm -rf node_modules
@@ -168,6 +169,15 @@ clean-deps:
 	rm -rf packages/server/node_modules
 	rm -rf packages/common/node_modules
 	-rm -rf node_modules_cache
+
+clean-docker: down
+	-docker ps -a | grep rpgtools | awk '{print $1}' | xargs docker rm -f
+	-docker images -a | grep rpgtools | awk '{print $3}' | xargs docker rmi -f
+	-docker rmi zachanator070/rpgtools:latest
+	-docker rmi rpgtools-server
+	-docker rmi rpgtools-server-brk
+	-docker rmi rpgtools-server_base
+	-docker rmi rpgtools-ui-builder
 
 # cleans up uncompressed artifacts that bloat the built docker image
 clean-uncompressed:
@@ -204,7 +214,7 @@ $(SERVER_JS): $(SERVER_TS) $(NODE_MODULES)
 # Builds rpgtools docker image
 build-prod: $(NODE_MODULES) prod-ui clean-uncompressed $(SERVER_JS)
 	echo "Building version $(VERSION)"
-	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile .
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
 
 ############
 # BUILD UI #
