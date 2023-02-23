@@ -129,7 +129,7 @@ test-e2e-sqlite: $(ELECTRON_EXEC)
 	cp .env.example .env
 	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
 	-rm ./db/rpgtools.sqlite
-	export SQLITE_DIRECTORY_PATH=db && nohup ./$(ELECTRON_EXEC) >/dev/null 2>&1 &
+	export SQLITE_DIRECTORY_PATH=db && nohup ./$(ELECTRON_EXEC) >electron.log 2>&1 &
 	./wait_for_server.sh
 	npm run -w packages/frontend test
 	pkill -f @rpgtools

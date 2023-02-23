@@ -31,4 +31,4 @@ jobs:
       if: failure()
       with:
         name: nohup_logs
-        path: /home/runner/work/rpgtools/rpgtools/nohup.out
+        path: /home/runner/work/rpgtools/rpgtools/electron.log
