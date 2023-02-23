@@ -16,7 +16,9 @@ jobs:
         node-version: 16.14.0
     - uses: actions/checkout@v3
     - name: CI
-      run: make ci
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: make ci
     - uses: actions/upload-artifact@v3
       if: failure()
       with:
