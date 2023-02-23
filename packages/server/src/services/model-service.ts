@@ -49,15 +49,14 @@ export class ModelService {
 		if (!(await model.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error("You do not have permission to edit this model");
 		}
+		let fileToDelete = null;
 		if (file) {
 			if (await this.cache.exists(model.fileName)) {
 				await this.cache.delete(model.fileName);
 			}
 
-			if (model.fileId) {
-				const file = await databaseContext.fileRepository.findOneById(model.fileId);
-				await databaseContext.fileRepository.delete(file);
-			}
+			fileToDelete = model.fileId;
+
 			file = await file;
 
 			const newFile = this.fileFactory.build({filename: file.filename, readStream: file.createReadStream(), mimeType: 'application/octet-stream'});
@@ -71,6 +70,10 @@ export class ModelService {
 		model.height = height;
 		model.notes = notes;
 		await databaseContext.modelRepository.update(model);
+		if(fileToDelete) {
+			const file = await databaseContext.fileRepository.findOneById(fileToDelete);
+			await databaseContext.fileRepository.delete(file);
+		}
 		return model;
 	};
 

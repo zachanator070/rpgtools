@@ -16,6 +16,14 @@ elif [ ! -z "$POSTGRES_HOST" ]
 then
   docker exec rpgtools-postgres-1 psql -U rpgtools -f /postgres-dump/clean.sql
   docker exec rpgtools-postgres-1 psql -U rpgtools -f /postgres-dump/${DUMP_NAME}.sql
+elif [ ! -z "$SQLITE_DIRECTORY_PATH" ]
+then
+  SQLITE_DB=../../${SQLITE_DIRECTORY_PATH}/rpgtools.sqlite
+  pkill -f @rpgtools
+  sqlite3 ${SQLITE_DB} .tables | awk '{printf "%s\n%s\n%s\n",$1,$2,$3}' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'
+  sqlite3 -line ${SQLITE_DB} ".read ../../dev/sqlite-dump/${DUMP_NAME}.sql"
+  export SQLITE_DIRECTORY_PATH=../../db && nohup ./../../packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server >/dev/null 2>&1 &
+  ../../wait_for_server.sh
 else
   echo "Unable to detect database, check .env file for at least one database host defined"
   exit 1

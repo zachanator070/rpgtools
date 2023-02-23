@@ -3,6 +3,7 @@ import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import FileModel from "./file-model";
+import {FILE, WORLD} from "@rpgtools/common/src/type-constants";
 
 export default class ModelModel extends PermissionControlledModel {
 
@@ -41,6 +42,20 @@ export default class ModelModel extends PermissionControlledModel {
             type: DataTypes.STRING,
             allowNull: false
         },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
+        },
+        fileId: {
+            type: DataTypes.UUID,
+            references: {
+                model: FILE,
+                key: '_id'
+            }
+        }
     };
 
     static connect() {

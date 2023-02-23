@@ -9,6 +9,7 @@ import WorldModel from "./world-model";
 import {RoleModel} from "./role-model";
 import SqlModel from "./sql-model";
 import UserToRoleModel from "./user-to-role-model";
+import {WORLD} from "@rpgtools/common/src/type-constants";
 
 
 export default class UserModel extends SqlModel {
@@ -42,10 +43,17 @@ export default class UserModel extends SqlModel {
         tokenVersion: {
             type: DataTypes.STRING,
         },
+        currentWorldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
+        }
     };
 
     static connect() {
-        UserModel.belongsTo(WorldModel, {as: 'currenWorld'});
+        UserModel.belongsTo(WorldModel, {as: 'currentWorld'});
         UserModel.belongsToMany(RoleModel, {as: 'roles', through: UserToRoleModel});
     }
 }

@@ -3,25 +3,36 @@
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
-NODE_MODULES=node_modules/@rpgtools/server/package.json
-PROD_NODE_MODULES_CACHE=node_modules_cache/apollo-server/package.json
-FRONTEND_JS=packages/frontend/dist/app.js
+NODE_MODULES=node_modules/webpack/package.json
+PROD_NODE_MODULES_CACHE=node_modules_prod/apollo-server/package.json
+DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
+PROD_FRONTEND_JS=packages/frontend/dist/production.txt
+DEV_FRONTEND_JS=packages/frontend/dist/development.txt
 FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
-SERVER_JS=packages/server/dist/server/src/index.js
-SERVER_TS=$(shell find packages/server/src -name *.ts)
+SERVER_JS=packages/server/dist/server/index.js
+SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
 ELECTRON_DEB=packages/server/out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
+
+DEV_SERVER_CONTAINER=containers/dev-server.txt
+DEV_SERVER_BRK_CONTAINER=containers/dev-server-brk.txt
+SERVER_PACKAGE_JSON=packages/server/package.json
+
+DEV_FRONTEND_CONTAINER=containers/dev-ui.txt
+FRONTEND_PACKAGE_JSON=packages/frontend/package.json
+
+PROD_SERVER_CONTAINER=containers/prod-server.txt
 
 ################
 # RUN COMMANDS #
 ################
 
 # runs production version of docker image with minimal depending services
-run-prod: build-prod
+run-prod: $(PROD_SERVER_CONTAINER)
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-run-dev: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
+run-dev: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
@@ -56,7 +67,7 @@ install:
 	echo rpgtools is now available
 
 run-electron: $(ELECTRON_EXEC)
-	./$(ELECTRON_EXEC)
+	export SQLITE_DIRECTORY_PATH=db && ./$(ELECTRON_EXEC)
 
 #########
 # TESTS #
@@ -90,13 +101,13 @@ test-integration-mongodb:
 
 test-integration-sqlite:
 	cp .env.example packages/server/jest.env
-	sed -i 's/^#SQLITE_DB_NAME=rpgtools/SQLITE_DB_NAME=rpgtools/' packages/server/jest.env
+	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-test-e2e: test-e2e-mongodb test-e2e-postgres
+test-e2e: test-e2e-mongodb test-e2e-postgres test-e2e-sqlite
 
-test-e2e-mongodb: build-prod
+test-e2e-mongodb: $(PROD_SERVER_CONTAINER)
 	cp .env.example .env
 	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
 	docker compose up -d prod mongodb
@@ -105,7 +116,7 @@ test-e2e-mongodb: build-prod
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-postgres: build-prod
+test-e2e-postgres: $(PROD_SERVER_CONTAINER)
 	cp .env.example .env
 	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -113,6 +124,15 @@ test-e2e-postgres: build-prod
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
 	docker compose down
+
+test-e2e-sqlite: $(ELECTRON_EXEC)
+	cp .env.example .env
+	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
+	-rm ./db/rpgtools.sqlite
+	export SQLITE_DIRECTORY_PATH=db && nohup ./$(ELECTRON_EXEC) >/dev/null 2>&1 &
+	./wait_for_server.sh
+	npm run -w packages/frontend test
+	pkill -f @rpgtools
 
 run-cypress:
 	npm run -w packages/frontend cypress:open
@@ -168,7 +188,8 @@ clean-deps:
 	rm -rf packages/frontend/node_modules
 	rm -rf packages/server/node_modules
 	rm -rf packages/common/node_modules
-	-rm -rf node_modules_cache
+	-rm -rf node_modules_prod
+	-rm -rf node_modules_dev
 
 clean-docker: down
 	-docker ps -a | grep rpgtools | awk '{print $1}' | xargs docker rm -f
@@ -178,11 +199,7 @@ clean-docker: down
 	-docker rmi rpgtools-server-brk
 	-docker rmi rpgtools-server_base
 	-docker rmi rpgtools-ui-builder
-
-# cleans up uncompressed artifacts that bloat the built docker image
-clean-uncompressed:
-	rm -f packages/frontend/dist/app.js
-	rm -f packages/frontend/dist/app.css
+	-rm -rf containers
 
 ######################
 # BUILD DEPENDENCIES #
@@ -198,8 +215,14 @@ $(NODE_MODULES): package-lock.json
 
 $(PROD_NODE_MODULES_CACHE):
 	npm ci --omit=dev
-	rm -rf node_modules/@rpgtools
-	mv node_modules node_modules_cache
+	mkdir -p node_modules_prod
+	cp -R node_modules/* node_modules_prod
+	rm -rf node_modules_prod/@rpgtools
+
+$(DEV_NODE_MODULES_CACHE):
+	npm ci
+	mkdir -p node_modules_dev
+	cp -R node_modules/* node_modules_dev
 
 ################
 # BUILD SERVER #
@@ -211,25 +234,36 @@ server-js: $(SERVER_JS)
 $(SERVER_JS): $(SERVER_TS) $(NODE_MODULES)
 	npm run -w packages/server build
 
+build-prod: $(PROD_SERVER_CONTAINER)
+
 # Builds rpgtools docker image
-build-prod: $(NODE_MODULES) prod-ui clean-uncompressed $(SERVER_JS)
+$(PROD_SERVER_CONTAINER): $(NODE_MODULES) $(PROD_FRONTEND_JS) $(SERVER_JS)
 	echo "Building version $(VERSION)"
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
+	echo $(shell docker images | grep zachanator070/rpgtools:latest | awk '{print $3}' > $(PROD_SERVER_CONTAINER) )
 
 ############
 # BUILD UI #
 ############
 
-prod-ui: NODE_ENV=production
-prod-ui: $(FRONTEND_JS)
-
 # transpiles the frontend tsx and typescript to js
-$(FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES) .env
+prod-ui: $(PROD_FRONTEND_JS)
+
+$(PROD_FRONTEND_JS): $(NODE_MODULES) $(FRONTEND_TS)
+	rm -rf packages/frontend/dist
+	export NODE_ENV=production && npm -w packages/frontend start
+	rm -f packages/frontend/dist/app.js
+	rm -f packages/frontend/dist/app.css
+	> $(PROD_FRONTEND_JS)
+
+$(DEV_FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES)
+	rm -rf packages/frontend/dist
 	npm -w packages/frontend start
+	> $(DEV_FRONTEND_JS)
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
 build-with-stats: BUILD_WITH_STATS=true
-build-with-stats: prod-ui
+build-with-stats: $(PROD_FRONTEND_JS)
 
 #####################
 # BUILD DIRECTORIES #
@@ -251,9 +285,27 @@ db:
 .env:
 	cp .env.example .env
 
+containers:
+	mkdir -p containers
+
 # builds local docker compose containers, usually only used in a dev environment
 build-dev: $(FRONTEND_JS)
 	docker compose build
+
+$(DEV_SERVER_CONTAINER): $(SERVER_PACKAGE_JSON)
+	docker compose build server
+	echo $(shell docker images | grep rpgtools-server | awk '{print $3}' > $(DEV_SERVER_CONTAINER) )
+
+$(DEV_SERVER_BRK_CONTAINER): $(SERVER_PACKAGE_JSON)
+	docker compose build server-brk
+	echo $(shell docker images | grep rpgtools-server-brk | awk '{print $3}' > $(DEV_SERVER_BRK_CONTAINER) )
+
+$(DEV_FRONTEND_CONTAINER): $(FRONTEND_PACKAGE_JSON)
+	docker compose build ui-builder
+	echo $(shell docker images | grep rpgtools-ui-builder | awk '{print $3}' > $(DEV_FRONTEND_CONTAINER) )
+
+build-common:
+	npm run -w packages/common build
 
 ##################
 # BUILD ELECTRON #
@@ -262,17 +314,20 @@ build-dev: $(FRONTEND_JS)
 # makes packaged electron executable
 electron-package: $(ELECTRON_EXEC)
 
-electron-deps: $(PROD_NODE_MODULES_CACHE) $(NODE_MODULES) prod-ui $(SERVER_JS)
-	cp -R node_modules_cache/* packages/server/node_modules
+$(ELECTRON_EXEC): $(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
+	cp -R node_modules_prod/* packages/server/node_modules
 	mkdir -p packages/server/node_modules/@rpgtools
 	cp -R packages/common packages/server/node_modules/@rpgtools
 	mkdir -p packages/server/dist/frontend
 	cp -R packages/frontend/dist/* packages/server/dist/frontend
-
-$(ELECTRON_EXEC): electron-deps
 	npm run -w packages/server package
 
-$(ELECTRON_DEB): electron-deps
+$(ELECTRON_DEB): $(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
+	cp -R node_modules_prod/* packages/server/node_modules
+	mkdir -p packages/server/node_modules/@rpgtools
+	cp -R packages/common packages/server/node_modules/@rpgtools
+	mkdir -p packages/server/dist/frontend
+	cp -R packages/frontend/dist/* packages/server/dist/frontend
 	npm run -w packages/server make
 
 electron: $(ELECTRON_DEB)

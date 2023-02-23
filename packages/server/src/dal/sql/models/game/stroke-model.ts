@@ -2,6 +2,7 @@ import {DataTypes, HasManyGetAssociationsMixin, Model, Sequelize} from "sequeliz
 import {defaultAttributes} from "../default-attributes";
 import PathNodeModel from "./path-node-model";
 import SqlModel from "../sql-model";
+import {GAME} from "@rpgtools/common/src/type-constants";
 
 
 export default class StrokeModel extends SqlModel {
@@ -31,6 +32,13 @@ export default class StrokeModel extends SqlModel {
                     args: [["circle", "square", "erase", "line"]],
                     msg: `type is not one of the following values: ${["circle", "square", "erase", "line"]}`
                 }
+            }
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: GAME,
+                key: '_id'
             }
         }
     };

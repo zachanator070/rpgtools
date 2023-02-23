@@ -1,8 +1,9 @@
-import {BelongsToGetAssociationMixin, BelongsToManyOptions, DataTypes, ModelStatic} from "sequelize";
+import {BelongsToManyOptions, DataTypes, ModelStatic} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import WorldModel from "./world-model";
 import ImageModel from "./image-model";
+import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
 
 export function setupWikiPageAssociations(model: ModelStatic<any>, type: string) {
     model.hasOne(WikiPageModel, {foreignKey: 'wiki', constraints: false, scope: {type}});
@@ -30,6 +31,23 @@ export default class WikiPageModel extends PermissionControlledModel {
         type: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        wiki: {
+            type: DataTypes.UUID,
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
+        },
+        coverImageId: {
+            type: DataTypes.UUID,
+            references: {
+                model: IMAGE,
+                key: '_id'
+            }
         }
     };
 

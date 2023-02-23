@@ -6,9 +6,10 @@ import {
 } from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
-import ArticleModel from "./article-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import WikiPageModel from "./wiki-page-model";
+import {WIKI_FOLDER, WORLD} from "@rpgtools/common/src/type-constants";
+import WikiFolderToWikiPageModel from "./wiki-folder-to-wiki-page-model";
 
 
 export default class WikiFolderModel extends PermissionControlledModel {
@@ -26,12 +27,26 @@ export default class WikiFolderModel extends PermissionControlledModel {
         name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        WikiFolderId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WIKI_FOLDER,
+                key: '_id'
+            }
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
         }
     };
 
     static connect() {
         WikiFolderModel.belongsTo(WorldModel, {as: 'world'});
-        WikiFolderModel.belongsToMany(WikiPageModel, {as: 'pages', through: 'WikiFolderToWikiPage', constraints: false});
+        WikiFolderModel.belongsToMany(WikiPageModel, {as: 'pages', through: WikiFolderToWikiPageModel, constraints: false});
         WikiFolderModel.hasMany(WikiFolderModel, {as: 'children'});
         configPermissionControlledModel(WikiFolderModel);
     }

@@ -195,6 +195,7 @@ import InGameModelFactory from "../domain-entities/factory/game/in-game-model-fa
 import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permission-controlled-repository";
 import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine";
 import SqliteDbEngine from "../dal/sql/sqlite-db-engine";
+import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine";
 
 const container = new Container();
 
@@ -335,7 +336,7 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(MongodbWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
-	} else if (process.env.POSTGRES_HOST || process.env.SQLITE_DB_NAME) {
+	} else if (process.env.POSTGRES_HOST || process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(SqlArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(SqlChunkRepository);
 		container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(SqlFileRepository);
@@ -553,7 +554,7 @@ const bindAll = () => {
 		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(MongodbDbEngine).inSingletonScope();
 	} else if (process.env.POSTGRES_HOST) {
 		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(PostgresDbEngine).inSingletonScope();
-	} else if (process.env.SQLITE_DB_NAME) {
+	} else if (process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(SqliteDbEngine).inSingletonScope();
 	} else {
 		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(InMemoryDbEngine).inSingletonScope();
@@ -617,6 +618,9 @@ const bindAll = () => {
 // mongodb
 	container.bind<FilterFactory>(INJECTABLE_TYPES.FilterFactory).to(FilterFactory);
 	container.bind<MongoDbMigrationV40>(INJECTABLE_TYPES.MongoDbMigrationV40).to(MongoDbMigrationV40);
+
+// sql
+	container.bind<AbstractSqlDbEngine>(INJECTABLE_TYPES.SqlDbEngine).to(AbstractSqlDbEngine);
 }
 
 
