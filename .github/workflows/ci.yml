@@ -27,3 +27,8 @@ jobs:
       with:
         name: seed_logs
         path: /home/runner/work/rpgtools/rpgtools/packages/frontend/seed.log
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: nohup_logs
+        path: /home/runner/work/rpgtools/rpgtools/nohup.out
