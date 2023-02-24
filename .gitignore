@@ -14,3 +14,4 @@ packages/server/out
 db/
 containers/
 nohup.out
+electron.log
