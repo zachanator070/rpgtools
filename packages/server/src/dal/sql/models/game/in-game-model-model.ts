@@ -3,6 +3,7 @@ import {defaultAttributes} from "../default-attributes";
 import ModelModel from "../model-model";
 import ArticleModel from "../article-model";
 import SqlModel from "../sql-model";
+import {GAME, MODEL} from "@rpgtools/common/src/type-constants";
 
 
 export default class InGameModelModel extends SqlModel {
@@ -36,6 +37,20 @@ export default class InGameModelModel extends SqlModel {
         },
         color: {
             type: DataTypes.STRING,
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: GAME,
+                key: '_id'
+            }
+        },
+        modelId: {
+            type: DataTypes.UUID,
+            references: {
+                model: MODEL,
+                key: '_id'
+            }
         }
     };
 

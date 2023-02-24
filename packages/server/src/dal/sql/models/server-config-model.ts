@@ -7,6 +7,8 @@ import UserModel from "./user-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import RegisterCodeModel from "./register-code-model";
 import WorldModel from "./world-model";
+import {WORLD} from "@rpgtools/common/src/type-constants";
+import AdminUsersToServerConfigModel from "./admin-users-to-server-config-model";
 
 
 export default class ServerConfigModel extends PermissionControlledModel {
@@ -30,12 +32,19 @@ export default class ServerConfigModel extends PermissionControlledModel {
         unlockCode: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        defaultWorldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
         }
     };
 
     static connect() {
         configPermissionControlledModel(ServerConfigModel);
-        ServerConfigModel.belongsToMany(UserModel, {as: 'admins', through: 'AdminUsersToServerConfig'});
+        ServerConfigModel.belongsToMany(UserModel, {as: 'admins', through: AdminUsersToServerConfigModel});
         ServerConfigModel.hasMany(RegisterCodeModel, {as: 'codes'});
         ServerConfigModel.belongsTo(WorldModel, {as: 'defaultWorld'});
     }

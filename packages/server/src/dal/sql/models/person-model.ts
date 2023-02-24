@@ -1,4 +1,5 @@
 import ModeledWikiModel, {configModeledWikiModel, modeledWikiAttributes} from "./modeled-wiki-model";
+import {PERSON} from "@rpgtools/common/src/type-constants";
 
 
 export default class PersonModel extends ModeledWikiModel {
@@ -8,6 +9,6 @@ export default class PersonModel extends ModeledWikiModel {
     };
 
     static connect() {
-        configModeledWikiModel(PersonModel, 'Person');
+        configModeledWikiModel(PersonModel, PERSON);
     }
 }

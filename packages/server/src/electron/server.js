@@ -12,14 +12,13 @@ const expressApp = document.getElementById("expressApp");
 const loading = document.getElementById("loading");
 
 const node = child_process.fork(
-    `${app.getAppPath()}/dist/server/src/index.js`,
+    `${app.getAppPath()}/dist/server/index.js`,
     [],
     {
         stdio: ["pipe", "pipe", "pipe", "ipc"],
         execArgv: ["--experimental-specifier-resolution=node"],
         env: {
-            SQLITE_DB_NAME: "rpgtools",
-            SQLITE_DIRECTORY_PATH: path.join(`${os.homedir()}`, '.rpgtools'),
+            SQLITE_DIRECTORY_PATH: process.env.SQLITE_DIRECTORY_PATH || path.join(`${os.homedir()}`, '.rpgtools'),
             UNLOCK_CODE: "unlock_me"
         }
     }

@@ -1,6 +1,7 @@
 import {DataTypes} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import SqlModel from "../sql-model";
+import {CHARACTER} from "@rpgtools/common/src/type-constants";
 
 
 export default class CharacterAttributeModel extends SqlModel {
@@ -17,6 +18,13 @@ export default class CharacterAttributeModel extends SqlModel {
         value: {
             type: DataTypes.FLOAT,
             allowNull: false
+        },
+        CharacterId: {
+            type: DataTypes.UUID,
+            references: {
+                model: CHARACTER,
+                key: '_id'
+            }
         }
     };
 

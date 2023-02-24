@@ -3,6 +3,7 @@ import {defaultAttributes} from "./default-attributes";
 import SqlModel from "./sql-model";
 import ChunkModel from "./chunk-model";
 import WorldModel from "./world-model";
+import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
 
 
 export default class ImageModel extends SqlModel {
@@ -39,6 +40,20 @@ export default class ImageModel extends SqlModel {
         name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
+        },
+        iconId: {
+            type: DataTypes.UUID,
+            references: {
+                model: IMAGE,
+                key: '_id'
+            }
         }
     };
 

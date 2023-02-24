@@ -3,6 +3,7 @@ import {defaultAttributes} from "../default-attributes";
 import UserModel from "../user-model";
 import CharacterAttributeModel from "./character-attribute-model";
 import SqlModel from "../sql-model";
+import {GAME, USER} from "@rpgtools/common/src/type-constants";
 
 
 export default class CharacterModel extends SqlModel {
@@ -24,6 +25,20 @@ export default class CharacterModel extends SqlModel {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: GAME,
+                key: '_id'
+            }
+        },
+        playerId: {
+            type: DataTypes.UUID,
+            references: {
+                model: USER,
+                key: '_id'
+            }
+        }
     };
 
     static connect() {

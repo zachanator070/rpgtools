@@ -1,5 +1,3 @@
-// Generated using webpack-cli https://github.com/webpack/webpack-cli
-
 const path = require('path');
 const CompressionPlugin = require("compression-webpack-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
