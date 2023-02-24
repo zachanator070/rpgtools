@@ -1,7 +1,8 @@
 .vscode/
 .idea/
 node_modules/
-node_modules_cache/
+node_modules_prod/
+node_modules_dev/
 .env
 dist/
 coverage/
@@ -11,3 +12,5 @@ packages/frontend/seed.log
 packages/server/jest.env
 packages/server/out
 db/
+containers/
+nohup.out

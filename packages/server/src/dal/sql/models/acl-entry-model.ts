@@ -35,6 +35,12 @@ export default class AclEntryModel extends SqlModel {
                     msg: `principalType must be one of the following values: ${[USER, ROLE]}`
                 }
             }
+        },
+        principal: {
+            type: DataTypes.UUID
+        },
+        subject: {
+            type: DataTypes.UUID
         }
     };
 

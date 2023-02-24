@@ -1,9 +1,9 @@
 import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
 import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
 import ImageModel from "./image-model";
-import SqlModel from "./sql-model";
 import {defaultAttributes} from "./default-attributes";
 import WikiPageChild from "./wiki-page-child";
+import {IMAGE, PLACE} from "@rpgtools/common/src/type-constants";
 
 
 export default class PlaceModel extends WikiPageChild {
@@ -15,6 +15,13 @@ export default class PlaceModel extends WikiPageChild {
         ...defaultAttributes,
         pixelsPerFoot: {
             type: DataTypes.INTEGER
+        },
+        mapImageId: {
+            type: DataTypes.UUID,
+            references: {
+                model: IMAGE,
+                key: '_id'
+            }
         }
     };
 
@@ -22,6 +29,6 @@ export default class PlaceModel extends WikiPageChild {
 
     static connect() {
         PlaceModel.belongsTo(ImageModel, {as: 'mapImage'});
-        setupWikiPageAssociations(PlaceModel, 'Place');
+        setupWikiPageAssociations(PlaceModel, PLACE);
     }
 }

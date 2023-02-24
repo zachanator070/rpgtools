@@ -1,9 +1,8 @@
-import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
-import ImageModel from "./image-model";
 import FileModel from "./file-model";
-import WorldModel from "./world-model";
 import SqlModel from "./sql-model";
+import {FILE, IMAGE} from "@rpgtools/common/src/type-constants";
 
 
 export default class ChunkModel extends SqlModel {
@@ -33,6 +32,20 @@ export default class ChunkModel extends SqlModel {
         height: {
             type: DataTypes.FLOAT,
             allowNull: false
+        },
+        fileId: {
+            type: DataTypes.UUID,
+            references: {
+                model: FILE,
+                key: '_id'
+            }
+        },
+        imageId: {
+            type: DataTypes.UUID,
+            references: {
+                model: IMAGE,
+                key: '_id'
+            }
         }
     };
 

@@ -1,6 +1,7 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import SqlModel from "../sql-model";
+import {GAME} from "@rpgtools/common/src/type-constants";
 
 
 export default class MessageModel extends SqlModel {
@@ -37,6 +38,13 @@ export default class MessageModel extends SqlModel {
         timestamp: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: GAME,
+                key: '_id'
+            }
         }
     };
 

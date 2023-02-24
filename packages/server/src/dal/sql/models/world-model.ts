@@ -3,6 +3,7 @@ import {defaultAttributes} from "./default-attributes";
 import ArticleModel from "./article-model";
 import WikiFolderModel from "./wiki-folder-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants";
 
 
 export default class WorldModel extends PermissionControlledModel {
@@ -17,6 +18,16 @@ export default class WorldModel extends PermissionControlledModel {
             type: DataTypes.STRING,
             allowNull: false
         },
+        wikiPageId: {
+            type: DataTypes.UUID,
+        },
+        rootFolderId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WIKI_FOLDER,
+                key: '_id'
+            }
+        }
     };
     
     static connect() {

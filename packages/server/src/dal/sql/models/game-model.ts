@@ -1,5 +1,3 @@
-
-
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
@@ -11,7 +9,7 @@ import FogStrokeModel from "./game/fog-stroke-model";
 import MessageModel from "./game/message-model";
 import InGameModelModel from "./game/in-game-model-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
-import {FogStroke} from "../../../domain-entities/game";
+import {PLACE, USER, WORLD} from "@rpgtools/common/src/type-constants";
 
 
 export default class GameModel extends PermissionControlledModel {
@@ -36,6 +34,27 @@ export default class GameModel extends PermissionControlledModel {
         ...defaultAttributes,
         passwordHash: {
             type: DataTypes.STRING
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
+        },
+        mapId: {
+            type: DataTypes.UUID,
+            references: {
+                model: PLACE,
+                key: '_id'
+            }
+        },
+        hostId: {
+            type: DataTypes.UUID,
+            references: {
+                model: USER,
+                key: '_id'
+            }
         }
     };
 

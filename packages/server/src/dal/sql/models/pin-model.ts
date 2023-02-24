@@ -3,6 +3,7 @@ import {defaultAttributes} from "./default-attributes";
 import SqlModel from "./sql-model";
 import WikiPageModel from "./wiki-page-model";
 import WorldModel from "./world-model";
+import {WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 
 
 export default class PinModel extends SqlModel {
@@ -23,6 +24,23 @@ export default class PinModel extends SqlModel {
             type: DataTypes.FLOAT,
             allowNull: false
         },
+        mapId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WIKI_PAGE,
+                key: '_id'
+            }
+        },
+        pageId: {
+            type: DataTypes.UUID,
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
+        }
     };
 
     static connect() {

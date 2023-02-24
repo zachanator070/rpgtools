@@ -2,6 +2,7 @@ import {DataTypes} from "sequelize";
 import {defaultAttributes} from "./default-attributes";
 import WorldModel from "./world-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import {WORLD} from "@rpgtools/common/src/type-constants";
 
 
 export class RoleModel extends PermissionControlledModel {
@@ -14,6 +15,13 @@ export class RoleModel extends PermissionControlledModel {
         name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: WORLD,
+                key: '_id'
+            }
         }
     };
 

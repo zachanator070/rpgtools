@@ -1,14 +1,21 @@
 import {BelongsToGetAssociationMixin, DataTypes, ModelAttributes, ModelStatic} from "sequelize";
 import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
 import ModelModel from "./model-model";
-import SqlModel from "./sql-model";
 import {defaultAttributes} from "./default-attributes";
 import WikiPageChild from "./wiki-page-child";
+import {MODEL} from "@rpgtools/common/src/type-constants";
 
 export const modeledWikiAttributes: ModelAttributes = {
     ...defaultAttributes,
     modelColor: {
         type: DataTypes.STRING,
+    },
+    pageModelId: {
+        type: DataTypes.UUID,
+        references: {
+            model: MODEL,
+            key: '_id'
+        }
     }
 };
 
