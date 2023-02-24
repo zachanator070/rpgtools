@@ -22,7 +22,7 @@ then
   pkill -f @rpgtools
   sqlite3 ${SQLITE_DB} .tables | awk '{printf "%s\n%s\n%s\n",$1,$2,$3}' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'
   sqlite3 -line ${SQLITE_DB} ".read ../../dev/sqlite-dump/${DUMP_NAME}.sql"
-  export SQLITE_DIRECTORY_PATH=../../db && nohup ./../../packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server >electron.log 2>&1 &
+  export SQLITE_DIRECTORY_PATH=../../db && nohup ./../../packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server >../../electron.log 2>&1 &
   ../../wait_for_server.sh
 else
   echo "Unable to detect database, check .env file for at least one database host defined"
