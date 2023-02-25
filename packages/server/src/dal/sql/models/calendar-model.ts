@@ -1,4 +1,4 @@
-import {DataTypes, HasManyGetAssociationsMixin} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
 import WorldModel from "./world-model";
 import {defaultAttributes} from "./default-attributes";
 import AgeModel from "./calendar/age-model";
@@ -26,6 +26,7 @@ export default class CalendarModel extends PermissionControlledModel {
     };
 
     getAges: HasManyGetAssociationsMixin<AgeModel>;
+    setAges: HasManySetAssociationsMixin<AgeModel, string>;
 
     static connect() {
         CalendarModel.hasMany(AgeModel, {as: 'ages'});

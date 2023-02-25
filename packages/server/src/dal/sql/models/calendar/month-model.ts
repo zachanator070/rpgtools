@@ -1,7 +1,6 @@
 import SqlModel from "../sql-model";
-import {DataTypes, HasManyGetAssociationsMixin} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
-import DayOfTheWeekModel from "./day-of-the-week-model";
 import {AGE} from "@rpgtools/common/src/type-constants";
 
 

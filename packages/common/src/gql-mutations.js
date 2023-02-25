@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
 //region Authentication
 export const LOGIN_QUERY = gql `
 	mutation login($username: String!, $password: String!) {
@@ -480,6 +480,14 @@ export const RENAME_WORLD = gql `
 		renameWorld(worldId: $worldId, newName: $newName) {
 			_id
 			name
+		}
+	}
+`;
+export const UPSERT_CALENDAR = gql `
+	${CURRENT_WORLD_CALENDAR}
+	mutation upsertCalendar($calendar: CalendarInput!) {
+		upsertCalendar(calendar: $calendar) {
+			...currentWorldCalendar
 		}
 	}
 `;

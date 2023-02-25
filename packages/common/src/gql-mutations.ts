@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 import {
 	ACCESS_CONTROL_LIST,
 	CURRENT_WIKI_ATTRIBUTES,
-	CURRENT_WIKI_PLACE_ATTRIBUTES,
+	CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR,
 	CURRENT_WORLD_FOLDERS,
 	CURRENT_WORLD_ROLES,
 	CURRENT_WORLD_WIKIS,
@@ -527,6 +527,14 @@ export const RENAME_WORLD = gql`
 		renameWorld(worldId: $worldId, newName: $newName) {
 			_id
 			name
+		}
+	}
+`;
+export const UPSERT_CALENDAR = gql`
+	${CURRENT_WORLD_CALENDAR}
+	mutation upsertCalendar($calendar: CalendarInput!) {
+		upsertCalendar(calendar: $calendar) {
+			...currentWorldCalendar
 		}
 	}
 `;

@@ -83,6 +83,28 @@ export const CURRENT_WORLD_ROLES = gql `
         ...accessControlList
     }
 `;
+export const CURRENT_WORLD_CALENDAR = gql `
+    ${ACCESS_CONTROL_LIST}
+    fragment currentWorldCalendar on Calendar {
+        _id
+        name
+        ages {
+            _id
+            name
+            numYears
+            months {
+                _id
+                name
+                numDays
+            }
+            daysOfTheWeek {
+                _id
+                name
+            }
+        }
+        ...accessControlList
+    }
+`;
 export const SERVER_CONFIG_ROLES = gql `
     ${ACCESS_CONTROL_LIST}
     fragment serverConfigRoles on ServerConfig {

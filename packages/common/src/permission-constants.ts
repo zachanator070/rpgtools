@@ -1,5 +1,5 @@
 import {
-	ALL_WIKI_TYPES,
+	ALL_WIKI_TYPES, CALENDAR,
 	GAME,
 	MODEL,
 	ROLE,
@@ -80,6 +80,8 @@ export const WORLD_PERMISSIONS = [
 export const CALENDAR_RW = "Able to change this calendar definition";
 export const CALENDAR_READ = "Able to read this calendar";
 export const CALENDAR_ADMIN = "Able to change permissions for this calendar";
+
+export const CALENDAR_PERMISSIONS = [CALENDAR_RW, CALENDAR_READ, CALENDAR_ADMIN];
 
 // role permissions
 export const ROLE_READ = "Able to see members of this role";
@@ -171,6 +173,8 @@ export const getPermissionsBySubjectType = (subjectType: string) => {
 		return SERVER_PERMISSIONS;
 	} else if (subjectType === MODEL) {
 		return MODEL_PERMISSIONS;
+	} else if (subjectType === CALENDAR) {
+		return CALENDAR_PERMISSIONS;
 	}
 	return null;
 };
