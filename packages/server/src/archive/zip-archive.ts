@@ -43,6 +43,8 @@ import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 import {WikiPageRepository} from "../dal/repository/wiki-page-repository";
 import {WorldRepository} from "../dal/repository/world-repository";
 import {ArticleRepository} from "../dal/repository/article-repository";
+import {CalendarRepository} from "../dal/repository/calendar-repository";
+import EventWikiRepository from "../dal/repository/event-wiki-repository";
 
 @injectable()
 export class ZipArchive implements Archive {
@@ -80,6 +82,10 @@ export class ZipArchive implements Archive {
 	wikiPageRepository: WikiPageRepository;
 	@inject(INJECTABLE_TYPES.ArchiveWorldRepository)
 	worldRepository: WorldRepository;
+	@inject(INJECTABLE_TYPES.EventWikiRepository)
+	eventRepository: EventWikiRepository;
+	@inject(INJECTABLE_TYPES.CalendarRepository)
+	calendarRepository: CalendarRepository;
 
 	archive = archiver("zip", {
 		zlib: { level: 9 }, // Sets the compression level.

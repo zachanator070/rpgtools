@@ -29,6 +29,8 @@ import {DatabaseSession} from "./dal/database-session";
 import {Model} from "sequelize";
 import SqlModel from "./dal/sql/models/sql-model";
 import {ObjectId} from "mongoose";
+import {CalendarRepository} from "./dal/repository/calendar-repository";
+import EventWikiRepository from "./dal/repository/event-wiki-repository";
 
 export interface DomainEntity {
 	_id: string;
@@ -106,6 +108,8 @@ export interface RepositoryAccessor {
 	wikiPageRepository: WikiPageRepository;
 	worldRepository: WorldRepository;
 	fileRepository: FileRepository;
+	eventRepository: EventWikiRepository;
+	calendarRepository: CalendarRepository;
 }
 
 export type Factory<T> = (args: any) => T;

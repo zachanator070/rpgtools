@@ -35,9 +35,8 @@ export default class PostgresDbEngine implements DbEngine {
 
         this.abstractEngine.connectAll(this.connection);
 
-        console.log('Syncing table schemas')
+        console.log('Syncing table schemas');
         await this.connection.sync({alter: true});
-
     }
 
     getConnectionString(): string {

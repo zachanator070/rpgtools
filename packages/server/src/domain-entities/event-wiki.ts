@@ -12,6 +12,8 @@ import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authoriz
 export class EventWiki extends WikiPage {
     type: string = EVENT_WIKI;
 
+    calendar: string;
+
     age: number;
     year: number;
     month: number;
@@ -34,7 +36,7 @@ export class EventWiki extends WikiPage {
     }
 
     getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
-        return undefined;
+        return accessor.eventRepository;
     }
 
 }

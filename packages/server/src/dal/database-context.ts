@@ -19,6 +19,8 @@ import {WikiPageRepository} from "./repository/wiki-page-repository";
 import {WorldRepository} from "./repository/world-repository";
 import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {DatabaseSession} from "./database-session";
+import EventWikiRepository from "./repository/event-wiki-repository";
+import {CalendarRepository} from "./repository/calendar-repository";
 
 @injectable()
 export class DatabaseContext implements RepositoryAccessor {
@@ -57,6 +59,10 @@ export class DatabaseContext implements RepositoryAccessor {
     wikiPageRepository: WikiPageRepository;
     @inject(INJECTABLE_TYPES.WorldRepository)
     worldRepository: WorldRepository;
+    @inject(INJECTABLE_TYPES.EventWikiRepository)
+    eventRepository: EventWikiRepository;
+    @inject(INJECTABLE_TYPES.CalendarRepository)
+    calendarRepository: CalendarRepository;
 
     databaseSession: DatabaseSession;
 

@@ -2,7 +2,8 @@ import WikiPageChild from "./wiki-page-child";
 import {defaultAttributes} from "./default-attributes";
 import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
 import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {CALENDAR, EVENT_WIKI, WORLD} from "@rpgtools/common/src/type-constants";
+import CalendarModel from "./calendar-model";
 
 export default class EventWikiModel extends WikiPageChild {
 
@@ -14,8 +15,17 @@ export default class EventWikiModel extends WikiPageChild {
     declare minute: number;
     declare second: number;
 
+    declare calendar: string;
+
     static attributes = {
         ...defaultAttributes,
+        calendarId: {
+            type: DataTypes.UUID,
+            references: {
+                model: CALENDAR,
+                key: '_id'
+            }
+        },
         age: {
             type: DataTypes.INTEGER,
             allowNull: false
@@ -51,6 +61,7 @@ export default class EventWikiModel extends WikiPageChild {
 
     static connect() {
         setupWikiPageAssociations(EventWikiModel, EVENT_WIKI);
+        EventWikiModel.belongsTo(CalendarModel, {as: 'calendar'});
     }
 
 }

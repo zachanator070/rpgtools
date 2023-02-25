@@ -6,6 +6,7 @@ import path from 'path';
 import {SequelizeStorage, Umzug} from "umzug";
 
 import * as initial from './migrations/00_initial';
+import * as events from './migrations/01_events';
 import AbstractSqlDbEngine from "./abstract-sql-db-engine";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 
@@ -45,7 +46,7 @@ export default class SqliteDbEngine implements DbEngine {
         this.abstractEngine.connectAll(this.connection);
 
         console.log('Syncing table schemas')
-        await this.migrate();
+        await this.abstractEngine.migrate(this.connection);
     }
 
     async disconnect(): Promise<void> {
@@ -57,22 +58,6 @@ export default class SqliteDbEngine implements DbEngine {
 
     async createDatabaseSession(): Promise<DatabaseSession> {
         return new DatabaseSession(null, null);
-    }
-
-    async migrate(): Promise<void> {
-
-        const umzug = new Umzug({
-            migrations: [
-                {
-                    name: '00_initial',
-                    ...initial
-                }
-            ],
-            context: this.connection.getQueryInterface(),
-            storage: new SequelizeStorage({ sequelize: this.connection }),
-            logger: console,
-        });
-        await umzug.up();
     }
 
 }

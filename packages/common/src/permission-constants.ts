@@ -46,6 +46,9 @@ export const MODEL_ADD = "Able to create models in this world";
 export const MODEL_READ_ALL = "Read all models";
 export const MODEL_RW_ALL = "Write to any models";
 export const MODEL_ADMIN_ALL = "Able to change permissions for any model";
+export const CALENDAR_READ_ALL = "Read all calendars";
+export const CALENDAR_RW_ALL = "Write to any calendar";
+export const CALENDAR_ADMIN_ALL = "Able to change permissions for any calendar";
 
 export const WORLD_PERMISSIONS = [
 	WORLD_READ,
@@ -67,12 +70,16 @@ export const WORLD_PERMISSIONS = [
 	MODEL_RW_ALL,
 	MODEL_ADMIN_ALL,
 	WORLD_RW,
+	CALENDAR_READ_ALL,
+	CALENDAR_RW_ALL,
+	CALENDAR_ADMIN_ALL
 ];
 
 // calendar permissions
 
 export const CALENDAR_RW = "Able to change this calendar definition";
 export const CALENDAR_READ = "Able to read this calendar";
+export const CALENDAR_ADMIN = "Able to change permissions for this calendar";
 
 // role permissions
 export const ROLE_READ = "Able to see members of this role";

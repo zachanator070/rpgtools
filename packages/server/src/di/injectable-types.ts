@@ -55,6 +55,10 @@ export const INJECTABLE_TYPES = {
 	MessageFactory: Symbol.for('MessageFactory'),
 	InGameModelFactory: Symbol.for('InGameModelFactory'),
 
+	AgeFactory: Symbol.for("AgeFactory"),
+	MonthFactory: Symbol.for("MonthFactory"),
+	DayOfTheWeekFactory: Symbol.for("DayOfTheWeekFactory"),
+
 	// repositories
 	ArticleRepository: Symbol.for("ArticleRepository"),
 	ChunkRepository: Symbol.for("ChunkRepository"),
@@ -74,6 +78,7 @@ export const INJECTABLE_TYPES = {
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
 	EventWikiRepository: Symbol.for("EventWikiRepository"),
+	CalendarRepository: Symbol.for("CalendarRepository"),
 
 	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
 

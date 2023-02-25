@@ -1,11 +1,11 @@
 import {injectable} from "inversify";
 import AclEntryModel from "./models/acl-entry-model";
 import {
-    ACL_ENTRY,
-    ARTICLE,
+    ACL_ENTRY, AGE,
+    ARTICLE, CALENDAR,
     CHARACTER,
     CHARACTER_ATTRIBUTE,
-    CHUNK,
+    CHUNK, DAY_OF_THE_WEEK, EVENT_WIKI,
     FILE,
     FOG_STROKE,
     GAME,
@@ -14,7 +14,7 @@ import {
     ITEM,
     MESSAGE,
     MODEL,
-    MONSTER,
+    MONSTER, MONTH,
     PATH_NODE,
     PERSON,
     PIN,
@@ -55,6 +55,15 @@ import WikiFolderToWikiPageModel from "./models/wiki-folder-to-wiki-page-model";
 import WorldModel from "./models/world-model";
 import {Sequelize} from "sequelize";
 import AdminUsersToServerConfigModel from "./models/admin-users-to-server-config-model";
+import {SequelizeStorage, Umzug} from "umzug";
+import * as initial from "./migrations/00_initial";
+import * as events from "./migrations/01_events";
+import EventWikiModel from "./models/event- wiki-model";
+import CalendarModel from "./models/calendar-model";
+import AgeModel from "./models/calendar/age-model";
+import MonthModel from "./models/calendar/month-model";
+import {DayOfTheWeek} from "../../domain-entities/calendar";
+import DayOfTheWeekModel from "./models/calendar/day-of-the-week-model";
 
 
 @injectable()
@@ -94,6 +103,12 @@ export default class AbstractSqlDbEngine {
         WikiFolderModel.init(WikiFolderModel.attributes, {sequelize: connection, modelName: WIKI_FOLDER, freezeTableName: true});
         WikiFolderToWikiPageModel.init(WikiFolderToWikiPageModel.attributes, {sequelize: connection, modelName: 'WikiFolderToWikiPage', freezeTableName: true})
         WorldModel.init(WorldModel.attributes, {sequelize: connection, modelName: WORLD, freezeTableName: true});
+        EventWikiModel.init(EventWikiModel.attributes, {sequelize: connection, modelName: EVENT_WIKI, freezeTableName: true});
+
+        CalendarModel.init(CalendarModel.attributes, {sequelize: connection, modelName: CALENDAR, freezeTableName: true});
+        AgeModel.init(AgeModel.attributes, {sequelize: connection, modelName: AGE, freezeTableName: true});
+        MonthModel.init(MonthModel.attributes, {sequelize: connection, modelName: MONTH, freezeTableName: true});
+        DayOfTheWeekModel.init(DayOfTheWeekModel.attributes, {sequelize: connection, modelName: DAY_OF_THE_WEEK, freezeTableName: true});
 
         AclEntryModel.connect();
 
@@ -123,6 +138,32 @@ export default class AbstractSqlDbEngine {
         UserModel.connect();
         WikiFolderModel.connect();
         WorldModel.connect();
+
+        EventWikiModel.connect();
+        CalendarModel.connect();
+        AgeModel.connect();
+        MonthModel.connect();
+        DayOfTheWeekModel.connect();
+    }
+
+    async migrate(connection: Sequelize): Promise<void> {
+
+        const umzug = new Umzug({
+            migrations: [
+                {
+                    name: '00_initial',
+                    ...initial
+                },
+                {
+                    name: '01_events',
+                    ...events
+                }
+            ],
+            context: connection.getQueryInterface(),
+            storage: new SequelizeStorage({ sequelize: connection }),
+            logger: console,
+        });
+        await umzug.up();
     }
     
 }
