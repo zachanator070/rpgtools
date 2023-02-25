@@ -571,7 +571,7 @@ export const typeDefs = gql`
     type Age {
         _id: ID!
         name: String!
-        numYears: Integer!
+        numYears: Int!
         months: [Month!]!
         daysOfTheWeek: [DayOfTheWeek!]!
     }
@@ -579,7 +579,7 @@ export const typeDefs = gql`
     type Month {
         _id: ID!
         name: String!
-        numDays: Integer!
+        numDays: Int!
     }
     
     type DayOfTheWeek {
@@ -588,10 +588,29 @@ export const typeDefs = gql`
     }
     
     input CalendarInput {
-        _id: ID!
+        _id: ID
 	    world: ID!
 	    name: String!
-	    ages: [Age!]!
+	    ages: [AgeInput!]!
+    }
+    
+    input AgeInput {
+        _id: ID
+        name: String!
+        numYears: Int!
+        months: [MonthInput!]!
+        daysOfTheWeek: [DayOfTheWeekInput!]!
+    }
+    
+    input MonthInput {
+        _id: ID
+        name: String!
+        numDays: Int!
+    }
+    
+    input DayOfTheWeekInput {
+        _id: ID
+        name: String!
     }
         
 `;
