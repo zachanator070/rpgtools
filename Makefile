@@ -175,13 +175,12 @@ publish:
 ###############
 
 # cleans built transpiled js and node modules
-clean: clean-deps clean-docker
-
-clean-artifacts:
+clean: down clean-deps
 	rm -rf db
 	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
 	rm -rf packages/server/out
+	-docker rmi zachanator070/rpgtools:latest
 
 clean-deps:
 	rm -rf node_modules
@@ -239,8 +238,12 @@ build-prod: $(PROD_SERVER_CONTAINER)
 # Builds rpgtools docker image
 $(PROD_SERVER_CONTAINER): $(NODE_MODULES) $(PROD_FRONTEND_JS) $(SERVER_JS)
 	echo "Building version $(VERSION)"
+<<<<<<< HEAD
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
 	echo $(shell docker images | grep zachanator070/rpgtools:latest | awk '{print $3}' > $(PROD_SERVER_CONTAINER) )
+=======
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile .
+>>>>>>> parent of 61628dd (stop compiling test modules in dev environment)
 
 ############
 # BUILD UI #
