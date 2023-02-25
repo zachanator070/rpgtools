@@ -20,6 +20,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             world,
             coverImage,
             contentId,
+            calendar,
             age,
             year,
             month,
@@ -34,6 +35,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             world: string,
             coverImage: string,
             contentId: string,
+            calendar: string,
             age: number,
             year: number,
             month: number,
@@ -50,6 +52,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.world = world;
         event.coverImage = coverImage;
         event.contentId = contentId;
+        event.calendar = calendar;
         event.age = age;
         event.year = year;
         event.month = month;
@@ -62,26 +65,28 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
     }
 
     fromMongodbDocument({
-                            _id,
-                            name,
-                            world,
-                            coverImage,
-                            contentId,
-                            age,
-                            year,
-                            month,
-                            day,
-                            hour,
-                            minute,
-                            second,
-                            acl
-                        }: EventDocument): EventWiki {
+        _id,
+        name,
+        world,
+        coverImage,
+        contentId,
+        calendar,
+        age,
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        acl
+    }: EventDocument): EventWiki {
         const event = new EventWiki(this, new WikiPageAuthorizationPolicy());
         event._id = _id && _id.toString();
         event.name = name;
         event.world = world && world.toString();
         event.coverImage = coverImage && coverImage.toString();
         event.contentId = contentId && contentId.toString();
+        event.calendar = calendar;
         event.age = age;
         event.year = year;
         event.month = month;
@@ -101,6 +106,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             world: model.worldId,
             coverImage: model.coverImageId,
             contentId: model.contentId,
+            calendar: page?.calendar,
             age: page?.age,
             year: page?.year,
             month: page?.month,

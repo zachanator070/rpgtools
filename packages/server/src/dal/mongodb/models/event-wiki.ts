@@ -1,10 +1,11 @@
 import {WikiPageDocument} from "../../../types";
 import mongoose from "mongoose";
 import {v4} from "uuid";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {CALENDAR, EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 import {WikiPageModel} from "./wiki-page";
 
 export interface EventDocument extends WikiPageDocument {
+    calendar: string;
     age: number;
     year: number;
     month: number;
@@ -47,6 +48,10 @@ const eventSchema = new mongoose.Schema<EventDocument, mongoose.Model<EventDocum
         type: Number,
         required: [true, "second field required"],
     },
+    calendar: {
+        type: String,
+        ref: CALENDAR
+    }
 });
 
 export const EventWikiModel = WikiPageModel.discriminator<EventDocument, mongoose.Model<EventDocument>>(

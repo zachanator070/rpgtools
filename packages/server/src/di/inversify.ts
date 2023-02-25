@@ -200,6 +200,16 @@ import {EventWiki} from "../domain-entities/event-wiki";
 import EventWikiFactory from "../domain-entities/factory/event-wiki-factory";
 import EventWikiRepository from "../dal/repository/event-wiki-repository";
 import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-repository";
+import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory";
+import MonthFactory from "../domain-entities/factory/calendar/month-factory";
+import AgeFactory from "../domain-entities/factory/calendar/age-factory";
+import MongodbEventWikiRepository from "../dal/mongodb/repositories/mongodb-event-wiki-repository";
+import MongodbCalendarRepository from "../dal/mongodb/repositories/mongodb-calendar-repository";
+import {CalendarRepository} from "../dal/repository/calendar-repository";
+import SqlCalendarRepository from "../dal/sql/repository/sql-calendar-repository";
+import InMemoryEventWikiRepository from "../dal/in-memory/repositories/in-memory-event-wiki-repository";
+import InMemoryCalendarRepository from "../dal/in-memory/repositories/in-memory-calendar-repository";
+import CalendarFactory from "../domain-entities/factory/calendar-factory";
 
 const container = new Container();
 
@@ -318,6 +328,17 @@ const bindAll = () => {
 		.bind<InGameModelFactory>(INJECTABLE_TYPES.InGameModelFactory)
 		.to(InGameModelFactory);
 
+	container.bind<CalendarFactory>(INJECTABLE_TYPES.CalendarFactory).to(CalendarFactory);
+	container
+		.bind<DayOfTheWeekFactory>(INJECTABLE_TYPES.DayOfTheWeekFactory)
+		.to(DayOfTheWeekFactory);
+	container
+		.bind<MonthFactory>(INJECTABLE_TYPES.MonthFactory)
+		.to(MonthFactory);
+	container
+		.bind<AgeFactory>(INJECTABLE_TYPES.AgeFactory)
+		.to(AgeFactory);
+
 	// db repositories
 	if (process.env.MONGODB_HOST) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
@@ -343,6 +364,8 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(MongodbWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(MongodbEventWikiRepository);
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(MongodbCalendarRepository);
 	} else if (process.env.POSTGRES_HOST || process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(SqlArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(SqlChunkRepository);
@@ -368,6 +391,7 @@ const bindAll = () => {
 			.to(SqlWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
 		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(SqlEventWikiRepository);
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(SqlCalendarRepository);
 
 		container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 	} else {
@@ -394,6 +418,8 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(InMemoryWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(InMemoryEventWikiRepository);
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository);
 	}
 
 // authorization rule sets
