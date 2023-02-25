@@ -1,4 +1,4 @@
-import { ALL_WIKI_TYPES, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WIKI_PAGE, WORLD, } from "./type-constants";
+import { ALL_WIKI_TYPES, CALENDAR, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WIKI_PAGE, WORLD, } from "./type-constants";
 // server permissions
 export const WORLD_CREATE = "Create world access";
 export const WORLD_ADMIN_ALL = "Able to change permissions for all worlds";
@@ -65,6 +65,7 @@ export const WORLD_PERMISSIONS = [
 export const CALENDAR_RW = "Able to change this calendar definition";
 export const CALENDAR_READ = "Able to read this calendar";
 export const CALENDAR_ADMIN = "Able to change permissions for this calendar";
+export const CALENDAR_PERMISSIONS = [CALENDAR_RW, CALENDAR_READ, CALENDAR_ADMIN];
 // role permissions
 export const ROLE_READ = "Able to see members of this role";
 export const ROLE_RW = "Able to change members of this role";
@@ -141,6 +142,9 @@ export const getPermissionsBySubjectType = (subjectType) => {
     }
     else if (subjectType === MODEL) {
         return MODEL_PERMISSIONS;
+    }
+    else if (subjectType === CALENDAR) {
+        return CALENDAR_PERMISSIONS;
     }
     return null;
 };
