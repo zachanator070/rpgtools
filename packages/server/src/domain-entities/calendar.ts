@@ -25,7 +25,7 @@ export default class Calendar implements DomainEntity {
     constructor(@inject(INJECTABLE_TYPES.CalendarAuthorizationPolicy)
                     authorizationPolicy: CalendarAuthorizationPolicy,
                 @inject(INJECTABLE_TYPES.CalendarFactory)
-                    factory: CalendarFactory) {
+                    factory: EntityFactory<Calendar, CalendarDocument, CalendarModel>) {
         authorizationPolicy.entity = this;
         this.authorizationPolicy = authorizationPolicy;
         this.factory = factory;

@@ -16,6 +16,9 @@ import PinFactory from "../domain-entities/factory/pin-factory";
 import WorldFactory from "../domain-entities/factory/world-factory";
 import PlaceFactory from "../domain-entities/factory/place-factory";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import Calendar from "../domain-entities/calendar";
+import CalendarFactory from "../domain-entities/factory/calendar-factory";
+import {CalendarRepository} from "../dal/repository/calendar-repository";
 
 @injectable()
 export class WorldService {
@@ -30,6 +33,10 @@ export class WorldService {
 	placeFactory: PlaceFactory;
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
+	@inject(INJECTABLE_TYPES.CalendarFactory)
+	calendarFactory: CalendarFactory;
+	@inject(INJECTABLE_TYPES.CalendarRepository)
+	calendarRepository: CalendarRepository;
 
 	createWorld = async (
 		name: string,
@@ -229,4 +236,22 @@ export class WorldService {
 
 		return world;
 	};
+
+	public async upsertCalendar(calendar: Calendar, context: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
+		const entity = this.calendarFactory.build(calendar);
+		if(!entity._id) {
+			if(!await entity.authorizationPolicy.canCreate(context, databaseContext)) {
+				throw new Error('You do not have permission to create this calendar');
+			}
+			await this.calendarRepository.create(entity);
+		}
+		else {
+			if(!await entity.authorizationPolicy.canWrite(context, databaseContext)) {
+				throw new Error('You do not have permission to write to this calendar');
+			}
+			await this.calendarRepository.update(entity);
+		}
+
+		return entity;
+	}
 }

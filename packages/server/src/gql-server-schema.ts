@@ -74,6 +74,7 @@ export const typeDefs = gql`
 		createWorld(name: String!, public: Boolean!): World!
 		renameWorld(worldId: ID!, newName: String!): World!
 		load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
+		upsertCalendar(calendar: CalendarInput): Calendar!
 
 		createRole(worldId: ID!, name: String!): Role!
 		deleteRole(roleId: ID!): Role!
@@ -560,4 +561,37 @@ export const typeDefs = gql`
 	}
 
 	scalar Upload
+	
+	type Calendar {
+	    _id: ID!
+	    name: String!
+	    ages: [Age!]!
+    }
+    
+    type Age {
+        _id: ID!
+        name: String!
+        numYears: Integer!
+        months: [Month!]!
+        daysOfTheWeek: [DayOfTheWeek!]!
+    }
+    
+    type Month {
+        _id: ID!
+        name: String!
+        numDays: Integer!
+    }
+    
+    type DayOfTheWeek {
+        _id: ID!
+        name: String!
+    }
+    
+    input CalendarInput {
+        _id: ID!
+	    world: ID!
+	    name: String!
+	    ages: [Age!]!
+    }
+        
 `;

@@ -1,5 +1,12 @@
 import {DefaultTestingContext} from "../../default-testing-context";
-import {CREATE_PIN, CREATE_WORLD, DELETE_PIN, RENAME_WORLD, UPDATE_PIN} from "@rpgtools/common/src/gql-mutations";
+import {
+	CREATE_PIN,
+	CREATE_WORLD,
+	DELETE_PIN,
+	RENAME_WORLD,
+	UPDATE_PIN,
+	UPSERT_CALENDAR
+} from "@rpgtools/common/src/gql-mutations";
 import {container} from "../../../../src/di/inversify";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 
@@ -108,6 +115,55 @@ describe("world-mutations", () => {
 						map: {
 							_id: expect.any(String),
 						}
+					},
+				},
+				errors: undefined,
+			});
+		});
+
+		test("create calendar", async () => {
+			const calendarName = 'new calendar';
+			const ageName = 'new age';
+			const monthName = 'new month';
+			const dayName = 'new day';
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: UPSERT_CALENDAR,
+				variables: {
+					name: calendarName,
+					world: testingContext.world._id,
+					ages: [{
+						name: ageName,
+						numYears: 1000,
+						months: [{
+							name: monthName,
+							numDays: 30
+						}],
+						daysOfTheWeek: [{
+							name: dayName
+						}]
+					}]
+				}
+			});
+			expect(result).toMatchSnapshot({
+				data: {
+					upsertCalendar: {
+						_id: expect.any(String),
+						name: calendarName,
+						world: testingContext.world._id,
+						ages: [{
+							_id: expect.any(String),
+							name: ageName,
+							numYears: 1000,
+							months: [{
+								_id: expect.any(String),
+								name: monthName,
+								numDays: 30
+							}],
+							daysOfTheWeek: [{
+								_id: expect.any(String),
+								name: dayName
+							}]
+						}]
 					},
 				},
 				errors: undefined,
