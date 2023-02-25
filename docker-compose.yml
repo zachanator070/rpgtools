@@ -8,8 +8,6 @@ services:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
-      args:
-        - NODE_ENV=dev
     command: "npm run --workspace=packages/server dev"
     user: ${CURRENT_UID}
     env_file:
@@ -19,6 +17,7 @@ services:
     volumes:
       - ./packages/server/src:/opt/rpgtools/packages/server/src
       - ./packages/server/dist/server:/opt/rpgtools/packages/server/dist/server
+      - ./packages/server/dist/common:/opt/rpgtools/packages/server/dist/common
       - ./packages/frontend/dist:/opt/rpgtools/packages/server/dist/frontend
       - ./db:/opt/rpgtools/db
       - ./packages/common/src:/opt/rpgtools/packages/common/src

@@ -175,13 +175,12 @@ publish:
 ###############
 
 # cleans built transpiled js and node modules
-clean: clean-deps clean-docker
-
-clean-artifacts:
+clean: down clean-deps
 	rm -rf db
 	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
 	rm -rf packages/server/out
+	-docker rmi zachanator070/rpgtools:latest
 
 clean-deps:
 	rm -rf node_modules
