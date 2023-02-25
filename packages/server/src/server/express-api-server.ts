@@ -94,7 +94,6 @@ export class ExpressApiServer implements ApiServer {
 				return session;
 			},
 			csrfPrevention: true,
-			introspection: true,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
 				closeSessionPlugin,
@@ -134,7 +133,7 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/export", ExportRouter);
 
 		const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-		const uiPath = path.resolve(__dirname, '..', '..', 'frontend');
+		const uiPath = path.resolve(__dirname, '..', '..', '..', 'frontend');
 
 		this.expressServer.get("/ui*", (req, res) => {
 			return res.sendFile(path.resolve(uiPath, "index.html"));
