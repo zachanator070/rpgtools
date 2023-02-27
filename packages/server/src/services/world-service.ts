@@ -16,7 +16,7 @@ import PinFactory from "../domain-entities/factory/pin-factory";
 import WorldFactory from "../domain-entities/factory/world-factory";
 import PlaceFactory from "../domain-entities/factory/place-factory";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
-import Calendar from "../domain-entities/calendar";
+import Calendar, {Age} from "../domain-entities/calendar";
 import CalendarFactory from "../domain-entities/factory/calendar-factory";
 import {CalendarRepository} from "../dal/repository/calendar-repository";
 
@@ -237,8 +237,8 @@ export class WorldService {
 		return world;
 	};
 
-	public async upsertCalendar(calendar: Calendar, context: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
-		const entity = this.calendarFactory.build(calendar);
+	public async upsertCalendar(calendarId: string, world: string, name: string, ages: Age[], context: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
+		const entity = this.calendarFactory.build({_id: calendarId, world, name, ages, acl: []});
 		if(!entity._id) {
 			if(!await entity.authorizationPolicy.canCreate(context, databaseContext)) {
 				throw new Error('You do not have permission to create this calendar');

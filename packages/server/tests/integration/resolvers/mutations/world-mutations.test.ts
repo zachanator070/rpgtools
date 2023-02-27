@@ -149,7 +149,6 @@ describe("world-mutations", () => {
 					upsertCalendar: {
 						_id: expect.any(String),
 						name: calendarName,
-						world: testingContext.world._id,
 						ages: [{
 							_id: expect.any(String),
 							name: ageName,
@@ -162,6 +161,94 @@ describe("world-mutations", () => {
 							daysOfTheWeek: [{
 								_id: expect.any(String),
 								name: dayName
+							}]
+						}]
+					},
+				},
+				errors: undefined,
+			});
+		});
+
+		test("update calendar age years", async () => {
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: UPSERT_CALENDAR,
+				variables: {
+					name: testingContext.calendar.name,
+					calendarId: testingContext.calendar._id,
+					world: testingContext.world._id,
+					ages: [{
+						name: testingContext.calendar.ages[0].name,
+						_id: testingContext.calendar.ages[0]._id,
+						numYears: 1000,
+						months: [{
+							name: testingContext.calendar.ages[0].months[0].name,
+							_id: testingContext.calendar.ages[0].months[0]._id,
+							numDays: 60
+						}],
+						daysOfTheWeek: [{
+							name: testingContext.calendar.ages[0].daysOfTheWeek[0].name,
+							_id: testingContext.calendar.ages[0].daysOfTheWeek[0]._id
+						}]
+					}]
+				}
+			});
+			expect(result).toMatchSnapshot({
+				data: {
+					upsertCalendar: {
+						_id: expect.any(String),
+						name: testingContext.calendar.name,
+						ages: [{
+							_id: expect.any(String),
+							name: testingContext.calendar.ages[0].name,
+							numYears: 1000,
+							months: [{
+								name: testingContext.calendar.ages[0].months[0].name,
+								_id: expect.any(String),
+								numDays: 60
+							}],
+							daysOfTheWeek: [{
+								_id: expect.any(String),
+								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
+							}]
+						}]
+					},
+				},
+				errors: undefined,
+			});
+		});
+
+		test("update calendar delete month", async () => {
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: UPSERT_CALENDAR,
+				variables: {
+					name: testingContext.calendar.name,
+					calendarId: testingContext.calendar._id,
+					world: testingContext.world._id,
+					ages: [{
+						name: testingContext.calendar.ages[0].name,
+						_id: testingContext.calendar.ages[0]._id,
+						numYears: 100,
+						months: [],
+						daysOfTheWeek: [{
+							name: testingContext.calendar.ages[0].daysOfTheWeek[0].name,
+							_id: testingContext.calendar.ages[0].daysOfTheWeek[0]._id
+						}]
+					}]
+				}
+			});
+			expect(result).toMatchSnapshot({
+				data: {
+					upsertCalendar: {
+						_id: expect.any(String),
+						name: testingContext.calendar.name,
+						ages: [{
+							_id: expect.any(String),
+							name: testingContext.calendar.ages[0].name,
+							numYears: 100,
+							months: [],
+							daysOfTheWeek: [{
+								_id: expect.any(String),
+								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
 							}]
 						}]
 					},
@@ -223,6 +310,35 @@ describe("world-mutations", () => {
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: DELETE_PIN,
 					variables: { pinId: testingContext.pin._id },
+				});
+				expect(result).toMatchSnapshot({
+					errors: expect.arrayContaining([expect.any(Object)]),
+				});
+			});
+
+			test("update calendar no permission", async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: UPSERT_CALENDAR,
+					variables: {
+						name: testingContext.calendar.name,
+						calendarId: testingContext.calendar._id,
+						world: testingContext.world._id,
+						ages: []
+					}
+				});
+				expect(result).toMatchSnapshot({
+					errors: expect.arrayContaining([expect.any(Object)]),
+				});
+			});
+
+			test("create calendar no permission", async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: UPSERT_CALENDAR,
+					variables: {
+						name: testingContext.calendar.name,
+						world: testingContext.world._id,
+						ages: []
+					}
 				});
 				expect(result).toMatchSnapshot({
 					errors: expect.arrayContaining([expect.any(Object)]),

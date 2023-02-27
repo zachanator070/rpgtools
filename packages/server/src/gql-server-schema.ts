@@ -74,7 +74,7 @@ export const typeDefs = gql`
 		createWorld(name: String!, public: Boolean!): World!
 		renameWorld(worldId: ID!, newName: String!): World!
 		load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
-		upsertCalendar(calendar: CalendarInput): Calendar!
+		upsertCalendar(calendarId: ID, world: ID!, name: String!, ages: [AgeInput!]!): Calendar!
 
 		createRole(worldId: ID!, name: String!): Role!
 		deleteRole(roleId: ID!): Role!
@@ -562,10 +562,13 @@ export const typeDefs = gql`
 
 	scalar Upload
 	
-	type Calendar {
+	type Calendar implements PermissionControlled {
 	    _id: ID!
 	    name: String!
 	    ages: [Age!]!
+	    accessControlList: [AclEntry!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
     }
     
     type Age {
@@ -585,13 +588,6 @@ export const typeDefs = gql`
     type DayOfTheWeek {
         _id: ID!
         name: String!
-    }
-    
-    input CalendarInput {
-        _id: ID
-	    world: ID!
-	    name: String!
-	    ages: [AgeInput!]!
     }
     
     input AgeInput {
