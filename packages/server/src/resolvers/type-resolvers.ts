@@ -351,4 +351,7 @@ export const TypeResolvers = {
 		...permissionControlledInterfaceAttributes,
 	},
 	Upload: GraphQLUpload,
+	Calendar: {
+		...permissionControlledInterfaceAttributes,
+	}
 };

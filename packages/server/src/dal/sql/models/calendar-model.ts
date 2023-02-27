@@ -2,7 +2,7 @@ import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} fro
 import WorldModel from "./world-model";
 import {defaultAttributes} from "./default-attributes";
 import AgeModel from "./calendar/age-model";
-import PermissionControlledModel from "./permission-controlled-model";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import {WORLD} from "@rpgtools/common/src/type-constants";
 
 
@@ -29,7 +29,8 @@ export default class CalendarModel extends PermissionControlledModel {
     setAges: HasManySetAssociationsMixin<AgeModel, string>;
 
     static connect() {
-        CalendarModel.hasMany(AgeModel, {as: 'ages'});
-        CalendarModel.belongsTo(WorldModel);
+        configPermissionControlledModel(CalendarModel);
+        CalendarModel.hasMany(AgeModel, {as: 'ages', foreignKey: 'calendarId'});
+        CalendarModel.belongsTo(WorldModel, {foreignKey: 'worldId'});
     }
 }

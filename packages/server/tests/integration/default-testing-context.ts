@@ -28,6 +28,7 @@ import { Model } from "../../src/domain-entities/model";
 import {Game} from "../../src/domain-entities/game";
 import {ModelService} from "../../src/services/model-service";
 import {GameService} from "../../src/services/game-service";
+import Calendar from "../../src/domain-entities/calendar";
 
 export const testGamePassword = 'tester1password';
 
@@ -87,6 +88,8 @@ export class DefaultTestingContext {
 	model: Model;
 	game: Game;
 
+	calendar: Calendar;
+
 	async reset() {
 		const session = await this.dbEngine.createDatabaseSession();
 		const databaseContext = this.databaseContextFactory({session});
@@ -137,6 +140,27 @@ export class DefaultTestingContext {
 		this.pin = await databaseContext.pinRepository.findOneByMapAndPage(
 			this.world.wikiPage,
 			this.otherPage._id
+		);
+		this.calendar = await worldService.upsertCalendar(
+			null,
+			this.world._id,
+			this.world.name + ' calendar',
+			[{
+				_id: null,
+				name: "age 1",
+				numYears: 100,
+				months: [{
+					name: 'month 1',
+					numDays: 30,
+					_id: null
+				}],
+				daysOfTheWeek: [{
+					name: 'Monday',
+					_id: null
+				}]
+			}],
+			this.tester1SecurityContext,
+			databaseContext
 		);
 		await session.commit();
 		return this;

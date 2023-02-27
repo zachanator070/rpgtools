@@ -28,6 +28,7 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         return CalendarModel.build({
             _id: entity._id,
             name: entity.name,
+            worldId: entity.world
         });
     }
 
@@ -40,25 +41,34 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         const ageModels = [];
         for(let [index, age] of entity.ages.entries()) {
 
-            const ageModel = AgeModel.build({
-                _id: age._id,
-                name: age.name,
-                numYears: age.numYears,
-                index
-            });
+            let ageModel = null;
 
             if(!age._id) {
+                ageModel = AgeModel.build({
+                    _id: age._id,
+                    name: age.name,
+                    numYears: age.numYears,
+                    index
+                });
                 ageModel._id = v4();
                 await ageModel.save();
                 age._id = ageModel._id;
+            }
+            else {
+                ageModel = await AgeModel.findByPk(age._id);
+                await ageModel.update({
+                    name: age.name,
+                    numYears: age.numYears,
+                    index
+                });
             }
             await this.updateMonths(age, ageModel);
             await this.updateDays(age, ageModel);
             ageModels.push(ageModel);
         }
 
-        // delete old ages if calendar already exists
-        for(let oldAgeModel of await AgeModel.findAll({where: {CalendarId: entity._id}})) {
+        // delete old ages
+        for(let oldAgeModel of await AgeModel.findAll({where: {calendarId: entity._id}})) {
             let keep = false;
             for(let currentAgeModel of ageModels) {
                 if(oldAgeModel._id === currentAgeModel._id) {
@@ -78,22 +88,31 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         // save new months
         const monthModels = [];
         for(let [index, month] of entity.months.entries()) {
-            const monthModel = MonthModel.build({
-                _id: month._id,
-                name: month.name,
-                numDays: month.numDays,
-                index
-            });
+            let monthModel = null;
             if (!month._id) {
+                monthModel = MonthModel.build({
+                    _id: month._id,
+                    name: month.name,
+                    numDays: month.numDays,
+                    index
+                });
                 monthModel._id = v4();
                 await monthModel.save();
                 month._id = monthModel._id
+            }
+            else {
+                monthModel = await MonthModel.findByPk(month._id);
+                await monthModel.update({
+                    name: month.name,
+                    numDays: month.numDays,
+                    index
+                });
             }
             monthModels.push(monthModel);
         }
 
         // delete old months
-        for(let oldMonthModel of await MonthModel.findAll({where: {AgeId: entity._id}})) {
+        for(let oldMonthModel of await MonthModel.findAll({where: {ageId: entity._id}})) {
             let keep = false;
             for(let currentMonthModel of monthModels) {
                 if(oldMonthModel._id === currentMonthModel._id) {
@@ -113,21 +132,29 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         // save new days
         const dayModels = [];
         for(let [index, day] of entity.daysOfTheWeek.entries()) {
-            const dayModel = DayOfTheWeekModel.build({
-                _id: day._id,
-                name: day.name,
-                index
-            });
+            let dayModel = null;
             if (!day._id) {
+                dayModel = DayOfTheWeekModel.build({
+                    _id: day._id,
+                    name: day.name,
+                    index
+                });
                 dayModel._id = v4();
                 await dayModel.save();
                 day._id = dayModel._id
+            }
+            else {
+                dayModel = await DayOfTheWeekModel.findByPk(day._id);
+                await dayModel.update({
+                    name: day.name,
+                    index
+                });
             }
             dayModels.push(dayModel);
         }
 
         // delete old days
-        for(let oldDayModel of await DayOfTheWeekModel.findAll({where: {AgeId: entity._id}})) {
+        for(let oldDayModel of await DayOfTheWeekModel.findAll({where: {ageId: entity._id}})) {
             let keep = false;
             for(let currentDayModel of dayModels) {
                 if(oldDayModel._id === currentDayModel._id) {
