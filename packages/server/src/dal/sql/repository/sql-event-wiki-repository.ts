@@ -1,6 +1,6 @@
 import AbstractSqlRepository from "./abstract-sql-repository";
 import {EventWiki} from "../../../domain-entities/event-wiki";
-import EventWikiModel from "../models/event- wiki-model";
+import EventWikiModel from "../models/event-wiki-model";
 import {ModelStatic} from "sequelize";
 import {EntityFactory} from "../../../types";
 import {inject, injectable} from "inversify";
