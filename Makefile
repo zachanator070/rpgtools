@@ -9,14 +9,14 @@ DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
 PROD_FRONTEND_JS=packages/frontend/dist/production.txt
 DEV_FRONTEND_JS=packages/frontend/dist/development.txt
 FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
-SERVER_JS=packages/server/dist/server/index.js
+SERVER_JS=packages/server/dist/server/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
 ELECTRON_DEB=packages/server/out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
+DEV_SERVER_CONTAINER_SRC=packages/server/Dockerfile packages/server/tsconfig.json package-lock.json
 DEV_SERVER_BRK_CONTAINER=containers/dev-server-brk.txt
-SERVER_PACKAGE_JSON=packages/server/package.json
 
 DEV_FRONTEND_CONTAINER=containers/dev-ui.txt
 FRONTEND_PACKAGE_JSON=packages/frontend/package.json
@@ -32,11 +32,11 @@ run-prod: $(PROD_SERVER_CONTAINER)
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-run-dev: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
+run-dev: .env packages/frontend/dist packages/server/dist/server db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
-run-dev-brk: .env packages/frontend/dist packages/server/dist/common packages/server/dist/server db
+run-dev-brk: .env packages/frontend/dist  packages/server/dist/server db
 	docker compose up server-brk ui-builder
 
 run-mongodb:
@@ -175,12 +175,11 @@ publish:
 ###############
 
 # cleans built transpiled js and node modules
-clean: down clean-deps
+clean: down clean-deps clean-docker
 	rm -rf db
 	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
 	rm -rf packages/server/out
-	-docker rmi zachanator070/rpgtools:latest
 
 clean-deps:
 	rm -rf node_modules
@@ -272,9 +271,6 @@ packages/frontend/dist:
 	mkdir -p packages/frontend/dist
 	chmod -R o+rw packages/frontend/dist
 
-packages/server/dist/common:
-	mkdir -p packages/server/dist/common
-
 packages/server/dist/server:
 	mkdir -p packages/server/dist/server
 
@@ -288,18 +284,18 @@ containers:
 	mkdir -p containers
 
 # builds local docker compose containers, usually only used in a dev environment
-build-dev: $(FRONTEND_JS)
+build-dev: $(FRONTEND_JS) $(SERVER_JS)
 	docker compose build
 
-$(DEV_SERVER_CONTAINER): $(SERVER_PACKAGE_JSON)
+$(DEV_SERVER_CONTAINER): $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server
 	echo $(shell docker images | grep rpgtools-server | awk '{print $3}' > $(DEV_SERVER_CONTAINER) )
 
-$(DEV_SERVER_BRK_CONTAINER): $(SERVER_PACKAGE_JSON)
+$(DEV_SERVER_BRK_CONTAINER): $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server-brk
 	echo $(shell docker images | grep rpgtools-server-brk | awk '{print $3}' > $(DEV_SERVER_BRK_CONTAINER) )
 
-$(DEV_FRONTEND_CONTAINER): $(FRONTEND_PACKAGE_JSON)
+$(DEV_FRONTEND_CONTAINER): $(FRONTEND_PACKAGE_JSON) packages/frontend/Dockerfile
 	docker compose build ui-builder
 	echo $(shell docker images | grep rpgtools-ui-builder | awk '{print $3}' > $(DEV_FRONTEND_CONTAINER) )
 

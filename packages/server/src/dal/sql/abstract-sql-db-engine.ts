@@ -58,7 +58,7 @@ import AdminUsersToServerConfigModel from "./models/admin-users-to-server-config
 import {SequelizeStorage, Umzug} from "umzug";
 import * as initial from "./migrations/00_initial";
 import * as events from "./migrations/01_events";
-import EventWikiModel from "./models/event- wiki-model";
+import EventWikiModel from "./models/event-wiki-model";
 import CalendarModel from "./models/calendar-model";
 import AgeModel from "./models/calendar/age-model";
 import MonthModel from "./models/calendar/month-model";
