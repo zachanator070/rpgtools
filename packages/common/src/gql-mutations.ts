@@ -5,7 +5,7 @@ import {
 	CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR,
 	CURRENT_WORLD_FOLDERS,
 	CURRENT_WORLD_ROLES,
-	CURRENT_WORLD_WIKIS,
+	CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES,
 	GAME_ATTRIBUTES,
 	GAME_CHARACTERS,
 	GAME_FOG_STROKES,
@@ -508,6 +508,34 @@ export const UPDATE_WIKI = gql`
 		}
 	}
 `;
+export const UPDATE_EVENT = gql`
+	${EVENT_WIKI_ATTRIBUTES}
+	mutation updateEventWiki(
+		$wikiId: ID!, 
+		$calendarId: ID, 
+		$age: Int!, 
+		$year: Int!, 
+		$month: Int!, 
+		$day: Int!, 
+		$hour: Int!, 
+		$minute: Int!, 
+		$second: Int!
+	){
+		updateEventWiki(
+			wikiId: $wikiId, 
+			calendarId: $calendarId, 
+			age: $age, 
+			year: $year, 
+			month: $month, 
+			day: $day, 
+			hour: $hour, 
+			minute: $minute, 
+			second: $second
+		){
+			...eventWikiAttributes
+		}
+	}
+`;
 //endregion
 
 //region World
@@ -532,9 +560,19 @@ export const RENAME_WORLD = gql`
 `;
 export const UPSERT_CALENDAR = gql`
 	${CURRENT_WORLD_CALENDAR}
+	${ACCESS_CONTROL_LIST}
 	mutation upsertCalendar($calendarId: ID, $world: ID!, $name: String!, $ages: [AgeInput!]!) {
 		upsertCalendar(calendarId: $calendarId, world: $world, name: $name, ages: $ages) {
 			...currentWorldCalendar
+			...accessControlList
+		}
+	}
+`;
+
+export const DELETE_CALENDAR = gql`
+	mutation deleteCalendar($calendarId: ID!) {
+		deleteCalendar(calendarId: $calendarId) {
+			_id
 		}
 	}
 `;

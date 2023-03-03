@@ -64,6 +64,34 @@ export const wikiMutations = {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 		return await service.updateModeledWiki(securityContext, wikiId, model, color, databaseContext);
 	},
+	updateEventWiki: async(
+		_: any,
+		{
+			wikiId,
+			calendarId,
+			age,
+			year,
+			month,
+			day,
+			hour,
+			minute,
+			second,
+		}:{
+			wikiId: string,
+			calendarId: string,
+			age: number,
+			year: number,
+			month: number,
+			day: number,
+			hour: number,
+			minute: number,
+			second: number,
+		},
+		{securityContext, databaseContext}: SessionContext
+	) => {
+		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
+		return await service.updateEventWiki(securityContext, wikiId, calendarId, age, year, month, day, hour, minute, second, databaseContext);
+	},
 	moveWiki: async (
 		_: any,
 		{ wikiId, folderId }: { wikiId: string; folderId: string },

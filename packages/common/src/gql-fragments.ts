@@ -162,7 +162,23 @@ export const MODEL_ATTRIBUTES = gql`
         ...accessControlList
     }
 `;
+export const EVENT_WIKI_ATTRIBUTES = gql`
+    fragment eventWikiAttributes on EventWiki {
+        _id
+        calendar {
+            _id
+        } 
+        age 
+        year 
+        month 
+        day 
+        hour
+        minute 
+        second
+    }
+`;
 export const CURRENT_WIKI_ATTRIBUTES = gql`
+    ${EVENT_WIKI_ATTRIBUTES}
     ${CURRENT_WIKI_PLACE_ATTRIBUTES}
     ${MODEL_ATTRIBUTES}
     fragment currentWikiAttributes on WikiPage {
@@ -196,6 +212,9 @@ export const CURRENT_WIKI_ATTRIBUTES = gql`
         }
         ... on Place {
             ...currentWikiPlaceAttributes
+        }
+        ... on EventWiki {
+            ...eventWikiAttributes
         }
         ... on ModeledWiki {
             model{

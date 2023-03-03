@@ -210,6 +210,8 @@ import SqlCalendarRepository from "../dal/sql/repository/sql-calendar-repository
 import InMemoryEventWikiRepository from "../dal/in-memory/repositories/in-memory-event-wiki-repository";
 import InMemoryCalendarRepository from "../dal/in-memory/repositories/in-memory-calendar-repository";
 import CalendarFactory from "../domain-entities/factory/calendar-factory";
+import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
+import Calendar from "../domain-entities/calendar";
 
 const container = new Container();
 
@@ -249,6 +251,7 @@ const bindAll = () => {
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(User);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(WikiFolder);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
+	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(EventWiki);
 
 // entity factories
 	container.bind<AclFactory>(INJECTABLE_TYPES.AclFactory).to(AclFactory);
@@ -616,6 +619,7 @@ const bindAll = () => {
 		.to(WikiFolderDataLoader);
 	container.bind<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader).to(WikiPageDataLoader);
 	container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldDataLoader);
+	container.bind<DataLoader<Calendar>>(INJECTABLE_TYPES.CalendarDataLoader).to(CalendarDataLoader);
 
 // seeders
 	container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);

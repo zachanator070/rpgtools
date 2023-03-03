@@ -315,3 +315,30 @@ exports[`wiki page mutations with world with authenticated user with image updat
   },
 }
 `;
+
+exports[`wiki page mutations with world with authenticated user with new event wiki update event 1`] = `
+{
+  "data": {
+    "updateEventWiki": {
+      "_id": Any<String>,
+      "age": 1,
+      "calendar": {
+        "_id": Any<String>,
+      },
+      "day": 1,
+      "hour": 1,
+      "minute": 1,
+      "month": 1,
+      "second": 1,
+      "year": 1,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;

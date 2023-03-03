@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
 //region Authentication
 export const LOGIN_QUERY = gql `
 	mutation login($username: String!, $password: String!) {
@@ -463,6 +463,34 @@ export const UPDATE_WIKI = gql `
 		}
 	}
 `;
+export const UPDATE_EVENT = gql `
+	${EVENT_WIKI_ATTRIBUTES}
+	mutation updateEventWiki(
+		$wikiId: ID!, 
+		$calendarId: ID, 
+		$age: Int!, 
+		$year: Int!, 
+		$month: Int!, 
+		$day: Int!, 
+		$hour: Int!, 
+		$minute: Int!, 
+		$second: Int!
+	){
+		updateEventWiki(
+			wikiId: $wikiId, 
+			calendarId: $calendarId, 
+			age: $age, 
+			year: $year, 
+			month: $month, 
+			day: $day, 
+			hour: $hour, 
+			minute: $minute, 
+			second: $second
+		){
+			...eventWikiAttributes
+		}
+	}
+`;
 //endregion
 //region World
 export const CREATE_WORLD = gql `
@@ -488,6 +516,13 @@ export const UPSERT_CALENDAR = gql `
 	mutation upsertCalendar($calendarId: ID, $world: ID!, $name: String!, $ages: [AgeInput!]!) {
 		upsertCalendar(calendarId: $calendarId, world: $world, name: $name, ages: $ages) {
 			...currentWorldCalendar
+		}
+	}
+`;
+export const DELETE_CALENDAR = gql `
+	mutation deleteCalendar($calendarId: ID!) {
+		deleteCalendar(calendarId: $calendarId) {
+			_id
 		}
 	}
 `;

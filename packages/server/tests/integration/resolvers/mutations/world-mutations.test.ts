@@ -1,7 +1,7 @@
 import {DefaultTestingContext} from "../../default-testing-context";
 import {
 	CREATE_PIN,
-	CREATE_WORLD,
+	CREATE_WORLD, DELETE_CALENDAR,
 	DELETE_PIN,
 	RENAME_WORLD,
 	UPDATE_PIN,
@@ -251,6 +251,23 @@ describe("world-mutations", () => {
 								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
 							}]
 						}]
+					},
+				},
+				errors: undefined,
+			});
+		});
+
+		test('delete calendar', async () => {
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: DELETE_CALENDAR,
+				variables: {
+					calendarId: testingContext.calendar._id,
+				}
+			});
+			expect(result).toMatchSnapshot({
+				data: {
+					deleteCalendar: {
+						_id: expect.any(String),
 					},
 				},
 				errors: undefined,

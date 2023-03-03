@@ -187,6 +187,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderDataLoader: Symbol.for("WikiFolderDataLoader"),
 	WikiPageDataLoader: Symbol.for("WikiPageDataLoader"),
 	WorldDataLoader: Symbol.for("WorldDataLoader"),
+	CalendarDataLoader: Symbol.for('CalendarDataLoader'),
 
 	// seeders
 	RoleSeeder: Symbol.for("RoleSeeder"),
@@ -202,5 +203,6 @@ export const INJECTABLE_TYPES = {
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),
 	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
+
 
 };
