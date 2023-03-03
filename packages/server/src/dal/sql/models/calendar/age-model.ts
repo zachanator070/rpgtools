@@ -40,7 +40,7 @@ export default class AgeModel extends SqlModel {
     setDays: HasManySetAssociationsMixin<DayOfTheWeekModel, string>;
 
     static connect() {
-        AgeModel.hasMany(MonthModel, {as: 'months', foreignKey: 'ageId'});
-        AgeModel.hasMany(DayOfTheWeekModel, {as: 'days', foreignKey: 'ageId'});
+        AgeModel.hasMany(MonthModel, {as: 'months', foreignKey: 'ageId', onDelete: 'CASCADE'});
+        AgeModel.hasMany(DayOfTheWeekModel, {as: 'days', foreignKey: 'ageId', onDelete: 'CASCADE'});
     }
 }

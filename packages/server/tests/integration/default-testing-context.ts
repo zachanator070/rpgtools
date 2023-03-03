@@ -29,6 +29,7 @@ import {Game} from "../../src/domain-entities/game";
 import {ModelService} from "../../src/services/model-service";
 import {GameService} from "../../src/services/game-service";
 import Calendar from "../../src/domain-entities/calendar";
+import {EventWiki} from "../../src/domain-entities/event-wiki";
 
 export const testGamePassword = 'tester1password';
 

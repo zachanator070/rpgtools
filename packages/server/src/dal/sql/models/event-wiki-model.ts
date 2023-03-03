@@ -15,7 +15,7 @@ export default class EventWikiModel extends WikiPageChild {
     declare minute: number;
     declare second: number;
 
-    declare calendar: string;
+    declare calendarId: string;
 
     static attributes = {
         ...defaultAttributes,

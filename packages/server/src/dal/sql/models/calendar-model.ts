@@ -30,7 +30,7 @@ export default class CalendarModel extends PermissionControlledModel {
 
     static connect() {
         configPermissionControlledModel(CalendarModel);
-        CalendarModel.hasMany(AgeModel, {as: 'ages', foreignKey: 'calendarId'});
+        CalendarModel.hasMany(AgeModel, {as: 'ages', foreignKey: 'calendarId', onDelete: 'CASCADE'});
         CalendarModel.belongsTo(WorldModel, {foreignKey: 'worldId'});
     }
 }

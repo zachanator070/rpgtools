@@ -1,15 +1,17 @@
 import fs from "fs";
-import {ARTICLE, PLACE} from "@rpgtools/common/src/type-constants";
+import {ARTICLE, EVENT_WIKI, PLACE} from "@rpgtools/common/src/type-constants";
 import {DefaultTestingContext} from "../../default-testing-context";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
 import {Image} from "../../../../src/domain-entities/image";
 import {FileUpload, Upload} from "graphql-upload";
-import {CREATE_WIKI, DELETE_WIKI, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
+import {CREATE_WIKI, DELETE_WIKI, UPDATE_EVENT, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 import {ImageService} from "../../../../src/services/image-service";
 import {DbEngine, Factory} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {DatabaseContext} from "../../../../src/dal/database-context";
+import {EventWiki} from "../../../../src/domain-entities/event-wiki";
+import {WikiPageService} from "../../../../src/services/wiki-page-service";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
@@ -18,6 +20,7 @@ describe("wiki page mutations", () => {
 	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
+	const wikiPageService = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 
 
 	describe("with world", () => {
@@ -80,6 +83,7 @@ describe("wiki page mutations", () => {
 		});
 
 		describe("with authenticated user", () => {
+
 			beforeEach(async () => {
 				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.currentUser);
 			});
@@ -305,6 +309,57 @@ describe("wiki page mutations", () => {
 									},
 								},
 							},
+						},
+						errors: undefined
+					});
+				});
+			});
+
+			describe('with new event wiki', () => {
+				let eventId: string = null;
+				beforeEach(async () => {
+					const session = await dbEngine.createDatabaseSession();
+					const databaseContext = databaseContextFactory({session});
+					if(eventId) {
+						await wikiPageService.deleteWiki(testingContext.currentUserSecurityContext, eventId, databaseContext);
+					}
+					await wikiPageService.createWiki(testingContext.currentUserSecurityContext, 'event wiki', testingContext.world.rootFolder, databaseContext);
+					eventId = (await databaseContext.wikiPageRepository.findOneByNameAndWorld('event wiki', testingContext.world._id))._id;
+					await wikiPageService.updateWiki(testingContext.currentUserSecurityContext, eventId, databaseContext, undefined, undefined, undefined, EVENT_WIKI);
+
+					await session.commit();
+				});
+
+				test('update event', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: UPDATE_EVENT,
+						variables: {
+							wikiId: eventId,
+							calendarId: testingContext.calendar._id,
+							age: 1,
+							year: 1,
+							month: 1,
+							day: 1,
+							hour: 1,
+							minute: 1,
+							second: 1
+						},
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							updateEventWiki: {
+								_id: expect.any(String),
+								calendar: {
+									_id: expect.any(String),
+								},
+								age: 1,
+								year: 1,
+								month: 1,
+								day: 1,
+								hour: 1,
+								minute: 1,
+								second: 1
+							}
 						},
 						errors: undefined
 					});

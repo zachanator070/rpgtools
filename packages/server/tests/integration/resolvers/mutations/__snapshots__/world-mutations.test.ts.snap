@@ -90,6 +90,23 @@ exports[`world-mutations with world and logged in create world 1`] = `
 }
 `;
 
+exports[`world-mutations with world and logged in delete calendar 1`] = `
+{
+  "data": {
+    "deleteCalendar": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`world-mutations with world and logged in delete pin 1`] = `
 {
   "data": {

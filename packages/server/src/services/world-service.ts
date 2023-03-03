@@ -18,7 +18,6 @@ import PlaceFactory from "../domain-entities/factory/place-factory";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 import Calendar, {Age} from "../domain-entities/calendar";
 import CalendarFactory from "../domain-entities/factory/calendar-factory";
-import {CalendarRepository} from "../dal/repository/calendar-repository";
 
 @injectable()
 export class WorldService {
@@ -35,8 +34,6 @@ export class WorldService {
 	wikiFolderFactory: WikiFolderFactory;
 	@inject(INJECTABLE_TYPES.CalendarFactory)
 	calendarFactory: CalendarFactory;
-	@inject(INJECTABLE_TYPES.CalendarRepository)
-	calendarRepository: CalendarRepository;
 
 	createWorld = async (
 		name: string,
@@ -243,15 +240,32 @@ export class WorldService {
 			if(!await entity.authorizationPolicy.canCreate(context, databaseContext)) {
 				throw new Error('You do not have permission to create this calendar');
 			}
-			await this.calendarRepository.create(entity);
+			await databaseContext.calendarRepository.create(entity);
 		}
 		else {
 			if(!await entity.authorizationPolicy.canWrite(context, databaseContext)) {
 				throw new Error('You do not have permission to write to this calendar');
 			}
-			await this.calendarRepository.update(entity);
+			await databaseContext.calendarRepository.update(entity);
 		}
 
 		return entity;
+	}
+
+	public async deleteCalendar(calendarId: string, securityContext: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
+		const calendar = await databaseContext.calendarRepository.findOneById(calendarId);
+		if(!calendar) {
+			throw new Error(`No such calendar exists with id ${calendarId}`);
+		}
+		if(!await calendar.authorizationPolicy.canWrite(securityContext, databaseContext)) {
+			throw new Error(`You do not have permission to delete this calendar`);
+		}
+		const events = await databaseContext.eventRepository.findByCalendarId(calendarId);
+		for(let event of events) {
+			event.calendar = null;
+			await databaseContext.eventRepository.update(event);
+		}
+		await databaseContext.calendarRepository.delete(calendar);
+		return calendar;
 	}
 }

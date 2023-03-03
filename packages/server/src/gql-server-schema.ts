@@ -75,6 +75,7 @@ export const typeDefs = gql`
 		renameWorld(worldId: ID!, newName: String!): World!
 		load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
 		upsertCalendar(calendarId: ID, world: ID!, name: String!, ages: [AgeInput!]!): Calendar!
+		deleteCalendar(calendarId: ID!): Calendar!
 
 		createRole(worldId: ID!, name: String!): Role!
 		deleteRole(roleId: ID!): Role!
@@ -123,6 +124,17 @@ export const typeDefs = gql`
 		): WikiPage!
 		updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
 		updateModeledWiki(wikiId: ID!, model: ID, color: String): WikiPage!
+		updateEventWiki(
+		    wikiId: ID!, 
+		    calendarId: ID, 
+		    age: Int!, 
+		    year: Int!, 
+		    month: Int!, 
+		    day: Int!, 
+		    hour: Int!,
+		    minute: Int!, 
+		    second: Int!
+        ): EventWiki!
 		moveWiki(wikiId: ID!, folderId: ID!): WikiPage!
 
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
@@ -338,6 +350,27 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}
+	
+	type EventWiki implements WikiPage & PermissionControlled {
+	    _id: ID!
+		name: String!
+		content: String
+		world: World!
+		coverImage: Image
+        calendar: Calendar, 
+        age: Int!, 
+        year: Int!, 
+        month: Int!, 
+        day: Int!, 
+        hour: Int!,
+        minute: Int!, 
+        second: Int!,
+		type: String!
+		folder: WikiFolder!
+		accessControlList: [AclEntry!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+    }
 
 	type Person implements WikiPage & PermissionControlled & ModeledWiki {
 		_id: ID!

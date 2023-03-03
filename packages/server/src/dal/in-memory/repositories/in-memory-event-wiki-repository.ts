@@ -5,4 +5,7 @@ import {injectable} from "inversify";
 
 @injectable()
 export default class InMemoryEventWikiRepository extends AbstractInMemoryRepository<EventWiki> implements EventWikiRepository {
+    async findByCalendarId(calendarId: string): Promise<EventWiki[]> {
+        return [...this.items.values()].filter(event => event.calendar === calendarId);
+    }
 }
