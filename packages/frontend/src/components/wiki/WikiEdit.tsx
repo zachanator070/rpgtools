@@ -231,13 +231,14 @@ export default function WikiEdit() {
 			)}
 		</div>);
 	} else if(type === EVENT_WIKI) {
+		const eventWiki = currentWiki as EventWiki;
 		wikiSpecificFields = (
 			<div className={"margin-lg"}>
 				<div>
 					Calendar:
 					<span className={'margin-md-left'}>
 						<SelectCalendar
-							defaultCalendar={selectedCalendar?._id}
+							defaultCalendar={eventWiki.calendar?._id}
 							onChange={async (calendar) => {
 								setSelectedCalendar(calendar)
 							}}
@@ -248,7 +249,7 @@ export default function WikiEdit() {
 					<div className={'margin-md'}>
 						Age:
 						<span className={'margin-md-left'}>
-							<SelectAge onChange={setSelectedAge} calendar={selectedCalendar} defaultAge={selectedAge} />
+							<SelectAge onChange={setSelectedAge} calendar={selectedCalendar} defaultAge={eventWiki.age} />
 						</span>
 					</div>
 					<div className={'margin-md'}>
@@ -256,6 +257,7 @@ export default function WikiEdit() {
 						<span className={'margin-md-left'}>
 							<NumberInput
 								value={selectedYear}
+								defaultValue={eventWiki.year}
 								onChange={setSelectedYear}
 								minValue={1}
 								maxValue={selectedCalendar.ages[selectedAge - 1].numYears}
@@ -265,7 +267,7 @@ export default function WikiEdit() {
 					<div className={'margin-md'}>
 						Month:
 						<span className={'margin-md-left'}>
-							<SelectMonth onChange={setSelectedMonth} age={selectedCalendar.ages[selectedAge - 1]} defaultMonth={selectedMonth} />
+							<SelectMonth onChange={setSelectedMonth} age={selectedCalendar.ages[selectedAge - 1]} defaultMonth={eventWiki.month} />
 						</span>
 					</div>
 					<div className={'margin-md'}>
@@ -274,6 +276,7 @@ export default function WikiEdit() {
 							<NumberInput
 								value={selectedDay}
 								onChange={setSelectedDay}
+								defaultValue={eventWiki.day}
 								minValue={1}
 								maxValue={selectedCalendar.ages[selectedAge - 1].months[selectedMonth - 1].numDays}
 							/>
@@ -282,9 +285,9 @@ export default function WikiEdit() {
 					<div className={'margin-md'}>
 						Time:
 						<span className={'margin-md-left'}>
-							<NumberInput value={selectedHour} onChange={setSelectedHour} maxValue={23}/>
-							: <NumberInput value={selectedMinute} onChange={setSelectedMinute} maxValue={59}/>
-							: <NumberInput value={selectedSecond} onChange={setSelectedSecond} maxValue={59}/>
+							<NumberInput value={selectedHour} onChange={setSelectedHour} maxValue={23} defaultValue={eventWiki.hour}/>
+							: <NumberInput value={selectedMinute} onChange={setSelectedMinute} maxValue={59} defaultValue={eventWiki.minute}/>
+							: <NumberInput value={selectedSecond} onChange={setSelectedSecond} maxValue={59} defaultValue={eventWiki.second}/>
 						</span>
 					</div>
 				</>}

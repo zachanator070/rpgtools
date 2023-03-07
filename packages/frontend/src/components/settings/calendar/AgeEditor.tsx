@@ -33,7 +33,7 @@ export default function AgeEditor({age, onChange}: {age: Age, onChange: (age: Ag
             <div className={'margin-md-bottom'}>
                 Number of Years:
                 <span className={'margin-md-left'}>
-                    <NumberInput defaultValue={numYears} onChange={(value) => setNumYears(value)}/>
+                    <NumberInput defaultValue={numYears} onChange={(value) => setNumYears(value)} minValue={1}/>
                 </span>
             </div>
         </div>
@@ -52,10 +52,14 @@ export default function AgeEditor({age, onChange}: {age: Age, onChange: (age: Ag
                 <div className={'margin-md-bottom'}>
                     Number of Days:
                     <span className={'margin-md-left'}>
-                        <NumberInput defaultValue={month.numDays} onChange={value => {
-                            month.numDays = value;
-                            setMonths([...months]);
-                        }}/>
+                        <NumberInput
+                            defaultValue={month.numDays}
+                            onChange={value => {
+                                month.numDays = value;
+                                setMonths([...months]);
+                            }}
+                            minValue={1}
+                        />
                     </span>
                 </div>
                 <div className={'margin-md-bottom'}>
@@ -73,7 +77,7 @@ export default function AgeEditor({age, onChange}: {age: Age, onChange: (age: Ag
             </div>)}
             <SecondaryButton
                 onClick={() => {
-                    setMonths([...months, {name: 'New Month', numDays: 0}]);
+                    setMonths([...months, {name: 'New Month', numDays: 1}]);
                 }}
             >
                 Add Month
