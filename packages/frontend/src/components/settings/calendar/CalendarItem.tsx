@@ -10,15 +10,20 @@ import useDeleteCalendar from "../../../hooks/calendar/useDeleteCalendar";
 import LoadingView from "../../LoadingView";
 import DeleteIcon from "../../widgets/icons/DeleteIcon";
 import Collapsible from "../../widgets/Collapsible";
+import useModal from "../../widgets/useModal";
 
 export default function CalendarItem({calendar}: {calendar: Calendar}) {
     const {refetch} = useCalendars();
     const {deleteCalendar, loading: deleteLoading} = useDeleteCalendar();
     const [modalVisible, setModalVisible] = useState(false);
     const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
+
+    const {modalConfirm} = useModal();
+
     if(deleteLoading) {
         return <LoadingView/>;
     }
+
     return <div className={'margin-md-bottom'}>
         <h3>
             {calendar.name}
@@ -37,7 +42,11 @@ export default function CalendarItem({calendar}: {calendar: Calendar}) {
                 }
                 {calendar.canWrite &&
                     <a
-                        onClick={async () => await deleteCalendar({calendarId: calendar._id})}
+                        onClick={() => modalConfirm({
+                            title: 'Confirm Deletion',
+                            content: `Are you sure you want to delete calendar ${calendar.name}?`,
+                            onOk: async () => await deleteCalendar({calendarId: calendar._id})
+                        })}
                     >
                         <DeleteIcon/>
                     </a>

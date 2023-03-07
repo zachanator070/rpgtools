@@ -28,7 +28,7 @@ import ContextMenu from "../widgets/ContextMenu";
 interface FolderMenuProps {
 	folder: WikiFolder;
 	children?: ReactElement;
-	refetch?: () => Promise<void>;
+	refetch?: () => Promise<any>;
 }
 
 export default function FolderMenu({ folder, children, refetch }: FolderMenuProps) {

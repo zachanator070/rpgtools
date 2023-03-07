@@ -7,6 +7,7 @@ export interface TabPaneProps  {
     style?: CSSProperties;
     children?: React.ReactNode;
     closable?: boolean;
+    key?: any;
 }
 
 interface TabCollectionProps extends WidgetProps {
@@ -31,7 +32,7 @@ export default function TabCollection({activeKey, onChange, style, tabs, tabPosi
         onEdit={onEdit}
     >
         {tabs.map((tab, index) => (
-            <Tabs.TabPane tab={tab.title} style={tab.style} key={tab.title} closable={tab.closable}>
+            <Tabs.TabPane tab={tab.title} style={tab.style} key={tab.key || tab.title} closable={tab.closable}>
                 {tab.children}
             </Tabs.TabPane>
         ))}

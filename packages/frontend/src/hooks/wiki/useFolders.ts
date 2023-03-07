@@ -13,9 +13,9 @@ interface FoldersResult extends GqlQueryResult<WikiFolder[], FoldersVariables>{
 	folders: WikiFolder[]
 }
 
-export default function useFolders(variables?: FoldersVariables): FoldersResult {
+export default function useFolders(variables: FoldersVariables = {}): FoldersResult {
 	const params = useParams();
-	if (variables.worldId === null) {
+	if (!variables.worldId) {
 		variables.worldId = params.world_id;
 	}
 	const result = useGQLQuery<WikiFolder[], FoldersVariables>(FOLDERS, variables);
