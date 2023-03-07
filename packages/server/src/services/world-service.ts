@@ -1,10 +1,12 @@
 import {
+	CALENDAR_ADMIN,
+	CALENDAR_RW,
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
 } from "@rpgtools/common/src/permission-constants";
 import { SecurityContext } from "../security/security-context";
-import {PLACE, ROLE} from "@rpgtools/common/src/type-constants";
+import {PLACE, ROLE, USER} from "@rpgtools/common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
@@ -235,21 +237,33 @@ export class WorldService {
 	};
 
 	public async upsertCalendar(calendarId: string, world: string, name: string, ages: Age[], context: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
-		const entity = this.calendarFactory.build({_id: calendarId, world, name, ages, acl: []});
-		if(!entity._id) {
-			if(!await entity.authorizationPolicy.canCreate(context, databaseContext)) {
+
+		let calendar = null;
+		if(!calendarId) {
+			calendar = this.calendarFactory.build({_id: calendarId, world, name, ages, acl: [
+					{permission: CALENDAR_RW, principal: context.user._id, principalType: USER},
+					{permission: CALENDAR_ADMIN, principal: context.user._id, principalType: USER}
+				]});
+			if(!await calendar.authorizationPolicy.canCreate(context, databaseContext)) {
 				throw new Error('You do not have permission to create this calendar');
 			}
-			await databaseContext.calendarRepository.create(entity);
+			await databaseContext.calendarRepository.create(calendar);
 		}
 		else {
-			if(!await entity.authorizationPolicy.canWrite(context, databaseContext)) {
+			calendar = await databaseContext.calendarRepository.findOneById(calendarId);
+			if(!calendar) {
+				throw new Error(`Calendar with id ${calendarId} does not exist`);
+			}
+			if(!await calendar.authorizationPolicy.canWrite(context, databaseContext)) {
 				throw new Error('You do not have permission to write to this calendar');
 			}
-			await databaseContext.calendarRepository.update(entity);
+			calendar.world = world;
+			calendar.name = name;
+			calendar.ages = ages;
+			await databaseContext.calendarRepository.update(calendar);
 		}
 
-		return entity;
+		return calendar;
 	}
 
 	public async deleteCalendar(calendarId: string, securityContext: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
@@ -267,5 +281,10 @@ export class WorldService {
 		}
 		await databaseContext.calendarRepository.delete(calendar);
 		return calendar;
+	}
+
+	public async getCalendars(worldId: string, securityContext: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar[]> {
+		const calendars = await databaseContext.calendarRepository.findByWorldId(worldId);
+		return calendars.filter(calendar => calendar.authorizationPolicy.canRead(securityContext, databaseContext));
 	}
 }

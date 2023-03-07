@@ -85,7 +85,7 @@ export default function PermissionEditor({ subject, subjectType, refetch }: Perm
 									}
 									return (
 										<div key={`${permission}.${principal._id}`}>
-											{principalType === USER ? principal.username : principal.name}
+											{principal.name}
 											{subject.canAdmin && (
 												<PrimaryDangerButton
 													className="margin-md-left"

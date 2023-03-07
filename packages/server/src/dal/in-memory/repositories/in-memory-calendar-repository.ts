@@ -4,4 +4,8 @@ import {CalendarRepository} from "../../repository/calendar-repository";
 import {injectable} from "inversify";
 
 @injectable()
-export default class InMemoryCalendarRepository extends AbstractInMemoryRepository<Calendar> implements CalendarRepository{}
+export default class InMemoryCalendarRepository extends AbstractInMemoryRepository<Calendar> implements CalendarRepository{
+    async findByWorldId(worldId: string): Promise<Calendar[]> {
+        return [...this.items.values()].filter(calendar => calendar.world === worldId);
+    }
+}

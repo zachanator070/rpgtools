@@ -7,6 +7,8 @@ import ArticleFactory from "../../../domain-entities/factory/article-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 import WikiPageModel from "../models/wiki-page-model";
+import {WikiPage} from "../../../domain-entities/wiki-page";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 
 @injectable()
 export default class SqlArticleRepository extends AbstractSqlRepository<Article, WikiPageModel> implements ArticleRepository {
@@ -18,6 +20,9 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
 
     @inject(INJECTABLE_TYPES.WikiPageFactory)
     wikiPageFactory: WikiPageFactory;
+
+    @inject(INJECTABLE_TYPES.SqlPermissionControlledRepository)
+    sqlPermissionControlledRepository: SqlPermissionControlledRepository;
 
     async findOneByNameAndWorld(name: string, worldId: string): Promise<Article> {
         const model = await WikiPageModel.findOne({
@@ -31,6 +36,14 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
         if(model) {
             return this.entityFactory.fromSqlModel(model);
         }
+    }
+
+    async updateAssociations(entity: WikiPage, model: WikiPageModel) {
+        await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
+    }
+
+    async deleteAssociations(entity: WikiPage, model: WikiPageModel) {
+        await this.sqlPermissionControlledRepository.deleteAssociations(entity, model);
     }
 
     async modelFactory(entity: Article): Promise<WikiPageModel> {

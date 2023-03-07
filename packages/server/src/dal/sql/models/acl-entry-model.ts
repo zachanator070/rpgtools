@@ -1,4 +1,4 @@
-import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
+import {DataTypes} from "sequelize";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {ALL_PERMISSIONS} from "@rpgtools/common/src/permission-constants";
 import {defaultAttributes} from "./default-attributes";

@@ -6,14 +6,14 @@ import useCreateImage from "../../hooks/wiki/useCreateImage";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import useUpdateWiki from "../../hooks/wiki/useUpdateWiki";
 import useUpdatePlace from "../../hooks/wiki/useUpdatePlace";
-import { ALL_WIKI_TYPES, MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
+import {ALL_WIKI_TYPES, EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
 import ToolTip from "../widgets/ToolTip";
 import SelectModel from "../select/SelectModel";
 import ModelViewer from "../models/ModelViewer";
 import useUpdateModeledWiki from "../../hooks/wiki/useUpdateModeledWiki";
 import LoadingView from "../LoadingView";
 import MoveWikiButton from "./MoveWikiButton";
-import {Model, ModeledWiki, Place} from "../../types";
+import {Calendar, EventWiki, Model, ModeledWiki, Place} from "../../types";
 import useModal from "../widgets/useModal";
 import Errors from "../Errors";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
@@ -28,33 +28,49 @@ import Editor from "./Editor";
 import NumberInput from "../widgets/input/NumberInput";
 import FormItem from "../widgets/input/FormItem";
 import SecondaryDangerButton from "../widgets/SecondaryDangerButton";
+import SelectCalendar from "../select/SelectCalendar";
+import SelectAge from "../select/SelectAge";
+import SelectMonth from "../select/SelectMonth";
+import useUpdateEventWiki from "../../hooks/wiki/useUpdateEventWiki";
+
 
 export default function WikiEdit() {
 	const navigate = useNavigate();
+	const { wiki_id } = useParams();
+	const {modalConfirm} = useModal();
+
 	const { currentWiki, loading } = useCurrentWiki();
 	const { currentWorld, refetch: refetchWorld } = useCurrentWorld();
 
-	const [name, setName] = useState(null);
-	const [type, setType] = useState(null);
-	const [newCoverImageFile, setNewCoverImageFile] = useState<any>(undefined);
-	const [newMapImageFile, setNewMapImageFile] = useState<any>(undefined);
-	const [pixelsPerFoot, setPixelsPerFoot] = useState<number>(0);
-	const [modelColor, setModelColor] = useState<string>();
-	const [saving, setSaving] = useState(false);
 	const { deleteWiki } = useDeleteWiki();
 	const { createImage } = useCreateImage();
 	const { updateWiki } = useUpdateWiki();
 	const { updatePlace } = useUpdatePlace();
 	const { updateModeledWiki } = useUpdateModeledWiki();
+	const {updateEventWiki} = useUpdateEventWiki();
 
+	const [name, setName] = useState(null);
+	const [type, setType] = useState(null);
+	const [newCoverImageFile, setNewCoverImageFile] = useState<any>(undefined);
+
+	const [newMapImageFile, setNewMapImageFile] = useState<any>(undefined);
+	const [pixelsPerFoot, setPixelsPerFoot] = useState<number>(0);
+
+	const [modelColor, setModelColor] = useState<string>();
 	const [selectedModel, setSelectedModel] = useState<Model>();
 
+	const [selectedCalendar, setSelectedCalendar] = useState<Calendar>();
+	const [selectedAge, setSelectedAge] = useState<number>();
+	const [selectedYear, setSelectedYear] = useState<number>();
+	const [selectedMonth, setSelectedMonth] = useState<number>();
+	const [selectedDay, setSelectedDay] = useState<number>();
+	const [selectedHour, setSelectedHour] = useState<number>();
+	const [selectedMinute, setSelectedMinute] = useState<number>();
+	const [selectedSecond, setSelectedSecond] = useState<number>();
+
+	const [saving, setSaving] = useState(false);
 	const [editor, setEditor] = useState(null);
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
-
-	const { wiki_id } = useParams();
-	const {modalConfirm} = useModal();
-
 
 	useEffect(() => {
 		if (!currentWiki) {
@@ -66,11 +82,20 @@ export default function WikiEdit() {
 			if(currentWiki.type === PLACE) {
 				const currentMap = currentWiki as Place;
 				await setPixelsPerFoot(currentMap.pixelsPerFoot);
-			}
-			if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
+			} else if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
 				const modeledWiki = currentWiki as ModeledWiki;
 				setSelectedModel(modeledWiki.model);
 				setModelColor(modeledWiki.modelColor);
+			} else if (currentWiki.type === EVENT_WIKI) {
+				const eventWiki = currentWiki as EventWiki;
+				setSelectedCalendar(eventWiki.calendar);
+				setSelectedAge(eventWiki.age || 1);
+				setSelectedYear(eventWiki.year || 1);
+				setSelectedMonth(eventWiki.month || 1);
+				setSelectedDay(eventWiki.day || 1);
+				setSelectedHour(eventWiki.hour || 0);
+				setSelectedMinute(eventWiki.minute || 0);
+				setSelectedSecond(eventWiki.second || 0);
 			}
 		})();
 	}, [currentWiki]);
@@ -126,12 +151,23 @@ export default function WikiEdit() {
 				mapImageId = null;
 			}
 			await updatePlace({placeId: currentPlace._id, mapImageId, pixelsPerFoot});
-		}
-		if (MODELED_WIKI_TYPES.includes(type)) {
+		} else if (MODELED_WIKI_TYPES.includes(type)) {
 			await updateModeledWiki({
 				wikiId: currentWiki._id,
 				model: selectedModel ? selectedModel._id : null,
 				color: modelColor,
+			});
+		} else if(type === EVENT_WIKI) {
+			await updateEventWiki({
+				wikiId: currentWiki._id,
+				calendarId: selectedCalendar?._id,
+				age: selectedAge,
+				year: selectedYear,
+				month: selectedMonth,
+				day: selectedDay,
+				hour: selectedHour,
+				minute: selectedMinute,
+				second: selectedSecond
 			});
 		}
 		await refetchWorld();
@@ -149,11 +185,34 @@ export default function WikiEdit() {
 		);
 	}
 
-	let modeledWikiFields = null;
+	let wikiSpecificFields = null;
 
-	if(MODELED_WIKI_TYPES.includes(type)){
+	if(type === PLACE) {
+		wikiSpecificFields = <>
+			<div className="margin-lg">
+				<ImageInput
+					onChange={setNewMapImageFile}
+					initialImage={(currentWiki as Place).mapImage}
+					id={'mapImageUpload'}
+					revertId={'mapImageRevert'}
+					buttonText={"Select Map Image"}
+				/>
+			</div>
+			<div className="margin-lg" style={{display: 'flex'}}>
+				<FormItem label={<>
+					<ToolTip title={"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."}/>
+					Pixels Per Foot
+				</>}>
+					<NumberInput
+						value={pixelsPerFoot}
+						onChange={async (value) => setPixelsPerFoot(value)}
+					/>
+				</FormItem>
+			</div>
+		</>;
+	} else if(MODELED_WIKI_TYPES.includes(type)) {
 		const currentModeledWiki = currentWiki as ModeledWiki;
-		modeledWikiFields = (<div className={"margin-lg"} ref={setModelViewerContainer}>
+		wikiSpecificFields = (<div className={"margin-lg"} ref={setModelViewerContainer}>
 			{type} model:
 			<span className={"margin-md"}>
 						<SelectModel
@@ -171,6 +230,66 @@ export default function WikiEdit() {
 				/>
 			)}
 		</div>);
+	} else if(type === EVENT_WIKI) {
+		wikiSpecificFields = (
+			<div className={"margin-lg"}>
+				<div>
+					Calendar:
+					<span className={'margin-md-left'}>
+						<SelectCalendar
+							defaultCalendar={selectedCalendar?._id}
+							onChange={async (calendar) => {
+								setSelectedCalendar(calendar)
+							}}
+						/>
+					</span>
+				</div>
+				{selectedCalendar && selectedCalendar.ages.length > 0 && <>
+					<div className={'margin-md'}>
+						Age:
+						<span className={'margin-md-left'}>
+							<SelectAge onChange={setSelectedAge} calendar={selectedCalendar} defaultAge={selectedAge} />
+						</span>
+					</div>
+					<div className={'margin-md'}>
+						Year:
+						<span className={'margin-md-left'}>
+							<NumberInput
+								value={selectedYear}
+								onChange={setSelectedYear}
+								minValue={1}
+								maxValue={selectedCalendar.ages[selectedAge - 1].numYears}
+							/>
+						</span>
+					</div>
+					<div className={'margin-md'}>
+						Month:
+						<span className={'margin-md-left'}>
+							<SelectMonth onChange={setSelectedMonth} age={selectedCalendar.ages[selectedAge - 1]} defaultMonth={selectedMonth} />
+						</span>
+					</div>
+					<div className={'margin-md'}>
+						Day:
+						<span className={'margin-md-left'}>
+							<NumberInput
+								value={selectedDay}
+								onChange={setSelectedDay}
+								minValue={1}
+								maxValue={selectedCalendar.ages[selectedAge - 1].months[selectedMonth - 1].numDays}
+							/>
+						</span>
+					</div>
+					<div className={'margin-md'}>
+						Time:
+						<span className={'margin-md-left'}>
+							<NumberInput value={selectedHour} onChange={setSelectedHour} maxValue={23}/>
+							: <NumberInput value={selectedMinute} onChange={setSelectedMinute} maxValue={59}/>
+							: <NumberInput value={selectedSecond} onChange={setSelectedSecond} maxValue={59}/>
+						</span>
+					</div>
+				</>}
+			</div>
+		);
 	}
 
 	return (
@@ -196,32 +315,7 @@ export default function WikiEdit() {
 					buttonText={"Select Cover Image"}
 				/>
 			</div>
-			{type === PLACE && (
-				<>
-					<div className="margin-lg">
-						<ImageInput
-							onChange={setNewMapImageFile}
-							initialImage={(currentWiki as Place).mapImage}
-							id={'mapImageUpload'}
-							revertId={'mapImageRevert'}
-							buttonText={"Select Map Image"}
-						/>
-					</div>
-					<div className="margin-lg" style={{display: 'flex'}}>
-						<FormItem label={<>
-							<ToolTip title={"Number of pixels on this map that represent the length of 1 foot. Required if you wish to use this place in a game."}/>
-							Pixels Per Foot
-						</>}>
-							<NumberInput
-								value={pixelsPerFoot}
-								onChange={async (value) => setPixelsPerFoot(value)}
-							/>
-						</FormItem>
-					</div>
-				</>
-			)}
-
-			{modeledWikiFields}
+			{wikiSpecificFields}
 			<div className="margin-lg">
 				<Editor
 					content={currentWiki.content}

@@ -38,4 +38,8 @@ export default class SqlPermissionControlledRepository {
         }
         await model.setAcl(aclModels);
     }
+
+    async deleteAssociations(entity: PermissionControlledEntity, model: PermissionControlledModel) {
+        await AclEntryModel.destroy({where: {subject: entity._id}});
+    }
 }

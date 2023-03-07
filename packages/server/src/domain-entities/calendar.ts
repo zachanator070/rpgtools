@@ -1,14 +1,14 @@
 import {AclEntry, DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
 import CalendarFactory from "./factory/calendar-factory";
-import {inject} from "inversify";
+import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {CALENDAR} from "@rpgtools/common/src/type-constants";
 import {CalendarRepository} from "../dal/repository/calendar-repository";
 import {CalendarDocument} from "../dal/mongodb/models/calendar";
 import CalendarModel from "../dal/sql/models/calendar-model";
 
-
+@injectable()
 export default class Calendar implements DomainEntity {
 
     public _id: string;

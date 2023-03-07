@@ -10,12 +10,12 @@ interface DropdownSelectOption {
 
 interface DropdownSelectProps extends WidgetProps {
     value?: string,
-    onChange: (newValue: string) => any,
+    onChange: (newValue: any) => any,
     options: DropdownSelectOption[];
     loading?: boolean,
     onSearch?: (searchTerm: string) => Promise<void>;
     icon?: React.ReactNode;
-    defaultValue?: string;
+    defaultValue?: any;
     showArrow?: boolean;
     helpText?: string;
 }

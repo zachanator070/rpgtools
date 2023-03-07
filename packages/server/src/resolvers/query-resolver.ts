@@ -107,4 +107,12 @@ export default {
 		const service = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
 		return service.getFolderPath(securityContext, wikiId, databaseContext);
 	},
+	calendars: async (
+		_: any,
+		{ worldId } : { worldId: string },
+		{ securityContext, databaseContext }: SessionContext
+	) => {
+		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
+		return service.getCalendars(worldId, securityContext, databaseContext);
+	}
 };

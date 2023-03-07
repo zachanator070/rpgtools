@@ -212,6 +212,7 @@ import InMemoryCalendarRepository from "../dal/in-memory/repositories/in-memory-
 import CalendarFactory from "../domain-entities/factory/calendar-factory";
 import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
 import Calendar from "../domain-entities/calendar";
+import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
 
 const container = new Container();
 
@@ -252,6 +253,7 @@ const bindAll = () => {
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(WikiFolder);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(EventWiki);
+	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Calendar);
 
 // entity factories
 	container.bind<AclFactory>(INJECTABLE_TYPES.AclFactory).to(AclFactory);
@@ -477,6 +479,9 @@ const bindAll = () => {
 	container
 		.bind<WorldAuthorizationPolicy>(INJECTABLE_TYPES.WorldAuthorizationPolicy)
 		.to(WorldAuthorizationPolicy);
+	container
+		.bind<CalendarAuthorizationPolicy>(INJECTABLE_TYPES.CalendarAuthorizationPolicy)
+		.to(CalendarAuthorizationPolicy);
 
 // archive repositories
 	container

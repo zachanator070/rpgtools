@@ -35,6 +35,10 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 
+    async deleteAssociations(entity: WikiPage, model: WikiPageModel) {
+        await this.sqlPermissionControlledRepository.deleteAssociations(entity, model);
+    }
+
     async findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>> {
         return this.buildPaginatedResult(page, {_id: ids}, 'name');
     }

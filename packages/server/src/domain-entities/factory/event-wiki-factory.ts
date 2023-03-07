@@ -6,6 +6,7 @@ import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {EventWiki} from "../event-wiki";
+import EventWikiModel from "../../dal/sql/models/event-wiki-model";
 
 
 @injectable()
@@ -53,13 +54,13 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.coverImage = coverImage;
         event.contentId = contentId;
         event.calendar = calendar;
-        event.age = age;
-        event.year = year;
-        event.month = month;
-        event.day = day;
-        event.hour = day;
-        event.minute = minute;
-        event.second = second;
+        event.age = age || 0;
+        event.year = year || 0;
+        event.month = month || 0;
+        event.day = day || 0;
+        event.hour = day || 0;
+        event.minute = minute || 0;
+        event.second = second || 0;
         event.acl = acl;
         return event;
     }
@@ -99,14 +100,14 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
     }
 
     async fromSqlModel(model: WikiPageModel): Promise<EventWiki> {
-        const page = await model.getWiki();
+        const page = await model.getWiki() as EventWikiModel;
         return this.build({
             _id: model._id,
             name: model.name,
             world: model.worldId,
             coverImage: model.coverImageId,
             contentId: model.contentId,
-            calendar: page?.calendar,
+            calendar: page?.calendarId,
             age: page?.age,
             year: page?.year,
             month: page?.month,

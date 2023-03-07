@@ -23,7 +23,7 @@ export default function InputForm<T>({ onSubmit, children, loading, errors, butt
             span: 8,
         }}
 		wrapperCol={{
-            span: 8,
+            span: 16,
         }}
         onValuesChange={(changedValues, allValues) => {
             console.log(changedValues);

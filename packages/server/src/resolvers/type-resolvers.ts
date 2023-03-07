@@ -194,12 +194,12 @@ export const TypeResolvers = {
 			}
 		},
 	},
-	EventWiki: {
+	Event: {
 		...wikiPageInterfaceAttributes,
 		...permissionControlledInterfaceAttributes,
 		calendar: async (page: EventWiki, _: any, {databaseContext}: SessionContext): Promise<Calendar> => {
 			const dataLoader = container.get<DataLoader<Calendar>>(INJECTABLE_TYPES.CalendarDataLoader);
-			if(page.calendar) {
+			if (page.calendar) {
 				return dataLoader.getDocument(page.calendar, databaseContext);
 			}
 		}
