@@ -59,6 +59,8 @@ export const typeDefs = gql`
 		models(worldId: ID!): [Model!]!
 		
 		pins(worldId: ID!, page: Int): PinPaginatedResult!
+		
+		calendars(worldId: ID!): [Calendar!]!
 	}
 
 	type Mutation {
@@ -134,7 +136,7 @@ export const typeDefs = gql`
 		    hour: Int!,
 		    minute: Int!, 
 		    second: Int!
-        ): EventWiki!
+        ): Event!
 		moveWiki(wikiId: ID!, folderId: ID!): WikiPage!
 
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
@@ -351,7 +353,7 @@ export const typeDefs = gql`
 		canAdmin: Boolean!
 	}
 	
-	type EventWiki implements WikiPage & PermissionControlled {
+	type Event implements WikiPage & PermissionControlled {
 	    _id: ID!
 		name: String!
 		content: String

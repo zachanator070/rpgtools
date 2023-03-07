@@ -32,7 +32,7 @@ export default class SqlEventWikiRepository extends AbstractSqlRepository<EventW
         if(!page) {
             page = await EventWikiModel.create({
                 _id: entity._id,
-                calendar: entity.calendar,
+                calendarId: entity.calendar,
                 age: entity.age,
                 year: entity.year,
                 month: entity.month,
@@ -44,7 +44,17 @@ export default class SqlEventWikiRepository extends AbstractSqlRepository<EventW
             model.wiki = page._id;
             await model.save();
         } else {
-            page.set(entity);
+            page.set({
+                _id: entity._id,
+                calendarId: entity.calendar,
+                age: entity.age,
+                year: entity.year,
+                month: entity.month,
+                day: entity.day,
+                hour: entity.hour,
+                minute: entity.minute,
+                second: entity.second
+            });
             await page.save();
         }
     }

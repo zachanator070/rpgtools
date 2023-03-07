@@ -37,6 +37,10 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         await this.updateAges(entity, model);
     }
 
+    async deleteAssociations(entity: Calendar, model: CalendarModel) {
+        await this.sqlPermissionControlledRepository.deleteAssociations(entity, model);
+    }
+
     async updateAges(entity: Calendar, model: CalendarModel) {
         const ageModels = [];
         for(let [index, age] of entity.ages.entries()) {
@@ -168,6 +172,10 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         }
 
         await model.setDays(dayModels);
+    }
+
+    async findByWorldId(worldId: string): Promise<Calendar[]> {
+        return this.buildResults(await CalendarModel.findAll({where: {worldId: worldId}}));
     }
 
 }

@@ -123,8 +123,7 @@ export class WikiPageService {
 			const newType = this.entityMapper.map(type);
 			wikiPage = newType.factory.build(wikiPage) as WikiPage;
 		}
-
-		await databaseContext.wikiPageRepository.update(wikiPage);
+		await wikiPage.getRepository(databaseContext).update(wikiPage);
 		return wikiPage;
 	};
 
@@ -228,47 +227,49 @@ export class WikiPageService {
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))) {
 			throw new Error("You do not have permission to write to this page");
 		}
-		const calendar = await databaseContext.calendarRepository.findOneById(calendarId);
-		if(calendarId && !calendar) {
-			throw new Error(`Calendar with id ${calendarId} not found`);
+		if(calendarId) {
+			const calendar = await databaseContext.calendarRepository.findOneById(calendarId);
+			if(!calendar) {
+				throw new Error(`Calendar with id ${calendarId} not found`);
+			}
+			wikiPage.calendar = calendarId;
+			if(age - 1 > calendar.ages.length) {
+				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
+			}
+			if(age <= 0) {
+				throw new Error(`Age cannot be negative`)
+			}
+			wikiPage.age = age;
+			if(age > calendar.ages.length) {
+				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
+			}
+			if(age <= 0) {
+				throw new Error(`Age must be greater than 0`);
+			}
+			const ageEntity = calendar.ages[age - 1];
+			if(year > ageEntity.numYears) {
+				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.numYears} years`);
+			}
+			if(year <= 0) {
+				throw new Error(`Year must be greater than 0`);
+			}
+			wikiPage.year = year;
+			if(month - 1 > ageEntity.months.length) {
+				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.months.length} months`);
+			}
+			if(month <= 0) {
+				throw new Error(`Month must be greater than 0`);
+			}
+			wikiPage.month = month;
+			const monthEntity = ageEntity.months[month - 1];
+			if(day > monthEntity.numDays) {
+				throw new Error(`Month ${monthEntity._id} only has ${monthEntity.numDays}`);
+			}
+			if(day <= 0) {
+				throw new Error(`Day must be greater than 0`);
+			}
+			wikiPage.day = day;
 		}
-		wikiPage.calendar = calendarId;
-		if(age - 1 > calendar.ages.length) {
-			throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
-		}
-		if(age <= 0) {
-			throw new Error(`Age cannot be negative`)
-		}
-		wikiPage.age = age;
-		if(age > calendar.ages.length) {
-			throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
-		}
-		if(age <= 0) {
-			throw new Error(`Age must be greater than 0`);
-		}
-		const ageEntity = calendar.ages[age - 1];
-		if(year > ageEntity.numYears) {
-			throw new Error(`Age ${ageEntity._id} only has ${ageEntity.numYears} years`);
-		}
-		if(year <= 0) {
-			throw new Error(`Year must be greater than 0`);
-		}
-		wikiPage.year = year;
-		if(month - 1 > ageEntity.months.length) {
-			throw new Error(`Age ${ageEntity._id} only has ${ageEntity.months.length} months`);
-		}
-		if(month <= 0) {
-			throw new Error(`Month must be greater than 0`);
-		}
-		wikiPage.month = month;
-		const monthEntity = ageEntity.months[month - 1];
-		if(day > monthEntity.numDays) {
-			throw new Error(`Month ${monthEntity._id} only has ${monthEntity.numDays}`);
-		}
-		if(day <= 0) {
-			throw new Error(`Day must be greater than 0`);
-		}
-		wikiPage.day = day;
 		if(hour < 0 || hour > 23) {
 			throw new Error('Hour must be between 0 and 23');
 		}

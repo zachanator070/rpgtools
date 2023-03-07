@@ -3,9 +3,9 @@ import Editor from "./Editor";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LoadingView from "../LoadingView";
-import { MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
 import ModelViewer from "../models/ModelViewer";
-import {ModeledWiki, Place, WikiPage} from "../../types";
+import {EventWiki, ModeledWiki, Place, WikiPage} from "../../types";
 import usePins from "../../hooks/map/usePins";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ToolTip from "../widgets/ToolTip";
@@ -15,6 +15,23 @@ import GotoIcon from "../widgets/icons/GotoIcon";
 interface WikiContentProps {
 	currentWiki: WikiPage;
 	wikiLoading?: boolean;
+}
+
+function getDayOfTheWeek(event: EventWiki): string {
+	const age = event.calendar.ages[event.age - 1];
+	const dayOfTheYear = age.months.slice(event.month).reduce((sum, month) => sum + month.numDays, 0) + event.day - 1;
+	const dayOfTheWeekIndex = dayOfTheYear % age.daysOfTheWeek.length;
+	return age.daysOfTheWeek[dayOfTheWeekIndex].name;
+}
+
+function getDate(event: EventWiki): string {
+	const age = event.calendar.ages[event.age - 1];
+	const month = age.months[event.month - 1];
+	return `${getDayOfTheWeek(event)}, ${month.name} ${event.day}, Year ${event.year} of ${age.name}`;
+}
+
+function getTime(event: EventWiki): string {
+	return `${event.hour}:${event.minute}:${event.second}`;
 }
 
 export default function WikiContent({ currentWiki, wikiLoading }: WikiContentProps) {
@@ -102,14 +119,29 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 			typeSpecificContent = (
 				<div className={"margin-lg"} ref={setModelViewerContainer}>
 					<ModelViewer
-					model={currentModeledWiki.model}
-					showColorControls={false}
-					defaultColor={currentModeledWiki.modelColor}
-					container={modelViewerContainer}
+						model={currentModeledWiki.model}
+						showColorControls={false}
+						defaultColor={currentModeledWiki.modelColor}
+						container={modelViewerContainer}
 					/>
 				</div>
 			);
 		}
+	} else if(currentWiki.type === EVENT_WIKI) {
+		let eventWiki = currentWiki as EventWiki
+		typeSpecificContent = (<div>
+			{eventWiki.calendar && <>
+				<div className={'margin-md'}>
+					Calendar: {eventWiki.calendar.name}
+				</div>
+				<div className={'margin-md'}>
+					Date: {getDate(eventWiki)}
+				</div>
+				<div className={'margin-md'}>
+					Time: {getTime(eventWiki)}
+				</div>
+			</>}
+		</div>);
 	}
 
 	return (

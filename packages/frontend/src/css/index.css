@@ -133,20 +133,24 @@ body {
 }
 
 .margin-md-right {
-	margin-right: 15px;
+	margin-right: 1em;
 }
 
 .margin-md-left {
-	margin-left: 15px;
+	margin-left: 1em;
 }
 
 .margin-md-top {
 	margin-top: 1em;
 }
 
+.margin-md-bottom {
+	margin-bottom: 1em;
+}
+
 /*Large*/
 .margin-lg {
-	margin: 30px;
+	margin: 2em;
 }
 
 .margin-lg-top {
@@ -210,7 +214,7 @@ body {
 }
 
 .upload-list-inline {
-	width: 200px;
+	width: 12.5em;
 	margin-right: .5em;
 }
 

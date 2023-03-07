@@ -10,4 +10,6 @@ export function configPermissionControlledModel(model: ModelStatic<any>) {
 export default abstract class PermissionControlledModel extends SqlModel {
     getAcl: HasManyGetAssociationsMixin<AclEntryModel>;
     setAcl: HasManySetAssociationsMixin<AclEntryModel, string>;
+
+
 }

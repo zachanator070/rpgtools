@@ -3,7 +3,7 @@ import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import LoadingView from "./LoadingView";
 import MapView from "./map/MapView";
 import React from "react";
-import WorldSettings from "./WorldSettings";
+import WorldSettings from "./settings/WorldSettings";
 import RolesView from "./permissions/RolesView";
 import GameView from "./game/GameView";
 import GameLoginView from "./game/GameLoginView";

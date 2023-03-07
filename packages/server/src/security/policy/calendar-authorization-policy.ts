@@ -8,7 +8,9 @@ import {
     CALENDAR_READ,
     CALENDAR_READ_ALL, CALENDAR_RW, CALENDAR_RW_ALL
 } from "@rpgtools/common/src/permission-constants";
+import {injectable} from "inversify";
 
+@injectable()
 export default class CalendarAuthorizationPolicy implements EntityAuthorizationPolicy<Calendar> {
 
     entity: Calendar;

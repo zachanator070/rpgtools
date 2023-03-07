@@ -513,9 +513,11 @@ export const RENAME_WORLD = gql `
 `;
 export const UPSERT_CALENDAR = gql `
 	${CURRENT_WORLD_CALENDAR}
+	${ACCESS_CONTROL_LIST}
 	mutation upsertCalendar($calendarId: ID, $world: ID!, $name: String!, $ages: [AgeInput!]!) {
 		upsertCalendar(calendarId: $calendarId, world: $world, name: $name, ages: $ages) {
 			...currentWorldCalendar
+			...accessControlList
 		}
 	}
 `;
