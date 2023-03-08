@@ -213,6 +213,7 @@ import CalendarFactory from "../domain-entities/factory/calendar-factory";
 import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
 import Calendar from "../domain-entities/calendar";
 import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
+import {EventWikiDataLoader} from "../dal/dataloaders/EventWikiDataLoader";
 
 const container = new Container();
 
@@ -625,6 +626,7 @@ const bindAll = () => {
 	container.bind<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader).to(WikiPageDataLoader);
 	container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldDataLoader);
 	container.bind<DataLoader<Calendar>>(INJECTABLE_TYPES.CalendarDataLoader).to(CalendarDataLoader);
+	container.bind<DataLoader<EventWiki>>(INJECTABLE_TYPES.EventDataLoader).to(EventWikiDataLoader);
 
 // seeders
 	container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);

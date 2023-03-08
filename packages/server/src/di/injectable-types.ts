@@ -188,6 +188,7 @@ export const INJECTABLE_TYPES = {
 	WikiPageDataLoader: Symbol.for("WikiPageDataLoader"),
 	WorldDataLoader: Symbol.for("WorldDataLoader"),
 	CalendarDataLoader: Symbol.for('CalendarDataLoader'),
+	EventDataLoader: Symbol.for('EventDataLoader'),
 
 	// seeders
 	RoleSeeder: Symbol.for("RoleSeeder"),

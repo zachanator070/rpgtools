@@ -7,7 +7,7 @@ interface TimelineItem {
 }
 
 export default function VerticalTimeline({items}: {items: TimelineItem[]}) {
-    return <Timeline>
+    return <Timeline mode={'left'}>
         {items.map(
             (item, index) =>
                 <Timeline.Item label={item.label} key={index}>{item.children}</Timeline.Item>
