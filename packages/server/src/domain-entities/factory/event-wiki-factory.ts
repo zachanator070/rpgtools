@@ -92,7 +92,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.year = year;
         event.month = month;
         event.day = day;
-        event.hour = day;
+        event.hour = hour;
         event.minute = minute;
         event.second = second;
         event.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
@@ -112,7 +112,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             year: page?.year,
             month: page?.month,
             day: page?.day,
-            hour: page?.day,
+            hour: page?.hour,
             minute: page?.minute,
             second: page?.second,
             acl: await Promise.all(

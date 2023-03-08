@@ -61,13 +61,13 @@ export default function WikiTimeline({calendar}: {calendar: Calendar}) {
 
     const sortedEvents = wikis.docs.sort(sortEvents)
 
-    return <div style={{width: '100%'}}>
+    return <div style={{width: '100%'}} className={'margin-lg'}>
         <VerticalTimeline
             items={sortedEvents.map(wiki => {
                 const event = wiki as EventWiki;
                 return {
                     label: `${getDate(event)} ${getTime(event)}`,
-                    children: <Link to={`/ui/world/${world_id}/wiki/${event._id}/view`}><a>{event.name}</a></Link>
+                    children: <Link to={`/ui/world/${world_id}/wiki/${event._id}/view`}>{event.name}</Link>
                 }
             })}
         />
