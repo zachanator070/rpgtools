@@ -5,7 +5,16 @@ exports[`world-mutations with world and logged in create calendar 1`] = `
   "data": {
     "upsertCalendar": {
       "_id": Any<String>,
-      "accessControlList": [],
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
       "ages": [
         {
           "_id": Any<String>,
@@ -264,7 +273,16 @@ exports[`world-mutations with world and logged in update calendar age years 1`] 
   "data": {
     "upsertCalendar": {
       "_id": Any<String>,
-      "accessControlList": [],
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
       "ages": [
         {
           "_id": Any<String>,
@@ -305,7 +323,16 @@ exports[`world-mutations with world and logged in update calendar delete month 1
   "data": {
     "upsertCalendar": {
       "_id": Any<String>,
-      "accessControlList": [],
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
       "ages": [
         {
           "_id": Any<String>,

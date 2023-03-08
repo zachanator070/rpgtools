@@ -80,15 +80,17 @@ exports[`wiki page mutations with world with authenticated user create wiki 1`] 
   "data": {
     "createWiki": {
       "_id": Any<String>,
-      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
-      "children": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-        },
-      ],
+      "folder": {
+        "_id": Any<String>,
+        "name": Any<String>,
+      },
       "name": Any<String>,
+      "type": "Article",
+      "world": {
+        "_id": Any<String>,
+      },
     },
   },
   "errors": undefined,
@@ -322,7 +324,7 @@ exports[`wiki page mutations with world with authenticated user with new event w
     "updateEventWiki": {
       "_id": Any<String>,
       "age": 1,
-      "calendar": {
+      "calendar": ObjectContaining {
         "_id": Any<String>,
       },
       "day": 1,

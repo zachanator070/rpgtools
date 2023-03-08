@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, SERVER_CONFIG_ROLES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES, GAME_ATTRIBUTES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, SERVER_CONFIG_ROLES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
 //region User
 export const GET_CURRENT_USER = gql `
 	query currentUser{
@@ -137,6 +137,7 @@ export const GET_WIKI = gql `
 	${CURRENT_WIKI_ATTRIBUTES}
 	${ACCESS_CONTROL_LIST}
 	${CURRENT_WIKI_PLACE_ATTRIBUTES}
+	${EVENT_WIKI_ATTRIBUTES}
 	query currentWiki($wikiId: ID!){
 		wiki(wikiId: $wikiId) {
 			...currentWikiAttributes
@@ -144,12 +145,15 @@ export const GET_WIKI = gql `
 			... on Place {
 					...currentWikiPlaceAttributes
 			}
-				
+			... on Event {
+				...eventWikiAttributes
+			}
 		}
 	}
 `;
 export const SEARCH_WIKIS = gql `
 	${MODEL_ATTRIBUTES}
+	${EVENT_WIKI_ATTRIBUTES}
 	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean, $hasModel: Boolean, $page: Int){
 		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin, hasModel: $hasModel, page: $page){
 			docs{
@@ -164,6 +168,9 @@ export const SEARCH_WIKIS = gql `
 				}
 				... on PermissionControlled{
 					canAdmin
+				}
+				... on Event {
+					...eventWikiAttributes
 				}
 			}
 			nextPage
