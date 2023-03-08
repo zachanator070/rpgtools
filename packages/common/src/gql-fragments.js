@@ -161,10 +161,25 @@ export const MODEL_ATTRIBUTES = gql `
     }
 `;
 export const EVENT_WIKI_ATTRIBUTES = gql `
-    fragment eventWikiAttributes on EventWiki {
+    fragment eventWikiAttributes on Event {
         _id
         calendar {
             _id
+            name
+            ages{
+                _id
+                name
+                numYears
+                months {
+                    _id
+                    name
+                    numDays
+                }
+                daysOfTheWeek {
+                    _id
+                    name
+                }
+            }
         } 
         age 
         year 
@@ -211,7 +226,7 @@ export const CURRENT_WIKI_ATTRIBUTES = gql `
         ... on Place {
             ...currentWikiPlaceAttributes
         }
-        ... on EventWiki {
+        ... on Event {
             ...eventWikiAttributes
         }
         ... on ModeledWiki {

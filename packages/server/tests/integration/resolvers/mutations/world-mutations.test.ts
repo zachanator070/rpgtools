@@ -162,7 +162,17 @@ describe("world-mutations", () => {
 								_id: expect.any(String),
 								name: dayName
 							}]
-						}]
+						}],
+						accessControlList: expect.arrayContaining([
+							{
+								permission: expect.any(String),
+								principal: {
+									_id: expect.any(String),
+									name: expect.any(String)
+								},
+								principalType: expect.any(String)
+							}
+						])
 					},
 				},
 				errors: undefined,
@@ -210,7 +220,17 @@ describe("world-mutations", () => {
 								_id: expect.any(String),
 								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
 							}]
-						}]
+						}],
+						accessControlList: expect.arrayContaining([
+							{
+								permission: expect.any(String),
+								principal: {
+									_id: expect.any(String),
+									name: expect.any(String)
+								},
+								principalType: expect.any(String)
+							}
+						])
 					},
 				},
 				errors: undefined,
@@ -250,7 +270,17 @@ describe("world-mutations", () => {
 								_id: expect.any(String),
 								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
 							}]
-						}]
+						}],
+						accessControlList: expect.arrayContaining([
+							{
+								permission: expect.any(String),
+								principal: {
+									_id: expect.any(String),
+									name: expect.any(String)
+								},
+								principalType: expect.any(String)
+							}
+						])
 					},
 				},
 				errors: undefined,

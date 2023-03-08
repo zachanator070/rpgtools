@@ -416,10 +416,10 @@ export const CREATE_IMAGE = gql `
 //endregion
 //region Wiki
 export const CREATE_WIKI = gql `
-	${CURRENT_WORLD_FOLDERS}
+	${CURRENT_WORLD_WIKIS}
 	mutation createWiki($name: String!, $folderId: ID!){
 		createWiki(name: $name, folderId: $folderId){
-			...currentWorldFolders
+			${WIKIS_IN_FOLDER_ATTRIBUTES}
 		}
 	}
 `;

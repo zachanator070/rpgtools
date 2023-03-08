@@ -10,7 +10,6 @@ import {ImageService} from "../../../../src/services/image-service";
 import {DbEngine, Factory} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {DatabaseContext} from "../../../../src/dal/database-context";
-import {EventWiki} from "../../../../src/domain-entities/event-wiki";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
@@ -103,11 +102,14 @@ describe("wiki page mutations", () => {
 							name: expect.any(String),
 							canWrite: true,
 							canAdmin: true,
-							children: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-								})
-							]),
+							folder: {
+								_id: expect.any(String),
+								name: expect.any(String),
+							},
+							type: 'Article',
+							world: {
+								_id: expect.any(String),
+							}
 						},
 					},
 					errors: undefined
@@ -349,9 +351,9 @@ describe("wiki page mutations", () => {
 						data: {
 							updateEventWiki: {
 								_id: expect.any(String),
-								calendar: {
+								calendar: expect.objectContaining({
 									_id: expect.any(String),
-								},
+								}),
 								age: 1,
 								year: 1,
 								month: 1,
