@@ -49,7 +49,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 	const canWriteMenu = [
 		<div
 			key="createWiki"
-			onClick={async () => {
+			onClick={async (event) => {
 				await createWiki({name: "New Page", folderId: folder._id});
 			}}
 		>

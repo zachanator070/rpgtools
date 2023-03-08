@@ -15,7 +15,7 @@ export default function ContextMenu({menu, children}: ContextMenuProps) {
         };});
     return <Dropdown
         overlay={
-            <Menu items={items}/>
+            <Menu items={items} onClick={({domEvent}) => domEvent.stopPropagation()}/>
         }
         trigger={['contextMenu']}
     >

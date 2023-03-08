@@ -60,13 +60,13 @@ export default function WikiEdit() {
 	const [selectedModel, setSelectedModel] = useState<Model>();
 
 	const [selectedCalendar, setSelectedCalendar] = useState<Calendar>();
-	const [selectedAge, setSelectedAge] = useState<number>();
-	const [selectedYear, setSelectedYear] = useState<number>();
-	const [selectedMonth, setSelectedMonth] = useState<number>();
-	const [selectedDay, setSelectedDay] = useState<number>();
-	const [selectedHour, setSelectedHour] = useState<number>();
-	const [selectedMinute, setSelectedMinute] = useState<number>();
-	const [selectedSecond, setSelectedSecond] = useState<number>();
+	const [selectedAge, setSelectedAge] = useState<number>(1);
+	const [selectedYear, setSelectedYear] = useState<number>(1);
+	const [selectedMonth, setSelectedMonth] = useState<number>(1);
+	const [selectedDay, setSelectedDay] = useState<number>(1);
+	const [selectedHour, setSelectedHour] = useState<number>(0);
+	const [selectedMinute, setSelectedMinute] = useState<number>(0);
+	const [selectedSecond, setSelectedSecond] = useState<number>(0);
 
 	const [saving, setSaving] = useState(false);
 	const [editor, setEditor] = useState(null);
@@ -89,13 +89,13 @@ export default function WikiEdit() {
 			} else if (currentWiki.type === EVENT_WIKI) {
 				const eventWiki = currentWiki as EventWiki;
 				setSelectedCalendar(eventWiki.calendar);
-				setSelectedAge(eventWiki.age || 1);
-				setSelectedYear(eventWiki.year || 1);
-				setSelectedMonth(eventWiki.month || 1);
-				setSelectedDay(eventWiki.day || 1);
-				setSelectedHour(eventWiki.hour || 0);
-				setSelectedMinute(eventWiki.minute || 0);
-				setSelectedSecond(eventWiki.second || 0);
+				setSelectedAge(eventWiki.age);
+				setSelectedYear(eventWiki.year);
+				setSelectedMonth(eventWiki.month);
+				setSelectedDay(eventWiki.day);
+				setSelectedHour(eventWiki.hour);
+				setSelectedMinute(eventWiki.minute);
+				setSelectedSecond(eventWiki.second);
 			}
 		})();
 	}, [currentWiki]);
@@ -270,9 +270,10 @@ export default function WikiEdit() {
 							<SelectMonth onChange={setSelectedMonth} age={selectedCalendar.ages[selectedAge - 1]} defaultMonth={eventWiki.month} />
 						</span>
 					</div>
-					<div className={'margin-md'}>
-						Day:
-						<span className={'margin-md-left'}>
+					{selectedCalendar.ages[selectedAge - 1].months.length > 0 && <>
+						<div className={'margin-md'}>
+							Day:
+							<span className={'margin-md-left'}>
 							<NumberInput
 								value={selectedDay}
 								onChange={setSelectedDay}
@@ -281,7 +282,8 @@ export default function WikiEdit() {
 								maxValue={selectedCalendar.ages[selectedAge - 1].months[selectedMonth - 1].numDays}
 							/>
 						</span>
-					</div>
+						</div>
+					</>}
 					<div className={'margin-md'}>
 						Time:
 						<span className={'margin-md-left'}>

@@ -176,6 +176,7 @@ export const GET_WIKI = gql`
 
 export const SEARCH_WIKIS = gql`
 	${MODEL_ATTRIBUTES}
+	${EVENT_WIKI_ATTRIBUTES}
 	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean, $hasModel: Boolean, $page: Int){
 		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin, hasModel: $hasModel, page: $page){
 			docs{
@@ -190,6 +191,9 @@ export const SEARCH_WIKIS = gql`
 				}
 				... on PermissionControlled{
 					canAdmin
+				}
+				... on Event {
+					...eventWikiAttributes
 				}
 			}
 			nextPage

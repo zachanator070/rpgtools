@@ -40,12 +40,14 @@ export default function FolderNode({folderId, indent = 0}: {folderId: string, in
                 cursor: "pointer",
             }}
             onClick={(event) => {
-                if(isExpanded) {
-                    collapse(folderId);
-                } else {
-                    expand(folderId);
+                if (event.type === 'click') {
+                    if(isExpanded) {
+                        collapse(folderId);
+                    } else {
+                        expand(folderId);
+                    }
+                    setAnimateArrow(true);
                 }
-                setAnimateArrow(true);
             }}
         >
             <FolderMenu folder={folder} refetch={refetch}>
