@@ -284,7 +284,7 @@ containers:
 	mkdir -p containers
 
 # builds local docker compose containers, usually only used in a dev environment
-build-dev: $(FRONTEND_JS) $(SERVER_JS)
+build-dev: $(DEV_FRONTEND_JS) $(SERVER_JS)
 	docker compose build
 
 $(DEV_SERVER_CONTAINER): $(DEV_SERVER_CONTAINER_SRC)
