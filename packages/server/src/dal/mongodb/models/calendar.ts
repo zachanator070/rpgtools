@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {v4} from "uuid";
 import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
 import {CALENDAR, WORLD} from "@rpgtools/common/src/type-constants";
+import {AclEntry} from "./acl-entry";
 
 const dayOfTheWeekSchema = new mongoose.Schema({
     _id: {
@@ -60,7 +61,8 @@ const calendarSchema = new mongoose.Schema({
         type: String,
         required: [true, "name required"],
     },
-    ages: [ageSchema]
+    ages: [ageSchema],
+    acl: [AclEntry],
 });
 
 export interface CalendarDocument extends MongoDBDocument, PermissionControlledDocument {

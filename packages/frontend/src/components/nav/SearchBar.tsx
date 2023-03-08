@@ -1,10 +1,10 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import SelectWiki from "../select/SelectWiki";
 
-export default function SearchBar() {
+export default function SearchBar({style}: {style?: CSSProperties}) {
 	const navigate = useNavigate();
 	const { currentWorld, loading } = useCurrentWorld();
 	if (loading) {
@@ -13,7 +13,7 @@ export default function SearchBar() {
 	return (
 		<>
 			<SelectWiki
-				style={{ width: "100%" }}
+				style={style}
 				onChange={async (wiki) => {
 					navigate(`/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`);
 				}}

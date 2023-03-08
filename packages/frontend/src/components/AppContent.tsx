@@ -10,6 +10,7 @@ import GameLoginView from "./game/GameLoginView";
 import WikView from "./wiki/WikiView";
 import ModelView from "./models/ModelView";
 import DefaultView from "./DefaultView";
+import TimelineView from "./timeline/TimelineView";
 
 export default function AppContent(){
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
@@ -36,6 +37,7 @@ export default function AppContent(){
 			<Route path={`model`} element={<ModelView />}/>
 			<Route path={`gameLogin`} element={<GameLoginView />}/>
 			<Route path={`game/:game_id`} element={<GameView />}/>
+			<Route path={`timeline`} element={<TimelineView />}/>
 			<Route element={<DefaultView/>}/>
 		</Routes>
 	);
