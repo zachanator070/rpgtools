@@ -40,7 +40,7 @@ export class WikiPageService {
 	@inject(INJECTABLE_TYPES.EntityMapper)
 	entityMapper: EntityMapper;
 
-	createWiki = async (context: SecurityContext, name: string, folderId: string, databaseContext: DatabaseContext): Promise<WikiFolder> => {
+	createWiki = async (context: SecurityContext, name: string, folderId: string, databaseContext: DatabaseContext): Promise<WikiPage> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
 			throw new Error("Folder does not exist");
@@ -67,7 +67,7 @@ export class WikiPageService {
 		});
 
 		await databaseContext.articleRepository.update(newPage);
-		return folder;
+		return newPage;
 	};
 
 	updateWiki = async (
@@ -326,7 +326,7 @@ export class WikiPageService {
 		return foundWiki;
 	};
 
-	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean, hasModel: boolean, page: number, databaseContext: DatabaseContext): Promise<PaginatedResult<WikiPage>>  => {
+	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean, hasModel: boolean, page: number = 1, databaseContext: DatabaseContext): Promise<PaginatedResult<WikiPage>>  => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
 			throw new Error("World does not exist");

@@ -24,13 +24,13 @@ function getDayOfTheWeek(event: EventWiki): string {
 	return age.daysOfTheWeek[dayOfTheWeekIndex].name;
 }
 
-function getDate(event: EventWiki): string {
+export function getDate(event: EventWiki): string {
 	const age = event.calendar.ages[event.age - 1];
 	const month = age.months[event.month - 1];
 	return `${getDayOfTheWeek(event)}, ${month.name} ${event.day}, Year ${event.year} of ${age.name}`;
 }
 
-function getTime(event: EventWiki): string {
+export function getTime(event: EventWiki): string {
 	return `${event.hour}:${event.minute}:${event.second}`;
 }
 

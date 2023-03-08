@@ -54,11 +54,11 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.coverImage = coverImage;
         event.contentId = contentId;
         event.calendar = calendar;
-        event.age = age || 0;
-        event.year = year || 0;
-        event.month = month || 0;
-        event.day = day || 0;
-        event.hour = day || 0;
+        event.age = age || 1;
+        event.year = year || 1;
+        event.month = month || 1;
+        event.day = day || 1;
+        event.hour = hour || 0;
         event.minute = minute || 0;
         event.second = second || 0;
         event.acl = acl;

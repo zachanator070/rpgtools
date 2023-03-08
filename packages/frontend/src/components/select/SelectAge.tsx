@@ -11,10 +11,10 @@ export default function SelectAge({calendar, defaultAge, onChange}: {calendar: C
                 label: age.name
             };
         })}
-        defaultValue={{
+        defaultValue={defaultAge > 0 ? {
             value: defaultAge,
             label: calendar.ages[defaultAge - 1].name
-        }}
+        } : {}}
         onChange={(value) => onChange(parseInt(value))}
     />;
 
