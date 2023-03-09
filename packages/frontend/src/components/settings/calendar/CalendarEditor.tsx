@@ -47,17 +47,19 @@ export default function CalendarEditor({calendar}: {calendar: Calendar}) {
         return <LoadingView/>;
     }
 
-    return <div>
+    return <div className={'margin-lg'}>
         <div>
             Name:
             <span className={'margin-md-left'}>
                 <TextInput style={{width: '15rem'}} defaultValue={name} onChange={event => setName(event.target.value)}/>
             </span>
         </div>
-        <div style={{display: 'flex'}} className={'margin-md-top'}>
-            <ToolTip title={'Press the + button to add a new age to this calendar'} className={'margin-md-top margin-md-right'}>
-                <QuestionMarkIcon/>
-            </ToolTip>
+        <div>
+            <div className={'margin-md'}>
+                <ToolTip title={'Press the + button to add a new age to this calendar'}>
+                    <QuestionMarkIcon/>
+                </ToolTip>
+            </div>
             <TabCollection
                 style={{marginBottom: '2em'}}
                 onEdit={async (targetKey, action) => {
@@ -79,9 +81,10 @@ export default function CalendarEditor({calendar}: {calendar: Calendar}) {
                 tabs={[
                     ...ages.map((age, index) => {
                         return {
-                            title: `Age ${index + 1}`,
+                            title: calendar.ages.at(index)?.name || 'New Age',
                             key: index,
                             children: <AgeEditor
+                                editable={true}
                                 age={age}
                                 onChange={(age) => setAges([
                                     ...ages.slice(0, index),
