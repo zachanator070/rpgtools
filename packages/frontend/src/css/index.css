@@ -365,3 +365,17 @@ blockquote {
 .ant-tabs-content {
 	height: 100%;
 }
+
+.grid-3 {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	row-gap: .5em;
+	column-gap: .5em;
+}
+
+.grid-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	row-gap: .5em;
+	column-gap: .5em;
+}

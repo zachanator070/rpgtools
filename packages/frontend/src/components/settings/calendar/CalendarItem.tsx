@@ -11,6 +11,8 @@ import LoadingView from "../../LoadingView";
 import DeleteIcon from "../../widgets/icons/DeleteIcon";
 import Collapsible from "../../widgets/Collapsible";
 import useModal from "../../widgets/useModal";
+import TabCollection from "../../widgets/TabCollection";
+import AgeEditor from "./AgeEditor";
 
 export default function CalendarItem({calendar}: {calendar: Calendar}) {
     const {refetch} = useCalendars();
@@ -70,27 +72,19 @@ export default function CalendarItem({calendar}: {calendar: Calendar}) {
         </h3>
         <div className={'margin-md-left'}>
             <Collapsible title={'Ages'} startOpen={false}>
-                {calendar.ages.map((age, index) => {
-                    return <div key={index} className={'margin-md-left'}>
-                        <h3>{age.name}</h3>
-                        <div className={'margin-md-left'}>
-                            <div>Number of Years: {age.numYears}</div>
-                            <div>Months:</div>
-                            {age.months.map((month, index) => {
-                                return <div key={index} className={'margin-md-left'}>
-                                    <div>{month.name}</div>
-                                    <div className={'margin-md-left'}>Number of Days: {month.numDays}</div>
-                                </div>;
-                            })}
-                            <div>Days of the Week:</div>
-                            {age.daysOfTheWeek.map((day, index) => {
-                                return <div key={index} className={'margin-md-left'}>
-                                    <div>{day.name}</div>
-                                </div>;
-                            })}
-                        </div>
-                    </div>;
-                })}
+                <TabCollection
+                    tabs={[
+                    ...calendar.ages.map((age, index) => {
+                        return {
+                            title: calendar.ages.at(index).name,
+                            key: index,
+                            children: <AgeEditor
+                                editable={false}
+                                age={age}
+                            />
+                        }
+                    })
+                ]}/>
             </Collapsible>
 
         </div>

@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
 //region Authentication
 export const LOGIN_QUERY = gql `
 	mutation login($username: String!, $password: String!) {
@@ -447,11 +447,11 @@ export const UPDATE_MODELED_WIKI = gql `
 	}   
 `;
 export const UPDATE_PLACE = gql `
-	${CURRENT_WIKI_PLACE_ATTRIBUTES}
+	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
 		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
 			_id
-      		...currentWikiPlaceAttributes
+      		...currentWikiAttributes
 		}
 	}
 `;
@@ -464,7 +464,7 @@ export const UPDATE_WIKI = gql `
 	}
 `;
 export const UPDATE_EVENT = gql `
-	${EVENT_WIKI_ATTRIBUTES}
+	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updateEventWiki(
 		$wikiId: ID!, 
 		$calendarId: ID, 
@@ -487,7 +487,7 @@ export const UPDATE_EVENT = gql `
 			minute: $minute, 
 			second: $second
 		){
-			...eventWikiAttributes
+			...currentWikiAttributes
 		}
 	}
 `;

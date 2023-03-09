@@ -492,11 +492,11 @@ export const UPDATE_MODELED_WIKI = gql`
 	}   
 `;
 export const UPDATE_PLACE = gql`
-	${CURRENT_WIKI_PLACE_ATTRIBUTES}
+	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
 		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
 			_id
-      		...currentWikiPlaceAttributes
+      		...currentWikiAttributes
 		}
 	}
 `;
@@ -509,7 +509,7 @@ export const UPDATE_WIKI = gql`
 	}
 `;
 export const UPDATE_EVENT = gql`
-	${EVENT_WIKI_ATTRIBUTES}
+	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updateEventWiki(
 		$wikiId: ID!, 
 		$calendarId: ID, 
@@ -532,7 +532,7 @@ export const UPDATE_EVENT = gql`
 			minute: $minute, 
 			second: $second
 		){
-			...eventWikiAttributes
+			...currentWikiAttributes
 		}
 	}
 `;

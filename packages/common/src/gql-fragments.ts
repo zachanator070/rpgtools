@@ -196,12 +196,14 @@ export const CURRENT_WIKI_ATTRIBUTES = gql`
     ${EVENT_WIKI_ATTRIBUTES}
     ${CURRENT_WIKI_PLACE_ATTRIBUTES}
     ${MODEL_ATTRIBUTES}
+    ${ACCESS_CONTROL_LIST}
     fragment currentWikiAttributes on WikiPage {
         _id
         type
         name
         content
         ... on PermissionControlled {
+            ...accessControlList
             canWrite
             canAdmin
         }

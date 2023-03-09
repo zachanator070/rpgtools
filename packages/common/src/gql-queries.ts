@@ -157,19 +157,9 @@ export const GET_SERVER_CONFIG = gql`
 
 export const GET_WIKI = gql`
 	${CURRENT_WIKI_ATTRIBUTES}
-	${ACCESS_CONTROL_LIST}
-	${CURRENT_WIKI_PLACE_ATTRIBUTES}
-	${EVENT_WIKI_ATTRIBUTES}
 	query currentWiki($wikiId: ID!){
 		wiki(wikiId: $wikiId) {
-			...currentWikiAttributes
-			...accessControlList
-			... on Place {
-					...currentWikiPlaceAttributes
-			}
-			... on Event {
-				...eventWikiAttributes
-			}
+			...currentWikiAttributes		
 		}
 	}
 `;
