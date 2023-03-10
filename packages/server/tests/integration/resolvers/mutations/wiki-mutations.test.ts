@@ -21,7 +21,6 @@ describe("wiki page mutations", () => {
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 	const wikiPageService = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 
-
 	describe("with world", () => {
 		beforeEach(async () => {
 			await testingContext.reset();
@@ -193,6 +192,16 @@ describe("wiki page mutations", () => {
 							folder: {
 								_id: expect.any(String)
 							},
+							accessControlList: expect.arrayContaining([
+								expect.objectContaining({
+									permission: expect.any(String),
+									principal: {
+										_id: expect.any(String),
+										name: expect.any(String),
+									},
+									principalType: expect.any(String),
+								})
+							])
 						},
 					},
 					errors: undefined
@@ -249,6 +258,12 @@ describe("wiki page mutations", () => {
 						data: {
 							updatePlace: {
 								_id: expect.any(String),
+								folder: {
+									_id: expect.any(String),
+								},
+								world: {
+									_id: expect.any(String),
+								},
 								mapImage: {
 									_id: expect.any(String),
 									chunks: expect.arrayContaining([
@@ -351,6 +366,22 @@ describe("wiki page mutations", () => {
 						data: {
 							updateEventWiki: {
 								_id: expect.any(String),
+								accessControlList: expect.arrayContaining([
+									expect.objectContaining({
+										permission: expect.any(String),
+										principal: {
+											_id: expect.any(String),
+											name: expect.any(String),
+										},
+										principalType: expect.any(String),
+									})
+								]),
+								folder: {
+									_id: expect.any(String)
+								},
+								world: {
+									_id: expect.any(String)
+								},
 								calendar: expect.objectContaining({
 									_id: expect.any(String),
 								}),
