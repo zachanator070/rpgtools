@@ -1,6 +1,9 @@
 # node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
 FROM node:16.17.0-slim
 
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
+
 RUN mkdir /opt/rpgtools
 RUN chown node:node /opt/rpgtools
 
@@ -23,7 +26,7 @@ ADD --chown=node:node packages/server/package.json package.json
 ADD --chown=node:node packages/server/tsconfig.json tsconfig.json
 
 WORKDIR /opt/rpgtools
-RUN npm ci --omit=dev
+RUN npm ci
 
 ADD --chown=node:node packages/common/src packages/common/src
 ADD --chown=node:node packages/server/src packages/server/src

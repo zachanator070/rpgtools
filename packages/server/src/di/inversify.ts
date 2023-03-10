@@ -196,6 +196,24 @@ import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permiss
 import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine";
 import SqliteDbEngine from "../dal/sql/sqlite-db-engine";
 import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine";
+import {EventWiki} from "../domain-entities/event-wiki";
+import EventWikiFactory from "../domain-entities/factory/event-wiki-factory";
+import EventWikiRepository from "../dal/repository/event-wiki-repository";
+import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-repository";
+import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory";
+import MonthFactory from "../domain-entities/factory/calendar/month-factory";
+import AgeFactory from "../domain-entities/factory/calendar/age-factory";
+import MongodbEventWikiRepository from "../dal/mongodb/repositories/mongodb-event-wiki-repository";
+import MongodbCalendarRepository from "../dal/mongodb/repositories/mongodb-calendar-repository";
+import {CalendarRepository} from "../dal/repository/calendar-repository";
+import SqlCalendarRepository from "../dal/sql/repository/sql-calendar-repository";
+import InMemoryEventWikiRepository from "../dal/in-memory/repositories/in-memory-event-wiki-repository";
+import InMemoryCalendarRepository from "../dal/in-memory/repositories/in-memory-calendar-repository";
+import CalendarFactory from "../domain-entities/factory/calendar-factory";
+import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
+import Calendar from "../domain-entities/calendar";
+import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
+import {EventWikiDataLoader} from "../dal/dataloaders/EventWikiDataLoader";
 
 const container = new Container();
 
@@ -217,6 +235,7 @@ const bindAll = () => {
 	container.bind<User>(INJECTABLE_TYPES.User).to(User);
 	container.bind<WikiFolder>(INJECTABLE_TYPES.WikiFolder).to(WikiFolder);
 	container.bind<World>(INJECTABLE_TYPES.World).to(World);
+	container.bind<EventWiki>(INJECTABLE_TYPES.Event).to(EventWiki);
 
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Article);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Chunk);
@@ -234,6 +253,8 @@ const bindAll = () => {
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(User);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(WikiFolder);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
+	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(EventWiki);
+	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Calendar);
 
 // entity factories
 	container.bind<AclFactory>(INJECTABLE_TYPES.AclFactory).to(AclFactory);
@@ -287,6 +308,9 @@ const bindAll = () => {
 	container
 		.bind<WorldFactory>(INJECTABLE_TYPES.WorldFactory)
 		.to(WorldFactory);
+	container
+		.bind<EventWikiFactory>(INJECTABLE_TYPES.EventWikiFactory)
+		.to(EventWikiFactory);
 
 	container
 		.bind<CharacterFactory>(INJECTABLE_TYPES.CharacterFactory)
@@ -310,8 +334,18 @@ const bindAll = () => {
 		.bind<InGameModelFactory>(INJECTABLE_TYPES.InGameModelFactory)
 		.to(InGameModelFactory);
 
+	container.bind<CalendarFactory>(INJECTABLE_TYPES.CalendarFactory).to(CalendarFactory);
+	container
+		.bind<DayOfTheWeekFactory>(INJECTABLE_TYPES.DayOfTheWeekFactory)
+		.to(DayOfTheWeekFactory);
+	container
+		.bind<MonthFactory>(INJECTABLE_TYPES.MonthFactory)
+		.to(MonthFactory);
+	container
+		.bind<AgeFactory>(INJECTABLE_TYPES.AgeFactory)
+		.to(AgeFactory);
 
-// db repositories
+	// db repositories
 	if (process.env.MONGODB_HOST) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(MongodbChunkRepository);
@@ -336,6 +370,8 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(MongodbWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(MongodbEventWikiRepository);
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(MongodbCalendarRepository);
 	} else if (process.env.POSTGRES_HOST || process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(SqlArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(SqlChunkRepository);
@@ -360,6 +396,8 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(SqlWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(SqlEventWikiRepository);
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(SqlCalendarRepository);
 
 		container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 	} else {
@@ -386,6 +424,8 @@ const bindAll = () => {
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
 			.to(InMemoryWikiPageRepository);
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(InMemoryEventWikiRepository);
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository);
 	}
 
 // authorization rule sets
@@ -440,6 +480,9 @@ const bindAll = () => {
 	container
 		.bind<WorldAuthorizationPolicy>(INJECTABLE_TYPES.WorldAuthorizationPolicy)
 		.to(WorldAuthorizationPolicy);
+	container
+		.bind<CalendarAuthorizationPolicy>(INJECTABLE_TYPES.CalendarAuthorizationPolicy)
+		.to(CalendarAuthorizationPolicy);
 
 // archive repositories
 	container
@@ -582,6 +625,8 @@ const bindAll = () => {
 		.to(WikiFolderDataLoader);
 	container.bind<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader).to(WikiPageDataLoader);
 	container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldDataLoader);
+	container.bind<DataLoader<Calendar>>(INJECTABLE_TYPES.CalendarDataLoader).to(CalendarDataLoader);
+	container.bind<DataLoader<EventWiki>>(INJECTABLE_TYPES.EventDataLoader).to(EventWikiDataLoader);
 
 // seeders
 	container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);

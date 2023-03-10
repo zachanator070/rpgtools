@@ -40,7 +40,7 @@ describe("map pins", () => {
     it('edit pin', () => {
         cy.get('.mapPin').click();
         cy.get('div').contains('Edit Pin').click();
-        cy.get('.ant-form-item-control-input-content > :nth-child(1) > .ant-select > .ant-select-selector').click();
+        cy.get('.ant-form-item-control-input-content > .ant-select > .ant-select-selector').click();
         cy.get('.ant-select-item-option-active').should("be.visible");
         cy.get('.ant-select-item-option-active').click();
         cy.get('#submit').contains('Save').click();

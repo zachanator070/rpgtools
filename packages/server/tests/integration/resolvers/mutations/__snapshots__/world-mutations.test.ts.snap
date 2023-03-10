@@ -1,5 +1,55 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`world-mutations with world and logged in create calendar 1`] = `
+{
+  "data": {
+    "upsertCalendar": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "ages": [
+        {
+          "_id": Any<String>,
+          "daysOfTheWeek": [
+            {
+              "_id": Any<String>,
+              "name": "new day",
+            },
+          ],
+          "months": [
+            {
+              "_id": Any<String>,
+              "name": "new month",
+              "numDays": 30,
+            },
+          ],
+          "name": "new age",
+          "numYears": 1000,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "name": "new calendar",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`world-mutations with world and logged in create pin 1`] = `
 {
   "data": {
@@ -49,6 +99,23 @@ exports[`world-mutations with world and logged in create world 1`] = `
 }
 `;
 
+exports[`world-mutations with world and logged in delete calendar 1`] = `
+{
+  "data": {
+    "deleteCalendar": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`world-mutations with world and logged in delete pin 1`] = `
 {
   "data": {
@@ -69,6 +136,21 @@ exports[`world-mutations with world and logged in delete pin 1`] = `
     },
   },
   "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in not logged in create calendar no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
   "extensions": undefined,
   "http": {
     "headers": Headers {
@@ -138,6 +220,21 @@ exports[`world-mutations with world and logged in not logged in rename world no 
 }
 `;
 
+exports[`world-mutations with world and logged in not logged in update calendar no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`world-mutations with world and logged in not logged in update pin no permission 1`] = `
 {
   "data": null,
@@ -159,6 +256,100 @@ exports[`world-mutations with world and logged in rename world 1`] = `
     "renameWorld": {
       "_id": Any<String>,
       "name": "Azeroth",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in update calendar age years 1`] = `
+{
+  "data": {
+    "upsertCalendar": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "ages": [
+        {
+          "_id": Any<String>,
+          "daysOfTheWeek": [
+            {
+              "_id": Any<String>,
+              "name": "Monday",
+            },
+          ],
+          "months": [
+            {
+              "_id": Any<String>,
+              "name": "month 1",
+              "numDays": 60,
+            },
+          ],
+          "name": "age 1",
+          "numYears": 1000,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "name": "Earth calendar",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`world-mutations with world and logged in update calendar delete month 1`] = `
+{
+  "data": {
+    "upsertCalendar": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "ages": [
+        {
+          "_id": Any<String>,
+          "daysOfTheWeek": [
+            {
+              "_id": Any<String>,
+              "name": "Monday",
+            },
+          ],
+          "months": [],
+          "name": "age 1",
+          "numYears": 100,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "name": "Earth calendar",
     },
   },
   "errors": undefined,

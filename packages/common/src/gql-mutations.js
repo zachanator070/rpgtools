@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, GAME_ATTRIBUTES, GAME_CHARACTERS, GAME_FOG_STROKES, GAME_MAP, GAME_MODEL, GAME_MODELS, GAME_STROKES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
 //region Authentication
 export const LOGIN_QUERY = gql `
 	mutation login($username: String!, $password: String!) {
@@ -416,10 +416,10 @@ export const CREATE_IMAGE = gql `
 //endregion
 //region Wiki
 export const CREATE_WIKI = gql `
-	${CURRENT_WORLD_FOLDERS}
+	${CURRENT_WORLD_WIKIS}
 	mutation createWiki($name: String!, $folderId: ID!){
 		createWiki(name: $name, folderId: $folderId){
-			...currentWorldFolders
+			${WIKIS_IN_FOLDER_ATTRIBUTES}
 		}
 	}
 `;
@@ -447,11 +447,11 @@ export const UPDATE_MODELED_WIKI = gql `
 	}   
 `;
 export const UPDATE_PLACE = gql `
-	${CURRENT_WIKI_PLACE_ATTRIBUTES}
+	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updatePlace($placeId: ID!, $mapImageId: ID, $pixelsPerFoot: Int){
 		updatePlace(placeId: $placeId, mapImageId: $mapImageId, pixelsPerFoot: $pixelsPerFoot){
 			_id
-      		...currentWikiPlaceAttributes
+      		...currentWikiAttributes
 		}
 	}
 `;
@@ -459,6 +459,34 @@ export const UPDATE_WIKI = gql `
 	${CURRENT_WIKI_ATTRIBUTES}
 	mutation updateWiki($wikiId: ID!, $name: String, $content: Upload, $coverImageId: ID, $type: String){
 		updateWiki(wikiId: $wikiId, name: $name, content: $content, coverImageId: $coverImageId, type: $type){
+			...currentWikiAttributes
+		}
+	}
+`;
+export const UPDATE_EVENT = gql `
+	${CURRENT_WIKI_ATTRIBUTES}
+	mutation updateEventWiki(
+		$wikiId: ID!, 
+		$calendarId: ID, 
+		$age: Int!, 
+		$year: Int!, 
+		$month: Int!, 
+		$day: Int!, 
+		$hour: Int!, 
+		$minute: Int!, 
+		$second: Int!
+	){
+		updateEventWiki(
+			wikiId: $wikiId, 
+			calendarId: $calendarId, 
+			age: $age, 
+			year: $year, 
+			month: $month, 
+			day: $day, 
+			hour: $hour, 
+			minute: $minute, 
+			second: $second
+		){
 			...currentWikiAttributes
 		}
 	}
@@ -480,6 +508,23 @@ export const RENAME_WORLD = gql `
 		renameWorld(worldId: $worldId, newName: $newName) {
 			_id
 			name
+		}
+	}
+`;
+export const UPSERT_CALENDAR = gql `
+	${CURRENT_WORLD_CALENDAR}
+	${ACCESS_CONTROL_LIST}
+	mutation upsertCalendar($calendarId: ID, $world: ID!, $name: String!, $ages: [AgeInput!]!) {
+		upsertCalendar(calendarId: $calendarId, world: $world, name: $name, ages: $ages) {
+			...currentWorldCalendar
+			...accessControlList
+		}
+	}
+`;
+export const DELETE_CALENDAR = gql `
+	mutation deleteCalendar($calendarId: ID!) {
+		deleteCalendar(calendarId: $calendarId) {
+			_id
 		}
 	}
 `;

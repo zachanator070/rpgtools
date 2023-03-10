@@ -81,6 +81,7 @@ export class ExpressApiServer implements ApiServer {
 
 		};
 		this.gqlServer = new ApolloServer({
+			introspection: true,
 			schema,
 			context: async ({req, res}) => {
 				const cookieManager: CookieManager = new ExpressCookieManager(res);

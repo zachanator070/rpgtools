@@ -1,10 +1,12 @@
 import {
+	CALENDAR_ADMIN,
+	CALENDAR_RW,
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
 } from "@rpgtools/common/src/permission-constants";
 import { SecurityContext } from "../security/security-context";
-import {PLACE, ROLE} from "@rpgtools/common/src/type-constants";
+import {PLACE, ROLE, USER} from "@rpgtools/common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
 import { World } from "../domain-entities/world";
 import { inject, injectable } from "inversify";
@@ -16,6 +18,8 @@ import PinFactory from "../domain-entities/factory/pin-factory";
 import WorldFactory from "../domain-entities/factory/world-factory";
 import PlaceFactory from "../domain-entities/factory/place-factory";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import Calendar, {Age} from "../domain-entities/calendar";
+import CalendarFactory from "../domain-entities/factory/calendar-factory";
 
 @injectable()
 export class WorldService {
@@ -30,6 +34,8 @@ export class WorldService {
 	placeFactory: PlaceFactory;
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
+	@inject(INJECTABLE_TYPES.CalendarFactory)
+	calendarFactory: CalendarFactory;
 
 	createWorld = async (
 		name: string,
@@ -229,4 +235,56 @@ export class WorldService {
 
 		return world;
 	};
+
+	public async upsertCalendar(calendarId: string, world: string, name: string, ages: Age[], context: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
+
+		let calendar = null;
+		if(!calendarId) {
+			calendar = this.calendarFactory.build({_id: calendarId, world, name, ages, acl: [
+					{permission: CALENDAR_RW, principal: context.user._id, principalType: USER},
+					{permission: CALENDAR_ADMIN, principal: context.user._id, principalType: USER}
+				]});
+			if(!await calendar.authorizationPolicy.canCreate(context, databaseContext)) {
+				throw new Error('You do not have permission to create this calendar');
+			}
+			await databaseContext.calendarRepository.create(calendar);
+		}
+		else {
+			calendar = await databaseContext.calendarRepository.findOneById(calendarId);
+			if(!calendar) {
+				throw new Error(`Calendar with id ${calendarId} does not exist`);
+			}
+			if(!await calendar.authorizationPolicy.canWrite(context, databaseContext)) {
+				throw new Error('You do not have permission to write to this calendar');
+			}
+			calendar.world = world;
+			calendar.name = name;
+			calendar.ages = ages;
+			await databaseContext.calendarRepository.update(calendar);
+		}
+
+		return calendar;
+	}
+
+	public async deleteCalendar(calendarId: string, securityContext: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
+		const calendar = await databaseContext.calendarRepository.findOneById(calendarId);
+		if(!calendar) {
+			throw new Error(`No such calendar exists with id ${calendarId}`);
+		}
+		if(!await calendar.authorizationPolicy.canWrite(securityContext, databaseContext)) {
+			throw new Error(`You do not have permission to delete this calendar`);
+		}
+		const events = await databaseContext.eventRepository.findByCalendarId(calendarId);
+		for(let event of events) {
+			event.calendar = null;
+			await databaseContext.eventRepository.update(event);
+		}
+		await databaseContext.calendarRepository.delete(calendar);
+		return calendar;
+	}
+
+	public async getCalendars(worldId: string, securityContext: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar[]> {
+		const calendars = await databaseContext.calendarRepository.findByWorldId(worldId);
+		return calendars.filter(calendar => calendar.authorizationPolicy.canRead(securityContext, databaseContext));
+	}
 }

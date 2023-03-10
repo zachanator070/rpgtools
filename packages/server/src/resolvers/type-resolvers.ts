@@ -32,6 +32,8 @@ import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 import RoleFactory from "../domain-entities/factory/role-factory";
 import GameFactory from "../domain-entities/factory/game-factory";
 import ModelFactory from "../domain-entities/factory/model-factory";
+import {EventWiki} from "../domain-entities/event-wiki";
+import Calendar from "../domain-entities/calendar";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<World> => {
@@ -192,6 +194,16 @@ export const TypeResolvers = {
 			}
 		},
 	},
+	Event: {
+		...wikiPageInterfaceAttributes,
+		...permissionControlledInterfaceAttributes,
+		calendar: async (page: EventWiki, _: any, {databaseContext}: SessionContext): Promise<Calendar> => {
+			const dataLoader = container.get<DataLoader<Calendar>>(INJECTABLE_TYPES.CalendarDataLoader);
+			if (page.calendar) {
+				return dataLoader.getDocument(page.calendar, databaseContext);
+			}
+		}
+	},
 	ModeledWiki: {
 		__resolveType: async (page: ModeledPage): Promise<string> => {
 			return page.type;
@@ -351,4 +363,7 @@ export const TypeResolvers = {
 		...permissionControlledInterfaceAttributes,
 	},
 	Upload: GraphQLUpload,
+	Calendar: {
+		...permissionControlledInterfaceAttributes,
+	}
 };

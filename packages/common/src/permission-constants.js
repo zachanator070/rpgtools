@@ -1,4 +1,4 @@
-import { ALL_WIKI_TYPES, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WIKI_PAGE, WORLD, } from "./type-constants";
+import { ALL_WIKI_TYPES, CALENDAR, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WIKI_PAGE, WORLD, } from "./type-constants";
 // server permissions
 export const WORLD_CREATE = "Create world access";
 export const WORLD_ADMIN_ALL = "Able to change permissions for all worlds";
@@ -34,6 +34,9 @@ export const MODEL_ADD = "Able to create models in this world";
 export const MODEL_READ_ALL = "Read all models";
 export const MODEL_RW_ALL = "Write to any models";
 export const MODEL_ADMIN_ALL = "Able to change permissions for any model";
+export const CALENDAR_READ_ALL = "Read all calendars";
+export const CALENDAR_RW_ALL = "Write to any calendar";
+export const CALENDAR_ADMIN_ALL = "Able to change permissions for any calendar";
 export const WORLD_PERMISSIONS = [
     WORLD_READ,
     WORLD_ADMIN,
@@ -54,7 +57,15 @@ export const WORLD_PERMISSIONS = [
     MODEL_RW_ALL,
     MODEL_ADMIN_ALL,
     WORLD_RW,
+    CALENDAR_READ_ALL,
+    CALENDAR_RW_ALL,
+    CALENDAR_ADMIN_ALL
 ];
+// calendar permissions
+export const CALENDAR_RW = "Able to change this calendar definition";
+export const CALENDAR_READ = "Able to read this calendar";
+export const CALENDAR_ADMIN = "Able to change permissions for this calendar";
+export const CALENDAR_PERMISSIONS = [CALENDAR_RW, CALENDAR_READ, CALENDAR_ADMIN];
 // role permissions
 export const ROLE_READ = "Able to see members of this role";
 export const ROLE_RW = "Able to change members of this role";
@@ -103,7 +114,7 @@ export const GAME_PERMISSIONS = [
     GAME_ADMIN,
 ];
 const allPermissions = [];
-export const ALL_PERMISSIONS = allPermissions.concat(SERVER_PERMISSIONS, WORLD_PERMISSIONS, ROLE_PERMISSIONS, WIKI_PERMISSIONS, WIKI_FOLDER_PERMISSIONS, MODEL_PERMISSIONS, GAME_PERMISSIONS);
+export const ALL_PERMISSIONS = allPermissions.concat(SERVER_PERMISSIONS, WORLD_PERMISSIONS, ROLE_PERMISSIONS, WIKI_PERMISSIONS, WIKI_FOLDER_PERMISSIONS, MODEL_PERMISSIONS, GAME_PERMISSIONS, CALENDAR_PERMISSIONS);
 export const PUBLIC_WORLD_PERMISSIONS = [
     WIKI_READ_ALL,
     FOLDER_READ_ALL,
@@ -131,6 +142,9 @@ export const getPermissionsBySubjectType = (subjectType) => {
     }
     else if (subjectType === MODEL) {
         return MODEL_PERMISSIONS;
+    }
+    else if (subjectType === CALENDAR) {
+        return CALENDAR_PERMISSIONS;
     }
     return null;
 };

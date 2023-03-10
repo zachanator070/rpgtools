@@ -80,15 +80,17 @@ exports[`wiki page mutations with world with authenticated user create wiki 1`] 
   "data": {
     "createWiki": {
       "_id": Any<String>,
-      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
-      "children": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-        },
-      ],
+      "folder": {
+        "_id": Any<String>,
+        "name": Any<String>,
+      },
       "name": Any<String>,
+      "type": "Article",
+      "world": {
+        "_id": Any<String>,
+      },
     },
   },
   "errors": undefined,
@@ -138,6 +140,16 @@ exports[`wiki page mutations with world with authenticated user update type 1`] 
   "data": {
     "updateWiki": {
       "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
       "canAdmin": true,
       "canWrite": true,
       "content": null,
@@ -169,6 +181,7 @@ exports[`wiki page mutations with world with authenticated user update wiki just
   "data": {
     "updateWiki": {
       "_id": Any<String>,
+      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
       "content": Any<String>,
@@ -200,6 +213,7 @@ exports[`wiki page mutations with world with authenticated user update wiki just
   "data": {
     "updateWiki": {
       "_id": Any<String>,
+      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
       "content": null,
@@ -231,6 +245,7 @@ exports[`wiki page mutations with world with authenticated user with image updat
   "data": {
     "updateWiki": {
       "_id": Any<String>,
+      "accessControlList": [],
       "canAdmin": true,
       "canWrite": true,
       "content": null,
@@ -282,6 +297,14 @@ exports[`wiki page mutations with world with authenticated user with image updat
   "data": {
     "updatePlace": {
       "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": {
+        "_id": Any<String>,
+      },
       "mapImage": {
         "_id": Any<String>,
         "chunks": ArrayContaining [
@@ -303,7 +326,61 @@ exports[`wiki page mutations with world with authenticated user with image updat
         "name": "tests/integration/resolvers/mutations/testmap.png",
         "width": 1000,
       },
+      "name": "Earth",
       "pixelsPerFoot": null,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`wiki page mutations with world with authenticated user with new event wiki update event 1`] = `
+{
+  "data": {
+    "updateEventWiki": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "age": 1,
+      "calendar": ObjectContaining {
+        "_id": Any<String>,
+      },
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "day": 1,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "hour": 1,
+      "minute": 1,
+      "month": 1,
+      "name": "event wiki",
+      "second": 1,
+      "type": "Event",
+      "world": {
+        "_id": Any<String>,
+      },
+      "year": 1,
     },
   },
   "errors": undefined,

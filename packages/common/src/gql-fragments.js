@@ -83,6 +83,28 @@ export const CURRENT_WORLD_ROLES = gql `
         ...accessControlList
     }
 `;
+export const CURRENT_WORLD_CALENDAR = gql `
+    ${ACCESS_CONTROL_LIST}
+    fragment currentWorldCalendar on Calendar {
+        _id
+        name
+        ages {
+            _id
+            name
+            numYears
+            months {
+                _id
+                name
+                numDays
+            }
+            daysOfTheWeek {
+                _id
+                name
+            }
+        }
+        ...accessControlList
+    }
+`;
 export const SERVER_CONFIG_ROLES = gql `
     ${ACCESS_CONTROL_LIST}
     fragment serverConfigRoles on ServerConfig {
@@ -138,15 +160,48 @@ export const MODEL_ATTRIBUTES = gql `
         ...accessControlList
     }
 `;
+export const EVENT_WIKI_ATTRIBUTES = gql `
+    fragment eventWikiAttributes on Event {
+        _id
+        calendar {
+            _id
+            name
+            ages{
+                _id
+                name
+                numYears
+                months {
+                    _id
+                    name
+                    numDays
+                }
+                daysOfTheWeek {
+                    _id
+                    name
+                }
+            }
+        } 
+        age 
+        year 
+        month 
+        day 
+        hour
+        minute 
+        second
+    }
+`;
 export const CURRENT_WIKI_ATTRIBUTES = gql `
+    ${EVENT_WIKI_ATTRIBUTES}
     ${CURRENT_WIKI_PLACE_ATTRIBUTES}
     ${MODEL_ATTRIBUTES}
+    ${ACCESS_CONTROL_LIST}
     fragment currentWikiAttributes on WikiPage {
         _id
         type
         name
         content
         ... on PermissionControlled {
+            ...accessControlList
             canWrite
             canAdmin
         }
@@ -172,6 +227,9 @@ export const CURRENT_WIKI_ATTRIBUTES = gql `
         }
         ... on Place {
             ...currentWikiPlaceAttributes
+        }
+        ... on Event {
+            ...eventWikiAttributes
         }
         ... on ModeledWiki {
             model{

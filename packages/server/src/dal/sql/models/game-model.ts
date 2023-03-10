@@ -11,7 +11,6 @@ import InGameModelModel from "./game/in-game-model-model";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
 import {PLACE, USER, WORLD} from "@rpgtools/common/src/type-constants";
 
-
 export default class GameModel extends PermissionControlledModel {
 
     declare passwordHash: string;
@@ -61,12 +60,12 @@ export default class GameModel extends PermissionControlledModel {
     static connect() {
         GameModel.belongsTo(WorldModel, {as: 'world'});
         GameModel.belongsTo(PlaceModel, {as: 'map'});
-        GameModel.hasMany(CharacterModel, {as: 'characters'});
         GameModel.belongsTo(UserModel, {as: 'host'});
-        GameModel.hasMany(StrokeModel, {as: 'strokes'});
-        GameModel.hasMany(FogStrokeModel, {as: 'fog'});
-        GameModel.hasMany(MessageModel, {as: 'messages'});
-        GameModel.hasMany(InGameModelModel, {as: 'models'});
+        GameModel.hasMany(CharacterModel, {as: 'characters', onDelete: 'CASCADE'});
+        GameModel.hasMany(StrokeModel, {as: 'strokes', onDelete: 'CASCADE'});
+        GameModel.hasMany(FogStrokeModel, {as: 'fog', onDelete: 'CASCADE'});
+        GameModel.hasMany(MessageModel, {as: 'messages', onDelete: 'CASCADE'});
+        GameModel.hasMany(InGameModelModel, {as: 'models', onDelete: 'CASCADE'});
         configPermissionControlledModel(GameModel);
     }
 }

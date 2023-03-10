@@ -22,6 +22,8 @@ export const INJECTABLE_TYPES = {
 	User: Symbol.for("User"),
 	WikiFolder: Symbol.for("WikiFolder"),
 	World: Symbol.for("World"),
+	Event: Symbol.for("Event"),
+	Calendar: Symbol.for("Calendar"),
 
 	// entity factories
 	ArticleFactory: Symbol.for("ArticleFactory"),
@@ -42,6 +44,8 @@ export const INJECTABLE_TYPES = {
 	WikiFolderFactory: Symbol.for("WikiFolderFactory"),
 	WikiPageFactory: Symbol.for("WikiPageFactory"),
 	WorldFactory: Symbol.for("WorldFactory"),
+	EventWikiFactory: Symbol.for("EventFactory"),
+	CalendarFactory: Symbol.for("CalendarFactory"),
 
 	CharacterFactory: Symbol.for('CharacterFactory'),
 	CharacterAttributeFactory: Symbol.for('CharacterAttributeFactory'),
@@ -50,6 +54,10 @@ export const INJECTABLE_TYPES = {
 	FogStrokeFactory: Symbol.for('FogStrokeFactory'),
 	MessageFactory: Symbol.for('MessageFactory'),
 	InGameModelFactory: Symbol.for('InGameModelFactory'),
+
+	AgeFactory: Symbol.for("AgeFactory"),
+	MonthFactory: Symbol.for("MonthFactory"),
+	DayOfTheWeekFactory: Symbol.for("DayOfTheWeekFactory"),
 
 	// repositories
 	ArticleRepository: Symbol.for("ArticleRepository"),
@@ -69,6 +77,8 @@ export const INJECTABLE_TYPES = {
 	WikiFolderRepository: Symbol.for("WikiFolderRepository"),
 	WikiPageRepository: Symbol.for("WikiPageRepository"),
 	WorldRepository: Symbol.for("WorldRepository"),
+	EventWikiRepository: Symbol.for("EventWikiRepository"),
+	CalendarRepository: Symbol.for("CalendarRepository"),
 
 	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
 
@@ -90,6 +100,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderAuthorizationPolicy: Symbol.for("WikiFolderAuthorizationPolicy"),
 	WikiPageAuthorizationPolicy: Symbol.for("WikiPageAuthorizationPolicy"),
 	WorldAuthorizationPolicy: Symbol.for("WorldAuthorizationPolicy"),
+	CalendarAuthorizationPolicy: Symbol.for("CalendarAuthorizationPolicy"),
 
 	// archive repositories
 	ArchiveArticleRepository: Symbol.for("ArchiveArticleRepository"),
@@ -176,6 +187,8 @@ export const INJECTABLE_TYPES = {
 	WikiFolderDataLoader: Symbol.for("WikiFolderDataLoader"),
 	WikiPageDataLoader: Symbol.for("WikiPageDataLoader"),
 	WorldDataLoader: Symbol.for("WorldDataLoader"),
+	CalendarDataLoader: Symbol.for('CalendarDataLoader'),
+	EventDataLoader: Symbol.for('EventDataLoader'),
 
 	// seeders
 	RoleSeeder: Symbol.for("RoleSeeder"),
@@ -191,5 +204,6 @@ export const INJECTABLE_TYPES = {
 	// mongodb
 	FilterFactory: Symbol.for("FilterFactory"),
 	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
+
 
 };

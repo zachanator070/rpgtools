@@ -3,13 +3,14 @@ import useCurrentWorld from "../hooks/world/useCurrentWorld";
 import LoadingView from "./LoadingView";
 import MapView from "./map/MapView";
 import React from "react";
-import WorldSettings from "./WorldSettings";
+import WorldSettings from "./settings/WorldSettings";
 import RolesView from "./permissions/RolesView";
 import GameView from "./game/GameView";
 import GameLoginView from "./game/GameLoginView";
 import WikView from "./wiki/WikiView";
 import ModelView from "./models/ModelView";
 import DefaultView from "./DefaultView";
+import TimelineView from "./timeline/TimelineView";
 
 export default function AppContent(){
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
@@ -36,6 +37,7 @@ export default function AppContent(){
 			<Route path={`model`} element={<ModelView />}/>
 			<Route path={`gameLogin`} element={<GameLoginView />}/>
 			<Route path={`game/:game_id`} element={<GameView />}/>
+			<Route path={`timeline`} element={<TimelineView />}/>
 			<Route element={<DefaultView/>}/>
 		</Routes>
 	);

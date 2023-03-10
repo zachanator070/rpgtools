@@ -1,4 +1,4 @@
-import {QueryInterface, Sequelize} from "sequelize";
+import {QueryInterface} from "sequelize";
 import AclEntryModel from "../models/acl-entry-model";
 import ArticleModel from "../models/article-model";
 import WikiPageModel from "../models/wiki-page-model";
@@ -56,8 +56,8 @@ import WikiFolderToWikiPageModel from "../models/wiki-folder-to-wiki-page-model"
 
 async function up({ context: queryInterface }: {context: QueryInterface}) {
 
+    await queryInterface.createTable(WORLD, WorldModel.attributes);
     await queryInterface.createTable(ACL_ENTRY, AclEntryModel.attributes);
-    await queryInterface.createTable('AdminUsersToServerConfig', AdminUsersToServerConfigModel.attributes);
     await queryInterface.createTable(ARTICLE, ArticleModel.attributes);
     await queryInterface.createTable(CHARACTER_ATTRIBUTE, CharacterAttributeModel.attributes);
     await queryInterface.createTable(CHARACTER, CharacterModel.attributes);
@@ -78,18 +78,17 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
     await queryInterface.createTable(REGISTER_CODE, RegisterCodeModel.attributes);
     await queryInterface.createTable(ROLE, RoleModel.attributes);
     await queryInterface.createTable(SERVER_CONFIG, ServerConfigModel.attributes);
+    await queryInterface.createTable('AdminUsersToServerConfig', AdminUsersToServerConfigModel.attributes);
     await queryInterface.createTable(STROKE, StrokeModel.attributes);
     await queryInterface.createTable(USER, UserModel.attributes);
     await queryInterface.createTable('UserToRole', UserToRoleModel.attributes);
     await queryInterface.createTable(WIKI_FOLDER, WikiFolderModel.attributes);
     await queryInterface.createTable('WikiFolderToWikiPage', WikiFolderToWikiPageModel.attributes);
     await queryInterface.createTable(WIKI_PAGE, WikiPageModel.attributes);
-    await queryInterface.createTable(WORLD, WorldModel.attributes);
 }
 
 async function down({ context: queryInterface }: {context: QueryInterface}) {
     await queryInterface.dropTable(ACL_ENTRY);
-    await queryInterface.dropTable('AdminUsersToServerConfig');
     await queryInterface.dropTable(ARTICLE);
     await queryInterface.dropTable(CHARACTER_ATTRIBUTE);
     await queryInterface.dropTable(CHARACTER);
@@ -110,6 +109,7 @@ async function down({ context: queryInterface }: {context: QueryInterface}) {
     await queryInterface.dropTable(REGISTER_CODE);
     await queryInterface.dropTable(ROLE);
     await queryInterface.dropTable(SERVER_CONFIG);
+    await queryInterface.dropTable('AdminUsersToServerConfig');
     await queryInterface.dropTable(STROKE);
     await queryInterface.dropTable(USER);
     await queryInterface.dropTable('UserToRole');

@@ -4,7 +4,7 @@ import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
 import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
 
 interface WikisInFolderVariables {
-	folderId?: string;
+	folderId: string;
 	page?: number;
 }
 

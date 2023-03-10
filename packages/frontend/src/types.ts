@@ -177,6 +177,28 @@ export interface Monster extends WikiPage, ModeledWiki {
     modelColor: string;
 }
 
+export interface EventWiki extends WikiPage {
+    _id: string;
+    name: string;
+    content: string;
+    world: World;
+    coverImage: Image;
+    type: string;
+    folder: WikiFolder;
+    accessControlList: AclEntry[];
+    canWrite: boolean;
+    canAdmin: boolean;
+
+    calendar: Calendar;
+    age: number;
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+    second: number;
+}
+
 export interface WikiFolder extends PermissionControlled {
     _id: string;
     name: string;
@@ -325,5 +347,32 @@ export interface PathNodeInput {
 }
 
 export interface CharacterInput {
+    name: string;
+}
+
+export interface Calendar extends PermissionControlled {
+    _id: string;
+    name: string;
+    ages: Age[];
+    canWrite: boolean;
+    canAdmin: boolean;
+}
+
+export interface Age {
+    _id?: string;
+    name: string;
+    numYears: number;
+    months: Month[];
+    daysOfTheWeek: DayOfTheWeek[];
+}
+
+export interface Month {
+    _id?: string;
+    name: string;
+    numDays: number;
+}
+
+export interface DayOfTheWeek {
+    _id?: string;
     name: string;
 }

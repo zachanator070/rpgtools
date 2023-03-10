@@ -7,8 +7,10 @@ interface NumberInputProps extends WidgetProps {
     onChange?: (number) => any;
     name?: string;
     defaultValue?: number;
+    maxValue?: number;
+    minValue?: number;
 }
 
-export default function NumberInput({style, value, onChange, id, name, defaultValue}: NumberInputProps) {
-    return <InputNumber name={name} style={style} value={value} onChange={onChange} id={id} defaultValue={defaultValue}/>;
+export default function NumberInput({style, value, onChange, id, name, defaultValue, maxValue, minValue}: NumberInputProps) {
+    return <InputNumber name={name} style={style} value={value} onChange={onChange} id={id} defaultValue={defaultValue} max={maxValue} min={minValue}/>;
 }

@@ -6,6 +6,8 @@ export interface TabPaneProps  {
     title: string;
     style?: CSSProperties;
     children?: React.ReactNode;
+    closable?: boolean;
+    key?: any;
 }
 
 interface TabCollectionProps extends WidgetProps {
@@ -13,9 +15,11 @@ interface TabCollectionProps extends WidgetProps {
     onChange?: (key: string) => any;
     tabs: TabPaneProps[];
     tabPosition?: 'left' | 'right' | 'top' | 'bottom';
+    onEdit?: (targetKey: React.MouseEvent | React.KeyboardEvent | string,
+              action: 'add' | 'remove') => any;
 }
 
-export default function TabCollection({activeKey, onChange, style, tabs, tabPosition,}: TabCollectionProps) {
+export default function TabCollection({activeKey, onChange, style, tabs, tabPosition, onEdit = undefined}: TabCollectionProps) {
     if (!tabPosition) {
         tabPosition = 'top';
     }
@@ -23,11 +27,12 @@ export default function TabCollection({activeKey, onChange, style, tabs, tabPosi
         activeKey={activeKey}
         onChange={onChange}
         style={style}
-        type={"card"}
+        type={onEdit ? "editable-card" : "card"}
         tabPosition={tabPosition}
+        onEdit={onEdit}
     >
-        {tabs.map(tab => (
-            <Tabs.TabPane tab={tab.title} style={tab.style} key={tab.title}>
+        {tabs.map((tab, index) => (
+            <Tabs.TabPane tab={tab.title} style={tab.style} key={tab.key || tab.title} closable={tab.closable}>
                 {tab.children}
             </Tabs.TabPane>
         ))}

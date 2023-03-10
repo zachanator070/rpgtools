@@ -59,6 +59,8 @@ export const typeDefs = gql`
 		models(worldId: ID!): [Model!]!
 		
 		pins(worldId: ID!, page: Int): PinPaginatedResult!
+		
+		calendars(worldId: ID!): [Calendar!]!
 	}
 
 	type Mutation {
@@ -74,6 +76,8 @@ export const typeDefs = gql`
 		createWorld(name: String!, public: Boolean!): World!
 		renameWorld(worldId: ID!, newName: String!): World!
 		load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
+		upsertCalendar(calendarId: ID, world: ID!, name: String!, ages: [AgeInput!]!): Calendar!
+		deleteCalendar(calendarId: ID!): Calendar!
 
 		createRole(worldId: ID!, name: String!): Role!
 		deleteRole(roleId: ID!): Role!
@@ -111,7 +115,7 @@ export const typeDefs = gql`
 		moveFolder(folderId: ID!, parentFolderId: ID!): WikiFolder!
 		importContent(folderId: ID!, zipFile: Upload!): WikiFolder!
 
-		createWiki(name: String!, folderId: ID!): WikiFolder!
+		createWiki(name: String!, folderId: ID!): WikiPage!
 		deleteWiki(wikiId: ID!): WikiFolder!
 		updateWiki(
 			wikiId: ID!
@@ -122,6 +126,17 @@ export const typeDefs = gql`
 		): WikiPage!
 		updatePlace(placeId: ID!, mapImageId: ID, pixelsPerFoot: Int): Place!
 		updateModeledWiki(wikiId: ID!, model: ID, color: String): WikiPage!
+		updateEventWiki(
+		    wikiId: ID!, 
+		    calendarId: ID, 
+		    age: Int!, 
+		    year: Int!, 
+		    month: Int!, 
+		    day: Int!, 
+		    hour: Int!,
+		    minute: Int!, 
+		    second: Int!
+        ): Event!
 		moveWiki(wikiId: ID!, folderId: ID!): WikiPage!
 
 		createImage(file: Upload!, worldId: ID!, chunkify: Boolean): Image!
@@ -337,6 +352,27 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 		canAdmin: Boolean!
 	}
+	
+	type Event implements WikiPage & PermissionControlled {
+	    _id: ID!
+		name: String!
+		content: String
+		world: World!
+		coverImage: Image
+        calendar: Calendar, 
+        age: Int!, 
+        year: Int!, 
+        month: Int!, 
+        day: Int!, 
+        hour: Int!,
+        minute: Int!, 
+        second: Int!,
+		type: String!
+		folder: WikiFolder!
+		accessControlList: [AclEntry!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+    }
 
 	type Person implements WikiPage & PermissionControlled & ModeledWiki {
 		_id: ID!
@@ -560,4 +596,52 @@ export const typeDefs = gql`
 	}
 
 	scalar Upload
+	
+	type Calendar implements PermissionControlled {
+	    _id: ID!
+	    name: String!
+	    ages: [Age!]!
+	    accessControlList: [AclEntry!]!
+		canWrite: Boolean!
+		canAdmin: Boolean!
+    }
+    
+    type Age {
+        _id: ID!
+        name: String!
+        numYears: Int!
+        months: [Month!]!
+        daysOfTheWeek: [DayOfTheWeek!]!
+    }
+    
+    type Month {
+        _id: ID!
+        name: String!
+        numDays: Int!
+    }
+    
+    type DayOfTheWeek {
+        _id: ID!
+        name: String!
+    }
+    
+    input AgeInput {
+        _id: ID
+        name: String!
+        numYears: Int!
+        months: [MonthInput!]!
+        daysOfTheWeek: [DayOfTheWeekInput!]!
+    }
+    
+    input MonthInput {
+        _id: ID
+        name: String!
+        numDays: Int!
+    }
+    
+    input DayOfTheWeekInput {
+        _id: ID
+        name: String!
+    }
+        
 `;

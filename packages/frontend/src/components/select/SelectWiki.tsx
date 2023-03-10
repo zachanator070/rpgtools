@@ -62,7 +62,7 @@ export default function SelectWiki<T extends WikiPage>({
 	}
 
 	return (
-		<div>
+		<>
 			<DropdownSelect
 				value={value}
 				showArrow={false}
@@ -84,6 +84,6 @@ export default function SelectWiki<T extends WikiPage>({
 				{...kids}
 			</div> }
 
-		</div>
+		</>
 	);
 };
