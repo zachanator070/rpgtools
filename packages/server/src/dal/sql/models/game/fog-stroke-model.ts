@@ -8,7 +8,8 @@ import {GAME} from "@rpgtools/common/src/type-constants";
 export default class FogStrokeModel extends SqlModel {
 
     declare size: number;
-    declare type: string;
+    declare strokeType: string;
+    declare GameId: string;
 
     getPath: HasManyGetAssociationsMixin<PathNodeModel>;
 
@@ -17,7 +18,7 @@ export default class FogStrokeModel extends SqlModel {
         size: {
             type: DataTypes.FLOAT,
         },
-        type: {
+        strokeType: {
             type: DataTypes.STRING,
             validate: {
                 isIn: {

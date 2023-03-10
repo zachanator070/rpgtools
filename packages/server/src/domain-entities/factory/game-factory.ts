@@ -1,6 +1,6 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {Character, FogStroke, Game, InGameModel, Message, Stroke} from "../game";
+import {Character, Game, InGameModel, Message} from "../game";
 import {
     GameDocument,
 } from "../../dal/mongodb/models/game";
@@ -14,6 +14,8 @@ import StrokeFactory from "./game/stroke-factory";
 import MessageFactory from "./game/message-factory";
 import InGameModelFactory from "./game/in-game-model-factory";
 import FogStrokeFactory from "./game/fog-stroke-factory";
+import {FogStroke} from "../fog-stroke";
+import {Stroke} from "../stroke";
 
 
 @injectable()
@@ -47,8 +49,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
             world,
             map,
             characters,
-            strokes,
-            fog,
             messages,
             models,
             host,
@@ -59,8 +59,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
             world: string,
             map: string,
             characters: Character[],
-            strokes: Stroke[],
-            fog: FogStroke[],
             messages: Message[],
             models: InGameModel[],
             host: string,
@@ -73,8 +71,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
         game.world = world;
         game.map = map;
         game.characters = characters;
-        game.strokes = strokes;
-        game.fog = fog;
         game.messages = messages;
         game.models = models;
         game.host = host;
@@ -88,8 +84,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
         world,
         map,
         characters,
-        strokes,
-        fog,
         messages,
         models,
         host,
@@ -101,8 +95,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
         game.world = world && world.toString();
         game.map = map && map.toString();
         game.characters = characters.map(character => this.characterFactory.fromMongodbDocument(character))
-        game.strokes = strokes.map(stroke => this.strokeFactory.fromMongodbDocument(stroke));
-        game.fog = fog.map(stroke => this.fogStrokeFactory.fromMongodbDocument(stroke));
         game.messages = messages.map(message => this.messageFactory.fromMongodbDocument(message));
         game.models = models.map(model => this.inGameModelFactory.fromMongodbDocument(model));
         game.host = host && host.toString();
@@ -117,8 +109,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
             world: model.worldId,
             map: model.mapId,
             characters: await Promise.all((await model.getCharacters()).map(entry => this.characterFactory.fromSqlModel(entry))),
-            strokes: await Promise.all((await model.getStrokes()).map(entry => this.strokeFactory.fromSqlModel(entry))),
-            fog: await Promise.all((await model.getFog()).map(entry => this.fogStrokeFactory.fromSqlModel(entry))),
             messages: await Promise.all((await model.getMessages()).map(entry => this.messageFactory.fromSqlModel(entry))),
             models: await Promise.all((await model.getModels()).map(entry => this.inGameModelFactory.fromSqlModel(entry))),
             host: model.hostId,

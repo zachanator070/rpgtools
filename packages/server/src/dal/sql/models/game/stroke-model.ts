@@ -10,7 +10,8 @@ export default class StrokeModel extends SqlModel {
     declare color: string;
     declare size: number;
     declare fill: boolean;
-    declare type: string;
+    declare strokeType: string;
+    declare GameId: string;
 
     getPath: HasManyGetAssociationsMixin<PathNodeModel>;
 
@@ -25,7 +26,7 @@ export default class StrokeModel extends SqlModel {
         fill: {
             type: DataTypes.BOOLEAN
         },
-        type: {
+        strokeType: {
             type: DataTypes.STRING,
             validate: {
                 isIn: {
