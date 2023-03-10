@@ -1,13 +1,8 @@
-import {
-	AclEntry,
-	DomainEntity, EntityFactory,
-	PermissionControlledEntity,
-	RepositoryAccessor,
-} from "../types";
-import { GameAuthorizationPolicy } from "../security/policy/game-authorization-policy";
-import { GAME } from "@rpgtools/common/src/type-constants";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import {AclEntry, EntityFactory, PermissionControlledEntity, RepositoryAccessor,} from "../types";
+import {GameAuthorizationPolicy} from "../security/policy/game-authorization-policy";
+import {GAME} from "@rpgtools/common/src/type-constants";
+import {inject, injectable} from "inversify";
+import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {GameDocument} from "../dal/mongodb/models/game";
 import GameModel from "../dal/sql/models/game-model";
@@ -19,8 +14,6 @@ export class Game implements PermissionControlledEntity {
 	public world: string;
 	public map?: string;
 	public characters: Character[];
-	public strokes: Stroke[];
-	public fog: FogStroke[];
 	public messages: Message[];
 	public models: InGameModel[];
 	public host: string;
@@ -40,7 +33,7 @@ export class Game implements PermissionControlledEntity {
 		this.factory = factory;
 	}
 
-	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity> {
+	getRepository(accessor: RepositoryAccessor): Repository<Game> {
 		return accessor.gameRepository;
 	}
 }
@@ -82,46 +75,6 @@ export class CharacterAttribute {
 		this._id = _id;
 		this.name = name;
 		this.value = value;
-	}
-}
-
-export class Stroke {
-
-	public _id: string;
-	public path: PathNode[];
-	public color: string;
-	public size: number;
-	public fill: boolean;
-	public type: string;
-
-	constructor(
-		id: string,
-		path: PathNode[],
-		color: string,
-		size: number,
-		fill: boolean,
-		type: string
-	) {
-		this._id = id;
-		this.path = path;
-		this.color = color;
-		this.size = size;
-		this.fill = fill;
-		this.type = type;
-	}
-}
-
-export class FogStroke {
-	public _id: string;
-	public path: PathNode[];
-	public size: number;
-	public type: string;
-
-	constructor(id: string, path: PathNode[], size: number, type: string) {
-		this._id = id;
-		this.path = path;
-		this.size = size;
-		this.type = type;
 	}
 }
 

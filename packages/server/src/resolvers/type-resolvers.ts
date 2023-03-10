@@ -115,7 +115,7 @@ export const TypeResolvers = {
 		},
 		canHostGame: async (world: World, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 			const gameFactory = container.get<GameFactory>(INJECTABLE_TYPES.GameFactory);
-			const testGame = gameFactory.build({passwordHash: "password", world: world._id, map: null, characters: [], strokes: [], fog: [], messages: [], models: [], host: null, acl: []});
+			const testGame = gameFactory.build({passwordHash: "password", world: world._id, map: null, characters: [], messages: [], models: [], host: null, acl: []});
 			return testGame.authorizationPolicy.canCreate(securityContext, databaseContext);
 		},
 		canAddModels: async (world: World, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {

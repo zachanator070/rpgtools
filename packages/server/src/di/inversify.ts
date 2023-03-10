@@ -214,6 +214,14 @@ import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
 import Calendar from "../domain-entities/calendar";
 import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
 import {EventWikiDataLoader} from "../dal/dataloaders/EventWikiDataLoader";
+import FogStrokeAuthorization from "../security/policy/fog-stroke-authorization-policy";
+import StrokeAuthorizationPolicy from "../security/policy/stroke-authorization-policy";
+import InMemoryFogStrokeRepository from "../dal/in-memory/repositories/in-memory-fog-stroke-repository";
+import InMemoryStrokeRepository from "../dal/in-memory/repositories/in-memory-stroke-repository";
+import SqlFogStrokeRepository from "../dal/sql/repository/sql-fog-stroke-repository";
+import SqlStrokeRepository from "../dal/sql/repository/sql-stroke-repository";
+import MongodbFogStrokeRepository from "../dal/mongodb/repositories/mongodb-fog-stroke-repository";
+import MongodbStrokeRepository from "../dal/mongodb/repositories/mongodb-stroke-repository";
 
 const container = new Container();
 
@@ -372,6 +380,8 @@ const bindAll = () => {
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
 		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(MongodbEventWikiRepository);
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(MongodbCalendarRepository);
+		container.bind<MongodbFogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(MongodbFogStrokeRepository);
+		container.bind<MongodbStrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(MongodbStrokeRepository);
 	} else if (process.env.POSTGRES_HOST || process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(SqlArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(SqlChunkRepository);
@@ -398,6 +408,8 @@ const bindAll = () => {
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
 		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(SqlEventWikiRepository);
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(SqlCalendarRepository);
+		container.bind<SqlFogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(SqlFogStrokeRepository);
+		container.bind<SqlStrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(SqlStrokeRepository);
 
 		container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 	} else {
@@ -426,6 +438,8 @@ const bindAll = () => {
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
 		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(InMemoryEventWikiRepository);
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository);
+		container.bind<InMemoryFogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(InMemoryFogStrokeRepository)
+		container.bind<InMemoryStrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(InMemoryStrokeRepository)
 	}
 
 // authorization rule sets
@@ -483,6 +497,12 @@ const bindAll = () => {
 	container
 		.bind<CalendarAuthorizationPolicy>(INJECTABLE_TYPES.CalendarAuthorizationPolicy)
 		.to(CalendarAuthorizationPolicy);
+	container
+		.bind<FogStrokeAuthorization>(INJECTABLE_TYPES.FogStrokeAuthorizationPolicy)
+		.to(FogStrokeAuthorization);
+	container
+		.bind<StrokeAuthorizationPolicy>(INJECTABLE_TYPES.StrokeAuthorizationPolicy)
+		.to(StrokeAuthorizationPolicy);
 
 // archive repositories
 	container

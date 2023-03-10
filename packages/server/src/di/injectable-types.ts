@@ -79,6 +79,8 @@ export const INJECTABLE_TYPES = {
 	WorldRepository: Symbol.for("WorldRepository"),
 	EventWikiRepository: Symbol.for("EventWikiRepository"),
 	CalendarRepository: Symbol.for("CalendarRepository"),
+	StrokeRepository: Symbol.for('StrokeRepository'),
+	FogStrokeRepository: Symbol.for('FogStrokeRepository'),
 
 	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
 
@@ -101,6 +103,8 @@ export const INJECTABLE_TYPES = {
 	WikiPageAuthorizationPolicy: Symbol.for("WikiPageAuthorizationPolicy"),
 	WorldAuthorizationPolicy: Symbol.for("WorldAuthorizationPolicy"),
 	CalendarAuthorizationPolicy: Symbol.for("CalendarAuthorizationPolicy"),
+	FogStrokeAuthorizationPolicy: Symbol.for('FogStrokeAuthorizationPolicy'),
+	StrokeAuthorizationPolicy: Symbol.for('StrokeAuthorizationPolicy'),
 
 	// archive repositories
 	ArchiveArticleRepository: Symbol.for("ArchiveArticleRepository"),

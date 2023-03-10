@@ -8,9 +8,6 @@ import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import CharacterModel from "../models/game/character-model";
 import CharacterAttributeModel from "../models/game/character-attribute-model";
 import MessageModel from "../models/game/message-model";
-import StrokeModel from "../models/game/stroke-model";
-import PathNodeModel from "../models/game/path-node-model";
-import FogStrokeModel from "../models/game/fog-stroke-model";
 import InGameModelModel from "../models/game/in-game-model-model";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 import {v4} from "uuid";
@@ -41,8 +38,6 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
 
         await this.updateCharacters(entity, gameModel);
         await this.updateMessages(entity, gameModel);
-        await this.updateStrokes(entity, gameModel);
-        await this.updateFog(entity, gameModel);
         await this.updateInGameModels(entity, gameModel);
     }
 
@@ -137,110 +132,6 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         }
 
         await gameModel.setMessages(messageModels);
-    }
-
-    async updateStrokes(entity: Game, gameModel: GameModel) {
-        const strokeModels = [];
-
-        for(let stroke of entity.strokes) {
-            const pathNodeModels = [];
-            for(let pathNode of stroke.path) {
-                const nodeModel = PathNodeModel.build({
-                    _id: pathNode._id,
-                    x: pathNode.x,
-                    y: pathNode.y,
-                    type: pathNode.type
-                });
-                if(!pathNode._id) {
-                    nodeModel._id = v4();
-                    await nodeModel.save();
-                    pathNode._id = nodeModel._id;
-                }
-                pathNodeModels.push(pathNode);
-            }
-            const strokeModel = StrokeModel.build({
-                _id: stroke._id,
-                color: stroke.color,
-                size: stroke.size,
-                fill: stroke.fill,
-                type: stroke.type,
-                GameId: entity._id,
-                path: pathNodeModels
-            });
-            if (!stroke._id) {
-                strokeModel._id = v4();
-                await strokeModel.save();
-                stroke._id = strokeModel._id
-            }
-            strokeModels.push(strokeModel);
-        }
-
-        // delete old stokes
-        for(let oldStroke of await StrokeModel.findAll({where: {GameId: entity._id}})) {
-            let keep = false;
-            for(let newStrokes of strokeModels) {
-                if(oldStroke._id === newStrokes._id) {
-                    keep = true;
-                    break;
-                }
-            }
-            if(!keep) {
-                // should cascade node deletion
-                await oldStroke.destroy();
-            }
-        }
-        await gameModel.setStrokes(strokeModels);
-    }
-
-    async updateFog(entity: Game, gameModel: GameModel) {
-        const fogModels = [];
-
-        for(let fog of entity.fog) {
-            const pathNodeModels = [];
-            for(let pathNode of fog.path) {
-                const nodeModel = PathNodeModel.build({
-                    _id: pathNode._id,
-                    x: pathNode.x,
-                    y: pathNode.y,
-                    type: pathNode.type
-                });
-                if(!pathNode._id) {
-                    nodeModel._id = v4();
-                    await nodeModel.save();
-                    pathNode._id = nodeModel._id;
-                }
-                pathNodeModels.push(pathNode);
-            }
-            const fogModel = FogStrokeModel.build({
-                _id: fog._id,
-                size: fog.size,
-                type: fog.type,
-                GameId: entity._id,
-                path: pathNodeModels
-            });
-            if (!fog._id) {
-                fogModel._id = v4();
-                await fogModel.save();
-                fog._id = fogModel._id
-            }
-            fogModels.push(fogModel);
-        }
-
-        // delete old fog strokes
-        for(let oldFog of await FogStrokeModel.findAll({where: {GameId: entity._id}})) {
-            let keep = false;
-            for(let newFog of fogModels) {
-                if(oldFog._id === newFog._id) {
-                    keep = true;
-                    break;
-                }
-            }
-            if(!keep) {
-                // should cascade node deletion
-                await oldFog.destroy();
-            }
-        }
-        await gameModel.setFog(fogModels);
     }
 
     async updateInGameModels(entity: Game, gameModel: GameModel) {

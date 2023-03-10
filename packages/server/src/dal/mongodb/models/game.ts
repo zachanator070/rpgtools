@@ -4,39 +4,9 @@ import {MongoDBDocument, PermissionControlledDocument} from "../../../types";
 import {AclEntry} from "./acl-entry";
 import {v4} from "uuid";
 
-const pathNode = new mongoose.Schema({
+export const pathNode = new mongoose.Schema({
 	x: Number,
 	y: Number,
-	_id: {
-		type: String,
-		default: v4
-	},
-});
-
-const strokeSchema = new mongoose.Schema({
-	path: [pathNode],
-	color: {
-		type: String,
-	},
-	size: Number,
-	fill: Boolean,
-	type: {
-		type: String,
-		enum: ["circle", "square", "erase", "line"],
-	},
-	_id: {
-		type: String,
-		default: v4
-	},
-});
-
-const fogStrokeSchema = new mongoose.Schema({
-	path: [pathNode],
-	size: Number,
-	type: {
-		type: String,
-		enum: ["fog", "erase"],
-	},
 	_id: {
 		type: String,
 		default: v4
@@ -101,8 +71,6 @@ const gameSchema = new mongoose.Schema({
 		ref: "User",
 		required: [true, "host id required"],
 	},
-	strokes: [strokeSchema],
-	fog: [fogStrokeSchema],
 	messages: [
 		new mongoose.Schema({
 			_id: {
@@ -180,8 +148,6 @@ export interface GameDocument extends MongoDBDocument, PermissionControlledDocum
 	map: string;
 	characters: CharacterDocument[];
 	host: string;
-	strokes: StrokeDocument[];
-	fog: FogStrokeDocument[];
 	models: InGameModelDocument[];
 	messages: MessageDocument[];
 }
@@ -189,20 +155,6 @@ export interface GameDocument extends MongoDBDocument, PermissionControlledDocum
 export interface PathNodeDocument extends MongoDBDocument {
     x: number;
     y: number;
-}
-
-export interface StrokeDocument extends MongoDBDocument {
-    path: PathNodeDocument[];
-    color: string;
-    size: number;
-    fill: boolean;
-    type: string;
-}
-
-export interface FogStrokeDocument extends MongoDBDocument {
-    path: PathNodeDocument[];
-    size: number;
-    type: string;
 }
 
 export interface CharacterDocument extends MongoDBDocument {

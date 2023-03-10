@@ -45,6 +45,8 @@ import {WorldRepository} from "../dal/repository/world-repository";
 import {ArticleRepository} from "../dal/repository/article-repository";
 import {CalendarRepository} from "../dal/repository/calendar-repository";
 import EventWikiRepository from "../dal/repository/event-wiki-repository";
+import FogStrokeRepository from "../dal/repository/fog-stroke-repository";
+import StrokeRepository from "../dal/repository/stroke-repository";
 
 @injectable()
 export class ZipArchive implements Archive {
@@ -86,6 +88,10 @@ export class ZipArchive implements Archive {
 	eventRepository: EventWikiRepository;
 	@inject(INJECTABLE_TYPES.CalendarRepository)
 	calendarRepository: CalendarRepository;
+	@inject(INJECTABLE_TYPES.FogStrokeAuthorizationPolicy)
+	fogStrokeRepository: FogStrokeRepository;
+	@inject(INJECTABLE_TYPES.StrokeAuthorizationPolicy)
+	strokeRepository: StrokeRepository;
 
 	archive = archiver("zip", {
 		zlib: { level: 9 }, // Sets the compression level.
