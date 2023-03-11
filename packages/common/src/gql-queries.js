@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES, GAME_ATTRIBUTES, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, SERVER_CONFIG_ROLES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES, GAME_ATTRIBUTES, GAME_FOG, GAME_STROKE, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, SERVER_CONFIG_ROLES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
 //region User
 export const GET_CURRENT_USER = gql `
 	query currentUser{
@@ -60,6 +60,30 @@ export const MY_GAMES = gql `
 	query myGames {
 		myGames {
 			_id
+		}
+	}
+`;
+export const GET_STROKES = gql `
+	${GAME_STROKE}
+	query getStrokes($gameId: ID!) {
+		strokes(gameId: $gameId) {
+			docs {
+				...gameStroke
+			}
+			nextPage
+			totalDocs
+		}
+	}
+`;
+export const GET_FOG_STROKES = gql `
+	${GAME_FOG}
+	query getFogStrokes($gameId: ID!) {
+		fogStrokes(gameId: $gameId) {
+			docs {
+				...gameFog
+			}
+			nextPage
+			totalDocs
 		}
 	}
 `;

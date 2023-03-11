@@ -302,14 +302,6 @@ export const GAME_STROKE = gql `
         fill
     }
 `;
-export const GAME_STROKES = gql `
-    ${GAME_STROKE}
-    fragment gameStrokes on Game {
-        strokes{
-            ...gameStroke
-        }
-    }
-`;
 export const GAME_MODEL = gql `
     fragment gameModel on PositionedModel {
         _id
@@ -353,20 +345,10 @@ export const GAME_FOG = gql `
         size
     }
 `;
-export const GAME_FOG_STROKES = gql `
-    ${GAME_FOG}
-    fragment gameFogStrokes on Game {
-        fog {
-            ...gameFog
-        }
-    }
-`;
 export const GAME_ATTRIBUTES = gql `
     ${GAME_MAP}
     ${GAME_CHARACTERS}
     ${GAME_MESSAGE}
-    ${GAME_STROKES}
-    ${GAME_FOG_STROKES}
     ${GAME_MODELS}
     ${ACCESS_CONTROL_LIST}
     fragment gameAttributes on Game {
@@ -384,8 +366,6 @@ export const GAME_ATTRIBUTES = gql `
         messages{
             ...gameMessage
         }
-        ...gameStrokes
-        ...gameFogStrokes
         ...gameModels
         ...accessControlList
     }
