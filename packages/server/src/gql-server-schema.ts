@@ -6,56 +6,19 @@ export const typeDefs = gql`
 
 		serverConfig: ServerConfig!
 
-		"""
-		Get a world by id
-		"""
 		world(worldId: ID): World
-		"""
-		Get all worlds
-		"""
 		worlds(name: String, page: Int): WorldPaginatedResult
-
-		"""
-		Get a wiki by id
-		"""
 		wiki(wikiId: ID!): WikiPage
-		"""
-		Get all wikis that are in a set of folders
-		"""
 		wikisInFolder(folderId: ID!, page: Int): WikiPagePaginatedResult!
         wikis(worldId: ID, name: String, types: [String!], canAdmin: Boolean, hasModel: Boolean, page: Int): WikiPagePaginatedResult!
-		"""
-		Get all wiki folders for a world
-		"""
 		folders(worldId: ID!, name: String, canAdmin: Boolean, page: Int): [WikiFolder!]!
-		"""
-		Get a path to the root folder for a wiki page
-		"""
 		getFolderPath(wikiId: ID!): [WikiFolder!]!
-
-		"""
-		Search for users by username
-		"""
 		users(username: String!): UserPaginatedResult!
-
-		"""
-		Search for roles by name
-		"""
 		roles(worldId: ID, name: String, canAdmin: Boolean, page: Int): RolePaginatedResult!
-
-		"""
-		Get a game by id
-		"""
 		game(gameId: ID!): Game!
-
-		"""
-		Get all games that the current user is a part of
-		"""
+		fogStrokes(gameId: ID!, page: Int): FogStrokePaginatedResult!
+		strokes(gameId: ID!, page: Int): StrokePaginatedResult!
 		myGames: [Game!]!
-
-		"""
-		Get all models for a world
-		"""
 		models(worldId: ID!): [Model!]!
 		
 		pins(worldId: ID!, page: Int): PinPaginatedResult!
@@ -309,6 +272,32 @@ export const typeDefs = gql`
 		prevPage: Int
 		nextPage: Int
     }
+    
+    type FogStrokePaginatedResult {
+        docs: [FogStroke!]!
+		totalDocs: Int!
+		limit: Int!
+		page: Int!
+		totalPages: Int!
+		pagingCounter: Int!
+		hasPrevPage: Boolean!
+		hasNextPage: Boolean!
+		prevPage: Int
+		nextPage: Int
+	}
+	
+	type StrokePaginatedResult {
+        docs: [Stroke!]!
+		totalDocs: Int!
+		limit: Int!
+		page: Int!
+		totalPages: Int!
+		pagingCounter: Int!
+		hasPrevPage: Boolean!
+		hasNextPage: Boolean!
+		prevPage: Int
+		nextPage: Int
+	}
 	
 	interface WikiPage {
 		_id: ID!
@@ -513,8 +502,6 @@ export const typeDefs = gql`
 		canWriteFog: Boolean!
 		canWrite: Boolean!
 		canAdmin: Boolean!
-		strokes: [Stroke!]!
-		fog: [FogStroke!]!
 		models: [PositionedModel!]!
 	}
 

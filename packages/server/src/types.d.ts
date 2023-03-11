@@ -31,6 +31,8 @@ import SqlModel from "./dal/sql/models/sql-model";
 import {ObjectId} from "mongoose";
 import {CalendarRepository} from "./dal/repository/calendar-repository";
 import EventWikiRepository from "./dal/repository/event-wiki-repository";
+import FogStrokeRepository from "./dal/repository/fog-stroke-repository";
+import StrokeRepository from "./dal/repository/stroke-repository";
 
 export interface DomainEntity {
 	_id: string;
@@ -110,6 +112,8 @@ export interface RepositoryAccessor {
 	fileRepository: FileRepository;
 	eventRepository: EventWikiRepository;
 	calendarRepository: CalendarRepository;
+	fogStrokeRepository: FogStrokeRepository;
+	strokeRepository: StrokeRepository;
 }
 
 export type Factory<T> = (args: any) => T;

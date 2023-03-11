@@ -21,6 +21,8 @@ import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {DatabaseSession} from "./database-session";
 import EventWikiRepository from "./repository/event-wiki-repository";
 import {CalendarRepository} from "./repository/calendar-repository";
+import FogStrokeRepository from "./repository/fog-stroke-repository";
+import StrokeRepository from "./repository/stroke-repository";
 
 @injectable()
 export class DatabaseContext implements RepositoryAccessor {
@@ -63,6 +65,10 @@ export class DatabaseContext implements RepositoryAccessor {
     eventRepository: EventWikiRepository;
     @inject(INJECTABLE_TYPES.CalendarRepository)
     calendarRepository: CalendarRepository;
+    @inject(INJECTABLE_TYPES.FogStrokeRepository)
+    fogStrokeRepository: FogStrokeRepository;
+    @inject(INJECTABLE_TYPES.StrokeRepository)
+    strokeRepository: StrokeRepository;
 
     databaseSession: DatabaseSession;
 

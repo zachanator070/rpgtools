@@ -277,9 +277,33 @@ export interface Game extends PermissionControlled {
     canPaint: boolean;
     canModel: boolean;
     canWriteFog: boolean;
-    strokes: Stroke[];
-    fog: FogStroke[];
     models: PositionedModel[];
+}
+
+export interface StrokesPaginated {
+    docs: Stroke[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: number;
+    nextPage: number;
+}
+
+export interface FogStrokesPaginated {
+    docs: FogStroke[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: number;
+    nextPage: number;
 }
 
 export interface GameCharacter {

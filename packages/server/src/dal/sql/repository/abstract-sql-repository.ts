@@ -83,6 +83,9 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
         if(sort) {
             order.push(sequelize.col(sort));
         }
+        if(!page) {
+            page = 1;
+        }
 
         const results = await this.staticModel.findAll({
             where: filter,

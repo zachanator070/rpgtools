@@ -13,12 +13,11 @@ import {USER} from "@rpgtools/common/src/type-constants";
 import { SecurityContext } from "../security/security-context";
 import {
 	Character, CharacterAttribute,
-	FogStroke,
 	Game,
 	InGameModel,
 	Message,
 	PathNode,
-	Stroke,
+
 } from "../domain-entities/game";
 import {
 	GAME_CHAT_EVENT,
@@ -41,6 +40,11 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {AuthorizationService} from "./authorization-service";
 import {DatabaseContext} from "../dal/database-context";
 import GameFactory from "../domain-entities/factory/game-factory";
+import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
+import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
+import {PaginatedResult} from "../dal/paginated-result";
+import {FogStroke} from "../domain-entities/fog-stroke";
+import {Stroke} from "../domain-entities/stroke";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -56,6 +60,12 @@ export class GameService {
 
 	@inject(INJECTABLE_TYPES.GameFactory)
 	gameFactory: GameFactory;
+
+	@inject(INJECTABLE_TYPES.StrokeFactory)
+	strokeFactory: StrokeFactory;
+
+	@inject(INJECTABLE_TYPES.FogStrokeFactory)
+	fogStrokeFactory: FogStrokeFactory;
 
 	createGame = async (
 		context: SecurityContext,
@@ -85,8 +95,6 @@ export class GameService {
 						[]
 					),
 				],
-				strokes: [],
-				fog: [],
 				messages: [],
 				models: [],
 				host: context.user._id,
@@ -212,42 +220,67 @@ export class GameService {
 			throw new Error("Place needs to have pixels per foot defined");
 		}
 
-		if (clearPaint && game.map && game.strokes.length > 0) {
+		const newMaxSize = Math.max(newMap.height, newMap.width);
+
+		if (clearPaint && game.map) {
 			const oldPlace = await databaseContext.placeRepository.findOneById(game.map);
 			const oldMap = await databaseContext.imageRepository.findOneById(oldPlace.mapImage);
 			const oldMapSize = Math.max(oldMap.height, oldMap.width);
-
-			game.strokes = [
-				new Stroke(
-					uuidv4(),
-					[new PathNode(uuidv4(), 0, 0)],
-					"#FFFFFF",
-					Math.ceil(oldMapSize / oldPlace.pixelsPerFoot / 2),
-					true,
-					"erase"
-				),
-			];
+			await databaseContext.strokeRepository.deleteAllByGameId(game._id);
+			await databaseContext.strokeRepository.create(
+				this.strokeFactory.build(
+					{
+						_id: uuidv4(),
+						game: game._id,
+						path: [new PathNode(uuidv4(), Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2))],
+						color: "#FFFFFF",
+						size: Math.ceil(oldMapSize / oldPlace.pixelsPerFoot / 2),
+						fill: true,
+						strokeType: "erase"
+					}
+				)
+			);
 		}
 
+		await databaseContext.fogStrokeRepository.deleteAllByGameId(game._id);
 		if (setFog) {
-			const newMaxSize = Math.max(newMap.height, newMap.width);
-
-			game.fog = [
-				new FogStroke(
-					uuidv4(),
-					[
-						new PathNode(
-							uuidv4(),
-							Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-							Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
-						),
-					],
-					newMaxSize,
-					"fog"
-				),
-			];
-		} else {
-			game.fog = [];
+			await databaseContext.fogStrokeRepository.create(
+				this.fogStrokeFactory.build(
+					{
+						_id: uuidv4(),
+						game: game._id,
+						path:[
+							new PathNode(
+								uuidv4(),
+								Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+								Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
+							),
+						],
+						size: newMaxSize,
+						strokeType: "fog"
+					}
+				)
+			);
+		}
+		else {
+			await databaseContext.fogStrokeRepository.create(
+				this.fogStrokeFactory.build(
+					{
+						_id: uuidv4(),
+						game: game._id,
+						path:[
+							new PathNode(
+								uuidv4(),
+								Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+								Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
+							),
+						],
+						size: newMaxSize,
+						strokeType: "erase"
+					}
+				)
+			);
 		}
 
 		game.map = place._id;
@@ -274,9 +307,8 @@ export class GameService {
 		if (!(await game.authorizationPolicy.userCanPaint(context))) {
 			throw new Error("You do not have permission to paint for this game");
 		}
-		const newStroke = new Stroke(strokeId, path, color, size, fill, type);
-		game.strokes.push(newStroke);
-		await databaseContext.gameRepository.update(game);
+		const newStroke = this.strokeFactory.build({_id: strokeId, game: game._id, path, color, size, fill, strokeType: type});
+		await databaseContext.strokeRepository.create(newStroke);
 		await this.eventPublisher.publish(GAME_STROKE_EVENT, {
 			gameId,
 			gameStrokeAdded: newStroke,
@@ -299,9 +331,8 @@ export class GameService {
 		if (!(await game.authorizationPolicy.userCanWriteFog(context))) {
 			throw new Error("You do not have permission to edit fog for this game");
 		}
-		const newStroke = new FogStroke(strokeId, path, size, type);
-		game.fog.push(newStroke);
-		await databaseContext.gameRepository.update(game);
+		const newStroke = this.fogStrokeFactory.build({_id: strokeId, game: game._id, path, size, strokeType: type});
+		await databaseContext.fogStrokeRepository.create(newStroke);
 		await this.eventPublisher.publish(GAME_FOG_STROKE_ADDED, {
 			gameId,
 			gameFogStrokeAdded: newStroke,
@@ -539,6 +570,22 @@ export class GameService {
 		}
 		return databaseContext.gameRepository.findByPlayer(context.user._id);
 	};
+
+	getFogStrokes = async (gameId: string, page: number, context: SecurityContext, databaseContext: DatabaseContext): Promise<PaginatedResult<FogStroke>> => {
+		const foundGame = await databaseContext.gameRepository.findOneById(gameId);
+		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
+			throw new Error("You do not have permission to read this game");
+		}
+		return databaseContext.fogStrokeRepository.findAllByGameIdPaginated(gameId, page);
+	}
+
+	getStrokes = async (gameId: string, page: number, context: SecurityContext, databaseContext: DatabaseContext): Promise<PaginatedResult<Stroke>> => {
+		const foundGame = await databaseContext.gameRepository.findOneById(gameId);
+		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
+			throw new Error("You do not have permission to read this game");
+		}
+		return databaseContext.strokeRepository.findAllByGameIdPaginated(gameId, page);
+	}
 
 	private genColor = () => '#' + (Math.random()*0xFFFFFF<<0).toString(16);
 

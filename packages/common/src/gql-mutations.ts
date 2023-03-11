@@ -2,17 +2,15 @@ import gql from "graphql-tag";
 import {
 	ACCESS_CONTROL_LIST,
 	CURRENT_WIKI_ATTRIBUTES,
-	CURRENT_WIKI_PLACE_ATTRIBUTES, CURRENT_WORLD_CALENDAR,
+	CURRENT_WORLD_CALENDAR,
 	CURRENT_WORLD_FOLDERS,
 	CURRENT_WORLD_ROLES,
-	CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES,
+	CURRENT_WORLD_WIKIS,
 	GAME_ATTRIBUTES,
 	GAME_CHARACTERS,
-	GAME_FOG_STROKES,
 	GAME_MAP,
 	GAME_MODEL,
 	GAME_MODELS,
-	GAME_STROKES,
 	MODEL_ATTRIBUTES,
 	PIN_ATTRIBUTES,
 	WIKIS_IN_FOLDER_ATTRIBUTES
@@ -273,14 +271,10 @@ export const SET_CHARACTER_ORDER = gql`
 `;
 export const SET_GAME_MAP = gql`
 	${GAME_MAP}
-	${GAME_STROKES}
-	${GAME_FOG_STROKES}
 	mutation setGameMap($gameId: ID!, $placeId: ID!, $clearPaint: Boolean, $setFog: Boolean){
 		setGameMap(gameId: $gameId, placeId: $placeId, clearPaint: $clearPaint, setFog: $setFog){
 			_id
 			...gameMap
-			...gameStrokes
-			...gameFogStrokes
 		}
 	}
 `;
