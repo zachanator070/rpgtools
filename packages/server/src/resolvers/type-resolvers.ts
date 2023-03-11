@@ -34,6 +34,8 @@ import GameFactory from "../domain-entities/factory/game-factory";
 import ModelFactory from "../domain-entities/factory/model-factory";
 import {EventWiki} from "../domain-entities/event-wiki";
 import Calendar from "../domain-entities/calendar";
+import {Stroke} from "../domain-entities/stroke";
+import {FogStroke} from "../domain-entities/fog-stroke";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<World> => {
@@ -348,6 +350,16 @@ export const TypeResolvers = {
 			return await game.authorizationPolicy.userCanModel(securityContext);
 		},
 		...permissionControlledInterfaceAttributes,
+	},
+	Stroke: {
+		type: async (stroke: Stroke, _: any, __: any): Promise<string> => {
+			return stroke.strokeType
+		}
+	},
+	FogStroke: {
+		type: async (stroke: FogStroke, _: any, __: any): Promise<string> => {
+			return stroke.strokeType
+		}
 	},
 	PositionedModel: {
 		model: async (model: InGameModel, _: any, {databaseContext}: SessionContext): Promise<Model> => {

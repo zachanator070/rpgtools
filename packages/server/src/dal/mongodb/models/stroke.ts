@@ -2,7 +2,7 @@ import {MongoDBDocument} from "../../../types";
 import {pathNode, PathNodeDocument} from "./game";
 import mongoose, {ObjectId} from "mongoose";
 import {v4} from "uuid";
-import {STROKE} from "@rpgtools/common/src/type-constants";
+import {GAME, STROKE} from "@rpgtools/common/src/type-constants";
 
 const strokeSchema = new mongoose.Schema({
     path: [pathNode],
@@ -11,7 +11,7 @@ const strokeSchema = new mongoose.Schema({
     },
     size: Number,
     fill: Boolean,
-    type: {
+    strokeType: {
         type: String,
         enum: ["circle", "square", "erase", "line"],
     },
@@ -19,6 +19,11 @@ const strokeSchema = new mongoose.Schema({
         type: String,
         default: v4
     },
+    game: {
+        type: String,
+        ref: GAME,
+        index: true,
+    }
 });
 
 export interface StrokeDocument extends MongoDBDocument {

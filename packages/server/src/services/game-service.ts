@@ -220,6 +220,8 @@ export class GameService {
 			throw new Error("Place needs to have pixels per foot defined");
 		}
 
+		const newMaxSize = Math.max(newMap.height, newMap.width);
+
 		if (clearPaint && game.map) {
 			const oldPlace = await databaseContext.placeRepository.findOneById(game.map);
 			const oldMap = await databaseContext.imageRepository.findOneById(oldPlace.mapImage);
@@ -230,7 +232,8 @@ export class GameService {
 					{
 						_id: uuidv4(),
 						game: game._id,
-						path: [new PathNode(uuidv4(), 0, 0)],
+						path: [new PathNode(uuidv4(), Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2))],
 						color: "#FFFFFF",
 						size: Math.ceil(oldMapSize / oldPlace.pixelsPerFoot / 2),
 						fill: true,
@@ -240,9 +243,8 @@ export class GameService {
 			);
 		}
 
+		await databaseContext.fogStrokeRepository.deleteAllByGameId(game._id);
 		if (setFog) {
-			const newMaxSize = Math.max(newMap.height, newMap.width);
-			await databaseContext.fogStrokeRepository.deleteAllByGameId(game._id);
 			await databaseContext.fogStrokeRepository.create(
 				this.fogStrokeFactory.build(
 					{
@@ -257,6 +259,25 @@ export class GameService {
 						],
 						size: newMaxSize,
 						strokeType: "fog"
+					}
+				)
+			);
+		}
+		else {
+			await databaseContext.fogStrokeRepository.create(
+				this.fogStrokeFactory.build(
+					{
+						_id: uuidv4(),
+						game: game._id,
+						path:[
+							new PathNode(
+								uuidv4(),
+								Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+								Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
+							),
+						],
+						size: newMaxSize,
+						strokeType: "erase"
 					}
 				)
 			);

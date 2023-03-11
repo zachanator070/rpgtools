@@ -65,9 +65,9 @@ export class DatabaseContext implements RepositoryAccessor {
     eventRepository: EventWikiRepository;
     @inject(INJECTABLE_TYPES.CalendarRepository)
     calendarRepository: CalendarRepository;
-    @inject(INJECTABLE_TYPES.FogStrokeAuthorizationPolicy)
+    @inject(INJECTABLE_TYPES.FogStrokeRepository)
     fogStrokeRepository: FogStrokeRepository;
-    @inject(INJECTABLE_TYPES.StrokeAuthorizationPolicy)
+    @inject(INJECTABLE_TYPES.StrokeRepository)
     strokeRepository: StrokeRepository;
 
     databaseSession: DatabaseSession;
