@@ -20,31 +20,34 @@ export default class SqlStrokeRepository extends AbstractSqlRepository<Stroke, S
 
     async modelFactory(entity: Stroke): Promise<StrokeModel> {
 
-        const pathNodeModels = [];
-        for(let pathNode of entity.path) {
-            const nodeModel = PathNodeModel.build({
-                _id: pathNode._id,
-                x: pathNode.x,
-                y: pathNode.y,
-                type: pathNode.type
-            });
-            if(!pathNode._id) {
-                nodeModel._id = v4();
-                await nodeModel.save();
-                pathNode._id = nodeModel._id;
-            }
-            pathNodeModels.push(pathNode);
-        }
-
         return StrokeModel.build({
             _id: entity._id,
             GameId: entity.game,
             color: entity.color,
             size: entity.size,
             fill: entity.fill,
-            path: pathNodeModels,
             strokeType: entity.strokeType
         })
+    }
+
+    async updateAssociations(entity: Stroke, model: StrokeModel): Promise<void> {
+        super.updateAssociations(entity, model);
+
+        for(let pathNode of entity.path) {
+            const nodeModel = PathNodeModel.build({
+                _id: pathNode._id,
+                x: pathNode.x,
+                y: pathNode.y,
+                type: pathNode.type,
+                StrokeId: model._id,
+            });
+            if(!pathNode._id) {
+                nodeModel._id = v4();
+                await nodeModel.save();
+                pathNode._id = nodeModel._id;
+            }
+            await nodeModel.save();
+        }
     }
 
     async findAllByGameIdPaginated(id: string, page: number): Promise<PaginatedResult<Stroke>> {

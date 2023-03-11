@@ -1,4 +1,4 @@
-import {DataTypes, HasManyGetAssociationsMixin, Model} from "sequelize";
+import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Model} from "sequelize";
 import {defaultAttributes} from "../default-attributes";
 import PathNodeModel from "./path-node-model";
 import SqlModel from "../sql-model";
@@ -12,6 +12,7 @@ export default class FogStrokeModel extends SqlModel {
     declare GameId: string;
 
     getPath: HasManyGetAssociationsMixin<PathNodeModel>;
+    setPath: HasManySetAssociationsMixin<PathNodeModel, any>;
 
     static attributes = {
         ...defaultAttributes,

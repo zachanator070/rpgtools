@@ -8,10 +8,14 @@ import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubsc
 import useMyGames from "../../hooks/game/useMyGames";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser";
 import useModal from "../widgets/useModal";
+import useGameStrokes from "../../hooks/game/useGameStrokes";
+import useGameFogStrokes from "../../hooks/game/useGameFogStrokes";
 
 export default function GameView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
 	const { currentGame, loading } = useCurrentGame();
+	const {strokes, loading: strokeLoading} = useGameStrokes();
+	const {fogStrokes, loading: fogStrokeLoading} = useGameFogStrokes();
 	const { currentUser } = useCurrentUser();
 	const { refetch } = useMyGames();
 	const { data: mapChangeGame } = useGameMapChangeSubscription();
@@ -45,7 +49,8 @@ export default function GameView() {
 		}
 	}, [currentGame]);
 
-	if (loading || currentWorldLoading) {
+	if (loading || currentWorldLoading || strokeLoading || fogStrokeLoading ||
+		strokes.totalDocs !== strokes.docs.length || fogStrokes.totalDocs !== fogStrokes.docs.length) {
 		return <LoadingView />;
 	}
 
@@ -60,5 +65,5 @@ export default function GameView() {
 		);
 	}
 
-	return <GameContent currentGame={currentGame} />;
+	return <GameContent currentGame={currentGame} strokes={strokes.docs} fogStrokes={fogStrokes.docs}/>;
 };

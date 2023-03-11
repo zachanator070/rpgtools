@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
 import {GameControls} from "./GameControls";
+import {FogStroke, Stroke} from "../types";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -172,8 +173,10 @@ export class PaintControls implements GameControls {
 		this.scene.add(this.paintBrushMesh);
 	};
 
-	stroke = (stroke, useCache = true) => {
-		let { path, type, color, fill, size, _id } = stroke;
+	stroke = (stroke: Stroke | FogStroke, useCache = true) => {
+		let { path, type, size, _id } = stroke;
+		const color = (stroke as Stroke).color;
+		const fill = (stroke as Stroke).fill;
 		size *= this.location.pixelsPerFoot;
 		if (useCache) {
 			for (let stroke of this.strokesAlreadyDrawn) {
@@ -239,6 +242,8 @@ export class PaintControls implements GameControls {
 					ctx.clearRect(part.x - size / 2, part.y - size / 2, size, size);
 				}
 				break;
+			default:
+				console.warn(`Unknown stroke type when rendering stroke ${stroke._id}`);
 		}
 		if (useCache) {
 			this.strokesAlreadyDrawn.push(stroke);

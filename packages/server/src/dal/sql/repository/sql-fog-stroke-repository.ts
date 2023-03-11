@@ -9,7 +9,6 @@ import FogStrokeRepository from "../../repository/fog-stroke-repository";
 import PathNodeModel from "../models/game/path-node-model";
 import {v4} from "uuid";
 import {PaginatedResult} from "../../paginated-result";
-import {FilterCondition} from "../../filter-condition";
 
 @injectable()
 export default class SqlFogStrokeRepository extends AbstractSqlRepository<FogStroke, FogStrokeModel> implements FogStrokeRepository{
@@ -19,29 +18,33 @@ export default class SqlFogStrokeRepository extends AbstractSqlRepository<FogStr
 
     async modelFactory(entity: FogStroke): Promise<FogStrokeModel> {
 
-        const pathNodeModels = [];
+        return FogStrokeModel.build({
+            _id: entity._id,
+            GameId: entity.game,
+            size: entity.size,
+            strokeType: entity.strokeType,
+        });
+    }
+
+    async updateAssociations(entity: FogStroke, model: FogStrokeModel): Promise<void> {
+        super.updateAssociations(entity, model);
+
         for(let pathNode of entity.path) {
             const nodeModel = PathNodeModel.build({
                 _id: pathNode._id,
                 x: pathNode.x,
                 y: pathNode.y,
-                type: pathNode.type
+                type: pathNode.type,
+                FogStrokeId: model._id,
             });
             if(!pathNode._id) {
                 nodeModel._id = v4();
                 await nodeModel.save();
                 pathNode._id = nodeModel._id;
             }
-            pathNodeModels.push(pathNode);
+            await nodeModel.save();
         }
 
-        return FogStrokeModel.build({
-            _id: entity,
-            GameId: entity.game,
-            size: entity.size,
-            strokeType: entity.strokeType,
-            path: pathNodeModels
-        });
     }
 
     staticModel: ModelStatic<any> = FogStrokeModel;

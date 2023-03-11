@@ -24,7 +24,7 @@ import useGameFogSubscription from "../../hooks/game/useGameFogSubscription";
 import GameWikiDrawer from "./GameWikiDrawer";
 import InitiativeTracker from "./initiative-tracker/InitiativeTracker";
 import GameDrawer from "./GameDrawer";
-import {Game} from "../../types";
+import {FogStroke, Game, Stroke} from "../../types";
 import useModal from "../widgets/useModal";
 import FullScreenModal from "../widgets/FullScreenModal";
 import ProgressBar from "../widgets/ProgressBar";
@@ -32,9 +32,11 @@ import useNotification from "../widgets/useNotification";
 
 interface GameContentProps {
 	currentGame: Game;
+	strokes: Stroke[];
+	fogStrokes: FogStroke[];
 }
 
-export default function GameContent({ currentGame }: GameContentProps) {
+export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
 	const renderCanvas: Ref<HTMLCanvasElement> = useRef();
 	const [renderer, setRenderer] = useState<GameRenderer>();
 	const [showLoading, setShowLoading] = useState<boolean>(false);
@@ -243,13 +245,13 @@ export default function GameContent({ currentGame }: GameContentProps) {
 					}
 					renderer.setupMap();
 				}
-				if (renderer.getPaintControls()) {
-					for (let stroke of currentGame.strokes) {
+				if (renderer.getPaintControls() && strokes) {
+					for (let stroke of strokes) {
 						renderer.getPaintControls().stroke(stroke);
 					}
 				}
-				if (renderer.getFogControls()) {
-					for (let fogStroke of currentGame.fog) {
+				if (renderer.getFogControls() && fogStrokes) {
+					for (let fogStroke of fogStrokes) {
 						renderer.getFogControls().stroke(fogStroke);
 					}
 				}
@@ -269,7 +271,7 @@ export default function GameContent({ currentGame }: GameContentProps) {
 		};
 
 		window.addEventListener("resize", resize);
-	}, [currentGame, renderer]);
+	}, [currentGame, strokes, fogStrokes, renderer]);
 
 	return (
 		<>
