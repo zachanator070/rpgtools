@@ -219,7 +219,7 @@ export class SrdImportService {
 		for await (let article of this.open5eApiClient.getClasses()) {
 			const page = this.articleFactory.build({name: article.name, world: containingFolder.world, coverImage: null, contentId: null, acl: []});
 			await databaseContext.articleRepository.create(page);
-			const content = this.deltaFactory.fromCharacterClass(article, containingFolder.world, databaseContext);
+			const content = await this.deltaFactory.fromCharacterClass(article, containingFolder.world, databaseContext);
 			const contentFile = await this.createWikiContentFile(
 				page._id,
 				JSON.stringify(content),
