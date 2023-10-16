@@ -17,8 +17,8 @@ div.center {
     text-align: center;
     background-color: white;
     padding-bottom: 5em;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-left: 3em;
+    padding-right: 3em;
 }
 
 p.attribution {
@@ -57,5 +57,5 @@ p.description {
 }
 
 img.logo {
-    width: 12em;
+    width: 7em;
 }
