@@ -17,7 +17,7 @@ try {
     makers: [
       {
         name: '@electron-forge/maker-squirrel',
-        config: {bin: 'rpgtools-server', name: 'rpgtools-server', artifactName: 'rpgtools-server', appName: 'rpgtools-server', setupExe: `@rpgtools-server-${version} Setup`, version},
+        config: {bin: 'rpgtools-server', name: 'rpgtools-server', artifactName: 'rpgtools-server', appName: 'rpgtools-server', setupExe: `@rpgtools-server-${version} Setup.exe`, version},
       },
       {
         name: '@electron-forge/maker-deb',
