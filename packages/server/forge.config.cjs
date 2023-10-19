@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = {
+const config = {
   packagerConfig: { prune: false, executableName: '@rpgtools-server' },
   rebuildConfig: {},
   hooks: {},
@@ -24,3 +24,19 @@ module.exports = {
     }
   ],
 };
+
+try {
+  const fileContents = fs.readFileSync('../../package.json', 'utf8');
+  const data = JSON.parse(fileContents);
+  console.log(`Building Electron App version ${data.version}`);
+  config.appVersion = data.version;
+  config.packagerConfig.appVersion = data.version;
+  for(let maker of config.makers) {
+    maker.config.version = data.version;
+  }
+} catch (err) {
+  console.error(err);
+  throw err;
+}
+
+module.exports = config;
