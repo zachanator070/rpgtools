@@ -1,3 +1,2 @@
- ### RPG Tools v4.0.2 Changelog
- - Fixed a bug where launching the electron app crashes due to sqlite migrating schema
- - Introduced electron app end-to-end tests
+ ### RPG Tools v4.1.2 Changelog
+ - Change electron packager to look at parent package.json for version number
