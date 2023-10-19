@@ -2,8 +2,7 @@ name: CD
 
 on:
   push:
-    tags:
-      - '*'
+    branch: "main"
   workflow_dispatch:
 
 jobs:
@@ -20,6 +19,12 @@ jobs:
     - name: version
       run: echo version=`jq -r .version package.json` >> $GITHUB_OUTPUT
       id: version
+    - name: create tag
+      uses: rickstaa/action-create-tag@v1
+      id: "tag_create"
+      with:
+        tag: v${{ steps.version.outputs.version }}
+        force_push_tag: true
     - name: release
       uses: actions/create-release@v1
       id: create_release
