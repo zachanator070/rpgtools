@@ -24,7 +24,7 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 	const [editor, setEditor] = useState<Quill>();
 	const params = useParams();
 	const navigate = useNavigate();
-	const { refetch, wikis, loading: wikisLoading } = useSearchWikiPages({
+	const { refetch } = useSearchWikiPages({
 		worldId: params.world_id,
 		types: null,
 	});

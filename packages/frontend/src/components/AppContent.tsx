@@ -7,7 +7,7 @@ import WorldSettings from "./settings/WorldSettings";
 import RolesView from "./permissions/RolesView";
 import GameView from "./game/GameView";
 import GameLoginView from "./game/GameLoginView";
-import WikView from "./wiki/WikiView";
+import WikiIndex from "./wiki/WikiIndex";
 import ModelView from "./models/ModelView";
 import DefaultView from "./DefaultView";
 import TimelineView from "./timeline/TimelineView";
@@ -32,7 +32,7 @@ export default function AppContent(){
 			/>
 			<Route path={`roles`} element={<RolesView />}/>
 			<Route path={`map/:map_id`} element={<MapView />}/>
-			<Route path={`wiki/:wiki_id/*`} element={<WikView />}/>
+			<Route path={`wiki/:wiki_id/*`} element={<WikiIndex />}/>
 			<Route path={`model/:model_id/*`} element={<ModelView />}/>
 			<Route path={`model`} element={<ModelView />}/>
 			<Route path={`gameLogin`} element={<GameLoginView />}/>
