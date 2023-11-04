@@ -1,2 +1,3 @@
- ### RPG Tools v4.1.2 Changelog
- - Change electron packager to look at parent package.json for version number
+ ### RPG Tools v4.2 Changelog
+ - Moved wiki buttons to top of the page
+ - Upped version of Electron forge to address MacOS maker
