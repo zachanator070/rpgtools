@@ -1,16 +1,15 @@
 import React, {ReactElement, useRef, useState} from "react";
-import Editor from "./Editor";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import Editor from "../Editor";
+import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import LoadingView from "../LoadingView";
+import LoadingView from "../../LoadingView";
 import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
-import ModelViewer from "../models/ModelViewer";
-import {EventWiki, ModeledWiki, Place, WikiPage} from "../../types";
-import usePins from "../../hooks/map/usePins";
-import PrimaryButton from "../widgets/PrimaryButton";
-import ToolTip from "../widgets/ToolTip";
-import EditIcon from "../widgets/icons/EditIcon";
-import GotoIcon from "../widgets/icons/GotoIcon";
+import ModelViewer from "../../models/ModelViewer";
+import {EventWiki, ModeledWiki, Place, WikiPage} from "../../../types";
+import usePins from "../../../hooks/map/usePins";
+import ToolTip from "../../widgets/ToolTip";
+import GotoIcon from "../../widgets/icons/GotoIcon";
+import WikiViewButtonBar from "./WikiViewButtonBar";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
@@ -34,7 +33,7 @@ export function getTime(event: EventWiki): string {
 	return `${event.hour}:${event.minute}:${event.second}`;
 }
 
-export default function WikiContent({ currentWiki, wikiLoading }: WikiContentProps) {
+export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps) {
 	const navigate = useNavigate();
 
 	const { currentWorld, loading } = useCurrentWorld();
@@ -146,6 +145,7 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 
 	return (
 		<div ref={wikiView} className="margin-md-top">
+			<WikiViewButtonBar currentWiki={currentWiki} currentWikiLoading={wikiLoading}/>
 			<h1>{currentWiki.name}</h1>
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
@@ -164,29 +164,6 @@ export default function WikiContent({ currentWiki, wikiLoading }: WikiContentPro
 			<div className="padding-md">
 				<Editor content={currentWiki.content} readOnly={true} />
 			</div>
-
-			<span>
-				{currentWiki.canWrite && (
-					<span className="margin-lg">
-						<Link to={`/ui/world/${currentWorld._id}/wiki/${currentWiki._id}/edit`}>
-							<PrimaryButton>
-								<EditIcon />
-								Edit
-							</PrimaryButton>
-						</Link>
-					</span>
-				)}
-
-				<span className={"margin-lg"}>
-					<PrimaryButton
-						onClick={() => {
-							window.location.href = `/export/${currentWiki.type}/${currentWiki._id}`;
-						}}
-					>
-						Export
-					</PrimaryButton>
-				</span>
-			</span>
 		</div>
 	);
 };

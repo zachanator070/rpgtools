@@ -4,7 +4,7 @@ import useWikisByCalendar from "../../hooks/wiki/useWikisByCalendar";
 import LoadingView from "../LoadingView";
 import VerticalTimeline from "../widgets/VerticalTimeline";
 import {Link, useParams} from "react-router-dom";
-import {getDate, getTime} from "../wiki/WikiContent";
+import {getDate, getTime} from "../wiki/view/WikiView";
 
 
 function sortEvents(eventA: EventWiki, eventB: EventWiki): number {

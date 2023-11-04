@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import SelectFolder from "../select/SelectFolder";
-import useMoveWiki from "../../hooks/wiki/useMoveWiki";
-import {WikiPage} from "../../types";
-import FullScreenModal from "../widgets/FullScreenModal";
-import PrimaryButton from "../widgets/PrimaryButton";
+import SelectFolder from "../../select/SelectFolder";
+import useMoveWiki from "../../../hooks/wiki/useMoveWiki";
+import {WikiPage} from "../../../types";
+import FullScreenModal from "../../widgets/FullScreenModal";
+import PrimaryButton from "../../widgets/PrimaryButton";
 
 interface MoveWikiButtonProps {
 	wikiPage: WikiPage;
@@ -33,7 +33,10 @@ export default function MoveWikiButton({ wikiPage }: MoveWikiButtonProps) {
 					</PrimaryButton>
 				</div>
 			</FullScreenModal>
-			<PrimaryButton onClick={() => setMoveModalVisibility(true)}>
+			<PrimaryButton
+				className={'margin-md-right margin-md-left'}
+				onClick={() => setMoveModalVisibility(true)}
+			>
 				Move Wiki
 			</PrimaryButton>
 		</>

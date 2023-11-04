@@ -2,7 +2,8 @@ name: CD
 
 on:
   push:
-    branch: "main"
+    branches: 
+    - main
   workflow_dispatch:
 
 jobs:
