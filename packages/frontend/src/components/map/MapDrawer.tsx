@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 import SlidingDrawer from "../widgets/SlidingDrawer";
-import WikiContent from "../wiki/WikiContent";
+import WikiView from "../wiki/view/WikiView";
 import MapWikiContext from "../../MapWikiContext";
 import useGetWiki from "../../hooks/wiki/useGetWiki";
 
@@ -10,7 +10,7 @@ export default function MapDrawer() {
 
 	return (
 		<SlidingDrawer placement={"left"} visible={showMapDrawer} setVisible={setShowMapDrawer} startVisible={false}>
-			<WikiContent currentWiki={wiki} wikiLoading={loading}/>
+			<WikiView currentWiki={wiki} wikiLoading={loading}/>
 		</SlidingDrawer>
 	);
 };

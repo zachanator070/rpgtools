@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import SlidingDrawer from "../widgets/SlidingDrawer";
 import useGameWiki from "../../hooks/wiki/useGameWiki";
-import WikiContent from "../wiki/WikiContent";
+import WikiView from "../wiki/view/WikiView";
 import LoadingView from "../LoadingView";
 
 interface GameWikiDrawerProps {
@@ -24,7 +24,7 @@ export default function GameWikiDrawer({ wikiId }: GameWikiDrawerProps) {
 	}
 	return (
 		<SlidingDrawer placement={"left"} startVisible={true}>
-			{loading ? <LoadingView /> : <WikiContent currentWiki={wiki} wikiLoading={loading}/>}
+			{loading ? <LoadingView /> : <WikiView currentWiki={wiki} wikiLoading={loading}/>}
 		</SlidingDrawer>
 	);
 };

@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import FolderMenu from "../FolderMenu";
+import FolderMenu from "./FolderMenu";
 import DownArrowIcon from "../../widgets/icons/DownArrowIcon";
 import OpenFolderIcon from "../../widgets/icons/OpenFolderIcon";
 import FolderIcon from "../../widgets/icons/FolderIcon";
