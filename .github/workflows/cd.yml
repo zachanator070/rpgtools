@@ -101,7 +101,7 @@ jobs:
           node-version: 16.14.0
       - uses: actions/checkout@v3
       - name: install distutils
-        run: pip install packaging
+        run: pip install setuptools
       - name: build artifacts
         run: make electron
       - name: list artifacts
