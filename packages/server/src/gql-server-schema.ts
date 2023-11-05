@@ -38,7 +38,7 @@ export const typeDefs = gql`
 
 		createWorld(name: String!, public: Boolean!): World!
 		renameWorld(worldId: ID!, newName: String!): World!
-		load5eContent(worldId: ID!, creatureCodex: Boolean, tomeOfBeasts: Boolean): World!
+		load5eContent(worldId: ID!): World!
 		upsertCalendar(calendarId: ID, world: ID!, name: String!, ages: [AgeInput!]!): Calendar!
 		deleteCalendar(calendarId: ID!): Calendar!
 
