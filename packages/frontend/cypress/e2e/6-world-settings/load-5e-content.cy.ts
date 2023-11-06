@@ -9,7 +9,7 @@ describe('load 5e content', () => {
         goToWorldSettings();
     })
 
-    it.skip('load all', () => {
+    it('load all', () => {
         cy.get('button').contains('Load').click();
         cy.location({ timeout: 120000 }).should((location) => {
             expect(location.href).eq(MIDDLE_EARTH_WIKI_URL);

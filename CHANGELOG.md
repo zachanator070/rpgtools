@@ -1,3 +1,2 @@
- ### RPG Tools v4.2.6 Changelog
- - Updated some vulnerable libraries reported by npm. Some still exist. Most are dev dependencies
-while the others are disputed or have no fix version.
+ ### RPG Tools v4.2.5 Changelog
+ - Changed functionality of 5e import to import directly from zip bundle hosted on GitHub
