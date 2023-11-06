@@ -4,8 +4,6 @@ import {LOAD_5E_CONTENT} from "@rpgtools/common/src/gql-mutations";
 
 interface Load5eContentVariables {
 	worldId: string;
-	creatureCodex: boolean;
-	tomeOfBeasts: boolean;
 }
 
 interface Load5eContentResult extends GqlMutationResult<World,  Load5eContentVariables>{

@@ -1,5 +1,4 @@
 import { SecurityContext } from "../security/security-context";
-import { FileUpload } from "graphql-upload";
 import { inject, injectable } from "inversify";
 import {
 	Archive,
@@ -17,7 +16,10 @@ import {DatabaseContext} from "../dal/database-context";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
 import {USER} from "@rpgtools/common/src/type-constants";
+import {World} from "../domain-entities/world";
 
+import fetch from 'node-fetch';
+import {Readable} from "stream";
 
 @injectable()
 export class ContentImportService {
@@ -28,10 +30,36 @@ export class ContentImportService {
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
 
+	srdZipUrl = process.env.SRD_ZIP_URL || 'https://github.com/zachanator070/rpgtools-srd/releases/download/4.0.1/rpgtools-srd-4.0.1.zip';
+
+	import5eSrd = async (
+		context: SecurityContext,
+		worldId: string,
+		databaseContext: DatabaseContext
+	): Promise<World> => {
+		const world = await databaseContext.worldRepository.findOneById(worldId);
+		if (!world) {
+			throw new Error("World does not exist");
+		}
+		const rootFolder = await databaseContext.wikiFolderRepository.findOneById(world.rootFolder);
+		if (!(await rootFolder.authorizationPolicy.canWrite(context, databaseContext))) {
+			throw new Error("You do not have permission to add a top level folder");
+		}
+		const topFolder = this.wikiFolderFactory.build({name: "5e", world: worldId, pages: [], children: [], acl: []});
+		await databaseContext.wikiFolderRepository.create(topFolder);
+		rootFolder.children.push(topFolder._id);
+		await databaseContext.wikiFolderRepository.update(rootFolder);
+
+		const response = await fetch(this.srdZipUrl);
+
+		await this.importContent(context, rootFolder._id, new Readable().wrap(response.body), databaseContext);
+
+		return world;
+	}
 	public importContent = async (
 		context: SecurityContext,
 		folderId: string,
-		zipFile: FileUpload,
+		zipFile: Readable,
 		databaseContext: DatabaseContext
 	): Promise<WikiFolder> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
@@ -42,16 +70,13 @@ export class ContentImportService {
 			throw new Error("You do not have permission to add content to this folder");
 		}
 
-		zipFile = await zipFile;
-		const archiveReadStream = zipFile.createReadStream();
 		// probably need to detect here what kind of file we are dealing with then create an archive based upon the file type
-		const archive = await this.archiveFactory.zipFromZipStream(archiveReadStream);
+		const archive = await this.archiveFactory.zipFromZipStream(zipFile);
 		try {
 			await this.processArchive(archive, folder, databaseContext, context);
 		} catch (e) {
 			throw new Error(`Error occurred while processing archive: ${e.message}`);
 		}
-
 
 		return folder;
 	};
