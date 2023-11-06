@@ -2,8 +2,8 @@ import { SessionContext } from "../../types";
 import { container } from "../../di/inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import {WorldService} from "../../services/world-service";
-import {SrdImportService} from "../../services/srd-import-service";
 import {Age} from "../../domain-entities/calendar";
+import {ContentImportService} from "../../services/content-import-service";
 
 interface createWorldArgs {
 	name: string;
@@ -52,13 +52,11 @@ export const worldMutations = {
 		_: any,
 		{
 			worldId,
-			creatureCodex,
-			tomeOfBeasts,
-		}: { worldId: string; creatureCodex: boolean; tomeOfBeasts: boolean },
+		}: { worldId: string },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
-		const service = container.get<SrdImportService>(INJECTABLE_TYPES.SrdImportService);
-		return await service.import5eSrd(securityContext, worldId, creatureCodex, tomeOfBeasts, databaseContext);
+		const service = container.get<ContentImportService>(INJECTABLE_TYPES.ContentImportService);
+		return await service.import5eSrd(securityContext, worldId, databaseContext);
 	},
 	upsertCalendar: async (
 		_: any,

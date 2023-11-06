@@ -1,3 +1,2 @@
- ### RPG Tools v4.2 Changelog
- - Moved wiki buttons to top of the page
- - Upped version of Electron forge to address MacOS maker
+ ### RPG Tools v4.2.5 Changelog
+ - Changed functionality of 5e import to import directly from zip bundle hosted on GitHub

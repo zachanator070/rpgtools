@@ -46,6 +46,7 @@ export const wikiFolderMutations = {
 		const importContentService = container.get<ContentImportService>(
 			INJECTABLE_TYPES.ContentImportService
 		);
-		return await importContentService.importContent(securityContext, folderId, zipFile, databaseContext);
+		await zipFile;
+		return await importContentService.importContent(securityContext, folderId, zipFile.createReadStream(), databaseContext);
 	},
 };

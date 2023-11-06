@@ -55,13 +55,11 @@ import { GameService } from "../services/game-service";
 import { ImageService } from "../services/image-service";
 import { ModelService } from "../services/model-service";
 import { ServerConfigService } from "../services/server-config-service";
-import { SrdImportService } from "../services/srd-import-service";
 import { UserService } from "../services/user-service";
 import { WikiFolderService } from "../services/wiki-folder-service";
 import { WikiPageService } from "../services/wiki-page-service";
 import { WorldService } from "../services/world-service";
 import { ExpressSessionContextFactory } from "../server/express-session-context-factory";
-import { Open5eApiClient } from "../five-e-import/open-5e-api-client";
 import { RedisClient } from "../dal/cache/redis-client";
 import { ArchiveFactory } from "../archive/archive-factory";
 import { ExpressApiServer } from "../server/express-api-server";
@@ -122,8 +120,6 @@ import { WorldAuthorizationPolicy } from "../security/policy/world-authorization
 import {ServerProperties} from "../server/server-properties";
 import FilterFactory from "../dal/mongodb/FilterFactory";
 import {NoCacheClient} from "../dal/cache/no-cache-client";
-import {DeltaFactory} from "../five-e-import/delta-factory";
-import {Dnd5eApiClient} from "../five-e-import/dnd-5e-api-client";
 import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
 import EntityMapper from "../domain-entities/entity-mapper";
@@ -564,7 +560,6 @@ const bindAll = () => {
 	container
 		.bind<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService)
 		.to(ServerConfigService);
-	container.bind<SrdImportService>(INJECTABLE_TYPES.SrdImportService).to(SrdImportService);
 	container.bind<UserService>(INJECTABLE_TYPES.UserService).to(UserService);
 	container
 		.bind<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService)
@@ -580,13 +575,6 @@ const bindAll = () => {
 	container
 		.bind<SecurityContextFactory>(INJECTABLE_TYPES.SecurityContextFactory)
 		.to(SecurityContextFactory);
-
-// open 5e
-	container.bind<Open5eApiClient>(INJECTABLE_TYPES.Open5eApiClient).to(Open5eApiClient);
-	container.bind<Dnd5eApiClient>(INJECTABLE_TYPES.Dnd5eApiClient).to(Dnd5eApiClient);
-
-// delta
-	container.bind<DeltaFactory>(INJECTABLE_TYPES.DeltaFactory).to(DeltaFactory);
 
 // cache
 	if(process.env.REDIS_URL)

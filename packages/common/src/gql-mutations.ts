@@ -588,8 +588,8 @@ export const IMPORT_CONTENT = gql`
 `;
 export const LOAD_5E_CONTENT = gql`
 	${CURRENT_WORLD_FOLDERS}
-	mutation load5eContent($worldId: ID!, $creatureCodex: Boolean, $tomeOfBeasts: Boolean){
-		load5eContent(worldId: $worldId, creatureCodex: $creatureCodex, tomeOfBeasts: $tomeOfBeasts){
+	mutation load5eContent($worldId: ID!){
+		load5eContent(worldId: $worldId){
 			_id
 		    rootFolder{
 			    ...currentWorldFolders
