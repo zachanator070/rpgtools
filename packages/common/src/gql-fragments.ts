@@ -64,6 +64,7 @@ export const CURRENT_WORLD_FOLDERS = gql`
         canAdmin
         children{
             _id
+            name
         }
         ...accessControlList
 	}

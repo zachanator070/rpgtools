@@ -228,7 +228,8 @@ export const TypeResolvers = {
 		},
 		children: async (folder: WikiFolder, _: any, { securityContext, databaseContext }: SessionContext): Promise<WikiFolder[]> => {
 			const dataLoader = container.get<DataLoader<WikiFolder>>(INJECTABLE_TYPES.WikiFolderDataLoader);
-			return dataLoader.getPermissionControlledDocuments(securityContext, folder.children, databaseContext);
+			const children = await dataLoader.getPermissionControlledDocuments(securityContext, folder.children, databaseContext);
+			return children.sort((a, b) => a.name < b.name ? -1 : 1);
 		},
 		...permissionControlledInterfaceAttributes,
 	},
