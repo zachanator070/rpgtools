@@ -29,7 +29,8 @@ import {Game} from "../../src/domain-entities/game";
 import {ModelService} from "../../src/services/model-service";
 import {GameService} from "../../src/services/game-service";
 import Calendar from "../../src/domain-entities/calendar";
-import {EventWiki} from "../../src/domain-entities/event-wiki";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {Readable} from "stream";
 
 export const testGamePassword = 'tester1password';
 
@@ -89,7 +90,8 @@ export class DefaultTestingContext {
 	model: Model;
 	game: Game;
 
-	calendar: Calendar;
+	calendar1: Calendar;
+    calendar2: Calendar;
 
 	async reset() {
 		const session = await this.dbEngine.createDatabaseSession();
@@ -142,10 +144,10 @@ export class DefaultTestingContext {
 			this.world.wikiPage,
 			this.otherPage._id
 		);
-		this.calendar = await worldService.upsertCalendar(
+		this.calendar1 = await worldService.upsertCalendar(
 			null,
 			this.world._id,
-			this.world.name + ' calendar',
+			this.world.name + ' calendar1',
 			[{
 				_id: null,
 				name: "age 1",
@@ -163,6 +165,27 @@ export class DefaultTestingContext {
 			this.tester1SecurityContext,
 			databaseContext
 		);
+        this.calendar2 = await worldService.upsertCalendar(
+            null,
+            this.world._id,
+            this.world.name + ' calendar2',
+            [{
+                _id: null,
+                name: "age 1",
+                numYears: 100,
+                months: [{
+                    name: 'month 1',
+                    numDays: 30,
+                    _id: null
+                }],
+                daysOfTheWeek: [{
+                    name: 'Monday',
+                    _id: null
+                }]
+            }],
+            this.tester1SecurityContext,
+            databaseContext
+        );
 		await session.commit();
 		return this;
 	};
@@ -211,6 +234,165 @@ export class DefaultTestingContext {
 
 		this.game = await this.gameService.getGame(this.tester1SecurityContext, this.game._id, databaseContext);
 		await session.commit();
+	}
+
+	async setupEvents() {
+
+        // create 3 events in calendar1, 2 events in calendar2, 2 events in calendar 1 and 1 event in calendar2 link to root wiki page
+		const session = await this.dbEngine.createDatabaseSession();
+		const databaseContext = this.databaseContextFactory({session});
+
+		const createEventContent = (linkedWikiId: string): string => {
+			return `{"ops":[{"insert":"At a time where "},{"insert":{"mention":{"index":"0","denotationChar":"","value":"<a href=\\"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view\\" target=_self>Middle Earth","link":"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view","target":"_self"}}},{"insert":" comes to a time of peace.\\n"}]}`
+		}
+
+        // create events in calendar1
+		const first = await this.wikiPageService.createWiki(
+            this.tester1SecurityContext,
+            'first',
+            this.world.rootFolder,
+            databaseContext
+        );
+		await this.wikiPageService.updateWiki(
+            this.tester1SecurityContext,
+            first._id,
+            databaseContext,
+            Readable.from(createEventContent(this.world.wikiPage)),
+            null,
+            null,
+            EVENT_WIKI
+        );
+        await this.wikiPageService.updateEventWiki(
+            this.tester1SecurityContext,
+            first._id,
+            this.calendar1._id,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            databaseContext
+        );
+
+		const second = await this.wikiPageService.createWiki(
+            this.tester1SecurityContext,
+            'second',
+            this.world.rootFolder,
+            databaseContext
+        );
+		await this.wikiPageService.updateWiki(
+            this.tester1SecurityContext,
+            second._id,
+            databaseContext,
+            Readable.from(createEventContent(this.world.wikiPage)),
+            null,
+            null,
+            EVENT_WIKI
+        );
+        await this.wikiPageService.updateEventWiki(
+            this.tester1SecurityContext,
+            second._id,
+            this.calendar1._id,
+            1,
+            2,
+            1,
+            1,
+            2,
+            2,
+            2,
+            databaseContext
+        );
+
+        const unrelated = await this.wikiPageService.createWiki(
+            this.tester1SecurityContext,
+            'unrelated',
+            this.world.rootFolder,
+            databaseContext
+        );
+        await this.wikiPageService.updateWiki(
+            this.tester1SecurityContext,
+            unrelated._id,
+            databaseContext,
+            null,
+            null,
+            null,
+            EVENT_WIKI
+        );
+        await this.wikiPageService.updateEventWiki(
+            this.tester1SecurityContext,
+            unrelated._id,
+            this.calendar1._id,
+            1,
+            3,
+            1,
+            1,
+            3,
+            3,
+            3,
+            databaseContext
+        );
+
+        // create events in calendar2
+        const cal2First = await this.wikiPageService.createWiki(
+            this.tester1SecurityContext,
+            'other first',
+            this.world.rootFolder,
+            databaseContext
+        );
+        await this.wikiPageService.updateWiki(
+            this.tester1SecurityContext,
+            cal2First._id,
+            databaseContext,
+            Readable.from(createEventContent(this.world.wikiPage)),
+            null,
+            null,
+            EVENT_WIKI
+        );
+        await this.wikiPageService.updateEventWiki(
+            this.tester1SecurityContext,
+            cal2First._id,
+            this.calendar2._id,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            databaseContext
+        );
+
+        const cal2Unrelated = await this.wikiPageService.createWiki(
+            this.tester1SecurityContext,
+            'other unrelated',
+            this.world.rootFolder,
+            databaseContext
+        );
+        await this.wikiPageService.updateWiki(
+            this.tester1SecurityContext,
+            cal2Unrelated._id,
+            databaseContext,
+            null,
+            null,
+            null,
+            EVENT_WIKI
+        );
+        await this.wikiPageService.updateEventWiki(
+            this.tester1SecurityContext,
+            cal2Unrelated._id,
+            this.calendar2._id,
+            1,
+            3,
+            1,
+            1,
+            3,
+            3,
+            3,
+            databaseContext
+        );
+
 	}
 
 }

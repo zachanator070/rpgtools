@@ -8,6 +8,7 @@ import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 import {Op} from "sequelize";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 
 @injectable()
 export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPage, WikiPageModel> implements WikiPageRepository {
@@ -65,6 +66,18 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
         if(model) {
             return this.entityFactory.fromSqlModel(model);
         }
+    }
+
+    findEventsByWorldAndContentAndCalendar(page: number, worldId: string, contentIds?: string[], calendarIds?: string[]): Promise<PaginatedResult<WikiPage>> {
+        const filter: any = {worldId: worldId, type: EVENT_WIKI};
+        if(contentIds && contentIds.length > 0) {
+            filter.contentId = contentIds;
+        }
+        if(calendarIds && calendarIds.length > 0) {
+            filter.calendar = calendarIds;
+        }
+
+        return this.buildPaginatedResult(page, filter, 'name');
     }
 
 }

@@ -5,6 +5,7 @@ import FileModel from "../models/file-model";
 import {FileRepository} from "../../repository/file-repository";
 import FileFactory from "../../../domain-entities/factory/file-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {Op, WhereOptions} from "sequelize";
 
 
 @injectable()
@@ -17,13 +18,13 @@ export default class SqlFileRepository extends AbstractSqlRepository<File, FileM
     async modelFactory(entity: File | undefined): Promise<FileModel> {
         const contentChunks: Buffer[] = [];
         const content = await new Promise((resolve, reject) => {
-            entity.readStream.on('readable', () => {
-                let chunk;
-                while ((chunk = entity.readStream.read()) !== null) {
-                    contentChunks.push(chunk);
-                }
+            entity.readStream.on('data', (data) => {
+                contentChunks.push(data);
             });
-            entity.readStream.on('end', () => {
+            entity.readStream.on('error', (error) => {
+                reject(error);
+            });
+            entity.readStream.on('close', () => {
                 resolve(Buffer.concat(contentChunks));
             });
         });
@@ -34,6 +35,20 @@ export default class SqlFileRepository extends AbstractSqlRepository<File, FileM
             mimeType: entity.mimeType,
             content: content
         });
+    }
+
+    async findByContent(searchTerms: string[]): Promise<File[]> {
+
+        const filters: WhereOptions[] = [];
+        for(let term of searchTerms) {
+            filters.push({content: {[Op.iLike]: `%${term}%` }});
+        }
+
+        return this.buildResults(await this.staticModel.findAll({
+            where: {
+                [Op.or]: filters
+            }
+        }));
     }
 
 }

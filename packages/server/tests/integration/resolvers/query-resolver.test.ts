@@ -8,7 +8,7 @@ import {
 	GET_CURRENT_WORLD,
 	GET_WORLDS, SEARCH_ROLES,
 	SEARCH_USERS,
-	WIKIS_IN_FOLDER, GET_GAME, MY_GAMES
+	WIKIS_IN_FOLDER, GET_GAME, MY_GAMES, SEARCH_EVENTS
 } from "@rpgtools/common/src/gql-queries";
 import {WorldService} from "../../../src/services/world-service";
 import {WikiFolderService} from "../../../src/services/wiki-folder-service";
@@ -331,6 +331,105 @@ describe("query resolver", () => {
 						},
 						errors: undefined
 					});
+				});
+			})
+
+			describe ('with multiple events, calendars, and referenced wikis', () => {
+
+				beforeEach(async () => {
+					await testingContext.setupEvents();
+				});
+
+				it('get all events', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: SEARCH_EVENTS,
+						variables: {
+							worldId: testingContext.world._id
+						}
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							events: {
+								docs: expect.arrayContaining([
+									expect.objectContaining({
+										_id: expect.any(String),
+									}),
+								])
+							}
+						},
+						errors: undefined
+					});
+					expect(result.data.events.docs.length).toBe(5);
+				});
+
+				it('get all events in second calendar', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: SEARCH_EVENTS,
+						variables: {
+							worldId: testingContext.world._id,
+							calendarIds: [testingContext.calendar2._id]
+						}
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							events: {
+								docs: expect.arrayContaining([
+									expect.objectContaining({
+										_id: expect.any(String),
+									}),
+								])
+							}
+						},
+						errors: undefined
+					});
+					expect(result.data.events.docs.length).toBe(2);
+				});
+
+				it('get only events related to world wiki page', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: SEARCH_EVENTS,
+						variables: {
+							worldId: testingContext.world._id,
+							relatedWikiIds: [testingContext.world.wikiPage]
+						}
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							events: {
+								docs: expect.arrayContaining([
+									expect.objectContaining({
+										_id: expect.any(String),
+									}),
+								])
+							}
+						},
+						errors: undefined
+					});
+					expect(result.data.events.docs.length).toBe(3);
+				});
+
+				it('get only events related to world in second calendar', async () => {
+					const result = await testingContext.server.executeGraphQLQuery({
+						query: SEARCH_EVENTS,
+						variables: {
+							worldId: testingContext.world._id,
+							relatedWikiIds: [testingContext.world.wikiPage],
+							calendarIds: [testingContext.calendar2._id]
+						}
+					});
+					expect(result).toMatchSnapshot({
+						data: {
+							events: {
+								docs: expect.arrayContaining([
+									expect.objectContaining({
+										_id: expect.any(String),
+									}),
+								])
+							}
+						},
+						errors: undefined
+					});
+					expect(result.data.events.docs.length).toBe(1);
 				});
 			})
 		});

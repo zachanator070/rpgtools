@@ -233,19 +233,13 @@ export class WikiPageService {
 				throw new Error(`Calendar with id ${calendarId} not found`);
 			}
 			wikiPage.calendar = calendarId;
-			if(age - 1 > calendar.ages.length) {
+			if(age - 1 >= calendar.ages.length) {
 				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
 			}
 			if(age <= 0) {
 				throw new Error(`Age cannot be negative`)
 			}
 			wikiPage.age = age;
-			if(age > calendar.ages.length) {
-				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
-			}
-			if(age <= 0) {
-				throw new Error(`Age must be greater than 0`);
-			}
 			const ageEntity = calendar.ages[age - 1];
 			if(year > ageEntity.numYears) {
 				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.numYears} years`);
@@ -254,7 +248,7 @@ export class WikiPageService {
 				throw new Error(`Year must be greater than 0`);
 			}
 			wikiPage.year = year;
-			if(month - 1 > ageEntity.months.length) {
+			if(month - 1 >= ageEntity.months.length) {
 				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.months.length} months`);
 			}
 			if(month <= 0) {
@@ -384,4 +378,31 @@ export class WikiPageService {
 		results.docs = docs;
 		return results;
 	};
+
+    async getEvents(worldId: string, securityContext: SecurityContext, databaseContext: DatabaseContext, relatedWikiIds?: string[], calendarIds?: string[], page: number = 1) : Promise<PaginatedResult<WikiPage>> {
+		const world = await databaseContext.worldRepository.findOneById(worldId);
+		if (!world) {
+			throw new Error("World does not exist");
+		}
+		if (!(await world.authorizationPolicy.canRead(securityContext, databaseContext))) {
+			throw new Error("You do not have permission to read this World");
+		}
+
+		const relatedWikiContents = relatedWikiIds ? await databaseContext.fileRepository.findByContent(relatedWikiIds) : undefined;
+
+		const results = await databaseContext.wikiPageRepository.findEventsByWorldAndContentAndCalendar(
+			page,
+			worldId,
+			relatedWikiContents && relatedWikiContents.map(file => file._id),
+			calendarIds
+		);
+		const docs = [];
+		for (let doc of results.docs) {
+			if (await doc.authorizationPolicy.canRead(securityContext, databaseContext)) {
+				docs.push(doc);
+			}
+		}
+		results.docs = docs;
+		return results;
+    }
 }
