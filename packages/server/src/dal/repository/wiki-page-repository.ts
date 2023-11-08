@@ -6,5 +6,4 @@ export interface WikiPageRepository extends Repository<WikiPage>{
     findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>>;
     findByNameAndTypesPaginatedSortByName(page: number, name?: string, types?: string[]): Promise<PaginatedResult<WikiPage>>;
     findOneByNameAndWorld(name: string, worldId: string): Promise<WikiPage>;
-    findEventsByWorldAndContentAndCalendar(page: number, worldId: string, contentIds?: string[], calendarIds?: string[]): Promise<PaginatedResult<WikiPage>>;
 }

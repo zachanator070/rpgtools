@@ -78,7 +78,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
         return results;
     }
 
-    async buildPaginatedResult(page: number, filter: any, sort?: string): Promise<PaginatedResult<T>> {
+    async buildPaginatedResult(page: number, filter: any, sort?: string, results?: M[]): Promise<PaginatedResult<T>> {
         const order = [];
         if(sort) {
             order.push(sequelize.col(sort));
@@ -87,12 +87,14 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
             page = 1;
         }
 
-        const results = await this.staticModel.findAll({
-            where: filter,
-            limit: this.PAGE_LIMIT,
-            offset: (page - 1) * this.PAGE_LIMIT,
-            order: order
-        });
+        if(!results) {
+            results = await this.staticModel.findAll({
+                where: filter,
+                limit: this.PAGE_LIMIT,
+                offset: (page - 1) * this.PAGE_LIMIT,
+                order: order
+            });
+        }
 
         const count = await this.staticModel.count({
             where: filter

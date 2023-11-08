@@ -19,13 +19,13 @@ export default class SqlFileRepository extends AbstractSqlRepository<File, FileM
         const contentChunks: Buffer[] = [];
         const content = await new Promise((resolve, reject) => {
             entity.readStream.on('data', (data) => {
-                contentChunks.push(data);
+                contentChunks.push(Buffer.from(data));
             });
             entity.readStream.on('error', (error) => {
                 reject(error);
             });
-            entity.readStream.on('close', () => {
-                resolve(Buffer.concat(contentChunks));
+            entity.readStream.on('end', () => {
+                resolve(Buffer.concat(contentChunks).toString('utf8'));
             });
         });
 

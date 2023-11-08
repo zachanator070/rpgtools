@@ -50,25 +50,4 @@ export class MongodbWikiPageRepository
 		]);
 	}
 
-	findEventsByWorldAndContentAndCalendar(page: number, worldId: string, contentIds?: string[], calendarIds?: string[]): Promise<PaginatedResult<WikiPage>> {
-
-		const conditions = [
-			new FilterCondition("world", worldId),
-			new FilterCondition('type', EVENT_WIKI)
-		];
-
-		if(calendarIds) {
-			conditions.push(new FilterCondition('calendar', calendarIds, FILTER_CONDITION_OPERATOR_IN));
-		}
-
-		if(contentIds) {
-			conditions.push(new FilterCondition('contentId', contentIds, FILTER_CONDITION_OPERATOR_IN));
-		}
-
-		return this.findPaginated(
-			conditions,
-			page
-		);
-	}
-
 }

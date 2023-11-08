@@ -7,6 +7,9 @@ import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageModel from "../models/wiki-page-model";
 import EventWikiRepository from "../../repository/event-wiki-repository";
+import {PaginatedResult} from "../../paginated-result";
+import {WikiPage} from "../../../domain-entities/wiki-page";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 
 @injectable()
 export default class SqlEventWikiRepository extends AbstractSqlRepository<EventWiki, WikiPageModel> implements EventWikiRepository {
@@ -69,4 +72,26 @@ export default class SqlEventWikiRepository extends AbstractSqlRepository<EventW
         return Promise.all(pages.map((event) => this.entityFactory.fromSqlModel(event)));
     }
 
+    async findByWorldAndContentAndCalendar(page: number, worldId: string, contentIds?: string[], calendarIds?: string[]): Promise<PaginatedResult<WikiPage>> {
+        const baseFilter: any = {worldId: worldId, type: EVENT_WIKI};
+        const eventFilter: any = {};
+        if(contentIds && contentIds.length > 0) {
+            baseFilter.contentId = contentIds;
+        }
+        if(calendarIds && calendarIds.length > 0) {
+            eventFilter.calendarId = calendarIds;
+        }
+
+        const results = await WikiPageModel.findAll({
+            where: baseFilter,
+            limit: this.PAGE_LIMIT,
+            offset: (page - 1) * this.PAGE_LIMIT,
+            include: {
+                model: EventWikiModel,
+                where: eventFilter
+            }
+        });
+
+        return this.buildPaginatedResult(page, baseFilter, 'name', results);
+    }
 }

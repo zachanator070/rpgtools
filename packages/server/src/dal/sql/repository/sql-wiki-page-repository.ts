@@ -68,16 +68,4 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
         }
     }
 
-    findEventsByWorldAndContentAndCalendar(page: number, worldId: string, contentIds?: string[], calendarIds?: string[]): Promise<PaginatedResult<WikiPage>> {
-        const filter: any = {worldId: worldId, type: EVENT_WIKI};
-        if(contentIds && contentIds.length > 0) {
-            filter.contentId = contentIds;
-        }
-        if(calendarIds && calendarIds.length > 0) {
-            filter.calendar = calendarIds;
-        }
-
-        return this.buildPaginatedResult(page, filter, 'name');
-    }
-
 }

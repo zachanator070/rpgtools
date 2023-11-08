@@ -390,7 +390,7 @@ export class WikiPageService {
 
 		const relatedWikiContents = relatedWikiIds ? await databaseContext.fileRepository.findByContent(relatedWikiIds) : undefined;
 
-		const results = await databaseContext.wikiPageRepository.findEventsByWorldAndContentAndCalendar(
+		const results = await databaseContext.eventRepository.findByWorldAndContentAndCalendar(
 			page,
 			worldId,
 			relatedWikiContents && relatedWikiContents.map(file => file._id),

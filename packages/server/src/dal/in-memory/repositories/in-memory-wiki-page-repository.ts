@@ -30,15 +30,4 @@ export class InMemoryWikiPageRepository extends AbstractInMemoryRepository<WikiP
             new FilterCondition("world", worldId),
         ]);
     }
-
-    findEventsByWorldAndContentAndCalendar(page: number, worldId: string, contentIds?: string[], calendarIds?: string[]): Promise<PaginatedResult<WikiPage>> {
-        const conditions = [new FilterCondition('world', worldId), new FilterCondition('type', EVENT_WIKI)];
-        if(contentIds && contentIds.length > 0) {
-            conditions.push(new FilterCondition('contentId', contentIds, FILTER_CONDITION_OPERATOR_IN));
-        }
-        if(calendarIds && calendarIds.length > 0){
-            conditions.push(new FilterCondition('calendar', calendarIds, FILTER_CONDITION_OPERATOR_IN));
-        }
-        return this.findPaginated(conditions, page, 'name');
-    }
 }
