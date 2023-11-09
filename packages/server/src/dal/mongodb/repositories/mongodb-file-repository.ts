@@ -117,36 +117,4 @@ export class MongodbFileRepository implements FileRepository {
 		return this.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)]);
 	}
 
-	async findByContent(searchTerms: string[]): Promise<File[]> {
-		// this is crazy inefficient but mongodb doesn't support text searching file contents as far as I can tell
-		const results: File[] = [];
-		const allFiles = await this.findAll();
-		for(let file of allFiles) {
-			for(let term of searchTerms) {
-				const containsTerm = await new Promise((resolve, reject) => {
-					const bufferQueue: Buffer[] = [];
-					let returnValue = false;
-					file.readStream.on('data', (data) => {
-						bufferQueue.push(data.toString());
-						const currentValue = bufferQueue.join();
-						if(currentValue.includes(term)) {
-							returnValue = true;
-							file.readStream.destroy();
-						}
-						if(bufferQueue.length > 3) {
-							bufferQueue.shift();
-						}
-					});
-					file.readStream.on('error', (err) => reject(err));
-					file.readStream.on('close', () => { resolve(returnValue) });
-				});
-				if(containsTerm) {
-					results.push(file);
-				}
-			}
-
-		}
-
-		return results;
-	}
 }

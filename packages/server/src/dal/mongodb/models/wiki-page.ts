@@ -26,7 +26,12 @@ const wikiPageSchema = new mongoose.Schema(
 		},
 		contentId: {
 			type: String,
-		}
+		},
+		relatedWikis: {
+			type: [String],
+			ref: WIKI_PAGE,
+			default: []
+		},
 	},
 	{
 		discriminatorKey: "type",

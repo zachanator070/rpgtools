@@ -37,18 +37,4 @@ export default class SqlFileRepository extends AbstractSqlRepository<File, FileM
         });
     }
 
-    async findByContent(searchTerms: string[]): Promise<File[]> {
-
-        const filters: WhereOptions[] = [];
-        for(let term of searchTerms) {
-            filters.push({content: {[Op.iLike]: `%${term}%` }});
-        }
-
-        return this.buildResults(await this.staticModel.findAll({
-            where: {
-                [Op.or]: filters
-            }
-        }));
-    }
-
 }

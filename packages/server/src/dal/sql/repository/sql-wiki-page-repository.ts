@@ -8,7 +8,6 @@ import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
 import {Op} from "sequelize";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 
 @injectable()
 export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPage, WikiPageModel> implements WikiPageRepository {
@@ -33,6 +32,8 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     }
 
     async updateAssociations(entity: WikiPage, model: WikiPageModel) {
+        const relatedWikiModels = await WikiPageModel.findAll({where: {_id: entity.relatedWikis}});
+        await model.setRelatedWikis(relatedWikiModels);
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 

@@ -60,6 +60,8 @@ export default class SqlEventWikiRepository extends AbstractSqlRepository<EventW
             });
             await page.save();
         }
+        const relatedWikiModels = await WikiPageModel.findAll({where: {_id: entity.relatedWikis}});
+        await model.setRelatedWikis(relatedWikiModels);
     }
 
     async deleteAssociations(entity: EventWiki, model: WikiPageModel){

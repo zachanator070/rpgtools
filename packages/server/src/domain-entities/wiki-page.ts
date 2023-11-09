@@ -19,6 +19,7 @@ export abstract class WikiPage implements PermissionControlledEntity {
 	public contentId: string | null;
 	public content: string | null;
 	public acl: AclEntry[];
+	public relatedWikis: string[];
 
 	authorizationPolicy: WikiPageAuthorizationPolicy;
 

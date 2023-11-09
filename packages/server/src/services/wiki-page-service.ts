@@ -17,6 +17,7 @@ import MonsterFactory from "../domain-entities/factory/monster-factory";
 import PersonFactory from "../domain-entities/factory/person-factory";
 import PlaceFactory from "../domain-entities/factory/place-factory";
 import FileFactory from "../domain-entities/factory/file-factory";
+import stream from "stream";
 
 @injectable()
 export class WikiPageService {
@@ -50,7 +51,7 @@ export class WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const newPage = this.articleFactory.build({name, world: folder.world, coverImage: null, contentId: null, acl: []});
+		const newPage = this.articleFactory.build({name, world: folder.world, coverImage: null, contentId: null, acl: [], relatedWikis: []});
 		await databaseContext.articleRepository.create(newPage);
 		folder.pages.push(newPage._id);
 		await databaseContext.wikiFolderRepository.update(folder);
@@ -88,11 +89,38 @@ export class WikiPageService {
 		}
 
 		if (readStream) {
+			const relatedWikis: Set<string> = new Set();
 			let contentFile = await databaseContext.fileRepository.findOneById(wikiPage.contentId);
 
 			if (contentFile) {
 				await databaseContext.fileRepository.delete(contentFile);
 			}
+
+			const searchingStream = new stream.PassThrough();
+			const chunks: Buffer[] = [];
+			const matchChunks = () => {
+				const current = Buffer.concat(chunks).toString('utf8');
+				const matches = current.matchAll(/\/ui\/world\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/wiki\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/view/g);
+				if(matches) {
+					for(let match of matches) {
+						relatedWikis.add(match[1]);
+					}
+				}
+			}
+			searchingStream.on('data', (chunk) => {
+				chunks.push(Buffer.from(chunk));
+				matchChunks();
+				if(chunks.length > 3) {
+					chunks.shift();
+				}
+			});
+			searchingStream.on('end', async () => {
+				matchChunks();
+				wikiPage.relatedWikis = [...relatedWikis];
+			});
+			const finalSteam = new stream.PassThrough();
+			searchingStream.pipe(finalSteam);
+			readStream.pipe(searchingStream);
 
 			contentFile = this.fileFactory.build(
 				{
@@ -388,12 +416,10 @@ export class WikiPageService {
 			throw new Error("You do not have permission to read this World");
 		}
 
-		const relatedWikiContents = relatedWikiIds ? await databaseContext.fileRepository.findByContent(relatedWikiIds) : undefined;
-
 		const results = await databaseContext.eventRepository.findByWorldAndContentAndCalendar(
 			page,
 			worldId,
-			relatedWikiContents && relatedWikiContents.map(file => file._id),
+			relatedWikiIds,
 			calendarIds
 		);
 		const docs = [];

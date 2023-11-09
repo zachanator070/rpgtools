@@ -29,7 +29,8 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             hour,
             minute,
             second,
-            acl
+            acl,
+            relatedWikis
         }:{
             _id?: string,
             name: string,
@@ -44,7 +45,8 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             hour: number,
             minute: number,
             second: number,
-            acl: AclEntry[]
+            acl: AclEntry[],
+            relatedWikis: string []
         }
     ) {
         const event: EventWiki = new EventWiki(this, new WikiPageAuthorizationPolicy());
@@ -62,6 +64,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.minute = minute || 0;
         event.second = second || 0;
         event.acl = acl;
+        event.relatedWikis = relatedWikis;
         return event;
     }
 
@@ -79,7 +82,8 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         hour,
         minute,
         second,
-        acl
+        acl,
+        relatedWikis
     }: EventDocument): EventWiki {
         const event = new EventWiki(this, new WikiPageAuthorizationPolicy());
         event._id = _id && _id.toString();
@@ -96,6 +100,7 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.minute = minute;
         event.second = second;
         event.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
+        event.relatedWikis = relatedWikis.map(_id => _id.toString());
         return event;
     }
 
@@ -117,7 +122,8 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
             second: page?.second,
             acl: await Promise.all(
                 (await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
-            )
+            ),
+            relatedWikis: (await Promise.all((await model.getRelatedWikis()).map(wiki => wiki._id)))
         });
     }
 
