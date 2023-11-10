@@ -70,7 +70,7 @@ export default class WikiPageModel extends PermissionControlledModel {
     static connect() {
         WikiPageModel.belongsTo(WorldModel, {as: 'world',});
         WikiPageModel.belongsTo(ImageModel, {as: 'coverImage'});
-        WikiPageModel.belongsToMany(WikiPageModel, {foreignKey: 'WikiPageId', otherKey: 'relatedWikiId', as: 'relatedWikis', through: WikiPageToWikiPageModel, constraints: false});
+        WikiPageModel.belongsToMany(WikiPageModel, {as: 'relatedWikis', through: WikiPageToWikiPageModel});
         configPermissionControlledModel(WikiPageModel);
     }
 }

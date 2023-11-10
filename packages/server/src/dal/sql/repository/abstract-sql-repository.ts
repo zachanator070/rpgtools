@@ -5,6 +5,7 @@ import {DatabaseSession} from "../../database-session";
 import {PaginatedResult} from "../../paginated-result";
 import {injectable} from "inversify";
 import {v4} from "uuid";
+import useRemoveUserRole from "@rpgtools/frontend/src/hooks/authorization/useRemoveUserRole";
 
 @injectable()
 export default abstract class AbstractSqlRepository<T extends DomainEntity, M extends SqlModel> {
@@ -78,7 +79,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
         return results;
     }
 
-    async buildPaginatedResult(page: number, filter: any, sort?: string, results?: M[]): Promise<PaginatedResult<T>> {
+    async buildPaginatedResult(page: number, filter: any, sort?: string, results?: M[], totalCount?: number): Promise<PaginatedResult<T>> {
         const order = [];
         if(sort) {
             order.push(sequelize.col(sort));
@@ -94,16 +95,15 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
                 offset: (page - 1) * this.PAGE_LIMIT,
                 order: order
             });
+            totalCount = await this.staticModel.count({
+                where: filter
+            });
         }
 
-        const count = await this.staticModel.count({
-            where: filter
-        });
-
-        const totalPages = Math.ceil(count / this.PAGE_LIMIT);
+        const totalPages = Math.ceil(totalCount / this.PAGE_LIMIT);
 
         return {
-            totalDocs: count,
+            totalDocs: totalCount,
             limit: this.PAGE_LIMIT,
             page,
             pagingCounter: page * this.PAGE_LIMIT,

@@ -347,6 +347,7 @@ describe("query resolver", () => {
 							worldId: testingContext.world._id
 						}
 					});
+					expect(result.errors).toBe(undefined);
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -359,7 +360,7 @@ describe("query resolver", () => {
 						},
 						errors: undefined
 					});
-					expect(result.data.events.docs.length).toBe(5);
+					expect(result.data && result.data.events.docs.length).toBe(5);
 				});
 
 				it('get all events in second calendar', async () => {
@@ -370,6 +371,7 @@ describe("query resolver", () => {
 							calendarIds: [testingContext.calendar2._id]
 						}
 					});
+					expect(result.errors).toBe(undefined);
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -382,7 +384,7 @@ describe("query resolver", () => {
 						},
 						errors: undefined
 					});
-					expect(result.data.events.docs.length).toBe(2);
+					expect(result.data && result.data.events.docs.length).toBe(2);
 				});
 
 				it('get only events related to world wiki page', async () => {
@@ -393,6 +395,7 @@ describe("query resolver", () => {
 							relatedWikiIds: [testingContext.world.wikiPage]
 						}
 					});
+					expect(result.errors).toBe(undefined);
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -405,10 +408,10 @@ describe("query resolver", () => {
 						},
 						errors: undefined
 					});
-					expect(result.data.events.docs.length).toBe(3);
+					expect(result.data && result.data.events.docs.length).toBe(3);
 				});
 
-				it('get only events related to world in second calendar', async () => {
+				it('get only events related to world wiki page in second calendar', async () => {
 					const result = await testingContext.server.executeGraphQLQuery({
 						query: SEARCH_EVENTS,
 						variables: {
@@ -417,6 +420,7 @@ describe("query resolver", () => {
 							calendarIds: [testingContext.calendar2._id]
 						}
 					});
+					expect(result.errors).toBe(undefined);
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -429,7 +433,7 @@ describe("query resolver", () => {
 						},
 						errors: undefined
 					});
-					expect(result.data.events.docs.length).toBe(1);
+					expect(result.data && result.data.events.docs.length).toBe(1);
 				});
 			})
 		});

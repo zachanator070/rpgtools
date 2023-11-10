@@ -33,7 +33,7 @@ export default class MongodbEventWikiRepository extends AbstractMongodbRepositor
         }
 
         if(contentIds) {
-            conditions.push(new FilterCondition('contentId', contentIds, FILTER_CONDITION_OPERATOR_IN));
+            conditions.push(new FilterCondition('relatedWikis', contentIds, FILTER_CONDITION_OPERATOR_IN));
         }
 
         return this.findPaginated(

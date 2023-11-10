@@ -269,7 +269,7 @@ exports[`query resolver with world with authenticated user with multiple events,
 }
 `;
 
-exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world in second calendar 1`] = `
+exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page 1`] = `
 {
   "data": {
     "events": {
@@ -291,7 +291,7 @@ exports[`query resolver with world with authenticated user with multiple events,
 }
 `;
 
-exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page 1`] = `
+exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page in second calendar 1`] = `
 {
   "data": {
     "events": {
