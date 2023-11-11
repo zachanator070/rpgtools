@@ -5,7 +5,6 @@ import {DatabaseSession} from "../../database-session";
 import {PaginatedResult} from "../../paginated-result";
 import {injectable} from "inversify";
 import {v4} from "uuid";
-import useRemoveUserRole from "@rpgtools/frontend/src/hooks/authorization/useRemoveUserRole";
 
 @injectable()
 export default abstract class AbstractSqlRepository<T extends DomainEntity, M extends SqlModel> {
@@ -98,6 +97,8 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
             totalCount = await this.staticModel.count({
                 where: filter
             });
+        } else if(totalCount === undefined || totalCount === null) {
+            throw Error('totalCount must be supplied if results are passed in')
         }
 
         const totalPages = Math.ceil(totalCount / this.PAGE_LIMIT);

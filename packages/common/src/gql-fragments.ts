@@ -165,6 +165,7 @@ export const MODEL_ATTRIBUTES = gql`
 export const EVENT_WIKI_ATTRIBUTES = gql`
     fragment eventWikiAttributes on Event {
         _id
+        name
         calendar {
             _id
             name
