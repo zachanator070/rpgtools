@@ -183,6 +183,7 @@ export interface WikiPageDocument extends MongoDBDocument, PermissionControlledD
 	world: string;
 	coverImage?: string;
 	contentId?: string;
+	relatedWikis: string[];
 }
 
 export interface ModeledWikiDocument extends WikiPageDocument {

@@ -12,6 +12,7 @@ import {WikiPageRepository} from "../../repository/wiki-page-repository";
 import {PaginatedResult} from "../../paginated-result";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
 import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 
 
 @injectable()

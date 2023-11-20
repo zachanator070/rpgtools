@@ -191,7 +191,7 @@ export class WorldService {
 	) => {
 		const world = this.worldFactory.build({name, wikiPage: null, rootFolder: null, acl: []});
 		await databaseContext.worldRepository.create(world);
-		const rootWiki = this.placeFactory.build({name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: []});
+		const rootWiki = this.placeFactory.build({name, world: world._id, coverImage: null, contentId: null, mapImage: null, pixelsPerFoot: 0, acl: [], relatedWikis: []});
 		await databaseContext.placeRepository.create(rootWiki);
 		const rootFolder = this.wikiFolderFactory.build({name, world: world._id, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(rootFolder);

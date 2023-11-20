@@ -16,6 +16,8 @@ export default class PostgresDbEngine implements DbEngine {
     host = process.env.POSTGRES_HOST || 'postgres';
     dbName = process.env.POSTGRES_DB_NAME || 'rpgtools';
 
+    stdOutLogging = process.env.POSTGRES_SQL_LOGGING || 'false';
+
     @inject(INJECTABLE_TYPES.SqlDbEngine)
     abstractEngine: AbstractSqlDbEngine;
 
@@ -29,7 +31,7 @@ export default class PostgresDbEngine implements DbEngine {
         this.connection = new Sequelize(
             this.getConnectionString(),
             {
-                logging: false
+                logging: this.stdOutLogging.toLowerCase() === 'true' && console.log
             }
         );
 

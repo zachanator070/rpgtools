@@ -24,6 +24,7 @@ export const typeDefs = gql`
 		pins(worldId: ID!, page: Int): PinPaginatedResult!
 		
 		calendars(worldId: ID!): [Calendar!]!
+		events(worldId: ID!, relatedWikiIds: [String!], calendarIds: [String!]): WikiPagePaginatedResult!
 	}
 
 	type Mutation {

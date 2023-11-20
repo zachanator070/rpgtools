@@ -116,4 +116,5 @@ export class MongodbFileRepository implements FileRepository {
 	findByIds(ids: string[]): Promise<File[]> {
 		return this.find([new FilterCondition("_id", ids, FILTER_CONDITION_OPERATOR_IN)]);
 	}
+
 }

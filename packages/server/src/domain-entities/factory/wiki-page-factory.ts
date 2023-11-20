@@ -25,14 +25,16 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
               world,
               coverImage,
               contentId,
-              acl
+              acl,
+              relatedWikis
           }: {
             _id?: string,
             name: string,
             world: string,
             coverImage: string,
             contentId: string,
-            acl: AclEntry[]
+            acl: AclEntry[],
+            relatedWikis: string[],
         }): WikiPage {
         const article = new Article(this.articleFactory, new WikiPageAuthorizationPolicy());
         article._id = _id;
@@ -41,6 +43,7 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
         article.coverImage = coverImage;
         article.contentId = contentId;
         article.acl = acl;
+        article.relatedWikis = relatedWikis;
         return article;
     }
 

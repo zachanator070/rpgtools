@@ -17,6 +17,7 @@ import MonsterFactory from "../domain-entities/factory/monster-factory";
 import PersonFactory from "../domain-entities/factory/person-factory";
 import PlaceFactory from "../domain-entities/factory/place-factory";
 import FileFactory from "../domain-entities/factory/file-factory";
+import stream from "stream";
 
 @injectable()
 export class WikiPageService {
@@ -50,7 +51,7 @@ export class WikiPageService {
 			throw new Error(`You do not have permission to write to the folder ${folderId}`);
 		}
 
-		const newPage = this.articleFactory.build({name, world: folder.world, coverImage: null, contentId: null, acl: []});
+		const newPage = this.articleFactory.build({name, world: folder.world, coverImage: null, contentId: null, acl: [], relatedWikis: []});
 		await databaseContext.articleRepository.create(newPage);
 		folder.pages.push(newPage._id);
 		await databaseContext.wikiFolderRepository.update(folder);
@@ -88,11 +89,38 @@ export class WikiPageService {
 		}
 
 		if (readStream) {
+			const relatedWikis: Set<string> = new Set();
 			let contentFile = await databaseContext.fileRepository.findOneById(wikiPage.contentId);
 
 			if (contentFile) {
 				await databaseContext.fileRepository.delete(contentFile);
 			}
+
+			const searchingStream = new stream.PassThrough();
+			const chunks: Buffer[] = [];
+			const matchChunks = () => {
+				const current = Buffer.concat(chunks).toString('utf8');
+				const matches = current.matchAll(/\/ui\/world\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/wiki\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/view/g);
+				if(matches) {
+					for(let match of matches) {
+						relatedWikis.add(match[1]);
+					}
+				}
+			}
+			searchingStream.on('data', (chunk) => {
+				chunks.push(Buffer.from(chunk));
+				matchChunks();
+				if(chunks.length > 3) {
+					chunks.shift();
+				}
+			});
+			searchingStream.on('end', async () => {
+				matchChunks();
+				wikiPage.relatedWikis = [...relatedWikis];
+			});
+			const finalSteam = new stream.PassThrough();
+			searchingStream.pipe(finalSteam);
+			readStream.pipe(searchingStream);
 
 			contentFile = this.fileFactory.build(
 				{
@@ -233,19 +261,13 @@ export class WikiPageService {
 				throw new Error(`Calendar with id ${calendarId} not found`);
 			}
 			wikiPage.calendar = calendarId;
-			if(age - 1 > calendar.ages.length) {
+			if(age - 1 >= calendar.ages.length) {
 				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
 			}
 			if(age <= 0) {
 				throw new Error(`Age cannot be negative`)
 			}
 			wikiPage.age = age;
-			if(age > calendar.ages.length) {
-				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
-			}
-			if(age <= 0) {
-				throw new Error(`Age must be greater than 0`);
-			}
 			const ageEntity = calendar.ages[age - 1];
 			if(year > ageEntity.numYears) {
 				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.numYears} years`);
@@ -254,7 +276,7 @@ export class WikiPageService {
 				throw new Error(`Year must be greater than 0`);
 			}
 			wikiPage.year = year;
-			if(month - 1 > ageEntity.months.length) {
+			if(month - 1 >= ageEntity.months.length) {
 				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.months.length} months`);
 			}
 			if(month <= 0) {
@@ -384,4 +406,29 @@ export class WikiPageService {
 		results.docs = docs;
 		return results;
 	};
+
+    async getEvents(worldId: string, securityContext: SecurityContext, databaseContext: DatabaseContext, relatedWikiIds?: string[], calendarIds?: string[], page: number = 1) : Promise<PaginatedResult<WikiPage>> {
+		const world = await databaseContext.worldRepository.findOneById(worldId);
+		if (!world) {
+			throw new Error("World does not exist");
+		}
+		if (!(await world.authorizationPolicy.canRead(securityContext, databaseContext))) {
+			throw new Error("You do not have permission to read this World");
+		}
+
+		const results = await databaseContext.eventRepository.findByWorldAndContentAndCalendar(
+			page,
+			worldId,
+			relatedWikiIds,
+			calendarIds
+		);
+		const docs = [];
+		for (let doc of results.docs) {
+			if (await doc.authorizationPolicy.canRead(securityContext, databaseContext)) {
+				docs.push(doc);
+			}
+		}
+		results.docs = docs;
+		return results;
+    }
 }

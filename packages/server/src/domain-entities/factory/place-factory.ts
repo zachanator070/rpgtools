@@ -23,7 +23,8 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
             contentId,
             mapImage,
             pixelsPerFoot,
-            acl
+            acl,
+            relatedWikis
         }:{
             _id?: string,
             name: string,
@@ -32,7 +33,8 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
             contentId: string,
             mapImage: string,
             pixelsPerFoot: number,
-            acl: AclEntry[]
+            acl: AclEntry[],
+            relatedWikis: string[]
         }
     ) {
         const place: Place = new Place(this, new WikiPageAuthorizationPolicy());
@@ -44,6 +46,7 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
         place.mapImage = mapImage;
         place.pixelsPerFoot = pixelsPerFoot;
         place.acl = acl;
+        place.relatedWikis = relatedWikis;
         return place;
     }
 
@@ -55,7 +58,8 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
         contentId,
         mapImage,
         pixelsPerFoot,
-        acl
+        acl,
+        relatedWikis
     }: PlaceDocument): Place {
         const place = new Place(this, new WikiPageAuthorizationPolicy());
         place._id = _id && _id.toString();
@@ -66,6 +70,7 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
         place.mapImage = mapImage && mapImage.toString();
         place.pixelsPerFoot = pixelsPerFoot;
         place.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
+        place.relatedWikis = relatedWikis.map(_id => _id.toString());
         return place;
     }
 
@@ -81,7 +86,8 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
             pixelsPerFoot: page?.pixelsPerFoot,
             acl: await Promise.all(
                 (await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
-            )
+            ),
+            relatedWikis: (await Promise.all((await model.getRelatedWikis()).map(wiki => wiki._id)))
         });
     }
 

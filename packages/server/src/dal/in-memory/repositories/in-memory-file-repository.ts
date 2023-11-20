@@ -4,4 +4,6 @@ import {FileRepository} from "../../repository/file-repository";
 
 export class InMemoryFileRepository
 	extends AbstractInMemoryRepository<File>
-	implements FileRepository {}
+	implements FileRepository {
+
+}

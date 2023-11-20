@@ -352,7 +352,7 @@ describe("wiki page mutations", () => {
 						query: UPDATE_EVENT,
 						variables: {
 							wikiId: eventId,
-							calendarId: testingContext.calendar._id,
+							calendarId: testingContext.calendar1._id,
 							age: 1,
 							year: 1,
 							month: 1,

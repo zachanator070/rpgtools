@@ -5,6 +5,7 @@ import FileModel from "../models/file-model";
 import {FileRepository} from "../../repository/file-repository";
 import FileFactory from "../../../domain-entities/factory/file-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {Op, WhereOptions} from "sequelize";
 
 
 @injectable()
@@ -17,14 +18,14 @@ export default class SqlFileRepository extends AbstractSqlRepository<File, FileM
     async modelFactory(entity: File | undefined): Promise<FileModel> {
         const contentChunks: Buffer[] = [];
         const content = await new Promise((resolve, reject) => {
-            entity.readStream.on('readable', () => {
-                let chunk;
-                while ((chunk = entity.readStream.read()) !== null) {
-                    contentChunks.push(chunk);
-                }
+            entity.readStream.on('data', (data) => {
+                contentChunks.push(Buffer.from(data));
+            });
+            entity.readStream.on('error', (error) => {
+                reject(error);
             });
             entity.readStream.on('end', () => {
-                resolve(Buffer.concat(contentChunks));
+                resolve(Buffer.concat(contentChunks).toString('utf8'));
             });
         });
 
