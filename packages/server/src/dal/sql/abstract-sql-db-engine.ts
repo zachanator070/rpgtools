@@ -58,12 +58,13 @@ import AdminUsersToServerConfigModel from "./models/admin-users-to-server-config
 import {SequelizeStorage, Umzug} from "umzug";
 import * as initial from "./migrations/00_initial";
 import * as events from "./migrations/01_events";
+import * as related_wikis from "./migrations/02_related_wikis";
 import EventWikiModel from "./models/event-wiki-model";
 import CalendarModel from "./models/calendar-model";
 import AgeModel from "./models/calendar/age-model";
 import MonthModel from "./models/calendar/month-model";
-import {DayOfTheWeek} from "../../domain-entities/calendar";
 import DayOfTheWeekModel from "./models/calendar/day-of-the-week-model";
+import WikiPageToWikiPageModel from "./models/wiki-page-to-wiki-page-model";
 
 
 @injectable()
@@ -75,6 +76,7 @@ export default class AbstractSqlDbEngine {
         AclEntryModel.init(AclEntryModel.attributes, {sequelize: connection, modelName: ACL_ENTRY, freezeTableName: true});
         AdminUsersToServerConfigModel.init(AdminUsersToServerConfigModel.attributes, {sequelize: connection, modelName: 'AdminUsersToServerConfig', freezeTableName: true});
         WikiPageModel.init(WikiPageModel.attributes, {sequelize: connection, modelName: WIKI_PAGE, freezeTableName: true});
+        WikiPageToWikiPageModel.init(WikiPageToWikiPageModel.attributes, {sequelize: connection, modelName: 'WikiPageToWikiPage', freezeTableName: true});
         ArticleModel.init(ArticleModel.attributes, {sequelize: connection, modelName: ARTICLE, freezeTableName: true});
         ChunkModel.init(ChunkModel.attributes, {sequelize: connection, modelName: CHUNK, freezeTableName: true});
         FileModel.init(FileModel.attributes, {sequelize: connection, modelName: FILE, freezeTableName: true});
@@ -157,6 +159,10 @@ export default class AbstractSqlDbEngine {
                 {
                     name: '01_events',
                     ...events
+                },
+                {
+                    name: '02_related_wikis',
+                    ...related_wikis
                 }
             ],
             context: connection.getQueryInterface(),

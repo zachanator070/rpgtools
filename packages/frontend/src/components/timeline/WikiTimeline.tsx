@@ -1,7 +1,5 @@
 import React from 'react';
-import {Calendar, EventWiki} from "../../types";
-import useWikisByCalendar from "../../hooks/wiki/useWikisByCalendar";
-import LoadingView from "../LoadingView";
+import {EventWiki} from "../../types";
 import VerticalTimeline from "../widgets/VerticalTimeline";
 import {Link, useParams} from "react-router-dom";
 import {getDate, getTime} from "../wiki/view/WikiView";
@@ -51,15 +49,9 @@ function sortEvents(eventA: EventWiki, eventB: EventWiki): number {
     }
 }
 
-export default function WikiTimeline({calendar}: {calendar: Calendar}) {
+export default function WikiTimeline({events}: {events: EventWiki[]}) {
     const {world_id} = useParams();
-    const {wikis, loading} = useWikisByCalendar({calendarId: calendar._id});
-
-    if(loading) {
-        return <LoadingView/>;
-    }
-
-    const sortedEvents = wikis.docs.sort(sortEvents)
+    const sortedEvents = [...events].sort(sortEvents)
 
     return <div style={{width: '100%'}} className={'margin-lg'}>
         <VerticalTimeline

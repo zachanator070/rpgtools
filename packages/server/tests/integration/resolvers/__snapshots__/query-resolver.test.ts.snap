@@ -225,6 +225,94 @@ exports[`query resolver with world with authenticated user with hosted game get 
 }
 `;
 
+exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get all events 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get all events in second calendar 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
+exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page in second calendar 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": {
+    "headers": Headers {
+      Symbol(map): {},
+    },
+  },
+}
+`;
+
 exports[`query resolver with world with authenticated user world 1`] = `
 {
   "data": {

@@ -6,6 +6,7 @@ import {PlaceRepository} from "../../repository/place-repository";
 import PlaceFactory from "../../../domain-entities/factory/place-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageModel from "../models/wiki-page-model";
+import {Op} from "sequelize";
 
 @injectable()
 export default class SqlPlaceRepository extends AbstractSqlRepository<Place, WikiPageModel> implements PlaceRepository {
@@ -43,6 +44,8 @@ export default class SqlPlaceRepository extends AbstractSqlRepository<Place, Wik
             });
             await page.save();
         }
+        const relatedWikiModels = await WikiPageModel.findAll({where: {_id: [...entity.relatedWikis]}});
+        await model.setRelatedWikis(relatedWikiModels);
     }
 
     async deleteAssociations(entity: Place, model: WikiPageModel){

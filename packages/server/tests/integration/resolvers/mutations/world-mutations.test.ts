@@ -183,21 +183,21 @@ describe("world-mutations", () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: UPSERT_CALENDAR,
 				variables: {
-					name: testingContext.calendar.name,
-					calendarId: testingContext.calendar._id,
+					name: testingContext.calendar1.name,
+					calendarId: testingContext.calendar1._id,
 					world: testingContext.world._id,
 					ages: [{
-						name: testingContext.calendar.ages[0].name,
-						_id: testingContext.calendar.ages[0]._id,
+						name: testingContext.calendar1.ages[0].name,
+						_id: testingContext.calendar1.ages[0]._id,
 						numYears: 1000,
 						months: [{
-							name: testingContext.calendar.ages[0].months[0].name,
-							_id: testingContext.calendar.ages[0].months[0]._id,
+							name: testingContext.calendar1.ages[0].months[0].name,
+							_id: testingContext.calendar1.ages[0].months[0]._id,
 							numDays: 60
 						}],
 						daysOfTheWeek: [{
-							name: testingContext.calendar.ages[0].daysOfTheWeek[0].name,
-							_id: testingContext.calendar.ages[0].daysOfTheWeek[0]._id
+							name: testingContext.calendar1.ages[0].daysOfTheWeek[0].name,
+							_id: testingContext.calendar1.ages[0].daysOfTheWeek[0]._id
 						}]
 					}]
 				}
@@ -206,19 +206,19 @@ describe("world-mutations", () => {
 				data: {
 					upsertCalendar: {
 						_id: expect.any(String),
-						name: testingContext.calendar.name,
+						name: testingContext.calendar1.name,
 						ages: [{
 							_id: expect.any(String),
-							name: testingContext.calendar.ages[0].name,
+							name: testingContext.calendar1.ages[0].name,
 							numYears: 1000,
 							months: [{
-								name: testingContext.calendar.ages[0].months[0].name,
+								name: testingContext.calendar1.ages[0].months[0].name,
 								_id: expect.any(String),
 								numDays: 60
 							}],
 							daysOfTheWeek: [{
 								_id: expect.any(String),
-								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
+								name: testingContext.calendar1.ages[0].daysOfTheWeek[0].name
 							}]
 						}],
 						accessControlList: expect.arrayContaining([
@@ -241,17 +241,17 @@ describe("world-mutations", () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: UPSERT_CALENDAR,
 				variables: {
-					name: testingContext.calendar.name,
-					calendarId: testingContext.calendar._id,
+					name: testingContext.calendar1.name,
+					calendarId: testingContext.calendar1._id,
 					world: testingContext.world._id,
 					ages: [{
-						name: testingContext.calendar.ages[0].name,
-						_id: testingContext.calendar.ages[0]._id,
+						name: testingContext.calendar1.ages[0].name,
+						_id: testingContext.calendar1.ages[0]._id,
 						numYears: 100,
 						months: [],
 						daysOfTheWeek: [{
-							name: testingContext.calendar.ages[0].daysOfTheWeek[0].name,
-							_id: testingContext.calendar.ages[0].daysOfTheWeek[0]._id
+							name: testingContext.calendar1.ages[0].daysOfTheWeek[0].name,
+							_id: testingContext.calendar1.ages[0].daysOfTheWeek[0]._id
 						}]
 					}]
 				}
@@ -260,15 +260,15 @@ describe("world-mutations", () => {
 				data: {
 					upsertCalendar: {
 						_id: expect.any(String),
-						name: testingContext.calendar.name,
+						name: testingContext.calendar1.name,
 						ages: [{
 							_id: expect.any(String),
-							name: testingContext.calendar.ages[0].name,
+							name: testingContext.calendar1.ages[0].name,
 							numYears: 100,
 							months: [],
 							daysOfTheWeek: [{
 								_id: expect.any(String),
-								name: testingContext.calendar.ages[0].daysOfTheWeek[0].name
+								name: testingContext.calendar1.ages[0].daysOfTheWeek[0].name
 							}]
 						}],
 						accessControlList: expect.arrayContaining([
@@ -291,7 +291,7 @@ describe("world-mutations", () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_CALENDAR,
 				variables: {
-					calendarId: testingContext.calendar._id,
+					calendarId: testingContext.calendar1._id,
 				}
 			});
 			expect(result).toMatchSnapshot({
@@ -367,8 +367,8 @@ describe("world-mutations", () => {
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPSERT_CALENDAR,
 					variables: {
-						name: testingContext.calendar.name,
-						calendarId: testingContext.calendar._id,
+						name: testingContext.calendar1.name,
+						calendarId: testingContext.calendar1._id,
 						world: testingContext.world._id,
 						ages: []
 					}
@@ -382,7 +382,7 @@ describe("world-mutations", () => {
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: UPSERT_CALENDAR,
 					variables: {
-						name: testingContext.calendar.name,
+						name: testingContext.calendar1.name,
 						world: testingContext.world._id,
 						ages: []
 					}

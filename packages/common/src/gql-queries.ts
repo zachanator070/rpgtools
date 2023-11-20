@@ -227,6 +227,18 @@ export const WIKIS_IN_FOLDER = gql`
 		}
 	}
 `;
+
+export const SEARCH_EVENTS = gql`
+	${EVENT_WIKI_ATTRIBUTES}
+	query events($worldId: ID!, $relatedWikiIds: [String!], $calendarIds: [String!]) {
+		events(worldId: $worldId, relatedWikiIds: $relatedWikiIds, calendarIds: $calendarIds) {
+			docs {
+				...eventWikiAttributes
+			}
+			nextPage
+		}
+	}
+`;
 //endregion
 
 //region Folders

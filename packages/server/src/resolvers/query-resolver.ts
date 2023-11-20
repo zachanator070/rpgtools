@@ -122,5 +122,13 @@ export default {
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 		return service.getCalendars(worldId, securityContext, databaseContext);
+	},
+	events: async (
+		_: any,
+		{ worldId, relatedWikiIds, calendarIds } : { worldId: string, relatedWikiIds: string[], calendarIds: string[] },
+		{ securityContext, databaseContext }: SessionContext
+	) => {
+		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
+		return service.getEvents(worldId, securityContext, databaseContext, relatedWikiIds, calendarIds);
 	}
 };

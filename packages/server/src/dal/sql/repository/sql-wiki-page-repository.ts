@@ -32,6 +32,8 @@ export default class SqlWikiPageRepository extends AbstractSqlRepository<WikiPag
     }
 
     async updateAssociations(entity: WikiPage, model: WikiPageModel) {
+        const relatedWikiModels = await WikiPageModel.findAll({where: {_id: entity.relatedWikis}});
+        await model.setRelatedWikis(relatedWikiModels);
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 

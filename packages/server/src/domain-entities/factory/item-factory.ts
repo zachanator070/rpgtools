@@ -23,7 +23,8 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
             contentId,
             pageModel,
             modelColor,
-            acl
+            acl,
+            relatedWikis
         }: {
             _id?: string,
             name: string,
@@ -32,7 +33,8 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
             contentId: string,
             pageModel: string,
             modelColor: string,
-            acl: AclEntry[]
+            acl: AclEntry[],
+            relatedWikis: string[]
         }
     ) {
         const item: Item = new Item(this, new WikiPageAuthorizationPolicy());
@@ -44,6 +46,7 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
         item.pageModel = pageModel;
         item.modelColor = modelColor;
         item.acl = acl;
+        item.relatedWikis = relatedWikis;
         return item;
     }
 
@@ -55,7 +58,8 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
         contentId,
         pageModel,
         modelColor,
-        acl
+        acl,
+        relatedWikis
     }: ItemDocument): Item {
         const item = new Item(this, new WikiPageAuthorizationPolicy());
         item._id = _id && _id.toString();
@@ -66,6 +70,7 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
         item.pageModel = pageModel && pageModel.toString();
         item.modelColor = modelColor;
         item.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
+        item.relatedWikis = relatedWikis.map(_id => _id.toString());
         return item;
     }
 
@@ -81,7 +86,8 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
             modelColor: page?.modelColor,
             acl: await Promise.all(
                 (await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))
-            )
+            ),
+            relatedWikis: (await Promise.all((await model.getRelatedWikis()).map(wiki => wiki._id)))
         });
     }
 
