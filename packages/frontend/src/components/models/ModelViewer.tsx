@@ -1,7 +1,7 @@
-import React, {Ref, RefObject, useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer";
 import LoadingView from "../LoadingView";
-import {Model} from "../../types";
+import { Model } from "../../types";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ColorInput from "../widgets/input/ColorInput";
 
@@ -9,7 +9,7 @@ interface ModelViewerProps {
 	model: Model;
 	defaultColor?: string;
 	showColorControls?: boolean;
-	onChangeColor?: (color: string) => Promise<any>;
+	onChangeColor?: (color: string) => Promise<void>;
 	container?: HTMLElement;
 }
 
@@ -33,12 +33,12 @@ export default function ModelViewer({
 				const observer = new ResizeObserver(() => {
 					if (container.offsetWidth !== canvasWidth) {
 						setCanvasWidth(container.offsetWidth);
-						setCanvasHeight(container.offsetWidth * 3/4);
+						setCanvasHeight((container.offsetWidth * 3) / 4);
 					}
 				});
 				observer.observe(container);
 				setCanvasWidth(container.offsetWidth);
-				setCanvasHeight(container.offsetWidth * 3/4);
+				setCanvasHeight((container.offsetWidth * 3) / 4);
 				await setRenderer(
 					new ModelRenderer(
 						renderCanvas.current,
@@ -47,11 +47,10 @@ export default function ModelViewer({
 						model.height,
 						(loading) => {
 							setModelLoading(loading);
-						}
-					)
+						},
+					),
 				);
 			}
-
 		})();
 	}, [container]);
 
@@ -145,4 +144,4 @@ export default function ModelViewer({
 			</div>
 		</div>
 	);
-};
+}

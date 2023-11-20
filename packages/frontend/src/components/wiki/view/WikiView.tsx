@@ -46,7 +46,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	const getPinFromPageId = (pageId) => {
-		for (let pin of pins.docs) {
+		for (const pin of pins.docs) {
 			if (pin.page && pin.page._id === pageId) {
 				return pin;
 			}
@@ -62,7 +62,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 	}
 
 	let gotoMap = null;
-	let pin = getPinFromPageId(currentWiki._id);
+	const pin = getPinFromPageId(currentWiki._id);
 	if (pin) {
 		gotoMap = (
 			<a
@@ -127,7 +127,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 			);
 		}
 	} else if(currentWiki.type === EVENT_WIKI) {
-		let eventWiki = currentWiki as EventWiki
+		const eventWiki = currentWiki as EventWiki
 		typeSpecificContent = (<div>
 			{eventWiki.calendar && <>
 				<div className={'margin-md'}>

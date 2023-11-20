@@ -1,12 +1,12 @@
-import React, {CSSProperties, useState} from "react";
+import React, { CSSProperties, useState } from "react";
 import { useParams } from "react-router-dom";
 import useFolders from "../../hooks/wiki/useFolders";
 import DropdownSelect from "../widgets/DropdownSelect";
 import SearchIcon from "../widgets/icons/SearchIcon";
-import {WikiFolder} from "../../types";
+import { WikiFolder } from "../../types";
 
 interface SelectFolderProps {
-	onChange?: (folder: WikiFolder) => any;
+	onChange?: (folder: WikiFolder) => void;
 	style?: CSSProperties;
 	canAdmin?: boolean;
 }
@@ -21,7 +21,7 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
 		if (onChange) {
-			for (let folder of folders) {
+			for (const folder of folders) {
 				if (folder._id === newValue) {
 					await onChange(folder);
 				}
@@ -29,14 +29,14 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 		}
 	};
 
-	const options =
-		folders ?
-		folders.map((folder) => {
-			return {
-				label: folder.name,
-				value: folder._id
-			};
-		}) : [];
+	const options = folders
+		? folders.map((folder) => {
+				return {
+					label: folder.name,
+					value: folder._id,
+				};
+		  })
+		: [];
 
 	return (
 		<DropdownSelect
@@ -53,4 +53,4 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 			options={options}
 		/>
 	);
-};
+}

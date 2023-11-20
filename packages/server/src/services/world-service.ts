@@ -74,7 +74,7 @@ export class WorldService {
 	) => {
 		const pinsPage = await databaseContext.pinRepository.findByWorldPaginated(worldId, page);
 		const results = [];
-		for (let pin of pinsPage.docs) {
+		for (const pin of pinsPage.docs) {
 			if (await pin.authorizationPolicy.canRead(context, databaseContext)) {
 				results.push(pin);
 			}
@@ -174,7 +174,7 @@ export class WorldService {
 			results = await databaseContext.worldRepository.findAllPaginated(page);
 		}
 		const docs = [];
-		for (let world of results.docs) {
+		for (const world of results.docs) {
 			if (await world.authorizationPolicy.canRead(context, databaseContext)) {
 				docs.push(world);
 			}
@@ -222,7 +222,7 @@ export class WorldService {
 
 		const everyoneRole = await databaseContext.roleRepository.findOneByName(EVERYONE);
 		if (isPublic) {
-			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
+			for (const permission of PUBLIC_WORLD_PERMISSIONS) {
 				world.acl.push({
 					permission: permission,
 					principal: everyoneRole._id,
@@ -275,7 +275,7 @@ export class WorldService {
 			throw new Error(`You do not have permission to delete this calendar`);
 		}
 		const events = await databaseContext.eventRepository.findByCalendarId(calendarId);
-		for(let event of events) {
+		for(const event of events) {
 			event.calendar = null;
 			await databaseContext.eventRepository.update(event);
 		}

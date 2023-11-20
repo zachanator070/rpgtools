@@ -103,7 +103,7 @@ export class GameService {
 		);
 
 		await databaseContext.gameRepository.create(game);
-		for (let permission of GAME_PERMISSIONS) {
+		for (const permission of GAME_PERMISSIONS) {
 			game.acl.push({
 				permission,
 				principal: context.user._id,
@@ -188,7 +188,7 @@ export class GameService {
 		game.messages = game.messages.concat(messages);
 		await databaseContext.gameRepository.update(game);
 
-		for (let message of messages) {
+		for (const message of messages) {
 			await this.eventPublisher.publish(GAME_CHAT_EVENT, { gameId, gameChat: message });
 		}
 		return game;
@@ -389,7 +389,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel: InGameModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -425,7 +425,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -457,7 +457,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -488,7 +488,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -517,8 +517,8 @@ export class GameService {
 			throw new Error("You do not have permission to change the character order for this game.");
 		}
 		const newOrder = [];
-		for (let newCharacter of characters) {
-			for (let character of game.characters) {
+		for (const newCharacter of characters) {
+			for (const character of game.characters) {
 				if (character.name === newCharacter.name) {
 					newOrder.push(character);
 					break;
@@ -541,7 +541,7 @@ export class GameService {
 			throw new Error("Game does not exist");
 		}
 		let userCharacter = null;
-		for (let character of game.characters) {
+		for (const character of game.characters) {
 			if (character.player === context.user._id) {
 				userCharacter = character;
 				break;
@@ -600,7 +600,7 @@ export class GameService {
 		const commandString = parts.shift();
 		const command = commands.find((command) => command.command === commandString);
 		const executor = game.characters.find((character) => character.player === currentUser._id);
-		let serverResponse = command.getDefaultResponse(executor);
+		const serverResponse = command.getDefaultResponse(executor);
 		const messages: Message[] = [];
 		if (command.echoCommand) {
 			messages.push(new Message(executor.name, executor.player, MESSAGE_SERVER_USER, MESSAGE_SERVER_USER, message, Date.now(), uuidv4()));
@@ -612,7 +612,7 @@ export class GameService {
 		}
 		const options = [];
 		const args = [];
-		for (let option of command.options) {
+		for (const option of command.options) {
 			const currentArg = parts.shift();
 			if (currentArg) {
 				if (currentArg === option.name) {
@@ -625,7 +625,7 @@ export class GameService {
 				break;
 			}
 		}
-		for (let arg of command.args) {
+		for (const arg of command.args) {
 			const currentArg = parts.shift();
 			if (currentArg) {
 				if (currentArg.substr(0, 1) === "-") {

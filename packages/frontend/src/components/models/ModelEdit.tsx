@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useDeleteModel from "../../hooks/model/useDeleteModel";
-import {Model} from "../../types";
+import { Model } from "../../types";
 import ColumnedContent from "../widgets/ColumnedContent";
 import useModal from "../widgets/useModal";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
@@ -19,28 +19,20 @@ export default function ModelEdit({ model }: ModelEditProps) {
 	const { updateModel, loading, errors } = useUpdateModel();
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
 	const navigate = useNavigate();
-	const { deleteModel } = useDeleteModel(async (data) => {
+	const { deleteModel } = useDeleteModel(async () => {
 		navigate(`/ui/world/${currentWorld._id}/model`);
 	});
 
 	const { model_id } = useParams();
 
-	const {modalConfirm} = useModal();
+	const { modalConfirm } = useModal();
 
 	if (!model) {
-		return (
-			<Errors
-				errors={[
-					`404 - Model ${model_id} not found`,
-				]}
-			/>
-		);
+		return <Errors errors={[`404 - Model ${model_id} not found`]} />;
 	}
 
 	if (!model.canWrite) {
-		return (
-			<Errors errors={["You do not have permission to edit this model"]} />
-		);
+		return <Errors errors={["You do not have permission to edit this model"]} />;
 	}
 
 	if (worldLoading) {
@@ -60,11 +52,9 @@ export default function ModelEdit({ model }: ModelEditProps) {
 							depth: parseFloat(values.depth),
 							width: parseFloat(values.width),
 							height: parseFloat(values.height),
-							notes: values.notes
+							notes: values.notes,
 						});
-						navigate(
-							`/ui/world/${currentWorld._id}/model/${model._id}/view`
-						);
+						navigate(`/ui/world/${currentWorld._id}/model/${model._id}/view`);
 					}}
 					initialValues={model}
 					fileRequired={false}
@@ -87,6 +77,5 @@ export default function ModelEdit({ model }: ModelEditProps) {
 				</PrimaryDangerButton>
 			</div>
 		</ColumnedContent>
-
 	);
-};
+}

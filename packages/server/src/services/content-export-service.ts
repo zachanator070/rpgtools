@@ -92,12 +92,12 @@ export class ContentExportService {
 			return;
 		}
 
-		for (let pageId of folder.pages) {
+		for (const pageId of folder.pages) {
 			const page = await databaseContext.wikiPageRepository.findOneById(pageId);
 			await this.exportWikiPage(context, pageId, page.type, archive, databaseContext);
 		}
 
-		for (let childId of folder.children) {
+		for (const childId of folder.children) {
 			const child = await databaseContext.wikiFolderRepository.findOneById(childId);
 			await this.addWikiFolder(context, child, archive, databaseContext, false);
 		}
@@ -116,7 +116,7 @@ export class ContentExportService {
 			await this.addImage(context, icon, archive, databaseContext);
 		}
 		const chunks: Chunk[] = await databaseContext.chunkRepository.findByIds(image.chunks);
-		for (let chunk of chunks) {
+		for (const chunk of chunks) {
 			await archive.chunkRepository.create(chunk);
 			const file = await databaseContext.fileRepository.findOneById(chunk.fileId);
 			await this.addFile(file, archive);

@@ -28,7 +28,7 @@ export default function ModelView() {
 	useEffect(() => {
 		(async () => {
 			if (models) {
-				for (let model of models) {
+				for (const model of models) {
 					if (model._id === params.model_id) {
 						await setSelectedModel(model);
 					}

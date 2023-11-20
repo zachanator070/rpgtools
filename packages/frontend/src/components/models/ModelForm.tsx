@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import ToolTip from "../widgets/ToolTip";
 import InputForm from "../widgets/input/InputForm";
 import FormItem from "../widgets/input/FormItem";
@@ -6,7 +6,8 @@ import FileInput from "../widgets/input/FileInput";
 import TextInput from "../widgets/input/TextInput";
 import NumberInput from "../widgets/input/NumberInput";
 import TextAreaInput from "../widgets/input/TextAreaInput";
-import {Model} from "../../types";
+import { Model } from "../../types";
+import { UploadFile } from "antd";
 
 interface CallbackValues {
 	name: string;
@@ -14,11 +15,11 @@ interface CallbackValues {
 	width: string;
 	height: string;
 	notes: string;
-	file: any;
+	file: UploadFile;
 }
 
 interface ModelFormProps {
-	callback: (values: CallbackValues) => Promise<any>;
+	callback: (values: CallbackValues) => Promise<void>;
 	initialValues?: Model;
 	loading: boolean;
 	fileRequired?: boolean;
@@ -32,16 +33,16 @@ export default function ModelForm({
 	errors,
 	fileRequired = true,
 }: ModelFormProps) {
-
 	const [selectedFile, setSelectedFile] = useState(null);
 
 	return (
-		<InputForm onSubmit={(values) => callback({file: selectedFile, ...values})} loading={loading} errors={errors}>
-			<FormItem
-				label="Name"
-				required={true}
-			>
-				<TextInput defaultValue={initialValues && initialValues.name} name="name"/>
+		<InputForm
+			onSubmit={(values) => callback({ file: selectedFile, ...values })}
+			loading={loading}
+			errors={errors}
+		>
+			<FormItem label="Name" required={true}>
+				<TextInput defaultValue={initialValues && initialValues.name} name="name" />
 			</FormItem>
 			<FormItem
 				label={
@@ -59,9 +60,7 @@ export default function ModelForm({
 								</>
 							}
 						/>
-						<span style={{marginLeft: ".5em"}}>
-							File
-						</span>
+						<span style={{ marginLeft: ".5em" }}>File</span>
 					</div>
 				}
 				validationRules={[
@@ -78,45 +77,50 @@ export default function ModelForm({
 						if (!supportedTypes.includes(type)) {
 							throw new Error(`File type ${type} not supported`);
 						}
-					}
+					},
 				]}
 				required={fileRequired}
 			>
-				<FileInput onChange={setSelectedFile}/>
+				<FileInput onChange={setSelectedFile} />
 			</FormItem>
 			<FormItem
 				label={
 					<div>
-						<ToolTip title={"Depth of the model in feet"}/> Depth
+						<ToolTip title={"Depth of the model in feet"} /> Depth
 					</div>
 				}
 				required={true}
 			>
-				<NumberInput defaultValue={initialValues && initialValues.depth} name="depth"/>
+				<NumberInput defaultValue={initialValues && initialValues.depth} name="depth" />
 			</FormItem>
 			<FormItem
 				label={
 					<div>
-						<ToolTip title={"Width of the model in feet"}/> Width
+						<ToolTip title={"Width of the model in feet"} /> Width
 					</div>
 				}
 				required={true}
 			>
-				<NumberInput defaultValue={initialValues && initialValues.width} name="width"/>
+				<NumberInput defaultValue={initialValues && initialValues.width} name="width" />
 			</FormItem>
 			<FormItem
 				label={
 					<div>
-						<ToolTip title={"Height of the model in feet"}/> Height
+						<ToolTip title={"Height of the model in feet"} /> Height
 					</div>
 				}
 				required={true}
 			>
-				<NumberInput defaultValue={initialValues && initialValues.height} name="height"/>
+				<NumberInput defaultValue={initialValues && initialValues.height} name="height" />
 			</FormItem>
-			<FormItem label={<div>Notes</div>} >
-				<TextAreaInput name="notes" defaultValue={initialValues && initialValues.notes} rows={15} cols={50} />
+			<FormItem label={<div>Notes</div>}>
+				<TextAreaInput
+					name="notes"
+					defaultValue={initialValues && initialValues.notes}
+					rows={15}
+					cols={50}
+				/>
 			</FormItem>
 		</InputForm>
 	);
-};
+}

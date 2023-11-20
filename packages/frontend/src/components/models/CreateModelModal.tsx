@@ -7,7 +7,7 @@ import FullScreenModal from "../widgets/FullScreenModal";
 
 interface CreateModelModalProps {
 	visibility: boolean;
-	setVisibility: (visibility: boolean) => Promise<any>;
+	setVisibility: (visibility: boolean) => Promise<void>;
 }
 
 export default function CreateModelModal({ visibility, setVisibility }: CreateModelModalProps) {
@@ -15,18 +15,12 @@ export default function CreateModelModal({ visibility, setVisibility }: CreateMo
 
 	const { createModel, loading, errors } = useCreateModel(async (data) => {
 		await setVisibility(false);
-		navigate(
-			`/ui/world/${currentWorld._id}/model/${data._id}/view`
-		);
+		navigate(`/ui/world/${currentWorld._id}/model/${data._id}/view`);
 	});
 	const navigate = useNavigate();
 
 	return (
-		<FullScreenModal
-			title={"Create New Model"}
-			visible={visibility}
-			setVisible={setVisibility}
-		>
+		<FullScreenModal title={"Create New Model"} visible={visibility} setVisible={setVisibility}>
 			<ModelForm
 				callback={async (values) => {
 					await createModel({
@@ -44,4 +38,4 @@ export default function CreateModelModal({ visibility, setVisibility }: CreateMo
 			/>
 		</FullScreenModal>
 	);
-};
+}

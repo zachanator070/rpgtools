@@ -48,7 +48,7 @@ export abstract class AbstractMongodbRepository<
 		}
 		const docs: DocumentType[] = await this.model.find(filter, null, {sort: sortOptions}).exec();
 		const results: EntityType[] = [];
-		for (let doc of docs) {
+		for (const doc of docs) {
 			results.push(this.entityFactory.fromMongodbDocument(doc));
 		}
 		return results;
@@ -102,7 +102,7 @@ export abstract class AbstractMongodbRepository<
 			.limit(this.PAGE_LIMIT)
 			.exec();
 		const results: EntityType[] = [];
-		for (let doc of docs) {
+		for (const doc of docs) {
 			results.push(this.entityFactory.fromMongodbDocument(doc));
 		}
 		const count = await this.model.find(filter).count();

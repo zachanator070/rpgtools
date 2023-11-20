@@ -15,7 +15,7 @@ export class SecurityContextFactory {
 
 	getRoles = async (user: User): Promise<Role[]> => {
 		const roles: Role[] = [];
-		for (let roleId of user.roles) {
+		for (const roleId of user.roles) {
 			roles.push(await this.roleRepository.findOneById(roleId));
 		}
 		if (user.username !== ANON_USERNAME) {

@@ -53,7 +53,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 		selectSubject = <SelectFolder canAdmin={true} onChange={(folder) => setSubjectId(folder._id)} />;
 	}
 
-	let availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
+	const availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
 
 	return (
 		<div className={"margin-lg-top"}>

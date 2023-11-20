@@ -28,7 +28,7 @@ export default class RpgToolsServer {
     async seedDB() {
         const seeders: Seeder[] = [this.serverConfigSeeder, this.roleSeeder];
 
-        for (let seeder of seeders) {
+        for (const seeder of seeders) {
             await seeder.seed();
         }
     };

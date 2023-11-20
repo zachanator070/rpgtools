@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import useUpdatePin from "../../hooks/map/useUpdatePin";
 import useDeletePin from "../../hooks/map/useDeletePin";
 import SelectWiki from "../select/SelectWiki";
 import usePins from "../../hooks/map/usePins";
 import FullScreenModal from "../widgets/FullScreenModal";
 import InputForm from "../widgets/input/InputForm";
-import {PLACE} from "@rpgtools/common/src/type-constants";
 import FormItem from "../widgets/input/FormItem";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import {Pin, WikiPage} from "../../types";
+import { Pin, WikiPage } from "../../types";
 
 interface EditPinModalProps {
 	visibility: boolean;
@@ -17,17 +16,16 @@ interface EditPinModalProps {
 }
 
 export default function EditPinModal({ visibility, setVisibility, pinId }: EditPinModalProps) {
-
-	const {pins, loading} = usePins({});
+	const { pins, loading } = usePins({});
 	const [pinPage, setPinPage] = useState<WikiPage>(null);
-	const [pinBeingEdited, setPinBeingEdited] = useState<Pin>(null)
+	const [pinBeingEdited, setPinBeingEdited] = useState<Pin>(null);
 	const { updatePin, loading: updateLoading, errors } = useUpdatePin();
 	const { deletePin, loading: deleteLoading } = useDeletePin();
 
 	useEffect(() => {
 		if (pins && pinBeingEdited) {
-			let possiblePins = pins.docs;
-			for (let pin of possiblePins) {
+			const possiblePins = pins.docs;
+			for (const pin of possiblePins) {
 				if (pin._id === pinId) {
 					setPinBeingEdited(pin);
 					break;
@@ -43,28 +41,24 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 
 	return (
 		<div>
-			<FullScreenModal
-				title="Edit Pin"
-				visible={visibility}
-				setVisible={setVisibility}
-			>
+			<FullScreenModal title="Edit Pin" visible={visibility} setVisible={setVisibility}>
 				<InputForm
 					errors={errors}
 					loading={updateLoading || deleteLoading}
 					onSubmit={async () => {
-						await updatePin({pinId, pageId: pinPage._id});
+						await updatePin({ pinId, pageId: pinPage._id });
 						await setVisibility(false);
 					}}
-					buttonText={'Save'}
+					buttonText={"Save"}
 				>
 					<FormItem label="Page">
-						<SelectWiki types={[]} onChange={(page) => setPinPage(page)}/>
+						<SelectWiki types={[]} onChange={(page) => setPinPage(page)} />
 					</FormItem>
 				</InputForm>
 				<PrimaryDangerButton
 					loading={updateLoading || deleteLoading}
 					onClick={async () => {
-						await deletePin({pinId});
+						await deletePin({ pinId });
 						await setVisibility(false);
 					}}
 				>
@@ -73,4 +67,4 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 			</FullScreenModal>
 		</div>
 	);
-};
+}

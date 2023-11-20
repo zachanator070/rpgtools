@@ -6,7 +6,7 @@ import {AbstractArchiveFactory, CookieManager, SessionContextFactory} from "../t
 import {ContentExportService} from "../services/content-export-service";
 import {ExpressCookieManager} from "../server/express-cookie-manager";
 
-let ExportRouter = express.Router();
+const ExportRouter = express.Router();
 
 ExportRouter.get("/:model/:id", async (req, res) => {
 	const sessionFactory = container.get<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory);

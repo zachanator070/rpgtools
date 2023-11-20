@@ -132,8 +132,8 @@ export class GameRenderer extends EventEmitter {
 	};
 
 	setupScene() {
-		let renderHeight = this.renderRoot.clientHeight;
-		let renderWidth = this.renderRoot.clientWidth;
+		const renderHeight = this.renderRoot.clientHeight;
+		const renderWidth = this.renderRoot.clientWidth;
 
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color(0x656970);
@@ -147,8 +147,8 @@ export class GameRenderer extends EventEmitter {
 			1,
 			700
 		);
-		let cameraZ = DEFAULT_MAP_SIZE;
-		let cameraY = DEFAULT_MAP_SIZE;
+		const cameraZ = DEFAULT_MAP_SIZE;
+		const cameraY = DEFAULT_MAP_SIZE;
 
 		this.camera.position.z = cameraZ;
 		this.camera.position.y = cameraY;
@@ -260,7 +260,7 @@ export class GameRenderer extends EventEmitter {
 
 		const imagesLoading: Promise<void>[] = [];
 
-		for (let chunk of this.mapImage.chunks) {
+		for (const chunk of this.mapImage.chunks) {
 			const base_image = new Image();
 			base_image.src = `/images/${chunk.fileId}`;
 			const imagePromise = new Promise<void>((resolve, reject) => {
@@ -496,7 +496,7 @@ export class GameRenderer extends EventEmitter {
 	}
 
 	addModel(positionedModel: PositionedModel) {
-		for (let model of this.meshedModels) {
+		for (const model of this.meshedModels) {
 			if (model.positionedModel._id === positionedModel._id) {
 				return;
 			}
@@ -537,7 +537,7 @@ export class GameRenderer extends EventEmitter {
 						child.castShadow = true;
 					}
 				});
-				for (let meshedModel of this.meshedModels) {
+				for (const meshedModel of this.meshedModels) {
 					if (meshedModel.positionedModel._id === positionedModel._id) {
 						meshedModel.mesh = loadedMesh;
 						if (extension === "obj") {
@@ -581,7 +581,7 @@ export class GameRenderer extends EventEmitter {
 			this.selectModelControls.constructGlow();
 		}
 		let meshedModelToRemove = null;
-		for (let meshedModel of this.meshedModels) {
+		for (const meshedModel of this.meshedModels) {
 			if (meshedModel.positionedModel._id === positionedModel._id) {
 				meshedModelToRemove = meshedModel;
 			}
@@ -601,13 +601,13 @@ export class GameRenderer extends EventEmitter {
 	updateModel(positionedModel) {
 		let targetModel = null;
 		let targetOriginal = null;
-		for (let meshedModel of this.meshedModels) {
+		for (const meshedModel of this.meshedModels) {
 			if (meshedModel.positionedModel._id === positionedModel._id) {
 				targetModel = meshedModel;
 				break;
 			}
 		}
-		for (let meshedModel of this.originalMeshedModels) {
+		for (const meshedModel of this.originalMeshedModels) {
 			if (meshedModel.positionedModel._id === positionedModel._id) {
 				targetOriginal = meshedModel;
 				break;
@@ -653,7 +653,7 @@ export class GameRenderer extends EventEmitter {
 		} else {
 			this.scene.remove(meshedModel.mesh);
 			let clonedModel = null;
-			for (let model of this.originalMeshedModels) {
+			for (const model of this.originalMeshedModels) {
 				if (model.positionedModel._id === meshedModel.positionedModel._id) {
 					clonedModel = model;
 				}

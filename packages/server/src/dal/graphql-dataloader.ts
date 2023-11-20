@@ -22,7 +22,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 	getDocuments = async (ids: string[], databaseContext: DatabaseContext): Promise<T[]> => {
 		const results = await this.getDataLoader(databaseContext).loadMany(ids);
 		const goodResults: T[] = [];
-		for (let result of results) {
+		for (const result of results) {
 			if (result instanceof Error) {
 				throw result;
 			}
@@ -45,7 +45,7 @@ export abstract class GraphqlDataloader<T extends DomainEntity> implements DataL
 	): Promise<T[]> => {
 		const documents = await this.getDocuments(ids, databaseContext);
 		const readableDocuments = [];
-		for (let document of documents) {
+		for (const document of documents) {
 			if (await document.authorizationPolicy.canRead(context, databaseContext)) {
 				readableDocuments.push(document);
 			}

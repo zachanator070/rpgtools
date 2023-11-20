@@ -35,7 +35,7 @@ export default function RolesView() {
 
 	let selectedRole = null;
 	if (selectedRoleId) {
-		for (let role of roles.docs) {
+		for (const role of roles.docs) {
 			if (role._id === selectedRoleId) {
 				selectedRole = role;
 			}

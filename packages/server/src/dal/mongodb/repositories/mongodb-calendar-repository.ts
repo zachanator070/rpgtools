@@ -23,16 +23,16 @@ export default class MongodbCalendarRepository extends AbstractMongodbRepository
     }
 
     hydrateEmbeddedIds(entity: Calendar) {
-        for(let age of entity.ages) {
+        for(const age of entity.ages) {
             if(!age._id) {
                 age._id = (new ObjectId()).toString();
             }
-            for(let month of age.months) {
+            for(const month of age.months) {
                 if(!month._id) {
                     month._id = (new ObjectId()).toString();
                 }
             }
-            for(let day of age.daysOfTheWeek) {
+            for(const day of age.daysOfTheWeek) {
                 if(!day._id) {
                     day._id = (new ObjectId()).toString();
                 }

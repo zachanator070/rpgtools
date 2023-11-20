@@ -14,7 +14,7 @@ describe("image-mutations", () => {
 	describe("with existing world and logged in user", () => {
 
 		const filename = "tests/integration/resolvers/mutations/testmap.png";
-		let testFile: FileUpload = {
+		const testFile: FileUpload = {
 			encoding: "base64",
 			mimetype: "image/png",
 			filename: filename,

@@ -1,26 +1,26 @@
-import React, {CSSProperties, useState} from "react";
+import React, { CSSProperties, useState } from "react";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles";
 import DropdownSelect from "../widgets/DropdownSelect";
 import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectRoleProps {
-	onChange: (roleId: string) => any;
+	onChange: (roleId: string) => void;
 	style?: CSSProperties;
 	canAdmin?: boolean;
 }
 
 export default function SelectRole({ onChange, style, canAdmin }: SelectRoleProps) {
-	const { refetch, roles, loading } = useSearchRoles({ canAdmin });
+	const { refetch, roles } = useSearchRoles({ canAdmin });
 	const [value, setValue] = useState<string>();
 
-	const options =
-		roles ?
-		roles.docs.map((role) => {
-			return {
-				label: role.name,
-				value: role._id
-			};
-		}) : [];
+	const options = roles
+		? roles.docs.map((role) => {
+				return {
+					label: role.name,
+					value: role._id,
+				};
+		  })
+		: [];
 
 	return (
 		<DropdownSelect
@@ -38,8 +38,8 @@ export default function SelectRole({ onChange, style, canAdmin }: SelectRoleProp
 			helpText={"Search for a role"}
 			showArrow={false}
 			style={style ? style : { width: 200 }}
-			id={'selectRole'}
+			id={"selectRole"}
 			options={options}
 		/>
 	);
-};
+}

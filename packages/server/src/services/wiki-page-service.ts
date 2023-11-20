@@ -102,7 +102,7 @@ export class WikiPageService {
 				const current = Buffer.concat(chunks).toString('utf8');
 				const matches = current.matchAll(/\/ui\/world\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/wiki\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/view/g);
 				if(matches) {
-					for(let match of matches) {
+					for(const match of matches) {
 						relatedWikis.add(match[1]);
 					}
 				}
@@ -218,7 +218,7 @@ export class WikiPageService {
 		color: string,
 		databaseContext: DatabaseContext
 	) => {
-		let wikiPage: ModeledPage = await databaseContext.wikiPageRepository.findOneById(wikiId) as ModeledPage;
+		const wikiPage: ModeledPage = await databaseContext.wikiPageRepository.findOneById(wikiId) as ModeledPage;
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
@@ -364,7 +364,7 @@ export class WikiPageService {
 		const results = await databaseContext.wikiPageRepository.findByNameAndTypesPaginatedSortByName(page, name, types);
 
 		const docs = [];
-		for (let doc of results.docs) {
+		for (const doc of results.docs) {
 			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context, databaseContext))) {
 				continue;
 			}
@@ -398,7 +398,7 @@ export class WikiPageService {
 		}
 		const results = await databaseContext.wikiPageRepository.findByIdsPaginated(folder.pages, page,"name");
 		const docs = [];
-		for (let doc of results.docs) {
+		for (const doc of results.docs) {
 			if (await doc.authorizationPolicy.canRead(context, databaseContext)) {
 				docs.push(doc);
 			}
@@ -423,7 +423,7 @@ export class WikiPageService {
 			calendarIds
 		);
 		const docs = [];
-		for (let doc of results.docs) {
+		for (const doc of results.docs) {
 			if (await doc.authorizationPolicy.canRead(securityContext, databaseContext)) {
 				docs.push(doc);
 			}

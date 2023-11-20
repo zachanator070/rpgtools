@@ -116,7 +116,7 @@ export class ZipArchive implements Archive {
 		this.archive.pipe(output);
 		await this.dumpRepo<Article>(this.articleRepository, ARTICLE, this.getWikiPagePath);
 		await this.dumpRepo(this.chunkRepository, CHUNK, async (entity: Chunk) => "chunks");
-		for (let file of await this.fileRepository.findAll()) {
+		for (const file of await this.fileRepository.findAll()) {
 			await this.addArchiveEntry(file.readStream, `files/${FILE}.${file._id}.json`);
 		}
 		await this.dumpRepo(this.itemRepository, ITEM, this.getWikiPagePath);
@@ -150,7 +150,7 @@ export class ZipArchive implements Archive {
 		entityType: string,
 		getPath: (entity: T) => Promise<string>
 	): Promise<void> => {
-		for (let page of await repo.findAll()) {
+		for (const page of await repo.findAll()) {
 			const path: string = await getPath(page);
 			delete page.authorizationPolicy;
 			await this.addArchiveEntry(

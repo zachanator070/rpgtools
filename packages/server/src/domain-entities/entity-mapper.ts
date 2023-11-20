@@ -9,7 +9,7 @@ export default class EntityMapper {
     domainEntities: DomainEntity[];
 
     public map(type: string): DomainEntity {
-        for (let entity of this.domainEntities) {
+        for (const entity of this.domainEntities) {
             if (entity.type === type) {
                 return entity;
             }

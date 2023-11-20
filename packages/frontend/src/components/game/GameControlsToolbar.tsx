@@ -16,7 +16,6 @@ import PermissionModal from "../modals/PermissionModal";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import ToolTip from "../widgets/ToolTip";
 import DeleteIcon from "../widgets/icons/DeleteIcon";
-import QuestionMarkIcon from "../widgets/icons/QuestionMarkIcon";
 import CloudIcon from "../widgets/icons/CloudIcon";
 import HighlightIcon from "../widgets/icons/HighlightIcon";
 import RedoIcon from "../widgets/icons/RedoIcon";
@@ -32,7 +31,10 @@ interface GameControlsToolbarProps {
 	setControlsMode: (mode: string) => void;
 }
 
-export default function GameControlsToolbar({ controlsMode, setControlsMode }: GameControlsToolbarProps) {
+export default function GameControlsToolbar({
+	controlsMode,
+	setControlsMode,
+}: GameControlsToolbarProps) {
 	const { currentGame, loading, refetch: refetchCurrentGame } = useCurrentGame();
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
@@ -113,7 +115,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 			}}
 			key={"Help Text"}
 		>
-			<ToolTip title={toolTipText[controlsMode]}/>
+			<ToolTip title={toolTipText[controlsMode]} />
 		</div>,
 	];
 	menu.push(
@@ -147,7 +149,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 					</ToolTip>
 				</div>
 			);
-		})
+		}),
 	);
 
 	menu.push(
@@ -175,7 +177,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 					</a>
 				</div>
 			</ToolTip>
-		</div>
+		</div>,
 	);
 
 	return (
@@ -188,16 +190,18 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 					left: 0,
 					right: 0,
 					bottom: 0,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center'
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
 				}}
 			>
-				<div style={{ backgroundColor: "white", display: 'flex', alignItems: 'center' }}>{menu}</div>
+				<div style={{ backgroundColor: "white", display: "flex", alignItems: "center" }}>
+					{menu}
+				</div>
 				<div className={"margin-lg-left"}>
 					<LeaveGameButton />
 				</div>
 			</div>
 		</div>
 	);
-};
+}

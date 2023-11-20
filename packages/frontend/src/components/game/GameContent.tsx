@@ -246,16 +246,16 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 					renderer.setupMap();
 				}
 				if (renderer.getPaintControls() && strokes) {
-					for (let stroke of strokes) {
+					for (const stroke of strokes) {
 						renderer.getPaintControls().stroke(stroke);
 					}
 				}
 				if (renderer.getFogControls() && fogStrokes) {
-					for (let fogStroke of fogStrokes) {
+					for (const fogStroke of fogStrokes) {
 						renderer.getFogControls().stroke(fogStroke);
 					}
 				}
-				for (let model of currentGame.models) {
+				for (const model of currentGame.models) {
 					renderer.addModel(model);
 				}
 			}

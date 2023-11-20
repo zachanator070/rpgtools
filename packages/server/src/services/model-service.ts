@@ -118,7 +118,7 @@ export class ModelService {
 		await databaseContext.fileRepository.create(file);
 		model.fileId = file._id;
 		await databaseContext.modelRepository.create(model);
-		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
+		for (const permission of [MODEL_RW, MODEL_ADMIN]) {
 			model.acl.push({
 				permission,
 				principal: context.user._id,
@@ -139,7 +139,7 @@ export class ModelService {
 			throw new Error("You do not have permission to delete this model");
 		}
 		const games = await databaseContext.gameRepository.findWithModel(modelId);
-		for (let game of games) {
+		for (const game of games) {
 			const positionedModel = game.models.find((otherModel) => otherModel.model === model._id);
 			game.models = game.models.filter((positionedModel) => positionedModel.model !== model._id);
 			await databaseContext.gameRepository.update(game);
@@ -158,7 +158,7 @@ export class ModelService {
 	getModels = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext): Promise<Model[]> => {
 		const models = await databaseContext.modelRepository.findByWorld(worldId);
 		const returnModels = [];
-		for (let model of models) {
+		for (const model of models) {
 			if (await model.authorizationPolicy.canRead(context, databaseContext)) {
 				returnModels.push(model);
 			}

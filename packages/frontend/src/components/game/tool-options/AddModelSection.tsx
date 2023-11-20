@@ -5,13 +5,13 @@ import useAddModel from "../../../hooks/game/useAddModel";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import SelectWiki from "../../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
-import {ModeledWiki} from "../../../types";
+import { Model, ModeledWiki } from "../../../types";
 import PrimaryButton from "../../widgets/PrimaryButton";
 import Toggle from "../../widgets/Toggle";
 
 interface SelectedModel {
-	model: any;
-	wiki?: any;
+	model: Model;
+	wiki?: ModeledWiki;
 }
 
 export default function AddModelSection() {
@@ -32,8 +32,8 @@ export default function AddModelSection() {
 
 	return (
 		<div className={"padding-lg-top"}>
-			<div style={{display: "flex", marginBottom: "1em"}}>
-				<div style={{marginLeft: "1em", marginRight: "1em"}}>Search for</div>
+			<div style={{ display: "flex", marginBottom: "1em" }}>
+				<div style={{ marginLeft: "1em", marginRight: "1em" }}>Search for</div>
 
 				<Toggle
 					checkedChildren={"Wiki's with Models"}
@@ -48,7 +48,7 @@ export default function AddModelSection() {
 				<SelectWiki
 					types={MODELED_WIKI_TYPES}
 					onChange={async (wiki: ModeledWiki) => {
-						setSelectedModel({model: wiki.model, wiki});
+						setSelectedModel({ model: wiki.model, wiki });
 						await setModelColor(wiki.modelColor);
 					}}
 					hasModel={true}
@@ -56,7 +56,7 @@ export default function AddModelSection() {
 			) : (
 				<SelectModel
 					onChange={async (model) => {
-						await setSelectedModel({ model })
+						await setSelectedModel({ model });
 					}}
 					showClear={false}
 				/>
@@ -88,4 +88,4 @@ export default function AddModelSection() {
 			)}
 		</div>
 	);
-};
+}

@@ -58,12 +58,12 @@ const wikiPageInterfaceAttributes = {
 	canAdmin: async (page: WikiPage, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 		return page.authorizationPolicy.canAdmin(securityContext, databaseContext);
 	},
-	content: async (page: WikiPage, _: any, __: SessionContext): Promise<String> => {
+	content: async (page: WikiPage, _: any, __: SessionContext): Promise<string> => {
 		if(page.contentId){
 			const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
 			const contentFile = await fileRepository.findOneById(page.contentId);
 			const buffer: string[] = []
-			const contents = new Promise<String>((resolve, reject) => {
+			const contents = new Promise<string>((resolve, reject) => {
 				contentFile.readStream.on('data', (chunk) => { buffer.push(chunk.toString())});
 				contentFile.readStream.on('error', (err) => reject(err));
 				contentFile.readStream.on('end', () => { resolve(buffer.join()) });
@@ -270,7 +270,7 @@ export const TypeResolvers = {
 			const repository = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
 			const roles = await repository.findAll();
 			const returnRoles = [];
-			for (let role of roles) {
+			for (const role of roles) {
 				if (await role.authorizationPolicy.canAdmin(securityContext, databaseContext)) {
 					returnRoles.push(role);
 				}
@@ -317,7 +317,7 @@ export const TypeResolvers = {
 		characters: async (game: Game, _: any, {databaseContext}: SessionContext): Promise<any[]> => {
 			const dataLoader = container.get<DataLoader<User>>(INJECTABLE_TYPES.UserDataLoader);
 			const characters = [];
-			for (let character of game.characters) {
+			for (const character of game.characters) {
 				characters.push({
 					_id: character._id,
 					name: character.name,

@@ -18,7 +18,7 @@ export default function FormItem({label, children, lastItem, required, validatio
         },
     ];
     if (validationRules) {
-        for(let rule of validationRules) {
+        for(const rule of validationRules) {
             rules.push({validator: async (rule, value) => rule(value)})
         }
     }

@@ -30,11 +30,11 @@ export class RollGameCommand extends AbstractGameCommand {
 	];
 
 	exec(executor: Character, args: GameCommandArg[], options: GameCommandOption[]): Message[] {
-		let response = this.getDefaultResponse(executor);
+		const response = this.getDefaultResponse(executor);
 		const matches = args.find((arg) => arg.name === "DICE").value.match(/(\d+d\d+([+-]\d+)?)+/gm);
 		if (matches) {
 			const rollResults = [];
-			for (let match of matches) {
+			for (const match of matches) {
 				const newMatches = match.match(/(?<numDice>\d+)d(?<dice>\d+)(?<modifier>[+-]\d+)?/);
 				const numDice = parseInt(newMatches.groups.numDice);
 				const dice = parseInt(newMatches.groups.dice);

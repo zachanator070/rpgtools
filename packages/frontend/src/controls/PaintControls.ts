@@ -179,7 +179,7 @@ export class PaintControls implements GameControls {
 		const fill = (stroke as Stroke).fill;
 		size *= this.location.pixelsPerFoot;
 		if (useCache) {
-			for (let stroke of this.strokesAlreadyDrawn) {
+			for (const stroke of this.strokesAlreadyDrawn) {
 				if (stroke._id === _id) {
 					return;
 				}
@@ -200,13 +200,13 @@ export class PaintControls implements GameControls {
 				if (path.length > 0) {
 					ctx.moveTo(path[0].x, path[0].y);
 				}
-				for (let part of path) {
+				for (const part of path) {
 					ctx.lineTo(part.x, part.y);
 				}
 				ctx.stroke();
 				break;
 			case BRUSH_SQUARE:
-				for (let part of path) {
+				for (const part of path) {
 					if (fill) {
 						ctx.fillStyle = color;
 						ctx.fillRect(part.x - size / 2, part.y - size / 2, size, size);
@@ -218,13 +218,13 @@ export class PaintControls implements GameControls {
 				}
 				break;
 			case BRUSH_FOG:
-				for (let part of path) {
+				for (const part of path) {
 					ctx.fillStyle = color;
 					ctx.fillRect(part.x - size / 2, part.y - size / 2, size, size);
 				}
 				break;
 			case BRUSH_CIRCLE:
-				for (let part of path) {
+				for (const part of path) {
 					ctx.beginPath();
 					ctx.arc(part.x, part.y, size / 2, 0, Math.PI * 2);
 					if (fill) {
@@ -238,7 +238,7 @@ export class PaintControls implements GameControls {
 				}
 				break;
 			case BRUSH_ERASE:
-				for (let part of path) {
+				for (const part of path) {
 					ctx.clearRect(part.x - size / 2, part.y - size / 2, size, size);
 				}
 				break;
@@ -257,7 +257,7 @@ export class PaintControls implements GameControls {
 		}
 		const intersects = this.raycaster.intersectObject(this.mapMesh);
 
-		for (let intersect of intersects) {
+		for (const intersect of intersects) {
 			const currentPath = [];
 			if (this.pathBeingPainted.length > 0 && this.brushType === BRUSH_LINE) {
 				currentPath.push(

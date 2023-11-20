@@ -1,11 +1,11 @@
-import React, {CSSProperties, useState} from "react";
+import React, { CSSProperties, useState } from "react";
 import useSearchModels from "../../hooks/model/useSearchModels";
-import {Model} from "../../types";
+import { Model } from "../../types";
 import DropdownSelect from "../widgets/DropdownSelect";
 import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 
 interface SelectModelProps {
-	onChange?: (model: Model) => Promise<any>;
+	onChange?: (model: Model) => Promise<void>;
 	style?: CSSProperties;
 	defaultModel?: Model;
 	showClear?: boolean;
@@ -17,13 +17,13 @@ export default function SelectModel({
 	defaultModel,
 	showClear = true,
 }: SelectModelProps) {
-	const { searchModels, models, loading } = useSearchModels();
+	const { searchModels, models } = useSearchModels();
 	const [value, setValue] = useState<string>();
 
 	const options = models.map((model) => {
 		return {
 			value: model._id,
-			label: model.name
+			label: model.name,
 		};
 	});
 
@@ -38,7 +38,7 @@ export default function SelectModel({
 				onChange={async (newValue) => {
 					await setValue(newValue);
 					if (onChange) {
-						for (let model of models) {
+						for (const model of models) {
 							if (model._id === newValue) {
 								await onChange(model);
 								break;
@@ -64,4 +64,4 @@ export default function SelectModel({
 			)}
 		</div>
 	);
-};
+}

@@ -233,7 +233,7 @@ describe("wiki page mutations", () => {
 
 			describe("with image", () => {
 				const filename = "tests/integration/resolvers/mutations/testmap.png";
-				let testFile = {
+				const testFile = {
 					filename,
 					createReadStream: () =>
 						fs.createReadStream(filename),

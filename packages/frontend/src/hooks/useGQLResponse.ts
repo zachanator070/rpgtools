@@ -36,7 +36,7 @@ export default function useGQLResponse
 
 	useEffect(() => {
 		if (displayErrors) {
-			for (let message of errors) {
+			for (const message of errors) {
 				errorNotification({
 					message: errorTitle,
 					description: message,

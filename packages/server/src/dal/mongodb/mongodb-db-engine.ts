@@ -61,7 +61,7 @@ export default class MongodbDbEngine implements DbEngine {
 
     async clearDb(): Promise<void> {
         const collections = await mongoose.connection.db.listCollections().toArray();
-        for (let collection of collections) {
+        for (const collection of collections) {
             try {
                 await mongoose.connection.db.dropCollection(collection.name);
             } catch (e) {

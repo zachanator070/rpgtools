@@ -28,7 +28,7 @@ export class RoleService {
 		const results = await databaseContext.roleRepository.findByWorldAndNamePaginated(worldId, page, name);
 
 		const roles = [];
-		for (let role of results.docs) {
+		for (const role of results.docs) {
 			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context, databaseContext))) {
 				continue;
 			}

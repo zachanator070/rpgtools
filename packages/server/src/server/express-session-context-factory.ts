@@ -61,7 +61,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					refreshToken
 				);
 				if (currentUser.tokenVersion === version) {
-					let tokens = await this.authenticationService.createTokens(
+					const tokens = await this.authenticationService.createTokens(
 						currentUser,
 						version,
 						databaseContext

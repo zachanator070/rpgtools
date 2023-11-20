@@ -19,11 +19,11 @@ export default function MapView() {
 	const {mapWikiId} = useContext(MapWikiContext);
 
 	const getPins = () => {
-		let filteredPins = [];
-		let pinsOnThisMap = pins.docs.filter((pin) => {
+		const filteredPins = [];
+		const pinsOnThisMap = pins.docs.filter((pin) => {
 			return pin.map._id === currentMap._id;
 		});
-		for (let pin of pinsOnThisMap) {
+		for (const pin of pinsOnThisMap) {
 			filteredPins.push(<PinComponent pin={pin} key={pin._id} />);
 		}
 
@@ -35,7 +35,7 @@ export default function MapView() {
 	}
 	const pinComponents = getPins();
 
-	let map = (
+	const map = (
 		<Map
 			menuItems={[
 				{

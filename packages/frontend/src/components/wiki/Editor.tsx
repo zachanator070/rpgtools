@@ -77,7 +77,7 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 							});
 							renderList(
 								results.docs.map((wiki) => {
-									let url = `/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`;
+									const url = `/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`;
 									const result: any = {};
 									result.value = wiki.name;
 									result.link = url;

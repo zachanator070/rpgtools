@@ -13,7 +13,7 @@ export default class FilterFactory {
     public build(conditions: FilterCondition[]) {
 
         const filter: any = {};
-        for (let condition of conditions) {
+        for (const condition of conditions) {
             if (condition.operator === FILTER_CONDITION_OPERATOR_IN) {
                 filter[condition.field] = {$in: this.getConditionValue(condition)};
             } else if (condition.operator === FILTER_CONDITION_OPERATOR_EQUALS) {

@@ -67,7 +67,7 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 					errors={errors}
 					onSubmit={async ({ value }) => {
 						const attributes: GameCharacterAttribute[] = [];
-						for (let oldAttribute of currentCharacter.attributes) {
+						for (const oldAttribute of currentCharacter.attributes) {
 							if (oldAttribute._id === attribute._id) {
 								attributes.push({
 									_id: oldAttribute._id,

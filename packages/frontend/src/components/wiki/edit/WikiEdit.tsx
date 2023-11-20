@@ -103,7 +103,7 @@ export default function WikiEdit() {
 
 	const wikiTypes = ALL_WIKI_TYPES;
 	const options = [];
-	for (let type of wikiTypes) {
+	for (const type of wikiTypes) {
 		options.push({
 			label: type,
 			value: type

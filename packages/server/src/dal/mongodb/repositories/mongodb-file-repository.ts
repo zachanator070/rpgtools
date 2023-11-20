@@ -56,7 +56,7 @@ export class MongodbFileRepository implements FileRepository {
 			const gfs = new GridFSBucket(mongoose.connection.db);
 
 			gfs.find({metadata:{_id: entity._id}}).toArray().then(found => {
-				for(let file of found){
+				for(const file of found){
 					gfs.delete(file._id, (error) => {
 						if(error){
 							reject(error);
@@ -79,7 +79,7 @@ export class MongodbFileRepository implements FileRepository {
 		}
 		const docs: any[] = await gfs.find(filter).toArray();
 		const results: File[] = [];
-		for (let doc of docs) {
+		for (const doc of docs) {
 			results.push(this.entityFactory.build({_id: doc.metadata._id, filename: doc.filename, readStream: gfs.openDownloadStream(doc._id), mimeType: null}));
 		}
 		return results;

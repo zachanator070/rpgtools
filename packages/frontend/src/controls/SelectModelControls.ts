@@ -38,7 +38,7 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 			transparent: true,
 			opacity: 0.5,
 		});
-		let boxGeometry = new THREE.BoxGeometry(
+		const boxGeometry = new THREE.BoxGeometry(
 			this.selectControls.selectedMeshedModel.positionedModel.model.width,
 			this.selectControls.selectedMeshedModel.positionedModel.model.height,
 			this.selectControls.selectedMeshedModel.positionedModel.model.depth,

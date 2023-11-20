@@ -1,18 +1,18 @@
-import React, {ReactComponentElement, useState} from "react";
+import React, { CSSProperties, ReactComponentElement, useState } from "react";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
 import { useParams } from "react-router-dom";
-import {WikiPage} from "../../types";
+import { WikiPage } from "../../types";
 import PrimaryButton from "../widgets/PrimaryButton";
 import DropdownSelect from "../widgets/DropdownSelect";
 import SearchIcon from "../widgets/icons/SearchIcon";
 
-interface SelectWikiProps <T extends WikiPage>{
+interface SelectWikiProps<T extends WikiPage> {
 	types?: string[];
-	onChange?: (wiki: T) => any;
-	style?: any;
+	onChange?: (wiki: T) => void;
+	style?: CSSProperties;
 	showClear?: boolean;
 	canAdmin?: boolean;
-	children?: ReactComponentElement<any>[] | ReactComponentElement<any>;
+	children?: ReactComponentElement<never>[] | ReactComponentElement<never>;
 	hasModel?: boolean;
 }
 export default function SelectWiki<T extends WikiPage>({
@@ -22,30 +22,30 @@ export default function SelectWiki<T extends WikiPage>({
 	showClear = false,
 	canAdmin,
 	children,
-	hasModel
+	hasModel,
 }: SelectWikiProps<T>) {
 	const params = useParams();
-	const { refetch, wikis, loading } = useSearchWikiPages({
+	const { refetch, wikis } = useSearchWikiPages({
 		worldId: params.world_id,
 		types,
 		canAdmin,
-		hasModel
+		hasModel,
 	});
 	const [value, setValue] = useState<string>();
 
-	const options =
-		wikis ?
-		wikis.docs.map((wiki) => {
-			return {
-				label: wiki.name,
-				value: wiki._id
-			};
-		}) : [];
+	const options = wikis
+		? wikis.docs.map((wiki) => {
+				return {
+					label: wiki.name,
+					value: wiki._id,
+				};
+		  })
+		: [];
 
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
 		if (onChange) {
-			for (let wiki of wikis.docs) {
+			for (const wiki of wikis.docs) {
 				if (wiki._id === newValue) {
 					await onChange(wiki as T);
 				}
@@ -55,10 +55,14 @@ export default function SelectWiki<T extends WikiPage>({
 
 	const kids = [];
 	if (showClear) {
-		kids.push(<PrimaryButton style={{marginRight: "1em"}} onClick={async () => await onSelect(null)}>Clear</PrimaryButton>);
+		kids.push(
+			<PrimaryButton style={{ marginRight: "1em" }} onClick={async () => await onSelect(null)}>
+				Clear
+			</PrimaryButton>,
+		);
 	}
 	if (children) {
-		kids.push(...React.Children.toArray(children))
+		kids.push(...React.Children.toArray(children));
 	}
 
 	return (
@@ -80,10 +84,7 @@ export default function SelectWiki<T extends WikiPage>({
 				icon={<SearchIcon />}
 				options={options}
 			/>
-			{kids.length > 0 && <div style={{display: "flex", marginTop: "1em"}}>
-				{...kids}
-			</div> }
-
+			{kids.length > 0 && <div style={{ display: "flex", marginTop: "1em" }}>{...kids}</div>}
 		</>
 	);
-};
+}

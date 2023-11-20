@@ -10,7 +10,7 @@ export default function DefaultView() {
 	useEffect(() => {
 		// if there isn't a world specified in the url and the logged in user was last using a world, redirect to that world
 		if (currentUser && currentUser.currentWorld) {
-			let redirectUrl = `/ui/world/${currentUser.currentWorld._id}/map/${currentUser.currentWorld.wikiPage._id}`;
+			const redirectUrl = `/ui/world/${currentUser.currentWorld._id}/map/${currentUser.currentWorld.wikiPage._id}`;
 			navigate(redirectUrl);
 		}
 	}, [currentUser]);

@@ -72,7 +72,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     async buildResults(models: M[]){
         const results = [];
-        for(let model of models) {
+        for(const model of models) {
             results.push(await this.entityFactory.fromSqlModel(model));
         }
         return results;

@@ -1,7 +1,8 @@
 import React from "react";
 import {
 	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS, GameRenderer,
+	FOG_CONTROLS,
+	GameRenderer,
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
@@ -15,7 +16,7 @@ import AddModelSection from "./AddModelSection";
 interface ToolOptionsProps {
 	renderer: GameRenderer;
 	controlsMode: string;
-	setGameWikiId: (wikiId: string) => Promise<any>
+	setGameWikiId: (wikiId: string) => Promise<void>;
 }
 
 export default function ToolOptions({ renderer, controlsMode, setGameWikiId }: ToolOptionsProps) {
@@ -53,4 +54,4 @@ export default function ToolOptions({ renderer, controlsMode, setGameWikiId }: T
 			{content}
 		</>
 	);
-};
+}

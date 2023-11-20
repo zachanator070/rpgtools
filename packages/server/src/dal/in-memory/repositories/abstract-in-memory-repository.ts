@@ -98,7 +98,7 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 
 	private filter = (conditions: FilterCondition[], resultsArray: Type[]): Type[] => {
 		let results = [...resultsArray];
-		for (let filter of conditions) {
+		for (const filter of conditions) {
 			results = results.filter((entity: any) => {
 				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
 					return entity[filter.field] === filter.value;

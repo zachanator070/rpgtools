@@ -43,7 +43,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
 
     async updateCharacters(entity: Game, gameModel: GameModel) {
         const characterModels = [];
-        for(let character of entity.characters) {
+        for(const character of entity.characters) {
 
             const characterModel = CharacterModel.build({
                 _id: character._id,
@@ -61,7 +61,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
 
             // save new attributes
             const attributeModels = [];
-            for(let attribute of character.attributes) {
+            for(const attribute of character.attributes) {
                 const attributeModel = CharacterAttributeModel.build({
                     _id: attribute._id,
                     name: attribute.name,
@@ -76,9 +76,9 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
             }
 
             // delete old attributes
-            for(let attributeModel of await CharacterAttributeModel.findAll({where: {CharacterId: character._id}})) {
+            for(const attributeModel of await CharacterAttributeModel.findAll({where: {CharacterId: character._id}})) {
                 let keep = false;
-                for(let characterAttributeModel of attributeModels) {
+                for(const characterAttributeModel of attributeModels) {
                     if(attributeModel._id === characterAttributeModel._id) {
                         keep = true;
                         break;
@@ -98,7 +98,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         const messageModels = [];
 
         // save new messages
-        for(let message of entity.messages) {
+        for(const message of entity.messages) {
             const messageModel = MessageModel.build({
                 _id: message._id,
                 message: message.message,
@@ -118,9 +118,9 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         }
 
         // delete old messages
-        for(let messageModel of await MessageModel.findAll({where: {GameId: entity._id}})) {
+        for(const messageModel of await MessageModel.findAll({where: {GameId: entity._id}})) {
             let keep = false;
-            for(let oldMessageModel of messageModels) {
+            for(const oldMessageModel of messageModels) {
                 if(messageModel._id === oldMessageModel._id) {
                     keep = true;
                     break;
@@ -138,7 +138,7 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         const inGameModelModels = [];
 
         // save new messages
-        for(let inGameModel of entity.models) {
+        for(const inGameModel of entity.models) {
             const inGameModelModel = InGameModelModel.build({
                 _id: inGameModel._id,
                 x: inGameModel.x,
@@ -159,9 +159,9 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
         }
 
         // delete old models
-        for(let oldInGameModel of await InGameModelModel.findAll({where: {GameId: entity._id}})) {
+        for(const oldInGameModel of await InGameModelModel.findAll({where: {GameId: entity._id}})) {
             let keep = false;
-            for(let newInGameModel of inGameModelModels) {
+            for(const newInGameModel of inGameModelModels) {
                 if(oldInGameModel._id === newInGameModel._id) {
                     keep = true;
                     break;

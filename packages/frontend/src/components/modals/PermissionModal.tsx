@@ -1,13 +1,14 @@
 import React from "react";
 import PermissionEditor from "../permissions/PermissionEditor";
 import FullScreenModal from "../widgets/FullScreenModal";
+import { PermissionControlled } from "../../types";
 
 interface PermissionModalProps {
 	visibility: boolean;
 	setVisibility: (visibility: boolean) => Promise<void>;
-	subject: any;
+	subject: PermissionControlled;
 	subjectType: string;
-	refetch: () => Promise<any>;
+	refetch: () => Promise<void>;
 }
 
 export default function PermissionModal({
@@ -21,20 +22,22 @@ export default function PermissionModal({
 		return <></>;
 	}
 
-	let subjectName = subject.name;
+	const subjectName = subject.name;
 
 	return (
 		<FullScreenModal
 			visible={visibility}
 			title={`Permissions for ${subjectName}`}
 			setVisible={setVisibility}
-			width={'60em'}
+			width={"60em"}
 		>
 			<PermissionEditor
 				subject={subject}
 				subjectType={subjectType}
-				refetch={async () => {await refetch()}}
+				refetch={async () => {
+					await refetch();
+				}}
 			/>
 		</FullScreenModal>
 	);
-};
+}

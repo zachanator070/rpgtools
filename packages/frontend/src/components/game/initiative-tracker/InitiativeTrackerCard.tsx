@@ -1,8 +1,8 @@
-import React, {CSSProperties} from "react";
-import { useDrag, useDrop} from "react-dnd";
+import React, { CSSProperties } from "react";
+import { useDrag, useDrop } from "react-dnd";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import {GameCharacter} from "../../../types";
+import { GameCharacter } from "../../../types";
 
 export interface DraggableCharacterItem {
 	type: string;
@@ -12,7 +12,7 @@ export interface DraggableCharacterItem {
 interface InitiativeTrackerCardProps {
 	character: GameCharacter;
 	data: GameCharacter[];
-	setData: (roster: GameCharacter[]) => Promise<any>;
+	setData: (roster: GameCharacter[]) => Promise<void>;
 	loading: boolean;
 }
 
@@ -24,7 +24,7 @@ export default function InitiativeTrackerCard({
 }: InitiativeTrackerCardProps) {
 	const { currentGame } = useCurrentGame();
 
-	const [props, dragRef] = useDrag<DraggableCharacterItem, void, void>({
+	const [, dragRef] = useDrag<DraggableCharacterItem, void, void>({
 		type: INITIATIVE_CARD,
 		item: {
 			type: INITIATIVE_CARD,
@@ -33,14 +33,12 @@ export default function InitiativeTrackerCard({
 		canDrag: () => currentGame.canWrite && !loading,
 	});
 
-	const [dropProps, dropRef] = useDrop({
+	const [, dropRef] = useDrop({
 		accept: INITIATIVE_CARD,
-		canDrop: (item: DraggableCharacterItem, monitor) => item.name !== character.name,
-		drop: async (draggedItem, monitor) => {
+		canDrop: (item: DraggableCharacterItem) => item.name !== character.name,
+		drop: async (draggedItem) => {
 			const newData = [];
-			for (let oldItem of data.filter(
-				(oldItem) => oldItem.name !== draggedItem.name
-			)) {
+			for (const oldItem of data.filter((oldItem) => oldItem.name !== draggedItem.name)) {
 				if (oldItem.name === character.name) {
 					newData.push(draggedItem);
 				}
@@ -56,7 +54,7 @@ export default function InitiativeTrackerCard({
 		borderRadius: "5px",
 		padding: "5px 8px",
 		margin: "5px",
-		color: "white"
+		color: "white",
 	};
 
 	return (
@@ -70,4 +68,4 @@ export default function InitiativeTrackerCard({
 			{character.name}
 		</div>
 	);
-};
+}

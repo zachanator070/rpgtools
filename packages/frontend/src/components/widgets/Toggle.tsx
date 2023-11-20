@@ -1,19 +1,26 @@
-import React from 'react';
-import {Switch} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import React from "react";
+import { Switch } from "antd";
+import { WidgetProps } from "./WidgetProps";
 
 interface ToggleProps extends WidgetProps {
-    checkedChildren: React.ReactNode;
-    unCheckedChildren: React.ReactNode;
-    onChange: (boolean) => any;
-    defaultChecked: boolean;
+	checkedChildren: React.ReactNode;
+	unCheckedChildren: React.ReactNode;
+	onChange: (boolean) => void;
+	defaultChecked: boolean;
 }
 
-export default function Toggle({checkedChildren, unCheckedChildren, onChange, defaultChecked}: ToggleProps) {
-    return <Switch
-        defaultChecked={defaultChecked}
-        checkedChildren={checkedChildren}
-        unCheckedChildren={unCheckedChildren}
-        onChange={onChange}
-    />;
+export default function Toggle({
+	checkedChildren,
+	unCheckedChildren,
+	onChange,
+	defaultChecked,
+}: ToggleProps) {
+	return (
+		<Switch
+			defaultChecked={defaultChecked}
+			checkedChildren={checkedChildren}
+			unCheckedChildren={unCheckedChildren}
+			onChange={onChange}
+		/>
+	);
 }

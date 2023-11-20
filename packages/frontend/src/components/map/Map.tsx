@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useRef, useState} from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import useCurrentMap from "../../hooks/map/useCurrentMap";
 import LoadingView from "../LoadingView";
 import ContextMenu from "../widgets/ContextMenu";
@@ -10,7 +10,7 @@ interface MapProps {
 
 interface MapMenuItem {
 	name: string;
-	onClick: (mouseX: number, mouseY: number) => Promise<any>
+	onClick: (mouseX: number, mouseY: number) => Promise<void>;
 }
 
 export default function Map({ menuItems, extras }: MapProps) {
@@ -22,7 +22,7 @@ export default function Map({ menuItems, extras }: MapProps) {
 	const lastMouseX = useRef(0);
 	const x = useRef(0);
 	const y = useRef(0);
-	const [coordsHash, setCoordsHash] = useState(null);
+	const [, setCoordsHash] = useState(null);
 
 	const mapContainer = useRef<HTMLDivElement>();
 	const map = useRef(null);
@@ -33,8 +33,7 @@ export default function Map({ menuItems, extras }: MapProps) {
 	const updateWindowDimensions = async () => {
 		if (
 			mapContainer.current &&
-			(mapContainer.current.offsetWidth !== width ||
-				mapContainer.current.offsetHeight !== height)
+			(mapContainer.current.offsetWidth !== width || mapContainer.current.offsetHeight !== height)
 		) {
 			await setWidth(mapContainer.current.offsetWidth);
 			await setHeight(mapContainer.current.offsetHeight);
@@ -58,8 +57,8 @@ export default function Map({ menuItems, extras }: MapProps) {
 		const eventX = evt.clientX;
 		const eventY = evt.clientY;
 		if (lastMouseX.current && lastMouseY.current) {
-			let newX = x.current + (eventX - lastMouseX.current) / zoom.current;
-			let newY = y.current + (eventY - lastMouseY.current) / zoom.current;
+			const newX = x.current + (eventX - lastMouseX.current) / zoom.current;
+			const newY = y.current + (eventY - lastMouseY.current) / zoom.current;
 			// console.log(`Setting map coords to ${newX}, ${newY}`);
 			x.current = newX;
 			y.current = newY;
@@ -146,7 +145,7 @@ export default function Map({ menuItems, extras }: MapProps) {
 	};
 
 	const getChunks = () => {
-		for (let chunk of currentMap.mapImage.chunks) {
+		for (const chunk of currentMap.mapImage.chunks) {
 			const standardChunkWidth = 250;
 			const standardChunkHeight = 250;
 
@@ -171,19 +170,21 @@ export default function Map({ menuItems, extras }: MapProps) {
 	if (!menuItems) {
 		menuItems = [];
 	}
-	const dropdownItems = menuItems.map(item => {
-		return <span
-			key={item.name}
-			onClick={async () => {
-				const boundingBox = map.current.getBoundingClientRect();
-				const newPinX = lastMouseX.current - boundingBox.x;
-				const newPinY = lastMouseY.current - boundingBox.y;
-				const coords = reverseTranslate(newPinX, newPinY);
-				await item.onClick(coords[0], coords[1]);
-			}}
-		>
-			{item.name}
-		</span>;
+	const dropdownItems = menuItems.map((item) => {
+		return (
+			<span
+				key={item.name}
+				onClick={async () => {
+					const boundingBox = map.current.getBoundingClientRect();
+					const newPinX = lastMouseX.current - boundingBox.x;
+					const newPinY = lastMouseY.current - boundingBox.y;
+					const coords = reverseTranslate(newPinX, newPinY);
+					await item.onClick(coords[0], coords[1]);
+				}}
+			>
+				{item.name}
+			</span>
+		);
 	});
 
 	if (loading) {
@@ -192,12 +193,12 @@ export default function Map({ menuItems, extras }: MapProps) {
 
 	const clonedExtras = [];
 
-	for (let extra of extras || []) {
+	for (const extra of extras || []) {
 		clonedExtras.push(
 			React.cloneElement(extra, {
 				translate: translate,
 				reverseTranslate: reverseTranslate,
-			})
+			}),
 		);
 	}
 
@@ -227,16 +228,13 @@ export default function Map({ menuItems, extras }: MapProps) {
 		</div>
 	);
 
-
 	return (
 		<div ref={mapContainer} className="flex-grow-1 flex-column">
 			{currentMap.canWrite && dropdownItems.length > 0 ? (
-				<ContextMenu menu={dropdownItems}>
-					{mapComponent}
-				</ContextMenu>
+				<ContextMenu menu={dropdownItems}>{mapComponent}</ContextMenu>
 			) : (
 				mapComponent
 			)}
 		</div>
 	);
-};
+}

@@ -38,9 +38,9 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
         const codesToSet = [];
 
         const currentCodes = await model.getCodes();
-        for(let currentCode of currentCodes) {
+        for(const currentCode of currentCodes) {
             let found = false;
-            for(let newCode of entity.registerCodes) {
+            for(const newCode of entity.registerCodes) {
                 if(currentCode.code === newCode) {
                     found = true;
                     codesToSet.push(currentCode);
@@ -51,9 +51,9 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
             }
         }
 
-        for(let newCode of entity.registerCodes) {
+        for(const newCode of entity.registerCodes) {
             let found = false;
-            for(let currentCode of currentCodes) {
+            for(const currentCode of currentCodes) {
                 if(currentCode.code === newCode) {
                     found = true;
                 }

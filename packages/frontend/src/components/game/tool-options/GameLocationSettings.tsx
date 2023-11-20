@@ -4,17 +4,20 @@ import { PLACE } from "@rpgtools/common/src/type-constants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../../hooks/game/useSetGameMap";
 import LoadingView from "../../LoadingView";
-import {GameRenderer} from "../../../rendering/GameRenderer";
+import { GameRenderer } from "../../../rendering/GameRenderer";
 import PrimaryButton from "../../widgets/PrimaryButton";
 import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
 import Toggle from "../../widgets/Toggle";
 
- interface GameLocationSettingsProps {
-	 setGameWikiId: (wikiId: string) => Promise<any>;
-	 renderer: GameRenderer;
- }
+interface GameLocationSettingsProps {
+	setGameWikiId: (wikiId: string) => Promise<void>;
+	renderer: GameRenderer;
+}
 
-export default function GameLocationSettings({ setGameWikiId, renderer }: GameLocationSettingsProps) {
+export default function GameLocationSettings({
+	setGameWikiId,
+	renderer,
+}: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [clearPaint, setClearPaint] = useState<boolean>();
@@ -94,4 +97,4 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 			)}
 		</div>
 	);
-};
+}

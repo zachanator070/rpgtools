@@ -8,7 +8,7 @@ export default function useCurrentCharacter() {
 
 	const result: {currentCharacter: GameCharacter} = { currentCharacter: null };
 	if (currentGame && currentUser) {
-		for (let character of currentGame.characters) {
+		for (const character of currentGame.characters) {
 			if (character.player._id === currentUser._id) {
 				result.currentCharacter = character;
 				return result;

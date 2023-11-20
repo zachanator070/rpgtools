@@ -1,5 +1,5 @@
 export const getIntrospectionData = async () => {
-	let response = await fetch(`/graphql`, {
+	const response = await fetch(`/graphql`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
@@ -19,7 +19,7 @@ export const getIntrospectionData = async () => {
     `,
 		}),
 	});
-	let result = await response.json();
+	const result = await response.json();
 	// here we're filtering out any type information unrelated to unions or interfaces
 	const filteredData = result.data.__schema.types.filter(
 		(type) => type.possibleTypes !== null

@@ -25,18 +25,18 @@ export class MongodbGameRepository
 	model: mongoose.Model<any> = GameModel;
 
 	hydrateEmbeddedIds(entity: Game) {
-		for (let character of entity.characters) {
+		for (const character of entity.characters) {
 			if (!character._id) {
 				character._id = (new ObjectId()).toString();
 			}
-			for (let attribute of character.attributes) {
+			for (const attribute of character.attributes) {
 				if (!attribute._id) {
 					attribute._id = (new ObjectId()).toString();
 				}
 			}
 		}
 
-		for(let model of entity.models) {
+		for(const model of entity.models) {
 			if(!model._id) {
 				model._id = (new ObjectId()).toString();
 			}

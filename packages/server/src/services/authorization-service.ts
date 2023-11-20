@@ -128,7 +128,7 @@ export class AuthorizationService {
 		}
 		const newRole = this.roleFactory.build({name, world: worldId, acl: []});
 		await databaseContext.roleRepository.create(newRole);
-		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
+		for (const permission of [ROLE_ADMIN, ROLE_RW]) {
 			newRole.acl.push({
 				permission,
 				principal: context.user._id,
@@ -151,7 +151,7 @@ export class AuthorizationService {
 			throw new Error("You cannot delete this role");
 		}
 		const usersWithRole = await databaseContext.userRepository.findWithRole(role._id);
-		for(let user of usersWithRole) {
+		for(const user of usersWithRole) {
 			user.roles = user.roles.filter(id => id !== role._id);
 			await databaseContext.userRepository.update(user);
 		}

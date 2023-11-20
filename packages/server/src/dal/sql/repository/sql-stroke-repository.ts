@@ -33,7 +33,7 @@ export default class SqlStrokeRepository extends AbstractSqlRepository<Stroke, S
     async updateAssociations(entity: Stroke, model: StrokeModel): Promise<void> {
         super.updateAssociations(entity, model);
 
-        for(let pathNode of entity.path) {
+        for(const pathNode of entity.path) {
             const nodeModel = PathNodeModel.build({
                 _id: pathNode._id,
                 x: pathNode.x,

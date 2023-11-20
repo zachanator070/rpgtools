@@ -1,4 +1,4 @@
-import React, {Ref, useEffect, useRef, useState} from "react";
+import React, { Ref, useEffect, useRef, useState } from "react";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useGameChat from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
@@ -46,7 +46,7 @@ export default function GameChat() {
 
 	const submitComment = async () => {
 		if (comment) {
-			await gameChat({gameId: currentGame._id, message: comment});
+			await gameChat({ gameId: currentGame._id, message: comment });
 			await setComment(null);
 			chatInput.current.focus();
 		}
@@ -77,10 +77,10 @@ export default function GameChat() {
 					hours={date.getHours()}
 					minutes={date.getMinutes()}
 					seconds={date.getSeconds()}
-					key={sender+receiver+message+timestamp}
+					key={sender + receiver + message + timestamp}
 				/>
 			);
-		})
+		});
 	}
 
 	return (
@@ -88,19 +88,19 @@ export default function GameChat() {
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				gap: '2em',
-				marginTop: '2em',
-				marginBottom: '2em'
+				gap: "2em",
+				marginTop: "2em",
+				marginBottom: "2em",
 			}}
 		>
 			<div
 				style={{
-					height: '50vh',
+					height: "50vh",
 					overflowY: "scroll",
 					display: "flex",
 					flexDirection: "column",
 				}}
-				id={'chat'}
+				id={"chat"}
 			>
 				{comments}
 			</div>
@@ -111,9 +111,9 @@ export default function GameChat() {
 					await setComment(value.target.value);
 				}}
 				onKeyDown={async (key) => {
+					const historyItem = getHistory(historyIndex + 1);
 					switch (key) {
 						case "ArrowUp":
-							const historyItem = getHistory(historyIndex + 1);
 							if (historyItem) {
 								setComment(historyItem);
 								setHistoryIndex(historyIndex + 1);
@@ -131,18 +131,13 @@ export default function GameChat() {
 						default:
 							setHistoryIndex(-1);
 							break;
-
 					}
 				}}
 				value={comment}
 			/>
-			<PrimaryButton
-				submit={true}
-				loading={chatLoading}
-				onClick={submitComment}
-			>
+			<PrimaryButton submit={true} loading={chatLoading} onClick={submitComment}>
 				Add Comment
 			</PrimaryButton>
 		</div>
 	);
-};
+}

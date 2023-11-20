@@ -1,23 +1,27 @@
 import React from "react";
 import { INITIATIVE_CARD } from "./DragAndDropConstants";
 import { useDrop } from "react-dnd";
-import {GameCharacter} from "../../../types";
-import {DraggableCharacterItem} from "./InitiativeTrackerCard";
+import { GameCharacter } from "../../../types";
+import { DraggableCharacterItem } from "./InitiativeTrackerCard";
 
 interface InitiativeTrackerDummyCardProps {
 	side: "left" | "right";
 	data: GameCharacter[];
-	setData: (roster: GameCharacter[]) => Promise<any>;
+	setData: (roster: GameCharacter[]) => Promise<void>;
 }
 
-export default function InitiativeTrackerDummyCard({ side, data, setData }: InitiativeTrackerDummyCardProps) {
-	const [dropProps, dropRef] = useDrop({
+export default function InitiativeTrackerDummyCard({
+	side,
+	data,
+	setData,
+}: InitiativeTrackerDummyCardProps) {
+	const [, dropRef] = useDrop({
 		accept: INITIATIVE_CARD,
-		drop: (draggedItem: DraggableCharacterItem, monitor) => {
-			const newData = data.filter(
-				(oldItem) => oldItem.name !== draggedItem.name
+		drop: (draggedItem: DraggableCharacterItem) => {
+			const newData = data.filter((oldItem) => oldItem.name !== draggedItem.name);
+			const draggedCharacter = data.find(
+				(character: GameCharacter) => character.name === draggedItem.name,
 			);
-			const draggedCharacter = data.find((character: GameCharacter) => character.name === draggedItem.name);
 			if (side === "left") {
 				setData([draggedCharacter, ...newData]);
 			} else {
@@ -35,4 +39,4 @@ export default function InitiativeTrackerDummyCard({ side, data, setData }: Init
 			ref={dropRef}
 		/>
 	);
-};
+}

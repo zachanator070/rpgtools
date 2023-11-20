@@ -29,7 +29,7 @@ export default class SqlFogStrokeRepository extends AbstractSqlRepository<FogStr
     async updateAssociations(entity: FogStroke, model: FogStrokeModel): Promise<void> {
         super.updateAssociations(entity, model);
 
-        for(let pathNode of entity.path) {
+        for(const pathNode of entity.path) {
             const nodeModel = PathNodeModel.build({
                 _id: pathNode._id,
                 x: pathNode.x,

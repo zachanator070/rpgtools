@@ -80,7 +80,7 @@ export default class MongoDbMigrationV40 {
             return;
         }
         const newDocs = [];
-        for(let embeddedDoc of embeddedDocs) {
+        for(const embeddedDoc of embeddedDocs) {
             delete embeddedDoc._id;
             newDocs.push({
                 _id: v4(),
@@ -112,7 +112,7 @@ export default class MongoDbMigrationV40 {
         const chunkCollection = db.collection('chunks');
         const imageCollection = db.collection('images');
         const allChunks = await chunkCollection.find().toArray();
-        for(let chunk of allChunks) {
+        for(const chunk of allChunks) {
             const originalId = chunk._id;
             await this.migrateDocumentId(chunk, chunkCollection);
             await imageCollection.updateOne({chunks: originalId}, {$set:{'chunks.$': chunk._id}})
@@ -122,18 +122,18 @@ export default class MongoDbMigrationV40 {
     async migrateGameIds(db: Db) {
         const gameCollection = db.collection('games');
         const allGames = await gameCollection.find().toArray();
-        for(let game of allGames) {
+        for(const game of allGames) {
             await this.migrateDocumentId(game, gameCollection);
             await this.migrateEmbeddedDocumentIds(game, 'characters');
-            for(let character of game.characters) {
+            for(const character of game.characters) {
                 await this.migrateEmbeddedDocumentIds(character, 'attributes');
             }
             await this.migrateEmbeddedDocumentIds(game, 'strokes');
-            for(let stroke of game.strokes) {
+            for(const stroke of game.strokes) {
                 await this.migrateEmbeddedDocumentIds(stroke, 'path');
             }
             await this.migrateEmbeddedDocumentIds(game, 'fog');
-            for(let fog of game.fog) {
+            for(const fog of game.fog) {
                 await this.migrateEmbeddedDocumentIds(fog, 'path');
             }
             await this.migrateEmbeddedDocumentIds(game, 'messages');
@@ -148,7 +148,7 @@ export default class MongoDbMigrationV40 {
         const chunkCollection = db.collection('chunks');
         const wikiCollection = db.collection('wikipages');
         const allImages = await imageCollection.find().toArray();
-        for(let image of allImages) {
+        for(const image of allImages) {
             const oldId = image._id;
             await this.migrateDocumentId(image, imageCollection);
             await imageCollection.updateOne({icon: oldId}, {$set: {icon: image._id}});
@@ -161,7 +161,7 @@ export default class MongoDbMigrationV40 {
     async migrateModelIds(db: Db) {
         const modelCollection = db.collection('models');
         const gameCollection = db.collection('games');
-        for(let model of await modelCollection.find().toArray()) {
+        for(const model of await modelCollection.find().toArray()) {
             const oldId = model._id;
             await this.migrateDocumentId(model, modelCollection);
             await gameCollection.updateMany({'models.model': oldId}, {$set:{'models.$.model': model._id}});
@@ -172,7 +172,7 @@ export default class MongoDbMigrationV40 {
 
     async migratePinIds(db: Db) {
         const pinCollection = db.collection('pins');
-        for(let pin of await pinCollection.find().toArray()) {
+        for(const pin of await pinCollection.find().toArray()) {
             await this.migrateDocumentId(pin, pinCollection);
         }
     }
@@ -180,7 +180,7 @@ export default class MongoDbMigrationV40 {
     async migrateRoleIds(db: Db) {
         const roleCollection = db.collection('roles');
         const userCollection = db.collection('users');
-        for(let role of await roleCollection.find().toArray()) {
+        for(const role of await roleCollection.find().toArray()) {
             const oldId = role._id;
             await this.migrateDocumentId(role, roleCollection);
             await this.migrateAclPrincipalId(db, oldId, role._id as any);
@@ -202,7 +202,7 @@ export default class MongoDbMigrationV40 {
         const userCollection = db.collection('users');
         const gameCollection = db.collection('games');
         const configCollection = db.collection('serverconfigs');
-        for(let user of await userCollection.find().toArray()) {
+        for(const user of await userCollection.find().toArray()) {
             const oldId = user._id;
             await this.migrateDocumentId(user, userCollection);
             await this.migrateAclPrincipalId(db, oldId, user._id.toString());
@@ -215,7 +215,7 @@ export default class MongoDbMigrationV40 {
     async migrateWikiFolderIds(db: Db) {
         const wikiFolderCollection = db.collection('wikifolders');
         const worldCollection = db.collection('worlds');
-        for(let wikiFolder of await wikiFolderCollection.find().toArray()) {
+        for(const wikiFolder of await wikiFolderCollection.find().toArray()) {
             const oldId = wikiFolder._id;
             await this.migrateDocumentId(wikiFolder, wikiFolderCollection);
             await wikiFolderCollection.updateOne({children: oldId}, {$set: {'children.$': wikiFolder._id}});
@@ -231,7 +231,7 @@ export default class MongoDbMigrationV40 {
         const pinCollection = db.collection('pins');
         const worldCollection = db.collection('worlds');
         const gameCollection = db.collection('games');
-        for(let wikiPage of await wikiPageCollection.find().toArray()) {
+        for(const wikiPage of await wikiPageCollection.find().toArray()) {
             const oldId = wikiPage._id;
             await this.migrateDocumentId(wikiPage, wikiPageCollection);
             await wikiFolderCollection.updateOne({pages: oldId}, {$set: {'pages.$': wikiPage._id}});
@@ -255,7 +255,7 @@ export default class MongoDbMigrationV40 {
         const imageCollection = db.collection('images');
         const roleCollection = db.collection('roles');
         const userCollection = db.collection('users');
-        for(let world of await worldCollection.find().toArray()) {
+        for(const world of await worldCollection.find().toArray()) {
             const oldId = world._id;
             await this.migrateDocumentId(world, worldCollection);
             await pinCollection.updateMany({world: oldId}, {$set: {world: world._id}});
@@ -277,7 +277,7 @@ export default class MongoDbMigrationV40 {
         const wikiPageCollection = db.collection('wikipages');
         const chunkCollection = db.collection('chunks');
         const modelCollection = db.collection('models');
-        for(let file of await filesCollection.find().toArray()) {
+        for(const file of await filesCollection.find().toArray()) {
             const oldId = file._id;
             const newId = v4();
             await filesCollection.updateOne({_id: oldId}, {$set: {metadata: {_id: newId}}});
@@ -292,7 +292,7 @@ export default class MongoDbMigrationV40 {
     async migratePermissionAssignments(db: Db) {
 
         const permissionAssignments = await db.collection('permissionassignments').find({}).toArray();
-        for (let permissionAssignment of permissionAssignments) {
+        for (const permissionAssignment of permissionAssignments) {
 
             let collection = null;
             if(permissionAssignment.subjectType === WORLD) {
@@ -318,9 +318,9 @@ export default class MongoDbMigrationV40 {
             }
 
             const usersWithPermission = await db.collection('users').find({permissions: permissionAssignment._id}).toArray();
-            for (let user of usersWithPermission) {
+            for (const user of usersWithPermission) {
                 let found = false;
-                for(let entry of entity.acl) {
+                for(const entry of entity.acl) {
                     if(entry.permission === permissionAssignment.permission && entry.principal.toString() === user._id.toString()){
                         found = true;
                         break;
@@ -336,9 +336,9 @@ export default class MongoDbMigrationV40 {
             }
 
             const rolesWithPermission = await db.collection('roles').find({permissions: permissionAssignment._id}).toArray();
-            for (let role of rolesWithPermission) {
+            for (const role of rolesWithPermission) {
                 let found = false;
-                for(let entry of entity.acl) {
+                for(const entry of entity.acl) {
                     if(entry.permission === permissionAssignment.permission && entry.principal.toString() === role._id.toString()){
                         found = true;
                         break;

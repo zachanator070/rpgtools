@@ -14,7 +14,7 @@ export default class InMemoryFogStrokeRepository extends AbstractInMemoryReposit
 
     async deleteAllByGameId(id: string): Promise<void> {
         const toDelete = [...this.items.entries()].filter(([id, stroke]) => stroke.game !== id );
-        for(let [id, stroke] of toDelete) {
+        for(const [id, stroke] of toDelete) {
             await this.delete(stroke);
         }
     }

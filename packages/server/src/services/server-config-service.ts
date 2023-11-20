@@ -23,7 +23,7 @@ export class ServerConfigService {
 	roleFactory: RoleFactory;
 
 	serverNeedsSetup = async (databaseContext: DatabaseContext): Promise<boolean> => {
-		let adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
+		const adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
 
 		if (!adminRole) {
 			return true;
@@ -59,7 +59,7 @@ export class ServerConfigService {
 		);
 		const adminRole = this.roleFactory.build({name: SERVER_ADMIN_ROLE, world: null, acl: []});
 		await databaseContext.roleRepository.create(adminRole);
-		for (let permission of SERVER_PERMISSIONS) {
+		for (const permission of SERVER_PERMISSIONS) {
 
 			server.acl.push({
 				permission,

@@ -1,4 +1,4 @@
-import React, {useReducer} from "react";
+import React, { useReducer } from "react";
 import tetrahedron from "../../../icons/tetrahedron.svg";
 import cube from "../../../icons/cube.svg";
 import octahedron from "../../../icons/octahedron.svg";
@@ -13,39 +13,59 @@ import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import ToolTip from "../../widgets/ToolTip";
 import PrimaryButton from "../../widgets/PrimaryButton";
 
-export const SET_COUNT_ACTION = 'SET_COUNT_ACTION';
-export const SET_BONUS_ACTION = 'SET_BONUS_ACTION';
+export const SET_COUNT_ACTION = "SET_COUNT_ACTION";
+export const SET_BONUS_ACTION = "SET_BONUS_ACTION";
 
-const diceReducer = (state, action) => {
-	switch (action.type){
+export interface DiceState {
+	name: string;
+	count: number;
+	bonus: number;
+}
+
+export interface DiceAction {
+	type: string;
+	payload: number;
+}
+
+export type DiceReducer = (DiceState, DiceAction) => DiceState;
+
+const diceReducer: DiceReducer = (state: DiceState, action: DiceAction) => {
+	switch (action.type) {
 		case SET_COUNT_ACTION:
-			return {...state, count: action.payload};
+			return { ...state, count: action.payload };
 		case SET_BONUS_ACTION:
-			return {...state, bonus: action.payload};
+			return { ...state, bonus: action.payload };
 		default:
 			throw new Error(`Dice reducer action not supported: ${action}`);
 	}
-}
+};
 
 export default function DiceRoller() {
-	const [d4, setD4] = useReducer(diceReducer, {name: 'd4', count: 0, bonus: 0});
-	const [d6, setD6] = useReducer(diceReducer, {name: 'd6', count: 0, bonus: 0});
-	const [d8, setD8] = useReducer(diceReducer, {name: 'd8', count: 0, bonus: 0});
-	const [d10, setD10] = useReducer(diceReducer, {name: 'd10', count: 0, bonus: 0});
-	const [d12, setD12] = useReducer(diceReducer, {name: 'd12', count: 0, bonus: 0});
-	const [d20, setD20] = useReducer(diceReducer, {name: 'd20', count: 0, bonus: 0});
-	const [d100, setD100] = useReducer(diceReducer, {name: 'd100', count: 0, bonus: 0});
+	const [d4, setD4] = useReducer<DiceReducer>(diceReducer, {
+		name: "d4",
+		count: 0,
+		bonus: 0,
+	});
+	const [d6, setD6] = useReducer<DiceReducer>(diceReducer, { name: "d6", count: 0, bonus: 0 });
+	const [d8, setD8] = useReducer<DiceReducer>(diceReducer, { name: "d8", count: 0, bonus: 0 });
+	const [d10, setD10] = useReducer<DiceReducer>(diceReducer, { name: "d10", count: 0, bonus: 0 });
+	const [d12, setD12] = useReducer<DiceReducer>(diceReducer, { name: "d12", count: 0, bonus: 0 });
+	const [d20, setD20] = useReducer<DiceReducer>(diceReducer, { name: "d20", count: 0, bonus: 0 });
+	const [d100, setD100] = useReducer<DiceReducer>(diceReducer, {
+		name: "d100",
+		count: 0,
+		bonus: 0,
+	});
 	const { currentGame } = useCurrentGame();
 	const { gameChat } = useGameChat();
 
 	const getDiceCommand = (dice) => {
 		if (dice.count !== 0) {
-			let bonus = '';
-			if(dice.bonus !== 0){
-				if(dice.bonus>0){
+			let bonus = "";
+			if (dice.bonus !== 0) {
+				if (dice.bonus > 0) {
 					bonus = `+${dice.bonus}`;
-				}
-				else{
+				} else {
 					bonus = dice.bonus;
 				}
 			}
@@ -59,7 +79,7 @@ export default function DiceRoller() {
 			<div className={"margin-lg-bottom"}>
 				<h2 style={{ display: "inline" }}>Roll Dice</h2>
 				<span className={"margin-lg-left"}>
-					<ToolTip title={"Left click a dice to add it to selection, right click to remove it."}/>
+					<ToolTip title={"Left click a dice to add it to selection, right click to remove it."} />
 				</span>
 			</div>
 			<div
@@ -70,17 +90,35 @@ export default function DiceRoller() {
 					flexWrap: "wrap",
 				}}
 			>
-				<DiceIcon tooltip={"d4"} count={d4.count} reducer={setD4} icon={tetrahedron} {...d4}/>
-				<DiceIcon tooltip={"d6"} count={d6.count} reducer={setD6} icon={cube} {...d6}/>
-				<DiceIcon tooltip={"d8"} count={d8.count} reducer={setD8} icon={octahedron} {...d8}/>
-				<DiceIcon tooltip={"d10"} count={d10.count} reducer={setD10} icon={decahedron} {...d10}/>
-				<DiceIcon tooltip={"d12"} count={d12.count} reducer={setD12} icon={dodecahedron} {...d12}/>
-				<DiceIcon tooltip={"d20"} count={d20.count} reducer={setD20} icon={icosahedron} {...d20}/>
-				<DiceIcon tooltip={"d100"} count={d100.count} reducer={setD100} icon={doubleDecahedron} {...d100}/>
+				<DiceIcon tooltip={"d4"} count={d4.count} dispatch={setD4} icon={tetrahedron} {...d4} />
+				<DiceIcon tooltip={"d6"} count={d6.count} dispatch={setD6} icon={cube} {...d6} />
+				<DiceIcon tooltip={"d8"} count={d8.count} dispatch={setD8} icon={octahedron} {...d8} />
+				<DiceIcon tooltip={"d10"} count={d10.count} dispatch={setD10} icon={decahedron} {...d10} />
+				<DiceIcon
+					tooltip={"d12"}
+					count={d12.count}
+					dispatch={setD12}
+					icon={dodecahedron}
+					{...d12}
+				/>
+				<DiceIcon tooltip={"d20"} count={d20.count} dispatch={setD20} icon={icosahedron} {...d20} />
+				<DiceIcon
+					tooltip={"d100"}
+					count={d100.count}
+					dispatch={setD100}
+					icon={doubleDecahedron}
+					{...d100}
+				/>
 			</div>
 			<PrimaryButton
 				disabled={
-					d4 === 0 && d6 === 0 && d8 === 0 && d10 === 0 && d12 === 0 && d20 === 0 && d100 === 0
+					d4.count === 0 &&
+					d6.count === 0 &&
+					d8.count === 0 &&
+					d10.count === 0 &&
+					d12.count === 0 &&
+					d20.count === 0 &&
+					d100.count === 0
 				}
 				onClick={async () => {
 					let diceCommand = "";
@@ -92,11 +130,11 @@ export default function DiceRoller() {
 					diceCommand += getDiceCommand(d20);
 					diceCommand += getDiceCommand(d100);
 					diceCommand = "/roll " + diceCommand;
-					await gameChat({gameId: currentGame._id, message: diceCommand});
+					await gameChat({ gameId: currentGame._id, message: diceCommand });
 				}}
 			>
 				Roll
 			</PrimaryButton>
 		</div>
 	);
-};
+}

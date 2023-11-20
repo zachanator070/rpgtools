@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import useCreateWorld from "../../hooks/world/useCreateWorld";
 import { useNavigate } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
@@ -12,7 +12,7 @@ import FullScreenModal from "../widgets/FullScreenModal";
 
 interface CreateWorldModalProps {
 	visibility: boolean;
-	setVisibility: (visibility: boolean) => any;
+	setVisibility: (visibility: boolean) => void;
 }
 
 export default function CreateWorldModal({ visibility, setVisibility }: CreateWorldModalProps) {
@@ -22,51 +22,53 @@ export default function CreateWorldModal({ visibility, setVisibility }: CreateWo
 	const [isPublic, setIsPublic] = useState(false);
 
 	const { createWorld, loading, errors } = useCreateWorld(async (data) => {
-		await setCurrentWorld({worldId: data.createWorld._id});
+		await setCurrentWorld({ worldId: data.createWorld._id });
 		navigate(`/ui/world/${data.createWorld._id}/map/${data.createWorld.wikiPage._id}`);
 	});
 
 	return (
-		<FullScreenModal
-			title="Create World"
-			visible={visibility}
-			setVisible={setVisibility}
-		>
+		<FullScreenModal title="Create World" visible={visibility} setVisible={setVisibility}>
 			<InputForm
 				errors={errors}
 				loading={loading}
-				onSubmit={async ({name}) => {
-					await createWorld({name, public: isPublic});
+				onSubmit={async ({ name }) => {
+					await createWorld({ name, public: isPublic });
 					await setVisibility(false);
 				}}
 			>
 				<FormItem label="Name" required={true}>
-					<TextInput name="name" id={'newWorldName'}/>
+					<TextInput name="name" id={"newWorldName"} />
 				</FormItem>
 				<FormItem
 					label={
 						<>
 							<ToolTip
-								title={<>
-									Public worlds will have the following permissions given to any visitor:
-									<br />
-									<ul>
-										{PUBLIC_WORLD_PERMISSIONS.map((permission) => (
-											<li key={permission}>
-												{permission}
-												<br />
-											</li>
-										))}
-									</ul>
-								</>}
+								title={
+									<>
+										Public worlds will have the following permissions given to any visitor:
+										<br />
+										<ul>
+											{PUBLIC_WORLD_PERMISSIONS.map((permission) => (
+												<li key={permission}>
+													{permission}
+													<br />
+												</li>
+											))}
+										</ul>
+									</>
+								}
 							/>
 							Public World
 						</>
 					}
 				>
-					<PrimaryCheckbox name={"isPublic"} checked={isPublic} onChange={(checked) => setIsPublic(checked)}/>
+					<PrimaryCheckbox
+						name={"isPublic"}
+						checked={isPublic}
+						onChange={(checked) => setIsPublic(checked)}
+					/>
 				</FormItem>
 			</InputForm>
 		</FullScreenModal>
 	);
-};
+}

@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LoadingView from "../LoadingView";
 import GameContent from "./GameContent";
@@ -14,20 +14,20 @@ import useGameFogStrokes from "../../hooks/game/useGameFogStrokes";
 export default function GameView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
 	const { currentGame, loading } = useCurrentGame();
-	const {strokes, loading: strokeLoading} = useGameStrokes();
-	const {fogStrokes, loading: fogStrokeLoading} = useGameFogStrokes();
+	const { strokes, loading: strokeLoading } = useGameStrokes();
+	const { fogStrokes, loading: fogStrokeLoading } = useGameFogStrokes();
 	const { currentUser } = useCurrentUser();
 	const { refetch } = useMyGames();
-	const { data: mapChangeGame } = useGameMapChangeSubscription();
+	useGameMapChangeSubscription();
 
-	const {modalWarning} = useModal();
+	const { modalWarning } = useModal();
 
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (currentGame) {
 			let hostGone = true;
-			for (let character of currentGame.characters) {
+			for (const character of currentGame.characters) {
 				if (character.player._id === currentGame.host._id) {
 					hostGone = false;
 				}
@@ -49,21 +49,26 @@ export default function GameView() {
 		}
 	}, [currentGame]);
 
-	if (loading || currentWorldLoading || strokeLoading || fogStrokeLoading ||
-		strokes.totalDocs !== strokes.docs.length || fogStrokes.totalDocs !== fogStrokes.docs.length) {
+	if (
+		loading ||
+		currentWorldLoading ||
+		strokeLoading ||
+		fogStrokeLoading ||
+		strokes.totalDocs !== strokes.docs.length ||
+		fogStrokes.totalDocs !== fogStrokes.docs.length
+	) {
 		return <LoadingView />;
 	}
 
 	if (!currentGame) {
 		return (
 			<>
-				<p>
-					You do not have permission to view this game or this game doesn't
-					exist
-				</p>
+				<p>You do not have permission to view this game or this game doesn't exist</p>
 			</>
 		);
 	}
 
-	return <GameContent currentGame={currentGame} strokes={strokes.docs} fogStrokes={fogStrokes.docs}/>;
-};
+	return (
+		<GameContent currentGame={currentGame} strokes={strokes.docs} fogStrokes={fogStrokes.docs} />
+	);
+}

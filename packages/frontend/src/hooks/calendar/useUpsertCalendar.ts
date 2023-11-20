@@ -6,7 +6,7 @@ import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries";
 
 export interface UpsertCalendarVariables {
     calendarId?: string;
-    name: String;
+    name: string;
     ages: Age[]
 }
 
