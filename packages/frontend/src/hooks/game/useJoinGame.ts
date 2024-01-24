@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Game} from "../../types";
-import {JOIN_GAME} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { Game } from "../../types";
+import { JOIN_GAME } from "@rpgtools/common/src/gql-mutations";
 
 interface JoinGameVariables {
 	gameId: string;
@@ -8,14 +8,19 @@ interface JoinGameVariables {
 	characterName?: string;
 }
 
+interface JoinGameData {
+	joinGame: Game;
+}
 interface JoinGameResult extends GqlMutationResult<Game, JoinGameVariables> {
 	joinGame: MutationMethod<Game, JoinGameVariables>;
 }
 
 export default function useJoinGame(callback): JoinGameResult {
-	const result = useGQLMutation<Game, JoinGameVariables>(JOIN_GAME, {}, { onCompleted: callback });
+	const result = useGQLMutation<Game, JoinGameData, JoinGameVariables>(JOIN_GAME, null, {
+		onCompleted: callback,
+	});
 	return {
 		...result,
-		joinGame: result.mutate
+		joinGame: result.mutate,
 	};
-};
+}

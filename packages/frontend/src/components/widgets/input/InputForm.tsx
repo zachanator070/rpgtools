@@ -6,8 +6,8 @@ import Errors from "../../Errors";
 import { WidgetProps } from "../WidgetProps";
 import LoadingIcon from "../icons/LoadingIcon";
 
-interface InputFormProps<T> extends WidgetProps {
-	onSubmit: (T) => any;
+interface InputFormProps extends WidgetProps {
+	onSubmit: (T) => void;
 	children: ReactElement<FormItemProps> | ReactElement<FormItemProps>[];
 	loading: boolean;
 	errors: string[];
@@ -15,14 +15,14 @@ interface InputFormProps<T> extends WidgetProps {
 	disabled?: boolean;
 }
 
-export default function InputForm<T>({
+export default function InputForm({
 	onSubmit,
 	children,
 	loading,
 	errors,
 	buttonText,
 	disabled,
-}: InputFormProps<T>) {
+}: InputFormProps) {
 	return (
 		<Form
 			onFinish={() => {}}

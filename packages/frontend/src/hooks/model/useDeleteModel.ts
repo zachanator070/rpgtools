@@ -1,24 +1,27 @@
 import useGetModels from "./useGetModels";
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {useParams} from "react-router-dom";
-import useCurrentWorld from "../world/useCurrentWorld";
-import {Model} from "../../types";
-import {DELETE_MODEL} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { MutationMethod } from "../useGQLMutation";
+import { useParams } from "react-router-dom";
+import { Model } from "../../types";
+import { DELETE_MODEL } from "@rpgtools/common/src/gql-mutations";
 
 interface DeleteModelVariables {
 	modelId: string;
 }
 
+interface DeleteModelData {
+	deleteModel: Model;
+}
 interface DeleteModelResult {
-	deleteModel: MutationMethod<Model, DeleteModelVariables>
+	deleteModel: MutationMethod<Model, DeleteModelVariables>;
 }
 
-export default function useDeleteModel(callback: (data: Model) => Promise<void>): DeleteModelResult {
+export default function useDeleteModel(
+	callback: (data: Model) => Promise<void>,
+): DeleteModelResult {
 	const { refetch } = useGetModels();
-	const {currentWorld} = useCurrentWorld();
 	const params = useParams();
 
-	const result = useGQLMutation<Model, DeleteModelVariables>(
+	const result = useGQLMutation<Model, DeleteModelData, DeleteModelVariables>(
 		DELETE_MODEL,
 		{ modelId: params.model_id },
 		{
@@ -27,10 +30,10 @@ export default function useDeleteModel(callback: (data: Model) => Promise<void>)
 				await callback(data);
 			},
 			displayErrors: true,
-		}
+		},
 	);
 	return {
 		...result,
-		deleteModel: result.mutate
-	}
-};
+		deleteModel: result.mutate,
+	};
+}

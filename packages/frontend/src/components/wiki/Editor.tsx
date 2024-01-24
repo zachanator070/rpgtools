@@ -8,24 +8,28 @@ import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 Quill.debug("error");
 
 interface EditorProps {
 	content: string;
 	readOnly?: boolean;
-	onInit?: (editor: Quill) => Promise<any>;
+	onInit?: (editor: Quill) => Promise<void>;
+}
+
+interface MentionEvent extends Event {
+	value: {
+		link: string;
+	};
 }
 
 export default function Editor({ content, readOnly, onInit }: EditorProps) {
 	const { currentWorld, loading } = useCurrentWorld();
 	const editorCreated = useRef(false);
 	const [editor, setEditor] = useState<Quill>();
-	const params = useParams();
 	const navigate = useNavigate();
 	const { refetch } = useSearchWikiPages({
-		worldId: params.world_id,
 		types: null,
 	});
 
@@ -33,7 +37,13 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 		if (content && editor) {
 			editor.setContents(JSON.parse(content));
 			// mention links are broken. Instead, we have to use an even listener
-			window.addEventListener('mention-clicked', (event) => {navigate((event as any).value.link);}, false);
+			window.addEventListener(
+				"mention-clicked",
+				(event) => {
+					navigate((event as MentionEvent).value.link);
+				},
+				false,
+			);
 		}
 	}, [content, editor]);
 
@@ -67,34 +77,36 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 					toolbar: readOnly ? null : toolBar,
 					mention: {
 						showDenotationChar: false,
-						source: async (searchTerm, renderList, mentionChar) => {
+						source: async (searchTerm, renderList) => {
 							if (searchTerm === "") {
 								return renderList([], searchTerm);
 							}
 							const results = await refetch({
-								worldId: params.world_id,
 								name: searchTerm,
 							});
 							renderList(
 								results.docs.map((wiki) => {
 									const url = `/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`;
-									const result: any = {};
-									result.value = wiki.name;
-									result.link = url;
-									result.target = "_self";
+									const result: {
+										value: string;
+										link: string;
+										target: string;
+									} = {
+										value: wiki.name,
+										link: url,
+										target: "_self",
+									};
 									return result;
 								}),
-								searchTerm
+								searchTerm,
 							);
 						},
 						render: (item) => {
 							return `<a href='${item.link}'/>`;
-						}
+						},
 					},
 				},
-				placeholder: readOnly
-					? "This tale has yet to be told"
-					: "Compose an epic...",
+				placeholder: readOnly ? "This tale has yet to be told" : "Compose an epic...",
 			};
 			const newEditor = new Quill("#editor", options);
 			if (onInit) {
@@ -124,4 +136,4 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 			}}
 		/>
 	);
-};
+}

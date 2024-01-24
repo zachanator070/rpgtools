@@ -1,19 +1,19 @@
 import { useSubscription } from "@apollo/client";
 import useGQLResponse from "./useGQLResponse";
-import {ApiHookResponse} from "./types";
+import { GQLResult } from "./types";
 
-export interface GqlSubscriptionResult<TData> extends ApiHookResponse<TData> {}
+export interface GqlSubscriptionResult<TData> extends GQLResult<TData> {}
 
-export default function useGQLSubscription<TData, TVariables=void>(
+export default function useGQLSubscription<TEntity, TData>(
 	query,
 	variables,
-	options = { displayErrors: true }
-): GqlSubscriptionResult<TData> {
+	options = { displayErrors: true },
+): GqlSubscriptionResult<TEntity> {
 	const { data, loading, error } = useSubscription(query, { variables });
 
-	const response = useGQLResponse<TData>(query, data, error, options.displayErrors);
+	const response = useGQLResponse<TEntity, TData>(query, data, error, options.displayErrors);
 	return {
 		...response,
-		loading
+		loading,
 	};
-};
+}

@@ -1,12 +1,12 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import {GameControls} from "./GameControls";
+import { GameControls } from "./GameControls";
+import THREE from "three";
 
 export class CameraControls implements GameControls {
-
 	private enabled: boolean;
-	private controls: any;
-	private renderRoot: any
-	private camera: any;
+	private controls: OrbitControls;
+	private renderRoot: HTMLCanvasElement;
+	private camera: THREE.PerspectiveCamera;
 
 	constructor(renderRoot, camera) {
 		this.renderRoot = renderRoot;

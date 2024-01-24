@@ -1,7 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Pin, World} from "../../types";
-import {CREATE_PIN} from "@rpgtools/common/src/gql-mutations";
-import {GET_PINS} from "@rpgtools/common/src/gql-queries";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { Pin } from "../../types";
+import { CREATE_PIN } from "@rpgtools/common/src/gql-mutations";
+import { GET_PINS } from "@rpgtools/common/src/gql-queries";
 
 interface CreatePinVariables {
 	mapId: string;
@@ -10,14 +10,21 @@ interface CreatePinVariables {
 	wikiId?: number;
 }
 
-interface CreatePinResult extends GqlMutationResult<Pin, CreatePinVariables>{
+interface CreatePinData {
+	createPin: Pin;
+}
+interface CreatePinResult extends GqlMutationResult<Pin, CreatePinVariables> {
 	createPin: MutationMethod<Pin, CreatePinVariables>;
 }
 
 export default function useCreatePin(): CreatePinResult {
-	const result = useGQLMutation<Pin, CreatePinVariables>(CREATE_PIN, {}, {refetchQueries: [GET_PINS]});
+	const result = useGQLMutation<Pin, CreatePinData, CreatePinVariables>(
+		CREATE_PIN,
+		{},
+		{ refetchQueries: [GET_PINS] },
+	);
 	return {
 		...result,
-		createPin: result.mutate
+		createPin: result.mutate,
 	};
-};
+}

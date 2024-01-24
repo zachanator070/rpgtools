@@ -1,7 +1,7 @@
 import useCurrentGame from "./useCurrentGame";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Game} from "../../types";
-import {SET_CHARACTER_ATTRIBUTES} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { Game } from "../../types";
+import { SET_CHARACTER_ATTRIBUTES } from "@rpgtools/common/src/gql-mutations";
 
 export interface CharacterAttributeInput {
 	_id?: string;
@@ -9,19 +9,27 @@ export interface CharacterAttributeInput {
 	value: number;
 }
 
+interface SetCharacterAttributesData {
+	setCharacterAttributes: Game;
+}
+
 interface SetCharacterAttributesVariables {
 	gameId?: string;
 	attributes: CharacterAttributeInput[];
 }
 
-interface SetCharacterAttributesResult extends GqlMutationResult<Game, SetCharacterAttributesVariables>{
-	setCharacterAttributes: MutationMethod<Game, SetCharacterAttributesVariables>
+interface SetCharacterAttributesResult
+	extends GqlMutationResult<Game, SetCharacterAttributesVariables> {
+	setCharacterAttributes: MutationMethod<Game, SetCharacterAttributesVariables>;
 }
 export default function useSetCharacterAttributes(): SetCharacterAttributesResult {
 	const { currentGame } = useCurrentGame();
-	const result = useGQLMutation<Game, SetCharacterAttributesVariables>(SET_CHARACTER_ATTRIBUTES, { gameId: currentGame._id });
+	const result = useGQLMutation<Game, SetCharacterAttributesData, SetCharacterAttributesVariables>(
+		SET_CHARACTER_ATTRIBUTES,
+		{ gameId: currentGame._id },
+	);
 	return {
 		...result,
-		setCharacterAttributes: result.mutate
+		setCharacterAttributes: result.mutate,
 	};
-};
+}

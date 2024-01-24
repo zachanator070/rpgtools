@@ -1,33 +1,35 @@
-import {DocumentNode, useQuery} from "@apollo/client";
+import { DocumentNode, useQuery } from "@apollo/client";
 import useGQLResponse from "./useGQLResponse";
-import {ApiHookResponse} from "./types";
-import {ApolloQueryResult} from "@apollo/client/core";
-import getQueryName from "./getQueryName";
+import { GQLResult } from "./types";
+import { ApolloQueryResult } from "@apollo/client/core";
 
-export interface GqlQueryResult<TData, TVariables=void> extends ApiHookResponse<TData> {
-	refetch: (variables?: TVariables) => Promise<TData>;
-	fetchMore: ((fetchMoreOptions: {variables: TVariables, updateQuery?: (previousResultQuery: any, options: {fetchMoreResult: any}) => any}) => Promise<ApolloQueryResult<TData>>);
+export interface GqlQueryResult<TEntity, TData, TVariables> extends GQLResult<TEntity> {
+	refetch: (variables?: TVariables) => Promise<TEntity>;
+	fetchMore: (fetchMoreOptions: {
+		variables: TVariables;
+		updateQuery?: (previousResultQuery: TData, options: { fetchMoreResult: TData }) => TData;
+	}) => Promise<ApolloQueryResult<TEntity>>;
 }
 
-export default function useGQLQuery<TData, TVariables=void>(
+export default function useGQLQuery<TEntity, TData, TVariables = void>(
 	query: DocumentNode,
-	variables: any = null,
-	options = { onCompleted: () => {}, displayErrors: true }
-): GqlQueryResult<TData, TVariables> {
+	variables: TVariables = null,
+	options = { onCompleted: () => {}, displayErrors: true },
+): GqlQueryResult<TEntity, TData, TVariables> {
 	const { data, loading, error, refetch, fetchMore } = useQuery<TData, TVariables>(query, {
 		variables,
 		onCompleted: options.onCompleted,
 	});
-	const response = useGQLResponse<TData>(query, data, error, options.displayErrors);
+	const response = useGQLResponse<TEntity, TData>(query, data, error, options.displayErrors);
 	return {
 		...response,
 		loading,
 		refetch: async (newVariables?: TVariables) => {
-			const originalVariables = Object.create(variables);
-			const result = await refetch(Object.assign(originalVariables, newVariables));
-			return (result.data as any)[response.queryName]
+			const mergedVariables = { ...variables, ...newVariables };
+			const result = await refetch(mergedVariables);
+			return result.data[response.queryName];
 		},
-		fetchMore: async ({variables: moreVariables, updateQuery}) => fetchMore({variables: moreVariables, updateQuery})
-
+		fetchMore: async ({ variables: moreVariables, updateQuery }) =>
+			fetchMore({ variables: moreVariables, updateQuery })[response.queryName],
 	};
-};
+}

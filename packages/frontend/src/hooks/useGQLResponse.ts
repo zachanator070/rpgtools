@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import {DocumentNode} from "graphql";
-import {ApolloError} from "@apollo/client/errors";
+import { DocumentNode } from "graphql";
+import { ApolloError } from "@apollo/client/errors";
 import getQueryName from "./getQueryName";
 import useNotification from "../components/widgets/useNotification";
 
@@ -10,10 +10,13 @@ interface GenericGqlResponse<T> {
 	queryName: string;
 }
 
-export default function useGQLResponse
-	<T>(query: DocumentNode, data: any, error: ApolloError | undefined, displayErrors: boolean):
-		GenericGqlResponse<T> {
-	const {errorNotification} = useNotification();
+export default function useGQLResponse<TEntity, TData>(
+	query: DocumentNode,
+	data: TData,
+	error: ApolloError | undefined,
+	displayErrors: boolean,
+): GenericGqlResponse<TEntity> {
+	const { errorNotification } = useNotification();
 	let errors: string[] = [];
 	let errorTitle = "Server Error";
 	if (error) {
@@ -50,4 +53,4 @@ export default function useGQLResponse
 		errors,
 		queryName: queryName,
 	};
-};
+}

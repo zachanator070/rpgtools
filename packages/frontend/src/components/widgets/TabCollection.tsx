@@ -41,7 +41,7 @@ export default function TabCollection({
 			tabPosition={tabPosition}
 			onEdit={onEdit}
 		>
-			{tabs.map((tab, index) => (
+			{tabs.map((tab) => (
 				<Tabs.TabPane
 					tab={tab.title}
 					style={tab.style}

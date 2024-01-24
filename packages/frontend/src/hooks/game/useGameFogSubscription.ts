@@ -1,14 +1,14 @@
 import { useParams } from "react-router-dom";
-import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
+import useGQLSubscription, { GqlSubscriptionResult } from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {FogStroke, Game} from "../../types";
-import {GAME_FOG} from "@rpgtools/common/src/gql-fragments";
+import { FogStroke } from "../../types";
+import { GAME_FOG } from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_FOG_SUBSCRIPTION = gql`
 	${GAME_FOG}
-	subscription gameFogStrokeAdded($gameId: ID!){
-		gameFogStrokeAdded(gameId: $gameId){
-			...gameFog		
+	subscription gameFogStrokeAdded($gameId: ID!) {
+		gameFogStrokeAdded(gameId: $gameId) {
+			...gameFog
 		}
 	}
 `;
@@ -17,15 +17,18 @@ interface GameFogSubscriptionVariables {
 	gameId: string;
 }
 
-interface GameFogSubscriptionResult extends GqlSubscriptionResult<FogStroke>{
-	gameFogStrokeAdded: FogStroke
+interface GameFogSubscriptionResult extends GqlSubscriptionResult<FogStroke> {
+	gameFogStrokeAdded: FogStroke;
 }
 
 export default function useGameFogSubscription(): GameFogSubscriptionResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<FogStroke, GameFogSubscriptionVariables>(GAME_FOG_SUBSCRIPTION, { gameId: game_id });
+	const result = useGQLSubscription<FogStroke, GameFogSubscriptionVariables>(
+		GAME_FOG_SUBSCRIPTION,
+		{ gameId: game_id },
+	);
 	return {
 		...result,
-		gameFogStrokeAdded: result.data
-	}
-};
+		gameFogStrokeAdded: result.data,
+	};
+}

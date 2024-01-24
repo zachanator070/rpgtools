@@ -1,11 +1,11 @@
-import React, {ReactElement, useRef, useState} from "react";
+import React, { ReactElement, useRef, useState } from "react";
 import Editor from "../Editor";
 import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingView from "../../LoadingView";
-import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
+import { EVENT_WIKI, MODELED_WIKI_TYPES, PLACE } from "@rpgtools/common/src/type-constants";
 import ModelViewer from "../../models/ModelViewer";
-import {EventWiki, ModeledWiki, Place, WikiPage} from "../../../types";
+import { EventWiki, ModeledWiki, Place, WikiPage } from "../../../types";
 import usePins from "../../../hooks/map/usePins";
 import ToolTip from "../../widgets/ToolTip";
 import GotoIcon from "../../widgets/icons/GotoIcon";
@@ -18,7 +18,8 @@ interface WikiContentProps {
 
 function getDayOfTheWeek(event: EventWiki): string {
 	const age = event.calendar.ages[event.age - 1];
-	const dayOfTheYear = age.months.slice(event.month).reduce((sum, month) => sum + month.numDays, 0) + event.day - 1;
+	const dayOfTheYear =
+		age.months.slice(event.month).reduce((sum, month) => sum + month.numDays, 0) + event.day - 1;
 	const dayOfTheWeekIndex = dayOfTheYear % age.daysOfTheWeek.length;
 	return age.daysOfTheWeek[dayOfTheWeekIndex].name;
 }
@@ -37,7 +38,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 	const navigate = useNavigate();
 
 	const { currentWorld, loading } = useCurrentWorld();
-	const {pins, loading: pinsLoading} = usePins({});
+	const { pins, loading: pinsLoading } = usePins({});
 
 	const wikiView = useRef(null);
 
@@ -77,18 +78,17 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 	}
 
 	let typeSpecificContent: ReactElement = null;
-	if(currentWiki.type === PLACE) {
+	if (currentWiki.type === PLACE) {
 		const currentPlace = currentWiki as Place;
-		if(currentPlace.mapImage) {
-
+		if (currentPlace.mapImage) {
 			typeSpecificContent = (
 				<>
 					<div className="padding-md">
 						<img
 							alt={currentPlace.mapImage.name}
-							style={{maxWidth: '100%'}}
+							style={{ maxWidth: "100%" }}
 							src={`/images/${currentPlace.mapImage.icon.chunks[0].fileId}`}
-							id={'mapImage'}
+							id={"mapImage"}
 						/>
 						<span className="margin-md-left">
 							<a
@@ -97,7 +97,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 									navigate(`/ui/world/${currentWorld._id}/map/${currentPlace._id}`);
 								}}
 							>
-								Go to Map <GotoIcon/>
+								Go to Map <GotoIcon />
 							</a>
 						</span>
 					</div>
@@ -114,7 +114,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 		}
 	} else if (MODELED_WIKI_TYPES.includes(currentWiki.type)) {
 		const currentModeledWiki = currentWiki as ModeledWiki;
-		if(currentModeledWiki.model) {
+		if (currentModeledWiki.model) {
 			typeSpecificContent = (
 				<div className={"margin-lg"} ref={setModelViewerContainer}>
 					<ModelViewer
@@ -126,26 +126,24 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 				</div>
 			);
 		}
-	} else if(currentWiki.type === EVENT_WIKI) {
-		const eventWiki = currentWiki as EventWiki
-		typeSpecificContent = (<div>
-			{eventWiki.calendar && <>
-				<div className={'margin-md'}>
-					Calendar: {eventWiki.calendar.name}
-				</div>
-				<div className={'margin-md'}>
-					Date: {getDate(eventWiki)}
-				</div>
-				<div className={'margin-md'}>
-					Time: {getTime(eventWiki)}
-				</div>
-			</>}
-		</div>);
+	} else if (currentWiki.type === EVENT_WIKI) {
+		const eventWiki = currentWiki as EventWiki;
+		typeSpecificContent = (
+			<div>
+				{eventWiki.calendar && (
+					<>
+						<div className={"margin-md"}>Calendar: {eventWiki.calendar.name}</div>
+						<div className={"margin-md"}>Date: {getDate(eventWiki)}</div>
+						<div className={"margin-md"}>Time: {getTime(eventWiki)}</div>
+					</>
+				)}
+			</div>
+		);
 	}
 
 	return (
 		<div ref={wikiView} className="margin-md-top">
-			<WikiViewButtonBar currentWiki={currentWiki} currentWikiLoading={wikiLoading}/>
+			<WikiViewButtonBar currentWiki={currentWiki} currentWikiLoading={wikiLoading} />
 			<h1>{currentWiki.name}</h1>
 			{gotoMap}
 			<h2>{currentWiki.type}</h2>
@@ -153,9 +151,9 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 				<img
 					className="padding-md"
 					alt={currentWiki.coverImage.name}
-					style={{ objectFit: "contain", maxWidth: '100%'}}
+					style={{ objectFit: "contain", maxWidth: "100%" }}
 					src={`/images/${currentWiki.coverImage.chunks[0].fileId}`}
-					id={'coverImage'}
+					id={"coverImage"}
 				/>
 			)}
 
@@ -166,4 +164,4 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 			</div>
 		</div>
 	);
-};
+}

@@ -1,11 +1,9 @@
-import React from "react";
-import {SelectControls} from "./SelectControls";
-import {PositionedModel} from "../types";
-import {GameControls} from "./GameControls";
+import { SelectControls } from "./SelectControls";
+import { PositionedModel } from "../types";
+import { GameControls } from "./GameControls";
 
 export class DeleteControls implements GameControls {
-
-	private renderRoot: any
+	private renderRoot: HTMLCanvasElement;
 	private selectControls: SelectControls;
 	private deleteModel: (positionedModel: PositionedModel) => void;
 

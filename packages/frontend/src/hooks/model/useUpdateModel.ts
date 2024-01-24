@@ -1,27 +1,31 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Model} from "../../types";
-import {UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { Model } from "../../types";
+import { UPDATE_MODEL } from "@rpgtools/common/src/gql-mutations";
+import { UploadFile } from "antd";
 
 interface UpdateModelVariables {
 	modelId: string;
 	name: string;
-	file: any;
+	file: UploadFile;
 	depth: number;
 	width: number;
 	height: number;
 	notes: string;
 }
 
-interface UpdateModelResult extends GqlMutationResult<Model,  UpdateModelVariables>{
+interface UpdateModelData {
+	updateModel: Model;
+}
+interface UpdateModelResult extends GqlMutationResult<Model, UpdateModelVariables> {
 	updateModel: MutationMethod<Model, UpdateModelVariables>;
 	model: Model;
 }
 
 export default function useUpdateModel(): UpdateModelResult {
-	const result = useGQLMutation<Model, UpdateModelVariables>(UPDATE_MODEL)
+	const result = useGQLMutation<Model, UpdateModelData, UpdateModelVariables>(UPDATE_MODEL);
 	return {
 		...result,
 		updateModel: result.mutate,
-		model: result.data
+		model: result.data,
 	};
-};
+}

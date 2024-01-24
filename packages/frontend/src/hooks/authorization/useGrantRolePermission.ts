@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
-import {GRANT_ROLE_PERMISSION} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { World } from "../../types";
+import { GRANT_ROLE_PERMISSION } from "@rpgtools/common/src/gql-mutations";
 
 interface GrantRolePermissionVariables {
 	roleId: string;
@@ -9,16 +9,28 @@ interface GrantRolePermissionVariables {
 	subjectType: string;
 }
 
-interface GrantRolePermissionResult extends GqlMutationResult<World, GrantRolePermissionVariables> {
-	grantRolePermission: MutationMethod<World, GrantRolePermissionVariables>
+interface GrantRolePermission {
+	grantRolePermission: World;
 }
 
-export default function useGrantRolePermission({callback}: {callback: () => Promise<void>}): GrantRolePermissionResult {
-	const result = useGQLMutation<World, GrantRolePermissionVariables>(GRANT_ROLE_PERMISSION,{}, {
-		onCompleted: callback,
-	});
+interface GrantRolePermissionResult extends GqlMutationResult<World, GrantRolePermissionVariables> {
+	grantRolePermission: MutationMethod<World, GrantRolePermissionVariables>;
+}
+
+export default function useGrantRolePermission({
+	callback,
+}: {
+	callback: () => Promise<void>;
+}): GrantRolePermissionResult {
+	const result = useGQLMutation<World, GrantRolePermission, GrantRolePermissionVariables>(
+		GRANT_ROLE_PERMISSION,
+		null,
+		{
+			onCompleted: callback,
+		},
+	);
 	return {
 		...result,
-		grantRolePermission: result.mutate
+		grantRolePermission: result.mutate,
 	};
-};
+}

@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
-import {GameControls} from "./GameControls";
-import {FogStroke, Stroke} from "../types";
+import { GameControls } from "./GameControls";
+import { FogStroke, Stroke } from "../types";
+import { MapLocation, PathNode } from "../rendering/GameRenderer";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -15,37 +16,28 @@ export const DEFAULT_BRUSH_SIZE = 5;
 export const DEFAULT_MAP_SIZE = 50;
 
 export class PaintControls implements GameControls {
-
-	private renderRoot: any;
-	private raycaster: any;
-	private scene: any;
-	private location: any;
-	private mapMesh: any;
-	private strokeCallback: any;
+	private renderRoot: HTMLCanvasElement;
+	private raycaster: THREE.Raycaster;
+	private scene: THREE.Scene;
+	private location: MapLocation;
+	private mapMesh: THREE.Mesh;
+	private strokeCallback: (stroke: Stroke) => void;
 	private drawCanvas: HTMLCanvasElement;
 	private drawTexture: THREE.CanvasTexture;
 	private drawMaterial: THREE.MeshPhongMaterial;
 	private drawMesh: THREE.Mesh;
 	private drawMeshOpacity: number;
-	private pathBeingPainted: any[];
-	private strokeId: any;
+	private pathBeingPainted: PathNode[];
+	private strokeId: string;
 	private brushType: string = DEFAULT_BRUSH_TYPE;
 	private brushColor: string = DEFAULT_BRUSH_COLOR;
 	private brushFill: boolean = DEFAULT_BRUSH_FILL;
 	private brushSize: number = DEFAULT_BRUSH_SIZE;
-	private strokesAlreadyDrawn: any[];
-	private paintBrushMesh: any;
-	private paintBrushMaterial: any;
+	private strokesAlreadyDrawn: (Stroke | FogStroke)[];
+	private paintBrushMesh: THREE.Mesh;
+	private paintBrushMaterial: THREE.Material;
 
-	constructor(
-		renderRoot,
-		raycaster,
-		scene,
-		mapMesh,
-		location,
-		strokeCallback,
-		meshY = 0.01
-	) {
+	constructor(renderRoot, raycaster, scene, mapMesh, location, strokeCallback, meshY = 0.01) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
 		this.scene = scene;
@@ -64,7 +56,7 @@ export class PaintControls implements GameControls {
 
 		const drawGeometry = new THREE.PlaneGeometry(
 			this.location.mapImage.width / this.location.pixelsPerFoot,
-			this.location.mapImage.height / this.location.pixelsPerFoot
+			this.location.mapImage.height / this.location.pixelsPerFoot,
 		);
 		drawGeometry.rotateX(-Math.PI / 2);
 		this.drawMaterial = new THREE.MeshPhongMaterial({
@@ -102,7 +94,7 @@ export class PaintControls implements GameControls {
 	};
 	getBrushType = () => {
 		return this.brushType;
-	}
+	};
 
 	setBrushColor = (color) => {
 		this.brushColor = color;
@@ -111,7 +103,7 @@ export class PaintControls implements GameControls {
 	};
 	getBrushColor = () => {
 		return this.brushColor;
-	}
+	};
 
 	setBrushFill = (fill) => {
 		this.brushFill = fill;
@@ -121,7 +113,7 @@ export class PaintControls implements GameControls {
 	};
 	getBrushFill = () => {
 		return this.brushFill;
-	}
+	};
 
 	setBrushSize = (size) => {
 		this.brushSize = size;
@@ -129,7 +121,7 @@ export class PaintControls implements GameControls {
 	};
 	getBrushSize = () => {
 		return this.brushSize;
-	}
+	};
 
 	setupBrush = () => {
 		this.createPaintBrushMesh();
@@ -156,28 +148,21 @@ export class PaintControls implements GameControls {
 		this.setBrushColor(this.brushColor);
 		let geometry;
 		if (this.brushType === BRUSH_CIRCLE || this.brushType === BRUSH_LINE) {
-			geometry = new THREE.CylinderGeometry(
-				this.brushSize / 2,
-				this.brushSize / 2,
-				1,
-				32
-			);
+			geometry = new THREE.CylinderGeometry(this.brushSize / 2, this.brushSize / 2, 1, 32);
 		} else {
 			geometry = new THREE.BoxGeometry(this.brushSize, 1, this.brushSize);
 		}
-		const oldVisibility = this.paintBrushMesh
-			? this.paintBrushMesh.visible
-			: false;
+		const oldVisibility = this.paintBrushMesh ? this.paintBrushMesh.visible : false;
 		this.paintBrushMesh = new THREE.Mesh(geometry, this.paintBrushMaterial);
 		this.paintBrushMesh.visible = oldVisibility;
 		this.scene.add(this.paintBrushMesh);
 	};
 
 	stroke = (stroke: Stroke | FogStroke, useCache = true) => {
-		let { path, type, size, _id } = stroke;
+		const { path, type, size, _id } = stroke;
 		const color = (stroke as Stroke).color;
 		const fill = (stroke as Stroke).fill;
-		size *= this.location.pixelsPerFoot;
+		stroke.size *= this.location.pixelsPerFoot;
 		if (useCache) {
 			for (const stroke of this.strokesAlreadyDrawn) {
 				if (stroke._id === _id) {
@@ -260,17 +245,11 @@ export class PaintControls implements GameControls {
 		for (const intersect of intersects) {
 			const currentPath = [];
 			if (this.pathBeingPainted.length > 0 && this.brushType === BRUSH_LINE) {
-				currentPath.push(
-					this.pathBeingPainted[this.pathBeingPainted.length - 1]
-				);
+				currentPath.push(this.pathBeingPainted[this.pathBeingPainted.length - 1]);
 			}
 			const newPoint = {
-				x:
-					intersect.point.x * this.location.pixelsPerFoot +
-					this.location.mapImage.width / 2,
-				y:
-					intersect.point.z * this.location.pixelsPerFoot +
-					this.location.mapImage.height / 2,
+				x: intersect.point.x * this.location.pixelsPerFoot + this.location.mapImage.width / 2,
+				y: intersect.point.z * this.location.pixelsPerFoot + this.location.mapImage.height / 2,
 				_id: uuidv4(),
 			};
 			currentPath.push(newPoint);
@@ -285,7 +264,7 @@ export class PaintControls implements GameControls {
 					size: this.brushSize,
 					_id: this.strokeId,
 				},
-				false
+				false,
 			);
 		}
 	};
@@ -293,10 +272,7 @@ export class PaintControls implements GameControls {
 	stopPaintingWithBrush = () => {
 		this.renderRoot.removeEventListener("mousemove", this.paintWithBrush);
 		this.renderRoot.removeEventListener("mouseup", this.stopPaintingWithBrush);
-		this.renderRoot.removeEventListener(
-			"mouseleave",
-			this.stopPaintingWithBrush
-		);
+		this.renderRoot.removeEventListener("mouseleave", this.stopPaintingWithBrush);
 		if (this.strokeId) {
 			const stroke = {
 				path: this.pathBeingPainted,
@@ -345,13 +321,7 @@ export class PaintControls implements GameControls {
 		};
 	};
 
-	loadSaveState = ({
-		brushType,
-		brushColor,
-		brushSize,
-		brushFill,
-		drawMeshOpacity,
-	}) => {
+	loadSaveState = ({ brushType, brushColor, brushSize, brushFill, drawMeshOpacity }) => {
 		this.setBrushType(brushType);
 		this.setBrushColor(brushColor);
 		this.setBrushSize(brushSize);

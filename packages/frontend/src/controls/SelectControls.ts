@@ -1,14 +1,15 @@
-import {GameControls} from "./GameControls";
-import {GameRenderer, MeshedModel} from "../rendering/GameRenderer";
+import { GameControls } from "./GameControls";
+import { GameRenderer, IntersectionPoint, MeshedModel } from "../rendering/GameRenderer";
+import THREE from "three";
 
 export class SelectControls implements GameControls {
-	private renderRoot: any;
-	private raycaster: any;
+	private renderRoot: HTMLCanvasElement;
+	private raycaster: THREE.Raycaster;
 	private renderer: GameRenderer;
 	private selectedMeshedModel: MeshedModel;
-	private intersectionPoint: any;
+	private intersectionPoint: IntersectionPoint;
 
-	constructor(renderRoot: any, raycaster: any, renderer: GameRenderer) {
+	constructor(renderRoot: HTMLCanvasElement, raycaster: THREE.Raycaster, renderer: GameRenderer) {
 		this.renderRoot = renderRoot;
 		this.raycaster = raycaster;
 		this.renderer = renderer;

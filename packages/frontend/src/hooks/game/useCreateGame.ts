@@ -1,7 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Game} from "../../types";
-import {CREATE_GAME} from "@rpgtools/common/src/gql-mutations";
-import {useParams} from "react-router-dom";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { Game } from "../../types";
+import { CREATE_GAME } from "@rpgtools/common/src/gql-mutations";
+import { useParams } from "react-router-dom";
 
 interface CreateGameVariables {
 	worldId: string;
@@ -9,16 +9,24 @@ interface CreateGameVariables {
 	characterName?: string;
 }
 
-interface CreateGameResult extends GqlMutationResult<Game, CreateGameVariables>{
+interface CreateGameData {
+	createGame: Game;
+}
+
+interface CreateGameResult extends GqlMutationResult<Game, CreateGameVariables> {
 	createGame: MutationMethod<Game, CreateGameVariables>;
 }
 
 export default function useCreateGame(callback): CreateGameResult {
 	const { world_id } = useParams();
 
-	const result = useGQLMutation<Game, CreateGameVariables>(CREATE_GAME, {worldId: world_id}, { onCompleted: callback });
+	const result = useGQLMutation<Game, CreateGameData, CreateGameVariables>(
+		CREATE_GAME,
+		{ worldId: world_id },
+		{ onCompleted: callback },
+	);
 	return {
 		...result,
-		createGame: result.mutate
+		createGame: result.mutate,
 	};
-};
+}

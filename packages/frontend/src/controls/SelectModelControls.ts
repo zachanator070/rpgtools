@@ -1,19 +1,19 @@
 import * as THREE from "three";
 import { MeshBasicMaterial, Vector3 } from "three";
 import EventEmitter from "events";
-import {GameControls} from "./GameControls";
-import {PositionedModel} from "../types";
-
+import { GameControls } from "./GameControls";
+import { PositionedModel } from "../types";
+import { SelectControls } from "./SelectControls";
 
 export const MODEL_SELECTED_EVENT = "model selected";
 
 export class SelectModelControls extends EventEmitter implements GameControls {
-	private renderRoot: any;
-	private camera: any;
-	private scene: any;
-	selectControls: any;
+	private renderRoot: HTMLCanvasElement;
+	private camera: THREE.Camera;
+	private scene: THREE.Scene;
+	selectControls: SelectControls;
 	private selectedPositionedModel: PositionedModel;
-	private glow: any;
+	private glow: THREE.Mesh;
 
 	constructor(renderRoot, camera, scene, selectControls) {
 		super();
@@ -25,7 +25,7 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 	}
 
 	constructGlow = (moveOnly = false) => {
-		if (!this.selectControls.selectedMeshedModel) {
+		if (!this.selectControls.getSelectedMeshedModel()) {
 			if (this.glow) {
 				this.glow.visible = false;
 			}
@@ -39,34 +39,34 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 			opacity: 0.5,
 		});
 		const boxGeometry = new THREE.BoxGeometry(
-			this.selectControls.selectedMeshedModel.positionedModel.model.width,
-			this.selectControls.selectedMeshedModel.positionedModel.model.height,
-			this.selectControls.selectedMeshedModel.positionedModel.model.depth,
+			this.selectControls.getSelectedMeshedModel().positionedModel.model.width,
+			this.selectControls.getSelectedMeshedModel().positionedModel.model.height,
+			this.selectControls.getSelectedMeshedModel().positionedModel.model.depth,
 			2,
 			2,
-			2
+			2,
 		);
 		this.glow = new THREE.Mesh(boxGeometry, basicMaterial);
 		this.scene.add(this.glow);
 
-		const boxHeight = this.selectControls.selectedMeshedModel.positionedModel.model.height;
+		const boxHeight = this.selectControls.getSelectedMeshedModel().positionedModel.model.height;
 
 		this.glow.position.set(
-			this.selectControls.selectedMeshedModel.mesh.position.x,
+			this.selectControls.getSelectedMeshedModel().mesh.position.x,
 			0,
-			this.selectControls.selectedMeshedModel.mesh.position.z
+			this.selectControls.getSelectedMeshedModel().mesh.position.z,
 		);
 		this.glow.lookAt(
 			new Vector3(
-				this.selectControls.selectedMeshedModel.positionedModel.lookAtX,
+				this.selectControls.getSelectedMeshedModel().positionedModel.lookAtX,
 				0,
-				this.selectControls.selectedMeshedModel.positionedModel.lookAtZ
-			)
+				this.selectControls.getSelectedMeshedModel().positionedModel.lookAtZ,
+			),
 		);
 		this.glow.position.set(
-			this.selectControls.selectedMeshedModel.mesh.position.x,
+			this.selectControls.getSelectedMeshedModel().mesh.position.x,
 			boxHeight / 2 + 0.03,
-			this.selectControls.selectedMeshedModel.mesh.position.z
+			this.selectControls.getSelectedMeshedModel().mesh.position.z,
 		);
 		if (!moveOnly) {
 			this.glow.visible = true;
@@ -75,8 +75,8 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 	};
 
 	getPositionedModel = () => {
-		if (this.selectControls && this.selectControls.selectedMeshedModel) {
-			return this.selectControls.selectedMeshedModel.positionedModel;
+		if (this.selectControls && this.selectControls.getSelectedMeshedModel()) {
+			return this.selectControls.getSelectedMeshedModel().positionedModel;
 		}
 	};
 
@@ -84,9 +84,9 @@ export class SelectModelControls extends EventEmitter implements GameControls {
 		this.constructGlow();
 		this.emit(
 			MODEL_SELECTED_EVENT,
-			this.selectControls.selectedMeshedModel
-				? this.selectControls.selectedMeshedModel.positionedModel
-				: null
+			this.selectControls.getSelectedMeshedModel()
+				? this.selectControls.getSelectedMeshedModel().positionedModel
+				: null,
 		);
 	};
 

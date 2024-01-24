@@ -15,11 +15,11 @@ import { DeleteControls } from "../controls/DeleteControls";
 import { SelectModelControls } from "../controls/SelectModelControls";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import EventEmitter from "events";
-import {Game, Image, PositionedModel} from "../types";
-import {MutationMethod} from "../hooks/useGQLMutation";
-import {AddStrokeVariables} from "../hooks/game/useAddStroke";
-import {SetModelPositionVariables} from "../hooks/game/useSetModelPosition";
-import {AddFogVariables} from "../hooks/game/useAddFogStroke";
+import { Game, Image, PositionedModel } from "../types";
+import { MutationMethod } from "../hooks/useGQLMutation";
+import { AddStrokeVariables } from "../hooks/game/useAddStroke";
+import { SetModelPositionVariables } from "../hooks/game/useSetModelPosition";
+import { AddFogVariables } from "../hooks/game/useAddFogStroke";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -40,11 +40,26 @@ export const GROUND_Y_POSITION = -0.01;
 
 export interface MeshedModel {
 	positionedModel: PositionedModel;
-	mesh: any;
+	mesh: THREE.Mesh;
+}
+
+export interface MapLocation {
+	pixelsPerFoot: number;
+	mapImage: Image;
+}
+
+export interface PathNode {
+	x: number;
+	y: number;
+	_id: string;
+}
+
+export interface IntersectionPoint {
+	x: number;
+	y: number;
 }
 
 export class GameRenderer extends EventEmitter {
-
 	private renderer;
 	private camera;
 	private scene;
@@ -85,11 +100,11 @@ export class GameRenderer extends EventEmitter {
 		renderRoot: HTMLCanvasElement,
 		mapImage: Image,
 		addStroke: MutationMethod<Game, AddStrokeVariables>,
-		onProgress = (message: string, current: number, max: number) => {},
+		onProgress: (message: string, current: number, max: number) => void,
 		setModelPosition: MutationMethod<Game, SetModelPositionVariables>,
 		deleteModel: (model: PositionedModel) => void,
 		addFogStroke: MutationMethod<Game, AddStrokeVariables>,
-		pixelsPerFoot: number
+		pixelsPerFoot: number,
 	) {
 		super();
 		this.renderRoot = renderRoot;
@@ -108,7 +123,7 @@ export class GameRenderer extends EventEmitter {
 			await onProgress("", 0, 1);
 		};
 
-		if(pixelsPerFoot) {
+		if (pixelsPerFoot) {
 			this.pixelsPerFoot = pixelsPerFoot;
 		}
 
@@ -141,12 +156,7 @@ export class GameRenderer extends EventEmitter {
 		this.scene.add(new THREE.AmbientLight(0xffffff, 1));
 
 		// setup camera
-		this.camera = new THREE.PerspectiveCamera(
-			75,
-			renderWidth / renderHeight,
-			1,
-			700
-		);
+		this.camera = new THREE.PerspectiveCamera(75, renderWidth / renderHeight, 1, 700);
 		const cameraZ = DEFAULT_MAP_SIZE;
 		const cameraY = DEFAULT_MAP_SIZE;
 
@@ -235,7 +245,7 @@ export class GameRenderer extends EventEmitter {
 		mapGeometry.rotateX(-Math.PI / 2);
 		this.mapMesh = new THREE.Mesh(
 			mapGeometry,
-			new THREE.MeshPhongMaterial({ map: this.mapTexture })
+			new THREE.MeshPhongMaterial({ map: this.mapTexture }),
 		);
 
 		this.mapMesh.position.set(0, MAP_Y_POSITION, 0);
@@ -246,7 +256,7 @@ export class GameRenderer extends EventEmitter {
 		groundGeometry.rotateX(Math.PI / 2);
 		this.groundMesh = new THREE.Mesh(
 			groundGeometry,
-			new THREE.MeshBasicMaterial({ color: 0xffffff })
+			new THREE.MeshBasicMaterial({ color: 0xffffff }),
 		);
 		this.groundMesh.position.set(0, GROUND_Y_POSITION, 0);
 		this.scene.add(this.groundMesh);
@@ -263,7 +273,7 @@ export class GameRenderer extends EventEmitter {
 		for (const chunk of this.mapImage.chunks) {
 			const base_image = new Image();
 			base_image.src = `/images/${chunk.fileId}`;
-			const imagePromise = new Promise<void>((resolve, reject) => {
+			const imagePromise = new Promise<void>((resolve) => {
 				base_image.onload = () => {
 					mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
 					this.mapTexture.needsUpdate = true;
@@ -310,12 +320,10 @@ export class GameRenderer extends EventEmitter {
 				// calculate mouse position in normalized device coordinates
 				// (-1 to +1) for both components
 
-				this.mouseCoords.x =
-					(event.offsetX / this.renderer.domElement.width) * 2 - 1;
-				this.mouseCoords.y =
-					-(event.offsetY / this.renderer.domElement.height) * 2 + 1;
+				this.mouseCoords.x = (event.offsetX / this.renderer.domElement.width) * 2 - 1;
+				this.mouseCoords.y = -(event.offsetY / this.renderer.domElement.height) * 2 + 1;
 			},
-			false
+			false,
 		);
 	}
 
@@ -377,15 +385,16 @@ export class GameRenderer extends EventEmitter {
 			this.scene,
 			this.mapMesh,
 			{ pixelsPerFoot: this.pixelsPerFoot, mapImage: this.mapImage },
-			async (stroke) => await this.addStroke({
-				fill: stroke.fill,
-				path: stroke.path,
-				size: stroke.size,
-				strokeId: stroke._id,
-				type: stroke.type,
-				color: stroke.color
-			}),
-			DRAW_Y_POSITION
+			async (stroke) =>
+				await this.addStroke({
+					fill: stroke.fill,
+					path: stroke.path,
+					size: stroke.size,
+					strokeId: stroke._id,
+					type: stroke.type,
+					color: stroke.color,
+				}),
+			DRAW_Y_POSITION,
 		);
 		if (paintControlsSaveState) {
 			this.paintControls.loadSaveState(paintControlsSaveState);
@@ -407,10 +416,10 @@ export class GameRenderer extends EventEmitter {
 					path: fogStroke.path,
 					size: fogStroke.size,
 					strokeId: fogStroke._id,
-					type: fogStroke.type
+					type: fogStroke.type,
 				});
 			},
-			FOG_Y_POSITION
+			FOG_Y_POSITION,
 		);
 
 		if (fogControlsSaveState) {
@@ -427,11 +436,7 @@ export class GameRenderer extends EventEmitter {
 		if (this.selectControls) {
 			this.selectControls.tearDown();
 		}
-		this.selectControls = new SelectControls(
-			this.renderRoot,
-			this.raycaster,
-			this
-		);
+		this.selectControls = new SelectControls(this.renderRoot, this.raycaster, this);
 
 		if (this.selectModelControls) {
 			this.selectModelControls.tearDown();
@@ -440,7 +445,7 @@ export class GameRenderer extends EventEmitter {
 			this.renderRoot,
 			this.camera,
 			this.scene,
-			this.selectControls
+			this.selectControls,
 		);
 
 		if (this.moveControls) {
@@ -459,7 +464,7 @@ export class GameRenderer extends EventEmitter {
 					lookAtX: meshedModel.positionedModel.lookAtX,
 					lookAtZ: meshedModel.positionedModel.lookAtZ,
 				});
-			}
+			},
 		);
 
 		if (this.rotateControls) {
@@ -478,7 +483,7 @@ export class GameRenderer extends EventEmitter {
 					lookAtX: meshedModel.positionedModel.lookAtX,
 					lookAtZ: meshedModel.positionedModel.lookAtZ,
 				});
-			}
+			},
 		);
 
 		if (this.deleteControls) {
@@ -487,7 +492,7 @@ export class GameRenderer extends EventEmitter {
 		this.deleteControls = new DeleteControls(
 			this.renderRoot,
 			this.selectControls,
-			this.deleteModel
+			this.deleteModel,
 		);
 
 		this.changeControls(this.currentControls);
@@ -504,22 +509,18 @@ export class GameRenderer extends EventEmitter {
 		const model = positionedModel.model;
 		// push onto cache before loading to prevent race condition from model subscription
 		this.meshedModels.push({
-			positionedModel: {...positionedModel},
+			positionedModel: { ...positionedModel },
 			mesh: null,
 		});
 
 		const extension = model.fileName.split(".").pop();
 
-		const loader =
-			extension === "glb"
-				? new GLTFLoader(this.loader)
-				: new OBJLoader(this.loader);
+		const loader = extension === "glb" ? new GLTFLoader(this.loader) : new OBJLoader(this.loader);
 
 		loader.load(
 			`/models/${model.fileId}`,
 			(loadedModel) => {
-				const loadedMesh =
-					extension === "glb" ? loadedModel.scene : loadedModel;
+				const loadedMesh = extension === "glb" ? loadedModel.scene : loadedModel;
 
 				// get bounding box and scale to match board size
 				const bbox = new THREE.Box3().setFromObject(loadedMesh);
@@ -529,9 +530,7 @@ export class GameRenderer extends EventEmitter {
 
 				loadedMesh.scale.set(widthScale, heightScale, depthScale);
 				loadedMesh.position.set(positionedModel.x, 0, positionedModel.z);
-				loadedMesh.lookAt(
-					new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ)
-				);
+				loadedMesh.lookAt(new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ));
 				loadedMesh.traverse(function (child) {
 					if (child.isMesh) {
 						child.castShadow = true;
@@ -554,10 +553,7 @@ export class GameRenderer extends EventEmitter {
 						});
 						this.originalMeshedModels.push(meshedModelClone);
 						if (meshedModel.positionedModel.color) {
-							this.setModelColor(
-								meshedModel,
-								meshedModel.positionedModel.color
-							);
+							this.setModelColor(meshedModel, meshedModel.positionedModel.color);
 						}
 						break;
 					}
@@ -567,15 +563,15 @@ export class GameRenderer extends EventEmitter {
 			undefined,
 			(error) => {
 				console.error(error);
-			}
+			},
 		);
 	}
 
 	removeModel = (positionedModel) => {
 		if (
 			this.selectModelControls.selectControls.selectedMeshedModel &&
-			this.selectModelControls.selectControls.selectedMeshedModel
-				.positionedModel._id === positionedModel._id
+			this.selectModelControls.selectControls.selectedMeshedModel.positionedModel._id ===
+				positionedModel._id
 		) {
 			this.selectModelControls.selectControls.clearSelection();
 			this.selectModelControls.constructGlow();
@@ -591,9 +587,7 @@ export class GameRenderer extends EventEmitter {
 			return;
 		}
 		this.meshedModels = this.meshedModels.filter(
-			(meshedModel) =>
-				meshedModel.positionedModel._id !==
-				meshedModelToRemove.positionedModel._id
+			(meshedModel) => meshedModel.positionedModel._id !== meshedModelToRemove.positionedModel._id,
 		);
 		this.scene.remove(meshedModelToRemove.mesh);
 	};
@@ -619,14 +613,10 @@ export class GameRenderer extends EventEmitter {
 		}
 
 		targetModel.mesh.position.set(positionedModel.x, 0, positionedModel.z);
-		targetModel.mesh.lookAt(
-			new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ)
-		);
+		targetModel.mesh.lookAt(new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ));
 
 		targetOriginal.mesh.position.set(positionedModel.x, 0, positionedModel.z);
-		targetOriginal.mesh.lookAt(
-			new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ)
-		);
+		targetOriginal.mesh.lookAt(new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ));
 
 		if (targetModel.positionedModel.color !== positionedModel.color) {
 			this.setModelColor(targetModel, positionedModel.color);
@@ -636,8 +626,8 @@ export class GameRenderer extends EventEmitter {
 
 		if (
 			this.selectModelControls.selectControls.selectedMeshedModel &&
-			this.selectModelControls.selectControls.selectedMeshedModel
-				.positionedModel._id === positionedModel._id
+			this.selectModelControls.selectControls.selectedMeshedModel.positionedModel._id ===
+				positionedModel._id
 		) {
 			this.selectModelControls.constructGlow(true);
 		}

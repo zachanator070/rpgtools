@@ -1,7 +1,7 @@
-import {DocumentNode, useLazyQuery} from "@apollo/client";
+import { DocumentNode, useLazyQuery } from "@apollo/client";
 import useGQLResponse from "./useGQLResponse";
 // extends GqlQueryResult<TData, TVariables>
-export interface GqlLazyHookResult<TData, TVariables=void>  {
+export interface GqlLazyHookResult<TData, TVariables = void> {
 	loading: boolean;
 	refetch: LazyHookFetch<TData, TVariables>;
 	fetch: LazyHookFetch<TData, TVariables>;
@@ -9,31 +9,33 @@ export interface GqlLazyHookResult<TData, TVariables=void>  {
 	data: TData;
 }
 
-export type LazyHookFetch<TData, TVariables> = (variables?: TVariables) => Promise<any>;
-type UpdateQuery = (prev, {fetchMoreResult}) => any;
-type LazyQueryOptions = {
+export type LazyHookFetch<TData, TVariables> = (variables?: TVariables) => Promise<TData>;
+type UpdateQuery<TData> = (prev, { fetchMoreResult }) => TData;
+type LazyQueryOptions<TData> = {
 	onCompleted?: () => void;
 	displayErrors?: boolean;
-	updateQuery?: UpdateQuery;
-}
-export default function useGQLLazyQuery<TData, TVariables=void>(
+	updateQuery?: UpdateQuery<TData>;
+};
+export default function useGQLLazyQuery<TData, TVariables = void>(
 	query: DocumentNode,
-	variables: any = null,
-	options: LazyQueryOptions = { displayErrors: true }
+	variables: TVariables = null,
+	options: LazyQueryOptions<TData> = { displayErrors: true },
 ): GqlLazyHookResult<TData, TVariables> {
-	const [
-		fetch,
-		{ data, loading, error, refetch, fetchMore },
-	] = useLazyQuery<TData>(query, { variables, onCompleted: options.onCompleted });
+	const [fetch, { data, loading, error, refetch, fetchMore }] = useLazyQuery<TData>(query, {
+		variables,
+		onCompleted: options.onCompleted,
+	});
 	const response = useGQLResponse<TData>(query, data, error, options.displayErrors);
 	return {
 		...response,
 		loading,
 		refetch: async (newVariables?: TVariables) => {
-			const originalVariables = Object.create(variables);
-			return await refetch(Object.assign(originalVariables, newVariables));
+			const originalVariables = { ...variables };
+			return (await refetch({ ...originalVariables, ...newVariables })).data;
 		},
-		fetchMore: async (variables: TVariables) => { await fetchMore({variables, updateQuery: options.updateQuery}) },
-		fetch: async (variables) => fetch({ variables })
+		fetchMore: async (variables: TVariables) => {
+			return (await fetchMore({ variables, updateQuery: options.updateQuery })).data;
+		},
+		fetch: async (variables) => (await fetch({ variables })).data,
 	};
-};
+}

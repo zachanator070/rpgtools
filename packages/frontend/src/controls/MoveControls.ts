@@ -1,14 +1,14 @@
 import * as THREE from "three";
-import {GameControls} from "./GameControls";
-import {SelectControls} from "./SelectControls";
+import { GameControls } from "./GameControls";
+import { SelectControls } from "./SelectControls";
+import { MeshedModel } from "../rendering/GameRenderer";
 
 export class MoveControls implements GameControls {
-
-	private renderRoot: any;
-	private raycaster: any;
-	private mapMesh: any;
+	private renderRoot: HTMLCanvasElement;
+	private raycaster: THREE.Raycaster;
+	private mapMesh: THREE.Mesh;
 	private selectControls: SelectControls;
-	private moveCallback: any;
+	private moveCallback: (mesh: MeshedModel) => Promise<void>;
 
 	constructor(renderRoot, raycaster, mapMesh, selectControls, moveCallback) {
 		this.renderRoot = renderRoot;
@@ -31,32 +31,24 @@ export class MoveControls implements GameControls {
 		const origin = this.raycaster.camera.position;
 		const hypotenuse = origin.distanceTo(mapIntersect);
 		const theta = Math.asin(origin.y / hypotenuse);
-		const newHypotenuseLength =
-			this.selectControls.getIntersectionPoint().y / Math.sin(theta);
+		const newHypotenuseLength = this.selectControls.getIntersectionPoint().y / Math.sin(theta);
 		const hypotenuseRatio = newHypotenuseLength / hypotenuse;
-		const newHypotenuse = new THREE.Line3(
-			mapIntersect,
-			this.raycaster.camera.position
-		);
+		const newHypotenuse = new THREE.Line3(mapIntersect, this.raycaster.camera.position);
 		const newModelIntersection = new THREE.Vector3();
 		newHypotenuse.at(hypotenuseRatio, newModelIntersection);
 		const newModelPosition = new THREE.Vector3();
 		const mapPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
 		mapPlane.projectPoint(newModelIntersection, newModelPosition);
-		selectedMeshedModel.mesh.position.copy(
-			newModelPosition
-		);
+		selectedMeshedModel.mesh.position.copy(newModelPosition);
 	};
 
 	moveDone = () => {
 		const selectedMeshedModel = this.selectControls.getSelectedMeshedModel();
 		if (selectedMeshedModel) {
 			selectedMeshedModel.positionedModel.lookAtX +=
-				selectedMeshedModel.mesh.position.x -
-				selectedMeshedModel.positionedModel.x;
+				selectedMeshedModel.mesh.position.x - selectedMeshedModel.positionedModel.x;
 			selectedMeshedModel.positionedModel.lookAtZ +=
-				selectedMeshedModel.mesh.position.z -
-				selectedMeshedModel.positionedModel.z;
+				selectedMeshedModel.mesh.position.z - selectedMeshedModel.positionedModel.z;
 
 			selectedMeshedModel.positionedModel.x = selectedMeshedModel.mesh.position.x;
 			selectedMeshedModel.positionedModel.z = selectedMeshedModel.mesh.position.z;

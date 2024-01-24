@@ -1,4 +1,4 @@
-import React, {ReactElement, useState} from "react";
+import React, { ReactElement, useState } from "react";
 import useCreateWiki from "../../../hooks/wiki/useCreateWiki";
 import useCreateFolder from "../../../hooks/wiki/useCreateFolder";
 import useRenameFolder from "../../../hooks/wiki/useRenameFolder";
@@ -7,7 +7,7 @@ import ToolTip from "../../widgets/ToolTip";
 import useImportContent from "../../../hooks/world/useImportContent";
 import PermissionEditor from "../../permissions/PermissionEditor";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
-import {WikiFolder} from "../../../types";
+import { WikiFolder } from "../../../types";
 import MoveFolderModal from "../../modals/MoveFolderModal";
 import useModal from "../../widgets/useModal";
 import FullScreenModal from "../../widgets/FullScreenModal";
@@ -28,7 +28,7 @@ import ContextMenu from "../../widgets/ContextMenu";
 interface FolderMenuProps {
 	folder: WikiFolder;
 	children?: ReactElement;
-	refetch?: () => Promise<any>;
+	refetch?: () => Promise<void>;
 }
 
 export default function FolderMenu({ folder, children, refetch }: FolderMenuProps) {
@@ -44,16 +44,16 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 	const [importModalVisibility, setImportModalVisibility] = useState(false);
 	const [permissionModalVisibility, setPermissionModalVisibility] = useState(false);
 
-	const {modalConfirm} = useModal();
+	const { modalConfirm } = useModal();
 
 	const canWriteMenu = [
 		<div
 			key="createWiki"
-			onClick={async (event) => {
-				await createWiki({name: "New Page", folderId: folder._id});
+			onClick={async () => {
+				await createWiki({ name: "New Page", folderId: folder._id });
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<AddFileIcon />
 			</span>
 			New Wiki Page
@@ -61,10 +61,10 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 		<div
 			key="createFolder"
 			onClick={async () => {
-				await createFolder({parentFolderId: folder._id, name: "New Folder"});
+				await createFolder({ parentFolderId: folder._id, name: "New Folder" });
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<AddFolderIcon />
 			</span>
 			New Folder
@@ -75,7 +75,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				setRenameModalVisibility(true);
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<EditIcon />
 			</span>
 			Rename Folder
@@ -86,7 +86,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				setMoveFolderModalVisibility(true);
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<ImportIcon />
 			</span>
 			Move Folder
@@ -98,12 +98,12 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 					title: "Confirm Delete",
 					content: `Are you sure you want to delete the folder "${folder.name}? This will delete all content in this folder as well."`,
 					onOk: async () => {
-						await deleteFolder({folderId: folder._id});
+						await deleteFolder({ folderId: folder._id });
 					},
 				});
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<DeleteIcon />
 			</span>
 			Delete Folder
@@ -114,7 +114,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				setImportModalVisibility(true);
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<UploadIcon />
 			</span>
 			Import Content
@@ -128,7 +128,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				window.location.href = `/export/WikiFolder/${folder._id}`;
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<DownloadIcon />
 			</span>
 			Export Folder
@@ -139,7 +139,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 				setPermissionModalVisibility(true);
 			}}
 		>
-			<span style={{marginRight: '.5em'}}>
+			<span style={{ marginRight: ".5em" }}>
 				<PeopleIcon />
 			</span>
 			Folder Permissions
@@ -166,7 +166,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 						errors={renameErrors}
 						onSubmit={async ({ newName }) => {
 							setRenameModalVisibility(false);
-							await renameFolder({folderId: folder._id, name: newName});
+							await renameFolder({ folderId: folder._id, name: newName });
 						}}
 					>
 						<FormItem label={"New Name"}>
@@ -174,7 +174,11 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 						</FormItem>
 					</InputForm>
 				</FullScreenModal>
-				<MoveFolderModal folder={folder} visibility={moveFolderModalVisibility} setVisibility={setMoveFolderModalVisibility}/>
+				<MoveFolderModal
+					folder={folder}
+					visibility={moveFolderModalVisibility}
+					setVisibility={setMoveFolderModalVisibility}
+				/>
 				<FullScreenModal
 					title={"Import Content"}
 					visible={importModalVisibility}
@@ -186,31 +190,32 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 							loading={importLoading}
 							errors={importErrors}
 							onSubmit={async () => {
-
-								await importContent({
-									folderId: folder._id,
-									zipFile: selectedImportFile.fileList[0].originFileObj,
-								},
-								{
-									onCompleted: async () => setImportModalVisibility(false)
-								});
+								await importContent(
+									{
+										folderId: folder._id,
+										zipFile: selectedImportFile.fileList[0].originFileObj,
+									},
+									{
+										onCompleted: async () => setImportModalVisibility(false),
+									},
+								);
 							}}
 						>
 							<FormItem
 								label={
 									<div>
 										<ToolTip
-											title={<>
-												Supported file types:
-												<br />
-												<ul>
-													<li>.zip</li>
-												</ul>
-											</>}
+											title={
+												<>
+													Supported file types:
+													<br />
+													<ul>
+														<li>.zip</li>
+													</ul>
+												</>
+											}
 										/>
-										<span style={{marginLeft: ".5em"}}>
-											File
-										</span>
+										<span style={{ marginLeft: ".5em" }}>File</span>
 									</div>
 								}
 								required={true}
@@ -231,7 +236,7 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 									},
 								]}
 							>
-								<FileInput onChange={setSelectedImportFile}/>
+								<FileInput onChange={setSelectedImportFile} />
 							</FormItem>
 						</InputForm>
 					</div>
@@ -241,7 +246,13 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 					visible={permissionModalVisibility}
 					setVisible={() => setPermissionModalVisibility(false)}
 				>
-					<PermissionEditor subjectType={WIKI_FOLDER} subject={folder} refetch={async () => {await refetch()}}/>
+					<PermissionEditor
+						subjectType={WIKI_FOLDER}
+						subject={folder}
+						refetch={async () => {
+							await refetch();
+						}}
+					/>
 				</FullScreenModal>
 			</div>
 			<ContextMenu menu={menu}>
@@ -249,4 +260,4 @@ export default function FolderMenu({ folder, children, refetch }: FolderMenuProp
 			</ContextMenu>
 		</div>
 	);
-};
+}

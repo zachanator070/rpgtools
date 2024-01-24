@@ -1,9 +1,10 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {Image} from "../../types";
-import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { MutationMethod } from "../useGQLMutation";
+import { Image } from "../../types";
+import { CREATE_IMAGE } from "@rpgtools/common/src/gql-mutations";
+import { UploadFile } from "antd";
 
 interface CreateImageVariables {
-	file: any;
+	file: UploadFile;
 	worldId: string;
 	chunkify: boolean;
 }
@@ -18,4 +19,4 @@ export default function useCreateImage(): CreateImageResult {
 		...result,
 		createImage: result.mutate,
 	};
-};
+}

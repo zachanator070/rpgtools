@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
-import {REVOKE_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations";
+import useGQLMutation, { GqlMutationResult, MutationMethod } from "../useGQLMutation";
+import { World } from "../../types";
+import { REVOKE_USER_PERMISSION } from "@rpgtools/common/src/gql-mutations";
 
 interface RevokeUserPermissionVariables {
 	userId: string;
@@ -9,16 +9,29 @@ interface RevokeUserPermissionVariables {
 	subjectType: string;
 }
 
-interface RevokeUserPermissionResult extends GqlMutationResult<World, RevokeUserPermissionVariables>{
-	revokeUserPermission: MutationMethod<World, RevokeUserPermissionVariables>
+interface RevokeUserPermissionData {
+	revokeUserPermission: World;
 }
 
-export default function useRevokeUserPermission({callback}: {callback: () => Promise<void>}): RevokeUserPermissionResult {
-	const result = useGQLMutation<World, RevokeUserPermissionVariables>(REVOKE_USER_PERMISSION, {}, {
-		onCompleted: callback
-	});
+interface RevokeUserPermissionResult
+	extends GqlMutationResult<World, RevokeUserPermissionVariables> {
+	revokeUserPermission: MutationMethod<World, RevokeUserPermissionVariables>;
+}
+
+export default function useRevokeUserPermission({
+	callback,
+}: {
+	callback: () => Promise<void>;
+}): RevokeUserPermissionResult {
+	const result = useGQLMutation<World, RevokeUserPermissionData, RevokeUserPermissionVariables>(
+		REVOKE_USER_PERMISSION,
+		null,
+		{
+			onCompleted: callback,
+		},
+	);
 	return {
 		...result,
-		revokeUserPermission: result.mutate
+		revokeUserPermission: result.mutate,
 	};
-};
+}
