@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: 
+    branches:
     - main
   workflow_dispatch:
 
@@ -48,6 +48,15 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: make publish
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ docker-image ]
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          gh workflow run cd.yml -R zachanator070/thezachcave.com.conf
 
   electron-linux:
     runs-on: ubuntu-latest
