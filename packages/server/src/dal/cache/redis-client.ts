@@ -24,6 +24,9 @@ export class RedisClient implements Cache {
 		this.client.on("error", (error: string) => {
 			console.log(`Error while connecting to ${process.env.REDIS_URL}: ${error}`);
 		});
+		this.client.connect().then(() => {
+			console.log("Connected to redis");
+		});
 	}
 
 	readStream(key: string): Readable {
