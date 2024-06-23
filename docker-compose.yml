@@ -10,8 +10,8 @@ services:
       dockerfile: ./packages/server/Dockerfile
       args:
         - NODE_ENV=dev
+        - CURRENT_UID=${CURRENT_UID}
     command: "npm run --workspace=packages/server dev"
-    user: ${CURRENT_UID}
     env_file:
       - .env
     environment:
@@ -35,6 +35,7 @@ services:
     depends_on:
       - postgres
       - mongodb
+      - redis
       - ui-builder
 
   server-brk:
@@ -66,7 +67,8 @@ services:
     build:
       context: .
       dockerfile: ./packages/frontend/Dockerfile
-    user: ${CURRENT_UID}
+      args:
+        - CURRENT_UID=${CURRENT_UID}
     env_file:
       - .env
     environment:

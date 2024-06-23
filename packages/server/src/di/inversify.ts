@@ -578,7 +578,7 @@ const bindAll = () => {
 
 // cache
 	if(process.env.REDIS_URL)
-		container.bind<Cache>(INJECTABLE_TYPES.Cache).to(RedisClient);
+		container.bind<Cache>(INJECTABLE_TYPES.Cache).to(RedisClient).inSingletonScope();
 	else
 		container.bind<Cache>(INJECTABLE_TYPES.Cache).to(NoCacheClient);
 

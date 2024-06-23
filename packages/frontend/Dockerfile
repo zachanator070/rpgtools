@@ -1,4 +1,4 @@
-FROM node:16.17.0-slim
+FROM node:16-slim
 
 WORKDIR /opt/rpgtools
 
