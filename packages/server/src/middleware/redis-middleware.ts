@@ -27,7 +27,7 @@ export const redisMiddleware = (lookupKeyName: string) => async (
 		return cache.readStream(lookupKey).pipe(res);
 	} else {
 		// write file to cache and store for an hour, then write to response
-		readStream.on('error', () => {
+		readStream.on('error', (err) => {
 			res.flushHeaders();
 		});
 		return readStream.pipe(cache.writeStream(lookupKey, 60 * 60)).pipe(res);
