@@ -56,7 +56,7 @@ jobs:
       - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh workflow run cd.yml -R zachanator070/thezachcave.com.conf
+          gh workflow run cd.yml -R zachanator070/thezachcave.com.conf -f rpgtools_version=${{ needs.release.outputs.version }}
 
   electron-linux:
     runs-on: ubuntu-latest
