@@ -36,6 +36,8 @@ jobs:
   docker-image:
     runs-on: ubuntu-latest
     needs: release
+    outputs:
+      version: ${{ needs.release.outputs.version }}
     steps:
       - uses: actions/setup-node@v3
         with:
@@ -56,7 +58,7 @@ jobs:
       - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh workflow run cd.yml -R zachanator070/thezachcave.com.conf -f rpgtools_version=${{ needs.release.outputs.version }}
+          gh workflow run cd.yml -R zachanator070/thezachcave.com.conf -f rpgtools_version=${{ needs.docker-image.outputs.version }}
 
   electron-linux:
     runs-on: ubuntu-latest
