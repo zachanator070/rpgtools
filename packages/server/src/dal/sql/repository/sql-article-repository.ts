@@ -39,8 +39,10 @@ export default class SqlArticleRepository extends AbstractSqlRepository<Article,
     }
 
     async updateAssociations(entity: WikiPage, model: WikiPageModel) {
-        const relatedWikiModels = await WikiPageModel.findAll({where: {_id: entity.relatedWikis}});
-        await model.setRelatedWikis(relatedWikiModels);
+        if (entity.relatedWikis) {
+            const relatedWikiModels = await WikiPageModel.findAll({where: {_id: entity.relatedWikis}});
+            await model.setRelatedWikis(relatedWikiModels);
+        }
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
     }
 

@@ -44,6 +44,10 @@ export default class SqlItemRepository extends AbstractSqlRepository<Item, WikiP
             });
             await page.save();
         }
+        if (entity.relatedWikis) {
+            const relatedWikiModels = await WikiPageModel.findAll({where: {_id: entity.relatedWikis}});
+            await model.setRelatedWikis(relatedWikiModels);
+        }
     }
 
     async deleteAssociations(entity: Item, model: WikiPageModel){
