@@ -3,11 +3,19 @@ services:
   ##########
   # SERVER #
   ##########
+  base:
+    image: node:16
+    working_dir: /opt/rpgtools
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/opt/rpgtools
 
-  server_base:
+  server_dev:
     build:
       context: .
       dockerfile: ./packages/server/Dockerfile
+      target: base
       args:
         - NODE_ENV=dev
         - CURRENT_UID=${CURRENT_UID}
@@ -33,7 +41,7 @@ services:
 
   server:
     extends:
-      service: server_base
+      service: server_dev
     depends_on:
       - postgres
       - mongodb
@@ -42,7 +50,7 @@ services:
 
   server-brk:
     extends:
-      service: server_base
+      service: server_dev
     command: "npm run --workspace=packages/server dev-brk"
     depends_on:
       - postgres
@@ -58,6 +66,7 @@ services:
     depends_on:
       - mongodb
       - redis
+      - postgres
     networks:
       - rpgtools
 

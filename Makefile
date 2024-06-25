@@ -32,7 +32,7 @@ run-prod: .env $(PROD_SERVER_CONTAINER)
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-run-dev: .env packages/frontend/dist packages/server/dist/server db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
+run-dev: .env packages/frontend/dist packages/server/dist/server db containers $(NODE_MODULES) $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
@@ -209,16 +209,16 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
-	docker compose run --no-deps server npm ci
+	docker compose run base npm ci
 
-$(PROD_NODE_MODULES_CACHE):
-	npm ci --omit=dev
+$(PROD_NODE_MODULES_CACHE): .env
+	docker compose run base npm ci --omit=dev
 	mkdir -p node_modules_prod
 	cp -R node_modules/* node_modules_prod
 	rm -rf node_modules_prod/@rpgtools
 
-$(DEV_NODE_MODULES_CACHE):
-	npm ci
+$(DEV_NODE_MODULES_CACHE): .env
+	docker compose run base npm ci
 	mkdir -p node_modules_dev
 	cp -R node_modules/* node_modules_dev
 
@@ -230,7 +230,7 @@ server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
 $(SERVER_JS): .env $(SERVER_TS) $(packages/server/dist/server/src/index.js)
-	docker compose run --no-deps server npm run -w packages/server build
+	docker compose run base npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
 
