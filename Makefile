@@ -209,7 +209,7 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): package-lock.json
-	npm ci
+	docker compose run server npm ci
 
 $(PROD_NODE_MODULES_CACHE):
 	npm ci --omit=dev
@@ -229,8 +229,8 @@ $(DEV_NODE_MODULES_CACHE):
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
-$(SERVER_JS): $(SERVER_TS) $(NODE_MODULES)
-	npm run -w packages/server build
+$(SERVER_JS): $(SERVER_TS) $(packages/server/dist/server/src/index.js)
+	docker compose run server npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
 
@@ -249,14 +249,12 @@ prod-ui: $(PROD_FRONTEND_JS)
 
 $(PROD_FRONTEND_JS): $(NODE_MODULES) $(FRONTEND_TS)
 	rm -rf packages/frontend/dist
-	export NODE_ENV=production && npm -w packages/frontend start
-	rm -f packages/frontend/dist/app.js
-	rm -f packages/frontend/dist/app.css
+	docker compose run -e NODE_ENV=production ui-builder npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
 $(DEV_FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES)
 	rm -rf packages/frontend/dist
-	npm -w packages/frontend start
+	docker compose run ui-builder npm run --workspace=packages/frontend start
 	> $(DEV_FRONTEND_JS)
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder

@@ -30,7 +30,7 @@ ADD  packages/server/src packages/server/src
 
 ADD  packages/server/dist packages/server/dist
 
-ADD  packages/frontend/dist packages/server/dist/frontend
+ADD  packages/frontend/dist packages/frontend/dist
 
 RUN mkdir /opt/rpgtools/db
 RUN chmod o+rw /opt/rpgtools/db

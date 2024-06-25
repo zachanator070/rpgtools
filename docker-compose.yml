@@ -20,9 +20,11 @@ services:
       - ./packages/server/src:/opt/rpgtools/packages/server/src
       - ./packages/server/tests:/opt/rpgtools/packages/server/tests
       - ./packages/server/dist/server:/opt/rpgtools/packages/server/dist/server
-      - ./packages/frontend/dist:/opt/rpgtools/packages/server/dist/frontend
+      - ./packages/frontend/dist:/opt/rpgtools/packages/frontend/dist
+      # where to store SQLITE db files
       - ./db:/opt/rpgtools/db
       - ./packages/common/src:/opt/rpgtools/packages/common/src
+      - ./node_modules:/opt/rpgtools/node_modules
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
       - "9229:9229"
