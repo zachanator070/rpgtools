@@ -1,2 +1,2 @@
- ### RPG Tools v4.2.9 Changelog
- - Fixed a bug where children folders were not being returned in alphabetical order
+ ### RPG Tools v4.2.13 Changelog
+ - Altered build scripts to support IDE profiling inside local docker compose container.

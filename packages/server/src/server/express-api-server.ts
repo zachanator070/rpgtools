@@ -134,7 +134,8 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/export", ExportRouter);
 
 		const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-		const uiPath = path.resolve(__dirname, '..', '..', '..', 'frontend');
+		// /opt/rpgtools/packages/frontend/dist
+		const uiPath = path.resolve(__dirname, '..', '..', '..', '..', '..', 'frontend', 'dist');
 
 		this.expressServer.get("/ui*", (req, res) => {
 			return res.sendFile(path.resolve(uiPath, "index.html"));
