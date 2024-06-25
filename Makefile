@@ -28,7 +28,7 @@ PROD_SERVER_CONTAINER=containers/prod-server.txt
 ################
 
 # runs production version of docker image with minimal depending services
-run-prod: $(PROD_SERVER_CONTAINER)
+run-prod: .env $(PROD_SERVER_CONTAINER)
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
@@ -39,10 +39,10 @@ run-dev: .env packages/frontend/dist packages/server/dist/server db containers $
 run-dev-brk: .env packages/frontend/dist  packages/server/dist/server db
 	docker compose up server-brk ui-builder
 
-run-mongodb:
+run-mongodb: .env
 	docker compose up -d mongodb
 
-run-postgres:
+run-postgres: .env
 	docker compose up -d postgres
 
 # stops and destroys any running containers
@@ -50,7 +50,7 @@ down: .env
 	docker compose down
 
 # restart any running containers
-restart:
+restart: .env
 	docker compose restart
 
 # performs minimal install on a debian host
@@ -85,21 +85,21 @@ test-integration: test-integration-mongodb test-integration-postgres
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
 
-test-integration-postgres:
+test-integration-postgres: .env
 	docker compose up -d postgres
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-test-integration-mongodb:
+test-integration-mongodb: .env
 	docker compose up -d mongodb
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-test-integration-sqlite:
+test-integration-sqlite: .env
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
@@ -107,7 +107,7 @@ test-integration-sqlite:
 
 test-e2e: test-e2e-mongodb test-e2e-postgres test-e2e-sqlite
 
-test-e2e-mongodb: $(PROD_SERVER_CONTAINER)
+test-e2e-mongodb: .env $(PROD_SERVER_CONTAINER)
 	cp .env.example .env
 	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
 	docker compose up -d prod mongodb
@@ -116,7 +116,7 @@ test-e2e-mongodb: $(PROD_SERVER_CONTAINER)
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-postgres: $(PROD_SERVER_CONTAINER)
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 	cp .env.example .env
 	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -208,7 +208,7 @@ dev-deps: $(NODE_MODULES)
 prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
-$(NODE_MODULES): package-lock.json
+$(NODE_MODULES): .env package-lock.json
 	docker compose run server npm ci
 
 $(PROD_NODE_MODULES_CACHE):
@@ -229,7 +229,7 @@ $(DEV_NODE_MODULES_CACHE):
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
-$(SERVER_JS): $(SERVER_TS) $(packages/server/dist/server/src/index.js)
+$(SERVER_JS): .env $(SERVER_TS) $(packages/server/dist/server/src/index.js)
 	docker compose run server npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
@@ -247,12 +247,12 @@ $(PROD_SERVER_CONTAINER): $(NODE_MODULES) $(PROD_FRONTEND_JS) $(SERVER_JS)
 # transpiles the frontend tsx and typescript to js
 prod-ui: $(PROD_FRONTEND_JS)
 
-$(PROD_FRONTEND_JS): $(NODE_MODULES) $(FRONTEND_TS)
+$(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
 	rm -rf packages/frontend/dist
 	docker compose run -e NODE_ENV=production ui-builder npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
-$(DEV_FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES)
+$(DEV_FRONTEND_JS): .env $(FRONTEND_TS) $(NODE_MODULES)
 	rm -rf packages/frontend/dist
 	docker compose run ui-builder npm run --workspace=packages/frontend start
 	> $(DEV_FRONTEND_JS)
@@ -282,18 +282,18 @@ containers:
 	mkdir -p containers
 
 # builds local docker compose containers, usually only used in a dev environment
-build-dev: $(DEV_FRONTEND_JS) $(SERVER_JS)
+build-dev: .env $(DEV_FRONTEND_JS) $(SERVER_JS)
 	docker compose build
 
-$(DEV_SERVER_CONTAINER): $(DEV_SERVER_CONTAINER_SRC)
+$(DEV_SERVER_CONTAINER): .env $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server
 	echo $(shell docker images | grep rpgtools-server | awk '{print $3}' > $(DEV_SERVER_CONTAINER) )
 
-$(DEV_SERVER_BRK_CONTAINER): $(DEV_SERVER_CONTAINER_SRC)
+$(DEV_SERVER_BRK_CONTAINER): .env $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server-brk
 	echo $(shell docker images | grep rpgtools-server-brk | awk '{print $3}' > $(DEV_SERVER_BRK_CONTAINER) )
 
-$(DEV_FRONTEND_CONTAINER): $(FRONTEND_PACKAGE_JSON) packages/frontend/Dockerfile
+$(DEV_FRONTEND_CONTAINER): .env $(FRONTEND_PACKAGE_JSON) packages/frontend/Dockerfile
 	docker compose build ui-builder
 	echo $(shell docker images | grep rpgtools-ui-builder | awk '{print $3}' > $(DEV_FRONTEND_CONTAINER) )
 
