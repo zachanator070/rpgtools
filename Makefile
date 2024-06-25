@@ -175,7 +175,7 @@ publish:
 ###############
 
 # cleans built transpiled js and node modules
-clean: down clean-deps clean-docker
+clean: clean-deps clean-docker
 	rm -rf db
 	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
@@ -209,7 +209,7 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
-	docker compose run server npm ci
+	docker compose run --no-deps server npm ci
 
 $(PROD_NODE_MODULES_CACHE):
 	npm ci --omit=dev
@@ -230,7 +230,7 @@ server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
 $(SERVER_JS): .env $(SERVER_TS) $(packages/server/dist/server/src/index.js)
-	docker compose run server npm run -w packages/server build
+	docker compose run --no-deps server npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
 
