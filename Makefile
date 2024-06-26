@@ -229,13 +229,13 @@ $(DEV_NODE_MODULES_CACHE): .env
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
-$(SERVER_JS): .env $(SERVER_TS) $(packages/server/dist/server/src/index.js)
+$(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS) $(packages/server/dist/server/src/index.js)
 	docker compose run base npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
 
 # Builds rpgtools docker image
-$(PROD_SERVER_CONTAINER): $(NODE_MODULES) $(PROD_FRONTEND_JS) $(SERVER_JS)
+$(PROD_SERVER_CONTAINER): $(PROD_FRONTEND_JS) $(SERVER_JS)
 	echo "Building version $(VERSION)"
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
 	echo $(shell docker images | grep zachanator070/rpgtools:latest | awk '{print $3}' > $(PROD_SERVER_CONTAINER) )

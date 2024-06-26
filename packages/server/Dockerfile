@@ -4,6 +4,11 @@ FROM node:16-slim as base
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
 
+RUN mkdir /opt/rpgtools
+RUN chown node:node /opt/rpgtools
+
+USER node
+
 WORKDIR /opt/rpgtools
 RUN chmod o+rw /opt/rpgtools
 
