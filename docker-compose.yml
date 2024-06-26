@@ -8,6 +8,7 @@ services:
     working_dir: /opt/rpgtools
     environment:
       - NODE_ENV=development
+      - CYPRESS_CACHE_FOLDER=/opt/rpgtools/.cache/Cypress
     volumes:
       - ./:/opt/rpgtools
 
