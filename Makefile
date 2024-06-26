@@ -23,6 +23,8 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 PROD_SERVER_CONTAINER=containers/prod-server.txt
 
+NPM_COMMAND=docker compose run dev npm
+
 ################
 # RUN COMMANDS #
 ################
@@ -190,13 +192,9 @@ clean-deps:
 	-rm -rf node_modules_dev
 
 clean-docker: down
-	-docker ps -a | grep rpgtools | awk '{print $1}' | xargs docker rm -f
-	-docker images -a | grep rpgtools | awk '{print $3}' | xargs docker rmi -f
+	-$(shell docker ps -a | grep rpgtools | awk '{print $1}' | xargs docker rm -f)
+	-$(shell docker images -a | grep rpgtools | awk '{print $3}' | xargs docker rmi -f)
 	-docker rmi zachanator070/rpgtools:latest
-	-docker rmi rpgtools-server
-	-docker rmi rpgtools-server-brk
-	-docker rmi rpgtools-server_base
-	-docker rmi rpgtools-ui-builder
 	-rm -rf containers
 
 ######################
@@ -209,16 +207,16 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
-	docker compose run base npm ci
+	${NPM_COMMAND} ci
 
 $(PROD_NODE_MODULES_CACHE): .env
-	docker compose run base npm ci --omit=dev
+	${NPM_COMMAND} ci --omit=dev
 	mkdir -p node_modules_prod
 	cp -R node_modules/* node_modules_prod
 	rm -rf node_modules_prod/@rpgtools
 
 $(DEV_NODE_MODULES_CACHE): .env
-	docker compose run base npm ci
+	${NPM_COMMAND} ci
 	mkdir -p node_modules_dev
 	cp -R node_modules/* node_modules_dev
 
@@ -230,7 +228,7 @@ server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
 $(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS) $(packages/server/dist/server/src/index.js)
-	docker compose run base npm run -w packages/server build
+	${NPM_COMMAND} run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
 
