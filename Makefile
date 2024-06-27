@@ -192,8 +192,8 @@ clean-deps:
 	-rm -rf node_modules_dev
 
 clean-docker: down
-	-$(shell docker ps -a | grep rpgtools | awk '{print $1}' | xargs docker rm -f)
-	-$(shell docker images -a | grep rpgtools | awk '{print $3}' | xargs docker rmi -f)
+	-docker ps -a | grep rpgtools | awk '{print $$1}' | xargs docker rm -f
+	-docker images -a | grep rpgtools | awk '{print $$3}' | xargs docker rmi -f
 	-docker rmi zachanator070/rpgtools:latest
 	-rm -rf containers
 
