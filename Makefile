@@ -71,6 +71,9 @@ install:
 run-electron: $(ELECTRON_EXEC)
 	export SQLITE_DIRECTORY_PATH=db && ./$(ELECTRON_EXEC)
 
+shell: .env
+	docker compose run dev /bin/bash
+
 #########
 # TESTS #
 #########
