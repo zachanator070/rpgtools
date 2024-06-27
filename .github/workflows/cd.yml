@@ -34,7 +34,7 @@ jobs:
         body_path: CHANGELOG.md
 
   docker-image:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: release
     outputs:
       version: ${{ needs.release.outputs.version }}
