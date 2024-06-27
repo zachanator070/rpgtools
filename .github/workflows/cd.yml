@@ -34,14 +34,11 @@ jobs:
         body_path: CHANGELOG.md
 
   docker-image:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: release
     outputs:
       version: ${{ needs.release.outputs.version }}
     steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.0
       - uses: actions/checkout@v3
       - name: build
         run: make build-prod
