@@ -6,3 +6,5 @@ RUN chown node:node /opt/rpgtools
 WORKDIR /opt/rpgtools
 
 USER node
+
+ENV HOME="/home/node"
