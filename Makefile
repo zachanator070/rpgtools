@@ -3,7 +3,7 @@
 VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
-NODE_MODULES=node_modules/webpack/package.json
+NODE_MODULES=node_modules/.package-lock.json
 PROD_NODE_MODULES_CACHE=node_modules_prod/apollo-server/package.json
 DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
 PROD_FRONTEND_JS=packages/frontend/dist/production.txt
