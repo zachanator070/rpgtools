@@ -305,10 +305,20 @@ build-common:
 # BUILD ELECTRON #
 ##################
 
-# makes packaged electron executable
-electron-package: $(ELECTRON_EXEC)
+$(ELECTRON_EXEC):
+	npm ci --omit=dev
+	mkdir -p node_modules_prod
+	cp -R node_modules/* node_modules_prod
+	rm -rf node_modules_prod/@rpgtools
 
-$(ELECTRON_EXEC): $(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
+	npm ci
+	mkdir -p node_modules_dev
+	cp -R node_modules/* node_modules_dev
+
+	NODE_ENV=production npm run --workspace=packages/frontend start
+
+	NODE_ENV=production npm run -w packages/server build
+
 	cp -R node_modules_prod/* packages/server/node_modules
 	mkdir -p packages/server/node_modules/@rpgtools
 	cp -R packages/common packages/server/node_modules/@rpgtools
@@ -325,3 +335,4 @@ $(ELECTRON_DEB): $(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRO
 	npm run -w packages/server make
 
 electron: $(ELECTRON_DEB)
+electron-windows: $(ELECTRON_EXEC)
