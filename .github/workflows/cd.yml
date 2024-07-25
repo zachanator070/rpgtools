@@ -89,7 +89,7 @@ jobs:
           node-version: 16.14.0
       - uses: actions/checkout@v3
       - name: build artifacts
-        run: make electron-windows
+        run: make electron
       - name: list artifacts
         run: ls packages\server\out\make\squirrel.windows\x64
         continue-on-error: true

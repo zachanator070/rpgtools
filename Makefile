@@ -305,7 +305,7 @@ build-common:
 # BUILD ELECTRON #
 ##################
 
-$(ELECTRON_EXEC):
+electron-prep:
 	npm ci --omit=dev
 	mkdir -p node_modules_prod
 	cp -R node_modules/* node_modules_prod
@@ -324,15 +324,12 @@ $(ELECTRON_EXEC):
 	cp -R packages/common packages/server/node_modules/@rpgtools
 	mkdir -p packages/server/dist/frontend
 	cp -R packages/frontend/dist/* packages/server/dist/frontend
+
+electron-package: electron-prep
 	npm run -w packages/server package
 
-$(ELECTRON_DEB): $(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
-	cp -R node_modules_prod/* packages/server/node_modules
-	mkdir -p packages/server/node_modules/@rpgtools
-	cp -R packages/common packages/server/node_modules/@rpgtools
-	mkdir -p packages/server/dist/frontend
-	cp -R packages/frontend/dist/* packages/server/dist/frontend
+electron-make: electron-prep
 	npm run -w packages/server make
 
-electron: $(ELECTRON_DEB)
-electron-windows: $(ELECTRON_EXEC)
+electron: electron-make
+
