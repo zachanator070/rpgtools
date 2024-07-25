@@ -5,4 +5,6 @@ RUN chown node:node /opt/rpgtools
 
 WORKDIR /opt/rpgtools
 
-ENV HOME="/home/node"
+USER node
+
+ENV HOME="/opt/rpgtools"
