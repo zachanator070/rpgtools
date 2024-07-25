@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    user: ${CURRENT_UID}
+    user: 'root'
     environment:
       - NODE_ENV=development
     volumes:
