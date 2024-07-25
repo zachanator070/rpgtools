@@ -63,19 +63,19 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	useEffect(() => {
 		(async () => {
-			await setRenderer(
+			setRenderer(
 				new GameRenderer(
 					renderCanvas.current,
 					currentGame.map && currentGame.map.mapImage,
 					addStroke,
 					async (url, itemsLoaded, totalItems) => {
 						if (itemsLoaded / totalItems !== 1) {
-							await setShowLoading(true);
+							setShowLoading(true);
 						} else {
-							await setShowLoading(false);
+							setShowLoading(false);
 						}
-						await setUrlLoading(url);
-						await setLoadingProgress(itemsLoaded / totalItems);
+						setUrlLoading(url);
+						setLoadingProgress(itemsLoaded / totalItems);
 					},
 					setModelPosition,
 					async (positionedModel) => {
@@ -262,10 +262,10 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 		})();
 
 		const resize = () => {
-			if (renderer) {
+			if (renderer && renderCanvas.current) {
 				renderer.resize(
-					renderParent.current.clientWidth,
-					renderParent.current.clientHeight
+					renderCanvas.current.clientWidth,
+					renderCanvas.current.clientHeight
 				);
 			}
 		};
