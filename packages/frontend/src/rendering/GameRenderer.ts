@@ -105,7 +105,7 @@ export class GameRenderer extends EventEmitter {
 		this.loader = new THREE.LoadingManager();
 		this.loader.onProgress = onProgress;
 		this.loader.onStart = async () => {
-			await onProgress("", 0, 1);
+			onProgress("", 0, 1);
 		};
 
 		if(pixelsPerFoot) {
@@ -311,9 +311,9 @@ export class GameRenderer extends EventEmitter {
 				// (-1 to +1) for both components
 
 				this.mouseCoords.x =
-					(event.offsetX / this.renderer.domElement.width) * 2 - 1;
+					(event.offsetX / this.renderer.domElement.clientWidth) * 2 - 1;
 				this.mouseCoords.y =
-					-(event.offsetY / this.renderer.domElement.height) * 2 + 1;
+					-(event.offsetY / this.renderer.domElement.clientHeight) * 2 + 1;
 			},
 			false
 		);
@@ -523,9 +523,9 @@ export class GameRenderer extends EventEmitter {
 
 				// get bounding box and scale to match board size
 				const bbox = new THREE.Box3().setFromObject(loadedMesh);
-				const depthScale = model.depth / bbox.getSize().z;
-				const widthScale = model.width / bbox.getSize().x;
-				const heightScale = model.height / bbox.getSize().y;
+				const depthScale = model.depth / bbox.getSize(new THREE.Vector3()).z;
+				const widthScale = model.width / bbox.getSize(new THREE.Vector3()).x;
+				const heightScale = model.height / bbox.getSize(new THREE.Vector3()).y;
 
 				loadedMesh.scale.set(widthScale, heightScale, depthScale);
 				loadedMesh.position.set(positionedModel.x, 0, positionedModel.z);

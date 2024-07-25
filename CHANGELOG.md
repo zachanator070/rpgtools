@@ -1,2 +1,2 @@
- ### RPG Tools v4.2.13 Changelog
- - Altered build scripts to support IDE profiling inside local docker compose container.
+ ### RPG Tools v4.2.14 Changelog
+ - Fixed game model selection by using canvas clientWidth and clientHeight
