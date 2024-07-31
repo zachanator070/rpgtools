@@ -9,7 +9,7 @@ export interface AddStrokeVariables {
 	type: string;
 	size: number;
 	color: string;
-	fill: number;
+	fill: boolean;
 	strokeId: string;
 }
 

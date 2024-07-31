@@ -6,12 +6,11 @@ import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModel
 import useGameModelPositionedSubscription from "../../../hooks/game/useGameModelPosistionedSubscription";
 import LoadingView from "../../LoadingView";
 import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel";
-import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../../rendering/GameRenderer";
-import { MODEL_SELECTED_EVENT } from "../../../controls/SelectModelControls";
+import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../../game/GameRenderer";
+import { MODEL_SELECTED_EVENT } from "../../../game/controls/SelectModelControls";
 import {PositionedModel, WikiPage} from "../../../types";
 import PrimaryButton from "../../widgets/PrimaryButton";
 import PrimaryDangerButton from "../../widgets/PrimaryDangerButton";
-import TextInput from "../../widgets/input/TextInput";
 import ColorInput from "../../widgets/input/ColorInput";
 
 interface ModelInfoProps {

@@ -4,7 +4,7 @@ import { PLACE } from "@rpgtools/common/src/type-constants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../../hooks/game/useSetGameMap";
 import LoadingView from "../../LoadingView";
-import {GameRenderer} from "../../../rendering/GameRenderer";
+import {GameRenderer} from "../../../game/GameRenderer";
 import PrimaryButton from "../../widgets/PrimaryButton";
 import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
 import Toggle from "../../widgets/Toggle";

@@ -3,9 +3,9 @@ import {
 	BRUSH_ERASE,
 	BRUSH_FOG,
 	DEFAULT_BRUSH_SIZE,
-} from "../../../controls/PaintControls";
+} from "../../../game/controls/PaintControls";
 import ToolTip from "../../widgets/ToolTip";
-import {GameRenderer} from "../../../rendering/GameRenderer";
+import {GameRenderer} from "../../../game/GameRenderer";
 import NumberSlider from "../../widgets/NumberSlider";
 import DropdownSelect from "../../widgets/DropdownSelect";
 
