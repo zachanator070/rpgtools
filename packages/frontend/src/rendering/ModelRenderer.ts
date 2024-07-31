@@ -192,9 +192,9 @@ export class ModelRenderer {
 
 				// get bounding box and scale to match board size
 				const bbox = new THREE.Box3().setFromObject(loadedModel);
-				const depthScale = this.modelDepth / bbox.getSize().z;
-				const widthScale = this.modelWidth / bbox.getSize().x;
-				const heightScale = this.modelHeight / bbox.getSize().y;
+				const depthScale = this.modelDepth / bbox.getSize(new THREE.Vector3()).z;
+				const widthScale = this.modelWidth / bbox.getSize(new THREE.Vector3()).x;
+				const heightScale = this.modelHeight / bbox.getSize(new THREE.Vector3()).y;
 				loadedModel.scale.set(widthScale, heightScale, depthScale);
 				loadedModel.traverse(function (child) {
 					if (child.isMesh) {

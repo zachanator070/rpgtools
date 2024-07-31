@@ -9,7 +9,7 @@ import {
 	ROTATE_MODEL_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
-} from "../../rendering/GameRenderer";
+} from "../../game/GameRenderer";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LeaveGameButton from "./LeaveGameButton";
 import PermissionModal from "../modals/PermissionModal";

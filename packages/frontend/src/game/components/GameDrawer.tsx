@@ -8,7 +8,7 @@ import {
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
-} from "../../rendering/GameRenderer";
+} from "../../game/GameRenderer";
 import DiceOptions from "./dice-roller/DiceOptions";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";

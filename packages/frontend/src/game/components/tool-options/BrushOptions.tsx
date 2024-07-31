@@ -4,18 +4,18 @@ import {
 	BRUSH_ERASE,
 	BRUSH_LINE,
 	BRUSH_SQUARE,
-} from "../../../controls/PaintControls";
-import {GameRenderer} from "../../../rendering/GameRenderer";
-import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
-import ColorInput from "../../widgets/input/ColorInput";
-import DropdownSelect from "../../widgets/DropdownSelect";
-import NumberSlider from "../../widgets/NumberSlider";
+} from "../../controls/PaintControls";
+import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
+import ColorInput from "../../../components/widgets/input/ColorInput";
+import DropdownSelect from "../../../components/widgets/DropdownSelect";
+import NumberSlider from "../../../components/widgets/NumberSlider";
+import GameData from "../../GameData";
 
 interface BrushOptionsProps {
-	renderer: GameRenderer
+	gameData: GameData
 }
 
-export default function BrushOptions({ renderer }: BrushOptionsProps) {
+export default function BrushOptions({ gameData }: BrushOptionsProps) {
 	const [brushColor, setBrushColor] = useState(renderer.getPaintControls().getBrushColor());
 	const [brushType, setBrushType] = useState(renderer.getPaintControls().getBrushType());
 	const [brushSize, setBrushSize] = useState(renderer.getPaintControls().getBrushSize());

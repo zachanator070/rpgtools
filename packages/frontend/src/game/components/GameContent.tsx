@@ -10,7 +10,7 @@ import {
 	ROTATE_MODEL_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
-} from "../../rendering/GameRenderer";
+} from "../../game/GameRenderer";
 import useAddStroke from "../../hooks/game/useAddStroke";
 import useGameStrokeSubscription from "../../hooks/game/useGameStrokeSubscription";
 import GameControlsToolbar from "./GameControlsToolbar";
@@ -29,6 +29,7 @@ import useModal from "../widgets/useModal";
 import FullScreenModal from "../widgets/FullScreenModal";
 import ProgressBar from "../widgets/ProgressBar";
 import useNotification from "../widgets/useNotification";
+import GameController from "../../game/GameController";
 
 interface GameContentProps {
 	currentGame: Game;
@@ -39,6 +40,7 @@ interface GameContentProps {
 export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
 	const renderCanvas: Ref<HTMLCanvasElement> = useRef();
 	const [renderer, setRenderer] = useState<GameRenderer>();
+	const [gameControls, setGameControls] = useState<GameController>();
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [urlLoading, setUrlLoading] = useState<string>();
 	const [loadingProgress, setLoadingProgress] = useState<number>();
@@ -62,45 +64,46 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	const focusedElement = useRef<HTMLElement>(null);
 
 	useEffect(() => {
-		(async () => {
-			setRenderer(
-				new GameRenderer(
-					renderCanvas.current,
-					currentGame.map && currentGame.map.mapImage,
-					addStroke,
-					async (url, itemsLoaded, totalItems) => {
-						if (itemsLoaded / totalItems !== 1) {
-							setShowLoading(true);
-						} else {
-							setShowLoading(false);
-						}
-						setUrlLoading(url);
-						setLoadingProgress(itemsLoaded / totalItems);
-					},
-					setModelPosition,
-					async (positionedModel) => {
-						modalConfirm({
-							title: "Confirm Delete",
-							content: (
-								<>
-									Are you sure you want to delete the model{" "}
-									{positionedModel.model.name} ?
-								</>
-							),
-							okText: "Yes",
-							cancelText: "No",
-							onOk: async () => {
-								await deletePositionedModel({
-									gameId: currentGame._id,
-									positionedModelId: positionedModel._id,
-								});
-							},
-						});
-					},
-					addFogStroke,
-					currentGame.map ? currentGame.map.pixelsPerFoot : 1
-				)
+		(() => {
+			const renderer = new GameRenderer(
+				renderCanvas.current,
+				currentGame.map && currentGame.map.mapImage,
+				addStroke,
+				async (url, itemsLoaded, totalItems) => {
+					if (itemsLoaded / totalItems !== 1) {
+						setShowLoading(true);
+					} else {
+						setShowLoading(false);
+					}
+					setUrlLoading(url);
+					setLoadingProgress(itemsLoaded / totalItems);
+				},
+				setModelPosition,
+				async (positionedModel) => {
+					modalConfirm({
+						title: "Confirm Delete",
+						content: (
+							<>
+								Are you sure you want to delete the model{" "}
+								{positionedModel.model.name} ?
+							</>
+						),
+						okText: "Yes",
+						cancelText: "No",
+						onOk: async () => {
+							await deletePositionedModel({
+								gameId: currentGame._id,
+								positionedModelId: positionedModel._id,
+							});
+						},
+					});
+				},
+				addFogStroke,
+				currentGame.map ? currentGame.map.pixelsPerFoot : 1
 			);
+			const controlsManager = new GameController(renderer);
+			setRenderer(renderer);
+			setGameControls(controlsManager);
 		})();
 
 		const mouseOverListener = (event) => {
@@ -175,8 +178,8 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	}, []);
 
 	useEffect(() => {
-		if (renderer) {
-			renderer.changeControls(controlsMode);
+		if (gameControls) {
+			gameControls.changeControls(controlsMode);
 		}
 	}, [controlsMode]);
 
@@ -200,18 +203,18 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	useEffect(() => {
 		if (gameStrokeAdded && renderer) {
-			renderer.getPaintControls().stroke(gameStrokeAdded);
+			gameControls.getPaintControls().stroke(gameStrokeAdded);
 		}
 	}, [gameStrokeAdded]);
 
 	useEffect(() => {
 		if (gameFogStrokeAdded && renderer) {
-			renderer.getFogControls().stroke(gameFogStrokeAdded);
+			gameControls.getFogControls().stroke(gameFogStrokeAdded);
 		}
 	}, [gameFogStrokeAdded]);
 
 	useEffect(() => {
-		(async () => {
+		(() => {
 			if (!renderer) {
 				return;
 			}
@@ -245,14 +248,14 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 					}
 					renderer.setupMap();
 				}
-				if (renderer.getPaintControls() && strokes) {
+				if (gameControls.getPaintControls() && strokes) {
 					for (let stroke of strokes) {
-						renderer.getPaintControls().stroke(stroke);
+						gameControls.getPaintControls().stroke(stroke);
 					}
 				}
-				if (renderer.getFogControls() && fogStrokes) {
+				if (gameControls.getFogControls() && fogStrokes) {
 					for (let fogStroke of fogStrokes) {
-						renderer.getFogControls().stroke(fogStroke);
+						gameControls.getFogControls().stroke(fogStroke);
 					}
 				}
 				for (let model of currentGame.models) {

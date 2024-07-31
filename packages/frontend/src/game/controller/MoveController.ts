@@ -1,42 +1,34 @@
 import * as THREE from "three";
-import {GameControls} from "./GameControls";
-import {SelectControls} from "./SelectControls";
+import {GameController} from "./GameController";
+import GameData from "../GameData";
 
-export class MoveControls implements GameControls {
+export class MoveController implements GameController {
 
-	private renderRoot: any;
-	private raycaster: any;
-	private mapMesh: any;
-	private selectControls: SelectControls;
-	private moveCallback: any;
+	private gameData: GameData;
 
-	constructor(renderRoot, raycaster, mapMesh, selectControls, moveCallback) {
-		this.renderRoot = renderRoot;
-		this.raycaster = raycaster;
-		this.mapMesh = mapMesh;
-		this.selectControls = selectControls;
-		this.moveCallback = moveCallback;
+	constructor(gameData: GameData) {
+		this.gameData = gameData;
 	}
 
 	moveModel = () => {
-		const selectedMeshedModel = this.selectControls.getSelectedMeshedModel();
+		const selectedMeshedModel = this.gameData.selectedMeshedModel;
 		if (!selectedMeshedModel) {
 			return;
 		}
-		const mapIntersects = this.raycaster.intersectObject(this.mapMesh);
+		const mapIntersects = this.gameData.raycaster.intersectObject(this.gameData.mapMesh);
 		if (mapIntersects.length === 0) {
 			return;
 		}
 		const mapIntersect = mapIntersects[0].point;
-		const origin = this.raycaster.camera.position;
+		const origin = this.gameData.raycaster.camera.position;
 		const hypotenuse = origin.distanceTo(mapIntersect);
 		const theta = Math.asin(origin.y / hypotenuse);
 		const newHypotenuseLength =
-			this.selectControls.getIntersectionPoint().y / Math.sin(theta);
+			this.gameData.intersectionPoint.y / Math.sin(theta);
 		const hypotenuseRatio = newHypotenuseLength / hypotenuse;
 		const newHypotenuse = new THREE.Line3(
 			mapIntersect,
-			this.raycaster.camera.position
+			this.gameData.raycaster.camera.position
 		);
 		const newModelIntersection = new THREE.Vector3();
 		newHypotenuse.at(hypotenuseRatio, newModelIntersection);
@@ -49,7 +41,7 @@ export class MoveControls implements GameControls {
 	};
 
 	moveDone = () => {
-		const selectedMeshedModel = this.selectControls.getSelectedMeshedModel();
+		const selectedMeshedModel = this.gameData.selectedMeshedModel;
 		if (selectedMeshedModel) {
 			selectedMeshedModel.positionedModel.lookAtX +=
 				selectedMeshedModel.mesh.position.x -
@@ -60,26 +52,20 @@ export class MoveControls implements GameControls {
 
 			selectedMeshedModel.positionedModel.x = selectedMeshedModel.mesh.position.x;
 			selectedMeshedModel.positionedModel.z = selectedMeshedModel.mesh.position.z;
-
-			this.moveCallback(selectedMeshedModel);
 		}
-		this.selectControls.clearSelection();
 	};
 
 	enable = () => {
-		this.selectControls.enable();
-		this.renderRoot.addEventListener("mousemove", this.moveModel);
-		this.renderRoot.addEventListener("mouseup", this.moveDone);
+		this.gameData.renderRoot.addEventListener("mousemove", this.moveModel);
+		this.gameData.renderRoot.addEventListener("mouseup", this.moveDone);
 	};
 
 	disable = () => {
-		this.selectControls.disable();
 		this.tearDown();
 	};
 
 	tearDown = () => {
-		this.selectControls.tearDown();
-		this.renderRoot.removeEventListener("mousemove", this.moveModel);
-		this.renderRoot.removeEventListener("mouseup", this.moveDone);
+		this.gameData.renderRoot.removeEventListener("mousemove", this.moveModel);
+		this.gameData.renderRoot.removeEventListener("mouseup", this.moveDone);
 	};
 }

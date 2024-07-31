@@ -1,5 +1,5 @@
 
-export interface GameControls {
+export interface GameController {
     enable: () => void;
     disable: () => void;
     tearDown: () => void;
