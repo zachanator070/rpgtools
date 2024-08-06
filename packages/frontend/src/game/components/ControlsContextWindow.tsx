@@ -1,51 +1,51 @@
 import React, { useEffect, useState } from "react";
-import {
-	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS, GameRenderer,
-	PAINT_CONTROLS,
-	SELECT_LOCATION_CONTROLS,
-	SELECT_MODEL_CONTROLS,
-} from "../../game/GameRenderer";
+
 import BrushOptions from "./tool-options/BrushOptions";
 import FogOptions from "./tool-options/FogOptions";
 import ModelInfo from "./tool-options/ModelInfo";
 import GameLocationSettings from "./tool-options/GameLocationSettings";
 import AddModelSection from "./tool-options/AddModelSection";
-import MenuIcon from "../widgets/icons/MenuIcon";
-import CloseIcon from "../widgets/icons/CloseIcon";
+import GameControllerManager from "../GameControllerManager";
+import {
+	ADD_MODEL_CONTROLS,
+	FOG_CONTROLS,
+	PAINT_CONTROLS,
+	SELECT_LOCATION_CONTROLS,
+	SELECT_MODEL_CONTROLS
+} from "../GameState";
+import MenuIcon from "../../components/widgets/icons/MenuIcon";
+import CloseIcon from "../../components/widgets/icons/CloseIcon";
 
 interface ControlsContextWindowProps {
-	renderer: GameRenderer;
+	controllerManager: GameControllerManager;
 	controlsMode: string;
 	setGameWikiId: (id: string) => void
 }
 export default function ControlsContextWindow({
-	renderer,
+	controllerManager,
 	controlsMode,
 	setGameWikiId,
 }: ControlsContextWindowProps) {
 	const [visible, setVisible] = useState<boolean>();
 
 	useEffect(() => {
-		(async () => {
-			await setVisible(true);
-		})();
+			setVisible(true);
 	}, [controlsMode]);
 
 	let content = null;
 
 	switch (controlsMode) {
 		case PAINT_CONTROLS:
-			content = <BrushOptions renderer={renderer} />;
+			content = <BrushOptions controllerManager={controllerManager} />;
 			break;
 		case FOG_CONTROLS:
-			content = <FogOptions renderer={renderer} />;
+			content = <FogOptions controllerManager={controllerManager} />;
 			break;
 		case SELECT_MODEL_CONTROLS:
-			content = <ModelInfo renderer={renderer} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
+			content = <ModelInfo controllerManager={controllerManager} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case SELECT_LOCATION_CONTROLS:
-			content = <GameLocationSettings renderer={renderer} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
+			content = <GameLocationSettings controllerManager={controllerManager} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case ADD_MODEL_CONTROLS:
 			content = <AddModelSection />;

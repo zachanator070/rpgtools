@@ -1,24 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import useSetModelColor from "../../../hooks/game/useSetModelColor";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import SelectWiki from "../../select/SelectWiki";
 import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModelWiki";
 import useGameModelPositionedSubscription from "../../../hooks/game/useGameModelPosistionedSubscription";
-import LoadingView from "../../LoadingView";
 import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel";
-import {CONTROLS_SETUP_EVENT, GameRenderer} from "../../../game/GameRenderer";
-import { MODEL_SELECTED_EVENT } from "../../../game/controls/SelectModelControls";
 import {PositionedModel, WikiPage} from "../../../types";
-import PrimaryButton from "../../widgets/PrimaryButton";
-import PrimaryDangerButton from "../../widgets/PrimaryDangerButton";
-import ColorInput from "../../widgets/input/ColorInput";
+import GameControllerManager from "../../GameControllerManager";
+import LoadingView from "../../../components/LoadingView";
+import SelectWiki from "../../../components/select/SelectWiki";
+import PrimaryButton from "../../../components/widgets/PrimaryButton";
+import ColorInput from "../../../components/widgets/input/ColorInput";
+import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
 
 interface ModelInfoProps {
-	renderer: GameRenderer,
+	controllerManager: GameControllerManager,
 	setGameWikiId: (wikiId: string) => Promise<any>
 }
 
-export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
+export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInfoProps) {
 	const { currentGame, loading } = useCurrentGame();
 	const [positionedModel, setPositionedModel] = useState<PositionedModel>();
 	const [newWiki, setNewWiki] = useState<WikiPage>();
@@ -28,52 +27,14 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 	const { gameModelPositioned } = useGameModelPositionedSubscription();
 	const { deletePositionedModel } = useDeletePositionedModel();
 
-	const onControlsSetup = useRef(() => {
-		renderer.selectModelControls.on(MODEL_SELECTED_EVENT, (model) => {
-			setPositionedModel(model);
-		});
-	});
-
 	const onModelSelected = useRef((model) => {
 		setPositionedModel(model);
 	});
 
 	useEffect(() => {
-		if (renderer) {
-			renderer.on(CONTROLS_SETUP_EVENT, onControlsSetup.current);
-
-			if (renderer.selectModelControls) {
-				renderer.selectModelControls.on(
-					MODEL_SELECTED_EVENT,
-					onModelSelected.current
-				);
-				(async () => {
-					await setPositionedModel(
-						renderer.selectModelControls.getPositionedModel()
-					);
-				})();
-			}
+		if (positionedModel) {
+			setColor(positionedModel.color);
 		}
-		return () => {
-			if (renderer) {
-				renderer.off(CONTROLS_SETUP_EVENT, onControlsSetup.current);
-
-				if (renderer.selectModelControls) {
-					renderer.selectModelControls.off(
-						MODEL_SELECTED_EVENT,
-						onModelSelected.current
-					);
-				}
-			}
-		};
-	}, [renderer]);
-
-	useEffect(() => {
-		(async () => {
-			if (positionedModel) {
-				await setColor(positionedModel.color);
-			}
-		})();
 	}, [positionedModel]);
 
 	useEffect(() => {
@@ -82,9 +43,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 			positionedModel &&
 			positionedModel._id === gameModelPositioned._id
 		) {
-			(async () => {
-				await setPositionedModel(gameModelPositioned);
-			})();
+			setPositionedModel(gameModelPositioned);
 		}
 	}, [gameModelPositioned]);
 
@@ -147,9 +106,9 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 								style={{
 									width: "100px",
 								}}
-								onChange={async (e) => {
+								onChange={(e) => {
 									const value = e.target.value;
-									await setColor(value);
+									setColor(value);
 								}}
 							/>
 							<div style={{display: "flex", marginTop: "1em"}}>
@@ -179,7 +138,7 @@ export default function ModelInfo({ renderer, setGameWikiId }: ModelInfoProps) {
 
 						<PrimaryDangerButton
 							onClick={async () => {
-								await renderer.selectModelControls.select();
+								controllerManager.selectModelController.clearSelection();
 								await deletePositionedModel({
 									gameId: currentGame._id,
 									positionedModelId: positionedModel._id,

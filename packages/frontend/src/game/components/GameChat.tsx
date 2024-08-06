@@ -3,9 +3,9 @@ import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useGameChat from "../../hooks/game/useGameChat";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
-import PrimaryButton from "../widgets/PrimaryButton";
-import CommentMessage from "../widgets/CommentMessage";
-import TextInput from "../widgets/input/TextInput";
+import CommentMessage from "../../components/widgets/CommentMessage";
+import TextInput from "../../components/widgets/input/TextInput";
+import PrimaryButton from "../../components/widgets/PrimaryButton";
 
 export default function GameChat() {
 	const { currentGame } = useCurrentGame();
@@ -25,19 +25,15 @@ export default function GameChat() {
 	};
 
 	useEffect(() => {
-		(async () => {
-			if (currentGame) {
-				await setMessages(currentGame.messages);
-			}
-		})();
+		if (currentGame) {
+			setMessages(currentGame.messages);
+		}
 	}, [currentGame]);
 
 	useEffect(() => {
-		(async () => {
-			if (gameChatMessage) {
-				await setMessages(messages.concat([gameChatMessage]));
-			}
-		})();
+		if (gameChatMessage) {
+			setMessages(messages.concat([gameChatMessage]));
+		}
 	}, [gameChatMessage]);
 
 	useEffect(() => {
@@ -47,7 +43,7 @@ export default function GameChat() {
 	const submitComment = async () => {
 		if (comment) {
 			await gameChat({gameId: currentGame._id, message: comment});
-			await setComment(null);
+			setComment(null);
 			chatInput.current.focus();
 		}
 	};
@@ -107,8 +103,8 @@ export default function GameChat() {
 			<TextInput
 				innerRef={chatInput}
 				disabled={chatLoading}
-				onChange={async (value) => {
-					await setComment(value.target.value);
+				onChange={(value) => {
+					setComment(value.target.value);
 				}}
 				onKeyDown={async (key) => {
 					switch (key) {

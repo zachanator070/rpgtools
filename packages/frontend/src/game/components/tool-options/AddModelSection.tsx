@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import SelectModel from "../../select/SelectModel";
-import ModelViewer from "../../models/ModelViewer";
 import useAddModel from "../../../hooks/game/useAddModel";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import SelectWiki from "../../select/SelectWiki";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
 import {ModeledWiki} from "../../../types";
-import PrimaryButton from "../../widgets/PrimaryButton";
-import Toggle from "../../widgets/Toggle";
-
+import Toggle from "../../../components/widgets/Toggle";
+import SelectWiki from "../../../components/select/SelectWiki";
+import SelectModel from "../../../components/select/SelectModel";
+import ModelViewer from "../../../components/models/ModelViewer";
+import PrimaryButton from "../../../components/widgets/PrimaryButton";
 interface SelectedModel {
 	model: any;
 	wiki?: any;
@@ -25,9 +24,7 @@ export default function AddModelSection() {
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	useEffect(() => {
-		(async () => {
-			await setSelectedModel(null);
-		})();
+		setSelectedModel(null);
 	}, [wikiSearch]);
 
 	return (
@@ -39,24 +36,24 @@ export default function AddModelSection() {
 					checkedChildren={"Wiki's with Models"}
 					unCheckedChildren={"Model's only"}
 					defaultChecked={true}
-					onChange={async (checked) => {
-						await setWikiSearch(checked);
+					onChange={(checked) => {
+						setWikiSearch(checked);
 					}}
 				/>
 			</div>
 			{wikiSearch ? (
 				<SelectWiki
 					types={MODELED_WIKI_TYPES}
-					onChange={async (wiki: ModeledWiki) => {
+					onChange={(wiki: ModeledWiki) => {
 						setSelectedModel({model: wiki.model, wiki});
-						await setModelColor(wiki.modelColor);
+						setModelColor(wiki.modelColor);
 					}}
 					hasModel={true}
 				/>
 			) : (
 				<SelectModel
 					onChange={async (model) => {
-						await setSelectedModel({ model })
+						setSelectedModel({ model })
 					}}
 					showClear={false}
 				/>

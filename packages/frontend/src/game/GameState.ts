@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import {CAMERA_CONTROLS, MeshedModel} from "./GameRenderer";
-import {Image, Place} from "../types";
+import {Game, Image, Place, PositionedModel} from "../types";
 import {
     BufferGeometry,
     CanvasTexture,
@@ -22,7 +21,28 @@ import {
 } from "./controller/PaintController";
 import {Subject} from "rxjs";
 
-export default class GameData {
+export const CAMERA_CONTROLS = "Camera Controls";
+export const PAINT_CONTROLS = "Paint Controls";
+export const MOVE_MODEL_CONTROLS = "Move Model Controls";
+export const ROTATE_MODEL_CONTROLS = "Rotate Model Controls";
+export const DELETE_CONTROLS = "Delete Controls";
+export const FOG_CONTROLS = "Fog Controls";
+export const SELECT_MODEL_CONTROLS = "Select Model Controls";
+export const SELECT_LOCATION_CONTROLS = "Game Location";
+export const ADD_MODEL_CONTROLS = "Add Model";
+
+export const MAP_Y_POSITION = 0;
+export const DRAW_Y_POSITION = 0.05;
+export const FOG_Y_POSITION = 0.1;
+export const GROUND_Y_POSITION = -0.01;
+
+export interface MeshedModel {
+    positionedModel: PositionedModel;
+    mesh: any;
+}
+
+export default class GameState {
+    private _currentGame: Game;
     private _renderer: THREE.WebGLRenderer;
     private _renderRoot: HTMLCanvasElement;
 
@@ -48,7 +68,7 @@ export default class GameData {
     private _location: Place;
 
     private _currentControls = CAMERA_CONTROLS;
-    public currentControlsSubject = new Subject();
+    private _currentControlsSubject = new Subject();
 
     // selected model
     private _selectedMeshedModel: MeshedModel;
@@ -353,5 +373,21 @@ export default class GameData {
 
     set paintBrushMaterial(value: any) {
         this._paintBrushMaterial = value;
+    }
+
+    get currentGame(): Game {
+        return this._currentGame;
+    }
+
+    set currentGame(value: Game) {
+        this._currentGame = value;
+    }
+
+    get currentControlsSubject(): Subject<unknown> {
+        return this._currentControlsSubject;
+    }
+
+    set currentControlsSubject(value: Subject<unknown>) {
+        this._currentControlsSubject = value;
     }
 }

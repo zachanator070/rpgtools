@@ -1,19 +1,14 @@
 import React, { useState } from "react";
-import {
-	BRUSH_ERASE,
-	BRUSH_FOG,
-	DEFAULT_BRUSH_SIZE,
-} from "../../../game/controls/PaintControls";
-import ToolTip from "../../widgets/ToolTip";
-import {GameRenderer} from "../../../game/GameRenderer";
-import NumberSlider from "../../widgets/NumberSlider";
-import DropdownSelect from "../../widgets/DropdownSelect";
-
+import GameControllerManager from "../../GameControllerManager";
+import {BRUSH_ERASE, BRUSH_FOG, DEFAULT_BRUSH_SIZE} from "../../controller/PaintController";
+import DropdownSelect from "../../../components/widgets/DropdownSelect";
+import NumberSlider from "../../../components/widgets/NumberSlider";
+import ToolTip from "../../../components/widgets/ToolTip";
 interface FogOptionsProps {
-	renderer: GameRenderer;
+	controllerManager: GameControllerManager;
 }
 
-export default function FogOptions({ renderer }: FogOptionsProps) {
+export default function FogOptions({ controllerManager }: FogOptionsProps) {
 	const [brushType, setBrushType] = useState(BRUSH_FOG);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
 
@@ -24,9 +19,9 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 				<DropdownSelect
 					value={brushType}
 					style={{ width: 120 }}
-					onChange={async (value) => {
-						await setBrushType(value);
-						renderer.getFogControls().setBrushType(value);
+					onChange={(value) => {
+						setBrushType(value);
+						controllerManager.fogController.setBrushType(value);
 					}}
 					options={[
 						{value: BRUSH_FOG, label: 'Fog'},
@@ -40,9 +35,9 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 					min={1}
 					max={20}
 					value={brushSize}
-					onChange={async (value) => {
-						await setBrushSize(value);
-						renderer.getFogControls().setBrushSize(value);
+					onChange={(value) => {
+						setBrushSize(value);
+						controllerManager.fogController.setBrushSize(value);
 					}}
 				/>
 			</div>
@@ -53,7 +48,7 @@ export default function FogOptions({ renderer }: FogOptionsProps) {
 					min={0}
 					max={100}
 					onChange={async (value) => {
-						renderer.getFogControls().setDrawMeshOpacity(value / 100);
+						controllerManager.fogController.setDrawMeshOpacity(value / 100);
 					}}
 					defaultValue={100}
 				/>

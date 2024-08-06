@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
-import SlidingDrawer from "../widgets/SlidingDrawer";
 import GameChat from "./GameChat";
 import ToolOptions from "./tool-options/ToolOptions";
-import {
-	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS, GameRenderer,
-	PAINT_CONTROLS,
-	SELECT_LOCATION_CONTROLS,
-	SELECT_MODEL_CONTROLS,
-} from "../../game/GameRenderer";
 import DiceOptions from "./dice-roller/DiceOptions";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
-import TabCollection from "../widgets/TabCollection";
+import {
+	ADD_MODEL_CONTROLS,
+	FOG_CONTROLS,
+	PAINT_CONTROLS,
+	SELECT_LOCATION_CONTROLS,
+	SELECT_MODEL_CONTROLS
+} from "../GameState";
+import GameControllerManager from "../GameControllerManager";
+import SlidingDrawer from "../../components/widgets/SlidingDrawer";
+import TabCollection from "../../components/widgets/TabCollection";
 
 const GAME_CONTROLS_WITH_CONTEXT = [
 	SELECT_MODEL_CONTROLS,
@@ -23,12 +24,12 @@ const GAME_CONTROLS_WITH_CONTEXT = [
 ];
 
 interface GameDrawerProps {
-	renderer: GameRenderer;
+	controllerManager: GameControllerManager;
 	controlsMode: string;
 	setGameWikiId: (wikiId: string) => void;
 }
 
-export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: GameDrawerProps) {
+export default function GameDrawer({ controllerManager, controlsMode, setGameWikiId }: GameDrawerProps) {
 	const [visible, setVisible] = useState<boolean>(true);
 	const [activeKey, setActiveKey] = useState<string>("Chat");
 	const { gameChat } = useGameChatSubscription();
@@ -70,7 +71,7 @@ export default function GameDrawer({ renderer, controlsMode, setGameWikiId }: Ga
 					{
 						title: 'Tool Options',
 						children: <ToolOptions
-							renderer={renderer}
+							controllerManager={controllerManager}
 							controlsMode={controlsMode}
 							setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
 						/>

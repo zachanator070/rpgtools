@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
 import {GameController} from "./GameController";
 import {FogStroke, Stroke} from "../../types";
-import GameData from "../GameData";
+import GameState from "../GameState";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -17,15 +17,23 @@ export const DEFAULT_MAP_SIZE = 50;
 
 export class PaintController implements GameController {
 
-	private gameData: GameData;
+	private gameData: GameState;
+	private meshY: number;
 
 	constructor(
-		gameData: GameData,
+		gameData: GameState,
 		meshY = 0.01
 	) {
 		this.gameData = gameData;
+		this.meshY = meshY;
 
 		this.gameData.drawCanvas = document.createElement("canvas");
+		if(this.gameData.location) {
+			this.setupDrawCanvas();
+		}
+	}
+
+	setupDrawCanvas() {
 		this.gameData.drawCanvas.height = this.gameData.location.mapImage.height;
 		this.gameData.drawCanvas.width = this.gameData.location.mapImage.width;
 
@@ -45,7 +53,7 @@ export class PaintController implements GameController {
 		});
 		this.gameData.drawMesh = new THREE.Mesh(drawGeometry, this.gameData.drawMaterial);
 		this.gameData.drawMesh.receiveShadow = true;
-		this.gameData.drawMesh.position.set(0, meshY, 0);
+		this.gameData.drawMesh.position.set(0, this.meshY, 0);
 		this.gameData.drawMeshOpacity = 1;
 		this.gameData.scene.add(this.gameData.drawMesh);
 

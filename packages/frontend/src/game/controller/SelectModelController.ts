@@ -1,13 +1,13 @@
 
 import {GameController} from "./GameController";
-import GameData from "../GameData";
+import GameState from "../GameState";
 import {Material, MeshBasicMaterial, Vector3} from "three";
 import * as THREE from "three";
 
 export class SelectModelController implements GameController {
-	private gameData: GameData;
+	private gameData: GameState;
 
-	constructor(gameData: GameData) {
+	constructor(gameData: GameState) {
 		this.gameData = gameData;
 	}
 

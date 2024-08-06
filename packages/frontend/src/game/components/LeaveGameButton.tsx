@@ -4,7 +4,7 @@ import useLeaveGame from "../../hooks/game/useLeaveGame";
 import { useNavigate } from "react-router-dom";
 import useMyGames from "../../hooks/game/useMyGames";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
+import PrimaryDangerButton from "../../components/widgets/PrimaryDangerButton";
 
 export default function LeaveGameButton() {
 	const { currentWorld } = useCurrentWorld();

@@ -4,13 +4,12 @@ import {
 	CAMERA_CONTROLS,
 	DELETE_CONTROLS,
 	FOG_CONTROLS,
-	GameRenderer,
 	MOVE_MODEL_CONTROLS,
 	PAINT_CONTROLS,
 	ROTATE_MODEL_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS,
-} from "../../game/GameRenderer";
+} from "../GameState";
 import useAddStroke from "../../hooks/game/useAddStroke";
 import useGameStrokeSubscription from "../../hooks/game/useGameStrokeSubscription";
 import GameControlsToolbar from "./GameControlsToolbar";
@@ -25,11 +24,12 @@ import GameWikiDrawer from "./GameWikiDrawer";
 import InitiativeTracker from "./initiative-tracker/InitiativeTracker";
 import GameDrawer from "./GameDrawer";
 import {FogStroke, Game, Stroke} from "../../types";
-import useModal from "../widgets/useModal";
-import FullScreenModal from "../widgets/FullScreenModal";
-import ProgressBar from "../widgets/ProgressBar";
-import useNotification from "../widgets/useNotification";
-import GameController from "../../game/GameController";
+import useModal from "../../components/widgets/useModal";
+import FullScreenModal from "../../components/widgets/FullScreenModal";
+import ProgressBar from "../../components/widgets/ProgressBar";
+import useNotification from "../../components/widgets/useNotification";
+import GameControllerManager from "../GameControllerManager";
+import GameStateFactory from "../GameStateFactory";
 
 interface GameContentProps {
 	currentGame: Game;
@@ -39,8 +39,7 @@ interface GameContentProps {
 
 export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
 	const renderCanvas: Ref<HTMLCanvasElement> = useRef();
-	const [renderer, setRenderer] = useState<GameRenderer>();
-	const [gameControls, setGameControls] = useState<GameController>();
+	const [controllerManager, setControllerManager] = useState<GameControllerManager>();
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [urlLoading, setUrlLoading] = useState<string>();
 	const [loadingProgress, setLoadingProgress] = useState<number>();
@@ -63,218 +62,63 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	const renderParent: Ref<HTMLDivElement> = useRef();
 	const focusedElement = useRef<HTMLElement>(null);
 
-	useEffect(() => {
-		(() => {
-			const renderer = new GameRenderer(
-				renderCanvas.current,
-				currentGame.map && currentGame.map.mapImage,
-				addStroke,
-				async (url, itemsLoaded, totalItems) => {
-					if (itemsLoaded / totalItems !== 1) {
-						setShowLoading(true);
-					} else {
-						setShowLoading(false);
-					}
-					setUrlLoading(url);
-					setLoadingProgress(itemsLoaded / totalItems);
-				},
-				setModelPosition,
-				async (positionedModel) => {
-					modalConfirm({
-						title: "Confirm Delete",
-						content: (
-							<>
-								Are you sure you want to delete the model{" "}
-								{positionedModel.model.name} ?
-							</>
-						),
-						okText: "Yes",
-						cancelText: "No",
-						onOk: async () => {
-							await deletePositionedModel({
-								gameId: currentGame._id,
-								positionedModelId: positionedModel._id,
-							});
-						},
-					});
-				},
-				addFogStroke,
-				currentGame.map ? currentGame.map.pixelsPerFoot : 1
-			);
-			const controlsManager = new GameController(renderer);
-			setRenderer(renderer);
-			setGameControls(controlsManager);
-		})();
+	const trySetupControllerManager = (renderCanvas: HTMLCanvasElement) => {
+		if(!renderCanvas || controllerManager) {
+			return;
+		}
+		const gameState = GameStateFactory(
+			renderCanvas,
+			currentGame,
+			currentGame.map && currentGame.map.mapImage,
+			currentGame.map ? currentGame.map.pixelsPerFoot : 1
+		);
+		const controlsManager = new GameControllerManager(gameState);
+		setControllerManager(controlsManager);
 
-		const mouseOverListener = (event) => {
-			focusedElement.current = event.target as HTMLElement;
-		};
-		const keyDownListener = ({ code }) => {
+		if (currentGame.map && currentGame.map.mapImage) {
+			let mapNeedsSetup = false;
+			if (controllerManager.gameState.pixelsPerFoot !== currentGame.map.pixelsPerFoot) {
+				controllerManager.gameState.pixelsPerFoot = currentGame.map.pixelsPerFoot;
+				mapNeedsSetup = true;
+			}
 			if (
-				![
-					"KeyP",
-					"KeyC",
-					"KeyM",
-					"KeyR",
-					"KeyX",
-					"KeyF",
-					"KeyS",
-					"KeyA",
-					"KeyL",
-				].includes(code) || renderCanvas.current !== focusedElement.current
+				(!controllerManager.gameState.mapImage && currentGame.map.mapImage) ||
+				(controllerManager.gameState.mapImage && !currentGame.map.mapImage) ||
+				controllerManager.gameState.mapImage._id !== currentGame.map.mapImage._id
 			) {
-				return;
+				controllerManager.gameState.mapImage = currentGame.map.mapImage;
+				mapNeedsSetup = true;
 			}
-			switch (code) {
-				case "KeyC":
-					setControlsMode(CAMERA_CONTROLS);
-					break;
-				case "KeyP":
-					if (currentGame.canPaint) {
-						setControlsMode(PAINT_CONTROLS);
-					}
-					break;
-				case "KeyM":
-					if (currentGame.canModel) {
-						setControlsMode(MOVE_MODEL_CONTROLS);
-					}
-					break;
-				case "KeyR":
-					if (currentGame.canModel) {
-						setControlsMode(ROTATE_MODEL_CONTROLS);
-					}
-					break;
-				case "KeyX":
-					if (currentGame.canModel) {
-						setControlsMode(DELETE_CONTROLS);
-					}
-					break;
-				case "KeyF":
-					if (currentGame.canWriteFog) {
-						setControlsMode(FOG_CONTROLS);
-					}
-					break;
-				case "KeyS":
-					setControlsMode(SELECT_MODEL_CONTROLS);
-					break;
-				case "KeyA":
-					if (currentGame.canModel) {
-						setControlsMode(ADD_MODEL_CONTROLS);
-					}
-					break;
-				case "KeyL":
-					setControlsMode(SELECT_LOCATION_CONTROLS);
-					break;
+			if (mapNeedsSetup) {
+				if (!currentGame.map.mapImage) {
+					errorNotification({
+						message: "Map Render Error",
+						description: `Location: ${currentGame.map.name} has no map image!`,
+					});
+				}
+				if (!currentGame.map.pixelsPerFoot) {
+					errorNotification({
+						message: "Map Render Error",
+						description: `Location: ${currentGame.map.name} has no "pixel per foot" value set!`,
+					});
+				}
+				controllerManager.mapController.setupMap();
 			}
-		};
-		window.addEventListener("mouseover", mouseOverListener);
-
-		window.addEventListener("keydown", keyDownListener);
-
-		return () => {
-			window.removeEventListener("mouseover", mouseOverListener);
-			window.removeEventListener("keydown", keyDownListener);
-		}
-	}, []);
-
-	useEffect(() => {
-		if (gameControls) {
-			gameControls.changeControls(controlsMode);
-		}
-	}, [controlsMode]);
-
-	useEffect(() => {
-		if (renderer) {
-			renderer.updateModel(modelPositioned);
-		}
-	}, [modelPositioned]);
-
-	useEffect(() => {
-		if (gameModelAdded && renderer) {
-			renderer.addModel(gameModelAdded);
-		}
-	}, [gameModelAdded]);
-
-	useEffect(() => {
-		if (gameModelDeleted && renderer) {
-			renderer.removeModel(gameModelDeleted);
-		}
-	}, [gameModelDeleted]);
-
-	useEffect(() => {
-		if (gameStrokeAdded && renderer) {
-			gameControls.getPaintControls().stroke(gameStrokeAdded);
-		}
-	}, [gameStrokeAdded]);
-
-	useEffect(() => {
-		if (gameFogStrokeAdded && renderer) {
-			gameControls.getFogControls().stroke(gameFogStrokeAdded);
-		}
-	}, [gameFogStrokeAdded]);
-
-	useEffect(() => {
-		(() => {
-			if (!renderer) {
-				return;
-			}
-
-			if (currentGame && currentGame.map && currentGame.map.mapImage) {
-				let needsSetup = false;
-				if (renderer.getPixelsPerFoot() !== currentGame.map.pixelsPerFoot) {
-					renderer.setPixelsPerFoot(currentGame.map.pixelsPerFoot);
-					needsSetup = true;
-				}
-				if (
-					(!renderer.getMapImage() && currentGame.map.mapImage) ||
-					(renderer.getMapImage() && !currentGame.map.mapImage) ||
-					renderer.getMapImage()._id !== currentGame.map.mapImage._id
-				) {
-					renderer.setMapImage(currentGame.map.mapImage);
-					needsSetup = true;
-				}
-				if (needsSetup) {
-					if (!currentGame.map.mapImage) {
-						errorNotification({
-							message: "Map Render Error",
-							description: `Location: ${currentGame.map.name} has no map image!`,
-						});
-					}
-					if (!currentGame.map.pixelsPerFoot) {
-						errorNotification({
-							message: "Map Render Error",
-							description: `Location: ${currentGame.map.name} has no "pixel per foot" value set!`,
-						});
-					}
-					renderer.setupMap();
-				}
-				if (gameControls.getPaintControls() && strokes) {
-					for (let stroke of strokes) {
-						gameControls.getPaintControls().stroke(stroke);
-					}
-				}
-				if (gameControls.getFogControls() && fogStrokes) {
-					for (let fogStroke of fogStrokes) {
-						gameControls.getFogControls().stroke(fogStroke);
-					}
-				}
-				for (let model of currentGame.models) {
-					renderer.addModel(model);
+			if (controllerManager.paintController && strokes) {
+				for (let stroke of strokes) {
+					controllerManager.paintController.stroke(stroke);
 				}
 			}
-		})();
-
-		const resize = () => {
-			if (renderer && renderCanvas.current) {
-				renderer.resize(
-					renderCanvas.current.clientWidth,
-					renderCanvas.current.clientHeight
-				);
+			if (controllerManager.fogController && fogStrokes) {
+				for (let fogStroke of fogStrokes) {
+					controllerManager.fogController.stroke(fogStroke);
+				}
 			}
-		};
-
-		window.addEventListener("resize", resize);
-	}, [currentGame, strokes, fogStrokes, renderer]);
+			for (let model of currentGame.models) {
+				controllerManager.sceneController.addModel(model);
+			}
+		}
+	}
 
 	return (
 		<>
@@ -302,7 +146,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 				ref={renderParent}
 			>
 				<canvas
-					ref={renderCanvas}
+					ref={(node) => trySetupControllerManager(node)}
 					style={{
 						flexGrow: 1,
 						display: "flex",
@@ -311,7 +155,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 				<InitiativeTracker />
 				<GameWikiDrawer wikiId={gameWikiId} />
 				<GameDrawer
-					renderer={renderer}
+					controllerManager={controllerManager}
 					controlsMode={controlsMode}
 					setGameWikiId={setGameWikiId}
 				/>

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import SelectWiki from "../../select/SelectWiki";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../../hooks/game/useSetGameMap";
-import LoadingView from "../../LoadingView";
-import {GameRenderer} from "../../../game/GameRenderer";
-import PrimaryButton from "../../widgets/PrimaryButton";
-import PrimaryCheckbox from "../../widgets/PrimaryCheckbox";
-import Toggle from "../../widgets/Toggle";
+import GameControllerManager from "../../GameControllerManager";
+import LoadingView from "../../../components/LoadingView";
+import Toggle from "../../../components/widgets/Toggle";
+import SelectWiki from "../../../components/select/SelectWiki";
+import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
+import PrimaryButton from "../../../components/widgets/PrimaryButton";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;
-	 renderer: GameRenderer;
+	 controllerManager: GameControllerManager;
  }
 
-export default function GameLocationSettings({ setGameWikiId, renderer }: GameLocationSettingsProps) {
+export default function GameLocationSettings({ setGameWikiId, controllerManager }: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [clearPaint, setClearPaint] = useState<boolean>();
@@ -41,9 +41,9 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 				<Toggle
 					checkedChildren={"Grid"}
 					unCheckedChildren={"No Grid"}
-					defaultChecked={renderer.getDrawGrid()}
-					onChange={async (checked) => {
-						renderer.setDrawGrid(checked);
+					defaultChecked={controllerManager.gameState.drawGrid}
+					onChange={(checked) => {
+						controllerManager.gameState.drawGrid = checked;
 					}}
 				/>
 			</div>
@@ -52,16 +52,16 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 					<h3>Change Location</h3>
 					<SelectWiki
 						types={[PLACE]}
-						onChange={async (wiki) => {
-							await setSelectedLocation(wiki._id);
+						onChange={(wiki) => {
+							setSelectedLocation(wiki._id);
 						}}
 					/>
 					<div className={"margin-md"}>
 						Clear Paint:{" "}
 						<PrimaryCheckbox
 							checked={clearPaint}
-							onChange={async (checked) => {
-								await setClearPaint(checked);
+							onChange={(checked) => {
+								setClearPaint(checked);
 							}}
 						/>
 					</div>
@@ -69,8 +69,8 @@ export default function GameLocationSettings({ setGameWikiId, renderer }: GameLo
 						Set Fog:{" "}
 						<PrimaryCheckbox
 							checked={setFog}
-							onChange={async (checked) => {
-								await setSetFog(checked);
+							onChange={(checked) => {
+								setSetFog(checked);
 							}}
 						/>
 					</div>
