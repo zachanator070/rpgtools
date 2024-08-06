@@ -10,8 +10,8 @@ import doubleDecahedron from "../../../icons/double-decahedron.svg";
 import DiceIcon from "./DiceIcon";
 import useGameChat from "../../../hooks/game/useGameChat";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import ToolTip from "../../widgets/ToolTip";
-import PrimaryButton from "../../widgets/PrimaryButton";
+import ToolTip from "../../../components/widgets/ToolTip";
+import PrimaryButton from "../../../components/widgets/PrimaryButton";
 
 export const SET_COUNT_ACTION = 'SET_COUNT_ACTION';
 export const SET_BONUS_ACTION = 'SET_BONUS_ACTION';

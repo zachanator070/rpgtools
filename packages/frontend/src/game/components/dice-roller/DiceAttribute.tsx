@@ -4,11 +4,11 @@ import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetCharacterAttributes from "../../../hooks/game/useSetCharacterAttributes";
 import {GameCharacterAttribute} from "../../../types";
 import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter";
-import InputForm from "../../widgets/input/InputForm";
-import FormItem from "../../widgets/input/FormItem";
-import NumberInput from "../../widgets/input/NumberInput";
-import FullScreenModal from "../../widgets/FullScreenModal";
-import EditIcon from "../../widgets/icons/EditIcon";
+import EditIcon from "../../../components/widgets/icons/EditIcon";
+import FullScreenModal from "../../../components/widgets/FullScreenModal";
+import InputForm from "../../../components/widgets/input/InputForm";
+import FormItem from "antd/es/form/FormItem";
+import NumberInput from "../../../components/widgets/input/NumberInput";
 
 interface DiceAttributeProps {
 	attribute: GameCharacterAttribute

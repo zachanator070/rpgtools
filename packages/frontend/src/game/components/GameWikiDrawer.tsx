@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import SlidingDrawer from "../widgets/SlidingDrawer";
 import useGameWiki from "../../hooks/wiki/useGameWiki";
-import WikiView from "../wiki/view/WikiView";
-import LoadingView from "../LoadingView";
+import SlidingDrawer from "../../components/widgets/SlidingDrawer";
+import LoadingView from "../../components/LoadingView";
+import WikiView from "../../components/wiki/view/WikiView";
 
 interface GameWikiDrawerProps {
 	wikiId: string;

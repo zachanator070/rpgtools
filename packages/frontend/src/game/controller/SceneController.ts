@@ -1,30 +1,50 @@
-import GameData from "../GameData";
+import GameState from "../GameState";
 import {PositionedModel} from "../../types";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import * as THREE from "three";
 import {Mesh, Vector3} from "three";
 import {Object3D} from "three/src/core/Object3D";
-import {MeshedModel} from "../GameRenderer";
+import {MeshedModel} from '../GameState';
 
 
 export default class SceneController {
 
-    private gameData: GameData;
+    private gameData: GameState;
+    private loader: THREE.LoadingManager;
 
-    public constructor(gameData: GameData) {
+    public constructor(gameData: GameState) {
         this.gameData = gameData;
+        this.loader = new THREE.LoadingManager();
+        this.loader.onProgress = (message: string, current: number, max: number) => {};
+        this.loader.onStart = async () => {
+        };
+
+        const animate = () => {
+            requestAnimationFrame(animate);
+            if (this.gameData.mouseCoords) {
+                this.gameData.raycaster.setFromCamera(this.gameData.mouseCoords, this.gameData.camera);
+            }
+            this.gameData.renderer.render(this.gameData.scene, this.gameData.camera);
+        };
+        animate();
     }
 
+    resize = (width: number, height: number) => {
+        this.gameData.camera.aspect = width / height;
+        this.gameData.camera.updateProjectionMatrix();
+        this.gameData.renderer.setSize(width, height);
+    };
+
     addModel(positionedModel: PositionedModel) {
-        for (let model of this.meshedModels) {
+        for (let model of this.gameData.meshedModels) {
             if (model.positionedModel._id === positionedModel._id) {
                 return;
             }
         }
         const model = positionedModel.model;
         // push onto cache before loading to prevent race condition from model subscription
-        this.meshedModels.push({
+        this.gameData.meshedModels.push({
             positionedModel: {...positionedModel},
             mesh: null,
         });
@@ -58,7 +78,7 @@ export default class SceneController {
                         child.castShadow = true;
                     }
                 });
-                for (let meshedModel of this.meshedModels) {
+                for (let meshedModel of this.gameData.meshedModels) {
                     if (meshedModel.positionedModel._id === positionedModel._id) {
                         meshedModel.mesh = loadedMesh;
                         if (extension === "obj") {
@@ -73,7 +93,7 @@ export default class SceneController {
                                 node.material = node.material.clone();
                             }
                         });
-                        this.originalMeshedModels.push(meshedModelClone);
+                        this.gameData.originalMeshedModels.push(meshedModelClone);
                         if (meshedModel.positionedModel.color) {
                             this.setModelColor(
                                 meshedModel,
@@ -83,7 +103,7 @@ export default class SceneController {
                         break;
                     }
                 }
-                this.scene.add(loadedMesh);
+                this.gameData.scene.add(loadedMesh);
             },
             undefined,
             (error) => {
@@ -93,16 +113,8 @@ export default class SceneController {
     }
 
     removeModel = (positionedModel: PositionedModel) => {
-        if (
-            this.selectModelControls.selectControls.selectedMeshedModel &&
-            this.selectModelControls.selectControls.selectedMeshedModel
-                .positionedModel._id === positionedModel._id
-        ) {
-            this.selectModelControls.selectControls.clearSelection();
-            this.selectModelControls.constructGlow();
-        }
         let meshedModelToRemove = null;
-        for (let meshedModel of this.meshedModels) {
+        for (let meshedModel of this.gameData.meshedModels) {
             if (meshedModel.positionedModel._id === positionedModel._id) {
                 meshedModelToRemove = meshedModel;
             }
@@ -111,24 +123,24 @@ export default class SceneController {
             console.warn("Could not find meshed model to delete");
             return;
         }
-        this.meshedModels = this.meshedModels.filter(
+        this.gameData.meshedModels = this.gameData.meshedModels.filter(
             (meshedModel) =>
                 meshedModel.positionedModel._id !==
                 meshedModelToRemove.positionedModel._id
         );
-        this.scene.remove(meshedModelToRemove.mesh);
+        this.gameData.scene.remove(meshedModelToRemove.mesh);
     };
 
     updateModel(positionedModel: PositionedModel) {
         let targetModel = null;
         let targetOriginal = null;
-        for (let meshedModel of this.meshedModels) {
+        for (let meshedModel of this.gameData.meshedModels) {
             if (meshedModel.positionedModel._id === positionedModel._id) {
                 targetModel = meshedModel;
                 break;
             }
         }
-        for (let meshedModel of this.originalMeshedModels) {
+        for (let meshedModel of this.gameData.originalMeshedModels) {
             if (meshedModel.positionedModel._id === positionedModel._id) {
                 targetOriginal = meshedModel;
                 break;
@@ -154,14 +166,6 @@ export default class SceneController {
         }
 
         targetModel.positionedModel = positionedModel;
-
-        if (
-            this.selectModelControls.selectControls.selectedMeshedModel &&
-            this.selectModelControls.selectControls.selectedMeshedModel
-                .positionedModel._id === positionedModel._id
-        ) {
-            this.selectModelControls.constructGlow(true);
-        }
     }
 
     setModelColor = (meshedModel: MeshedModel, color: string) => {
@@ -172,9 +176,9 @@ export default class SceneController {
                 }
             });
         } else {
-            this.scene.remove(meshedModel.mesh);
+            this.gameData.scene.remove(meshedModel.mesh);
             let clonedModel = null;
-            for (let model of this.originalMeshedModels) {
+            for (let model of this.gameData.originalMeshedModels) {
                 if (model.positionedModel._id === meshedModel.positionedModel._id) {
                     clonedModel = model;
                 }
@@ -189,7 +193,7 @@ export default class SceneController {
                     node.material = node.material.clone();
                 }
             });
-            this.scene.add(meshedModel.mesh);
+            this.gameData.scene.add(meshedModel.mesh);
         }
     };
 }

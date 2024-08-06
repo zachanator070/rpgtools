@@ -1,25 +1,20 @@
 import React, { useState } from "react";
-import {
-	BRUSH_CIRCLE,
-	BRUSH_ERASE,
-	BRUSH_LINE,
-	BRUSH_SQUARE,
-} from "../../controls/PaintControls";
 import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
 import ColorInput from "../../../components/widgets/input/ColorInput";
 import DropdownSelect from "../../../components/widgets/DropdownSelect";
 import NumberSlider from "../../../components/widgets/NumberSlider";
-import GameData from "../../GameData";
+import GameControllerManager from "../../GameControllerManager";
+import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_LINE, BRUSH_SQUARE} from "../../controller/PaintController";
 
 interface BrushOptionsProps {
-	gameData: GameData
+	controllerManager: GameControllerManager
 }
 
-export default function BrushOptions({ gameData }: BrushOptionsProps) {
-	const [brushColor, setBrushColor] = useState(renderer.getPaintControls().getBrushColor());
-	const [brushType, setBrushType] = useState(renderer.getPaintControls().getBrushType());
-	const [brushSize, setBrushSize] = useState(renderer.getPaintControls().getBrushSize());
-	const [fillBrush, setFillBrush] = useState(renderer.getPaintControls().getBrushFill());
+export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
+	const [brushColor, setBrushColor] = useState(controllerManager.paintController.getBrushColor());
+	const [brushType, setBrushType] = useState(controllerManager.paintController.getBrushType());
+	const [brushSize, setBrushSize] = useState(controllerManager.paintController.getBrushSize());
+	const [fillBrush, setFillBrush] = useState(controllerManager.paintController.getBrushFill());
 
 	return (
 		<>
@@ -28,10 +23,10 @@ export default function BrushOptions({ gameData }: BrushOptionsProps) {
 				<ColorInput
 					style={{ width: "50px" }}
 					value={brushColor}
-					onChange={async (e) => {
+					onChange={(e) => {
 						const value = e.target.value;
-						await setBrushColor(value);
-						renderer.getPaintControls().setBrushColor(value);
+						setBrushColor(value);
+						controllerManager.paintController.setBrushColor(value);
 					}}
 				/>
 			</div>
@@ -40,9 +35,9 @@ export default function BrushOptions({ gameData }: BrushOptionsProps) {
 				<DropdownSelect
 					value={brushType}
 					style={{ width: 120 }}
-					onChange={async (value) => {
-						await setBrushType(value);
-						renderer.getPaintControls().setBrushType(value);
+					onChange={(value) => {
+						setBrushType(value);
+						controllerManager.paintController.setBrushType(value);
 					}}
 					options={[
 						{value: BRUSH_LINE, label: 'Line'},
@@ -58,9 +53,9 @@ export default function BrushOptions({ gameData }: BrushOptionsProps) {
 					min={1}
 					max={20}
 					value={brushSize}
-					onChange={async (value) => {
-						await setBrushSize(value);
-						renderer.getPaintControls().setBrushSize(value);
+					onChange={(value) => {
+						setBrushSize(value);
+						controllerManager.paintController.setBrushSize(value);
 					}}
 				/>
 			</div>
@@ -68,9 +63,9 @@ export default function BrushOptions({ gameData }: BrushOptionsProps) {
 				<h3>Fill Brush</h3>
 				<PrimaryCheckbox
 					checked={fillBrush}
-					onChange={async (checked) => {
-						await setFillBrush(checked);
-						renderer.getPaintControls().setBrushFill(checked);
+					onChange={(checked) => {
+						setFillBrush(checked);
+						controllerManager.paintController.setBrushFill(checked);
 					}}
 				/>
 			</div>

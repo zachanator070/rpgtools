@@ -1,25 +1,23 @@
 
 import {GameController} from "./GameController";
-import GameData from "../GameData";
+import GameState from "../GameState";
 
 export class DeleteController implements GameController {
 
-	private renderRoot: HTMLCanvasElement;
-	private gameData: GameData;
+	private gameState: GameState;
 
-	constructor(renderRoot: HTMLCanvasElement, gameData: GameData) {
-		this.renderRoot = renderRoot;
-		this.gameData = gameData;
+	constructor(gameState: GameState) {
+		this.gameState = gameState;
 	}
 
 	deleteModelEvent = (event: KeyboardEvent) => {
-		if (event.key === 'del' && this.gameData.selectedMeshedModel) {
-			this.gameData.selectedMeshedModel = null;
+		if (event.key === 'del' && this.gameState.selectedMeshedModel) {
+			this.gameState.selectedMeshedModel = null;
 		}
 	};
 
 	enable = () => {
-		this.renderRoot.addEventListener("keydown", this.deleteModelEvent);
+		this.gameState.renderRoot.addEventListener("keydown", this.deleteModelEvent);
 	};
 
 	disable = () => {
@@ -27,6 +25,6 @@ export class DeleteController implements GameController {
 	};
 
 	tearDown = () => {
-		this.renderRoot.removeEventListener("keydown", this.deleteModelEvent);
+		this.gameState.renderRoot.removeEventListener("keydown", this.deleteModelEvent);
 	};
 }

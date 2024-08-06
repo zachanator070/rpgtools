@@ -1,11 +1,11 @@
 import {GameController} from "./GameController";
-import GameData from "../GameData";
+import GameState from "../GameState";
 
 export class RotateController implements GameController {
 
-	private gameData: GameData;
+	private gameData: GameState;
 
-	constructor(gameData: GameData) {
+	constructor(gameData: GameState) {
 		this.gameData = gameData;
 	}
 

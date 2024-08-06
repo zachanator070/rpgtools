@@ -1,38 +1,39 @@
 import React from "react";
-import {
-	ADD_MODEL_CONTROLS,
-	FOG_CONTROLS, GameRenderer,
-	PAINT_CONTROLS,
-	SELECT_LOCATION_CONTROLS,
-	SELECT_MODEL_CONTROLS,
-} from "../../../game/GameRenderer";
 import BrushOptions from "./BrushOptions";
 import FogOptions from "./FogOptions";
 import ModelInfo from "./ModelInfo";
 import GameLocationSettings from "./GameLocationSettings";
 import AddModelSection from "./AddModelSection";
+import GameControllerManager from "../../GameControllerManager";
+import {
+	ADD_MODEL_CONTROLS,
+	FOG_CONTROLS,
+	PAINT_CONTROLS,
+	SELECT_LOCATION_CONTROLS,
+	SELECT_MODEL_CONTROLS
+} from "../../GameState";
 
 interface ToolOptionsProps {
-	renderer: GameRenderer;
+	controllerManager: GameControllerManager;
 	controlsMode: string;
 	setGameWikiId: (wikiId: string) => Promise<any>
 }
 
-export default function ToolOptions({ renderer, controlsMode, setGameWikiId }: ToolOptionsProps) {
+export default function ToolOptions({ controllerManager, controlsMode, setGameWikiId }: ToolOptionsProps) {
 	let content = null;
 
 	switch (controlsMode) {
 		case PAINT_CONTROLS:
-			content = <BrushOptions renderer={renderer} />;
+			content = <BrushOptions controllerManager={controllerManager} />;
 			break;
 		case FOG_CONTROLS:
-			content = <FogOptions renderer={renderer} />;
+			content = <FogOptions controllerManager={controllerManager} />;
 			break;
 		case SELECT_MODEL_CONTROLS:
-			content = <ModelInfo renderer={renderer} setGameWikiId={setGameWikiId} />;
+			content = <ModelInfo controllerManager={controllerManager} setGameWikiId={setGameWikiId} />;
 			break;
 		case SELECT_LOCATION_CONTROLS:
-			content = <GameLocationSettings renderer={renderer} setGameWikiId={setGameWikiId} />;
+			content = <GameLocationSettings controllerManager={controllerManager} setGameWikiId={setGameWikiId} />;
 			break;
 		case ADD_MODEL_CONTROLS:
 			content = <AddModelSection />;

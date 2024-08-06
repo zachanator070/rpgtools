@@ -1,31 +1,27 @@
 import React, { useState } from "react";
-import {
-	ADD_MODEL_CONTROLS,
-	CAMERA_CONTROLS,
-	DELETE_CONTROLS,
-	FOG_CONTROLS,
-	MOVE_MODEL_CONTROLS,
-	PAINT_CONTROLS,
-	ROTATE_MODEL_CONTROLS,
-	SELECT_LOCATION_CONTROLS,
-	SELECT_MODEL_CONTROLS,
-} from "../../game/GameRenderer";
 import useCurrentGame from "../../hooks/game/useCurrentGame";
 import LeaveGameButton from "./LeaveGameButton";
-import PermissionModal from "../modals/PermissionModal";
 import { GAME } from "@rpgtools/common/src/type-constants";
-import ToolTip from "../widgets/ToolTip";
-import DeleteIcon from "../widgets/icons/DeleteIcon";
-import QuestionMarkIcon from "../widgets/icons/QuestionMarkIcon";
-import CloudIcon from "../widgets/icons/CloudIcon";
-import HighlightIcon from "../widgets/icons/HighlightIcon";
-import RedoIcon from "../widgets/icons/RedoIcon";
-import AddIcon from "../widgets/icons/AddIcon";
-import CameraIcon from "../widgets/icons/CameraIcon";
-import MoveIcon from "../widgets/icons/MoveIcon";
-import PeopleIcon from "../widgets/icons/PeopleIcon";
-import LocationIcon from "../widgets/icons/LocationIcon";
-import SelectIcon from "../widgets/icons/SelectIcon";
+import {
+	ADD_MODEL_CONTROLS,
+	CAMERA_CONTROLS, DELETE_CONTROLS, FOG_CONTROLS,
+	MOVE_MODEL_CONTROLS,
+	PAINT_CONTROLS,
+	ROTATE_MODEL_CONTROLS, SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
+} from "../GameState";
+import CameraIcon from "../../components/widgets/icons/CameraIcon";
+import HighlightIcon from "../../components/widgets/icons/HighlightIcon";
+import AddIcon from "../../components/widgets/icons/AddIcon";
+import MoveIcon from "../../components/widgets/icons/MoveIcon";
+import RedoIcon from "../../components/widgets/icons/RedoIcon";
+import DeleteIcon from "../../components/widgets/icons/DeleteIcon";
+import CloudIcon from "../../components/widgets/icons/CloudIcon";
+import SelectIcon from "../../components/widgets/icons/SelectIcon";
+import LocationIcon from "../../components/widgets/icons/LocationIcon";
+import ToolTip from "../../components/widgets/ToolTip";
+import PermissionModal from "../../components/modals/PermissionModal";
+import PeopleIcon from "../../components/widgets/icons/PeopleIcon";
+
 
 interface GameControlsToolbarProps {
 	controlsMode: string;
@@ -138,8 +134,8 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 								borderTop: mode === controlsMode ? "3px solid #1890ff" : "none",
 								cursor: "pointer",
 							}}
-							onClick={async () => {
-								await setControlsMode(mode);
+							onClick={() => {
+								setControlsMode(mode);
 							}}
 						>
 							{icons[mode]}
@@ -167,8 +163,8 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 			<ToolTip title={"Game Permissions"}>
 				<div style={{ padding: "10px", backgroundColor: "white" }}>
 					<a
-						onClick={async () => {
-							await setPermissionModalVisibility(true);
+						onClick={() => {
+							setPermissionModalVisibility(true);
 						}}
 					>
 						<PeopleIcon />
