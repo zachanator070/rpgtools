@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import {Game, Image, Place, PositionedModel} from "../types";
+import {FogStroke, Game, Image, PathNode, Place, PositionedModel, Stroke} from "../types";
 import {
     BufferGeometry,
     CanvasTexture,
-    DirectionalLight, Material,
+    DirectionalLight, Fog, Material,
     Mesh, MeshPhongMaterial, Object3DEventMap,
     PerspectiveCamera,
     Raycaster,
@@ -20,6 +20,7 @@ import {
     DEFAULT_BRUSH_TYPE
 } from "./controller/PaintController";
 import {Subject} from "rxjs";
+import Queue from "./Queue";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -66,6 +67,7 @@ export default class GameState {
     private _pixelsPerFoot: number;
     private _drawGrid: boolean = false;
     private _location: Place;
+    public locationSubject: Subject<Place> = new Subject();
 
     private _currentControls = CAMERA_CONTROLS;
     private _currentControlsSubject = new Subject();
@@ -80,19 +82,26 @@ export default class GameState {
     private _drawTexture: THREE.CanvasTexture;
     private _drawMaterial: THREE.MeshPhongMaterial;
     private _drawMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
-    private _drawMeshOpacity: number;
-    private _pathBeingPainted: any[];
-    private _strokeId: any;
+    private _drawMeshOpacity: number = 1;
+    private _pathBeingPainted: PathNode[] = [];
+    private _strokeId: string = null;
     private _brushType: string = DEFAULT_BRUSH_TYPE;
     private _brushColor: string = DEFAULT_BRUSH_COLOR;
     private _brushFill: boolean = DEFAULT_BRUSH_FILL;
     private _brushSize: number = DEFAULT_BRUSH_SIZE;
-    private _strokesAlreadyDrawn: any[];
-    private _paintBrushMesh: any;
-    private _paintBrushMaterial: any;
+    private _strokesAlreadyDrawn: Queue<Stroke> = new Queue<Stroke>();
+    private _paintBrushMesh: THREE.Mesh = null;
+    private _paintBrushMaterial: THREE.Material = null;
+    public strokeAddedSubject: Subject<Stroke> = new Subject();
 
     // fog
+    private _fogAlreadyDrawn: Queue<FogStroke> = new Queue<FogStroke>();
 
+    constructor() {
+        this._strokesAlreadyDrawn.addCallback((stroke) => {
+            this.strokeAddedSubject.next(stroke);
+        });
+    }
 
     get renderer(): WebGLRenderer {
         return this._renderer;
@@ -260,6 +269,7 @@ export default class GameState {
     }
 
     set location(value: Place) {
+        this.locationSubject.next(value);
         this._location = value;
     }
 
@@ -351,12 +361,12 @@ export default class GameState {
         this._brushSize = value;
     }
 
-    get strokesAlreadyDrawn(): any[] {
+    get strokesAlreadyDrawn(): Queue<Stroke> {
         return this._strokesAlreadyDrawn;
     }
 
-    set strokesAlreadyDrawn(value: any[]) {
-        this._strokesAlreadyDrawn = value;
+    get fogAlreadyDrawn(): Queue<FogStroke> {
+        return this._fogAlreadyDrawn;
     }
 
     get paintBrushMesh(): any {

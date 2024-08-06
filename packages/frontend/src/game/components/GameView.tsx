@@ -18,7 +18,6 @@ export default function GameView() {
 	const {fogStrokes, loading: fogStrokeLoading} = useGameFogStrokes();
 	const { currentUser } = useCurrentUser();
 	const { refetch } = useMyGames();
-	const { data: mapChangeGame } = useGameMapChangeSubscription();
 
 	const {modalWarning} = useModal();
 

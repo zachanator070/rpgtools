@@ -65,19 +65,19 @@ export default function GameStateFactory(
             gameState.scene.remove(gameState.light);
             gameState.scene.remove(gameState.light.target);
         }
-        gameState.light = new THREE.DirectionalLight(0xffffff, 0.25);
+        gameState.light = new THREE.DirectionalLight(0xffffff, 2);
         gameState.light.position.set(100, 100, 100);
         gameState.light.castShadow = true;
         gameState.light.shadow.camera.near = 0.01;
         gameState.light.shadow.camera.far = 1000;
-        const frustrum = 50;
+        const frustrum: number = 50;
         gameState.light.shadow.camera.left = -frustrum;
         gameState.light.shadow.camera.bottom = -frustrum;
         gameState.light.shadow.camera.right = frustrum;
         gameState.light.shadow.camera.top = frustrum;
 
-        // const helper = new THREE.DirectionalLightHelper( this.light, 5 );
-        // this.scene.add( helper );
+        const helper = new THREE.DirectionalLightHelper( gameState.light, 5 );
+        gameState.scene.add( helper );
 
         gameState.scene.add(gameState.light);
         gameState.scene.add(gameState.light.target);

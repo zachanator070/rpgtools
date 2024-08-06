@@ -27,9 +27,9 @@ import {FogStroke, Game, Stroke} from "../../types";
 import useModal from "../../components/widgets/useModal";
 import FullScreenModal from "../../components/widgets/FullScreenModal";
 import ProgressBar from "../../components/widgets/ProgressBar";
-import useNotification from "../../components/widgets/useNotification";
 import GameControllerManager from "../GameControllerManager";
 import GameStateFactory from "../GameStateFactory";
+import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
 
 interface GameContentProps {
 	currentGame: Game;
@@ -38,7 +38,6 @@ interface GameContentProps {
 }
 
 export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
-	const renderCanvas: Ref<HTMLCanvasElement> = useRef();
 	const [controllerManager, setControllerManager] = useState<GameControllerManager>();
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [urlLoading, setUrlLoading] = useState<string>();
@@ -49,18 +48,25 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	const { addFogStroke } = useAddFogStroke();
 
 	const {modalConfirm} = useModal();
-	const {errorNotification} = useNotification();
 
 	const [gameWikiId, setGameWikiId] = useState<string>();
 
 	const [controlsMode, setControlsMode] = useState<string>(CAMERA_CONTROLS);
+
+	const {data: mapChangeGame} = useGameMapChangeSubscription();
 	const { data: gameStrokeAdded } = useGameStrokeSubscription();
 	const { data: gameModelAdded } = useGameModelAddedSubscription();
 	const { data: modelPositioned } = useGameModelPositionedSubscription();
 	const { gameModelDeleted } = useGameModelDeletedSubscription();
 	const { gameFogStrokeAdded } = useGameFogSubscription();
-	const renderParent: Ref<HTMLDivElement> = useRef();
+
 	const focusedElement = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		if (controllerManager) {
+			controllerManager.gameState.location = mapChangeGame.map;
+		}
+	}, [mapChangeGame]);
 
 	const trySetupControllerManager = (renderCanvas: HTMLCanvasElement) => {
 		if(!renderCanvas || controllerManager) {
@@ -72,52 +78,11 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 			currentGame.map && currentGame.map.mapImage,
 			currentGame.map ? currentGame.map.pixelsPerFoot : 1
 		);
+		if (currentGame.map && currentGame.map.mapImage) {
+			gameState.location = currentGame.map;
+		}
 		const controlsManager = new GameControllerManager(gameState);
 		setControllerManager(controlsManager);
-
-		if (currentGame.map && currentGame.map.mapImage) {
-			let mapNeedsSetup = false;
-			if (controllerManager.gameState.pixelsPerFoot !== currentGame.map.pixelsPerFoot) {
-				controllerManager.gameState.pixelsPerFoot = currentGame.map.pixelsPerFoot;
-				mapNeedsSetup = true;
-			}
-			if (
-				(!controllerManager.gameState.mapImage && currentGame.map.mapImage) ||
-				(controllerManager.gameState.mapImage && !currentGame.map.mapImage) ||
-				controllerManager.gameState.mapImage._id !== currentGame.map.mapImage._id
-			) {
-				controllerManager.gameState.mapImage = currentGame.map.mapImage;
-				mapNeedsSetup = true;
-			}
-			if (mapNeedsSetup) {
-				if (!currentGame.map.mapImage) {
-					errorNotification({
-						message: "Map Render Error",
-						description: `Location: ${currentGame.map.name} has no map image!`,
-					});
-				}
-				if (!currentGame.map.pixelsPerFoot) {
-					errorNotification({
-						message: "Map Render Error",
-						description: `Location: ${currentGame.map.name} has no "pixel per foot" value set!`,
-					});
-				}
-				controllerManager.mapController.setupMap();
-			}
-			if (controllerManager.paintController && strokes) {
-				for (let stroke of strokes) {
-					controllerManager.paintController.stroke(stroke);
-				}
-			}
-			if (controllerManager.fogController && fogStrokes) {
-				for (let fogStroke of fogStrokes) {
-					controllerManager.fogController.stroke(fogStroke);
-				}
-			}
-			for (let model of currentGame.models) {
-				controllerManager.sceneController.addModel(model);
-			}
-		}
 	}
 
 	return (
@@ -143,7 +108,6 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 					position: "relative",
 					overflow: "hidden",
 				}}
-				ref={renderParent}
 			>
 				<canvas
 					ref={(node) => trySetupControllerManager(node)}
