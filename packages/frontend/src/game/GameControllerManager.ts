@@ -14,21 +14,22 @@ import GameState, {
 } from "./GameState";
 import SceneController from "./controller/SceneController";
 import MapController from "./controller/MapController";
+import {FogStroke, Stroke} from "../types";
 
 
 export default class GameControllerManager {
     private _selectModelController: SelectModelController;
     private _moveController: MoveController;
     private _rotateController: RotateController;
-    private _paintController: PaintController;
+    private _paintController: PaintController<Stroke>;
     private _deleteController: DeleteController;
-    private _fogController: PaintController;
+    private _fogController: PaintController<FogStroke>;
     private _cameraController: CameraController;
     private _sceneController: SceneController;
     private _mapController: MapController;
 
     private _gameState: GameState;
-    
+
     private focusedElement: HTMLElement;
 
     public constructor(gameData: GameState) {
@@ -44,11 +45,13 @@ export default class GameControllerManager {
 
         this._paintController = new PaintController(
             this._gameState,
+            this._gameState.strokesAlreadyDrawn,
             DRAW_Y_POSITION
         );
 
         this._fogController = new PaintController(
             this._gameState,
+            this._gameState.fogAlreadyDrawn,
             FOG_Y_POSITION
         );
 
@@ -82,13 +85,13 @@ export default class GameControllerManager {
 
         this._changeControls(this._gameState.currentControls);
     }
-    
+
     setupListeners() {
-        window.addEventListener("resize", this.resize);
-        window.addEventListener("mouseover", this.mouseOverListener);
-        window.addEventListener("keydown", this.keyDownListener);
+        window.addEventListener("resize", () => this.resize());
+        window.addEventListener("mouseover", (event) => this.mouseOverListener(event));
+        window.addEventListener("keydown", (event) => this.keyDownListener(event));
     }
-    
+
     tearDown() {
         window.removeEventListener("resize", this.resize);
         window.removeEventListener("mouseover", this.mouseOverListener);
@@ -97,8 +100,8 @@ export default class GameControllerManager {
 
     resize() {
         this.sceneController.resize(
-            this.gameState.renderRoot.clientWidth,
-            this.gameState.renderRoot.clientHeight
+            this.gameState.renderRoot.parentElement.clientWidth,
+            this.gameState.renderRoot.parentElement.clientHeight
         );
     };
 
@@ -168,92 +171,47 @@ export default class GameControllerManager {
         this._gameState.currentControls = mode;
     };
 
-
     get selectModelController(): SelectModelController {
         return this._selectModelController;
-    }
-
-    set selectModelController(value: SelectModelController) {
-        this._selectModelController = value;
     }
 
     get moveController(): MoveController {
         return this._moveController;
     }
 
-    set moveController(value: MoveController) {
-        this._moveController = value;
-    }
-
     get rotateController(): RotateController {
         return this._rotateController;
     }
 
-    set rotateController(value: RotateController) {
-        this._rotateController = value;
-    }
-
-    get paintController(): PaintController {
+    get paintController(): PaintController<Stroke> {
         return this._paintController;
-    }
-
-    set paintController(value: PaintController) {
-        this._paintController = value;
     }
 
     get deleteController(): DeleteController {
         return this._deleteController;
     }
 
-    set deleteController(value: DeleteController) {
-        this._deleteController = value;
-    }
-
-    get fogController(): PaintController {
+    get fogController(): PaintController<FogStroke> {
         return this._fogController;
-    }
-
-    set fogController(value: PaintController) {
-        this._fogController = value;
     }
 
     get cameraController(): CameraController {
         return this._cameraController;
     }
 
-    set cameraController(value: CameraController) {
-        this._cameraController = value;
-    }
-
     get gameState(): GameState {
         return this._gameState;
-    }
-
-    set gameState(value: GameState) {
-        this._gameState = value;
     }
 
     get changeControls(): (mode: string) => void {
         return this._changeControls;
     }
 
-    set changeControls(value: (mode: string) => void) {
-        this._changeControls = value;
-    }
-
     get sceneController(): SceneController {
         return this._sceneController;
     }
 
-    set sceneController(value: SceneController) {
-        this._sceneController = value;
-    }
-
     get mapController(): MapController {
         return this._mapController;
-    }
-
-    set mapController(value: MapController) {
-        this._mapController = value;
     }
 }

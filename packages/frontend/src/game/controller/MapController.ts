@@ -2,6 +2,8 @@ import GameState from "../GameState";
 import * as THREE from "three";
 import {GROUND_Y_POSITION, MAP_Y_POSITION} from "../GameState";
 import {DEFAULT_MAP_SIZE} from "./PaintController";
+import {Place} from "../../types";
+import useNotification from "../../components/widgets/useNotification";
 
 
 export default class MapController {
@@ -9,7 +11,40 @@ export default class MapController {
 
     public constructor(gameState: GameState) {
         this.gameState = gameState;
-        this.setupMap()
+        this.gameState.locationSubject.asObservable().subscribe((newLocation) => this.onLocationChange(newLocation));
+        this.setupMap();
+    }
+
+    onLocationChange(newLocation: Place) {
+        const {errorNotification} = useNotification();
+        let mapNeedsSetup = false;
+        if (this.gameState.pixelsPerFoot !== newLocation.pixelsPerFoot) {
+            this.gameState.pixelsPerFoot = newLocation.pixelsPerFoot;
+            mapNeedsSetup = true;
+        }
+        if (
+            (!this.gameState.mapImage && newLocation.mapImage) ||
+            (this.gameState.mapImage && !newLocation.mapImage) ||
+            this.gameState.mapImage._id !== newLocation.mapImage._id
+        ) {
+            this.gameState.mapImage = newLocation.mapImage;
+            mapNeedsSetup = true;
+        }
+        if (mapNeedsSetup) {
+            if (!newLocation.mapImage) {
+                errorNotification({
+                    message: "Map Render Error",
+                    description: `Location: ${newLocation.name} has no map image!`,
+                });
+            }
+            if (!newLocation.pixelsPerFoot) {
+                errorNotification({
+                    message: "Map Render Error",
+                    description: `Location: ${newLocation.name} has no "pixel per foot" value set!`,
+                });
+            }
+            this.setupMap();
+        }
     }
 
     setupMap() {
