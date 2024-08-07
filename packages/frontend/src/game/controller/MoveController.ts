@@ -4,31 +4,31 @@ import GameState from "../GameState";
 
 export class MoveController implements GameController {
 
-	private gameData: GameState;
+	private gameState: GameState;
 
 	constructor(gameData: GameState) {
-		this.gameData = gameData;
+		this.gameState = gameData;
 	}
 
 	moveModel = () => {
-		const selectedMeshedModel = this.gameData.selectedMeshedModel;
+		const selectedMeshedModel = this.gameState.selectedMeshedModel;
 		if (!selectedMeshedModel) {
 			return;
 		}
-		const mapIntersects = this.gameData.raycaster.intersectObject(this.gameData.mapMesh);
+		const mapIntersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
 		if (mapIntersects.length === 0) {
 			return;
 		}
 		const mapIntersect = mapIntersects[0].point;
-		const origin = this.gameData.raycaster.camera.position;
+		const origin = this.gameState.raycaster.camera.position;
 		const hypotenuse = origin.distanceTo(mapIntersect);
 		const theta = Math.asin(origin.y / hypotenuse);
 		const newHypotenuseLength =
-			this.gameData.intersectionPoint.y / Math.sin(theta);
+			this.gameState.intersectionPoint.y / Math.sin(theta);
 		const hypotenuseRatio = newHypotenuseLength / hypotenuse;
 		const newHypotenuse = new THREE.Line3(
 			mapIntersect,
-			this.gameData.raycaster.camera.position
+			this.gameState.raycaster.camera.position
 		);
 		const newModelIntersection = new THREE.Vector3();
 		newHypotenuse.at(hypotenuseRatio, newModelIntersection);
@@ -41,7 +41,7 @@ export class MoveController implements GameController {
 	};
 
 	moveDone = () => {
-		const selectedMeshedModel = this.gameData.selectedMeshedModel;
+		const selectedMeshedModel = this.gameState.selectedMeshedModel;
 		if (selectedMeshedModel) {
 			selectedMeshedModel.positionedModel.lookAtX +=
 				selectedMeshedModel.mesh.position.x -
@@ -56,8 +56,8 @@ export class MoveController implements GameController {
 	};
 
 	enable = () => {
-		this.gameData.renderRoot.addEventListener("mousemove", this.moveModel);
-		this.gameData.renderRoot.addEventListener("mouseup", this.moveDone);
+		this.gameState.renderRoot.addEventListener("mousemove", this.moveModel);
+		this.gameState.renderRoot.addEventListener("mouseup", this.moveDone);
 	};
 
 	disable = () => {
@@ -65,7 +65,7 @@ export class MoveController implements GameController {
 	};
 
 	tearDown = () => {
-		this.gameData.renderRoot.removeEventListener("mousemove", this.moveModel);
-		this.gameData.renderRoot.removeEventListener("mouseup", this.moveDone);
+		this.gameState.renderRoot.removeEventListener("mousemove", this.moveModel);
+		this.gameState.renderRoot.removeEventListener("mouseup", this.moveDone);
 	};
 }

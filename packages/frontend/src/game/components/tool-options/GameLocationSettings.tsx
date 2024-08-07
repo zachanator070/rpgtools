@@ -8,6 +8,7 @@ import Toggle from "../../../components/widgets/Toggle";
 import SelectWiki from "../../../components/select/SelectWiki";
 import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
+import {DEFAULT_MAP_DRAW_GRID} from "../../GameState";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;
@@ -41,9 +42,9 @@ export default function GameLocationSettings({ setGameWikiId, controllerManager 
 				<Toggle
 					checkedChildren={"Grid"}
 					unCheckedChildren={"No Grid"}
-					defaultChecked={controllerManager.gameState.drawGrid}
+					defaultChecked={DEFAULT_MAP_DRAW_GRID}
 					onChange={(checked) => {
-						controllerManager.gameState.drawGrid = checked;
+						controllerManager.mapController.setDrawGrid(checked);
 					}}
 				/>
 			</div>

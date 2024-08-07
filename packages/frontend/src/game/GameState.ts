@@ -19,7 +19,6 @@ import {
     DEFAULT_BRUSH_SIZE,
     DEFAULT_BRUSH_TYPE
 } from "./controller/PaintController";
-import {Subject} from "rxjs";
 import Queue from "./Queue";
 
 export const CAMERA_CONTROLS = "Camera Controls";
@@ -37,9 +36,18 @@ export const DRAW_Y_POSITION = 0.05;
 export const FOG_Y_POSITION = 0.1;
 export const GROUND_Y_POSITION = -0.01;
 
+export const DEFAULT_MAP_DRAW_GRID = false;
+
 export interface MeshedModel {
     positionedModel: PositionedModel;
     mesh: any;
+}
+
+export interface BrushOptions {
+    brushType: string;
+    brushColor: string;
+    brushFill: boolean;
+    brushSize: number;
 }
 
 export default class GameState {
@@ -65,12 +73,10 @@ export default class GameState {
     private _mapTexture: THREE.Texture;
     private _mapImage: Image;
     private _pixelsPerFoot: number;
-    private _drawGrid: boolean = false;
+    private _drawGrid: boolean = DEFAULT_MAP_DRAW_GRID;
     private _location: Place;
-    public locationSubject: Subject<Place> = new Subject();
 
     private _currentControls = CAMERA_CONTROLS;
-    private _currentControlsSubject = new Subject();
 
     // selected model
     private _selectedMeshedModel: MeshedModel;
@@ -78,30 +84,38 @@ export default class GameState {
     private _glow: Mesh;
 
     // painting
-    private _drawCanvas: HTMLCanvasElement;
-    private _drawTexture: THREE.CanvasTexture;
-    private _drawMaterial: THREE.MeshPhongMaterial;
-    private _drawMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
-    private _drawMeshOpacity: number = 1;
+    private _paintCanvas: HTMLCanvasElement;
+    private _paintTexture: THREE.CanvasTexture;
+    private _paintMaterial: THREE.MeshPhongMaterial;
+    private _paintMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
     private _pathBeingPainted: PathNode[] = [];
-    private _strokeId: string = null;
-    private _brushType: string = DEFAULT_BRUSH_TYPE;
-    private _brushColor: string = DEFAULT_BRUSH_COLOR;
-    private _brushFill: boolean = DEFAULT_BRUSH_FILL;
-    private _brushSize: number = DEFAULT_BRUSH_SIZE;
-    private _strokesAlreadyDrawn: Queue<Stroke> = new Queue<Stroke>();
+    private _paintStrokeBeingDrawnId: string = null;
+    private _paintBrushOptions: BrushOptions = {
+        brushType: DEFAULT_BRUSH_TYPE,
+        brushColor: DEFAULT_BRUSH_COLOR,
+        brushFill: DEFAULT_BRUSH_FILL,
+        brushSize: DEFAULT_BRUSH_SIZE
+    };
+    private _paintStrokesAlreadyDrawn: Queue<Stroke> = new Queue<Stroke>();
     private _paintBrushMesh: THREE.Mesh = null;
     private _paintBrushMaterial: THREE.Material = null;
-    public strokeAddedSubject: Subject<Stroke> = new Subject();
 
     // fog
+    private _fogCanvas: HTMLCanvasElement;
+    private _fogTexture: THREE.CanvasTexture;
+    private _fogMaterial: THREE.MeshPhongMaterial;
+    private _fogMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
+    private _fogPathBeingDrawn: PathNode[] = [];
+    private _fogStrokeBeingDrawnId: string = null;
+    private _fogBrushOptions: BrushOptions = {
+        brushType: DEFAULT_BRUSH_TYPE,
+        brushColor: DEFAULT_BRUSH_COLOR,
+        brushFill: DEFAULT_BRUSH_FILL,
+        brushSize: DEFAULT_BRUSH_SIZE
+    };
     private _fogAlreadyDrawn: Queue<FogStroke> = new Queue<FogStroke>();
-
-    constructor() {
-        this._strokesAlreadyDrawn.addCallback((stroke) => {
-            this.strokeAddedSubject.next(stroke);
-        });
-    }
+    private _fogBrushMesh: THREE.Mesh = null;
+    private _fogBrushMaterial: THREE.Material = null;
 
     get renderer(): WebGLRenderer {
         return this._renderer;
@@ -269,104 +283,55 @@ export default class GameState {
     }
 
     set location(value: Place) {
-        this.locationSubject.next(value);
         this._location = value;
     }
 
-    get drawCanvas(): HTMLCanvasElement {
-        return this._drawCanvas;
+    get paintCanvas(): HTMLCanvasElement {
+        return this._paintCanvas;
     }
 
-    set drawCanvas(value: HTMLCanvasElement) {
-        this._drawCanvas = value;
+    set paintCanvas(value: HTMLCanvasElement) {
+        this._paintCanvas = value;
     }
 
-    get drawTexture(): CanvasTexture {
-        return this._drawTexture;
+    get paintTexture(): CanvasTexture {
+        return this._paintTexture;
     }
 
-    set drawTexture(value: CanvasTexture) {
-        this._drawTexture = value;
+    set paintTexture(value: CanvasTexture) {
+        this._paintTexture = value;
     }
 
-    get drawMaterial(): MeshPhongMaterial {
-        return this._drawMaterial;
+    get paintMaterial(): MeshPhongMaterial {
+        return this._paintMaterial;
     }
 
-    set drawMaterial(value: MeshPhongMaterial) {
-        this._drawMaterial = value;
+    set paintMaterial(value: MeshPhongMaterial) {
+        this._paintMaterial = value;
     }
 
-    get drawMesh(): Mesh<BufferGeometry, Material, Object3DEventMap> {
-        return this._drawMesh;
+    get paintMesh(): Mesh<BufferGeometry, Material, Object3DEventMap> {
+        return this._paintMesh;
     }
 
-    set drawMesh(value: Mesh<BufferGeometry, Material, Object3DEventMap>) {
-        this._drawMesh = value;
+    set paintMesh(value: Mesh<BufferGeometry, Material, Object3DEventMap>) {
+        this._paintMesh = value;
     }
 
-    get drawMeshOpacity(): number {
-        return this._drawMeshOpacity;
-    }
-
-    set drawMeshOpacity(value: number) {
-        this._drawMeshOpacity = value;
-    }
-
-    get pathBeingPainted(): any[] {
+    get pathBeingPainted(): PathNode[] {
         return this._pathBeingPainted;
     }
 
-    set pathBeingPainted(value: any[]) {
+    set pathBeingPainted(value: PathNode[]) {
         this._pathBeingPainted = value;
     }
 
-    get strokeId(): any {
-        return this._strokeId;
+    get paintBrushOptions(): BrushOptions {
+        return this._paintBrushOptions;
     }
 
-    set strokeId(value: any) {
-        this._strokeId = value;
-    }
-
-    get brushType(): string {
-        return this._brushType;
-    }
-
-    set brushType(value: string) {
-        this._brushType = value;
-    }
-
-    get brushColor(): string {
-        return this._brushColor;
-    }
-
-    set brushColor(value: string) {
-        this._brushColor = value;
-    }
-
-    get brushFill(): boolean {
-        return this._brushFill;
-    }
-
-    set brushFill(value: boolean) {
-        this._brushFill = value;
-    }
-
-    get brushSize(): number {
-        return this._brushSize;
-    }
-
-    set brushSize(value: number) {
-        this._brushSize = value;
-    }
-
-    get strokesAlreadyDrawn(): Queue<Stroke> {
-        return this._strokesAlreadyDrawn;
-    }
-
-    get fogAlreadyDrawn(): Queue<FogStroke> {
-        return this._fogAlreadyDrawn;
+    get paintStrokesAlreadyDrawn(): Queue<Stroke> {
+        return this._paintStrokesAlreadyDrawn;
     }
 
     get paintBrushMesh(): any {
@@ -385,6 +350,18 @@ export default class GameState {
         this._paintBrushMaterial = value;
     }
 
+    get paintStrokeBeingDrawnId(): string {
+        return this._paintStrokeBeingDrawnId;
+    }
+
+    set paintStrokeBeingDrawnId(value: string) {
+        this._paintStrokeBeingDrawnId = value;
+    }
+
+    get fogAlreadyDrawn(): Queue<FogStroke> {
+        return this._fogAlreadyDrawn;
+    }
+
     get currentGame(): Game {
         return this._currentGame;
     }
@@ -393,11 +370,76 @@ export default class GameState {
         this._currentGame = value;
     }
 
-    get currentControlsSubject(): Subject<unknown> {
-        return this._currentControlsSubject;
+
+    get fogCanvas(): HTMLCanvasElement {
+        return this._fogCanvas;
     }
 
-    set currentControlsSubject(value: Subject<unknown>) {
-        this._currentControlsSubject = value;
+    set fogCanvas(value: HTMLCanvasElement) {
+        this._fogCanvas = value;
+    }
+
+    get fogTexture(): CanvasTexture {
+        return this._fogTexture;
+    }
+
+    set fogTexture(value: CanvasTexture) {
+        this._fogTexture = value;
+    }
+
+    get fogMaterial(): MeshPhongMaterial {
+        return this._fogMaterial;
+    }
+
+    set fogMaterial(value: MeshPhongMaterial) {
+        this._fogMaterial = value;
+    }
+
+    get fogMesh(): Mesh<BufferGeometry, Material, Object3DEventMap> {
+        return this._fogMesh;
+    }
+
+    set fogMesh(value: Mesh<BufferGeometry, Material, Object3DEventMap>) {
+        this._fogMesh = value;
+    }
+
+    get fogPathBeingDrawn(): PathNode[] {
+        return this._fogPathBeingDrawn;
+    }
+
+    set fogPathBeingDrawn(value: PathNode[]) {
+        this._fogPathBeingDrawn = value;
+    }
+
+    get fogStrokeBeingDrawnId(): string {
+        return this._fogStrokeBeingDrawnId;
+    }
+
+    set fogStrokeBeingDrawnId(value: string) {
+        this._fogStrokeBeingDrawnId = value;
+    }
+
+    get fogBrushOptions(): BrushOptions {
+        return this._fogBrushOptions;
+    }
+
+    set fogBrushOptions(value: BrushOptions) {
+        this._fogBrushOptions = value;
+    }
+
+    get fogBrushMesh(): Mesh {
+        return this._fogBrushMesh;
+    }
+
+    set fogBrushMesh(value: Mesh) {
+        this._fogBrushMesh = value;
+    }
+
+    get fogBrushMaterial(): Material {
+        return this._fogBrushMaterial;
+    }
+
+    set fogBrushMaterial(value: Material) {
+        this._fogBrushMaterial = value;
     }
 }

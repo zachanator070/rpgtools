@@ -11,11 +11,10 @@ export default class MapController {
 
     public constructor(gameState: GameState) {
         this.gameState = gameState;
-        this.gameState.locationSubject.asObservable().subscribe((newLocation) => this.onLocationChange(newLocation));
         this.setupMap();
     }
 
-    onLocationChange(newLocation: Place) {
+    setLocation(newLocation: Place) {
         const {errorNotification} = useNotification();
         let mapNeedsSetup = false;
         if (this.gameState.pixelsPerFoot !== newLocation.pixelsPerFoot) {

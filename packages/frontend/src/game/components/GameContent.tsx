@@ -64,9 +64,13 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	useEffect(() => {
 		if (controllerManager) {
-			controllerManager.gameState.location = mapChangeGame.map;
+			controllerManager.mapController.setLocation(mapChangeGame.map);
 		}
 	}, [mapChangeGame]);
+
+	useEffect(() => {
+		controllerManager.changeControls(controlsMode);
+	}, [controlsMode])
 
 	const trySetupControllerManager = (renderCanvas: HTMLCanvasElement) => {
 		if(!renderCanvas || controllerManager) {
