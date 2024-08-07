@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as THREE from "three";
 import {GameController} from "./GameController";
 import {FogStroke, Stroke} from "../../types";
-import GameState from "../GameState";
+import GameState, {BrushOptions, DRAW_Y_POSITION} from "../GameState";
 import Queue from "../Queue";
 
 export const BRUSH_CIRCLE = "circle";
@@ -18,130 +18,124 @@ export const DEFAULT_MAP_SIZE = 50;
 
 export class PaintController<T extends Stroke | FogStroke> implements GameController {
 
-	private gameState: GameState;
-	private strokeCache: Queue<T>;
-	private meshY: number;
-
+	protected gameState: GameState;
 	constructor(
 		gameData: GameState,
-		strokeCache: Queue<T>,
-		meshY = 0.01
 	) {
 		this.gameState = gameData;
-		this.strokeCache = strokeCache;
-		this.meshY = meshY;
 
-		this.gameState.drawCanvas = document.createElement("canvas");
+		this.drawCanvas = document.createElement("canvas");
 		if(this.gameState.location) {
 			this.setupDrawCanvas();
 		}
 	}
 
 	setupDrawCanvas() {
-		this.gameState.drawCanvas.height = this.gameState.location.mapImage.height;
-		this.gameState.drawCanvas.width = this.gameState.location.mapImage.width;
+		this.drawCanvas.height = this.gameState.location.mapImage.height;
+		this.drawCanvas.width = this.gameState.location.mapImage.width;
 
-		this.gameState.drawTexture = new THREE.CanvasTexture(this.gameState.drawCanvas);
-		this.gameState.drawTexture.generateMipmaps = false;
-		this.gameState.drawTexture.wrapS = this.gameState.drawTexture.wrapT = THREE.ClampToEdgeWrapping;
-		this.gameState.drawTexture.minFilter = THREE.LinearFilter;
+		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
+		this.drawTexture.generateMipmaps = false;
+		this.drawTexture.wrapS = this.drawTexture.wrapT = THREE.ClampToEdgeWrapping;
+		this.drawTexture.minFilter = THREE.LinearFilter;
+		// in threejs v155 color space was changed to be more realistic, this fixes the color to be more accurate to original image
+		this.drawTexture.colorSpace = THREE.SRGBColorSpace;
 
 		const drawGeometry = new THREE.PlaneGeometry(
 			this.gameState.location.mapImage.width / this.gameState.location.pixelsPerFoot,
 			this.gameState.location.mapImage.height / this.gameState.location.pixelsPerFoot
 		);
 		drawGeometry.rotateX(-Math.PI / 2);
-		this.gameState.drawMaterial = new THREE.MeshPhongMaterial({
-			map: this.gameState.drawTexture,
+		this.drawMaterial = new THREE.MeshPhongMaterial({
+			map: this.drawTexture,
 			transparent: true,
 		});
-		this.gameState.drawMesh = new THREE.Mesh(drawGeometry, this.gameState.drawMaterial);
-		this.gameState.drawMesh.receiveShadow = true;
-		this.gameState.drawMesh.position.set(0, this.meshY, 0);
-		this.gameState.scene.add(this.gameState.drawMesh);
+		this.drawMesh = new THREE.Mesh(drawGeometry, this.drawMaterial);
+		this.drawMesh.receiveShadow = true;
+		this.drawMesh.position.set(0, this.meshY, 0);
+		this.gameState.scene.add(this.drawMesh);
 
 		this.setupBrush();
 	}
 
 	setBrushType = (type: string) => {
-		this.gameState.brushType = type;
-		this.gameState.scene.remove(this.gameState.paintBrushMesh);
+		this.brushOptions.brushType = type;
+		this.gameState.scene.remove(this.brushMesh);
 		this.createPaintBrushMesh();
-		this.gameState.paintBrushMaterial.needsUpdate = true;
-		this.gameState.scene.add(this.gameState.paintBrushMesh);
+		this.brushMaterial.needsUpdate = true;
+		this.gameState.scene.add(this.brushMesh);
 		this.updateBrushPosition();
 	};
 	getBrushType = () => {
-		return this.gameState.brushType;
+		return this.brushOptions.brushType;
 	}
 
 	setBrushColor = (color: string) => {
-		this.gameState.brushColor = color;
-		this.gameState.paintBrushMaterial.color.setHex(parseInt("0x" + color.substring(1)));
-		this.gameState.paintBrushMaterial.needsUpdate = true;
+		this.brushOptions.brushColor = color;
+		this.brushMaterial.color.setHex(parseInt("0x" + color.substring(1)));
+		this.brushMaterial.needsUpdate = true;
 	};
 	getBrushColor = () => {
-		return this.gameState.brushColor;
+		return this.brushOptions.brushColor;
 	}
 
 	setBrushFill = (fill: boolean) => {
-		this.gameState.brushFill = fill;
+		this.brushOptions.brushFill = fill;
 
-		this.gameState.paintBrushMaterial.wireframe = !fill;
-		this.gameState.paintBrushMaterial.needsUpdate = true;
+		this.brushMaterial.wireframe = !fill;
+		this.brushMaterial.needsUpdate = true;
 	};
 	getBrushFill = () => {
-		return this.gameState.brushFill;
+		return this.brushOptions.brushFill;
 	}
 
 	setBrushSize = (size: number) => {
-		this.gameState.brushSize = size;
+		this.brushOptions.brushSize = size;
 		this.createPaintBrushMesh();
 	};
 	getBrushSize = () => {
-		return this.gameState.brushSize;
+		return this.brushOptions.brushSize;
 	}
 
 	setupBrush = () => {
 		this.createPaintBrushMesh();
-		this.gameState.paintBrushMesh.visible = false;
+		this.brushMesh.visible = false;
 	};
 
 	setDrawMeshOpacity = (value: number) => {
-		if (this.gameState.drawMesh) {
-			this.gameState.drawMeshOpacity = value;
-			this.gameState.drawMesh.material.opacity = value;
-			this.gameState.drawMesh.material.needsUpdate = true;
+		if (this.drawMesh) {
+			this.drawMesh.material.opacity = value;
+			this.drawMesh.material.needsUpdate = true;
 		}
 	};
 
 	createPaintBrushMesh = () => {
-		if (this.gameState.paintBrushMesh) {
-			this.gameState.scene.remove(this.gameState.paintBrushMesh);
+		if (this.brushMesh) {
+			this.gameState.scene.remove(this.brushMesh);
 		}
-		if (!this.gameState.paintBrushMaterial) {
-			this.gameState.paintBrushMaterial = new THREE.MeshBasicMaterial({
-				color: this.gameState.brushColor,
+		if (!this.brushMaterial) {
+			this.brushMaterial = new THREE.MeshBasicMaterial({
+				color: this.brushOptions.brushColor,
 			});
 		}
-		this.setBrushColor(this.gameState.brushColor);
+		this.setBrushColor(this.brushOptions.brushColor);
 		let geometry: THREE.BufferGeometry;
-		if (this.gameState.brushType === BRUSH_CIRCLE || this.gameState.brushType === BRUSH_LINE) {
+		if (this.brushOptions.brushType === BRUSH_CIRCLE || this.brushOptions.brushType === BRUSH_LINE) {
 			geometry = new THREE.CylinderGeometry(
-				this.gameState.brushSize / 2,
-				this.gameState.brushSize / 2,
+				this.brushOptions.brushSize / 2,
+				this.brushOptions.brushSize / 2,
 				1,
 				32
 			);
 		} else {
-			geometry = new THREE.BoxGeometry(this.gameState.brushSize, 1, this.gameState.brushSize);
+			geometry = new THREE.BoxGeometry(this.brushOptions.brushSize, 1, this.brushOptions.brushSize);
 		}
-		const oldVisibility = this.gameState.paintBrushMesh
-			? this.gameState.paintBrushMesh.visible
+		const oldVisibility = this.brushMesh
+			? this.brushMesh.visible
 			: false;
-		this.gameState.paintBrushMesh = new THREE.Mesh(geometry, this.gameState.paintBrushMaterial);
-		this.gameState.paintBrushMesh.visible = oldVisibility;
-		this.gameState.scene.add(this.gameState.paintBrushMesh);
+		this.brushMesh = new THREE.Mesh(geometry, this.brushMaterial);
+		this.brushMesh.visible = oldVisibility;
+		this.gameState.scene.add(this.brushMesh);
 	};
 
 	stroke = (stroke: T, useCache = true) => {
@@ -150,7 +144,7 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		const fill = (stroke as Stroke).fill;
 		size *= this.gameState.location.pixelsPerFoot;
 		if (useCache) {
-			for (let stroke of this.gameState.strokesAlreadyDrawn) {
+			for (let stroke of this.strokesAlreadyDrawn) {
 				if (stroke._id === _id) {
 					return;
 				}
@@ -160,7 +154,7 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 			console.warn("Trying to stroke a path with zero length path!");
 			return;
 		}
-		const ctx = this.gameState.drawCanvas.getContext("2d");
+		const ctx = this.drawCanvas.getContext("2d");
 		ctx.lineCap = "round";
 		ctx.lineJoin = "round";
 		switch (type) {
@@ -219,7 +213,7 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		if (useCache) {
 			this.strokeCache.enqueue(stroke);
 		}
-		this.gameState.drawTexture.needsUpdate = true;
+		this.drawTexture.needsUpdate = true;
 	};
 
 	paintWithBrush = () => {
@@ -230,9 +224,9 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 		for (let intersect of intersects) {
 			const currentPath = [];
-			if (this.gameState.pathBeingPainted.length > 0 && this.gameState.brushType === BRUSH_LINE) {
+			if (this.pathBeingDrawn.length > 0 && this.brushOptions.brushType === BRUSH_LINE) {
 				currentPath.push(
-					this.gameState.pathBeingPainted[this.gameState.pathBeingPainted.length - 1]
+					this.pathBeingDrawn[this.pathBeingDrawn.length - 1]
 				);
 			}
 			const newPoint = {
@@ -245,16 +239,16 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 				_id: uuidv4(),
 			};
 			currentPath.push(newPoint);
-			this.gameState.pathBeingPainted.push(newPoint);
+			this.pathBeingDrawn.push(newPoint);
 
 			this.stroke(
 				{
 					path: currentPath,
-					type: this.gameState.brushType,
-					color: this.gameState.brushColor,
-					fill: this.gameState.brushFill,
-					size: this.gameState.brushSize,
-					_id: this.gameState.strokeId,
+					type: this.brushOptions.brushType,
+					color: this.brushOptions.brushColor,
+					fill: this.brushOptions.brushFill,
+					size: this.brushOptions.brushSize,
+					_id: this.strokeBeingDrawnId,
 				} as any,
 				false
 			);
@@ -268,24 +262,23 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 			"mouseleave",
 			this.stopPaintingWithBrush
 		);
-		if (this.gameState.strokeId) {
+		if (this.strokeBeingDrawnId) {
 			const stroke = {
-				path: this.gameState.pathBeingPainted,
-				type: this.gameState.brushType,
-				color: this.gameState.brushColor,
-				size: this.gameState.brushSize,
-				fill: this.gameState.brushFill,
-				_id: this.gameState.strokeId,
-				strokeId: this.gameState.strokeId,
+				path: this.pathBeingDrawn,
+				type: this.brushOptions.brushType,
+				color: this.brushOptions.brushColor,
+				size: this.brushOptions.brushSize,
+				fill: this.brushOptions.brushFill,
+				_id: this.strokeBeingDrawnId,
 			};
-			this.strokeCache.enqueue(stroke as any);
-			this.gameState.pathBeingPainted = [];
-			this.gameState.strokeId = null;
+			this.strokeCache.enqueue(stroke as T);
+			this.pathBeingDrawn = [];
+			this.strokeBeingDrawnId = null;
 		}
 	};
 
 	updateBrushPosition = () => {
-		if (!this.gameState.mapMesh || !this.gameState.paintBrushMesh) {
+		if (!this.gameState.mapMesh || !this.brushMesh) {
 			return;
 		}
 		const intersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
@@ -293,57 +286,113 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 			return;
 		}
 		const intersect = intersects[0];
-		this.gameState.paintBrushMesh.position.set(intersect.point.x, 0, intersect.point.z);
+		this.brushMesh.position.set(intersect.point.x, 0, intersect.point.z);
 	};
 
 	paintMouseDownEvent = () => {
-		this.gameState.strokeId = uuidv4();
+		this.strokeBeingDrawnId = uuidv4();
 		this.paintWithBrush();
 		this.gameState.renderRoot.addEventListener("mousemove", this.paintWithBrush);
 		this.gameState.renderRoot.addEventListener("mouseup", this.stopPaintingWithBrush);
 		this.gameState.renderRoot.addEventListener("mouseleave", this.stopPaintingWithBrush);
 	};
 
-	getSaveState = () => {
-		return {
-			brushType: this.gameState.brushType,
-			brushColor: this.gameState.brushColor,
-			brushSize: this.gameState.brushSize,
-			brushFill: this.gameState.brushFill,
-			drawMeshOpacity: this.gameState.drawMeshOpacity,
-		};
-	};
-
-	loadSaveState = ({
-		brushType,
-		brushColor,
-		brushSize,
-		brushFill,
-		drawMeshOpacity,
-	}) => {
-		this.setBrushType(brushType);
-		this.setBrushColor(brushColor);
-		this.setBrushSize(brushSize);
-		this.setBrushFill(brushFill);
-		this.setDrawMeshOpacity(drawMeshOpacity);
-	};
-
 	enable = () => {
 		this.gameState.renderRoot.addEventListener("mousedown", this.paintMouseDownEvent);
 		this.updateBrushPosition();
-		this.gameState.paintBrushMesh.visible = true;
+		this.brushMesh.visible = true;
 		this.gameState.renderRoot.addEventListener("mousemove", this.updateBrushPosition);
 	};
 
 	disable = () => {
 		this.gameState.renderRoot.removeEventListener("mousedown", this.paintMouseDownEvent);
-		this.gameState.paintBrushMesh.visible = false;
+		this.brushMesh.visible = false;
 	};
 
 	tearDown = () => {
 		this.disable();
 		this.gameState.renderRoot.removeEventListener("mousemove", this.updateBrushPosition);
-		this.gameState.scene.remove(this.gameState.drawMesh);
-		this.gameState.scene.remove(this.gameState.paintBrushMesh);
+		this.gameState.scene.remove(this.drawMesh);
+		this.gameState.scene.remove(this.brushMesh);
 	};
+
+	get drawCanvas() {
+		return this.gameState.paintCanvas;
+	}
+
+	set drawCanvas(drawCanvas) {
+		this.gameState.paintCanvas = drawCanvas;
+	}
+
+	get drawTexture() {
+		return this.gameState.paintTexture;
+	}
+
+	set drawTexture(drawTexture) {
+		this.gameState.paintTexture = drawTexture;
+	}
+
+	get drawMaterial() {
+		return this.gameState.paintMaterial;
+	}
+
+	set drawMaterial(drawMaterial) {
+		this.gameState.paintMaterial = drawMaterial;
+	}
+
+	get drawMesh() {
+		return this.gameState.paintMesh;
+	}
+
+	set drawMesh(drawMesh) {
+		this.gameState.paintMesh = drawMesh;
+	}
+
+	get brushOptions(): BrushOptions {
+		return this.gameState.paintBrushOptions;
+	}
+
+	get brushMesh() {
+		return this.gameState.paintBrushMesh;
+	}
+
+	set brushMesh(brushMesh) {
+		this.gameState.paintBrushMesh = brushMesh;
+	}
+
+	get brushMaterial() {
+		return this.gameState.paintBrushMaterial;
+	}
+
+	set brushMaterial(brushMaterial) {
+		this.gameState.paintBrushMaterial = brushMaterial;
+	}
+
+	get strokesAlreadyDrawn() {
+		return this.gameState.paintStrokesAlreadyDrawn;
+	}
+
+	get pathBeingDrawn() {
+		return this.gameState.pathBeingPainted;
+	}
+
+	set pathBeingDrawn(pathBeingDrawn) {
+		this.gameState.pathBeingPainted = pathBeingDrawn;
+	}
+
+	get strokeBeingDrawnId() {
+		return this.gameState.paintStrokeBeingDrawnId;
+	}
+
+	set strokeBeingDrawnId(strokeBeingDrawnId) {
+		this.gameState.paintStrokeBeingDrawnId = strokeBeingDrawnId;
+	}
+
+	get strokeCache(): Queue<T> {
+		return this.gameState.paintStrokesAlreadyDrawn as Queue<T>;
+	}
+
+	get meshY() {
+		return DRAW_Y_POSITION;
+	}
 }

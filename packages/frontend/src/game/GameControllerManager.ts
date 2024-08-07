@@ -7,14 +7,14 @@ import {CameraController} from "./controller/CameraController";
 import GameState, {
     ADD_MODEL_CONTROLS,
     CAMERA_CONTROLS, DELETE_CONTROLS,
-    DRAW_Y_POSITION, FOG_CONTROLS,
-    FOG_Y_POSITION,
+    FOG_CONTROLS,
     MOVE_MODEL_CONTROLS,
     PAINT_CONTROLS, ROTATE_MODEL_CONTROLS, SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
 } from "./GameState";
 import SceneController from "./controller/SceneController";
 import MapController from "./controller/MapController";
 import {FogStroke, Stroke} from "../types";
+import FogController from "./controller/FogController";
 
 
 export default class GameControllerManager {
@@ -32,27 +32,34 @@ export default class GameControllerManager {
 
     private focusedElement: HTMLElement;
 
+    private controllerMap: { [key: string]: any };
+
     public constructor(gameData: GameState) {
         this._gameState = gameData;
-        this.setupControls();
+        this.setupControllers();
+        this.controllerMap = {
+            [CAMERA_CONTROLS]: this.cameraController,
+            [PAINT_CONTROLS]: this.paintController,
+            [MOVE_MODEL_CONTROLS]: this.moveController,
+            [ROTATE_MODEL_CONTROLS]: this.rotateController,
+            [DELETE_CONTROLS]: this.deleteController,
+            [FOG_CONTROLS]: this.fogController,
+            [SELECT_MODEL_CONTROLS]: this.selectModelController,
+        };
         this.setupListeners();
     }
 
-    setupControls() {
+    setupControllers() {
         this._mapController = new MapController(this._gameState);
         this._sceneController = new SceneController(this._gameState);
         this._cameraController = new CameraController(this._gameState);
 
         this._paintController = new PaintController(
             this._gameState,
-            this._gameState.strokesAlreadyDrawn,
-            DRAW_Y_POSITION
         );
 
-        this._fogController = new PaintController(
+        this._fogController = new FogController(
             this._gameState,
-            this._gameState.fogAlreadyDrawn,
-            FOG_Y_POSITION
         );
 
         if (this._selectModelController) {
@@ -83,7 +90,7 @@ export default class GameControllerManager {
             this._gameState,
         );
 
-        this._changeControls(this._gameState.currentControls);
+        this.changeControls(this._gameState.currentControls);
     }
 
     setupListeners() {
@@ -96,12 +103,16 @@ export default class GameControllerManager {
         window.removeEventListener("resize", this.resize);
         window.removeEventListener("mouseover", this.mouseOverListener);
         window.removeEventListener("keydown", this.keyDownListener);
+
+        Object.values(this.controllerMap).forEach((controller) => {
+            controller.tearDown();
+        });
     }
 
     resize() {
         this.sceneController.resize(
-            this.gameState.renderRoot.parentElement.clientWidth,
-            this.gameState.renderRoot.parentElement.clientHeight
+            this._gameState.renderRoot.parentElement.clientWidth,
+            this._gameState.renderRoot.parentElement.clientHeight
         );
     };
 
@@ -120,56 +131,61 @@ export default class GameControllerManager {
                 "KeyS",
                 "KeyA",
                 "KeyL",
-            ].includes(code) || this.gameState.renderRoot !== this.focusedElement
+            ].includes(code) || this._gameState.renderRoot !== this.focusedElement
         ) {
             return;
         }
         switch (code) {
             case "KeyC":
-                this.gameState.currentControls = CAMERA_CONTROLS;
+                this.changeControls(CAMERA_CONTROLS);
                 break;
             case "KeyP":
-                if (this.gameState.currentGame.canPaint) {
-                    this.gameState.currentControls = PAINT_CONTROLS;
+                if (this._gameState.currentGame.canPaint) {
+                    this.changeControls(PAINT_CONTROLS);
                 }
                 break;
             case "KeyM":
-                if (this.gameState.currentGame.canModel) {
-                    this.gameState.currentControls = MOVE_MODEL_CONTROLS;
+                if (this._gameState.currentGame.canModel) {
+                    this.changeControls(MOVE_MODEL_CONTROLS);
                 }
                 break;
             case "KeyR":
-                if (this.gameState.currentGame.canModel) {
-                    this.gameState.currentControls = ROTATE_MODEL_CONTROLS;
+                if (this._gameState.currentGame.canModel) {
+                    this.changeControls(ROTATE_MODEL_CONTROLS);
                 }
                 break;
             case "KeyX":
-                if (this.gameState.currentGame.canModel) {
-                    this.gameState.currentControls = DELETE_CONTROLS;
+                if (this._gameState.currentGame.canModel) {
+                    this.changeControls(DELETE_CONTROLS);
                 }
                 break;
             case "KeyF":
-                if (this.gameState.currentGame.canWriteFog) {
-                    this.gameState.currentControls = FOG_CONTROLS;
+                if (this._gameState.currentGame.canWriteFog) {
+                    this.changeControls(FOG_CONTROLS);
                 }
                 break;
             case "KeyS":
-                this.gameState.currentControls = SELECT_MODEL_CONTROLS;
+                this.changeControls(SELECT_MODEL_CONTROLS);
                 break;
             case "KeyA":
-                if (this.gameState.currentGame.canModel) {
-                    this.gameState.currentControls = ADD_MODEL_CONTROLS;
+                if (this._gameState.currentGame.canModel) {
+                    this.changeControls(ADD_MODEL_CONTROLS);
                 }
                 break;
             case "KeyL":
-                this.gameState.currentControls = SELECT_LOCATION_CONTROLS;
+                this.changeControls(SELECT_LOCATION_CONTROLS);
                 break;
         }
     };
 
-    private _changeControls = (mode: string) => {
+    changeControls = (mode: string) => {
         this._gameState.currentControls = mode;
-    };
+
+        Object.values(this.controllerMap).forEach((controller) => {
+            controller.disable();
+        });
+        this.controllerMap[mode].enable();
+    }
 
     get selectModelController(): SelectModelController {
         return this._selectModelController;
@@ -197,14 +213,6 @@ export default class GameControllerManager {
 
     get cameraController(): CameraController {
         return this._cameraController;
-    }
-
-    get gameState(): GameState {
-        return this._gameState;
-    }
-
-    get changeControls(): (mode: string) => void {
-        return this._changeControls;
     }
 
     get sceneController(): SceneController {

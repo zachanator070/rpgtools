@@ -76,8 +76,8 @@ export default function GameStateFactory(
         gameState.light.shadow.camera.right = frustrum;
         gameState.light.shadow.camera.top = frustrum;
 
-        const helper = new THREE.DirectionalLightHelper( gameState.light, 5 );
-        gameState.scene.add( helper );
+        // const helper = new THREE.DirectionalLightHelper( gameState.light, 5 );
+        // gameState.scene.add( helper );
 
         gameState.scene.add(gameState.light);
         gameState.scene.add(gameState.light.target);
