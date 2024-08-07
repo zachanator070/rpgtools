@@ -77,6 +77,8 @@ export default class MapController {
         this.gameState.mapTexture.generateMipmaps = false;
         this.gameState.mapTexture.wrapS = this.gameState.mapTexture.wrapT = THREE.ClampToEdgeWrapping;
         this.gameState.mapTexture.minFilter = THREE.LinearFilter;
+        // in threejs v155 color space was changed to be more realistic, this fixes the color to be more accurate to original image
+        this.gameState.mapTexture.colorSpace = THREE.SRGBColorSpace;
 
         this.paintMap();
 
