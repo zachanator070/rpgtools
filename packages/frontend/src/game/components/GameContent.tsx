@@ -60,7 +60,9 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	const { gameModelDeleted } = useGameModelDeletedSubscription();
 	const { gameFogStrokeAdded } = useGameFogSubscription();
 
-	const focusedElement = useRef<HTMLElement>(null);
+	useEffect(() => {
+		return () => controllerManager.tearDown();
+	}, []);
 
 	useEffect(() => {
 		if (controllerManager) {
