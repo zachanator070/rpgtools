@@ -15,6 +15,7 @@ import SceneController from "./controller/SceneController";
 import MapController from "./controller/MapController";
 import {FogStroke, Stroke} from "../types";
 import FogController from "./controller/FogController";
+import {GameController} from "./controller/GameController";
 
 
 export default class GameControllerManager {
@@ -32,7 +33,7 @@ export default class GameControllerManager {
 
     private focusedElement: HTMLElement;
 
-    private controllerMap: { [key: string]: any };
+    private controllerMap: { [key: string]: GameController };
 
     public constructor(gameData: GameState) {
         this._gameState = gameData;
