@@ -86,7 +86,7 @@ export default class GameState {
     // painting
     private _paintCanvas: HTMLCanvasElement;
     private _paintTexture: THREE.CanvasTexture;
-    private _paintMaterial: THREE.MeshPhongMaterial;
+    private _paintMaterial: THREE.Material;
     private _paintMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
     private _pathBeingPainted: PathNode[] = [];
     private _paintStrokeBeingDrawnId: string = null;
@@ -302,11 +302,11 @@ export default class GameState {
         this._paintTexture = value;
     }
 
-    get paintMaterial(): MeshPhongMaterial {
+    get paintMaterial(): THREE.Material {
         return this._paintMaterial;
     }
 
-    set paintMaterial(value: MeshPhongMaterial) {
+    set paintMaterial(value: THREE.Material) {
         this._paintMaterial = value;
     }
 

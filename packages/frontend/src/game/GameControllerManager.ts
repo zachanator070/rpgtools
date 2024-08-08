@@ -47,6 +47,7 @@ export default class GameControllerManager {
             [FOG_CONTROLS]: this.fogController,
             [SELECT_MODEL_CONTROLS]: this.selectModelController,
         };
+        this.changeControls(this._gameState.currentControls);
         this.setupListeners();
     }
 
@@ -63,41 +64,27 @@ export default class GameControllerManager {
             this._gameState,
         );
 
-        if (this._selectModelController) {
-            this._selectModelController.tearDown();
-        }
         this._selectModelController = new SelectModelController(
             this._gameState
         );
 
-        if (this._moveController) {
-            this._moveController.tearDown();
-        }
         this._moveController = new MoveController(
             this._gameState,
         );
 
-        if (this._rotateController) {
-            this._rotateController.tearDown();
-        }
         this._rotateController = new RotateController(
             this._gameState,
         );
 
-        if (this._deleteController) {
-            this._deleteController.tearDown();
-        }
         this._deleteController = new DeleteController(
             this._gameState,
         );
-
-        this.changeControls(this._gameState.currentControls);
     }
 
     setupListeners() {
-        window.addEventListener("resize", () => this.resize());
-        window.addEventListener("mouseover", (event) => this.mouseOverListener(event));
-        window.addEventListener("keydown", (event) => this.keyDownListener(event));
+        window.addEventListener("resize", this.resize);
+        window.addEventListener("mouseover", this.mouseOverListener);
+        window.addEventListener("keydown", this.keyDownListener);
     }
 
     tearDown() {
@@ -110,17 +97,17 @@ export default class GameControllerManager {
         });
     }
 
-    resize() {
+    resize = () => {
         this.sceneController.resize(
             this._gameState.renderRoot.parentElement.clientWidth,
             this._gameState.renderRoot.parentElement.clientHeight
         );
     };
 
-    mouseOverListener(event) {
+    mouseOverListener = (event) => {
         this.focusedElement = event.target as HTMLElement;
     }
-    keyDownListener({ code }) {
+    keyDownListener = ({ code }) => {
         if (
             ![
                 "KeyP",

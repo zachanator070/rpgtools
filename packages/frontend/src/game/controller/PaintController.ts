@@ -46,7 +46,7 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 			this.gameState.location.mapImage.height / this.gameState.location.pixelsPerFoot
 		);
 		drawGeometry.rotateX(-Math.PI / 2);
-		this.drawMaterial = new THREE.MeshPhongMaterial({
+		this.drawMaterial = new THREE.MeshBasicMaterial({
 			map: this.drawTexture,
 			transparent: true,
 		});
@@ -58,55 +58,9 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.setupBrush();
 	}
 
-	setBrushType = (type: string) => {
-		this.brushOptions.brushType = type;
-		this.gameState.scene.remove(this.brushMesh);
-		this.createPaintBrushMesh();
-		this.brushMaterial.needsUpdate = true;
-		this.gameState.scene.add(this.brushMesh);
-		this.updateBrushPosition();
-	};
-	getBrushType = () => {
-		return this.brushOptions.brushType;
-	}
-
-	setBrushColor = (color: string) => {
-		this.brushOptions.brushColor = color;
-		this.brushMaterial.color.setHex(parseInt("0x" + color.substring(1)));
-		this.brushMaterial.needsUpdate = true;
-	};
-	getBrushColor = () => {
-		return this.brushOptions.brushColor;
-	}
-
-	setBrushFill = (fill: boolean) => {
-		this.brushOptions.brushFill = fill;
-
-		this.brushMaterial.wireframe = !fill;
-		this.brushMaterial.needsUpdate = true;
-	};
-	getBrushFill = () => {
-		return this.brushOptions.brushFill;
-	}
-
-	setBrushSize = (size: number) => {
-		this.brushOptions.brushSize = size;
-		this.createPaintBrushMesh();
-	};
-	getBrushSize = () => {
-		return this.brushOptions.brushSize;
-	}
-
 	setupBrush = () => {
 		this.createPaintBrushMesh();
 		this.brushMesh.visible = false;
-	};
-
-	setDrawMeshOpacity = (value: number) => {
-		if (this.drawMesh) {
-			this.drawMesh.material.opacity = value;
-			this.drawMesh.material.needsUpdate = true;
-		}
 	};
 
 	createPaintBrushMesh = () => {
@@ -140,6 +94,7 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 	stroke = (stroke: T, useCache = true) => {
 		let { path, type, size, _id } = stroke;
+		console.log('Stroke called');
 		const color = (stroke as Stroke).color;
 		const fill = (stroke as Stroke).fill;
 		size *= this.gameState.location.pixelsPerFoot;
@@ -314,6 +269,56 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.gameState.renderRoot.removeEventListener("mousemove", this.updateBrushPosition);
 		this.gameState.scene.remove(this.drawMesh);
 		this.gameState.scene.remove(this.brushMesh);
+	};
+
+	setBrushType = (type: string) => {
+		this.brushOptions.brushType = type;
+		this.gameState.scene.remove(this.brushMesh);
+		this.createPaintBrushMesh();
+		this.brushMaterial.needsUpdate = true;
+		this.gameState.scene.add(this.brushMesh);
+		this.updateBrushPosition();
+	};
+
+	getBrushType = () => {
+		return this.brushOptions.brushType;
+	}
+
+	setBrushColor = (color: string) => {
+		this.brushOptions.brushColor = color;
+		this.brushMaterial.color.setHex(parseInt("0x" + color.substring(1)));
+		this.brushMaterial.needsUpdate = true;
+	};
+
+	getBrushColor = () => {
+		return this.brushOptions.brushColor;
+	}
+
+	setBrushFill = (fill: boolean) => {
+		this.brushOptions.brushFill = fill;
+
+		this.brushMaterial.wireframe = !fill;
+		this.brushMaterial.needsUpdate = true;
+	};
+
+	getBrushFill = () => {
+		return this.brushOptions.brushFill;
+	}
+
+	setBrushSize = (size: number) => {
+		this.brushOptions.brushSize = size;
+		this.createPaintBrushMesh();
+	};
+
+	getBrushSize = () => {
+		return this.brushOptions.brushSize;
+	}
+
+	setDrawMeshOpacity = (value: number) => {
+		if (this.drawMesh) {
+			this.drawMesh.material.opacity = value;
+			this.drawMesh.material.needsUpdate = true;
+		}
 	};
 
 	get drawCanvas() {
