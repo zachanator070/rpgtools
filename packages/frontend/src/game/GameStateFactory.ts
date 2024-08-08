@@ -8,19 +8,13 @@ import {DEFAULT_MAP_SIZE} from "./controller/PaintController";
 export default function GameStateFactory(
     renderRoot: HTMLCanvasElement,
     currentGame: Game,
-    mapImage: Image,
-    pixelsPerFoot: number
 ): GameState {
     const gameState = new GameState();
     gameState.renderRoot = renderRoot;
     gameState.currentGame = currentGame;
-    gameState.mapImage = mapImage;
+    gameState.location = currentGame.map;
 
     gameState.mouseCoords = new Vector2();
-
-    if(pixelsPerFoot) {
-        gameState.pixelsPerFoot = pixelsPerFoot;
-    }
 
     setupRaycaster(gameState);
     setupScene(gameState);

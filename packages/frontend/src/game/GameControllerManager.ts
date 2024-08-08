@@ -13,7 +13,7 @@ import GameState, {
 } from "./GameState";
 import SceneController from "./controller/SceneController";
 import MapController from "./controller/MapController";
-import {FogStroke, Stroke} from "../types";
+import {FogStroke, Place, Stroke} from "../types";
 import FogController from "./controller/FogController";
 import {GameController} from "./controller/GameController";
 
@@ -39,13 +39,13 @@ export default class GameControllerManager {
         this._gameState = gameData;
         this.setupControllers();
         this.controllerMap = {
-            [CAMERA_CONTROLS]: this.cameraController,
-            [PAINT_CONTROLS]: this.paintController,
-            [MOVE_MODEL_CONTROLS]: this.moveController,
-            [ROTATE_MODEL_CONTROLS]: this.rotateController,
-            [DELETE_CONTROLS]: this.deleteController,
-            [FOG_CONTROLS]: this.fogController,
-            [SELECT_MODEL_CONTROLS]: this.selectModelController,
+            [CAMERA_CONTROLS]: this._cameraController,
+            [PAINT_CONTROLS]: this._paintController,
+            [MOVE_MODEL_CONTROLS]: this._moveController,
+            [ROTATE_MODEL_CONTROLS]: this._rotateController,
+            [DELETE_CONTROLS]: this._deleteController,
+            [FOG_CONTROLS]: this._fogController,
+            [SELECT_MODEL_CONTROLS]: this._selectModelController,
         };
         this.changeControls(this._gameState.currentControls);
         this.setupListeners();
@@ -98,7 +98,8 @@ export default class GameControllerManager {
     }
 
     resize = () => {
-        this.sceneController.resize(
+        console.log('resize called');
+        this._sceneController.resize(
             this._gameState.renderRoot.parentElement.clientWidth,
             this._gameState.renderRoot.parentElement.clientHeight
         );
@@ -166,48 +167,56 @@ export default class GameControllerManager {
         }
     };
 
+    // APIs used by react components
+
     changeControls = (mode: string) => {
         this._gameState.currentControls = mode;
 
         Object.values(this.controllerMap).forEach((controller) => {
             controller.disable();
         });
-        this.controllerMap[mode].enable();
+        this.controllerMap[mode]?.enable();
     }
 
-    get selectModelController(): SelectModelController {
-        return this._selectModelController;
+    changeLocation(newLocation: Place) {
+        this._mapController.setLocation(newLocation);
+        this._paintController.setupDrawCanvas();
+        this._fogController.setupDrawCanvas();
     }
 
-    get moveController(): MoveController {
-        return this._moveController;
+    setDrawGrid(drawGrid: boolean) {
+        this._mapController.setDrawGrid(drawGrid);
     }
 
-    get rotateController(): RotateController {
-        return this._rotateController;
+    clearSelection() {
+        this._selectModelController.clearSelection();
     }
 
-    get paintController(): PaintController<Stroke> {
-        return this._paintController;
+    setBrushType(brushType: string) {
+        this._paintController.setBrushType(brushType);
     }
 
-    get deleteController(): DeleteController {
-        return this._deleteController;
+    setBrushColor(color: string) {
+        this._paintController.setBrushColor(color);
     }
 
-    get fogController(): PaintController<FogStroke> {
-        return this._fogController;
+    setBrushSize(size: number) {
+        this._paintController.setBrushSize(size);
     }
 
-    get cameraController(): CameraController {
-        return this._cameraController;
+    setBrushFill(fill: boolean) {
+        this._paintController.setBrushFill(fill);
     }
 
-    get sceneController(): SceneController {
-        return this._sceneController;
+    setFogBrushType(brushType: string) {
+        this._fogController.setBrushType(brushType);
     }
 
-    get mapController(): MapController {
-        return this._mapController;
+    setFogBrushSize(size: number) {
+        this._fogController.setBrushSize(size);
+    }
+
+    setFogOpacity(opacity: number) {
+        this._fogController.setDrawMeshOpacity(opacity);
     }
 }

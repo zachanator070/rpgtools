@@ -21,7 +21,7 @@ export default function FogOptions({ controllerManager }: FogOptionsProps) {
 					style={{ width: 120 }}
 					onChange={(value) => {
 						setBrushType(value);
-						controllerManager.fogController.setBrushType(value);
+						controllerManager.setFogBrushType(value);
 					}}
 					options={[
 						{value: BRUSH_FOG, label: 'Fog'},
@@ -37,7 +37,7 @@ export default function FogOptions({ controllerManager }: FogOptionsProps) {
 					value={brushSize}
 					onChange={(value) => {
 						setBrushSize(value);
-						controllerManager.fogController.setBrushSize(value);
+						controllerManager.setFogBrushSize(value);
 					}}
 				/>
 			</div>
@@ -48,7 +48,7 @@ export default function FogOptions({ controllerManager }: FogOptionsProps) {
 					min={0}
 					max={100}
 					onChange={async (value) => {
-						controllerManager.fogController.setDrawMeshOpacity(value / 100);
+						controllerManager.setFogOpacity(value / 100);
 					}}
 					defaultValue={100}
 				/>

@@ -35,11 +35,6 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.drawCanvas.width = this.gameState.location.mapImage.width;
 
 		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
-		this.drawTexture.generateMipmaps = false;
-		this.drawTexture.wrapS = this.drawTexture.wrapT = THREE.ClampToEdgeWrapping;
-		this.drawTexture.minFilter = THREE.LinearFilter;
-		// in threejs v155 color space was changed to be more realistic, this fixes the color to be more accurate to original image
-		this.drawTexture.colorSpace = THREE.SRGBColorSpace;
 
 		const drawGeometry = new THREE.PlaneGeometry(
 			this.gameState.location.mapImage.width / this.gameState.location.pixelsPerFoot,
@@ -50,6 +45,11 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 			map: this.drawTexture,
 			transparent: true,
 		});
+
+		// in the case of location change, remove the old mesh
+		if(this.drawMesh) {
+			this.gameState.scene.remove(this.drawMesh);
+		}
 		this.drawMesh = new THREE.Mesh(drawGeometry, this.drawMaterial);
 		this.drawMesh.receiveShadow = true;
 		this.drawMesh.position.set(0, this.meshY, 0);
@@ -261,7 +261,9 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 	disable = () => {
 		this.gameState.renderRoot.removeEventListener("mousedown", this.paintMouseDownEvent);
-		this.brushMesh.visible = false;
+		if(this.brushMesh) {
+			this.brushMesh.visible = false;
+		}
 	};
 
 	tearDown = () => {

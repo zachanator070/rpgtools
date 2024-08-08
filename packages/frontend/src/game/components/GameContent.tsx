@@ -66,7 +66,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	useEffect(() => {
 		if (controllerManager) {
-			controllerManager.mapController.setLocation(mapChangeGame.map);
+			controllerManager.changeLocation(mapChangeGame.map);
 		}
 	}, [mapChangeGame]);
 
@@ -82,13 +82,8 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 		}
 		const gameState = GameStateFactory(
 			renderCanvas,
-			currentGame,
-			currentGame.map && currentGame.map.mapImage,
-			currentGame.map ? currentGame.map.pixelsPerFoot : 1
+			currentGame
 		);
-		if (currentGame.map && currentGame.map.mapImage) {
-			gameState.location = currentGame.map;
-		}
 		const controlsManager = new GameControllerManager(gameState);
 		setControllerManager(controlsManager);
 	}
