@@ -4,17 +4,23 @@ import ColorInput from "../../../components/widgets/input/ColorInput";
 import DropdownSelect from "../../../components/widgets/DropdownSelect";
 import NumberSlider from "../../../components/widgets/NumberSlider";
 import GameControllerManager from "../../GameControllerManager";
-import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_LINE, BRUSH_SQUARE} from "../../controller/PaintController";
+import {
+	BRUSH_CIRCLE,
+	BRUSH_ERASE,
+	BRUSH_LINE,
+	BRUSH_SQUARE,
+	DEFAULT_BRUSH_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE, DEFAULT_BRUSH_TYPE
+} from "../../controller/PaintController";
 
 interface BrushOptionsProps {
 	controllerManager: GameControllerManager
 }
 
 export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
-	const [brushColor, setBrushColor] = useState(controllerManager.paintController.getBrushColor());
-	const [brushType, setBrushType] = useState(controllerManager.paintController.getBrushType());
-	const [brushSize, setBrushSize] = useState(controllerManager.paintController.getBrushSize());
-	const [fillBrush, setFillBrush] = useState(controllerManager.paintController.getBrushFill());
+	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
+	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
+	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
+	const [fillBrush, setFillBrush] = useState(DEFAULT_BRUSH_FILL);
 
 	return (
 		<>
@@ -26,7 +32,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					onChange={(e) => {
 						const value = e.target.value;
 						setBrushColor(value);
-						controllerManager.paintController.setBrushColor(value);
+						controllerManager.setBrushColor(value);
 					}}
 				/>
 			</div>
@@ -37,7 +43,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					style={{ width: 120 }}
 					onChange={(value) => {
 						setBrushType(value);
-						controllerManager.paintController.setBrushType(value);
+						controllerManager.setBrushType(value);
 					}}
 					options={[
 						{value: BRUSH_LINE, label: 'Line'},
@@ -55,7 +61,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					value={brushSize}
 					onChange={(value) => {
 						setBrushSize(value);
-						controllerManager.paintController.setBrushSize(value);
+						controllerManager.setBrushSize(value);
 					}}
 				/>
 			</div>
@@ -65,7 +71,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					checked={fillBrush}
 					onChange={(checked) => {
 						setFillBrush(checked);
-						controllerManager.paintController.setBrushFill(checked);
+						controllerManager.setBrushFill(checked);
 					}}
 				/>
 			</div>

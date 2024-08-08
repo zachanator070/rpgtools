@@ -71,8 +71,6 @@ export default class GameState {
     private _groundMesh: THREE.Mesh;
     private _mapCanvas: HTMLCanvasElement;
     private _mapTexture: THREE.Texture;
-    private _mapImage: Image;
-    private _pixelsPerFoot: number;
     private _drawGrid: boolean = DEFAULT_MAP_DRAW_GRID;
     private _location: Place;
 
@@ -211,22 +209,6 @@ export default class GameState {
 
     set renderRoot(value: HTMLCanvasElement) {
         this._renderRoot = value;
-    }
-
-    get mapImage(): Image {
-        return this._mapImage;
-    }
-
-    set mapImage(value: Image) {
-        this._mapImage = value;
-    }
-
-    get pixelsPerFoot(): number {
-        return this._pixelsPerFoot;
-    }
-
-    set pixelsPerFoot(value: number) {
-        this._pixelsPerFoot = value;
     }
 
     get drawGrid(): boolean {

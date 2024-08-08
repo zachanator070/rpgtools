@@ -44,7 +44,7 @@ export default function GameLocationSettings({ setGameWikiId, controllerManager 
 					unCheckedChildren={"No Grid"}
 					defaultChecked={DEFAULT_MAP_DRAW_GRID}
 					onChange={(checked) => {
-						controllerManager.mapController.setDrawGrid(checked);
+						controllerManager.setDrawGrid(checked);
 					}}
 				/>
 			</div>

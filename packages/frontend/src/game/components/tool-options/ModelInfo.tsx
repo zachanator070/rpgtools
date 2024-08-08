@@ -138,7 +138,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 
 						<PrimaryDangerButton
 							onClick={async () => {
-								controllerManager.selectModelController.clearSelection();
+								controllerManager.clearSelection();
 								await deletePositionedModel({
 									gameId: currentGame._id,
 									positionedModelId: positionedModel._id,

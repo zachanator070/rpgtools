@@ -17,16 +17,7 @@ export default class MapController {
     setLocation(newLocation: Place) {
         const {errorNotification} = useNotification();
         let mapNeedsSetup = false;
-        if (this.gameState.pixelsPerFoot !== newLocation.pixelsPerFoot) {
-            this.gameState.pixelsPerFoot = newLocation.pixelsPerFoot;
-            mapNeedsSetup = true;
-        }
-        if (
-            (!this.gameState.mapImage && newLocation.mapImage) ||
-            (this.gameState.mapImage && !newLocation.mapImage) ||
-            this.gameState.mapImage._id !== newLocation.mapImage._id
-        ) {
-            this.gameState.mapImage = newLocation.mapImage;
+        if (this.gameState.location?._id !== newLocation?._id) {
             mapNeedsSetup = true;
         }
         if (mapNeedsSetup) {
@@ -47,7 +38,7 @@ export default class MapController {
     }
 
     setupMap() {
-        if (!(this.gameState.mapImage && this.gameState.pixelsPerFoot)) {
+        if (!(this.gameState.location.mapImage && this.gameState.location.pixelsPerFoot)) {
             return;
         }
 
@@ -60,22 +51,19 @@ export default class MapController {
         }
 
         const mapHeight =
-            this.gameState.mapImage && this.gameState.pixelsPerFoot
-                ? this.gameState.mapImage.height / this.gameState.pixelsPerFoot
+            this.gameState.location.mapImage && this.gameState.location.pixelsPerFoot
+                ? this.gameState.location.mapImage.height / this.gameState.location.pixelsPerFoot
                 : DEFAULT_MAP_SIZE;
         const mapWidth =
-            this.gameState.mapImage && this.gameState.pixelsPerFoot
-                ? this.gameState.mapImage.width / this.gameState.pixelsPerFoot
+            this.gameState.location.mapImage && this.gameState.location.pixelsPerFoot
+                ? this.gameState.location.mapImage.width / this.gameState.location.pixelsPerFoot
                 : DEFAULT_MAP_SIZE;
 
         this.gameState.mapCanvas = document.createElement("canvas");
-        this.gameState.mapCanvas.height = this.gameState.mapImage.height;
-        this.gameState.mapCanvas.width = this.gameState.mapImage.width;
+        this.gameState.mapCanvas.height = this.gameState.location.mapImage.height;
+        this.gameState.mapCanvas.width = this.gameState.location.mapImage.width;
 
         this.gameState.mapTexture = new THREE.CanvasTexture(this.gameState.mapCanvas);
-        this.gameState.mapTexture.generateMipmaps = false;
-        this.gameState.mapTexture.wrapS = this.gameState.mapTexture.wrapT = THREE.ClampToEdgeWrapping;
-        this.gameState.mapTexture.minFilter = THREE.LinearFilter;
         // in threejs v155 color space was changed to be more realistic, this fixes the color to be more accurate to original image
         this.gameState.mapTexture.colorSpace = THREE.SRGBColorSpace;
 
@@ -107,7 +95,7 @@ export default class MapController {
 
         const imagesLoading: Promise<void>[] = [];
 
-        for (let chunk of this.gameState.mapImage.chunks) {
+        for (let chunk of this.gameState.location.mapImage.chunks) {
             const base_image = new Image();
             base_image.src = `/images/${chunk.fileId}`;
             const imagePromise = new Promise<void>((resolve) => {
@@ -130,18 +118,18 @@ export default class MapController {
     }
 
     private paintGrid() {
-        const squareSize = this.gameState.pixelsPerFoot * 5;
+        const squareSize = this.gameState.location.pixelsPerFoot * 5;
         const context = this.gameState.mapCanvas.getContext("2d");
         context.lineWidth = 3;
         context.strokeStyle = "#000000";
         context.beginPath();
-        for (let x = 0; x < this.gameState.mapImage.width; x += squareSize) {
+        for (let x = 0; x < this.gameState.location.mapImage.width; x += squareSize) {
             context.moveTo(x, 0);
-            context.lineTo(x, this.gameState.mapImage.height);
+            context.lineTo(x, this.gameState.location.mapImage.height);
         }
-        for (let y = 0; y < this.gameState.mapImage.height; y += squareSize) {
+        for (let y = 0; y < this.gameState.location.mapImage.height; y += squareSize) {
             context.moveTo(0, y);
-            context.lineTo(this.gameState.mapImage.width, y);
+            context.lineTo(this.gameState.location.mapImage.width, y);
         }
         context.stroke();
 
