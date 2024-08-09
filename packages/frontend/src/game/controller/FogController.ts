@@ -1,7 +1,6 @@
 import {PaintController} from "./PaintController";
 import {FogStroke, Stroke} from "../../types";
 import GameState, {BrushOptions, FOG_Y_POSITION} from "../GameState";
-import Queue from "../Queue";
 
 
 export default class FogController extends PaintController<FogStroke>{
@@ -61,7 +60,7 @@ export default class FogController extends PaintController<FogStroke>{
     }
 
     get strokesAlreadyDrawn() {
-        return this.gameState.fogAlreadyDrawn as Queue<Stroke>;
+        return this.gameState.fogAlreadyDrawn;
     }
 
     get pathBeingDrawn() {
@@ -82,5 +81,9 @@ export default class FogController extends PaintController<FogStroke>{
 
     get meshY() {
         return FOG_Y_POSITION;
+    }
+
+    notifyDrawFinishedCallbacks(stroke: FogStroke) {
+        this.gameState.notifyFogFinishedCallbacks(stroke);
     }
 }

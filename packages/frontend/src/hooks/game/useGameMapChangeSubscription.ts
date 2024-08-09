@@ -22,9 +22,13 @@ interface GameMapChangeSubscriptionResult extends GqlSubscriptionResult<Game>{
 	gameMapChange: Game;
 }
 
-export default function useGameMapChangeSubscription(): GameMapChangeSubscriptionResult {
+export default function useGameMapChangeSubscription(onData?: (data: Game) => any): GameMapChangeSubscriptionResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<Game, GameMapChangeSubscriptionVariables>(GAME_MAP_SUBSCRIPTION, { gameId: game_id });
+	const result = useGQLSubscription<Game, GameMapChangeSubscriptionVariables>(
+		GAME_MAP_SUBSCRIPTION,
+		{ gameId: game_id },
+		{onData}
+	);
 	return {
 		...result,
 		gameMapChange: result.data

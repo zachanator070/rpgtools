@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {FogStroke, Game, Image, PathNode, Place, PositionedModel, Stroke} from "../types";
+import {FogStroke, Game, PathNode, Place, PositionedModel, Stroke} from "../types";
 import {
     BufferGeometry,
     CanvasTexture,
@@ -19,7 +19,6 @@ import {
     DEFAULT_BRUSH_SIZE,
     DEFAULT_BRUSH_TYPE
 } from "./controller/PaintController";
-import Queue from "./Queue";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -75,6 +74,7 @@ export default class GameState {
     private _location: Place;
 
     private _currentControls = CAMERA_CONTROLS;
+    private _changeControlsCallbacks: ((mode: string) => any)[] = [];
 
     // selected model
     private _selectedMeshedModel: MeshedModel;
@@ -94,9 +94,10 @@ export default class GameState {
         brushFill: DEFAULT_BRUSH_FILL,
         brushSize: DEFAULT_BRUSH_SIZE
     };
-    private _paintStrokesAlreadyDrawn: Queue<Stroke> = new Queue<Stroke>();
+    private _paintStrokesAlreadyDrawn: { [ket: string]: Stroke } = {};
     private _paintBrushMesh: THREE.Mesh = null;
     private _paintBrushMaterial: THREE.Material = null;
+    private _paintingFinishedCallbacks: ((stroke: Stroke) => any)[] = [];
 
     // fog
     private _fogCanvas: HTMLCanvasElement;
@@ -111,9 +112,10 @@ export default class GameState {
         brushFill: DEFAULT_BRUSH_FILL,
         brushSize: DEFAULT_BRUSH_SIZE
     };
-    private _fogAlreadyDrawn: Queue<FogStroke> = new Queue<FogStroke>();
+    private _fogAlreadyDrawn: { [ket: string]: FogStroke } = {};
     private _fogBrushMesh: THREE.Mesh = null;
     private _fogBrushMaterial: THREE.Material = null;
+    private _fogFinishedCallbacks: ((stroke: FogStroke) => any)[] = [];
 
     get renderer(): WebGLRenderer {
         return this._renderer;
@@ -233,6 +235,7 @@ export default class GameState {
 
     set currentControls(value: string) {
         this._currentControls = value;
+        this.notifyChangesCallback(value);
     }
 
     get selectedMeshedModel(): MeshedModel {
@@ -312,10 +315,6 @@ export default class GameState {
         return this._paintBrushOptions;
     }
 
-    get paintStrokesAlreadyDrawn(): Queue<Stroke> {
-        return this._paintStrokesAlreadyDrawn;
-    }
-
     get paintBrushMesh(): any {
         return this._paintBrushMesh;
     }
@@ -338,10 +337,6 @@ export default class GameState {
 
     set paintStrokeBeingDrawnId(value: string) {
         this._paintStrokeBeingDrawnId = value;
-    }
-
-    get fogAlreadyDrawn(): Queue<FogStroke> {
-        return this._fogAlreadyDrawn;
     }
 
     get currentGame(): Game {
@@ -423,5 +418,38 @@ export default class GameState {
 
     set fogBrushMaterial(value: Material) {
         this._fogBrushMaterial = value;
+    }
+
+
+    get paintStrokesAlreadyDrawn(): { [p: string]: Stroke } {
+        return this._paintStrokesAlreadyDrawn;
+    }
+
+    get paintingFinishedCallbacks(): ((stroke: Stroke) => void)[] {
+        return this._paintingFinishedCallbacks;
+    }
+
+    notifyPaintingFinishedCallbacks(stroke: Stroke): void {
+        this._paintingFinishedCallbacks.forEach(callback => callback(stroke));
+    }
+
+    get fogAlreadyDrawn(): { [p: string]: FogStroke } {
+        return this._fogAlreadyDrawn;
+    }
+
+    notifyFogFinishedCallbacks(fogStroke: FogStroke): void {
+        this._fogFinishedCallbacks.forEach((callback) => callback(fogStroke));
+    }
+
+    get fogFinishedCallbacks(): ((stroke: FogStroke) => void)[] {
+        return this._fogFinishedCallbacks;
+    }
+
+    addChangeControlsCallback(callback: ((mode: string) => any)) {
+        this._changeControlsCallbacks.push(callback);
+    }
+
+    notifyChangesCallback(mode: string) {
+        this._changeControlsCallbacks.forEach(callback => callback(mode));
     }
 }

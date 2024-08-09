@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {Game, Stroke} from "../../types";
+import {Stroke} from "../../types";
 import {GAME_STROKE} from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_STROKE_SUBSCRIPTION = gql`
@@ -14,17 +14,22 @@ export const GAME_STROKE_SUBSCRIPTION = gql`
 `;
 
 interface GameStrokeSubscriptionVariables {
-	gameId: string;
+    gameId: string;
 }
 
-interface GameStrokeSubscriptionResult extends GqlSubscriptionResult<Stroke>{
-	gameStrokeAdded: Stroke
+interface GameStrokeSubscriptionResult extends GqlSubscriptionResult<Stroke> {
+    gameStrokeAdded: Stroke
 }
-export default function useGameStrokeSubscription(): GameStrokeSubscriptionResult {
-	const { game_id } = useParams();
-	const result = useGQLSubscription<Stroke, GameStrokeSubscriptionVariables>(GAME_STROKE_SUBSCRIPTION, { gameId: game_id });
-	return {
-		...result,
-		gameStrokeAdded: result.data
-	}
+
+export default function useGameStrokeSubscription(onData?: (data: Stroke) => any): GameStrokeSubscriptionResult {
+    const {game_id} = useParams();
+    const result = useGQLSubscription<Stroke, GameStrokeSubscriptionVariables>(
+		GAME_STROKE_SUBSCRIPTION,
+		{gameId: game_id},
+		{onData}
+	);
+    return {
+        ...result,
+        gameStrokeAdded: result.data
+    }
 };

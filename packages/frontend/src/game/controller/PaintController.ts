@@ -3,7 +3,6 @@ import * as THREE from "three";
 import {GameController} from "./GameController";
 import {FogStroke, Stroke} from "../../types";
 import GameState, {BrushOptions, DRAW_Y_POSITION} from "../GameState";
-import Queue from "../Queue";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -99,10 +98,8 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		const fill = (stroke as Stroke).fill;
 		size *= this.gameState.location.pixelsPerFoot;
 		if (useCache) {
-			for (let stroke of this.strokesAlreadyDrawn) {
-				if (stroke._id === _id) {
-					return;
-				}
+			if (this.strokesAlreadyDrawn[_id]) {
+				return;
 			}
 		}
 		if (path.length === 0) {
@@ -166,7 +163,7 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 				console.warn(`Unknown stroke type when rendering stroke ${stroke._id}`);
 		}
 		if (useCache) {
-			this.strokeCache.enqueue(stroke);
+			this.strokesAlreadyDrawn[stroke._id] = stroke;
 		}
 		this.drawTexture.needsUpdate = true;
 	};
@@ -226,11 +223,15 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 				fill: this.brushOptions.brushFill,
 				_id: this.strokeBeingDrawnId,
 			};
-			this.strokeCache.enqueue(stroke as T);
 			this.pathBeingDrawn = [];
 			this.strokeBeingDrawnId = null;
+			this.notifyDrawFinishedCallbacks(stroke as T);
 		}
 	};
+
+	notifyDrawFinishedCallbacks(stroke: T) {
+		this.gameState.notifyPaintingFinishedCallbacks(stroke as Stroke);
+	}
 
 	updateBrushPosition = () => {
 		if (!this.gameState.mapMesh || !this.brushMesh) {
@@ -282,19 +283,11 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.updateBrushPosition();
 	};
 
-	getBrushType = () => {
-		return this.brushOptions.brushType;
-	}
-
 	setBrushColor = (color: string) => {
 		this.brushOptions.brushColor = color;
 		this.brushMaterial.color.setHex(parseInt("0x" + color.substring(1)));
 		this.brushMaterial.needsUpdate = true;
 	};
-
-	getBrushColor = () => {
-		return this.brushOptions.brushColor;
-	}
 
 	setBrushFill = (fill: boolean) => {
 		this.brushOptions.brushFill = fill;
@@ -303,18 +296,10 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.brushMaterial.needsUpdate = true;
 	};
 
-	getBrushFill = () => {
-		return this.brushOptions.brushFill;
-	}
-
 	setBrushSize = (size: number) => {
 		this.brushOptions.brushSize = size;
 		this.createPaintBrushMesh();
 	};
-
-	getBrushSize = () => {
-		return this.brushOptions.brushSize;
-	}
 
 	setDrawMeshOpacity = (value: number) => {
 		if (this.drawMesh) {
@@ -375,8 +360,8 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.gameState.paintBrushMaterial = brushMaterial;
 	}
 
-	get strokesAlreadyDrawn() {
-		return this.gameState.paintStrokesAlreadyDrawn;
+	get strokesAlreadyDrawn(): { [key: string]: T } {
+		return this.gameState.paintStrokesAlreadyDrawn as { [key: string]: T };
 	}
 
 	get pathBeingDrawn() {
@@ -393,10 +378,6 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 	set strokeBeingDrawnId(strokeBeingDrawnId) {
 		this.gameState.paintStrokeBeingDrawnId = strokeBeingDrawnId;
-	}
-
-	get strokeCache(): Queue<T> {
-		return this.gameState.paintStrokesAlreadyDrawn as Queue<T>;
 	}
 
 	get meshY() {

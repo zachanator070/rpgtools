@@ -13,7 +13,7 @@ import GameState, {
 } from "./GameState";
 import SceneController from "./controller/SceneController";
 import MapController from "./controller/MapController";
-import {FogStroke, Place, Stroke} from "../types";
+import {FogStroke, Place, PositionedModel, Stroke} from "../types";
 import FogController from "./controller/FogController";
 import {GameController} from "./controller/GameController";
 
@@ -218,5 +218,29 @@ export default class GameControllerManager {
 
     setFogOpacity(opacity: number) {
         this._fogController.setDrawMeshOpacity(opacity);
+    }
+
+    addPaintingFinishedCallback(callback: (stroke: Stroke) => any) {
+        this._gameState.paintingFinishedCallbacks.push(callback);
+    }
+
+    addFogFinishedCallback(callback: (stroke: FogStroke) => any) {
+        this._gameState.fogFinishedCallbacks.push(callback);
+    }
+
+    stroke(stroke: Stroke) {
+        this._paintController.stroke(stroke);
+    }
+
+    fogStroke(stroke: FogStroke) {
+        this._fogController.stroke(stroke);
+    }
+
+    addModel(positionedModel: PositionedModel) {
+        this._sceneController.addModel(positionedModel);
+    }
+
+    addChangeControlsCallback(callback: ((mode: string) => any)) {
+        this._gameState.addChangeControlsCallback(callback);
     }
 }

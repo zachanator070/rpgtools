@@ -19,6 +19,7 @@ export default class MapController {
         let mapNeedsSetup = false;
         if (this.gameState.location?._id !== newLocation?._id) {
             mapNeedsSetup = true;
+            this.gameState.location = newLocation;
         }
         if (mapNeedsSetup) {
             if (!newLocation.mapImage) {
@@ -38,7 +39,7 @@ export default class MapController {
     }
 
     setupMap() {
-        if (!(this.gameState.location.mapImage && this.gameState.location.pixelsPerFoot)) {
+        if (!(this.gameState.location?.mapImage && this.gameState.location?.pixelsPerFoot)) {
             return;
         }
 
