@@ -21,9 +21,13 @@ interface GameModelAddedResult extends GqlSubscriptionResult<PositionedModel> {
 	gameModelAdded: PositionedModel;
 }
 
-export default function useGameModelAddedSubscription(): GameModelAddedResult {
+export default function useGameModelAddedSubscription(onData?: (data: PositionedModel) => any): GameModelAddedResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<PositionedModel, GameModelAddedSubscriptionVariables>(GAME_MODEL_ADDED_SUBSCRIPTION, { gameId: game_id });
+	const result = useGQLSubscription<PositionedModel, GameModelAddedSubscriptionVariables>(
+		GAME_MODEL_ADDED_SUBSCRIPTION,
+		{ gameId: game_id },
+		{onData}
+	);
 	return {
 		...result,
 		gameModelAdded: result.data
