@@ -16,13 +16,11 @@ import GameWikiDrawer from "./GameWikiDrawer";
 import InitiativeTracker from "./initiative-tracker/InitiativeTracker";
 import GameDrawer from "./GameDrawer";
 import {FogStroke, Game, Stroke} from "../../types";
-import useModal from "../../components/widgets/useModal";
 import FullScreenModal from "../../components/widgets/FullScreenModal";
 import ProgressBar from "../../components/widgets/ProgressBar";
 import GameControllerManager from "../GameControllerManager";
 import GameStateFactory from "../GameStateFactory";
 import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
-import useAddModel from "../../hooks/game/useAddModel";
 
 interface GameContentProps {
 	currentGame: Game;
@@ -36,12 +34,9 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	const [urlLoading, setUrlLoading] = useState<string>();
 	const [loadingProgress, setLoadingProgress] = useState<number>();
 	const { addStroke } = useAddStroke();
-	const { addModel } = useAddModel();
 	const { setModelPosition } = useSetModelPosition();
 	const { deletePositionedModel } = useDeletePositionedModel();
 	const { addFogStroke } = useAddFogStroke();
-
-	const {modalConfirm} = useModal();
 
 	const [gameWikiId, setGameWikiId] = useState<string>();
 
@@ -50,7 +45,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	useGameMapChangeSubscription((game) => controllerManager.current.changeLocation(game.map));
 	useGameStrokeSubscription((stroke) => controllerManager.current.stroke(stroke));
 	useGameModelAddedSubscription((model) => controllerManager.current.addModel(model));
-	const { data: modelPositioned } = useGameModelPositionedSubscription();
+	useGameModelPositionedSubscription((model) => controllerManager.current.updateModel(model));
 	const { gameModelDeleted } = useGameModelDeletedSubscription();
 	useGameFogSubscription((fogStroke) => controllerManager.current.fogStroke(fogStroke));
 
@@ -74,6 +69,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 		fogStrokes.forEach((fogStroke) => controllerManager.current.fogStroke(fogStroke));
 		currentGame.models.forEach((model) => controllerManager.current.addModel(model));
 		controlsManager.addChangeControlsCallback((mode) => setControlsMode(mode));
+		controlsManager.addPositionedModelUpdatedCallback((model) => setModelPosition({...model, positionedModelId: model._id}));
 	}
 
 	return (

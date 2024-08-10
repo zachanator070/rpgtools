@@ -36,7 +36,7 @@ export default class MessageModel extends SqlModel {
             allowNull: false
         },
         timestamp: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         GameId: {

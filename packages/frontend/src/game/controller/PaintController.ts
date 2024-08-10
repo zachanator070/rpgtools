@@ -93,7 +93,6 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 	stroke = (stroke: T, useCache = true) => {
 		let { path, type, size, _id } = stroke;
-		console.log('Stroke called');
 		const color = (stroke as Stroke).color;
 		const fill = (stroke as Stroke).fill;
 		size *= this.gameState.location.pixelsPerFoot;

@@ -11,47 +11,26 @@ export class SelectModelController implements GameController {
 		this.gameData = gameData;
 	}
 
-	getAllChildren = (object) => {
-		const children = [...object.children] || [];
-		const returnChildren = [...children];
-		for (let child of children) {
-			returnChildren.push(...this.getAllChildren(child));
-		}
-		return returnChildren;
-	};
-
 	selectModel = () => {
-		const allObjects = [];
-		for (let model of this.gameData.meshedModels) {
-			allObjects.push(...this.getAllChildren(model.mesh));
-			allObjects.push(model.mesh);
-		}
-		const intersects = this.gameData.raycaster.intersectObjects(allObjects);
-		if (intersects.length === 0) {
-			this.clearSelection();
+
+		const selectedMesh = this.gameData.getFirstMeshUnderMouse();
+		if (!selectedMesh) {
+			this.removeGlow();
 			return;
 		}
-		let selectedMesh = intersects[0].object;
-		while (selectedMesh.parent) {
-			if (selectedMesh.parent.type === "Scene") {
-				break;
-			}
-			selectedMesh = selectedMesh.parent;
-		}
+
 		for (let meshedModel of this.gameData.meshedModels) {
 			if (meshedModel.mesh.id === selectedMesh.id) {
 				this.gameData.selectedMeshedModel = meshedModel;
 				break;
 			}
 		}
-		this.gameData.intersectionPoint = intersects[0].point;
+		this.constructGlow();
 	};
 
 	constructGlow = (moveOnly = false) => {
+		this.removeGlow();
 		if (!this.gameData.selectedMeshedModel) {
-			if (this.gameData.glow) {
-				this.gameData.glow.visible = false;
-			}
 			return;
 		}
 
@@ -97,9 +76,13 @@ export class SelectModelController implements GameController {
 		(this.gameData.glow.material as Material).needsUpdate = true;
 	};
 
+	removeGlow() {
+		this.gameData.scene.remove(this.gameData.glow);
+	}
+
 	clearSelection = () => {
 		this.gameData.selectedMeshedModel = null;
-		this.gameData.intersectionPoint = null;
+		this.removeGlow();
 	};
 
 	enable = () => {
@@ -107,6 +90,7 @@ export class SelectModelController implements GameController {
 	};
 
 	disable = () => {
+		this.clearSelection();
 		this.tearDown();
 	};
 
