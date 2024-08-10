@@ -3,7 +3,7 @@ import {PositionedModel} from "../../types";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import * as THREE from "three";
-import {Mesh, Vector3} from "three";
+import {Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3} from "three";
 import {Object3D} from "three/src/core/Object3D";
 import {MeshedModel} from '../GameState';
 
@@ -89,8 +89,8 @@ export default class SceneController {
                             mesh: loadedMesh.clone(),
                         };
                         meshedModelClone.mesh.traverse((node) => {
-                            if (node instanceof THREE.Mesh && node.isMesh) {
-                                node.material = node.material.clone();
+                            if ((node as Mesh).isMesh) {
+                                (node as Mesh).material = ((node as Mesh).material as MeshBasicMaterial).clone();
                             }
                         });
                         this.gameData.originalMeshedModels.push(meshedModelClone);
@@ -171,8 +171,8 @@ export default class SceneController {
     setModelColor = (meshedModel: MeshedModel, color: string) => {
         if (color) {
             meshedModel.mesh.traverse(function (child: Object3D) {
-                if (child instanceof Mesh && child.isMesh) {
-                    child.material.color.setHex(parseInt("0x" + color.substring(1)));
+                if ((child as Mesh).isMesh) {
+                    ((child as Mesh).material as MeshStandardMaterial).color.setHex(parseInt("0x" + color.substring(1)));
                 }
             });
         } else {
@@ -189,8 +189,8 @@ export default class SceneController {
             }
             meshedModel.mesh = clonedModel.mesh.clone();
             meshedModel.mesh.traverse((node: Object3D) => {
-                if (node instanceof Mesh && node.isMesh) {
-                    node.material = node.material.clone();
+                if ((node as Mesh).isMesh) {
+                    (node as Mesh).material = ((node as Mesh).material as MeshBasicMaterial).clone();
                 }
             });
             this.gameData.scene.add(meshedModel.mesh);
