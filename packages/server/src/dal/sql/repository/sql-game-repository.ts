@@ -117,15 +117,11 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 receiverUser: message.receiverUser,
                 GameId: entity._id
             });
-            if (!message._id) {
-                messageModel._id = v4();
-                await messageModel.save();
-                message._id = messageModel._id
-            }  else {
-                // update if already exists
-                messageModel.isNewRecord = false;
+
+            if (!await MessageModel.findOne({ where: { _id: message._id }})) {
                 await messageModel.save();
             }
+
             messageModels.push(messageModel);
         }
 
