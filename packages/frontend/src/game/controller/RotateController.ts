@@ -1,36 +1,61 @@
 import {GameController} from "./GameController";
-import GameState from "../GameState";
+import GameState, {MeshedModel} from "../GameState";
 
 export class RotateController implements GameController {
 
-	private gameData: GameState;
+	private gameState: GameState;
+
+	private mouseMoveListener: () => void;
+	private mouseUpListener: () => void;
 
 	constructor(gameData: GameState) {
-		this.gameData = gameData;
+		this.gameState = gameData;
 	}
 
-	rotateModel = () => {
-		if (!this.gameData.selectedMeshedModel) {
+	selectModel = () => {
+		const selectedObject = this.gameState.getFirstMeshUnderMouse();
+		if (!selectedObject) {
 			return;
 		}
-		const intersects = this.gameData.raycaster.intersectObject(this.gameData.mapMesh);
+		let selectedMeshedModel: MeshedModel;
+		for (let meshedModel of this.gameState.meshedModels) {
+			if (meshedModel.mesh.id === selectedObject.id) {
+				selectedMeshedModel = meshedModel;
+				break;
+			}
+		}
+		if (selectedObject) {
+			this.mouseMoveListener = () => this.rotateModel(selectedMeshedModel);
+			this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
+			this.mouseUpListener = () => this.rotateDone(selectedMeshedModel);
+			this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
+		}
+	}
+
+	rotateModel = (selectedMeshedModel: MeshedModel) => {
+		if (!selectedMeshedModel) {
+			return;
+		}
+		const intersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
 		if (intersects.length === 0) {
 			return;
 		}
 		const mapIntersect = intersects[0].point;
-		this.gameData.selectedMeshedModel.mesh.lookAt(mapIntersect);
-		this.gameData.selectedMeshedModel.positionedModel.lookAtX =
+		selectedMeshedModel.mesh.lookAt(mapIntersect);
+		selectedMeshedModel.positionedModel.lookAtX =
 			mapIntersect.x;
-		this.gameData.selectedMeshedModel.positionedModel.lookAtZ =
+		selectedMeshedModel.positionedModel.lookAtZ =
 			mapIntersect.z;
 	};
 
-	rotateDone = () => {
-	};
+	rotateDone = (selectedMeshedModel: MeshedModel) => {
+		this.gameState.renderRoot.removeEventListener("mousemove", this.mouseMoveListener);
+		this.gameState.renderRoot.removeEventListener("mouseup", this.mouseUpListener);
+		this.gameState.notifyPositionedModelUpdatedCallbacks(selectedMeshedModel.positionedModel);
+	}
 
 	enable = () => {
-		this.gameData.renderRoot.addEventListener("mousemove", this.rotateModel);
-		this.gameData.renderRoot.addEventListener("mouseup", this.rotateDone);
+		this.gameState.renderRoot.addEventListener("mousedown", this.selectModel);
 	};
 
 	disable = () => {
@@ -38,7 +63,6 @@ export class RotateController implements GameController {
 	};
 
 	tearDown = () => {
-		this.gameData.renderRoot.removeEventListener("mousemove", this.rotateModel);
-		this.gameData.renderRoot.removeEventListener("mouseup", this.rotateDone);
+		this.gameState.renderRoot.removeEventListener("mousedown", this.selectModel);
 	};
 }

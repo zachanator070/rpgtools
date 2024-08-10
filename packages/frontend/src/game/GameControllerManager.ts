@@ -243,4 +243,16 @@ export default class GameControllerManager {
     addChangeControlsCallback(callback: ((mode: string) => any)) {
         this._gameState.addChangeControlsCallback(callback);
     }
+
+    addSelectedModelCallback(callback: (model: PositionedModel) => any) {
+        this._gameState.addSelectModelCallback(callback);
+    }
+
+    addPositionedModelUpdatedCallback(callback: (model: PositionedModel) => any) {
+        this._gameState.addPositionedModelUpdatedCallback(callback);
+    }
+
+    updateModel(positionedModel: PositionedModel) {
+        this._sceneController.updateModel(positionedModel);
+    }
 }

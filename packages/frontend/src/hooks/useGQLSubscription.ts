@@ -15,7 +15,7 @@ export default function useGQLSubscription<TData, TVariables=void>(
 		query,
 		{
 			variables,
-			onSubscriptionData: ({ subscriptionData }) => options.onData && options.onData(subscriptionData.data[queryName])
+			onData: ({ data }) => options.onData && options.onData(data.data[queryName])
 		}
 	);
 

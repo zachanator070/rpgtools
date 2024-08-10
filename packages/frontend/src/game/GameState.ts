@@ -3,14 +3,13 @@ import {FogStroke, Game, PathNode, Place, PositionedModel, Stroke} from "../type
 import {
     BufferGeometry,
     CanvasTexture,
-    DirectionalLight, Fog, Material,
+    DirectionalLight,Material,
     Mesh, MeshPhongMaterial, Object3DEventMap,
     PerspectiveCamera,
     Raycaster,
     Scene,
     Texture,
     Vector2,
-    Vector3,
     WebGLRenderer
 } from "three";
 import {
@@ -19,6 +18,7 @@ import {
     DEFAULT_BRUSH_SIZE,
     DEFAULT_BRUSH_TYPE
 } from "./controller/PaintController";
+import {Object3D} from "three/src/core/Object3D";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -65,6 +65,8 @@ export default class GameState {
     private _meshedModels: MeshedModel[] = [];
     private _originalMeshedModels: MeshedModel[] = [];
 
+    private _positionedModelUpdatedCallbacks: ((model: PositionedModel) => any)[] = [];
+
     // map
     private _mapMesh: THREE.Mesh;
     private _groundMesh: THREE.Mesh;
@@ -78,8 +80,8 @@ export default class GameState {
 
     // selected model
     private _selectedMeshedModel: MeshedModel;
-    private _intersectionPoint: Vector3;
     private _glow: Mesh;
+    private _selectModelCallbacks: ((model: PositionedModel) => any)[] = [];
 
     // painting
     private _paintCanvas: HTMLCanvasElement;
@@ -244,14 +246,9 @@ export default class GameState {
 
     set selectedMeshedModel(value: MeshedModel) {
         this._selectedMeshedModel = value;
-    }
-
-    get intersectionPoint(): Vector3 {
-        return this._intersectionPoint;
-    }
-
-    set intersectionPoint(value: Vector3) {
-        this._intersectionPoint = value;
+        if (value) {
+            this.notifySelectModelCallbacks(value.positionedModel);
+        }
     }
 
     get glow(): Mesh {
@@ -451,5 +448,50 @@ export default class GameState {
 
     notifyChangesCallback(mode: string) {
         this._changeControlsCallbacks.forEach(callback => callback(mode));
+    }
+
+    addSelectModelCallback(callback: ((mode: PositionedModel) => any)) {
+        this._selectModelCallbacks.push(callback);
+    }
+
+    notifySelectModelCallbacks(model: PositionedModel) {
+        this._selectModelCallbacks.forEach(callback => callback(model));
+    }
+
+    getFirstMeshUnderMouse(): null | Object3D {
+        const allObjects = [];
+        for (let model of this.meshedModels) {
+            allObjects.push(...this.getAllChildren(model.mesh));
+            allObjects.push(model.mesh);
+        }
+        const intersects = this.raycaster.intersectObjects(allObjects);
+        if (intersects.length === 0) {
+            return;
+        }
+        let selectedMesh = intersects[0].object;
+        while (selectedMesh.parent) {
+            if (selectedMesh.parent.type === "Scene") {
+                break;
+            }
+            selectedMesh = selectedMesh.parent;
+        }
+        return selectedMesh;
+    }
+
+    getAllChildren = (object: Object3D) => {
+        const children = [...object.children] || [];
+        const returnChildren = [...children];
+        for (let child of children) {
+            returnChildren.push(...this.getAllChildren(child));
+        }
+        return returnChildren;
+    };
+
+    addPositionedModelUpdatedCallback(callback: ((model: PositionedModel) => any)) {
+        this._positionedModelUpdatedCallbacks.push(callback);
+    }
+
+    notifyPositionedModelUpdatedCallbacks(positionedModel: PositionedModel) {
+        this._positionedModelUpdatedCallbacks.forEach((callback) => callback(positionedModel));
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useSetModelColor from "../../../hooks/game/useSetModelColor";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModelWiki";
@@ -19,7 +19,7 @@ interface ModelInfoProps {
 
 export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInfoProps) {
 	const { currentGame, loading } = useCurrentGame();
-	const [positionedModel, setPositionedModel] = useState<PositionedModel>();
+	const [selectedPositionedModel, setSelectedPositionedModel] = useState<PositionedModel>();
 	const [newWiki, setNewWiki] = useState<WikiPage>();
 	const [color, setColor] = useState<string>();
 	const { setModelColor } = useSetModelColor();
@@ -27,23 +27,23 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 	const { gameModelPositioned } = useGameModelPositionedSubscription();
 	const { deletePositionedModel } = useDeletePositionedModel();
 
-	const onModelSelected = useRef((model) => {
-		setPositionedModel(model);
-	});
+	useEffect(() => {
+		controllerManager.addSelectedModelCallback((model) => setSelectedPositionedModel(model));
+	}, []);
 
 	useEffect(() => {
-		if (positionedModel) {
-			setColor(positionedModel.color);
+		if (selectedPositionedModel) {
+			setColor(selectedPositionedModel.color);
 		}
-	}, [positionedModel]);
+	}, [selectedPositionedModel]);
 
 	useEffect(() => {
 		if (
 			gameModelPositioned &&
-			positionedModel &&
-			positionedModel._id === gameModelPositioned._id
+			selectedPositionedModel &&
+			selectedPositionedModel._id === gameModelPositioned._id
 		) {
-			setPositionedModel(gameModelPositioned);
+			setSelectedPositionedModel(gameModelPositioned);
 		}
 	}, [gameModelPositioned]);
 
@@ -54,24 +54,24 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 	let content;
 
 	let name = null;
-	if (positionedModel) {
-		name = positionedModel.model.name;
-		if (positionedModel.wiki) {
-			name = positionedModel.wiki.name;
+	if (selectedPositionedModel) {
+		name = selectedPositionedModel.model.name;
+		if (selectedPositionedModel.wiki) {
+			name = selectedPositionedModel.wiki.name;
 		}
 	}
 
-	if (!positionedModel) {
+	if (!selectedPositionedModel) {
 		content = <h2>No Model Selected</h2>;
 	} else {
 		content = (
 			<>
 				<h2>{name}</h2>
-				{positionedModel.wiki && (
+				{selectedPositionedModel.wiki && (
 					<div className={"margin-lg"}>
 						<a
 							onClick={async () =>
-								await setGameWikiId(positionedModel.wiki._id)
+								await setGameWikiId(selectedPositionedModel.wiki._id)
 							}
 						>
 							Show Wiki
@@ -89,7 +89,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 								<PrimaryButton
 									onClick={async () =>
 										await setPositionedModelWiki({
-											positionedModelId: positionedModel._id,
+											positionedModelId: selectedPositionedModel._id,
 											wikiId: newWiki ? newWiki._id : null,
 										})
 									}
@@ -115,7 +115,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 								<PrimaryButton
 									onClick={async () => {
 										await setModelColor({
-											positionedModelId: positionedModel._id,
+											positionedModelId: selectedPositionedModel._id,
 											color: color,
 										});
 									}}
@@ -126,7 +126,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 								<PrimaryButton
 									onClick={async () => {
 										await setModelColor({
-											positionedModelId: positionedModel._id,
+											positionedModelId: selectedPositionedModel._id,
 											color: null,
 										});
 									}}
@@ -141,7 +141,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 								controllerManager.clearSelection();
 								await deletePositionedModel({
 									gameId: currentGame._id,
-									positionedModelId: positionedModel._id,
+									positionedModelId: selectedPositionedModel._id,
 								});
 							}}
 							style={{marginTop: "1em"}}
