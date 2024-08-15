@@ -19,6 +19,7 @@ import {
     DEFAULT_BRUSH_TYPE
 } from "./controller/PaintController";
 import {Object3D} from "three/src/core/Object3D";
+import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -53,6 +54,7 @@ export default class GameState {
     private _currentGame: Game;
     private _renderer: THREE.WebGLRenderer;
     private _renderRoot: HTMLCanvasElement;
+    private _composer: EffectComposer;
 
     // camera and lights
     private _camera: THREE.PerspectiveCamera;
@@ -493,5 +495,13 @@ export default class GameState {
 
     notifyPositionedModelUpdatedCallbacks(positionedModel: PositionedModel) {
         this._positionedModelUpdatedCallbacks.forEach((callback) => callback(positionedModel));
+    }
+
+    get composer(): EffectComposer {
+        return this._composer;
+    }
+
+    set composer(value: EffectComposer) {
+        this._composer = value;
     }
 }

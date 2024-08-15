@@ -1,21 +1,37 @@
 
 import {GameController} from "./GameController";
 import GameState from "../GameState";
-import {Material, MeshBasicMaterial, Vector3} from "three";
 import * as THREE from "three";
+import {OutlinePass} from "three/examples/jsm/postprocessing/OutlinePass";
+import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass";
+import {OutputPass} from "three/examples/jsm/postprocessing/OutputPass";
+import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
+import {FXAAShader} from "three/examples/jsm/shaders/FXAAShader";
 
 export class SelectModelController implements GameController {
 	private gameData: GameState;
-
+	private outlinePass: OutlinePass;
 	constructor(gameData: GameState) {
 		this.gameData = gameData;
+
+		const renderPass = new RenderPass(this.gameData.scene, this.gameData.camera);
+		this.gameData.composer.addPass(renderPass);
+
+		this.outlinePass = new OutlinePass(new THREE.Vector2(this.gameData.renderRoot.width, this.gameData.renderRoot.height), this.gameData.scene, this.gameData.camera);
+		this.gameData.composer.addPass(this.outlinePass);
+
+		const outputPass = new OutputPass();
+		this.gameData.composer.addPass(outputPass);
+
+		const effectFXAA = new ShaderPass(FXAAShader);
+		effectFXAA.uniforms['resolution'].value.set(1 / this.gameData.renderRoot.width, 1 / this.gameData.renderRoot.height);
+		this.gameData.composer.addPass(effectFXAA);
 	}
 
 	selectModel = () => {
-
+		this.removeGlow();
 		const selectedMesh = this.gameData.getFirstMeshUnderMouse();
 		if (!selectedMesh) {
-			this.removeGlow();
 			return;
 		}
 
@@ -28,56 +44,16 @@ export class SelectModelController implements GameController {
 		this.constructGlow();
 	};
 
-	constructGlow = (moveOnly = false) => {
-		this.removeGlow();
+	constructGlow = () => {
 		if (!this.gameData.selectedMeshedModel) {
 			return;
 		}
 
-		this.gameData.scene.remove(this.gameData.glow);
-		const basicMaterial = new MeshBasicMaterial({
-			color: new THREE.Color(0xffff00),
-			transparent: true,
-			opacity: 0.5,
-		});
-		let boxGeometry = new THREE.BoxGeometry(
-			this.gameData.selectedMeshedModel.positionedModel.model.width,
-			this.gameData.selectedMeshedModel.positionedModel.model.height,
-			this.gameData.selectedMeshedModel.positionedModel.model.depth,
-			2,
-			2,
-			2
-		);
-		this.gameData.glow = new THREE.Mesh(boxGeometry, basicMaterial);
-		this.gameData.scene.add(this.gameData.glow);
-
-		const boxHeight = this.gameData.selectedMeshedModel.positionedModel.model.height;
-
-		this.gameData.glow.position.set(
-			this.gameData.selectedMeshedModel.mesh.position.x,
-			0,
-			this.gameData.selectedMeshedModel.mesh.position.z
-		);
-		this.gameData.glow.lookAt(
-			new Vector3(
-				this.gameData.selectedMeshedModel.positionedModel.lookAtX,
-				0,
-				this.gameData.selectedMeshedModel.positionedModel.lookAtZ
-			)
-		);
-		this.gameData.glow.position.set(
-			this.gameData.selectedMeshedModel.mesh.position.x,
-			boxHeight / 2 + 0.03,
-			this.gameData.selectedMeshedModel.mesh.position.z
-		);
-		if (!moveOnly) {
-			this.gameData.glow.visible = true;
-		}
-		(this.gameData.glow.material as Material).needsUpdate = true;
+		this.outlinePass.selectedObjects = [this.gameData.selectedMeshedModel.mesh];
 	};
 
 	removeGlow() {
-		this.gameData.scene.remove(this.gameData.glow);
+		this.outlinePass.selectedObjects = [];
 	}
 
 	clearSelection = () => {
