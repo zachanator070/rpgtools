@@ -9,6 +9,7 @@ export const BRUSH_SQUARE = "square";
 export const BRUSH_ERASE = "erase";
 export const BRUSH_LINE = "line";
 export const BRUSH_FOG = "fog";
+export const BRUSH_FOG_COLOR = '#000000';
 export const DEFAULT_BRUSH_COLOR = "#FFFFFF";
 export const DEFAULT_BRUSH_TYPE = BRUSH_LINE;
 export const DEFAULT_BRUSH_FILL = true;
@@ -25,19 +26,23 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 		this.drawCanvas = document.createElement("canvas");
 		if(this.gameState.location) {
-			this.setupDrawCanvas();
+			this.setupDrawCanvas(
+				this.gameState.location.mapImage.width,
+				this.gameState.location.mapImage.height,
+				this.gameState.location.pixelsPerFoot,
+			);
 		}
 	}
 
-	setupDrawCanvas() {
-		this.drawCanvas.height = this.gameState.location.mapImage.height;
-		this.drawCanvas.width = this.gameState.location.mapImage.width;
+	setupDrawCanvas(width: number, height: number, pixelsPerFoot: number) {
+		this.drawCanvas.height = height;
+		this.drawCanvas.width = width;
 
 		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
 
 		const drawGeometry = new THREE.PlaneGeometry(
-			this.gameState.location.mapImage.width / this.gameState.location.pixelsPerFoot,
-			this.gameState.location.mapImage.height / this.gameState.location.pixelsPerFoot
+			this.drawCanvas.width / pixelsPerFoot,
+			this.drawCanvas.height / pixelsPerFoot
 		);
 		drawGeometry.rotateX(-Math.PI / 2);
 		this.drawMaterial = new THREE.MeshBasicMaterial({
@@ -55,6 +60,22 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.gameState.scene.add(this.drawMesh);
 
 		this.setupBrush();
+	}
+
+	resize(width: number, height: number, newPixelsPerFoot: number, oldPixelsPerFoot: number, clearPaint: boolean) {
+		this.gameState.scene.remove(this.drawMesh);
+		this.setupDrawCanvas(width, height, newPixelsPerFoot);
+		if (clearPaint) {
+			this.strokesAlreadyDrawn  = {};
+		}  else {
+			this.restroke(oldPixelsPerFoot);
+		}
+	}
+
+	restroke(pixelsPerFootOverride: number) {
+		for(let [id, stroke] of Object.entries(this.strokesAlreadyDrawn)) {
+			this.stroke(stroke, false, pixelsPerFootOverride);
+		}
 	}
 
 	setupBrush = () => {
@@ -91,11 +112,16 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.gameState.scene.add(this.brushMesh);
 	};
 
-	stroke = (stroke: T, useCache = true) => {
+	stroke = (stroke: T, useCache = true, pixelsPerFootOverride: number = null) => {
 		let { path, type, size, _id } = stroke;
 		const color = (stroke as Stroke).color;
 		const fill = (stroke as Stroke).fill;
-		size *= this.gameState.location.pixelsPerFoot;
+		let pixelsPerFoot = this.gameState.location.pixelsPerFoot;
+		// in the instance of resizing the canvas, new pixelPerFoot value can
+		if (pixelsPerFootOverride) {
+			pixelsPerFoot = pixelsPerFootOverride;
+		}
+		size *= pixelsPerFoot;
 		if (useCache) {
 			if (this.strokesAlreadyDrawn[_id]) {
 				return;
@@ -361,6 +387,10 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 
 	get strokesAlreadyDrawn(): { [key: string]: T } {
 		return this.gameState.paintStrokesAlreadyDrawn as { [key: string]: T };
+	}
+
+	set strokesAlreadyDrawn(strokes: { [key: string]: T }) {
+		(this.gameState.paintStrokesAlreadyDrawn as { [key: string]: T }) = strokes;
 	}
 
 	get pathBeingDrawn() {

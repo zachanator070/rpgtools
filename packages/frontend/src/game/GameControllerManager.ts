@@ -98,7 +98,6 @@ export default class GameControllerManager {
     }
 
     resize = () => {
-        console.log('resize called');
         this._sceneController.resize(
             this._gameState.renderRoot.parentElement.clientWidth,
             this._gameState.renderRoot.parentElement.clientHeight
@@ -178,10 +177,11 @@ export default class GameControllerManager {
         this.controllerMap[mode]?.enable();
     }
 
-    changeLocation(newLocation: Place) {
+    changeLocation(newLocation: Place, clearPaint: boolean, setFog: boolean) {
+        const oldPixelsPerFoot = this._gameState.location.pixelsPerFoot;
         this._mapController.setLocation(newLocation);
-        this._paintController.setupDrawCanvas();
-        this._fogController.setupDrawCanvas();
+        this._paintController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot, oldPixelsPerFoot, clearPaint);
+        this._fogController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot, oldPixelsPerFoot, !setFog);
     }
 
     setDrawGrid(drawGrid: boolean) {

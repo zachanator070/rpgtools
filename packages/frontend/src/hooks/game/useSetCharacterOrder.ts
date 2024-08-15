@@ -2,6 +2,7 @@ import useCurrentGame from "./useCurrentGame";
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {CharacterInput, Game} from "../../types";
 import {SET_CHARACTER_ORDER} from "@rpgtools/common/src/gql-mutations";
+import {useParams} from "react-router-dom";
 
 interface SetCharacterOrderVariables {
 	gameId?: string;
@@ -13,9 +14,9 @@ interface SetCharacterOrderResult extends GqlMutationResult<Game, SetCharacterOr
 }
 
 export default function useSetCharacterOrder (): SetCharacterOrderResult {
-	const { currentGame } = useCurrentGame();
+	const {game_id} = useParams();
 	const result = useGQLMutation<Game, SetCharacterOrderVariables>(SET_CHARACTER_ORDER, {
-		gameId: currentGame && currentGame._id,
+		gameId: game_id,
 	});
 	return {
 		...result,

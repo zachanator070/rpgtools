@@ -1,7 +1,7 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import useCurrentGame from "./useCurrentGame";
 import {Game, PathNodeInput} from "../../types";
 import {ADD_FOG_STROKE} from "@rpgtools/common/src/gql-mutations";
+import {useParams} from "react-router-dom";
 
 export interface AddFogVariables {
 	gameId?: string;
@@ -16,8 +16,8 @@ interface AddStrokeResult extends GqlMutationResult<Game, AddFogVariables> {
 }
 
 export default function useAddFogStroke(): AddStrokeResult {
-	const { currentGame } = useCurrentGame();
-	const returnValues = useGQLMutation<Game, AddFogVariables>(ADD_FOG_STROKE, {gameId: currentGame._id});
+	const {game_id} = useParams();
+	const returnValues = useGQLMutation<Game, AddFogVariables>(ADD_FOG_STROKE, {gameId: game_id});
 	return {
 		...returnValues,
 		addFogStroke: returnValues.mutate

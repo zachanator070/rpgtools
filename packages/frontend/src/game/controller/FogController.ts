@@ -1,5 +1,5 @@
 import {PaintController} from "./PaintController";
-import {FogStroke, Stroke} from "../../types";
+import {FogStroke} from "../../types";
 import GameState, {BrushOptions, FOG_Y_POSITION} from "../GameState";
 
 
@@ -61,6 +61,10 @@ export default class FogController extends PaintController<FogStroke>{
 
     get strokesAlreadyDrawn() {
         return this.gameState.fogAlreadyDrawn;
+    }
+
+    set strokesAlreadyDrawn(strokes: {[p: string]: FogStroke}) {
+        this.gameState.fogAlreadyDrawn = strokes;
     }
 
     get pathBeingDrawn() {

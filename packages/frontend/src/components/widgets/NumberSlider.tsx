@@ -16,5 +16,6 @@ export default function NumberSlider({min, max, value, onChange, defaultValue}: 
         max={max}
         value={value}
         onChange={onChange}
+        defaultValue={defaultValue}
     />;
 }

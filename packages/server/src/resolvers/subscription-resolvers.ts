@@ -43,7 +43,7 @@ export const SubscriptionResolvers = {
 		subscribe: withFilter(
 			() => getPubSub().asyncIterator([GAME_MAP_CHANGE]),
 			(payload, { gameId }) => {
-				return payload.gameMapChange._id === gameId;
+				return payload.gameId === gameId;
 			}
 		),
 	},

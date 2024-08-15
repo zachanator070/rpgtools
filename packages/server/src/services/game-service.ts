@@ -9,7 +9,7 @@ import {
 } from "@rpgtools/common/src/permission-constants";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
-import {USER} from "@rpgtools/common/src/type-constants";
+import { USER } from "@rpgtools/common/src/type-constants";
 import { SecurityContext } from "../security/security-context";
 import {
 	Character, CharacterAttribute,
@@ -37,14 +37,14 @@ import { AbstractGameCommand } from "../domain-entities/game-commands/abstract-g
 import { User } from "../domain-entities/user";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {AuthorizationService} from "./authorization-service";
-import {DatabaseContext} from "../dal/database-context";
+import { AuthorizationService } from "./authorization-service";
+import { DatabaseContext } from "../dal/database-context";
 import GameFactory from "../domain-entities/factory/game-factory";
 import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
 import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
-import {PaginatedResult} from "../dal/paginated-result";
-import {FogStroke} from "../domain-entities/fog-stroke";
-import {Stroke} from "../domain-entities/stroke";
+import { PaginatedResult } from "../dal/paginated-result";
+import { FogStroke } from "../domain-entities/fog-stroke";
+import { Stroke } from "../domain-entities/stroke";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -197,8 +197,8 @@ export class GameService {
 		context: SecurityContext,
 		gameId: string,
 		placeId: string,
-		clearPaint: boolean,
-		setFog: boolean,
+		clearPaint: boolean = false,
+		setFog: boolean = false,
 		databaseContext: DatabaseContext
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
@@ -244,49 +244,47 @@ export class GameService {
 		}
 
 		await databaseContext.fogStrokeRepository.deleteAllByGameId(game._id);
+		let newFogStroke: FogStroke;
 		if (setFog) {
-			await databaseContext.fogStrokeRepository.create(
-				this.fogStrokeFactory.build(
-					{
-						_id: uuidv4(),
-						game: game._id,
-						path:[
-							new PathNode(
-								uuidv4(),
-								Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-								Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
-							),
-						],
-						size: newMaxSize,
-						strokeType: "fog"
-					}
-				)
+			newFogStroke = this.fogStrokeFactory.build(
+				{
+					_id: uuidv4(),
+					game: game._id,
+					path:[
+						new PathNode(
+							uuidv4(),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
+						),
+					],
+					size: newMaxSize,
+					strokeType: "fog"
+				}
 			);
 		}
 		else {
-			await databaseContext.fogStrokeRepository.create(
-				this.fogStrokeFactory.build(
-					{
-						_id: uuidv4(),
-						game: game._id,
-						path:[
-							new PathNode(
-								uuidv4(),
-								Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-								Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
-							),
-						],
-						size: newMaxSize,
-						strokeType: "erase"
-					}
-				)
+			newFogStroke = this.fogStrokeFactory.build(
+				{
+					_id: uuidv4(),
+					game: game._id,
+					path:[
+						new PathNode(
+							uuidv4(),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
+							Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
+						),
+					],
+					size: newMaxSize,
+					strokeType: "erase"
+				}
 			);
 		}
+		await databaseContext.fogStrokeRepository.create(newFogStroke);
 
 		game.map = place._id;
 
 		await databaseContext.gameRepository.update(game);
-		await this.eventPublisher.publish(GAME_MAP_CHANGE, { gameMapChange: game });
+		await this.eventPublisher.publish(GAME_MAP_CHANGE, { gameId: game._id, gameMapChange: { map: place, clearPaint, setFog } });
 		return game;
 	};
 	addStroke = async (

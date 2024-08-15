@@ -18,7 +18,8 @@ export default function useFetchAllPagesEffect(result, query: DocumentNode, vari
                             const newResult = {};
                             newResult[queryName] = {
                                 docs: [],
-                                nextPage: options.fetchMoreResult[queryName].nextPage
+                                nextPage: options.fetchMoreResult[queryName].nextPage,
+                                totalDocs: result.data.totalDocs,
                             }
                             newResult[queryName].docs.push(...previousResultQuery[queryName].docs);
                             newResult[queryName].docs.push(...options.fetchMoreResult[queryName].docs);
