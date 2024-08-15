@@ -13,6 +13,7 @@ import {
     WebGLRenderer
 } from "three";
 import {
+    BRUSH_FOG, BRUSH_FOG_COLOR,
     DEFAULT_BRUSH_COLOR,
     DEFAULT_BRUSH_FILL,
     DEFAULT_BRUSH_SIZE,
@@ -111,8 +112,8 @@ export default class GameState {
     private _fogPathBeingDrawn: PathNode[] = [];
     private _fogStrokeBeingDrawnId: string = null;
     private _fogBrushOptions: BrushOptions = {
-        brushType: DEFAULT_BRUSH_TYPE,
-        brushColor: DEFAULT_BRUSH_COLOR,
+        brushType: BRUSH_FOG,
+        brushColor: BRUSH_FOG_COLOR,
         brushFill: DEFAULT_BRUSH_FILL,
         brushSize: DEFAULT_BRUSH_SIZE
     };
@@ -422,6 +423,14 @@ export default class GameState {
 
     get paintStrokesAlreadyDrawn(): { [p: string]: Stroke } {
         return this._paintStrokesAlreadyDrawn;
+    }
+
+    set paintStrokesAlreadyDrawn(value: { [p: string]: Stroke }) {
+        this._paintStrokesAlreadyDrawn = value;
+    }
+
+    set fogAlreadyDrawn(value: { [p: string]: FogStroke }) {
+        this._fogAlreadyDrawn = value;
     }
 
     get paintingFinishedCallbacks(): ((stroke: Stroke) => void)[] {

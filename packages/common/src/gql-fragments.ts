@@ -273,23 +273,21 @@ export const GAME_CHARACTERS = gql`
     }
 `;
 export const GAME_MAP = gql`
-    fragment gameMap on Game {
-        map {
+    fragment gameMap on Place {
+        _id
+        name
+        mapImage {
             _id
-            name
-            mapImage {
+            width
+            height
+            chunks{
                 _id
-                width
-                height
-                chunks{
-                    _id
-                    x
-                    y
-                    fileId
-                }
+                x
+                y
+                fileId
             }
-            pixelsPerFoot
         }
+        pixelsPerFoot
     }
 `;
 export const GAME_STROKE = gql`
@@ -358,7 +356,9 @@ export const GAME_ATTRIBUTES = gql`
     ${ACCESS_CONTROL_LIST}
     fragment gameAttributes on Game {
         _id
-        ...gameMap
+        map {
+         ...gameMap
+        }
         host{
             _id
         }

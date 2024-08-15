@@ -2,6 +2,7 @@ import useCurrentGame from "./useCurrentGame";
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {Game} from "../../types";
 import {SET_CHARACTER_ATTRIBUTES} from "@rpgtools/common/src/gql-mutations";
+import {useParams} from "react-router-dom";
 
 export interface CharacterAttributeInput {
 	_id?: string;
@@ -18,8 +19,8 @@ interface SetCharacterAttributesResult extends GqlMutationResult<Game, SetCharac
 	setCharacterAttributes: MutationMethod<Game, SetCharacterAttributesVariables>
 }
 export default function useSetCharacterAttributes(): SetCharacterAttributesResult {
-	const { currentGame } = useCurrentGame();
-	const result = useGQLMutation<Game, SetCharacterAttributesVariables>(SET_CHARACTER_ATTRIBUTES, { gameId: currentGame._id });
+	const {game_id} = useParams();
+	const result = useGQLMutation<Game, SetCharacterAttributesVariables>(SET_CHARACTER_ATTRIBUTES, { gameId: game_id });
 	return {
 		...result,
 		setCharacterAttributes: result.mutate

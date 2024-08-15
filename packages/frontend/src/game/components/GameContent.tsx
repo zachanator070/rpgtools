@@ -42,7 +42,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	const [controlsMode, setControlsMode] = useState<string>(CAMERA_CONTROLS);
 
-	useGameMapChangeSubscription((game) => controllerManager.current.changeLocation(game.map));
+	useGameMapChangeSubscription(({ map, clearPaint, setFog}) => controllerManager.current.changeLocation(map, clearPaint, setFog));
 	useGameStrokeSubscription((stroke) => controllerManager.current.stroke(stroke));
 	useGameModelAddedSubscription((model) => controllerManager.current.addModel(model));
 	useGameModelPositionedSubscription((model) => controllerManager.current.updateModel(model));

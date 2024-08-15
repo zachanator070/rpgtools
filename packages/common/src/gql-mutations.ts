@@ -274,7 +274,9 @@ export const SET_GAME_MAP = gql`
 	mutation setGameMap($gameId: ID!, $placeId: ID!, $clearPaint: Boolean, $setFog: Boolean){
 		setGameMap(gameId: $gameId, placeId: $placeId, clearPaint: $clearPaint, setFog: $setFog){
 			_id
-			...gameMap
+			map {
+				...gameMap
+			}
 		}
 	}
 `;
