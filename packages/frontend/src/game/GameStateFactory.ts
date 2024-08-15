@@ -3,6 +3,7 @@ import {Vector2, Vector3} from "three";
 import * as THREE from "three";
 import GameState from "./GameState";
 import {DEFAULT_MAP_SIZE} from "./controller/PaintController";
+import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 
 
 export default function GameStateFactory(
@@ -52,6 +53,8 @@ export default function GameStateFactory(
         gameState.renderer.shadowMap.enabled = true;
         gameState.renderer.setSize(renderWidth, renderHeight);
         gameState.renderer.setPixelRatio(window.devicePixelRatio);
+
+        gameState.composer = new EffectComposer(gameState.renderer);
     }
 
     function setupLight(gameState: GameState) {

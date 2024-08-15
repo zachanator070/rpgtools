@@ -25,7 +25,7 @@ export default class SceneController {
             if (this.gameData.mouseCoords) {
                 this.gameData.raycaster.setFromCamera(this.gameData.mouseCoords, this.gameData.camera);
             }
-            this.gameData.renderer.render(this.gameData.scene, this.gameData.camera);
+            this.gameData.composer.render();
         };
         animate();
     }
