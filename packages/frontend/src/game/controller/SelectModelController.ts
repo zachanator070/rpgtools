@@ -18,6 +18,10 @@ export class SelectModelController implements GameController {
 		this.gameData.composer.addPass(renderPass);
 
 		this.outlinePass = new OutlinePass(new THREE.Vector2(this.gameData.renderRoot.width, this.gameData.renderRoot.height), this.gameData.scene, this.gameData.camera);
+		this.outlinePass.edgeThickness = 1;
+		this.outlinePass.edgeStrength = 10;
+		this.outlinePass.pulsePeriod = 0;
+		this.outlinePass.usePatternTexture = false;
 		this.gameData.composer.addPass(this.outlinePass);
 
 		const outputPass = new OutputPass();

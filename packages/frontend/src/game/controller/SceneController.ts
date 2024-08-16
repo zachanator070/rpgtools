@@ -74,8 +74,9 @@ export default class SceneController {
                     new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ)
                 );
                 loadedMesh.traverse(function (child) {
-                    if (child instanceof THREE.Mesh && child.isMesh) {
+                    if ((child as Mesh).isMesh) {
                         child.castShadow = true;
+                        child.receiveShadow = true;
                     }
                 });
                 for (let meshedModel of this.gameData.meshedModels) {
