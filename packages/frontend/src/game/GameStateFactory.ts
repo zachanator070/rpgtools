@@ -51,7 +51,7 @@ export default function GameStateFactory(
         });
         gameState.renderer.shadowMap.enabled = true;
         gameState.renderer.setSize(renderWidth, renderHeight);
-        // gameState.renderer.setPixelRatio(window.devicePixelRatio);
+        gameState.renderer.setPixelRatio(window.devicePixelRatio);
 
         gameState.composer = new EffectComposer(gameState.renderer);
     }

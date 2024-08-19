@@ -197,7 +197,6 @@ export class GameService {
 		context: SecurityContext,
 		gameId: string,
 		placeId: string,
-		clearPaint: boolean = false,
 		setFog: boolean = false,
 		databaseContext: DatabaseContext
 	) => {
@@ -222,31 +221,11 @@ export class GameService {
 
 		const newMaxSize = Math.max(newMap.height, newMap.width);
 
-		if (clearPaint && game.map) {
-			const oldPlace = await databaseContext.placeRepository.findOneById(game.map);
-			const oldMap = await databaseContext.imageRepository.findOneById(oldPlace.mapImage);
-			const oldMapSize = Math.max(oldMap.height, oldMap.width);
-			await databaseContext.strokeRepository.deleteAllByGameId(game._id);
-			await databaseContext.strokeRepository.create(
-				this.strokeFactory.build(
-					{
-						_id: uuidv4(),
-						game: game._id,
-						path: [new PathNode(uuidv4(), Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-							Math.ceil(newMaxSize / place.pixelsPerFoot / 2))],
-						color: "#FFFFFF",
-						size: Math.ceil(oldMapSize / oldPlace.pixelsPerFoot / 2),
-						fill: true,
-						strokeType: "erase"
-					}
-				)
-			);
-		}
+		await databaseContext.strokeRepository.deleteAllByGameId(game._id);
 
 		await databaseContext.fogStrokeRepository.deleteAllByGameId(game._id);
-		let newFogStroke: FogStroke;
 		if (setFog) {
-			newFogStroke = this.fogStrokeFactory.build(
+			const newFogStroke = this.fogStrokeFactory.build(
 				{
 					_id: uuidv4(),
 					game: game._id,
@@ -261,30 +240,13 @@ export class GameService {
 					strokeType: "fog"
 				}
 			);
+			await databaseContext.fogStrokeRepository.create(newFogStroke);
 		}
-		else {
-			newFogStroke = this.fogStrokeFactory.build(
-				{
-					_id: uuidv4(),
-					game: game._id,
-					path:[
-						new PathNode(
-							uuidv4(),
-							Math.ceil(newMaxSize / place.pixelsPerFoot / 2),
-							Math.ceil(newMaxSize / place.pixelsPerFoot / 2)
-						),
-					],
-					size: newMaxSize,
-					strokeType: "erase"
-				}
-			);
-		}
-		await databaseContext.fogStrokeRepository.create(newFogStroke);
 
 		game.map = place._id;
 
 		await databaseContext.gameRepository.update(game);
-		await this.eventPublisher.publish(GAME_MAP_CHANGE, { gameId: game._id, gameMapChange: { map: place, clearPaint, setFog } });
+		await this.eventPublisher.publish(GAME_MAP_CHANGE, { gameId: game._id, gameMapChange: { map: place, setFog } });
 		return game;
 	};
 	addStroke = async (

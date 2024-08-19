@@ -11,7 +11,6 @@ export const GAME_MAP_SUBSCRIPTION = gql`
 			map {
 				...gameMap
 			}
-			clearPaint
 			setFog
 		}
 	}

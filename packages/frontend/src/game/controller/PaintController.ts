@@ -62,20 +62,9 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.setupBrush();
 	}
 
-	resize(width: number, height: number, newPixelsPerFoot: number, oldPixelsPerFoot: number, clearPaint: boolean) {
+	resize(width: number, height: number, newPixelsPerFoot: number) {
 		this.gameState.scene.remove(this.drawMesh);
 		this.setupDrawCanvas(width, height, newPixelsPerFoot);
-		if (clearPaint) {
-			this.strokesAlreadyDrawn  = {};
-		}  else {
-			this.restroke(oldPixelsPerFoot);
-		}
-	}
-
-	restroke(pixelsPerFootOverride: number) {
-		for(let [id, stroke] of Object.entries(this.strokesAlreadyDrawn)) {
-			this.stroke(stroke, false, pixelsPerFootOverride);
-		}
 	}
 
 	setupBrush = () => {

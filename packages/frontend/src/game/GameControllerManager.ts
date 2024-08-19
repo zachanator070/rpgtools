@@ -1,7 +1,7 @@
 import {SelectModelController} from "./controller/SelectModelController";
 import {MoveController} from "./controller/MoveController";
 import {RotateController} from "./controller/RotateController";
-import {PaintController} from "./controller/PaintController";
+import {BRUSH_FOG, PaintController} from "./controller/PaintController";
 import {DeleteController} from "./controller/DeleteController";
 import {CameraController} from "./controller/CameraController";
 import GameState, {
@@ -16,6 +16,7 @@ import MapController from "./controller/MapController";
 import {FogStroke, Place, PositionedModel, Stroke} from "../types";
 import FogController from "./controller/FogController";
 import {GameController} from "./controller/GameController";
+import {v4 as uuidv4} from "uuid";
 
 
 export default class GameControllerManager {
@@ -177,11 +178,28 @@ export default class GameControllerManager {
         this.controllerMap[mode]?.enable();
     }
 
-    changeLocation(newLocation: Place, clearPaint: boolean, setFog: boolean) {
-        const oldPixelsPerFoot = this._gameState.location.pixelsPerFoot;
+    changeLocation(newLocation: Place, setFog: boolean) {
         this._mapController.setLocation(newLocation);
-        this._paintController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot, oldPixelsPerFoot, clearPaint);
-        this._fogController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot, oldPixelsPerFoot, !setFog);
+        this._paintController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot);
+        this._fogController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot);
+        if (setFog) {
+            const newMaxSize = Math.max(newLocation.mapImage.height, newLocation.mapImage.width);
+            this._fogController.stroke(
+                {
+                    _id: uuidv4(),
+                    path:[
+                        {
+                            _id: uuidv4(),
+                            x: Math.ceil(newMaxSize / newLocation.pixelsPerFoot / 2),
+                            y: Math.ceil(newMaxSize / newLocation.pixelsPerFoot / 2)
+                        },
+                    ],
+                    size: newMaxSize,
+                    type: BRUSH_FOG
+                },
+                false
+            );
+        }
     }
 
     setDrawGrid(drawGrid: boolean) {
