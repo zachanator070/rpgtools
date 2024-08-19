@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import GameControllerManager from "../../GameControllerManager";
+import GameControllerFacade from "../../GameControllerFacade";
 import {BRUSH_ERASE, BRUSH_FOG, DEFAULT_BRUSH_SIZE} from "../../controller/PaintController";
 import DropdownSelect from "../../../components/widgets/DropdownSelect";
 import NumberSlider from "../../../components/widgets/NumberSlider";
 import ToolTip from "../../../components/widgets/ToolTip";
 interface FogOptionsProps {
-	controllerManager: GameControllerManager;
+	controllerFacade: GameControllerFacade;
 }
 
-export default function FogOptions({ controllerManager }: FogOptionsProps) {
+export default function FogOptions({ controllerFacade }: FogOptionsProps) {
 	const [brushType, setBrushType] = useState(BRUSH_FOG);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
 
@@ -21,7 +21,7 @@ export default function FogOptions({ controllerManager }: FogOptionsProps) {
 					style={{ width: 120 }}
 					onChange={(value) => {
 						setBrushType(value);
-						controllerManager.setFogBrushType(value);
+						controllerFacade.setFogBrushType(value);
 					}}
 					options={[
 						{value: BRUSH_FOG, label: 'Fog'},
@@ -37,7 +37,7 @@ export default function FogOptions({ controllerManager }: FogOptionsProps) {
 					value={brushSize}
 					onChange={(value) => {
 						setBrushSize(value);
-						controllerManager.setFogBrushSize(value);
+						controllerFacade.setFogBrushSize(value);
 					}}
 				/>
 			</div>
@@ -48,7 +48,7 @@ export default function FogOptions({ controllerManager }: FogOptionsProps) {
 					min={0}
 					max={100}
 					onChange={async (value) => {
-						controllerManager.setFogOpacity(value / 100);
+						controllerFacade.setFogOpacity(value / 100);
 					}}
 					defaultValue={100}
 				/>

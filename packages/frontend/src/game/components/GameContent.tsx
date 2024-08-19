@@ -18,7 +18,7 @@ import GameDrawer from "./GameDrawer";
 import {FogStroke, Game, Stroke} from "../../types";
 import FullScreenModal from "../../components/widgets/FullScreenModal";
 import ProgressBar from "../../components/widgets/ProgressBar";
-import GameControllerManager from "../GameControllerManager";
+import GameControllerFacade from "../GameControllerFacade";
 import GameStateFactory from "../GameStateFactory";
 import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
 
@@ -29,7 +29,7 @@ interface GameContentProps {
 }
 
 export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
-	const controllerManager = useRef<GameControllerManager>();
+	const controllerFacade = useRef<GameControllerFacade>();
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [urlLoading, setUrlLoading] = useState<string>();
 	const [loadingProgress, setLoadingProgress] = useState<number>();
@@ -42,35 +42,34 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	const [controlsMode, setControlsMode] = useState<string>(CAMERA_CONTROLS);
 
-	useGameMapChangeSubscription(({ map, setFog}) => controllerManager.current.changeLocation(map, setFog));
-	useGameStrokeSubscription((stroke) => controllerManager.current.stroke(stroke));
-	useGameModelAddedSubscription((model) => controllerManager.current.addModel(model));
-	useGameModelPositionedSubscription((model) => controllerManager.current.updateModel(model));
-	useGameModelDeletedSubscription((model) => controllerManager.current.removeModel(model));
-	useGameFogSubscription((fogStroke) => controllerManager.current.fogStroke(fogStroke));
+	useGameMapChangeSubscription(({ map, setFog}) => controllerFacade.current.changeLocation(map, setFog));
+	useGameStrokeSubscription((stroke) => controllerFacade.current.stroke(stroke));
+	useGameModelAddedSubscription((model) => controllerFacade.current.addModel(model));
+	useGameModelPositionedSubscription((model) => controllerFacade.current.updateModel(model));
+	useGameModelDeletedSubscription((model) => controllerFacade.current.removeModel(model));
+	useGameFogSubscription((fogStroke) => controllerFacade.current.fogStroke(fogStroke));
 
 	useEffect(() => {
-		return () => controllerManager.current.tearDown();
+		return () => controllerFacade.current.tearDown();
 	}, []);
 
-	const setupControllerManager = (renderCanvas: HTMLCanvasElement) => {
-		if(!renderCanvas || controllerManager.current) {
+	const setupControllerFacade = (renderCanvas: HTMLCanvasElement) => {
+		if(!renderCanvas || controllerFacade.current) {
 			return;
 		}
 		const gameState = GameStateFactory(
 			renderCanvas,
 			currentGame
 		);
-		const controlsManager = new GameControllerManager(gameState);
-		controlsManager.addPaintingFinishedCallback(async (stroke) => addStroke({...stroke, strokeId: stroke._id}));
-		controlsManager.addFogFinishedCallback(async (stroke) => addFogStroke({...stroke, strokeId: stroke._id}));
-		controlsManager.addRemoveModelCallback(async (model) => deletePositionedModel({gameId: currentGame._id, positionedModelId: model._id}));
-		controllerManager.current = controlsManager;
-		strokes.forEach((stroke) => controllerManager.current.stroke(stroke));
-		fogStrokes.forEach((fogStroke) => controllerManager.current.fogStroke(fogStroke));
-		currentGame.models.forEach((model) => controllerManager.current.addModel(model));
-		controlsManager.addChangeControlsCallback((mode) => setControlsMode(mode));
-		controlsManager.addPositionedModelUpdatedCallback((model) => setModelPosition({...model, positionedModelId: model._id}));
+		controllerFacade.current = new GameControllerFacade(gameState);;
+		controllerFacade.current.addPaintingFinishedCallback(async (stroke) => addStroke({...stroke, strokeId: stroke._id}));
+		controllerFacade.current.addFogFinishedCallback(async (stroke) => addFogStroke({...stroke, strokeId: stroke._id}));
+		controllerFacade.current.addRemoveModelCallback(async (model) => deletePositionedModel({gameId: currentGame._id, positionedModelId: model._id}));
+		strokes.forEach((stroke) => controllerFacade.current.stroke(stroke));
+		fogStrokes.forEach((fogStroke) => controllerFacade.current.fogStroke(fogStroke));
+		currentGame.models.forEach((model) => controllerFacade.current.addModel(model));
+		controllerFacade.current.addChangeControlsCallback((mode) => setControlsMode(mode));
+		controllerFacade.current.addPositionedModelUpdatedCallback((model) => setModelPosition({...model, positionedModelId: model._id}));
 	}
 
 	return (
@@ -98,7 +97,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 				}}
 			>
 				<canvas
-					ref={(node) => setupControllerManager(node)}
+					ref={(node) => setupControllerFacade(node)}
 					style={{
 						flexGrow: 1,
 						display: "flex",
@@ -107,13 +106,13 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 				<InitiativeTracker />
 				<GameWikiDrawer wikiId={gameWikiId} />
 				<GameDrawer
-					controllerManager={controllerManager.current}
+					controllerFacade={controllerFacade.current}
 					controlsMode={controlsMode}
 					setGameWikiId={setGameWikiId}
 				/>
 				<GameControlsToolbar
 					controlsMode={controlsMode}
-					setControlsMode={(mode) => controllerManager.current.changeControls(mode)}
+					setControlsMode={(mode) => controllerFacade.current.changeControls(mode)}
 				/>
 			</div>
 		</>

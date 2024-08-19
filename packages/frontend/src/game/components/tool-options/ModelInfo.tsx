@@ -5,7 +5,7 @@ import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModel
 import useGameModelPositionedSubscription from "../../../hooks/game/useGameModelPosistionedSubscription";
 import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel";
 import {PositionedModel, WikiPage} from "../../../types";
-import GameControllerManager from "../../GameControllerManager";
+import GameControllerFacade from "../../GameControllerFacade";
 import LoadingView from "../../../components/LoadingView";
 import SelectWiki from "../../../components/select/SelectWiki";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
@@ -13,11 +13,11 @@ import ColorInput from "../../../components/widgets/input/ColorInput";
 import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
 
 interface ModelInfoProps {
-	controllerManager: GameControllerManager,
+	controllerFacade: GameControllerFacade,
 	setGameWikiId: (wikiId: string) => Promise<any>
 }
 
-export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInfoProps) {
+export default function ModelInfo({ controllerFacade, setGameWikiId }: ModelInfoProps) {
 	const { currentGame, loading } = useCurrentGame();
 	const [selectedPositionedModel, setSelectedPositionedModel] = useState<PositionedModel>();
 	const [newWiki, setNewWiki] = useState<WikiPage>();
@@ -28,7 +28,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 	const { deletePositionedModel } = useDeletePositionedModel();
 
 	useEffect(() => {
-		controllerManager.addSelectedModelCallback((model) => setSelectedPositionedModel(model));
+		controllerFacade.addSelectedModelCallback((model) => setSelectedPositionedModel(model));
 	}, []);
 
 	useEffect(() => {
@@ -138,7 +138,7 @@ export default function ModelInfo({ controllerManager, setGameWikiId }: ModelInf
 
 						<PrimaryDangerButton
 							onClick={async () => {
-								controllerManager.clearSelection();
+								controllerFacade.clearSelection();
 								await deletePositionedModel({
 									gameId: currentGame._id,
 									positionedModelId: selectedPositionedModel._id,

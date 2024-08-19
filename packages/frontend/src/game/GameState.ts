@@ -21,6 +21,7 @@ import {
 } from "./controller/PaintController";
 import {Object3D} from "three/src/core/Object3D";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
+import {GameController} from "./controller/GameController";
 
 export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
@@ -31,6 +32,8 @@ export const FOG_CONTROLS = "Fog Controls";
 export const SELECT_MODEL_CONTROLS = "Select Model Controls";
 export const SELECT_LOCATION_CONTROLS = "Game Location";
 export const ADD_MODEL_CONTROLS = "Add Model";
+export const SCENE_CONTROLS = "Scene Controls";
+export const HOTKEY_CONTROLS = "Hotkey Controls";
 
 export const MAP_Y_POSITION = 0;
 export const DRAW_Y_POSITION = 0.05;
@@ -52,6 +55,11 @@ export interface BrushOptions {
 }
 
 export default class GameState {
+
+    // controllers
+    private _controllerMap: { [key: string]: GameController };
+
+    // render
     private _currentGame: Game;
     private _renderer: THREE.WebGLRenderer;
     private _renderRoot: HTMLCanvasElement;
@@ -511,5 +519,13 @@ export default class GameState {
 
     set composer(value: EffectComposer) {
         this._composer = value;
+    }
+
+    get controllerMap(): { [p: string]: GameController } {
+        return this._controllerMap;
+    }
+
+    set controllerMap(value: { [p: string]: GameController }) {
+        this._controllerMap = value;
     }
 }
