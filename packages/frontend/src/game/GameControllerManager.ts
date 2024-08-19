@@ -109,19 +109,7 @@ export default class GameControllerManager {
         this.focusedElement = event.target as HTMLElement;
     }
     keyDownListener = ({ code }) => {
-        if (
-            ![
-                "KeyP",
-                "KeyC",
-                "KeyM",
-                "KeyR",
-                "KeyX",
-                "KeyF",
-                "KeyS",
-                "KeyA",
-                "KeyL",
-            ].includes(code) || this._gameState.renderRoot !== this.focusedElement
-        ) {
+        if (this._gameState.renderRoot !== this.focusedElement) {
             return;
         }
         switch (code) {
@@ -256,6 +244,14 @@ export default class GameControllerManager {
 
     addModel(positionedModel: PositionedModel) {
         this._sceneController.addModel(positionedModel);
+    }
+
+    removeModel(positionedModel: PositionedModel) {
+        this._sceneController.removeModel(positionedModel);
+    }
+
+    addRemoveModelCallback(callback: ((model: PositionedModel) => any)) {
+        this._gameState.addRemoveModelCallback(callback);
     }
 
     addChangeControlsCallback(callback: ((mode: string) => any)) {

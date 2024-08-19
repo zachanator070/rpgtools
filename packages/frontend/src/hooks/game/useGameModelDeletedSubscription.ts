@@ -19,11 +19,13 @@ interface GameModelSubscriptionResult extends GqlSubscriptionResult<PositionedMo
 	gameModelDeleted: PositionedModel
 }
 
-export default function useGameModelDeletedSubscription(): GameModelSubscriptionResult {
+export default function useGameModelDeletedSubscription(onData: (model: PositionedModel) => void): GameModelSubscriptionResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<PositionedModel, GameModelDeletedSubscriptionVariables>(GAME_MODEL_DELETED_SUBSCRIPTION, {
-		gameId: game_id,
-	});
+	const result = useGQLSubscription<PositionedModel, GameModelDeletedSubscriptionVariables>(
+		GAME_MODEL_DELETED_SUBSCRIPTION,
+		{gameId: game_id},
+		{onData}
+	);
 	return {
 		...result,
 		gameModelDeleted: result.data

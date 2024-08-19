@@ -46,7 +46,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	useGameStrokeSubscription((stroke) => controllerManager.current.stroke(stroke));
 	useGameModelAddedSubscription((model) => controllerManager.current.addModel(model));
 	useGameModelPositionedSubscription((model) => controllerManager.current.updateModel(model));
-	const { gameModelDeleted } = useGameModelDeletedSubscription();
+	useGameModelDeletedSubscription((model) => controllerManager.current.removeModel(model));
 	useGameFogSubscription((fogStroke) => controllerManager.current.fogStroke(fogStroke));
 
 	useEffect(() => {
@@ -64,6 +64,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 		const controlsManager = new GameControllerManager(gameState);
 		controlsManager.addPaintingFinishedCallback(async (stroke) => addStroke({...stroke, strokeId: stroke._id}));
 		controlsManager.addFogFinishedCallback(async (stroke) => addFogStroke({...stroke, strokeId: stroke._id}));
+		controlsManager.addRemoveModelCallback(async (model) => deletePositionedModel({gameId: currentGame._id, positionedModelId: model._id}));
 		controllerManager.current = controlsManager;
 		strokes.forEach((stroke) => controllerManager.current.stroke(stroke));
 		fogStrokes.forEach((fogStroke) => controllerManager.current.fogStroke(fogStroke));
