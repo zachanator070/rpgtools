@@ -1,8 +1,6 @@
-import { v4 as uuidv4 } from "uuid";
-import * as THREE from "three";
-import {GameController} from "./GameController";
-import {FogStroke, Stroke} from "../../types";
+import {Stroke} from "../../types";
 import GameState, {BrushOptions, DRAW_Y_POSITION} from "../GameState";
+import DrawingController from "./DrawingController";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -16,14 +14,10 @@ export const DEFAULT_BRUSH_FILL = true;
 export const DEFAULT_BRUSH_SIZE = 5;
 export const DEFAULT_MAP_SIZE = 50;
 
-export class PaintController<T extends Stroke | FogStroke> implements GameController {
+export class PaintController extends DrawingController<Stroke> {
 
-	protected gameState: GameState;
-	constructor(
-		gameData: GameState,
-	) {
-		this.gameState = gameData;
-
+	constructor(gameState: GameState) {
+		super(gameState);
 		this.drawCanvas = document.createElement("canvas");
 		if(this.gameState.location) {
 			this.setupDrawCanvas(
@@ -33,294 +27,6 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 			);
 		}
 	}
-
-	setupDrawCanvas(width: number, height: number, pixelsPerFoot: number) {
-		this.drawCanvas.height = height;
-		this.drawCanvas.width = width;
-
-		this.drawTexture = new THREE.CanvasTexture(this.drawCanvas);
-
-		const drawGeometry = new THREE.PlaneGeometry(
-			this.drawCanvas.width / pixelsPerFoot,
-			this.drawCanvas.height / pixelsPerFoot
-		);
-		drawGeometry.rotateX(-Math.PI / 2);
-		this.drawMaterial = new THREE.MeshBasicMaterial({
-			map: this.drawTexture,
-			transparent: true,
-		});
-
-		// in the case of location change, remove the old mesh
-		if(this.drawMesh) {
-			this.gameState.scene.remove(this.drawMesh);
-		}
-		this.drawMesh = new THREE.Mesh(drawGeometry, this.drawMaterial);
-		this.drawMesh.receiveShadow = true;
-		this.drawMesh.position.set(0, this.meshY, 0);
-		this.gameState.scene.add(this.drawMesh);
-
-		this.setupBrush();
-	}
-
-	resize(width: number, height: number, newPixelsPerFoot: number) {
-		this.gameState.scene.remove(this.drawMesh);
-		this.setupDrawCanvas(width, height, newPixelsPerFoot);
-	}
-
-	setupBrush = () => {
-		this.createPaintBrushMesh();
-		this.brushMesh.visible = false;
-	};
-
-	createPaintBrushMesh = () => {
-		if (this.brushMesh) {
-			this.gameState.scene.remove(this.brushMesh);
-		}
-		if (!this.brushMaterial) {
-			this.brushMaterial = new THREE.MeshBasicMaterial({
-				color: this.brushOptions.brushColor,
-			});
-		}
-		this.setBrushColor(this.brushOptions.brushColor);
-		let geometry: THREE.BufferGeometry;
-		if (this.brushOptions.brushType === BRUSH_CIRCLE || this.brushOptions.brushType === BRUSH_LINE) {
-			geometry = new THREE.CylinderGeometry(
-				this.brushOptions.brushSize / 2,
-				this.brushOptions.brushSize / 2,
-				1,
-				32
-			);
-		} else {
-			geometry = new THREE.BoxGeometry(this.brushOptions.brushSize, 1, this.brushOptions.brushSize);
-		}
-		const oldVisibility = this.brushMesh
-			? this.brushMesh.visible
-			: false;
-		this.brushMesh = new THREE.Mesh(geometry, this.brushMaterial);
-		this.brushMesh.visible = oldVisibility;
-		this.gameState.scene.add(this.brushMesh);
-	};
-
-	stroke = (stroke: T, useCache = true, pixelsPerFootOverride: number = null) => {
-		let { path, type, size, _id } = stroke;
-		const color = (stroke as Stroke).color;
-		const fill = (stroke as Stroke).fill;
-		let pixelsPerFoot = this.gameState.location.pixelsPerFoot;
-		// in the instance of resizing the canvas, new pixelPerFoot value can
-		if (pixelsPerFootOverride) {
-			pixelsPerFoot = pixelsPerFootOverride;
-		}
-		size *= pixelsPerFoot;
-		if (useCache) {
-			if (this.strokesAlreadyDrawn[_id]) {
-				return;
-			}
-		}
-		if (path.length === 0) {
-			console.warn("Trying to stroke a path with zero length path!");
-			return;
-		}
-		const ctx = this.drawCanvas.getContext("2d");
-		ctx.lineCap = "round";
-		ctx.lineJoin = "round";
-		switch (type) {
-			case BRUSH_LINE:
-				ctx.strokeStyle = color;
-				ctx.lineWidth = size;
-				ctx.beginPath();
-				if (path.length > 0) {
-					ctx.moveTo(path[0].x, path[0].y);
-				}
-				for (let part of path) {
-					ctx.lineTo(part.x, part.y);
-				}
-				ctx.stroke();
-				break;
-			case BRUSH_SQUARE:
-				for (let part of path) {
-					if (fill) {
-						ctx.fillStyle = color;
-						ctx.fillRect(part.x - size / 2, part.y - size / 2, size, size);
-					} else {
-						ctx.lineWidth = DEFAULT_BRUSH_SIZE;
-						ctx.strokeStyle = color;
-						ctx.strokeRect(part.x - size / 2, part.y - size / 2, size, size);
-					}
-				}
-				break;
-			case BRUSH_FOG:
-				for (let part of path) {
-					ctx.fillStyle = color;
-					ctx.fillRect(part.x - size / 2, part.y - size / 2, size, size);
-				}
-				break;
-			case BRUSH_CIRCLE:
-				for (let part of path) {
-					ctx.beginPath();
-					ctx.arc(part.x, part.y, size / 2, 0, Math.PI * 2);
-					if (fill) {
-						ctx.fillStyle = color;
-						ctx.fill();
-					} else {
-						ctx.lineWidth = DEFAULT_BRUSH_SIZE;
-						ctx.strokeStyle = color;
-						ctx.stroke();
-					}
-				}
-				break;
-			case BRUSH_ERASE:
-				for (let part of path) {
-					ctx.clearRect(part.x - size / 2, part.y - size / 2, size, size);
-				}
-				break;
-			default:
-				console.warn(`Unknown stroke type when rendering stroke ${stroke._id}`);
-		}
-		if (useCache) {
-			this.strokesAlreadyDrawn[stroke._id] = stroke;
-		}
-		this.drawTexture.needsUpdate = true;
-	};
-
-	paintWithBrush = () => {
-		if (!this.gameState.mapMesh) {
-			return;
-		}
-		const intersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
-
-		for (let intersect of intersects) {
-			const currentPath = [];
-			if (this.pathBeingDrawn.length > 0 && this.brushOptions.brushType === BRUSH_LINE) {
-				currentPath.push(
-					this.pathBeingDrawn[this.pathBeingDrawn.length - 1]
-				);
-			}
-			const newPoint = {
-				x:
-					intersect.point.x * this.gameState.location.pixelsPerFoot +
-					this.gameState.location.mapImage.width / 2,
-				y:
-					intersect.point.z * this.gameState.location.pixelsPerFoot +
-					this.gameState.location.mapImage.height / 2,
-				_id: uuidv4(),
-			};
-			currentPath.push(newPoint);
-			this.pathBeingDrawn.push(newPoint);
-
-			this.stroke(
-				{
-					path: currentPath,
-					type: this.brushOptions.brushType,
-					color: this.brushOptions.brushColor,
-					fill: this.brushOptions.brushFill,
-					size: this.brushOptions.brushSize,
-					_id: this.strokeBeingDrawnId,
-				} as any,
-				false
-			);
-		}
-	};
-
-	stopPaintingWithBrush = () => {
-		this.gameState.renderRoot.removeEventListener("mousemove", this.paintWithBrush);
-		this.gameState.renderRoot.removeEventListener("mouseup", this.stopPaintingWithBrush);
-		this.gameState.renderRoot.removeEventListener(
-			"mouseleave",
-			this.stopPaintingWithBrush
-		);
-		if (this.strokeBeingDrawnId) {
-			const stroke = {
-				path: this.pathBeingDrawn,
-				type: this.brushOptions.brushType,
-				color: this.brushOptions.brushColor,
-				size: this.brushOptions.brushSize,
-				fill: this.brushOptions.brushFill,
-				_id: this.strokeBeingDrawnId,
-			};
-			this.pathBeingDrawn = [];
-			this.strokeBeingDrawnId = null;
-			this.notifyDrawFinishedCallbacks(stroke as T);
-		}
-	};
-
-	notifyDrawFinishedCallbacks(stroke: T) {
-		this.gameState.notifyPaintingFinishedCallbacks(stroke as Stroke);
-	}
-
-	updateBrushPosition = () => {
-		if (!this.gameState.mapMesh || !this.brushMesh) {
-			return;
-		}
-		const intersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
-		if (intersects.length === 0) {
-			return;
-		}
-		const intersect = intersects[0];
-		this.brushMesh.position.set(intersect.point.x, 0, intersect.point.z);
-	};
-
-	paintMouseDownEvent = () => {
-		this.strokeBeingDrawnId = uuidv4();
-		this.paintWithBrush();
-		this.gameState.renderRoot.addEventListener("mousemove", this.paintWithBrush);
-		this.gameState.renderRoot.addEventListener("mouseup", this.stopPaintingWithBrush);
-		this.gameState.renderRoot.addEventListener("mouseleave", this.stopPaintingWithBrush);
-	};
-
-	enable = () => {
-		this.gameState.renderRoot.addEventListener("mousedown", this.paintMouseDownEvent);
-		this.updateBrushPosition();
-		this.brushMesh.visible = true;
-		this.gameState.renderRoot.addEventListener("mousemove", this.updateBrushPosition);
-	};
-
-	disable = () => {
-		this.gameState.renderRoot.removeEventListener("mousedown", this.paintMouseDownEvent);
-		if(this.brushMesh) {
-			this.brushMesh.visible = false;
-		}
-	};
-
-	tearDown = () => {
-		this.disable();
-		this.gameState.renderRoot.removeEventListener("mousemove", this.updateBrushPosition);
-		this.gameState.scene.remove(this.drawMesh);
-		this.gameState.scene.remove(this.brushMesh);
-	};
-
-	setBrushType = (type: string) => {
-		this.brushOptions.brushType = type;
-		this.gameState.scene.remove(this.brushMesh);
-		this.createPaintBrushMesh();
-		this.brushMaterial.needsUpdate = true;
-		this.gameState.scene.add(this.brushMesh);
-		this.updateBrushPosition();
-	};
-
-	setBrushColor = (color: string) => {
-		this.brushOptions.brushColor = color;
-		this.brushMaterial.color.setHex(parseInt("0x" + color.substring(1)));
-		this.brushMaterial.needsUpdate = true;
-	};
-
-	setBrushFill = (fill: boolean) => {
-		this.brushOptions.brushFill = fill;
-
-		this.brushMaterial.wireframe = !fill;
-		this.brushMaterial.needsUpdate = true;
-	};
-
-	setBrushSize = (size: number) => {
-		this.brushOptions.brushSize = size;
-		this.createPaintBrushMesh();
-	};
-
-	setDrawMeshOpacity = (value: number) => {
-		if (this.drawMesh) {
-			this.drawMesh.material.opacity = value;
-			this.drawMesh.material.needsUpdate = true;
-		}
-	};
 
 	get drawCanvas() {
 		return this.gameState.paintCanvas;
@@ -374,12 +80,12 @@ export class PaintController<T extends Stroke | FogStroke> implements GameContro
 		this.gameState.paintBrushMaterial = brushMaterial;
 	}
 
-	get strokesAlreadyDrawn(): { [key: string]: T } {
-		return this.gameState.paintStrokesAlreadyDrawn as { [key: string]: T };
+	get strokesAlreadyDrawn(): { [key: string]: Stroke } {
+		return this.gameState.paintStrokesAlreadyDrawn as { [key: string]: Stroke };
 	}
 
-	set strokesAlreadyDrawn(strokes: { [key: string]: T }) {
-		(this.gameState.paintStrokesAlreadyDrawn as { [key: string]: T }) = strokes;
+	set strokesAlreadyDrawn(strokes: { [key: string]: Stroke }) {
+		(this.gameState.paintStrokesAlreadyDrawn as { [key: string]: Stroke }) = strokes;
 	}
 
 	get pathBeingDrawn() {
