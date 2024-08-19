@@ -34,7 +34,7 @@ export const ADD_MODEL_CONTROLS = "Add Model";
 
 export const MAP_Y_POSITION = 0;
 export const DRAW_Y_POSITION = 0.05;
-export const FOG_Y_POSITION = 0.1;
+export const FOG_Y_POSITION = 0.3;
 export const GROUND_Y_POSITION = -0.01;
 
 export const DEFAULT_MAP_DRAW_GRID = false;
