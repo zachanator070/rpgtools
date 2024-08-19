@@ -1,9 +1,7 @@
 import {GameController} from "./GameController";
 import GameState, {
     ADD_MODEL_CONTROLS,
-    CAMERA_CONTROLS,
-    DELETE_CONTROLS, FOG_CONTROLS,
-    MOVE_MODEL_CONTROLS,
+    FOG_CONTROLS,
     PAINT_CONTROLS,
     ROTATE_MODEL_CONTROLS, SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
 } from "../GameState";
@@ -11,18 +9,17 @@ import GameState, {
 export default class HotkeyController implements GameController {
 
     private gameState: GameState;
-    private focusedElement: HTMLElement;
 
     constructor(gameState: GameState) {
         this.gameState = gameState;
+        window.addEventListener("mouseover", this.mouseOverListener);
+        window.addEventListener("keydown", this.keyDownListener);
     }
 
     disable(): void {
     }
 
     enable(): void {
-        window.addEventListener("mouseover", this.mouseOverListener);
-        window.addEventListener("keydown", this.keyDownListener);
     }
 
     tearDown() {
@@ -31,35 +28,22 @@ export default class HotkeyController implements GameController {
     }
 
     mouseOverListener = (event) => {
-        this.focusedElement = event.target as HTMLElement;
+        this.gameState.focusedElement = event.target as HTMLElement;
     }
 
     keyDownListener = ({ code }) => {
-        if (this.gameState.renderRoot !== this.focusedElement) {
+        if (this.gameState.renderRoot !== this.gameState.focusedElement) {
             return;
         }
         switch (code) {
-            case "KeyC":
-                this.changeControls(CAMERA_CONTROLS);
-                break;
             case "KeyP":
                 if (this.gameState.currentGame.canPaint) {
                     this.changeControls(PAINT_CONTROLS);
                 }
                 break;
-            case "KeyM":
-                if (this.gameState.currentGame.canModel) {
-                    this.changeControls(MOVE_MODEL_CONTROLS);
-                }
-                break;
             case "KeyR":
                 if (this.gameState.currentGame.canModel) {
                     this.changeControls(ROTATE_MODEL_CONTROLS);
-                }
-                break;
-            case "KeyX":
-                if (this.gameState.currentGame.canModel) {
-                    this.changeControls(DELETE_CONTROLS);
                 }
                 break;
             case "KeyF":

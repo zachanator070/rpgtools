@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import useSetModelColor from "../../../hooks/game/useSetModelColor";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModelWiki";
@@ -11,13 +11,13 @@ import SelectWiki from "../../../components/select/SelectWiki";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
 import ColorInput from "../../../components/widgets/input/ColorInput";
 import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
+import {ControllerContext} from "../GameContent";
 
 interface ModelInfoProps {
-	controllerFacade: GameControllerFacade,
 	setGameWikiId: (wikiId: string) => Promise<any>
 }
 
-export default function ModelInfo({ controllerFacade, setGameWikiId }: ModelInfoProps) {
+export default function ModelInfo({ setGameWikiId }: ModelInfoProps) {
 	const { currentGame, loading } = useCurrentGame();
 	const [selectedPositionedModel, setSelectedPositionedModel] = useState<PositionedModel>();
 	const [newWiki, setNewWiki] = useState<WikiPage>();
@@ -26,6 +26,7 @@ export default function ModelInfo({ controllerFacade, setGameWikiId }: ModelInfo
 	const { setPositionedModelWiki } = useSetPositionedModelWiki();
 	const { gameModelPositioned } = useGameModelPositionedSubscription();
 	const { deletePositionedModel } = useDeletePositionedModel();
+	const controllerFacade = useContext(ControllerContext);
 
 	useEffect(() => {
 		controllerFacade.addSelectedModelCallback((model) => setSelectedPositionedModel(model));

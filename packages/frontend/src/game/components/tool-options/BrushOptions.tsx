@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
 import ColorInput from "../../../components/widgets/input/ColorInput";
 import DropdownSelect from "../../../components/widgets/DropdownSelect";
 import NumberSlider from "../../../components/widgets/NumberSlider";
-import GameControllerFacade from "../../GameControllerFacade";
 import {
 	BRUSH_CIRCLE,
 	BRUSH_ERASE,
@@ -11,16 +10,14 @@ import {
 	BRUSH_SQUARE,
 	DEFAULT_BRUSH_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE, DEFAULT_BRUSH_TYPE
 } from "../../controller/PaintController";
+import {ControllerContext} from "../GameContent";
 
-interface BrushOptionsProps {
-	controllerFacade: GameControllerFacade
-}
-
-export default function BrushOptions({ controllerFacade }: BrushOptionsProps) {
+export default function BrushOptions() {
 	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
 	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
 	const [fillBrush, setFillBrush] = useState(DEFAULT_BRUSH_FILL);
+	const controllerFacade = useContext(ControllerContext);
 
 	return (
 		<>

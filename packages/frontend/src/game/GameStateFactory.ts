@@ -4,6 +4,7 @@ import * as THREE from "three";
 import GameState from "./GameState";
 import {DEFAULT_MAP_SIZE} from "./controller/PaintController";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 
 export default function GameStateFactory(
@@ -54,6 +55,8 @@ export default function GameStateFactory(
         gameState.renderer.setPixelRatio(window.devicePixelRatio);
 
         gameState.composer = new EffectComposer(gameState.renderer);
+
+        gameState.cameraControls = new OrbitControls(gameState.camera, gameState.renderRoot);
     }
 
     function setupLight(gameState: GameState) {

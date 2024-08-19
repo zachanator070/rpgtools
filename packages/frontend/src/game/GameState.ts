@@ -3,8 +3,9 @@ import {FogStroke, Game, PathNode, Place, PositionedModel, Stroke} from "../type
 import {
     BufferGeometry,
     CanvasTexture,
-    DirectionalLight, Material,
-    Mesh, MeshBasicMaterial, MeshPhongMaterial, Object3DEventMap,
+    DirectionalLight,
+    Mesh, MeshBasicMaterial,
+    Object3DEventMap,
     PerspectiveCamera,
     Raycaster,
     Scene,
@@ -22,12 +23,10 @@ import {
 import {Object3D} from "three/src/core/Object3D";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 import {GameController} from "./controller/GameController";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
-export const CAMERA_CONTROLS = "Camera Controls";
 export const PAINT_CONTROLS = "Paint Controls";
-export const MOVE_MODEL_CONTROLS = "Move Model Controls";
 export const ROTATE_MODEL_CONTROLS = "Rotate Model Controls";
-export const DELETE_CONTROLS = "Delete Controls";
 export const FOG_CONTROLS = "Fog Controls";
 export const SELECT_MODEL_CONTROLS = "Select Model Controls";
 export const SELECT_LOCATION_CONTROLS = "Game Location";
@@ -58,6 +57,7 @@ export default class GameState {
 
     // controllers
     private _controllerMap: { [key: string]: GameController };
+    private _focusedElement: HTMLElement;
 
     // render
     private _currentGame: Game;
@@ -67,6 +67,7 @@ export default class GameState {
 
     // camera and lights
     private _camera: THREE.PerspectiveCamera;
+    private _cameraControls: OrbitControls;
     private _scene: THREE.Scene;
     private _light: THREE.DirectionalLight;
     private _raycaster: THREE.Raycaster;
@@ -87,7 +88,7 @@ export default class GameState {
     private _drawGrid: boolean = DEFAULT_MAP_DRAW_GRID;
     private _location: Place;
 
-    private _currentControls = CAMERA_CONTROLS;
+    private _currentControls = SELECT_MODEL_CONTROLS;
     private _changeControlsCallbacks: ((mode: string) => any)[] = [];
 
     // selected model
@@ -180,10 +181,6 @@ export default class GameState {
 
     get originalMeshedModels(): MeshedModel[] {
         return this._originalMeshedModels;
-    }
-
-    set originalMeshedModels(value: MeshedModel[]) {
-        this._originalMeshedModels = value;
     }
 
     get mapMesh(): Mesh {
@@ -399,10 +396,6 @@ export default class GameState {
         return this._fogBrushOptions;
     }
 
-    set fogBrushOptions(value: BrushOptions) {
-        this._fogBrushOptions = value;
-    }
-
     get fogBrushMesh(): Mesh<BufferGeometry, MeshBasicMaterial> {
         return this._fogBrushMesh;
     }
@@ -421,10 +414,6 @@ export default class GameState {
 
     get paintStrokesAlreadyDrawn(): { [p: string]: Stroke } {
         return this._paintStrokesAlreadyDrawn;
-    }
-
-    set paintStrokesAlreadyDrawn(value: { [p: string]: Stroke }) {
-        this._paintStrokesAlreadyDrawn = value;
     }
 
     set fogAlreadyDrawn(value: { [p: string]: FogStroke }) {
@@ -488,7 +477,7 @@ export default class GameState {
     }
 
     getAllChildren = (object: Object3D) => {
-        const children = [...object.children] || [];
+        const children = object?.children ? [...object.children] : [];
         const returnChildren = [...children];
         for (let child of children) {
             returnChildren.push(...this.getAllChildren(child));
@@ -526,5 +515,21 @@ export default class GameState {
 
     set controllerMap(value: { [p: string]: GameController }) {
         this._controllerMap = value;
+    }
+
+    get cameraControls(): OrbitControls {
+        return this._cameraControls;
+    }
+
+    set cameraControls(value: OrbitControls) {
+        this._cameraControls = value;
+    }
+
+    get focusedElement(): HTMLElement {
+        return this._focusedElement;
+    }
+
+    set focusedElement(value: HTMLElement) {
+        this._focusedElement = value;
     }
 }
