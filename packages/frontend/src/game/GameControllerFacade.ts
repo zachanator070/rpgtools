@@ -35,8 +35,8 @@ export default class GameControllerFacade {
 
     private _gameState: GameState;
 
-    public constructor(gameData: GameState) {
-        this._gameState = gameData;
+    public constructor(gameState: GameState) {
+        this._gameState = gameState;
         this.setupControllers();
         this._sceneController.enable();
         this._hotkeyController.enable();

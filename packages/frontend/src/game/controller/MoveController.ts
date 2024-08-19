@@ -11,8 +11,8 @@ export class MoveController implements GameController {
 	private mouseMoveListener: () => void;
 	private mouseUpListener: () => void;
 
-	constructor(gameData: GameState) {
-		this.gameState = gameData;
+	constructor(gameState: GameState) {
+		this.gameState = gameState;
 	}
 
 	selectModel = () => {

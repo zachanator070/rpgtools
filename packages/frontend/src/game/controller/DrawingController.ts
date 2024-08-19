@@ -11,9 +11,9 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
     protected gameState: GameState;
 
     protected constructor(
-        gameData: GameState,
+        gameState: GameState,
     ) {
-        this.gameState = gameData;
+        this.gameState = gameState;
     }
 
     setupDrawCanvas(width: number, height: number, pixelsPerFoot: number) {
