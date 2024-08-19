@@ -3,7 +3,7 @@ import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
 import ColorInput from "../../../components/widgets/input/ColorInput";
 import DropdownSelect from "../../../components/widgets/DropdownSelect";
 import NumberSlider from "../../../components/widgets/NumberSlider";
-import GameControllerManager from "../../GameControllerManager";
+import GameControllerFacade from "../../GameControllerFacade";
 import {
 	BRUSH_CIRCLE,
 	BRUSH_ERASE,
@@ -13,10 +13,10 @@ import {
 } from "../../controller/PaintController";
 
 interface BrushOptionsProps {
-	controllerManager: GameControllerManager
+	controllerFacade: GameControllerFacade
 }
 
-export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
+export default function BrushOptions({ controllerFacade }: BrushOptionsProps) {
 	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
 	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
@@ -32,7 +32,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					onChange={(e) => {
 						const value = e.target.value;
 						setBrushColor(value);
-						controllerManager.setBrushColor(value);
+						controllerFacade.setBrushColor(value);
 					}}
 				/>
 			</div>
@@ -43,7 +43,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					style={{ width: 120 }}
 					onChange={(value) => {
 						setBrushType(value);
-						controllerManager.setBrushType(value);
+						controllerFacade.setBrushType(value);
 					}}
 					options={[
 						{value: BRUSH_LINE, label: 'Line'},
@@ -61,7 +61,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					value={brushSize}
 					onChange={(value) => {
 						setBrushSize(value);
-						controllerManager.setBrushSize(value);
+						controllerFacade.setBrushSize(value);
 					}}
 				/>
 			</div>
@@ -71,7 +71,7 @@ export default function BrushOptions({ controllerManager }: BrushOptionsProps) {
 					checked={fillBrush}
 					onChange={(checked) => {
 						setFillBrush(checked);
-						controllerManager.setBrushFill(checked);
+						controllerFacade.setBrushFill(checked);
 					}}
 				/>
 			</div>

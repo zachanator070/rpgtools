@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../../hooks/game/useSetGameMap";
-import GameControllerManager from "../../GameControllerManager";
+import GameControllerFacade from "../../GameControllerFacade";
 import LoadingView from "../../../components/LoadingView";
 import Toggle from "../../../components/widgets/Toggle";
 import SelectWiki from "../../../components/select/SelectWiki";
@@ -12,10 +12,10 @@ import {DEFAULT_MAP_DRAW_GRID} from "../../GameState";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;
-	 controllerManager: GameControllerManager;
+	 controllerFacade: GameControllerFacade;
  }
 
-export default function GameLocationSettings({ setGameWikiId, controllerManager }: GameLocationSettingsProps) {
+export default function GameLocationSettings({ setGameWikiId, controllerFacade }: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [setFog, setSetFog] = useState<boolean>();
@@ -43,7 +43,7 @@ export default function GameLocationSettings({ setGameWikiId, controllerManager 
 					unCheckedChildren={"No Grid"}
 					defaultChecked={DEFAULT_MAP_DRAW_GRID}
 					onChange={(checked) => {
-						controllerManager.setDrawGrid(checked);
+						controllerFacade.setDrawGrid(checked);
 					}}
 				/>
 			</div>

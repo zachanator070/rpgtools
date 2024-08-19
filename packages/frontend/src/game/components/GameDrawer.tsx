@@ -11,7 +11,7 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
 } from "../GameState";
-import GameControllerManager from "../GameControllerManager";
+import GameControllerFacade from "../GameControllerFacade";
 import SlidingDrawer from "../../components/widgets/SlidingDrawer";
 import TabCollection from "../../components/widgets/TabCollection";
 
@@ -24,12 +24,12 @@ const GAME_CONTROLS_WITH_CONTEXT = [
 ];
 
 interface GameDrawerProps {
-	controllerManager: GameControllerManager;
+	controllerFacade: GameControllerFacade;
 	controlsMode: string;
 	setGameWikiId: (wikiId: string) => void;
 }
 
-export default function GameDrawer({ controllerManager, controlsMode, setGameWikiId }: GameDrawerProps) {
+export default function GameDrawer({ controllerFacade, controlsMode, setGameWikiId }: GameDrawerProps) {
 	const [visible, setVisible] = useState<boolean>(true);
 	const [activeKey, setActiveKey] = useState<string>("Chat");
 	const { gameChat } = useGameChatSubscription();
@@ -71,7 +71,7 @@ export default function GameDrawer({ controllerManager, controlsMode, setGameWik
 					{
 						title: 'Tool Options',
 						children: <ToolOptions
-							controllerManager={controllerManager}
+							controllerFacade={controllerFacade}
 							controlsMode={controlsMode}
 							setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)}
 						/>
