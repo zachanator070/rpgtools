@@ -69,6 +69,7 @@ export default class GameState {
     private _originalMeshedModels: MeshedModel[] = [];
 
     private _positionedModelUpdatedCallbacks: ((model: PositionedModel) => any)[] = [];
+    private _removeModelCallbacks: ((model: PositionedModel) => any)[] = [];
 
     // map
     private _mapMesh: THREE.Mesh;
@@ -83,7 +84,6 @@ export default class GameState {
 
     // selected model
     private _selectedMeshedModel: MeshedModel;
-    private _glow: Mesh;
     private _selectModelCallbacks: ((model: PositionedModel) => any)[] = [];
 
     // painting
@@ -253,15 +253,6 @@ export default class GameState {
             this.notifySelectModelCallbacks(value.positionedModel);
         }
     }
-
-    get glow(): Mesh {
-        return this._glow;
-    }
-
-    set glow(value: Mesh) {
-        this._glow = value;
-    }
-
 
     get location(): Place {
         return this._location;
@@ -504,6 +495,14 @@ export default class GameState {
 
     notifyPositionedModelUpdatedCallbacks(positionedModel: PositionedModel) {
         this._positionedModelUpdatedCallbacks.forEach((callback) => callback(positionedModel));
+    }
+
+    addRemoveModelCallback(callback: ((model: PositionedModel) => any)) {
+        this._removeModelCallbacks.push(callback);
+    }
+
+    notifyRemoveModelCallback(positionedModel: PositionedModel) {
+        this._removeModelCallbacks.forEach((callback) => callback(positionedModel));
     }
 
     get composer(): EffectComposer {
