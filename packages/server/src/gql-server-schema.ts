@@ -117,7 +117,7 @@ export const typeDefs = gql`
 			gameId: ID!
 			attributes: [CharacterAttributeInput!]!
 		): Game!
-		setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
+		setGameMap(gameId: ID!, placeId: ID!, setFog: Boolean): Game!
 		addStroke(
 			gameId: ID!
 			path: [PathNodeInput!]!
@@ -560,7 +560,6 @@ export const typeDefs = gql`
 	
 	type GameMapChange {
 	    map: Place!
-	    clearPaint: Boolean!
 	    setFog: Boolean!
     }
 

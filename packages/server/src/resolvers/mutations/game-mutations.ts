@@ -50,13 +50,12 @@ export const gameMutations = {
 		{
 			gameId,
 			placeId,
-			clearPaint,
 			setFog,
 		}: { gameId: string; placeId: string; clearPaint: boolean; setFog: boolean },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await service.setGameMap(securityContext, gameId, placeId, clearPaint, setFog, databaseContext);
+		return await service.setGameMap(securityContext, gameId, placeId, setFog, databaseContext);
 	},
 	addStroke: async (
 		_: any,

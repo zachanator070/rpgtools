@@ -6,7 +6,6 @@ import {GET_FOG_STROKES, GET_STROKES} from "@rpgtools/common/src/gql-queries";
 interface SetGameMapVariables {
 	gameId: string;
 	placeId: string;
-	clearPaint?: boolean;
 	setFog?: boolean;
 }
 

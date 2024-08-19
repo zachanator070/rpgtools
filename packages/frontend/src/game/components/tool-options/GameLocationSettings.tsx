@@ -18,7 +18,6 @@ import {DEFAULT_MAP_DRAW_GRID} from "../../GameState";
 export default function GameLocationSettings({ setGameWikiId, controllerManager }: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
-	const [clearPaint, setClearPaint] = useState<boolean>();
 	const [setFog, setSetFog] = useState<boolean>();
 	const { setGameMap } = useSetGameMap();
 
@@ -58,15 +57,6 @@ export default function GameLocationSettings({ setGameWikiId, controllerManager 
 						}}
 					/>
 					<div className={"margin-md"}>
-						Clear Paint:{" "}
-						<PrimaryCheckbox
-							checked={clearPaint}
-							onChange={(checked) => {
-								setClearPaint(checked);
-							}}
-						/>
-					</div>
-					<div className={"margin-md"}>
 						Set Fog:{" "}
 						<PrimaryCheckbox
 							checked={setFog}
@@ -82,7 +72,6 @@ export default function GameLocationSettings({ setGameWikiId, controllerManager 
 								await setGameMap({
 									gameId: currentGame._id,
 									placeId: selectedLocation,
-									clearPaint,
 									setFog,
 								});
 							}}
