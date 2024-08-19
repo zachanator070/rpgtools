@@ -63,17 +63,6 @@ export default function GameStateFactory(
         }
         gameState.light = new THREE.DirectionalLight(0xffffff, 2);
         gameState.light.position.set(100, 100, 100);
-        gameState.light.castShadow = true;
-        gameState.light.shadow.mapSize.width = 1024;
-        gameState.light.shadow.mapSize.height = 1024;
-        gameState.light.shadow.camera.near = 0.01;
-        gameState.light.shadow.camera.far = 1000;
-        const frustrum: number = 10;
-        gameState.light.shadow.camera.left = -frustrum;
-        gameState.light.shadow.camera.bottom = -frustrum;
-        gameState.light.shadow.camera.right = frustrum;
-        gameState.light.shadow.camera.top = frustrum;
-        gameState.light.shadow.bias = -0.005;
 
         // const helper = new THREE.DirectionalLightHelper( gameState.light, 5 );
         // gameState.scene.add( helper );
