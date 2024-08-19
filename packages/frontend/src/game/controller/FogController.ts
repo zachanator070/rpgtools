@@ -1,11 +1,20 @@
-import {PaintController} from "./PaintController";
 import {FogStroke} from "../../types";
 import GameState, {BrushOptions, FOG_Y_POSITION} from "../GameState";
+import DrawingController from "./DrawingController";
+import {BufferGeometry, Mesh, MeshBasicMaterial} from "three";
 
 
-export default class FogController extends PaintController<FogStroke>{
+export default class FogController extends DrawingController<FogStroke>{
     constructor(gameState: GameState) {
         super(gameState);
+        this.drawCanvas = document.createElement("canvas");
+        if(this.gameState.location) {
+            this.setupDrawCanvas(
+                this.gameState.location.mapImage.width,
+                this.gameState.location.mapImage.height,
+                this.gameState.location.pixelsPerFoot,
+            );
+        }
     }
     get drawCanvas() {
         return this.gameState.fogCanvas;
@@ -43,11 +52,11 @@ export default class FogController extends PaintController<FogStroke>{
         return this.gameState.fogBrushOptions;
     }
 
-    get brushMesh() {
+    get brushMesh(): Mesh<BufferGeometry, MeshBasicMaterial> {
         return this.gameState.fogBrushMesh;
     }
 
-    set brushMesh(brushMesh) {
+    set brushMesh(brushMesh: Mesh<BufferGeometry, MeshBasicMaterial>) {
         this.gameState.fogBrushMesh = brushMesh;
     }
 

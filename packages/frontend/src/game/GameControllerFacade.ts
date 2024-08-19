@@ -25,9 +25,9 @@ export default class GameControllerFacade {
     private _selectModelController: SelectModelController;
     private _moveController: MoveController;
     private _rotateController: RotateController;
-    private _paintController: PaintController<Stroke>;
+    private _paintController: PaintController;
     private _deleteController: DeleteController;
-    private _fogController: PaintController<FogStroke>;
+    private _fogController: FogController;
     private _cameraController: CameraController;
     private _sceneController: SceneController;
     private _mapController: MapController;

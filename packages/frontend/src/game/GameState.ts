@@ -3,8 +3,8 @@ import {FogStroke, Game, PathNode, Place, PositionedModel, Stroke} from "../type
 import {
     BufferGeometry,
     CanvasTexture,
-    DirectionalLight,Material,
-    Mesh, MeshPhongMaterial, Object3DEventMap,
+    DirectionalLight, Material,
+    Mesh, MeshBasicMaterial, MeshPhongMaterial, Object3DEventMap,
     PerspectiveCamera,
     Raycaster,
     Scene,
@@ -97,8 +97,8 @@ export default class GameState {
     // painting
     private _paintCanvas: HTMLCanvasElement;
     private _paintTexture: THREE.CanvasTexture;
-    private _paintMaterial: THREE.Material;
-    private _paintMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
+    private _paintMaterial: THREE.MeshBasicMaterial;
+    private _paintMesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial, THREE.Object3DEventMap>;
     private _pathBeingPainted: PathNode[] = [];
     private _paintStrokeBeingDrawnId: string = null;
     private _paintBrushOptions: BrushOptions = {
@@ -109,14 +109,14 @@ export default class GameState {
     };
     private _paintStrokesAlreadyDrawn: { [ket: string]: Stroke } = {};
     private _paintBrushMesh: THREE.Mesh = null;
-    private _paintBrushMaterial: THREE.Material = null;
+    private _paintBrushMaterial: THREE.MeshBasicMaterial = null;
     private _paintingFinishedCallbacks: ((stroke: Stroke) => any)[] = [];
 
     // fog
     private _fogCanvas: HTMLCanvasElement;
     private _fogTexture: THREE.CanvasTexture;
-    private _fogMaterial: THREE.MeshPhongMaterial;
-    private _fogMesh: THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>;
+    private _fogMaterial: THREE.MeshBasicMaterial;
+    private _fogMesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial, THREE.Object3DEventMap>;
     private _fogPathBeingDrawn: PathNode[] = [];
     private _fogStrokeBeingDrawnId: string = null;
     private _fogBrushOptions: BrushOptions = {
@@ -126,8 +126,8 @@ export default class GameState {
         brushSize: DEFAULT_BRUSH_SIZE
     };
     private _fogAlreadyDrawn: { [ket: string]: FogStroke } = {};
-    private _fogBrushMesh: THREE.Mesh = null;
-    private _fogBrushMaterial: THREE.Material = null;
+    private _fogBrushMesh: THREE.Mesh<BufferGeometry, MeshBasicMaterial> = null;
+    private _fogBrushMaterial: THREE.MeshBasicMaterial = null;
     private _fogFinishedCallbacks: ((stroke: FogStroke) => any)[] = [];
 
     get renderer(): WebGLRenderer {
@@ -286,19 +286,19 @@ export default class GameState {
         this._paintTexture = value;
     }
 
-    get paintMaterial(): THREE.Material {
+    get paintMaterial(): THREE.MeshBasicMaterial {
         return this._paintMaterial;
     }
 
-    set paintMaterial(value: THREE.Material) {
+    set paintMaterial(value: THREE.MeshBasicMaterial) {
         this._paintMaterial = value;
     }
 
-    get paintMesh(): Mesh<BufferGeometry, Material, Object3DEventMap> {
+    get paintMesh(): Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap> {
         return this._paintMesh;
     }
 
-    set paintMesh(value: Mesh<BufferGeometry, Material, Object3DEventMap>) {
+    set paintMesh(value: Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap>) {
         this._paintMesh = value;
     }
 
@@ -363,19 +363,19 @@ export default class GameState {
         this._fogTexture = value;
     }
 
-    get fogMaterial(): MeshPhongMaterial {
+    get fogMaterial(): MeshBasicMaterial {
         return this._fogMaterial;
     }
 
-    set fogMaterial(value: MeshPhongMaterial) {
+    set fogMaterial(value: MeshBasicMaterial) {
         this._fogMaterial = value;
     }
 
-    get fogMesh(): Mesh<BufferGeometry, Material, Object3DEventMap> {
+    get fogMesh(): Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap> {
         return this._fogMesh;
     }
 
-    set fogMesh(value: Mesh<BufferGeometry, Material, Object3DEventMap>) {
+    set fogMesh(value: Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap>) {
         this._fogMesh = value;
     }
 
@@ -403,22 +403,21 @@ export default class GameState {
         this._fogBrushOptions = value;
     }
 
-    get fogBrushMesh(): Mesh {
+    get fogBrushMesh(): Mesh<BufferGeometry, MeshBasicMaterial> {
         return this._fogBrushMesh;
     }
 
-    set fogBrushMesh(value: Mesh) {
+    set fogBrushMesh(value: Mesh<BufferGeometry, MeshBasicMaterial>) {
         this._fogBrushMesh = value;
     }
 
-    get fogBrushMaterial(): Material {
+    get fogBrushMaterial(): MeshBasicMaterial {
         return this._fogBrushMaterial;
     }
 
-    set fogBrushMaterial(value: Material) {
+    set fogBrushMaterial(value: MeshBasicMaterial) {
         this._fogBrushMaterial = value;
     }
-
 
     get paintStrokesAlreadyDrawn(): { [p: string]: Stroke } {
         return this._paintStrokesAlreadyDrawn;
