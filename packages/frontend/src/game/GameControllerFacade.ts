@@ -1,16 +1,11 @@
-import {SelectModelController} from "./controller/SelectModelController";
-import {MoveController} from "./controller/MoveController";
 import {RotateController} from "./controller/RotateController";
 import {BRUSH_FOG, PaintController} from "./controller/PaintController";
-import {DeleteController} from "./controller/DeleteController";
-import {CameraController} from "./controller/CameraController";
 import GameState, {
-    CAMERA_CONTROLS,
-    DELETE_CONTROLS,
-    FOG_CONTROLS, HOTKEY_CONTROLS,
-    MOVE_MODEL_CONTROLS,
+    FOG_CONTROLS,
+    HOTKEY_CONTROLS,
     PAINT_CONTROLS,
-    ROTATE_MODEL_CONTROLS, SCENE_CONTROLS,
+    ROTATE_MODEL_CONTROLS,
+    SCENE_CONTROLS,
     SELECT_MODEL_CONTROLS
 } from "./GameState";
 import SceneController from "./controller/SceneController";
@@ -19,16 +14,14 @@ import {FogStroke, Place, PositionedModel, Stroke} from "../types";
 import FogController from "./controller/FogController";
 import {v4 as uuidv4} from "uuid";
 import HotkeyController from "./controller/HotkeyController";
+import ModelController from "./controller/ModelController";
 
 
 export default class GameControllerFacade {
-    private _selectModelController: SelectModelController;
-    private _moveController: MoveController;
+    private modelController: ModelController;
     private _rotateController: RotateController;
     private _paintController: PaintController;
-    private _deleteController: DeleteController;
     private _fogController: FogController;
-    private _cameraController: CameraController;
     private _sceneController: SceneController;
     private _mapController: MapController;
     private _hotkeyController: HotkeyController;
@@ -38,12 +31,11 @@ export default class GameControllerFacade {
     public constructor(gameState: GameState) {
         this._gameState = gameState;
         this.setupControllers();
-        this._sceneController.enable();
-        this._hotkeyController.enable();
         this.changeControls(this._gameState.currentControls);
     }
 
     tearDown() {
+        this._gameState.cameraControls.dispose();
         Object.values(this._gameState.controllerMap).forEach((controller) => {
             controller.tearDown();
         });
@@ -52,7 +44,6 @@ export default class GameControllerFacade {
     setupControllers() {
         this._mapController = new MapController(this._gameState);
         this._sceneController = new SceneController(this._gameState);
-        this._cameraController = new CameraController(this._gameState);
 
         this._paintController = new PaintController(
             this._gameState,
@@ -62,32 +53,21 @@ export default class GameControllerFacade {
             this._gameState,
         );
 
-        this._selectModelController = new SelectModelController(
+        this.modelController = new ModelController(
             this._gameState
-        );
-
-        this._moveController = new MoveController(
-            this._gameState,
         );
 
         this._rotateController = new RotateController(
             this._gameState,
         );
 
-        this._deleteController = new DeleteController(
-            this._gameState,
-        );
-
         this._hotkeyController = new HotkeyController(this._gameState);
 
         this._gameState.controllerMap = {
-            [CAMERA_CONTROLS]: this._cameraController,
             [PAINT_CONTROLS]: this._paintController,
-            [MOVE_MODEL_CONTROLS]: this._moveController,
             [ROTATE_MODEL_CONTROLS]: this._rotateController,
-            [DELETE_CONTROLS]: this._deleteController,
             [FOG_CONTROLS]: this._fogController,
-            [SELECT_MODEL_CONTROLS]: this._selectModelController,
+            [SELECT_MODEL_CONTROLS]: this.modelController,
             [SCENE_CONTROLS]: this._sceneController,
             [HOTKEY_CONTROLS]: this._hotkeyController,
         };
@@ -128,7 +108,7 @@ export default class GameControllerFacade {
     }
 
     clearSelection() {
-        this._selectModelController.clearSelection();
+        this.modelController.clearSelection();
     }
 
     setBrushType(brushType: string) {

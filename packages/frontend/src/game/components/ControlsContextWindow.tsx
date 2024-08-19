@@ -5,7 +5,6 @@ import FogOptions from "./tool-options/FogOptions";
 import ModelInfo from "./tool-options/ModelInfo";
 import GameLocationSettings from "./tool-options/GameLocationSettings";
 import AddModelSection from "./tool-options/AddModelSection";
-import GameControllerFacade from "../GameControllerFacade";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS,
@@ -17,12 +16,10 @@ import MenuIcon from "../../components/widgets/icons/MenuIcon";
 import CloseIcon from "../../components/widgets/icons/CloseIcon";
 
 interface ControlsContextWindowProps {
-	controllerFacade: GameControllerFacade;
 	controlsMode: string;
 	setGameWikiId: (id: string) => void
 }
 export default function ControlsContextWindow({
-    controllerFacade,
 	controlsMode,
 	setGameWikiId,
 }: ControlsContextWindowProps) {
@@ -36,16 +33,16 @@ export default function ControlsContextWindow({
 
 	switch (controlsMode) {
 		case PAINT_CONTROLS:
-			content = <BrushOptions controllerFacade={controllerFacade} />;
+			content = <BrushOptions/>;
 			break;
 		case FOG_CONTROLS:
-			content = <FogOptions controllerFacade={controllerFacade} />;
+			content = <FogOptions />;
 			break;
 		case SELECT_MODEL_CONTROLS:
-			content = <ModelInfo controllerFacade={controllerFacade} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
+			content = <ModelInfo setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case SELECT_LOCATION_CONTROLS:
-			content = <GameLocationSettings controllerFacade={controllerFacade} setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
+			content = <GameLocationSettings setGameWikiId={async (wikiId: string) => setGameWikiId(wikiId)} />;
 			break;
 		case ADD_MODEL_CONTROLS:
 			content = <AddModelSection />;

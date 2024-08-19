@@ -5,14 +5,13 @@ import {FogStroke, PathNode, Stroke} from "../../types";
 import {v4 as uuidv4} from "uuid";
 import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_FOG, BRUSH_LINE, BRUSH_SQUARE, DEFAULT_BRUSH_SIZE} from "./PaintController";
 import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 export default abstract class DrawingController<T extends Stroke | FogStroke> implements GameController{
 
     protected gameState: GameState;
 
-    protected constructor(
-        gameState: GameState,
-    ) {
+    protected constructor(gameState: GameState) {
         this.gameState = gameState;
     }
 
@@ -42,11 +41,6 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
         this.gameState.scene.add(this.drawMesh);
 
         this.setupBrush();
-    }
-
-    resize(width: number, height: number, newPixelsPerFoot: number) {
-        this.gameState.scene.remove(this.drawMesh);
-        this.setupDrawCanvas(width, height, newPixelsPerFoot);
     }
 
     setupBrush = () => {
@@ -81,6 +75,28 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
         this.brushMesh = new THREE.Mesh(geometry, this.brushMaterial);
         this.brushMesh.visible = oldVisibility;
         this.gameState.scene.add(this.brushMesh);
+    };
+
+    enable = () => {
+        this.gameState.renderRoot.addEventListener("mousedown", this.paintMouseDownEvent);
+        this.updateBrushPosition();
+        this.brushMesh.visible = true;
+        this.gameState.renderRoot.addEventListener("mousemove", this.updateBrushPosition);
+        this.gameState.cameraControls.enabled = true;
+    };
+
+    disable = () => {
+        this.gameState.renderRoot.removeEventListener("mousedown", this.paintMouseDownEvent);
+        if(this.brushMesh) {
+            this.brushMesh.visible = false;
+        }
+    };
+
+    tearDown = () => {
+        this.disable();
+        this.gameState.renderRoot.removeEventListener("mousemove", this.updateBrushPosition);
+        this.gameState.scene.remove(this.drawMesh);
+        this.gameState.scene.remove(this.brushMesh);
     };
 
     stroke = (stroke: T, useCache = true, pixelsPerFootOverride: number = null) => {
@@ -204,6 +220,7 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
     };
 
     stopPaintingWithBrush = () => {
+        this.gameState.cameraControls.enabled = true;
         this.gameState.renderRoot.removeEventListener("mousemove", this.paintWithBrush);
         this.gameState.renderRoot.removeEventListener("mouseup", this.stopPaintingWithBrush);
         this.gameState.renderRoot.removeEventListener(
@@ -241,33 +258,17 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
         this.brushMesh.position.set(intersect.point.x, 0, intersect.point.z);
     };
 
-    paintMouseDownEvent = () => {
+    paintMouseDownEvent = (event: MouseEvent) => {
+        // if the secondary button was pressed don't do anything
+        if (event.buttons === 2) {
+            return;
+        }
+        this.gameState.cameraControls.enabled = false;
         this.strokeBeingDrawnId = uuidv4();
         this.paintWithBrush();
         this.gameState.renderRoot.addEventListener("mousemove", this.paintWithBrush);
         this.gameState.renderRoot.addEventListener("mouseup", this.stopPaintingWithBrush);
         this.gameState.renderRoot.addEventListener("mouseleave", this.stopPaintingWithBrush);
-    };
-
-    enable = () => {
-        this.gameState.renderRoot.addEventListener("mousedown", this.paintMouseDownEvent);
-        this.updateBrushPosition();
-        this.brushMesh.visible = true;
-        this.gameState.renderRoot.addEventListener("mousemove", this.updateBrushPosition);
-    };
-
-    disable = () => {
-        this.gameState.renderRoot.removeEventListener("mousedown", this.paintMouseDownEvent);
-        if(this.brushMesh) {
-            this.brushMesh.visible = false;
-        }
-    };
-
-    tearDown = () => {
-        this.disable();
-        this.gameState.renderRoot.removeEventListener("mousemove", this.updateBrushPosition);
-        this.gameState.scene.remove(this.drawMesh);
-        this.gameState.scene.remove(this.brushMesh);
     };
 
     setBrushType = (type: string) => {
@@ -303,6 +304,11 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
             this.drawMesh.material.needsUpdate = true;
         }
     };
+
+    resize(width: number, height: number, newPixelsPerFoot: number) {
+        this.gameState.scene.remove(this.drawMesh);
+        this.setupDrawCanvas(width, height, newPixelsPerFoot);
+    }
 
     // abstract methods
     abstract get  drawCanvas(): HTMLCanvasElement;

@@ -1,25 +1,25 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetGameMap from "../../../hooks/game/useSetGameMap";
-import GameControllerFacade from "../../GameControllerFacade";
 import LoadingView from "../../../components/LoadingView";
 import Toggle from "../../../components/widgets/Toggle";
 import SelectWiki from "../../../components/select/SelectWiki";
 import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
 import {DEFAULT_MAP_DRAW_GRID} from "../../GameState";
+import {ControllerContext} from "../GameContent";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;
-	 controllerFacade: GameControllerFacade;
  }
 
-export default function GameLocationSettings({ setGameWikiId, controllerFacade }: GameLocationSettingsProps) {
+export default function GameLocationSettings({ setGameWikiId }: GameLocationSettingsProps) {
 	const { currentGame, loading: gameLoading } = useCurrentGame();
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [setFog, setSetFog] = useState<boolean>();
 	const { setGameMap } = useSetGameMap();
+	const controllerFacade = useContext(ControllerContext);
 
 	if (gameLoading) {
 		return <LoadingView />;
