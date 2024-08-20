@@ -6,13 +6,11 @@ import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS,
 	PAINT_CONTROLS,
-	ROTATE_MODEL_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
 } from "../GameState";
 import HighlightIcon from "../../components/widgets/icons/HighlightIcon";
 import AddIcon from "../../components/widgets/icons/AddIcon";
-import RedoIcon from "../../components/widgets/icons/RedoIcon";
 import CloudIcon from "../../components/widgets/icons/CloudIcon";
 import SelectIcon from "../../components/widgets/icons/SelectIcon";
 import LocationIcon from "../../components/widgets/icons/LocationIcon";
@@ -47,7 +45,6 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 		</>
 	);
 	toolTipText[ADD_MODEL_CONTROLS] = <>Add a model to this game</>;
-	toolTipText[ROTATE_MODEL_CONTROLS] = <>Left click on a model and drag to rotate it</>;
 	toolTipText[FOG_CONTROLS] = (
 		<>
 			Left click and drag to add fog of war to scene
@@ -66,11 +63,13 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 			Right click and drag to pan camera
 			<br />
 			Scroll to zoom in or out
-			<br/>
+			<br />
 			Left click on a model to see information and settings about the model
 			<br />
 			Left click on a model and drag to move it
-			<br/>
+			<br />
+			Left click on a model and drag to rotate it
+			<br />
 			Press the delete key while a model is selected to delete it
 		</>
 	);
@@ -79,7 +78,6 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	const mouseOverText = {};
 	mouseOverText[PAINT_CONTROLS] = <>Paint Brush, hotkey: p</>;
 	mouseOverText[ADD_MODEL_CONTROLS] = <>Add Model, hotkey: a</>;
-	mouseOverText[ROTATE_MODEL_CONTROLS] = <>Rotate Model, hotkey: r</>;
 	mouseOverText[FOG_CONTROLS] = <>Fog of War Brush, hotkey: f</>;
 	mouseOverText[SELECT_MODEL_CONTROLS] = <>Select Model, hotkey: s</>;
 	mouseOverText[SELECT_LOCATION_CONTROLS] = <>Game Location, hotkey: l</>;
@@ -87,7 +85,6 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	const icons = {};
 	icons[SELECT_MODEL_CONTROLS] = <SelectIcon />;
 	icons[ADD_MODEL_CONTROLS] = <AddIcon />;
-	icons[ROTATE_MODEL_CONTROLS] = <RedoIcon />;
 	icons[PAINT_CONTROLS] = <HighlightIcon />;
 	icons[FOG_CONTROLS] = <CloudIcon />;
 	icons[SELECT_LOCATION_CONTROLS] = <LocationIcon />;
@@ -95,7 +92,6 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 	const permission = {};
 	permission[PAINT_CONTROLS] = currentGame.canPaint;
 	permission[ADD_MODEL_CONTROLS] = currentGame.canModel;
-	permission[ROTATE_MODEL_CONTROLS] = currentGame.canModel;
 	permission[FOG_CONTROLS] = currentGame.canWriteFog;
 	permission[SELECT_MODEL_CONTROLS] = true;
 	permission[SELECT_LOCATION_CONTROLS] = true;

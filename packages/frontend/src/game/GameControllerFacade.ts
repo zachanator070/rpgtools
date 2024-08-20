@@ -1,10 +1,8 @@
-import {RotateController} from "./controller/RotateController";
 import {BRUSH_FOG, PaintController} from "./controller/PaintController";
 import GameState, {
     FOG_CONTROLS,
     HOTKEY_CONTROLS,
     PAINT_CONTROLS,
-    ROTATE_MODEL_CONTROLS,
     SCENE_CONTROLS,
     SELECT_MODEL_CONTROLS
 } from "./GameState";
@@ -19,7 +17,6 @@ import ModelController from "./controller/ModelController";
 
 export default class GameControllerFacade {
     private modelController: ModelController;
-    private _rotateController: RotateController;
     private _paintController: PaintController;
     private _fogController: FogController;
     private _sceneController: SceneController;
@@ -57,15 +54,11 @@ export default class GameControllerFacade {
             this._gameState
         );
 
-        this._rotateController = new RotateController(
-            this._gameState,
-        );
 
         this._hotkeyController = new HotkeyController(this._gameState);
 
         this._gameState.controllerMap = {
             [PAINT_CONTROLS]: this._paintController,
-            [ROTATE_MODEL_CONTROLS]: this._rotateController,
             [FOG_CONTROLS]: this._fogController,
             [SELECT_MODEL_CONTROLS]: this.modelController,
             [SCENE_CONTROLS]: this._sceneController,

@@ -3,7 +3,7 @@ import GameState, {
     ADD_MODEL_CONTROLS,
     FOG_CONTROLS,
     PAINT_CONTROLS,
-    ROTATE_MODEL_CONTROLS, SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
+    SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
 } from "../GameState";
 
 export default class HotkeyController implements GameController {
@@ -39,11 +39,6 @@ export default class HotkeyController implements GameController {
             case "KeyP":
                 if (this.gameState.currentGame.canPaint) {
                     this.changeControls(PAINT_CONTROLS);
-                }
-                break;
-            case "KeyR":
-                if (this.gameState.currentGame.canModel) {
-                    this.changeControls(ROTATE_MODEL_CONTROLS);
                 }
                 break;
             case "KeyF":

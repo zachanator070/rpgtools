@@ -26,7 +26,6 @@ import {GameController} from "./controller/GameController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 export const PAINT_CONTROLS = "Paint Controls";
-export const ROTATE_MODEL_CONTROLS = "Rotate Model Controls";
 export const FOG_CONTROLS = "Fog Controls";
 export const SELECT_MODEL_CONTROLS = "Select Model Controls";
 export const SELECT_LOCATION_CONTROLS = "Game Location";
@@ -254,9 +253,7 @@ export default class GameState {
 
     set selectedMeshedModel(value: MeshedModel) {
         this._selectedMeshedModel = value;
-        if (value) {
-            this.notifySelectModelCallbacks(value.positionedModel);
-        }
+        this.notifySelectModelCallbacks(value?.positionedModel);
     }
 
     get location(): Place {
@@ -459,8 +456,10 @@ export default class GameState {
     getFirstMeshUnderMouse(): null | Object3D {
         const allObjects = [];
         for (let model of this.meshedModels) {
-            allObjects.push(...this.getAllChildren(model.mesh));
-            allObjects.push(model.mesh);
+            if (model.mesh) {
+                allObjects.push(...this.getAllChildren(model.mesh));
+                allObjects.push(model.mesh);
+            }
         }
         const intersects = this.raycaster.intersectObjects(allObjects);
         if (intersects.length === 0) {
