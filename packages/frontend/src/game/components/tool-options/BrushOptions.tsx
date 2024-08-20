@@ -11,13 +11,14 @@ import {
 	DEFAULT_BRUSH_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE, DEFAULT_BRUSH_TYPE
 } from "../../controller/PaintController";
 import {ControllerContext} from "../GameContent";
+import GameControllerFacade from "../../GameControllerFacade";
 
 export default function BrushOptions() {
 	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);
 	const [brushType, setBrushType] = useState(DEFAULT_BRUSH_TYPE);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
 	const [fillBrush, setFillBrush] = useState(DEFAULT_BRUSH_FILL);
-	const controllerFacade = useContext(ControllerContext);
+	const controllerFacade = useContext<GameControllerFacade>(ControllerContext);
 
 	return (
 		<>

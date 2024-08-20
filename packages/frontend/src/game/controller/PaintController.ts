@@ -1,6 +1,7 @@
-import {Stroke} from "../../types";
+import {PathNode, Stroke} from "../../types";
 import GameState, {BrushOptions, DRAW_Y_POSITION} from "../GameState";
 import DrawingController from "./DrawingController";
+import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
 
 export const BRUSH_CIRCLE = "circle";
 export const BRUSH_SQUARE = "square";
@@ -16,6 +17,22 @@ export const DEFAULT_MAP_SIZE = 50;
 
 export class PaintController extends DrawingController<Stroke> {
 
+	private paintCanvas: HTMLCanvasElement;
+	private paintTexture: Texture;
+	private paintMaterial: MeshBasicMaterial;
+	private paintMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
+	private paintBrushOptions: BrushOptions = {
+		brushColor: DEFAULT_BRUSH_COLOR,
+		brushFill: DEFAULT_BRUSH_FILL,
+		brushSize: DEFAULT_BRUSH_SIZE,
+		brushType: DEFAULT_BRUSH_TYPE
+	};
+	private paintBrushMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
+	private paintBrushMaterial: MeshBasicMaterial;
+	private paintStrokesAlreadyDrawn: {[id: string]: Stroke} = {};
+	private pathBeingPainted: PathNode[] = [];
+	private paintStrokeBeingDrawnId: string;
+
 	constructor(gameState: GameState) {
 		super(gameState);
 		this.drawCanvas = document.createElement("canvas");
@@ -29,79 +46,75 @@ export class PaintController extends DrawingController<Stroke> {
 	}
 
 	get drawCanvas() {
-		return this.gameState.paintCanvas;
+		return this.paintCanvas;
 	}
 
 	set drawCanvas(drawCanvas) {
-		this.gameState.paintCanvas = drawCanvas;
+		this.paintCanvas = drawCanvas;
 	}
 
 	get drawTexture() {
-		return this.gameState.paintTexture;
+		return this.paintTexture;
 	}
 
 	set drawTexture(drawTexture) {
-		this.gameState.paintTexture = drawTexture;
+		this.paintTexture = drawTexture;
 	}
 
 	get drawMaterial() {
-		return this.gameState.paintMaterial;
+		return this.paintMaterial;
 	}
 
 	set drawMaterial(drawMaterial) {
-		this.gameState.paintMaterial = drawMaterial;
+		this.paintMaterial = drawMaterial;
 	}
 
 	get drawMesh() {
-		return this.gameState.paintMesh;
+		return this.paintMesh;
 	}
 
 	set drawMesh(drawMesh) {
-		this.gameState.paintMesh = drawMesh;
+		this.paintMesh = drawMesh;
 	}
 
 	get brushOptions(): BrushOptions {
-		return this.gameState.paintBrushOptions;
+		return this.paintBrushOptions;
 	}
 
 	get brushMesh() {
-		return this.gameState.paintBrushMesh;
+		return this.paintBrushMesh;
 	}
 
 	set brushMesh(brushMesh) {
-		this.gameState.paintBrushMesh = brushMesh;
+		this.paintBrushMesh = brushMesh;
 	}
 
 	get brushMaterial() {
-		return this.gameState.paintBrushMaterial;
+		return this.paintBrushMaterial;
 	}
 
 	set brushMaterial(brushMaterial) {
-		this.gameState.paintBrushMaterial = brushMaterial;
+		this.paintBrushMaterial = brushMaterial;
 	}
 
 	get strokesAlreadyDrawn(): { [key: string]: Stroke } {
-		return this.gameState.paintStrokesAlreadyDrawn as { [key: string]: Stroke };
-	}
-
-	set strokesAlreadyDrawn(strokes: { [key: string]: Stroke }) {
-		(this.gameState.paintStrokesAlreadyDrawn as { [key: string]: Stroke }) = strokes;
+		return this.paintStrokesAlreadyDrawn as { [key: string]: Stroke };
 	}
 
 	get pathBeingDrawn() {
-		return this.gameState.pathBeingPainted;
+		return this.pathBeingPainted;
 	}
 
 	set pathBeingDrawn(pathBeingDrawn) {
-		this.gameState.pathBeingPainted = pathBeingDrawn;
+		this.pathBeingPainted = pathBeingDrawn;
 	}
 
 	get strokeBeingDrawnId() {
-		return this.gameState.paintStrokeBeingDrawnId;
+		return this.paintStrokeBeingDrawnId;
 	}
 
 	set strokeBeingDrawnId(strokeBeingDrawnId) {
-		this.gameState.paintStrokeBeingDrawnId = strokeBeingDrawnId;
+		this.paintStrokeBeingDrawnId = strokeBeingDrawnId;
 	}
 
 	get meshY() {

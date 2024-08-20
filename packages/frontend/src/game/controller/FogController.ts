@@ -1,10 +1,26 @@
-import {FogStroke} from "../../types";
+import {FogStroke, PathNode} from "../../types";
 import GameState, {BrushOptions, FOG_Y_POSITION} from "../GameState";
 import DrawingController from "./DrawingController";
-import {BufferGeometry, Mesh, MeshBasicMaterial} from "three";
-
+import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
+import {BRUSH_FOG, BRUSH_FOG_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE} from "./PaintController";
 
 export default class FogController extends DrawingController<FogStroke>{
+    private fogCanvas: HTMLCanvasElement;
+    private fogTexture: Texture;
+    private fogMaterial: MeshBasicMaterial;
+    private fogMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
+    private fogBrushOptions: BrushOptions = {
+        brushColor: BRUSH_FOG_COLOR,
+        brushFill: DEFAULT_BRUSH_FILL,
+        brushSize: DEFAULT_BRUSH_SIZE,
+        brushType: BRUSH_FOG
+    };
+    private fogBrushMesh: Mesh<BufferGeometry, MeshBasicMaterial>;
+    private fogBrushMaterial: MeshBasicMaterial;
+    private fogAlreadyDrawn: {[id: string]: FogStroke} = {};
+    private fogPathBeingDrawn: PathNode[] = [];
+    private fogStrokeBeingDrawnId: string;
+
     constructor(gameState: GameState) {
         super(gameState);
         this.drawCanvas = document.createElement("canvas");
@@ -17,79 +33,75 @@ export default class FogController extends DrawingController<FogStroke>{
         }
     }
     get drawCanvas() {
-        return this.gameState.fogCanvas;
+        return this.fogCanvas;
     }
 
     set drawCanvas(drawCanvas) {
-        this.gameState.fogCanvas = drawCanvas;
+        this.fogCanvas = drawCanvas;
     }
 
     get drawTexture() {
-        return this.gameState.fogTexture;
+        return this.fogTexture;
     }
 
     set drawTexture(drawTexture) {
-        this.gameState.fogTexture = drawTexture;
+        this.fogTexture = drawTexture;
     }
 
     get drawMaterial() {
-        return this.gameState.fogMaterial;
+        return this.fogMaterial;
     }
 
     set drawMaterial(drawMaterial) {
-        this.gameState.fogMaterial = drawMaterial;
+        this.fogMaterial = drawMaterial;
     }
 
     get drawMesh() {
-        return this.gameState.fogMesh;
+        return this.fogMesh;
     }
 
     set drawMesh(drawMesh) {
-        this.gameState.fogMesh = drawMesh;
+        this.fogMesh = drawMesh;
     }
 
     get brushOptions(): BrushOptions {
-        return this.gameState.fogBrushOptions;
+        return this.fogBrushOptions;
     }
 
     get brushMesh(): Mesh<BufferGeometry, MeshBasicMaterial> {
-        return this.gameState.fogBrushMesh;
+        return this.fogBrushMesh;
     }
 
     set brushMesh(brushMesh: Mesh<BufferGeometry, MeshBasicMaterial>) {
-        this.gameState.fogBrushMesh = brushMesh;
+        this.fogBrushMesh = brushMesh;
     }
 
     get brushMaterial() {
-        return this.gameState.fogBrushMaterial;
+        return this.fogBrushMaterial;
     }
 
     set brushMaterial(brushMaterial) {
-        this.gameState.fogBrushMaterial = brushMaterial;
+        this.fogBrushMaterial = brushMaterial;
     }
 
     get strokesAlreadyDrawn() {
-        return this.gameState.fogAlreadyDrawn;
-    }
-
-    set strokesAlreadyDrawn(strokes: {[p: string]: FogStroke}) {
-        this.gameState.fogAlreadyDrawn = strokes;
+        return this.fogAlreadyDrawn;
     }
 
     get pathBeingDrawn() {
-        return this.gameState.fogPathBeingDrawn;
+        return this.fogPathBeingDrawn;
     }
 
     set pathBeingDrawn(pathBeingDrawn) {
-        this.gameState.fogPathBeingDrawn = pathBeingDrawn;
+        this.fogPathBeingDrawn = pathBeingDrawn;
     }
 
     get strokeBeingDrawnId() {
-        return this.gameState.fogStrokeBeingDrawnId;
+        return this.fogStrokeBeingDrawnId;
     }
 
     set strokeBeingDrawnId(strokeBeingDrawnId) {
-        this.gameState.fogStrokeBeingDrawnId = strokeBeingDrawnId;
+        this.fogStrokeBeingDrawnId = strokeBeingDrawnId;
     }
 
     get meshY() {

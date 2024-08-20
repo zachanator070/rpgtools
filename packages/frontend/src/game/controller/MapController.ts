@@ -4,10 +4,15 @@ import {GROUND_Y_POSITION, MAP_Y_POSITION} from "../GameState";
 import {DEFAULT_MAP_SIZE} from "./PaintController";
 import {Place} from "../../types";
 import useNotification from "../../components/widgets/useNotification";
+import {CanvasTexture, Mesh} from "three";
 
 
 export default class MapController {
     private gameState: GameState;
+    private groundMesh: Mesh;
+    private mapCanvas: HTMLCanvasElement;
+    private mapTexture: CanvasTexture;
+    private drawGrid: boolean = false;
 
     public constructor(gameState: GameState) {
         this.gameState = gameState;
@@ -47,8 +52,8 @@ export default class MapController {
             this.gameState.scene.remove(this.gameState.mapMesh);
         }
 
-        if (this.gameState.groundMesh) {
-            this.gameState.scene.remove(this.gameState.groundMesh);
+        if (this.groundMesh) {
+            this.gameState.scene.remove(this.groundMesh);
         }
 
         const mapHeight =
@@ -60,13 +65,13 @@ export default class MapController {
                 ? this.gameState.location.mapImage.width / this.gameState.location.pixelsPerFoot
                 : DEFAULT_MAP_SIZE;
 
-        this.gameState.mapCanvas = document.createElement("canvas");
-        this.gameState.mapCanvas.height = this.gameState.location.mapImage.height;
-        this.gameState.mapCanvas.width = this.gameState.location.mapImage.width;
+        this.mapCanvas = document.createElement("canvas");
+        this.mapCanvas.height = this.gameState.location.mapImage.height;
+        this.mapCanvas.width = this.gameState.location.mapImage.width;
 
-        this.gameState.mapTexture = new THREE.CanvasTexture(this.gameState.mapCanvas);
+        this.mapTexture = new THREE.CanvasTexture(this.mapCanvas);
         // in threejs v155 color space was changed to be more realistic, this fixes the color to be more accurate to original image
-        this.gameState.mapTexture.colorSpace = THREE.SRGBColorSpace;
+        this.mapTexture.colorSpace = THREE.SRGBColorSpace;
 
         this.paintMap();
 
@@ -74,7 +79,7 @@ export default class MapController {
         mapGeometry.rotateX(-Math.PI / 2);
         this.gameState.mapMesh = new THREE.Mesh(
             mapGeometry,
-            new THREE.MeshPhongMaterial({ map: this.gameState.mapTexture })
+            new THREE.MeshPhongMaterial({ map: this.mapTexture })
         );
 
         this.gameState.mapMesh.position.set(0, MAP_Y_POSITION, 0);
@@ -83,16 +88,16 @@ export default class MapController {
 
         const groundGeometry = new THREE.PlaneGeometry(mapWidth, mapHeight);
         groundGeometry.rotateX(Math.PI / 2);
-        this.gameState.groundMesh = new THREE.Mesh(
+        this.groundMesh = new THREE.Mesh(
             groundGeometry,
             new THREE.MeshBasicMaterial({ color: 0xffffff })
         );
-        this.gameState.groundMesh.position.set(0, GROUND_Y_POSITION, 0);
-        this.gameState.scene.add(this.gameState.groundMesh);
+        this.groundMesh.position.set(0, GROUND_Y_POSITION, 0);
+        this.gameState.scene.add(this.groundMesh);
     }
 
     paintMap() {
-        const mapContext = this.gameState.mapCanvas.getContext("2d");
+        const mapContext = this.mapCanvas.getContext("2d");
 
         const imagesLoading: Promise<void>[] = [];
 
@@ -102,7 +107,7 @@ export default class MapController {
             const imagePromise = new Promise<void>((resolve) => {
                 base_image.onload = () => {
                     mapContext.drawImage(base_image, chunk.x * 250, chunk.y * 250);
-                    this.gameState.mapTexture.needsUpdate = true;
+                    this.mapTexture.needsUpdate = true;
                     resolve();
                 };
             });
@@ -110,17 +115,17 @@ export default class MapController {
         }
 
         Promise.all(imagesLoading).then(() => {
-            if (this.gameState.drawGrid) {
+            if (this.drawGrid) {
                 this.paintGrid();
             }
         });
 
-        this.gameState.mapTexture.needsUpdate = true;
+        this.mapTexture.needsUpdate = true;
     }
 
     private paintGrid() {
         const squareSize = this.gameState.location.pixelsPerFoot * 5;
-        const context = this.gameState.mapCanvas.getContext("2d");
+        const context = this.mapCanvas.getContext("2d");
         context.lineWidth = 3;
         context.strokeStyle = "#000000";
         context.beginPath();
@@ -134,12 +139,12 @@ export default class MapController {
         }
         context.stroke();
 
-        this.gameState.mapTexture.needsUpdate = true;
+        this.mapTexture.needsUpdate = true;
     }
 
     setDrawGrid(drawGrid: boolean) {
-        this.gameState.drawGrid = drawGrid;
-        if (this.gameState.drawGrid) {
+        this.drawGrid = drawGrid;
+        if (this.drawGrid) {
             this.paintGrid();
         } else {
             this.paintMap();
