@@ -84,25 +84,30 @@ export default class ModelController implements GameController {
         const selectedMesh = this.gameState.getFirstMeshUnderMouse();
         if (selectedMesh) {
             this.selectModel(selectedMesh);
-            let selectedMeshedModel: MeshedModel;
-            for (let meshedModel of this.gameState.meshedModels) {
-                if (meshedModel.mesh.id === selectedMesh.id) {
-                    selectedMeshedModel = meshedModel;
-                    break;
+            if (this.gameState.currentGame.canModel) {
+                let selectedMeshedModel: MeshedModel;
+                for (let meshedModel of this.gameState.meshedModels) {
+                    if (meshedModel.mesh.id === selectedMesh.id) {
+                        selectedMeshedModel = meshedModel;
+                        break;
+                    }
+                }
+                const objectIntersectionPoint = this.gameState.raycaster.intersectObject(selectedMesh)[0].point;
+                // left mouse button will move model
+                if (event.buttons === 1) {
+                    this.mouseMoveListener = () => this.moveModel(selectedMesh, objectIntersectionPoint);
+                    this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
+                    this.mouseUpListener = () => this.moveDone(selectedMeshedModel);
+                    this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
+                    // right mouse button will rotate model
+                } else if (event.buttons === 2) {
+                    this.mouseMoveListener = () => this.rotateModel(selectedMeshedModel);
+                    this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
+                    this.mouseUpListener = () => this.rotateDone(selectedMeshedModel);
+                    this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
                 }
             }
-            const objectIntersectionPoint = this.gameState.raycaster.intersectObject(selectedMesh)[0].point;
-            if (event.buttons === 1) {
-                this.mouseMoveListener = () => this.moveModel(selectedMesh, objectIntersectionPoint);
-                this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
-                this.mouseUpListener = () => this.moveDone(selectedMeshedModel);
-                this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
-            } else if (event.buttons === 2) {
-                this.mouseMoveListener = () => this.rotateModel(selectedMeshedModel);
-                this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
-                this.mouseUpListener = () => this.rotateDone(selectedMeshedModel);
-                this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
-            }
+
 
         } else {
             this.clearSelection();
