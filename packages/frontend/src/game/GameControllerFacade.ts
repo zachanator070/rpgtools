@@ -101,7 +101,7 @@ export default class GameControllerFacade {
     }
 
     clearSelection() {
-        this.modelController.clearSelection();
+        this.modelController.selectModel(null);
     }
 
     setBrushType(brushType: string) {
