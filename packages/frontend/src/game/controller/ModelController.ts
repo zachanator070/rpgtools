@@ -44,6 +44,7 @@ export default class ModelController implements GameController {
         this.gameState.renderRoot.addEventListener("mousedown", this.setMouseDragging);
         this.gameState.renderRoot.addEventListener("mouseup", this.setMouseNotDragging);
         this.gameState.renderRoot.addEventListener("mousemove", this.enableCameraMove);
+        this.gameState.renderRoot.addEventListener("contextmenu", this.disableContextMenu);
         window.addEventListener("keydown", this.deleteModelEvent, true);
     };
 
@@ -53,6 +54,7 @@ export default class ModelController implements GameController {
         this.gameState.renderRoot.removeEventListener("mousedown", this.setMouseDragging);
         this.gameState.renderRoot.removeEventListener("mouseup", this.setMouseNotDragging);
         this.gameState.renderRoot.removeEventListener("mousemove", this.enableCameraMove);
+        this.gameState.renderRoot.removeEventListener("contextmenu", this.disableContextMenu);
         window.removeEventListener("keydown", this.deleteModelEvent);
     };
 
@@ -67,6 +69,10 @@ export default class ModelController implements GameController {
         this.mouseDragging = false;
     }
 
+    disableContextMenu = (event: PointerEvent) => {
+        event.preventDefault();
+    }
+
     enableCameraMove = () => {
         if (!this.mouseDragging) {
             const selectedMesh = this.gameState.getFirstMeshUnderMouse();
@@ -74,7 +80,7 @@ export default class ModelController implements GameController {
         }
     }
 
-    tryModelSelect = () => {
+    tryModelSelect = (event: MouseEvent) => {
         const selectedMesh = this.gameState.getFirstMeshUnderMouse();
         if (selectedMesh) {
             this.selectModel(selectedMesh);
@@ -86,10 +92,18 @@ export default class ModelController implements GameController {
                 }
             }
             const objectIntersectionPoint = this.gameState.raycaster.intersectObject(selectedMesh)[0].point;
-            this.mouseMoveListener = () => this.moveModel(selectedMesh, objectIntersectionPoint);
-            this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
-            this.mouseUpListener = () => this.moveDone(selectedMeshedModel);
-            this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
+            if (event.buttons === 1) {
+                this.mouseMoveListener = () => this.moveModel(selectedMesh, objectIntersectionPoint);
+                this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
+                this.mouseUpListener = () => this.moveDone(selectedMeshedModel);
+                this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
+            } else if (event.buttons === 2) {
+                this.mouseMoveListener = () => this.rotateModel(selectedMeshedModel);
+                this.gameState.renderRoot.addEventListener("mousemove", this.mouseMoveListener);
+                this.mouseUpListener = () => this.rotateDone(selectedMeshedModel);
+                this.gameState.renderRoot.addEventListener("mouseup", this.mouseUpListener);
+            }
+
         } else {
             this.clearSelection();
         }
@@ -168,6 +182,28 @@ export default class ModelController implements GameController {
             this.gameState.notifyPositionedModelUpdatedCallbacks(selectedMeshedModel.positionedModel);
         }
     };
+
+    rotateModel = (selectedMeshedModel: MeshedModel) => {
+        if (!selectedMeshedModel) {
+            return;
+        }
+        const intersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
+        if (intersects.length === 0) {
+            return;
+        }
+        const mapIntersect = intersects[0].point;
+        selectedMeshedModel.mesh.lookAt(mapIntersect);
+        selectedMeshedModel.positionedModel.lookAtX =
+            mapIntersect.x;
+        selectedMeshedModel.positionedModel.lookAtZ =
+            mapIntersect.z;
+    };
+
+    rotateDone = (selectedMeshedModel: MeshedModel) => {
+        this.gameState.renderRoot.removeEventListener("mousemove", this.mouseMoveListener);
+        this.gameState.renderRoot.removeEventListener("mouseup", this.mouseUpListener);
+        this.gameState.notifyPositionedModelUpdatedCallbacks(selectedMeshedModel.positionedModel);
+    }
 
     deleteModelEvent = (event: KeyboardEvent) => {
         if (this.gameState.renderRoot !== this.gameState.focusedElement) {
