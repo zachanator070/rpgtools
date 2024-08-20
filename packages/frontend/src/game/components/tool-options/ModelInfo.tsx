@@ -12,6 +12,7 @@ import PrimaryButton from "../../../components/widgets/PrimaryButton";
 import ColorInput from "../../../components/widgets/input/ColorInput";
 import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
 import {ControllerContext} from "../GameContent";
+import useGameModelDeletedSubscription from "../../../hooks/game/useGameModelDeletedSubscription";
 
 interface ModelInfoProps {
 	setGameWikiId: (wikiId: string) => Promise<any>
@@ -27,6 +28,11 @@ export default function ModelInfo({ setGameWikiId }: ModelInfoProps) {
 	const { gameModelPositioned } = useGameModelPositionedSubscription();
 	const { deletePositionedModel } = useDeletePositionedModel();
 	const controllerFacade = useContext<GameControllerFacade>(ControllerContext);
+	useGameModelDeletedSubscription((model) => {
+		if (model._id === selectedPositionedModel?._id) {
+			setSelectedPositionedModel(null);
+		}
+	});
 
 	useEffect(() => {
 		controllerFacade.addSelectedModelCallback((model) => setSelectedPositionedModel(model));

@@ -8,6 +8,7 @@ import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
 import {FXAAShader} from "three/examples/jsm/shaders/FXAAShader";
 import {Object3D} from "three/src/core/Object3D";
 import {Vector3} from "three";
+import {PositionedModel} from "../../types";
 
 export default class ModelController implements GameController {
 
@@ -50,7 +51,7 @@ export default class ModelController implements GameController {
     };
 
     disable = () => {
-        this.clearSelection();
+        this.selectModel(null);
         this.gameState.renderRoot.removeEventListener("mousedown", this.tryModelSelect);
         this.gameState.renderRoot.removeEventListener("mousedown", this.setMouseDragging);
         this.gameState.renderRoot.removeEventListener("mouseup", this.setMouseNotDragging);
@@ -83,8 +84,8 @@ export default class ModelController implements GameController {
 
     tryModelSelect = (event: MouseEvent) => {
         const selectedMesh = this.gameState.getFirstMeshUnderMouse();
+        this.selectModel(selectedMesh);
         if (selectedMesh) {
-            this.selectModel(selectedMesh);
             if (this.gameState.currentGame.canModel) {
                 let selectedMeshedModel: MeshedModel;
                 for (let meshedModel of this.gameState.meshedModels) {
@@ -110,22 +111,23 @@ export default class ModelController implements GameController {
             }
 
 
-        } else {
-            this.clearSelection();
         }
     }
 
     selectModel = (selectedMesh: Object3D) => {
         this.removeGlow();
+        this.selectedMeshedModel = null;
 
         for (let meshedModel of this.gameState.meshedModels) {
-            if (meshedModel.mesh.id === selectedMesh.id) {
+            if (meshedModel.mesh.id === selectedMesh?.id) {
                 this.selectedMeshedModel = meshedModel;
-                this.gameState.notifySelectModelCallbacks(meshedModel.positionedModel);
                 break;
             }
         }
-        this.constructGlow();
+        if (this.selectedMeshedModel){
+            this.constructGlow();
+        }
+        this.gameState.notifySelectModelCallbacks(this.selectedMeshedModel?.positionedModel);
     };
 
     constructGlow = () => {
@@ -139,11 +141,6 @@ export default class ModelController implements GameController {
     removeGlow() {
         this.outlinePass.selectedObjects = [];
     }
-
-    clearSelection = () => {
-        this.selectedMeshedModel = null;
-        this.removeGlow();
-    };
 
     moveModel = (selectedObject: Object3D, objectIntersectionPoint: Vector3) => {
 
