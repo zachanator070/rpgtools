@@ -65,12 +65,14 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 			Scroll to zoom in or out
 			<br />
 			Left click on a model to see information and settings about the model
-			<br />
-			Left click on a model and drag to move it
-			<br />
-			Left click on a model and drag to rotate it
-			<br />
-			Press the delete key while a model is selected to delete it
+			{currentGame.canModel && <>
+				<br />
+				Left click on a model and drag to move it
+				<br />
+				Left click on a model and drag to rotate it
+				<br />
+				Press the delete key while a model is selected to delete it
+			</>}
 		</>
 	);
 	toolTipText[SELECT_LOCATION_CONTROLS] = <>See controls window to change location of this game</>;
