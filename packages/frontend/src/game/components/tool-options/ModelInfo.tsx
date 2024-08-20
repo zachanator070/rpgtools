@@ -26,7 +26,7 @@ export default function ModelInfo({ setGameWikiId }: ModelInfoProps) {
 	const { setPositionedModelWiki } = useSetPositionedModelWiki();
 	const { gameModelPositioned } = useGameModelPositionedSubscription();
 	const { deletePositionedModel } = useDeletePositionedModel();
-	const controllerFacade = useContext(ControllerContext);
+	const controllerFacade = useContext<GameControllerFacade>(ControllerContext);
 
 	useEffect(() => {
 		controllerFacade.addSelectedModelCallback((model) => setSelectedPositionedModel(model));

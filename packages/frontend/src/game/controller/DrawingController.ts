@@ -5,7 +5,6 @@ import {FogStroke, PathNode, Stroke} from "../../types";
 import {v4 as uuidv4} from "uuid";
 import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_FOG, BRUSH_LINE, BRUSH_SQUARE, DEFAULT_BRUSH_SIZE} from "./PaintController";
 import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 export default abstract class DrawingController<T extends Stroke | FogStroke> implements GameController{
 
@@ -338,8 +337,6 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
     abstract set brushMaterial(brushMaterial: MeshBasicMaterial);
 
     abstract get strokesAlreadyDrawn(): { [key: string]: T };
-
-    abstract set strokesAlreadyDrawn(strokes: { [key: string]: T });
 
     abstract get pathBeingDrawn(): PathNode[];
 

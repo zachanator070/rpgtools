@@ -17,6 +17,7 @@ export default class ModelController implements GameController {
     private mouseMoveListener: () => void;
     private mouseUpListener: () => void;
     private mouseDragging: boolean = false;
+    private selectedMeshedModel: MeshedModel;
 
     constructor(gameState: GameState) {
         this.gameState = gameState;
@@ -119,7 +120,8 @@ export default class ModelController implements GameController {
 
         for (let meshedModel of this.gameState.meshedModels) {
             if (meshedModel.mesh.id === selectedMesh.id) {
-                this.gameState.selectedMeshedModel = meshedModel;
+                this.selectedMeshedModel = meshedModel;
+                this.gameState.notifySelectModelCallbacks(meshedModel.positionedModel);
                 break;
             }
         }
@@ -127,11 +129,11 @@ export default class ModelController implements GameController {
     };
 
     constructGlow = () => {
-        if (!this.gameState.selectedMeshedModel) {
+        if (!this.selectedMeshedModel) {
             return;
         }
 
-        this.outlinePass.selectedObjects = [this.gameState.selectedMeshedModel.mesh];
+        this.outlinePass.selectedObjects = [this.selectedMeshedModel.mesh];
     };
 
     removeGlow() {
@@ -139,7 +141,7 @@ export default class ModelController implements GameController {
     }
 
     clearSelection = () => {
-        this.gameState.selectedMeshedModel = null;
+        this.selectedMeshedModel = null;
         this.removeGlow();
     };
 
@@ -214,8 +216,8 @@ export default class ModelController implements GameController {
         if (this.gameState.renderRoot !== this.gameState.focusedElement) {
             return;
         }
-        if (event.key === 'Delete' && this.gameState.selectedMeshedModel) {
-            this.gameState.notifyRemoveModelCallback(this.gameState.selectedMeshedModel.positionedModel);
+        if (event.key === 'Delete' && this.selectedMeshedModel) {
+            this.gameState.notifyRemoveModelCallback(this.selectedMeshedModel.positionedModel);
         }
     };
 

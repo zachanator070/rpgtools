@@ -4,11 +4,12 @@ import DropdownSelect from "../../../components/widgets/DropdownSelect";
 import NumberSlider from "../../../components/widgets/NumberSlider";
 import ToolTip from "../../../components/widgets/ToolTip";
 import {ControllerContext} from "../GameContent";
+import GameControllerFacade from "../../GameControllerFacade";
 
 export default function FogOptions() {
 	const [brushType, setBrushType] = useState(BRUSH_FOG);
 	const [brushSize, setBrushSize] = useState(DEFAULT_BRUSH_SIZE);
-	const controllerFacade = useContext(ControllerContext);
+	const controllerFacade = useContext<GameControllerFacade>(ControllerContext);
 
 	return (
 		<>

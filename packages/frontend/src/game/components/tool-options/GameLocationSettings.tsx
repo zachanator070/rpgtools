@@ -9,6 +9,7 @@ import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
 import {DEFAULT_MAP_DRAW_GRID} from "../../GameState";
 import {ControllerContext} from "../GameContent";
+import GameControllerFacade from "../../GameControllerFacade";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;
@@ -19,7 +20,7 @@ export default function GameLocationSettings({ setGameWikiId }: GameLocationSett
 	const [selectedLocation, setSelectedLocation] = useState<string>();
 	const [setFog, setSetFog] = useState<boolean>();
 	const { setGameMap } = useSetGameMap();
-	const controllerFacade = useContext(ControllerContext);
+	const controllerFacade = useContext<GameControllerFacade>(ControllerContext);
 
 	if (gameLoading) {
 		return <LoadingView />;

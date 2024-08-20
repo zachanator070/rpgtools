@@ -1,25 +1,14 @@
 import * as THREE from "three";
-import {FogStroke, Game, PathNode, Place, PositionedModel, Stroke} from "../types";
+import {FogStroke, Game, Place, PositionedModel, Stroke} from "../types";
 import {
-    BufferGeometry,
-    CanvasTexture,
     DirectionalLight,
-    Mesh, MeshBasicMaterial,
-    Object3DEventMap,
+    Mesh,
     PerspectiveCamera,
     Raycaster,
     Scene,
-    Texture,
     Vector2,
     WebGLRenderer
 } from "three";
-import {
-    BRUSH_FOG, BRUSH_FOG_COLOR,
-    DEFAULT_BRUSH_COLOR,
-    DEFAULT_BRUSH_FILL,
-    DEFAULT_BRUSH_SIZE,
-    DEFAULT_BRUSH_TYPE
-} from "./controller/PaintController";
 import {Object3D} from "three/src/core/Object3D";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 import {GameController} from "./controller/GameController";
@@ -81,53 +70,18 @@ export default class GameState {
 
     // map
     private _mapMesh: THREE.Mesh;
-    private _groundMesh: THREE.Mesh;
-    private _mapCanvas: HTMLCanvasElement;
-    private _mapTexture: THREE.Texture;
-    private _drawGrid: boolean = DEFAULT_MAP_DRAW_GRID;
     private _location: Place;
 
     private _currentControls = SELECT_MODEL_CONTROLS;
     private _changeControlsCallbacks: ((mode: string) => any)[] = [];
 
     // selected model
-    private _selectedMeshedModel: MeshedModel;
     private _selectModelCallbacks: ((model: PositionedModel) => any)[] = [];
 
     // painting
-    private _paintCanvas: HTMLCanvasElement;
-    private _paintTexture: THREE.CanvasTexture;
-    private _paintMaterial: THREE.MeshBasicMaterial;
-    private _paintMesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial, THREE.Object3DEventMap>;
-    private _pathBeingPainted: PathNode[] = [];
-    private _paintStrokeBeingDrawnId: string = null;
-    private _paintBrushOptions: BrushOptions = {
-        brushType: DEFAULT_BRUSH_TYPE,
-        brushColor: DEFAULT_BRUSH_COLOR,
-        brushFill: DEFAULT_BRUSH_FILL,
-        brushSize: DEFAULT_BRUSH_SIZE
-    };
-    private _paintStrokesAlreadyDrawn: { [ket: string]: Stroke } = {};
-    private _paintBrushMesh: THREE.Mesh = null;
-    private _paintBrushMaterial: THREE.MeshBasicMaterial = null;
     private _paintingFinishedCallbacks: ((stroke: Stroke) => any)[] = [];
 
     // fog
-    private _fogCanvas: HTMLCanvasElement;
-    private _fogTexture: THREE.CanvasTexture;
-    private _fogMaterial: THREE.MeshBasicMaterial;
-    private _fogMesh: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial, THREE.Object3DEventMap>;
-    private _fogPathBeingDrawn: PathNode[] = [];
-    private _fogStrokeBeingDrawnId: string = null;
-    private _fogBrushOptions: BrushOptions = {
-        brushType: BRUSH_FOG,
-        brushColor: BRUSH_FOG_COLOR,
-        brushFill: DEFAULT_BRUSH_FILL,
-        brushSize: DEFAULT_BRUSH_SIZE
-    };
-    private _fogAlreadyDrawn: { [ket: string]: FogStroke } = {};
-    private _fogBrushMesh: THREE.Mesh<BufferGeometry, MeshBasicMaterial> = null;
-    private _fogBrushMaterial: THREE.MeshBasicMaterial = null;
     private _fogFinishedCallbacks: ((stroke: FogStroke) => any)[] = [];
 
     get renderer(): WebGLRenderer {
@@ -190,44 +144,12 @@ export default class GameState {
         this._mapMesh = value;
     }
 
-    get groundMesh(): Mesh {
-        return this._groundMesh;
-    }
-
-    set groundMesh(value: Mesh) {
-        this._groundMesh = value;
-    }
-
-    get mapCanvas(): HTMLCanvasElement {
-        return this._mapCanvas;
-    }
-
-    set mapCanvas(value: HTMLCanvasElement) {
-        this._mapCanvas = value;
-    }
-
-    get mapTexture(): Texture {
-        return this._mapTexture;
-    }
-
-    set mapTexture(value: Texture) {
-        this._mapTexture = value;
-    }
-
     get renderRoot(): HTMLCanvasElement {
         return this._renderRoot;
     }
 
     set renderRoot(value: HTMLCanvasElement) {
         this._renderRoot = value;
-    }
-
-    get drawGrid(): boolean {
-        return this._drawGrid;
-    }
-
-    set drawGrid(value: boolean) {
-        this._drawGrid = value;
     }
 
     get mouseCoords(): Vector2 {
@@ -247,89 +169,12 @@ export default class GameState {
         this.notifyChangesCallback(value);
     }
 
-    get selectedMeshedModel(): MeshedModel {
-        return this._selectedMeshedModel;
-    }
-
-    set selectedMeshedModel(value: MeshedModel) {
-        this._selectedMeshedModel = value;
-        this.notifySelectModelCallbacks(value?.positionedModel);
-    }
-
     get location(): Place {
         return this._location;
     }
 
     set location(value: Place) {
         this._location = value;
-    }
-
-    get paintCanvas(): HTMLCanvasElement {
-        return this._paintCanvas;
-    }
-
-    set paintCanvas(value: HTMLCanvasElement) {
-        this._paintCanvas = value;
-    }
-
-    get paintTexture(): CanvasTexture {
-        return this._paintTexture;
-    }
-
-    set paintTexture(value: CanvasTexture) {
-        this._paintTexture = value;
-    }
-
-    get paintMaterial(): THREE.MeshBasicMaterial {
-        return this._paintMaterial;
-    }
-
-    set paintMaterial(value: THREE.MeshBasicMaterial) {
-        this._paintMaterial = value;
-    }
-
-    get paintMesh(): Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap> {
-        return this._paintMesh;
-    }
-
-    set paintMesh(value: Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap>) {
-        this._paintMesh = value;
-    }
-
-    get pathBeingPainted(): PathNode[] {
-        return this._pathBeingPainted;
-    }
-
-    set pathBeingPainted(value: PathNode[]) {
-        this._pathBeingPainted = value;
-    }
-
-    get paintBrushOptions(): BrushOptions {
-        return this._paintBrushOptions;
-    }
-
-    get paintBrushMesh(): any {
-        return this._paintBrushMesh;
-    }
-
-    set paintBrushMesh(value: any) {
-        this._paintBrushMesh = value;
-    }
-
-    get paintBrushMaterial(): any {
-        return this._paintBrushMaterial;
-    }
-
-    set paintBrushMaterial(value: any) {
-        this._paintBrushMaterial = value;
-    }
-
-    get paintStrokeBeingDrawnId(): string {
-        return this._paintStrokeBeingDrawnId;
-    }
-
-    set paintStrokeBeingDrawnId(value: string) {
-        this._paintStrokeBeingDrawnId = value;
     }
 
     get currentGame(): Game {
@@ -341,82 +186,6 @@ export default class GameState {
     }
 
 
-    get fogCanvas(): HTMLCanvasElement {
-        return this._fogCanvas;
-    }
-
-    set fogCanvas(value: HTMLCanvasElement) {
-        this._fogCanvas = value;
-    }
-
-    get fogTexture(): CanvasTexture {
-        return this._fogTexture;
-    }
-
-    set fogTexture(value: CanvasTexture) {
-        this._fogTexture = value;
-    }
-
-    get fogMaterial(): MeshBasicMaterial {
-        return this._fogMaterial;
-    }
-
-    set fogMaterial(value: MeshBasicMaterial) {
-        this._fogMaterial = value;
-    }
-
-    get fogMesh(): Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap> {
-        return this._fogMesh;
-    }
-
-    set fogMesh(value: Mesh<BufferGeometry, MeshBasicMaterial, Object3DEventMap>) {
-        this._fogMesh = value;
-    }
-
-    get fogPathBeingDrawn(): PathNode[] {
-        return this._fogPathBeingDrawn;
-    }
-
-    set fogPathBeingDrawn(value: PathNode[]) {
-        this._fogPathBeingDrawn = value;
-    }
-
-    get fogStrokeBeingDrawnId(): string {
-        return this._fogStrokeBeingDrawnId;
-    }
-
-    set fogStrokeBeingDrawnId(value: string) {
-        this._fogStrokeBeingDrawnId = value;
-    }
-
-    get fogBrushOptions(): BrushOptions {
-        return this._fogBrushOptions;
-    }
-
-    get fogBrushMesh(): Mesh<BufferGeometry, MeshBasicMaterial> {
-        return this._fogBrushMesh;
-    }
-
-    set fogBrushMesh(value: Mesh<BufferGeometry, MeshBasicMaterial>) {
-        this._fogBrushMesh = value;
-    }
-
-    get fogBrushMaterial(): MeshBasicMaterial {
-        return this._fogBrushMaterial;
-    }
-
-    set fogBrushMaterial(value: MeshBasicMaterial) {
-        this._fogBrushMaterial = value;
-    }
-
-    get paintStrokesAlreadyDrawn(): { [p: string]: Stroke } {
-        return this._paintStrokesAlreadyDrawn;
-    }
-
-    set fogAlreadyDrawn(value: { [p: string]: FogStroke }) {
-        this._fogAlreadyDrawn = value;
-    }
-
     get paintingFinishedCallbacks(): ((stroke: Stroke) => void)[] {
         return this._paintingFinishedCallbacks;
     }
@@ -425,16 +194,12 @@ export default class GameState {
         this._paintingFinishedCallbacks.forEach(callback => callback(stroke));
     }
 
-    get fogAlreadyDrawn(): { [p: string]: FogStroke } {
-        return this._fogAlreadyDrawn;
+    get fogFinishedCallbacks(): ((stroke: FogStroke) => void)[] {
+        return this._fogFinishedCallbacks;
     }
 
     notifyFogFinishedCallbacks(fogStroke: FogStroke): void {
         this._fogFinishedCallbacks.forEach((callback) => callback(fogStroke));
-    }
-
-    get fogFinishedCallbacks(): ((stroke: FogStroke) => void)[] {
-        return this._fogFinishedCallbacks;
     }
 
     addChangeControlsCallback(callback: ((mode: string) => any)) {
