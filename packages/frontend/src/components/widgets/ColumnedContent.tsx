@@ -48,7 +48,7 @@ export default function ColumnedContent({children, style, childrenStyles, classN
         leftColumn = null;
         centerColumn = kids[0];
     }
-    return <div style={{display: "flex", overflow: 'auto', ...style}} className={className}>
+    return <div style={{display: "flex", ...style}} className={className}>
         <div style={{...leftStyles}}>
             {leftColumn}
         </div>

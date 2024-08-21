@@ -30,6 +30,8 @@ export const ControllerContext = createContext(null);
 
 export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
 	const [controllerFacade, setControllerFacade] = useState<GameControllerFacade>();
+	// need to use ref for cleanup function
+	const controllerRef = useRef<GameControllerFacade>(controllerFacade);
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [urlLoading, setUrlLoading] = useState<string>();
 	const [loadingProgress, setLoadingProgress] = useState<number>();
@@ -50,7 +52,9 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 	useGameFogSubscription((fogStroke) => controllerFacade.fogStroke(fogStroke));
 
 	useEffect(() => {
-		return () => controllerFacade.tearDown();
+		return () => {
+			controllerRef.current.tearDown();
+		};
 	}, []);
 
 	const setupControllerFacade = (renderCanvas: HTMLCanvasElement) => {
@@ -71,6 +75,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 		facade.addChangeControlsCallback((mode) => setControlsMode(mode));
 		facade.addPositionedModelUpdatedCallback((model) => setModelPosition({...model, positionedModelId: model._id}));
 		setControllerFacade(facade);
+		controllerRef.current = facade;
 	}
 
 	return (

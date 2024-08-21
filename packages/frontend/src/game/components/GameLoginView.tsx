@@ -37,7 +37,7 @@ export default function GameLoginView() {
 		key={game._id}
 		to={`/ui/world/${currentWorld._id}/game/${game._id}`}
 	>
-		${game._id}
+		{game._id}
 	</Link>);
 
 	return (
