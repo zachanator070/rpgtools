@@ -242,10 +242,12 @@ export const SET_CHARACTER_ORDER = gql `
 `;
 export const SET_GAME_MAP = gql `
 	${GAME_MAP}
-	mutation setGameMap($gameId: ID!, $placeId: ID!, $clearPaint: Boolean, $setFog: Boolean){
-		setGameMap(gameId: $gameId, placeId: $placeId, clearPaint: $clearPaint, setFog: $setFog){
+	mutation setGameMap($gameId: ID!, $placeId: ID!, $setFog: Boolean){
+		setGameMap(gameId: $gameId, placeId: $placeId, setFog: $setFog){
 			_id
-			...gameMap
+			map {
+				...gameMap
+			}
 		}
 	}
 `;
