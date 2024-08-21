@@ -31,6 +31,7 @@ import {GameService} from "../../src/services/game-service";
 import Calendar from "../../src/domain-entities/calendar";
 import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 import {Readable} from "stream";
+import {Buffer} from "buffer";
 
 export const testGamePassword = 'tester1password';
 
@@ -242,8 +243,9 @@ export class DefaultTestingContext {
 		const session = await this.dbEngine.createDatabaseSession();
 		const databaseContext = this.databaseContextFactory({session});
 
-		const createEventContent = (linkedWikiId: string): string => {
-			return `{"ops":[{"insert":"At a time where "},{"insert":{"mention":{"index":"0","denotationChar":"","value":"<a href=\\"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view\\" target=_self>Middle Earth","link":"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view","target":"_self"}}},{"insert":" comes to a time of peace.\\n"}]}`
+		const createEventContent = (linkedWikiId: string): Buffer => {
+			const testData = `{"ops":[{"insert":"At a time where "},{"insert":{"mention":{"index":"0","denotationChar":"","value":"<a href=\\"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view\\" target=_self>Middle Earth","link":"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view","target":"_self"}}},{"insert":" comes to a time of peace.\\n"}]}`;
+			return Buffer.from(testData, 'utf-8');
 		}
 
         // create events in calendar1

@@ -18,3 +18,4 @@ electron.log
 profile/
 .cache
 .npm
+.DS_Store
