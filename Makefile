@@ -93,7 +93,7 @@ test-integration-update-snapshots: test-integration-postgres
 test-integration-postgres: .env
 	docker compose up -d postgres
 	cp .env.example packages/server/jest.env
-	sed -i '' 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
+	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
