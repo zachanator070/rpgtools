@@ -65,8 +65,8 @@ export const MY_GAMES = gql `
 `;
 export const GET_STROKES = gql `
 	${GAME_STROKE}
-	query getStrokes($gameId: ID!) {
-		strokes(gameId: $gameId) {
+	query getStrokes($gameId: ID!, $page: Int) {
+		strokes(gameId: $gameId, page: $page) {
 			docs {
 				...gameStroke
 			}
@@ -77,8 +77,8 @@ export const GET_STROKES = gql `
 `;
 export const GET_FOG_STROKES = gql `
 	${GAME_FOG}
-	query getFogStrokes($gameId: ID!) {
-		fogStrokes(gameId: $gameId) {
+	query getFogStrokes($gameId: ID!, $page: Int) {
+		fogStrokes(gameId: $gameId, page: $page) {
 			docs {
 				...gameFog
 			}
