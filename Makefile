@@ -73,7 +73,7 @@ run-electron: $(ELECTRON_EXEC)
 # TESTS #
 #########
 
-test: test-e2e
+test: test-unit test-integration test-e2e
 
 JEST_OPTIONS=
 
@@ -245,7 +245,7 @@ prod-ui: $(PROD_FRONTEND_JS)
 
 $(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
 	rm -rf packages/frontend/dist
-	docker compose run --rm -e NODE_ENV=production ui-builder ls -la / && npm run --workspace=packages/frontend start
+	docker compose run --rm -e NODE_ENV=production ui-builder find . -name .npm -delete && npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
 $(DEV_FRONTEND_JS): .env $(FRONTEND_TS) $(NODE_MODULES)
