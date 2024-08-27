@@ -1,5 +1,4 @@
 FROM node:16-slim
-RUN rm -rf /root/.npm
 
 USER node
 WORKDIR /opt/rpgtools
