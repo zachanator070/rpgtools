@@ -23,8 +23,6 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 PROD_SERVER_CONTAINER=containers/prod-server.txt
 
-NPM_COMMAND=docker compose run dev npm
-
 ################
 # RUN COMMANDS #
 ################
@@ -70,9 +68,6 @@ install:
 
 run-electron: $(ELECTRON_EXEC)
 	export SQLITE_DIRECTORY_PATH=db && ./$(ELECTRON_EXEC)
-
-shell: .env
-	docker compose run dev /bin/bash
 
 #########
 # TESTS #
@@ -210,16 +205,16 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
-	${NPM_COMMAND} ci
+	npm ci
 
 $(PROD_NODE_MODULES_CACHE): .env
-	${NPM_COMMAND} ci --omit=dev
+	npm ci --omit=dev
 	mkdir -p node_modules_prod
 	cp -R node_modules/* node_modules_prod
 	rm -rf node_modules_prod/@rpgtools
 
 $(DEV_NODE_MODULES_CACHE): .env
-	${NPM_COMMAND} ci
+	npm ci
 	mkdir -p node_modules_dev
 	cp -R node_modules/* node_modules_dev
 
@@ -231,7 +226,7 @@ server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
 $(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS) $(packages/server/dist/server/src/index.js)
-	${NPM_COMMAND} run -w packages/server build
+	npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
 

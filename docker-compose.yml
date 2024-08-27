@@ -1,8 +1,9 @@
 services:
 
-  ##########
-  # SERVER #
-  ##########
+  #######
+  # Dev #
+  #######
+
   dev:
     build:
       context: .
@@ -12,6 +13,12 @@ services:
       - NODE_ENV=development
     volumes:
       - ./:/opt/rpgtools
+    networks:
+      - rpgtools
+
+  ##########
+  # SERVER #
+  ##########
 
   server:
     extends:
