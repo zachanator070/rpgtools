@@ -6,7 +6,7 @@
 	"repository": "https://github.com/zachanator070/rpgtools",
 	"type": "module",
 	"scripts": {
-		"start": "echo Running as ${CURRENT_UID} && webpack",
+		"start": "ls -la ../.. && echo Running as $(id -u):$(id -g) && webpack",
 		"start-dev": "webpack -w",
 		"test": "cypress run",
 		"cypress:open": "cypress open --e2e --browser chrome",
