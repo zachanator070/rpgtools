@@ -153,8 +153,10 @@ seed-new: .env
 ######
 # CI #
 ######
+echo-uid:
+	echo ${CURRENT_UID}
 
-ci: .env $(NODE_MODULES) test
+ci: echo-uid .env $(NODE_MODULES) test
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
