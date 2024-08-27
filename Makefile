@@ -185,6 +185,7 @@ clean: clean-deps clean-docker
 
 clean-deps:
 	rm -rf node_modules
+	rm -rf .npm
 	rm -rf packages/frontend/node_modules
 	rm -rf packages/server/node_modules
 	rm -rf packages/common/node_modules
@@ -233,7 +234,7 @@ $(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS) $(packages/server/dist/server/sr
 build-prod: $(PROD_SERVER_CONTAINER)
 
 # Builds rpgtools docker image
-$(PROD_SERVER_CONTAINER): $(PROD_FRONTEND_JS) $(SERVER_JS)
+$(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 	echo "Building version $(VERSION)"
 	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
 	echo $(shell docker images | grep zachanator070/rpgtools:latest | awk '{print $3}' > $(PROD_SERVER_CONTAINER) )
@@ -283,15 +284,15 @@ containers:
 build-dev: .env $(DEV_FRONTEND_JS) $(SERVER_JS)
 	docker compose build
 
-$(DEV_SERVER_CONTAINER): .env $(DEV_SERVER_CONTAINER_SRC)
+$(DEV_SERVER_CONTAINER): .env containers $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server
 	echo $(shell docker images | grep rpgtools-server | awk '{print $3}' > $(DEV_SERVER_CONTAINER) )
 
-$(DEV_SERVER_BRK_CONTAINER): .env $(DEV_SERVER_CONTAINER_SRC)
+$(DEV_SERVER_BRK_CONTAINER): .env containers $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server-brk
 	echo $(shell docker images | grep rpgtools-server-brk | awk '{print $3}' > $(DEV_SERVER_BRK_CONTAINER) )
 
-$(DEV_FRONTEND_CONTAINER): .env $(FRONTEND_PACKAGE_JSON) packages/frontend/Dockerfile
+$(DEV_FRONTEND_CONTAINER): .env containers $(FRONTEND_PACKAGE_JSON) packages/frontend/Dockerfile
 	docker compose build ui-builder
 	echo $(shell docker images | grep rpgtools-ui-builder | awk '{print $3}' > $(DEV_FRONTEND_CONTAINER) )
 
@@ -329,4 +330,6 @@ electron-make: electron-prep
 	npm run -w packages/server make
 
 electron: electron-make
+
+$(ELECTRON_EXEC): electron
 
