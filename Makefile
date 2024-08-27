@@ -245,7 +245,7 @@ prod-ui: $(PROD_FRONTEND_JS)
 
 $(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
 	rm -rf packages/frontend/dist
-	ls -la
+	find . -name .npm
 	docker compose run --rm -e NODE_ENV=production ui-builder npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
