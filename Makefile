@@ -153,10 +153,7 @@ seed-new: .env
 ######
 # CI #
 ######
-echo-uid:
-	echo ${CURRENT_UID}
-
-ci: echo-uid .env $(NODE_MODULES) test
+ci: .env $(NODE_MODULES) test
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
@@ -248,12 +245,14 @@ prod-ui: $(PROD_FRONTEND_JS)
 
 $(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
 	rm -rf packages/frontend/dist
-	docker compose run -e NODE_ENV=production ui-builder npm run --workspace=packages/frontend start
+	ls -la
+	docker compose run --rm -e NODE_ENV=production -u root ui-builder find / -name .npm
+	docker compose run --rm -e NODE_ENV=production ui-builder npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
 $(DEV_FRONTEND_JS): .env $(FRONTEND_TS) $(NODE_MODULES)
 	rm -rf packages/frontend/dist
-	docker compose run ui-builder npm run --workspace=packages/frontend start
+	docker compose run --rm ui-builder npm run --workspace=packages/frontend start
 	> $(DEV_FRONTEND_JS)
 
 # builds transpiled js bundles with stats about bundle, stats end up in dist folder
