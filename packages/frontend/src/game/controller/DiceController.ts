@@ -1,9 +1,35 @@
 import * as CANNON from 'cannon';
 import * as THREE from 'three';
+import {Texture} from "three";
+
+interface DiceValues {
+    dice: DiceObject;
+    value: number;
+    stableCount?: number;
+    vectors?: Vector;
+}
+
+interface Vector {
+    position: CANNON.Vec3;
+    quaternion: CANNON.Quaternion;
+    velocity: CANNON.Vec3;
+    angularVelocity: CANNON.Vec3;
+}
+
+interface MeshWithBody extends THREE.Mesh {
+    body: CANNON.Body;
+    diceObject: DiceObject;
+}
+
+interface DiceOptions {
+    size?: number;
+    fontColor?: any;
+    backColor?: any;
+}
 
 class DiceManagerClass {
-    private world: CANNON.World;
-    private diceBodyMaterial: CANNON.Material;
+    public world: CANNON.World;
+    public diceBodyMaterial: CANNON.Material;
     private floorBodyMaterial: CANNON.Material;
     private barrierBodyMaterial: CANNON.Material;
     private throwRunning: boolean;
@@ -12,7 +38,7 @@ class DiceManagerClass {
         this.world = null;
     }
 
-    setWorld(world) {
+    setWorld(world: CANNON.World) {
         this.world = world;
 
         this.diceBodyMaterial = new CANNON.Material('diceBodyMaterial');
@@ -33,14 +59,7 @@ class DiceManagerClass {
         );
     }
 
-    /**
-     *
-     * @param {array} diceValues
-     * @param {DiceObject} [diceValues.dice]
-     * @param {number} [diceValues.value]
-     *
-     */
-    prepareValues(diceValues) {
+    prepareValues(diceValues: DiceValues[]) {
         if (this.throwRunning) throw new Error('Cannot start another throw. Please wait, till the current throw is finished.');
 
         for (let i = 0; i < diceValues.length; i++) {
@@ -92,15 +111,29 @@ class DiceManagerClass {
     }
 }
 
-class DiceObject {
-    private object: THREE.Object3D;
+export abstract class DiceObject {
+    private object: MeshWithBody;
     private size: number;
-    private invertUpside: boolean;
+    protected invertUpside: boolean;
     private materialOptions: { shininess: number; color: number; flatShading: boolean; specular: number };
     private labelColor: string;
     private diceColor: string;
+    public simulationRunning: boolean;
+    public values: number;
+    protected scaleFactor: number;
+    protected tab: number;
+    protected af: number;
+    protected chamfer: number;
+    protected vertices: number[][];
+    protected faceTexts: string[];
+    protected customTextTextureFunction: (text, color, backColor) => Texture;
+    protected mass: number;
+    protected inertia: number;
+    protected textMargin: number;
+    protected faces: number[][];
+    private cannon_shape: CANNON.ConvexPolyhedron;
 
-    constructor(options: { size: number; fontColor: any; backColor: any; }) {
+    constructor(options: DiceOptions) {
         options = this.setDefaults(options, {
             size: 100,
             fontColor: '#000000',
@@ -122,9 +155,7 @@ class DiceObject {
         this.diceColor = options.backColor;
     }
 
-    setDefaults<T>(options: T extends {}, defaults: T) {
-        options = options || {};
-
+    setDefaults<T extends {[key: string]: any}>(options: T, defaults: T) {
         for (let key in defaults) {
             if (!defaults.hasOwnProperty(key)) continue;
 
@@ -136,7 +167,7 @@ class DiceObject {
         return options;
     }
 
-    emulateThrow(callback) {
+    emulateThrow(callback: (value: number) => void) {
         let stableCount = 0;
 
         let check = () => {
@@ -199,7 +230,7 @@ class DiceObject {
         };
     }
 
-    setVectors(vectors) {
+    setVectors(vectors: Vector) {
         this.object.body.position = vectors.position;
         this.object.body.quaternion = vectors.quaternion;
         this.object.body.velocity = vectors.velocity;
@@ -299,7 +330,7 @@ class DiceObject {
 
         const cb = new THREE.Vector3();
         const ab = new THREE.Vector3();
-        let materialIndex;
+        let materialIndex: number;
         let faceFirstVertexIndex = 0;
 
         for (let i = 0; i < faces.length; ++i) {
@@ -370,7 +401,7 @@ class DiceObject {
 
         let chamferGeometry = this.getChamferGeometry(vectors, this.faces, this.chamfer);
         let geometry = this.makeGeometry(chamferGeometry.vectors, chamferGeometry.faces, radius, this.tab, this.af);
-        geometry.cannon_shape = this.createShape(vectors, this.faces, radius);
+        this.cannon_shape = this.createShape(vectors, this.faces, radius);
 
         return geometry;
     }
@@ -379,7 +410,7 @@ class DiceObject {
         return Math.max(128, Math.pow(2, Math.floor(Math.log(approx) / Math.log(2))));
     }
 
-    createTextTexture(text, color, backColor) {
+    createTextTexture(text: string, color: string, backColor: string) {
         let canvas = document.createElement("canvas");
         let context = canvas.getContext("2d");
         let ts = this.calculateTextureSize(this.size / 2 + this.size * this.textMargin) * 2;
@@ -417,19 +448,19 @@ class DiceObject {
 
     create() {
         if (!DiceManager.world) throw new Error('You must call DiceManager.setWorld(world) first.');
-        this.object = new THREE.Mesh(this.getGeometry(), this.getMaterials());
+        this.object = new THREE.Mesh(this.getGeometry(), this.getMaterials()) as MeshWithBody;
 
-        this.object.reveiceShadow = true;
+        this.object.receiveShadow = true;
         this.object.castShadow = true;
         this.object.diceObject = this;
         this.object.body = new CANNON.Body({
             mass: this.mass,
-            shape: this.object.geometry.cannon_shape,
+            shape: this.cannon_shape,
             material: DiceManager.diceBodyMaterial
         });
         this.object.body.linearDamping = 0.1;
         this.object.body.angularDamping = 0.1;
-        DiceManager.world.add(this.object.body);
+        DiceManager.world.addBody(this.object.body);
 
         return this.object;
     }
@@ -442,8 +473,8 @@ class DiceObject {
     }
 
     updateBodyFromMesh() {
-        this.object.body.position.copy(this.object.position);
-        this.object.body.quaternion.copy(this.object.quaternion);
+        this.object.body.position.copy(new CANNON.Vec3(this.object.position.x, this.object.position.y, this.object.position.z));
+        this.object.body.quaternion.copy(new CANNON.Quaternion(this.object.quaternion.x, this.object.quaternion.y, this.object.quaternion.z, this.object.quaternion.w));
     }
 
     resetBody() {
@@ -470,7 +501,8 @@ class DiceObject {
         this.object.body.invInertiaWorld = new CANNON.Mat3();
         //this.object.body.invMassSolve = 0;
         this.object.body.invInertiaSolve = new CANNON.Vec3();
-        this.object.body.invInertiaWorldSolve = new CANNON.Mat3();
+        // typo in CANNON types results in this fix
+        (this.object.body as any).invInertiaWorldSolve = new CANNON.Mat3();
         //this.object.body.aabb = new CANNON.AABB();
         //this.object.body.aabbNeedsUpdate = true;
         this.object.body.wlambda = new CANNON.Vec3();
@@ -483,7 +515,8 @@ class DiceObject {
 }
 
 export class DiceD4 extends DiceObject {
-    constructor(options) {
+    private d4FaceTexts: string[][][];
+    constructor(options: DiceOptions) {
         super(options);
 
         this.tab = -0.1;
@@ -494,12 +527,12 @@ export class DiceD4 extends DiceObject {
         this.scaleFactor = 1.2;
         this.values = 4;
         this.d4FaceTexts = [
-            [[], [0, 0, 0], [2, 4, 3], [1, 3, 4], [2, 1, 4], [1, 2, 3]],
-            [[], [0, 0, 0], [2, 3, 4], [3, 1, 4], [2, 4, 1], [3, 2, 1]],
-            [[], [0, 0, 0], [4, 3, 2], [3, 4, 1], [4, 2, 1], [3, 1, 2]],
-            [[], [0, 0, 0], [4, 2, 3], [1, 4, 3], [4, 1, 2], [1, 3, 2]]
+            [[], ['0', '0', '0'], ['2', '4', '3'], ['1', '3', '4'], ['2', '1', '4'], ['1', '2', '3']],
+            [[], ['0', '0', '0'], ['2', '3', '4'], ['3', '1', '4'], ['2', '4', '1'], ['3', '2', '1']],
+            [[], ['0', '0', '0'], ['4', '3', '2'], ['3', '4', '1'], ['4', '2', '1'], ['3', '1', '2']],
+            [[], ['0', '0', '0'], ['4', '2', '3'], ['1', '4', '3'], ['4', '1', '2'], ['1', '3', '2']]
         ];
-        this.faceTexts = this.d4FaceTexts[0];
+        this.faceTexts = this.d4FaceTexts[0].map((x) => x.join(''));
         this.updateMaterialsForValue = function (diceValue) {
             if (diceValue < 0) diceValue += 4;
             this.faceTexts = this.d4FaceTexts[diceValue];
@@ -536,7 +569,7 @@ export class DiceD4 extends DiceObject {
 }
 
 export class DiceD6 extends DiceObject {
-    constructor(options) {
+    constructor(options: DiceOptions) {
         super(options);
 
         this.tab = 0.1;
@@ -559,7 +592,7 @@ export class DiceD6 extends DiceObject {
 }
 
 export class DiceD8 extends DiceObject {
-    constructor(options) {
+    constructor(options: DiceOptions) {
         super(options);
 
         this.tab = 0;
@@ -582,7 +615,7 @@ export class DiceD8 extends DiceObject {
 
 export class DiceD10 extends DiceObject {
 
-    constructor(options) {
+    constructor(options: DiceOptions) {
         super(options);
 
         this.tab = 0;
@@ -613,7 +646,7 @@ export class DiceD10 extends DiceObject {
 }
 
 export class DiceD12 extends DiceObject {
-    constructor(options) {
+    constructor(options: DiceOptions) {
         super(options);
 
         let p = (1 + Math.sqrt(5)) / 2;
@@ -642,7 +675,7 @@ export class DiceD12 extends DiceObject {
 }
 
 export class DiceD20 extends DiceObject {
-    constructor(options) {
+    constructor(options: DiceOptions) {
         super(options);
 
         let t = (1 + Math.sqrt(5)) / 2;
@@ -672,37 +705,3 @@ export class DiceD20 extends DiceObject {
 //---------------------------------------------//
 
 export const DiceManager = new DiceManagerClass();
-
-if (typeof define === 'function' && define.amd) {
-    define(function () {
-        return {
-            DiceManager: DiceManager,
-            DiceD4: DiceD4,
-            DiceD6: DiceD6,
-            DiceD8: DiceD8,
-            DiceD10: DiceD10,
-            DiceD12: DiceD12,
-            DiceD20: DiceD20,
-        };
-    });
-} else if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = {
-        DiceManager: DiceManager,
-        DiceD4: DiceD4,
-        DiceD6: DiceD6,
-        DiceD8: DiceD8,
-        DiceD10: DiceD10,
-        DiceD12: DiceD12,
-        DiceD20: DiceD20,
-    };
-} else {
-    window.Dice = {
-        DiceManager: DiceManager,
-        DiceD4: DiceD4,
-        DiceD6: DiceD6,
-        DiceD8: DiceD8,
-        DiceD10: DiceD10,
-        DiceD12: DiceD12,
-        DiceD20: DiceD20,
-    };
-}

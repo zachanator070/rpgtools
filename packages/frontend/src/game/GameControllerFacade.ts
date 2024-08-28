@@ -94,6 +94,7 @@ export default class GameControllerFacade {
                 false
             );
         }
+        this._sceneController.addDice();
     }
 
     setDrawGrid(drawGrid: boolean) {

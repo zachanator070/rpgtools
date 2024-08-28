@@ -13,6 +13,7 @@ import {Object3D} from "three/src/core/Object3D";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 import {GameController} from "./controller/GameController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {DiceObject} from "./controller/DiceController";
 
 export const PAINT_CONTROLS = "Paint Controls";
 export const FOG_CONTROLS = "Fog Controls";
@@ -83,6 +84,10 @@ export default class GameState {
 
     // fog
     private _fogFinishedCallbacks: ((stroke: FogStroke) => any)[] = [];
+
+    //physics
+    public world: CANNON.World;
+    public dice: DiceObject[];
 
     get renderer(): WebGLRenderer {
         return this._renderer;

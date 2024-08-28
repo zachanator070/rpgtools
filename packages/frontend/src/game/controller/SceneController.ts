@@ -7,6 +7,7 @@ import {Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3} from "three";
 import {Object3D} from "three/src/core/Object3D";
 import {MeshedModel} from '../GameState';
 import {GameController} from "./GameController";
+import {DiceD6, DiceManager} from "./DiceController";
 
 
 export default class SceneController implements GameController {
@@ -23,6 +24,10 @@ export default class SceneController implements GameController {
 
         const animate = () => {
             requestAnimationFrame(animate);
+            this.gameState.world.step(1.0 / 60.0);
+            this.gameState.dice.forEach((dice) => {
+                dice.updateMeshFromBody();
+            });
             if (this.gameState.mouseCoords) {
                 this.gameState.raycaster.setFromCamera(this.gameState.mouseCoords, this.gameState.camera);
             }
@@ -212,4 +217,19 @@ export default class SceneController implements GameController {
             this.gameState.scene.add(meshedModel.mesh);
         }
     };
+
+    addDice = () => {
+        const dice = new DiceD6({backColor: '#ff0000'}); //DiceD6 for six-sided dice; for options see DiceObject
+        this.gameState.scene.add(dice.getObject());
+
+        // If you want to place the mesh somewhere else, you have to update the body
+        dice.getObject().position.x = 150;
+        dice.getObject().position.y = 100;
+        dice.getObject().rotation.x = 20 * Math.PI / 180;
+        dice.updateBodyFromMesh();
+
+        // Set the value of the side, which will be upside after the dice lands
+        DiceManager.prepareValues([{dice: dice, value: 6}]);
+        this.gameState.dice.push(dice);
+    }
 }
