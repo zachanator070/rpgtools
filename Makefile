@@ -6,8 +6,8 @@ CURRENT_UID=$(shell id -u):$(shell id -g)
 NODE_MODULES=node_modules/.package-lock.json
 PROD_NODE_MODULES_CACHE=node_modules_prod/apollo-server/package.json
 DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
-PROD_FRONTEND_JS=packages/frontend/dist/production.txt
-DEV_FRONTEND_JS=packages/frontend/dist/development.txt
+PROD_FRONTEND_JS=packages/server/dist/frontend/production.txt
+DEV_FRONTEND_JS=packages/server/dist/frontend/development.txt
 FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=packages/server/dist/server/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
@@ -26,6 +26,7 @@ PROD_SERVER_CONTAINER=containers/prod-server.txt
 ################
 # RUN COMMANDS #
 ################
+.PHONY: run-prod run-dev run-dev-brk run-mongodb run-postgres down restart install run-electron
 
 # runs production version of docker image with minimal depending services
 run-prod: .env $(PROD_SERVER_CONTAINER)
@@ -72,6 +73,8 @@ run-electron: $(ELECTRON_EXEC)
 #########
 # TESTS #
 #########
+.PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-mongodb test-integration-sqlite
+.PHONY: test-e2e test-e2e-mongodb test-e2e-postgres test-e2e-sqlite run-cypress
 
 test: test-unit test-integration test-e2e
 
@@ -140,6 +143,7 @@ run-cypress:
 ########################
 # TEST DATA MANAGEMENT #
 ########################
+.PHONY: dump-db seed-middle-earth seed-new
 
 dump-db:.env
 	bash dev/scripts/dump.sh
@@ -153,6 +157,8 @@ seed-new: .env
 ######
 # CI #
 ######
+.PHONY: ci lint
+
 ci: .env $(NODE_MODULES) test
 
 lint:
@@ -162,6 +168,7 @@ lint:
 #########################
 # CONTINUOUS DEPLOYMENT #
 #########################
+.PHONY: publish
 
 # pushes built docker container to dockerhub
 publish:
@@ -172,6 +179,7 @@ publish:
 ###############
 # BUILD CLEAN #
 ###############
+.PHONY: clean clean-deps clean-docker
 
 # cleans built transpiled js and node modules
 clean: clean-deps clean-docker
@@ -198,6 +206,7 @@ clean-docker: down
 ######################
 # BUILD DEPENDENCIES #
 ######################
+.PHONY: dev-deps prod-deps
 
 dev-deps: $(NODE_MODULES)
 
@@ -221,11 +230,12 @@ $(DEV_NODE_MODULES_CACHE): .env
 ################
 # BUILD SERVER #
 ################
+.PHONY: server-js build-prod
 
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
-$(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS) $(packages/server/dist/server/src/index.js)
+$(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS)
 	npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
@@ -239,6 +249,7 @@ $(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 ############
 # BUILD UI #
 ############
+.PHONY: prod-ui build-with-stats
 
 # transpiles the frontend tsx and typescript to js
 prod-ui: $(PROD_FRONTEND_JS)
@@ -261,6 +272,7 @@ build-with-stats: $(PROD_FRONTEND_JS)
 #####################
 # BUILD DIRECTORIES #
 #####################
+.PHONY: build-dev build-common
 
 packages/frontend/dist:
 	mkdir -p packages/frontend/dist
@@ -300,34 +312,22 @@ build-common:
 ##################
 # BUILD ELECTRON #
 ##################
+.PHONY: electron-prep electron-package electron-make electron
 
-electron-prep:
-	npm ci --omit=dev
-	mkdir -p node_modules_prod
-	cp -R node_modules/* node_modules_prod
-	rm -rf node_modules_prod/@rpgtools
+ELECTRON_DEPS=$(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
 
-	npm ci
-	mkdir -p node_modules_dev
-	cp -R node_modules/* node_modules_dev
+# creates executable
+electron-package: $(ELECTRON_EXEC)
 
-	NODE_ENV=production npm run --workspace=packages/frontend start
-
-	NODE_ENV=production npm run -w packages/server build
-
+$(ELECTRON_EXEC): $(ELECTRON_DEPS)
 	cp -R node_modules_prod/* packages/server/node_modules
 	mkdir -p packages/server/node_modules/@rpgtools
 	cp -R packages/common packages/server/node_modules/@rpgtools
-	mkdir -p packages/server/dist/frontend
-	cp -R packages/frontend/dist/* packages/server/dist/frontend
-
-electron-package: electron-prep
 	npm run -w packages/server package
 
-electron-make: electron-prep
+# creates installable package
+electron-make: $(ELECTRON_DEPS)
+	cp -R node_modules_prod/* packages/server/node_modules
+	mkdir -p packages/server/node_modules/@rpgtools
+	cp -R packages/common packages/server/node_modules/@rpgtools
 	npm run -w packages/server make
-
-electron: electron-make
-
-$(ELECTRON_EXEC): electron
-

@@ -16,7 +16,8 @@ const config = {
         app: './src/index.tsx'
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        // need to output in the server package so electron app is packaged with UI bundle
+        path: path.resolve(__dirname, '../server/dist/frontend'),
         publicPath: "/",
     },
     plugins: [

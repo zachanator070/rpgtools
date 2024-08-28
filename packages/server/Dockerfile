@@ -42,6 +42,5 @@ CMD ["npm", "run", "--workspace=packages/server", "dev:start"]
 
 FROM base as prod
 ADD  packages/server/dist packages/server/dist
-ADD  packages/frontend/dist packages/frontend/dist
 
 CMD ["npm", "run", "--workspace=packages/server", "start"]

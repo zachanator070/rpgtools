@@ -73,6 +73,8 @@ services:
   ui-builder:
     extends:
       service: dev
+    environment:
+      - NODE_ENV
     command: "npm run --workspace=packages/frontend start-dev"
 
   ############
