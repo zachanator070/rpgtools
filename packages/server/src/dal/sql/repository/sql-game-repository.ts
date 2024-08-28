@@ -56,6 +56,10 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 characterModel._id = v4();
                 await characterModel.save();
                 character._id = characterModel._id;
+            } else {
+                // update if already exists
+                characterModel.isNewRecord = false;
+                await characterModel.save();
             }
             characterModels.push(characterModel);
 
@@ -71,6 +75,10 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                     attributeModel._id = v4();
                     await attributeModel.save();
                     attribute._id = attributeModel._id
+                } else {
+                    // update if already exists
+                    attributeModel.isNewRecord = false;
+                    await attributeModel.save();
                 }
                 attributeModels.push(attributeModel);
             }
@@ -109,11 +117,11 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 receiverUser: message.receiverUser,
                 GameId: entity._id
             });
-            if (!message._id) {
-                messageModel._id = v4();
+
+            if (!await MessageModel.findOne({ where: { _id: message._id }})) {
                 await messageModel.save();
-                message._id = messageModel._id
             }
+
             messageModels.push(messageModel);
         }
 
@@ -151,9 +159,14 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 GameId: entity._id
             });
             if (!inGameModel._id) {
+                // create if id doesn't exist
                 inGameModelModel._id = v4();
                 await inGameModelModel.save();
                 inGameModel._id = inGameModelModel._id
+            } else {
+                // update if already exists
+                inGameModelModel.isNewRecord = false;
+                await inGameModelModel.save();
             }
             inGameModelModels.push(inGameModelModel);
         }

@@ -1,0 +1,178 @@
+import {BRUSH_FOG, PaintController} from "./controller/PaintController";
+import GameState, {
+    FOG_CONTROLS,
+    HOTKEY_CONTROLS,
+    PAINT_CONTROLS,
+    SCENE_CONTROLS,
+    SELECT_MODEL_CONTROLS
+} from "./GameState";
+import SceneController from "./controller/SceneController";
+import MapController from "./controller/MapController";
+import {FogStroke, Place, PositionedModel, Stroke} from "../types";
+import FogController from "./controller/FogController";
+import {v4 as uuidv4} from "uuid";
+import HotkeyController from "./controller/HotkeyController";
+import ModelController from "./controller/ModelController";
+
+
+export default class GameControllerFacade {
+    private modelController: ModelController;
+    private _paintController: PaintController;
+    private _fogController: FogController;
+    private _sceneController: SceneController;
+    private _mapController: MapController;
+    private _hotkeyController: HotkeyController;
+
+    private _gameState: GameState;
+
+    public constructor(gameState: GameState) {
+        this._gameState = gameState;
+        this.setupControllers();
+        this.changeControls(this._gameState.currentControls);
+    }
+
+    tearDown() {
+        this._gameState.cameraControls.dispose();
+        Object.values(this._gameState.controllerMap).forEach((controller) => {
+            controller.tearDown();
+        });
+    }
+
+    setupControllers() {
+        this._mapController = new MapController(this._gameState);
+        this._sceneController = new SceneController(this._gameState);
+
+        this._paintController = new PaintController(
+            this._gameState,
+        );
+
+        this._fogController = new FogController(
+            this._gameState,
+        );
+
+        this.modelController = new ModelController(
+            this._gameState
+        );
+
+
+        this._hotkeyController = new HotkeyController(this._gameState);
+
+        this._gameState.controllerMap = {
+            [PAINT_CONTROLS]: this._paintController,
+            [FOG_CONTROLS]: this._fogController,
+            [SELECT_MODEL_CONTROLS]: this.modelController,
+            [SCENE_CONTROLS]: this._sceneController,
+            [HOTKEY_CONTROLS]: this._hotkeyController,
+        };
+    }
+
+    // APIs used by react components
+
+    changeControls = (mode: string) => {
+        this._hotkeyController.changeControls(mode);
+    }
+
+    changeLocation(newLocation: Place, setFog: boolean) {
+        this._mapController.setLocation(newLocation);
+        this._paintController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot);
+        this._fogController.resize(newLocation.mapImage.width, newLocation.mapImage.height, newLocation.pixelsPerFoot);
+        if (setFog) {
+            const newMaxSize = Math.max(newLocation.mapImage.height, newLocation.mapImage.width);
+            this._fogController.stroke(
+                {
+                    _id: uuidv4(),
+                    path:[
+                        {
+                            _id: uuidv4(),
+                            x: Math.ceil(newMaxSize / newLocation.pixelsPerFoot / 2),
+                            y: Math.ceil(newMaxSize / newLocation.pixelsPerFoot / 2)
+                        },
+                    ],
+                    size: newMaxSize,
+                    type: BRUSH_FOG
+                },
+                false
+            );
+        }
+    }
+
+    setDrawGrid(drawGrid: boolean) {
+        this._mapController.setDrawGrid(drawGrid);
+    }
+
+    clearSelection() {
+        this.modelController.selectModel(null);
+    }
+
+    setBrushType(brushType: string) {
+        this._paintController.setBrushType(brushType);
+    }
+
+    setBrushColor(color: string) {
+        this._paintController.setBrushColor(color);
+    }
+
+    setBrushSize(size: number) {
+        this._paintController.setBrushSize(size);
+    }
+
+    setBrushFill(fill: boolean) {
+        this._paintController.setBrushFill(fill);
+    }
+
+    setFogBrushType(brushType: string) {
+        this._fogController.setBrushType(brushType);
+    }
+
+    setFogBrushSize(size: number) {
+        this._fogController.setBrushSize(size);
+    }
+
+    setFogOpacity(opacity: number) {
+        this._fogController.setDrawMeshOpacity(opacity);
+    }
+
+    addPaintingFinishedCallback(callback: (stroke: Stroke) => any) {
+        this._gameState.paintingFinishedCallbacks.push(callback);
+    }
+
+    addFogFinishedCallback(callback: (stroke: FogStroke) => any) {
+        this._gameState.fogFinishedCallbacks.push(callback);
+    }
+
+    stroke(stroke: Stroke) {
+        this._paintController.stroke(stroke);
+    }
+
+    fogStroke(stroke: FogStroke) {
+        this._fogController.stroke(stroke);
+    }
+
+    addModel(positionedModel: PositionedModel) {
+        this._sceneController.addModel(positionedModel);
+    }
+
+    removeModel(positionedModel: PositionedModel) {
+        this._sceneController.removeModel(positionedModel);
+    }
+
+    addRemoveModelCallback(callback: ((model: PositionedModel) => any)) {
+        this._gameState.addRemoveModelCallback(callback);
+    }
+
+    addChangeControlsCallback(callback: ((mode: string) => any)) {
+        this._gameState.addChangeControlsCallback(callback);
+    }
+
+    addSelectedModelCallback(callback: (model: PositionedModel) => any) {
+        this._gameState.addSelectModelCallback(callback);
+    }
+
+    addPositionedModelUpdatedCallback(callback: (model: PositionedModel) => any) {
+        this._gameState.addPositionedModelUpdatedCallback(callback);
+    }
+
+    updateModel(positionedModel: PositionedModel) {
+        this._sceneController.updateModel(positionedModel);
+    }
+}

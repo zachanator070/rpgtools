@@ -117,7 +117,7 @@ export const typeDefs = gql`
 			gameId: ID!
 			attributes: [CharacterAttributeInput!]!
 		): Game!
-		setGameMap(gameId: ID!, placeId: ID!, clearPaint: Boolean, setFog: Boolean): Game!
+		setGameMap(gameId: ID!, placeId: ID!, setFog: Boolean): Game!
 		addStroke(
 			gameId: ID!
 			path: [PathNodeInput!]!
@@ -172,7 +172,7 @@ export const typeDefs = gql`
 	type Subscription {
 		gameChat(gameId: ID!): GameMessage!
 		gameRosterChange(gameId: ID!): Game!
-		gameMapChange(gameId: ID!): Game!
+		gameMapChange(gameId: ID!): GameMapChange!
 		gameStrokeAdded(gameId: ID!): Stroke!
 		gameFogStrokeAdded(gameId: ID!): FogStroke!
 		gameModelAdded(gameId: ID!): PositionedModel!
@@ -557,6 +557,11 @@ export const typeDefs = gql`
 		y: Float!
 		_id: String
 	}
+	
+	type GameMapChange {
+	    map: Place!
+	    setFog: Boolean!
+    }
 
 	type Model implements PermissionControlled {
 		_id: ID!

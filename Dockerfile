@@ -1,10 +1,8 @@
 FROM node:16-slim
-
+RUN rm -rf /root/.npm
 RUN mkdir /opt/rpgtools
 RUN chown node:node /opt/rpgtools
 
-WORKDIR /opt/rpgtools
-
 USER node
 
-ENV HOME="/opt/rpgtools"
+WORKDIR /opt/rpgtools

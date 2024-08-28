@@ -20,11 +20,15 @@ interface GameModelPositionedSubscriptionVariables {
 interface GameModelPositionedSubscriptionResult extends GqlSubscriptionResult<PositionedModel>{
 	gameModelPositioned: PositionedModel
 }
-export default function useGameModelPositionedSubscription(): GameModelPositionedSubscriptionResult {
+export default function useGameModelPositionedSubscription(onData?: (model: PositionedModel) => any): GameModelPositionedSubscriptionResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<PositionedModel, GameModelPositionedSubscriptionVariables>(GAME_MODEL_POSITIONED_SUBSCRIPTION, {
-		gameId: game_id,
-	});
+	const result = useGQLSubscription<PositionedModel, GameModelPositionedSubscriptionVariables>(
+		GAME_MODEL_POSITIONED_SUBSCRIPTION,
+		{
+			gameId: game_id,
+		},
+		{onData}
+	);
 	return {
 		...result,
 		gameModelPositioned: result.data

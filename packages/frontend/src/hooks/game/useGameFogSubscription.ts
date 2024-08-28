@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {FogStroke, Game} from "../../types";
+import {FogStroke} from "../../types";
 import {GAME_FOG} from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_FOG_SUBSCRIPTION = gql`
@@ -21,9 +21,13 @@ interface GameFogSubscriptionResult extends GqlSubscriptionResult<FogStroke>{
 	gameFogStrokeAdded: FogStroke
 }
 
-export default function useGameFogSubscription(): GameFogSubscriptionResult {
+export default function useGameFogSubscription(onData?: (data: FogStroke) => any): GameFogSubscriptionResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<FogStroke, GameFogSubscriptionVariables>(GAME_FOG_SUBSCRIPTION, { gameId: game_id });
+	const result = useGQLSubscription<FogStroke, GameFogSubscriptionVariables>(
+		GAME_FOG_SUBSCRIPTION,
+		{ gameId: game_id },
+		{onData}
+	);
 	return {
 		...result,
 		gameFogStrokeAdded: result.data

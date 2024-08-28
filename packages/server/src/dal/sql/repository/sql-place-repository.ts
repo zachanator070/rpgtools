@@ -6,7 +6,6 @@ import {PlaceRepository} from "../../repository/place-repository";
 import PlaceFactory from "../../../domain-entities/factory/place-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import WikiPageModel from "../models/wiki-page-model";
-import {Op} from "sequelize";
 
 @injectable()
 export default class SqlPlaceRepository extends AbstractSqlRepository<Place, WikiPageModel> implements PlaceRepository {

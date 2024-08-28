@@ -1,8 +1,9 @@
 services:
 
-  ##########
-  # SERVER #
-  ##########
+  #######
+  # Dev #
+  #######
+
   dev:
     build:
       context: .
@@ -12,6 +13,12 @@ services:
       - NODE_ENV=development
     volumes:
       - ./:/opt/rpgtools
+    networks:
+      - rpgtools
+
+  ##########
+  # SERVER #
+  ##########
 
   server:
     extends:
@@ -66,6 +73,8 @@ services:
   ui-builder:
     extends:
       service: dev
+    environment:
+      - NODE_ENV
     command: "npm run --workspace=packages/frontend start-dev"
 
   ############

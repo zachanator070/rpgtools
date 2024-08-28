@@ -280,6 +280,12 @@ export interface GameMessage {
     timestamp: string;
 }
 
+export interface GameMapChange {
+    map: Place;
+    clearPaint: boolean;
+    setFog: boolean;
+}
+
 export interface Game extends PermissionControlled {
     _id: string;
     world: World;

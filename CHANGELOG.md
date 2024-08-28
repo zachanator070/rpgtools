@@ -1,2 +1,6 @@
- ### RPG Tools v4.2.14 Changelog
- - Fixed game model selection by using canvas clientWidth and clientHeight
+ ### RPG Tools v5.0.0 Changelog
+ - Refactored game engine to use controllers in an MVC-like pattern
+ - Always remove paint when changing map locations
+ - Removed 'Set Paint' button from Game UI
+ - Merged camera, move model, rotate model, and select model controls
+ - Changed select model glow box to post-processing outline effect
