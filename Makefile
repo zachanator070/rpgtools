@@ -33,7 +33,7 @@ run-prod: .env $(PROD_SERVER_CONTAINER)
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-run-dev: .env packages/frontend/dist packages/server/dist/server db containers $(NODE_MODULES) $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
+run-dev: .env packages/frontend/dist packages/server/dist/server db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
@@ -145,7 +145,7 @@ run-cypress:
 ########################
 .PHONY: dump-db seed-middle-earth seed-new
 
-dump-db:.env
+dump-db: .env
 	bash dev/scripts/dump.sh
 
 seed-middle-earth: .env
@@ -293,15 +293,15 @@ containers:
 build-dev: .env $(DEV_FRONTEND_JS) $(SERVER_JS)
 	docker compose build
 
-$(DEV_SERVER_CONTAINER): .env containers $(DEV_SERVER_CONTAINER_SRC)
+$(DEV_SERVER_CONTAINER): .env containers $(NODE_MODULES) $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server
 	echo $(shell docker images | grep rpgtools-server | awk '{print $3}' > $(DEV_SERVER_CONTAINER) )
 
-$(DEV_SERVER_BRK_CONTAINER): .env containers $(DEV_SERVER_CONTAINER_SRC)
+$(DEV_SERVER_BRK_CONTAINER): .env containers $(NODE_MODULES) $(DEV_SERVER_CONTAINER_SRC)
 	docker compose build server-brk
 	echo $(shell docker images | grep rpgtools-server-brk | awk '{print $3}' > $(DEV_SERVER_BRK_CONTAINER) )
 
-$(DEV_FRONTEND_CONTAINER): .env containers $(FRONTEND_PACKAGE_JSON) packages/frontend/Dockerfile
+$(DEV_FRONTEND_CONTAINER): .env containers $(NODE_MODULES) $(FRONTEND_PACKAGE_JSON) Dockerfile
 	docker compose build ui-builder
 	echo $(shell docker images | grep rpgtools-ui-builder | awk '{print $3}' > $(DEV_FRONTEND_CONTAINER) )
 
