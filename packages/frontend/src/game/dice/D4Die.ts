@@ -11,7 +11,7 @@ export class D4Die extends PhysicsDie {
         this.chamfer = 0.96;
         this.vertices = [[1, 1, 1], [-1, -1, 1], [-1, 1, -1], [1, -1, -1]];
         this.faces = [[1, 0, 2, 1], [0, 1, 3, 2], [0, 3, 2, 3], [1, 2, 3, 4]];
-        this.scaleFactor = 1.2;
+        this.scaleFactor = .1;
         this.values = 4;
         this.d4FaceTexts = [
             [[], ['0', '0', '0'], ['2', '4', '3'], ['1', '3', '4'], ['2', '1', '4'], ['1', '2', '3']],

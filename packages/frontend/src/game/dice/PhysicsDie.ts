@@ -22,7 +22,7 @@ export abstract class PhysicsDie {
     private materialOptions: { shininess: number; color: number; flatShading: boolean; specular: number };
     private labelColor: string;
     private diceColor: string;
-    public simulationRunning: boolean;
+    public simulationRunning: boolean = false;
     public values: number;
     protected scaleFactor: number;
     protected tab: number;
@@ -35,6 +35,7 @@ export abstract class PhysicsDie {
     protected textMargin: number;
     protected faces: number[][];
     private cannon_shape: CANNON.ConvexPolyhedron;
+    private material: CANNON.Material;
 
     constructor(options: DiceOptions) {
         options.size = options.size || 100;
@@ -54,7 +55,10 @@ export abstract class PhysicsDie {
         };
         this.labelColor = options.fontColor;
         this.diceColor = options.backColor;
+        this.material = options.material;
+    }
 
+    assemble() {
         const mesh = new THREE.Mesh(this.getGeometry(), this.getMaterials());
 
         mesh.receiveShadow = true;
@@ -62,7 +66,7 @@ export abstract class PhysicsDie {
         const body = new CANNON.Body({
             mass: this.mass,
             shape: this.cannon_shape,
-            material: options.material,
+            material: this.material,
             type: CANNON.Body.DYNAMIC
         });
         body.linearDamping = 0.1;
@@ -328,8 +332,11 @@ export abstract class PhysicsDie {
     }
 
     updateMeshFromBody() {
-        this.object.mesh.position.copy(this.object.body.position);
-        this.object.mesh.quaternion.copy(this.object.body.quaternion);
+        // only update the visible mesh if we are not running a simulation
+        if (!this.simulationRunning) {
+            this.object.mesh.position.copy(this.object.body.position);
+            this.object.mesh.quaternion.copy(this.object.body.quaternion);
+        }
     }
 
     updateBodyFromMesh() {
