@@ -1,5 +1,6 @@
 import {BRUSH_FOG, PaintController} from "./controller/PaintController";
 import GameState, {
+    DICE_CONTROLS,
     FOG_CONTROLS,
     HOTKEY_CONTROLS,
     PAINT_CONTROLS,
@@ -13,6 +14,7 @@ import FogController from "./controller/FogController";
 import {v4 as uuidv4} from "uuid";
 import HotkeyController from "./controller/HotkeyController";
 import ModelController from "./controller/ModelController";
+import DiceController from "./controller/DiceController";
 
 
 export default class GameControllerFacade {
@@ -22,6 +24,7 @@ export default class GameControllerFacade {
     private _sceneController: SceneController;
     private _mapController: MapController;
     private _hotkeyController: HotkeyController;
+    private _diceController: DiceController;
 
     private _gameState: GameState;
 
@@ -57,12 +60,15 @@ export default class GameControllerFacade {
 
         this._hotkeyController = new HotkeyController(this._gameState);
 
+        this._diceController = new DiceController(this._gameState);
+
         this._gameState.controllerMap = {
             [PAINT_CONTROLS]: this._paintController,
             [FOG_CONTROLS]: this._fogController,
             [SELECT_MODEL_CONTROLS]: this.modelController,
             [SCENE_CONTROLS]: this._sceneController,
             [HOTKEY_CONTROLS]: this._hotkeyController,
+            [DICE_CONTROLS]: this._diceController,
         };
     }
 
@@ -94,7 +100,7 @@ export default class GameControllerFacade {
                 false
             );
         }
-        this._sceneController.addDice();
+        this._diceController.addDice();
     }
 
     setDrawGrid(drawGrid: boolean) {

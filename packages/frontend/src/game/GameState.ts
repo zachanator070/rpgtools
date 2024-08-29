@@ -14,7 +14,8 @@ import {Object3D} from "three/src/core/Object3D";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 import {GameController} from "./controller/GameController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {DiceObject} from "./controller/DiceController";
+
+import {PhysicsDie} from "./dice/PhysicsDie";
 
 export const PAINT_CONTROLS = "Paint Controls";
 export const FOG_CONTROLS = "Fog Controls";
@@ -23,6 +24,7 @@ export const SELECT_LOCATION_CONTROLS = "Game Location";
 export const ADD_MODEL_CONTROLS = "Add Model";
 export const SCENE_CONTROLS = "Scene Controls";
 export const HOTKEY_CONTROLS = "Hotkey Controls";
+export const DICE_CONTROLS = 'Dice Controls';
 
 export const MAP_Y_POSITION = 0;
 export const DRAW_Y_POSITION = 0.05;
@@ -88,7 +90,7 @@ export default class GameState {
 
     //physics
     public world: CANNON.World;
-    public dice: DiceObject[] = [];
+    public dice: PhysicsDie[] = [];
 
     get renderer(): WebGLRenderer {
         return this._renderer;

@@ -6,7 +6,6 @@ import GameState from "./GameState";
 import {DEFAULT_MAP_SIZE} from "./controller/PaintController";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {DiceManager} from "./controller/DiceController";
 
 
 export default function GameStateFactory(
@@ -25,7 +24,6 @@ export default function GameStateFactory(
     setupLight(gameState);
 
     gameState.world = new CANNON.World();
-    DiceManager.setWorld(gameState.world);
 
     function setupScene(gameState: GameState) {
         let renderHeight = gameState.renderRoot.clientHeight;
