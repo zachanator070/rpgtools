@@ -23,7 +23,6 @@ export default class SceneController implements GameController {
         };
 
         const animate = () => {
-            requestAnimationFrame(animate);
             this.gameState.world.step(1.0 / 60.0);
             this.gameState.dice.forEach((dice) => {
                 dice.updateMeshFromBody();
@@ -32,6 +31,8 @@ export default class SceneController implements GameController {
                 this.gameState.raycaster.setFromCamera(this.gameState.mouseCoords, this.gameState.camera);
             }
             this.gameState.composer.render();
+
+            requestAnimationFrame(animate);
         };
         animate();
 
@@ -223,8 +224,9 @@ export default class SceneController implements GameController {
         this.gameState.scene.add(dice.getObject());
 
         // If you want to place the mesh somewhere else, you have to update the body
-        dice.getObject().position.x = 150;
+        dice.getObject().position.x = 0;
         dice.getObject().position.y = 100;
+        dice.getObject().position.z = 0;
         dice.getObject().rotation.x = 20 * Math.PI / 180;
         dice.updateBodyFromMesh();
 

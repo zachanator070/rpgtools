@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from 'cannon';
 import {FogStroke, Game, Place, PositionedModel, Stroke} from "../types";
 import {
     DirectionalLight,
@@ -87,7 +88,7 @@ export default class GameState {
 
     //physics
     public world: CANNON.World;
-    public dice: DiceObject[];
+    public dice: DiceObject[] = [];
 
     get renderer(): WebGLRenderer {
         return this._renderer;

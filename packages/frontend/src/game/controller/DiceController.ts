@@ -41,9 +41,12 @@ class DiceManagerClass {
     setWorld(world: CANNON.World) {
         this.world = world;
 
-        this.diceBodyMaterial = new CANNON.Material('diceBodyMaterial');
-        this.floorBodyMaterial = new CANNON.Material('floorBodyMaterial');
-        this.barrierBodyMaterial = new CANNON.Material('barrierBodyMaterial');
+        // @ts-ignore
+        this.diceBodyMaterial = new CANNON.Material();
+        // @ts-ignore
+        this.floorBodyMaterial = new CANNON.Material();
+        // @ts-ignore
+        this.barrierBodyMaterial = new CANNON.Material();
 
         world.addContactMaterial(
             new CANNON.ContactMaterial(this.floorBodyMaterial, this.diceBodyMaterial, {
@@ -57,6 +60,13 @@ class DiceManagerClass {
         world.addContactMaterial(
             new CANNON.ContactMaterial(this.diceBodyMaterial, this.diceBodyMaterial, {friction: 0, restitution: 0.5})
         );
+
+        world.gravity.set(0, -9.82 * 20, 0);
+        world.broadphase = new CANNON.NaiveBroadphase();
+        world.solver.iterations = 16;
+        let floorBody = new CANNON.Body({mass: 0, shape: new CANNON.Plane(), material: DiceManager.floorBodyMaterial});
+        floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+        world.addBody(floorBody);
     }
 
     prepareValues(diceValues: DiceValues[]) {
@@ -103,7 +113,7 @@ class DiceManagerClass {
 
                 this.throwRunning = false;
             } else {
-                DiceManager.world.step(DiceManager.world.dt);
+                // DiceManager.world.step(DiceManager.world.dt);
             }
         };
 
@@ -456,7 +466,8 @@ export abstract class DiceObject {
         this.object.body = new CANNON.Body({
             mass: this.mass,
             shape: this.cannon_shape,
-            material: DiceManager.diceBodyMaterial
+            material: DiceManager.diceBodyMaterial,
+            type: CANNON.Body.DYNAMIC
         });
         this.object.body.linearDamping = 0.1;
         this.object.body.angularDamping = 0.1;
@@ -466,10 +477,8 @@ export abstract class DiceObject {
     }
 
     updateMeshFromBody() {
-        if (!this.simulationRunning) {
-            this.object.position.copy(this.object.body.position);
-            this.object.quaternion.copy(this.object.body.quaternion);
-        }
+        this.object.position.copy(this.object.body.position);
+        this.object.quaternion.copy(this.object.body.quaternion);
     }
 
     updateBodyFromMesh() {
@@ -579,7 +588,7 @@ export class DiceD6 extends DiceObject {
             [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]];
         this.faces = [[0, 3, 2, 1, 1], [1, 2, 6, 5, 2], [0, 1, 5, 4, 3],
             [3, 7, 6, 2, 4], [0, 4, 7, 3, 5], [4, 5, 6, 7, 6]];
-        this.scaleFactor = 0.9;
+        this.scaleFactor = 0.1;
         this.values = 6;
         this.faceTexts = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8',
             '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];

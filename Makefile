@@ -6,22 +6,27 @@ CURRENT_UID=$(shell id -u):$(shell id -g)
 NODE_MODULES=node_modules/.package-lock.json
 PROD_NODE_MODULES_CACHE=node_modules_prod/apollo-server/package.json
 DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
+
+SERVER_BUILD_DEST=packages/server/dist/server
+FRONTEND_BUILD_DEST=packages/server/dist/frontend
+
 PROD_FRONTEND_JS=packages/server/dist/frontend/production.txt
 DEV_FRONTEND_JS=packages/server/dist/frontend/development.txt
 FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
-SERVER_JS=packages/server/dist/server/src/index.js
+
+SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
+
 ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
 ELECTRON_DEB=packages/server/out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
 DEV_SERVER_CONTAINER_SRC=packages/server/Dockerfile packages/server/tsconfig.json package-lock.json
 DEV_SERVER_BRK_CONTAINER=containers/dev-server-brk.txt
-
 DEV_FRONTEND_CONTAINER=containers/dev-ui.txt
-FRONTEND_PACKAGE_JSON=packages/frontend/package.json
-
 PROD_SERVER_CONTAINER=containers/prod-server.txt
+
+FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 ################
 # RUN COMMANDS #
@@ -33,11 +38,11 @@ run-prod: .env $(PROD_SERVER_CONTAINER)
 	docker compose up -d prod
 
 # runs development docker environment with auto transpiling and restarting services upon file change
-run-dev: .env packages/frontend/dist packages/server/dist/server db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
+run-dev: .env $(SERVER_BUILD_DEST) db containers $(DEV_SERVER_CONTAINER) $(DEV_FRONTEND_CONTAINER)
 	docker compose up server ui-builder
 
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
-run-dev-brk: .env packages/frontend/dist  packages/server/dist/server db
+run-dev-brk: .env  $(SERVER_BUILD_DEST) db
 	docker compose up server-brk ui-builder
 
 run-mongodb: .env
@@ -184,7 +189,6 @@ publish:
 # cleans built transpiled js and node modules
 clean: clean-deps clean-docker
 	rm -rf db
-	rm -rf packages/frontend/dist
 	rm -rf packages/server/dist
 	rm -rf packages/server/out
 
@@ -255,12 +259,10 @@ $(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 prod-ui: $(PROD_FRONTEND_JS)
 
 $(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
-	rm -rf packages/frontend/dist
 	NODE_ENV=production npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
 $(DEV_FRONTEND_JS): .env $(FRONTEND_TS) $(NODE_MODULES)
-	rm -rf packages/frontend/dist
 	docker compose run --rm ui-builder npm run --workspace=packages/frontend start
 	> $(DEV_FRONTEND_JS)
 
@@ -273,12 +275,8 @@ build-with-stats: $(PROD_FRONTEND_JS)
 #####################
 .PHONY: build-dev build-common
 
-packages/frontend/dist:
-	mkdir -p packages/frontend/dist
-	chmod -R o+rw packages/frontend/dist
-
-packages/server/dist/server:
-	mkdir -p packages/server/dist/server
+$(SERVER_BUILD_DEST):
+	mkdir -p $(SERVER_BUILD_DEST)
 
 db:
 	mkdir -p db
