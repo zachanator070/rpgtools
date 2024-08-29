@@ -20,15 +20,16 @@ export class D4Die extends PhysicsDie {
             [[], ['0', '0', '0'], ['4', '2', '3'], ['1', '4', '3'], ['4', '1', '2'], ['1', '3', '2']]
         ];
         this.faceTexts = this.d4FaceTexts[0].map((x) => x.join(''));
-        this.updateMaterialsForValue = function (diceValue) {
-            if (diceValue < 0) diceValue += 4;
-            this.faceTexts = this.d4FaceTexts[diceValue];
-            this.object.material = this.getMaterials();
-        };
         this.mass = 300;
         this.inertia = 5;
         this.invertUpside = true;
     }
+
+    updateMaterialsForValue(diceValue) {
+        if (diceValue < 0) diceValue += 4;
+        this.faceTexts = this.d4FaceTexts[diceValue].map((x) => x.join(''));
+        this.object.mesh.material = this.getMaterials();
+    };
 
     createTextTexture(text, color, backColor) {
         let canvas = document.createElement("canvas");

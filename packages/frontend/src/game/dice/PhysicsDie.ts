@@ -16,7 +16,7 @@ export interface DiceOptions {
 }
 
 export abstract class PhysicsDie {
-    private object: MeshWithBody;
+    protected object: MeshWithBody;
     protected size: number;
     protected invertUpside: boolean;
     private materialOptions: { shininess: number; color: number; flatShading: boolean; specular: number };
