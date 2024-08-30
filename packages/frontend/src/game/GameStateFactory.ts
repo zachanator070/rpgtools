@@ -1,6 +1,7 @@
-import {Game, Image} from "../types";
+import {Game} from "../types";
 import {Vector2, Vector3} from "three";
 import * as THREE from "three";
+import * as CANNON from 'cannon';
 import GameState from "./GameState";
 import {DEFAULT_MAP_SIZE} from "./controller/PaintController";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
@@ -21,6 +22,8 @@ export default function GameStateFactory(
     setupRaycaster(gameState);
     setupScene(gameState);
     setupLight(gameState);
+
+    gameState.world = new CANNON.World();
 
     function setupScene(gameState: GameState) {
         let renderHeight = gameState.renderRoot.clientHeight;

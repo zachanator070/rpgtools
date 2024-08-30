@@ -22,11 +22,16 @@ export default class SceneController implements GameController {
         };
 
         const animate = () => {
-            requestAnimationFrame(animate);
+            this.gameState.world.step(1.0 / 60.0);
+            this.gameState.dice.forEach((dice) => {
+                dice.updateMeshFromBody();
+            });
             if (this.gameState.mouseCoords) {
                 this.gameState.raycaster.setFromCamera(this.gameState.mouseCoords, this.gameState.camera);
             }
             this.gameState.composer.render();
+
+            requestAnimationFrame(animate);
         };
         animate();
 

@@ -31,31 +31,37 @@ export class RollGameCommand extends AbstractGameCommand {
 
 	exec(executor: Character, args: GameCommandArg[], options: GameCommandOption[]): Message[] {
 		let response = this.getDefaultResponse(executor);
-		const matches = args.find((arg) => arg.name === "DICE").value.match(/(\d+d\d+([+-]\d+)?)+/gm);
+		const diceArg = args.find((arg) => arg.name === "DICE");
+		const matches = diceArg.value.match(/(\d+d\d+([+-]\d+)?)+/gm);
 		if (matches) {
-			const rollResults = [];
+			const rollResults: string[] = [];
+			const roller = options.find((option) => option.name === "-q") ? "You" : executor.name;
+			let rollSummary = `${roller} roll${roller === "You" ? "" : "s"} ${diceArg.value} ...`;
+			rollResults.push(rollSummary);
+			let rollTotal = 0;
 			for (let match of matches) {
-				const newMatches = match.match(/(?<numDice>\d+)d(?<dice>\d+)(?<modifier>[+-]\d+)?/);
+				const newMatches = match.match(/(?<numDice>\d+)d(?<diceType>\d+)(?<modifier>[+-]\d+)?/);
 				const numDice = parseInt(newMatches.groups.numDice);
-				const dice = parseInt(newMatches.groups.dice);
+				const diceType = parseInt(newMatches.groups.diceType);
 				const modifier = newMatches.groups.modifier ? parseInt(newMatches.groups.modifier) : 0;
-				const roller = options.find((option) => option.name === "-q") ? "You" : executor.name;
-				let rollResponse = `${roller} roll${roller === "You" ? "" : "s"} ${match} ...\n`;
-				let total = 0;
-				const rolls = [];
+				const diceTypeRoll = [];
 				for (let i = 0; i < numDice; i++) {
-					const result = Math.ceil(Math.random() * dice);
-					total += result;
-					rolls.push(result);
+					const result = Math.ceil(Math.random() * diceType);
+					rollTotal += result;
+					diceTypeRoll.push(result);
 				}
-				total += modifier;
-				rollResponse += rolls.join("\n") + "\n";
-				rollResponse += `Total: ${rolls.join(" + ")}${
-					modifier !== 0 ? " + " + modifier : ""
-				} = ${total}`;
-				rollResults.push(rollResponse);
+				rollTotal += modifier;
+				let diceTypeResult = `(${numDice}d${diceType}${newMatches.groups.modifier || ''}): ${diceTypeRoll.join(" + ")}`;
+				if (modifier > 0) {
+					diceTypeResult += ` + ${modifier}`;
+				} else if (modifier < 0) {
+					const absValueModifier = Math.abs(modifier);
+					diceTypeResult += ` - ${absValueModifier}`;
+				}
+				rollResults.push(diceTypeResult)
 			}
-			response.message = rollResults.join("\n\n");
+			rollResults.push(`Total: ${rollTotal}`);
+			response.message = rollResults.join("\n");
 		} else {
 			response.message = this.formatHelpMessage();
 		}

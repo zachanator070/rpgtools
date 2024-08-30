@@ -59,6 +59,7 @@ import {SequelizeStorage, Umzug} from "umzug";
 import * as initial from "./migrations/00_initial";
 import * as events from "./migrations/01_events";
 import * as related_wikis from "./migrations/02_related_wikis";
+import * as game_message_size from './migrations/03_game_message_size';
 import EventWikiModel from "./models/event-wiki-model";
 import CalendarModel from "./models/calendar-model";
 import AgeModel from "./models/calendar/age-model";
@@ -163,6 +164,10 @@ export default class AbstractSqlDbEngine {
                 {
                     name: '02_related_wikis',
                     ...related_wikis
+                },
+                {
+                    name: '03_game_message_size',
+                    ...game_message_size
                 }
             ],
             context: connection.getQueryInterface(),
