@@ -1,6 +1,6 @@
 import {DiceOptions, PhysicsDie} from "./PhysicsDie";
 
-export class D20Dice extends PhysicsDie {
+export class D20Die extends PhysicsDie {
     constructor(options: DiceOptions) {
         super(options);
 
@@ -17,7 +17,7 @@ export class D20Dice extends PhysicsDie {
             [3, 9, 4, 11], [3, 4, 2, 12], [3, 2, 6, 13], [3, 6, 8, 14], [3, 8, 9, 15],
             [4, 9, 5, 16], [2, 4, 11, 17], [6, 2, 10, 18], [8, 6, 7, 19], [9, 8, 1, 20]];
         this.scaleFactor = .1;
-        this.values = 20;
+        this.maxValue = 20;
         this.faceTexts = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8',
             '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
         this.textMargin = 1.0;

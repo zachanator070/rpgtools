@@ -91,6 +91,7 @@ export default class GameState {
     //physics
     public world: CANNON.World;
     public dice: PhysicsDie[] = [];
+    private _rollFinishedCallbacks: (() => any)[] = [];
 
     get renderer(): WebGLRenderer {
         return this._renderer;
@@ -271,6 +272,15 @@ export default class GameState {
 
     notifyRemoveModelCallback(positionedModel: PositionedModel) {
         this._removeModelCallbacks.forEach((callback) => callback(positionedModel));
+    }
+
+    addRollFinishedCallback(callback: (() => any)) {
+        this._rollFinishedCallbacks.push(callback);
+    }
+
+    notifyRollFinishedCallback() {
+        this._rollFinishedCallbacks.forEach((callback) => callback());
+        this._rollFinishedCallbacks = [];
     }
 
     get composer(): EffectComposer {

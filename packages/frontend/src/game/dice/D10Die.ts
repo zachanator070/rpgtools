@@ -21,7 +21,8 @@ export class D10Die extends PhysicsDie {
         this.vertices.push([0, 0, 1]);
 
         this.scaleFactor = 0.1;
-        this.values = 10;
+        this.maxValue = 10;
+
         this.faceTexts = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8',
             '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
         this.textMargin = 1.0;

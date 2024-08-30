@@ -5,21 +5,35 @@ import GameState from "../GameState";
 import {D6Die} from "../dice/D6Die";
 import {D8Die} from "../dice/D8Die";
 import {D10Die} from "../dice/D10Die";
-import {D20Dice} from "../dice/D20Die";
+import {D20Die} from "../dice/D20Die";
 import {D4Die} from "../dice/D4Die";
+import {D12Die} from "../dice/D12Die";
 
 export interface DiceValues {
     dice: PhysicsDie;
     value: number;
-    stableCount?: number;
-    vectors?: Vector;
+    initialDiceState?: DiceState;
 }
 
-export interface Vector {
+export interface DiceState {
     position: CANNON.Vec3;
     quaternion: CANNON.Quaternion;
     velocity: CANNON.Vec3;
     angularVelocity: CANNON.Vec3;
+}
+
+export enum DiceType {
+    D4 = 'D4',
+    D6 = 'D6',
+    D8 = 'D8',
+    D10 = 'D10',
+    D12 = 'D12',
+    D20 = 'D20',
+}
+
+export interface LoadedDiceRoll {
+    dice: DiceType;
+    expectedValue: number;
 }
 
 class DiceController implements GameController {
@@ -28,6 +42,7 @@ class DiceController implements GameController {
     private barrierBodyMaterial: CANNON.Material;
     private simulating: boolean;
     private gameState: GameState;
+    public rolling: boolean;
 
     constructor(gameState: GameState) {
         this.gameState = gameState;
@@ -60,12 +75,28 @@ class DiceController implements GameController {
         this.gameState.world.addBody(floorBody);
     }
 
-    prepareValues(diceValues: DiceValues[]) {
-        if (this.simulating) throw new Error('Cannot start another throw. Please wait, till the current throw is finished.');
+    rollFinishedCheck = () => {
+        let allStable = true;
+        this.gameState.dice.forEach((die) => {
+            allStable = allStable && die.isFinished();
+        });
+
+        if (allStable) {
+            this.gameState.world.removeEventListener('postStep', this.rollFinishedCheck);
+            this.gameState.notifyRollFinishedCallback();
+            this.rolling = false;
+        }
+    }
+
+    executeRollSim(diceValues: DiceValues[]) {
+        if (this.simulating){
+            console.warn('Cannot start another throw. Please wait, till the current throw is finished.');
+            return;
+        }
 
         for (let i = 0; i < diceValues.length; i++) {
-            if (diceValues[i].value < 1 || diceValues[i].dice.values < diceValues[i].value) {
-                throw new Error('Cannot throw die to value ' + diceValues[i].value + ', because it has only ' + diceValues[i].dice.values + ' sides.');
+            if (diceValues[i].value < diceValues[i].dice.minValue || diceValues[i].dice.maxValue < diceValues[i].value) {
+                throw new Error('Cannot throw die to value ' + diceValues[i].value + ', because it has only ' + diceValues[i].dice.maxValue + ' sides.');
             }
         }
 
@@ -73,8 +104,7 @@ class DiceController implements GameController {
 
         for (let i = 0; i < diceValues.length; i++) {
             diceValues[i].dice.simulationRunning = true;
-            diceValues[i].vectors = diceValues[i].dice.getCurrentVectors();
-            diceValues[i].stableCount = 0;
+            diceValues[i].initialDiceState = diceValues[i].dice.getCurrentVectors();
         }
 
         this.gameState.world.step(this.gameState.world.dt);
@@ -91,11 +121,12 @@ class DiceController implements GameController {
                 for (let i = 0; i < diceValues.length; i++) {
                     diceValues[i].dice.shiftUpperValue(diceValues[i].value);
                     diceValues[i].dice.resetBody();
-                    diceValues[i].dice.setVectors(diceValues[i].vectors);
+                    diceValues[i].dice.setDiceState(diceValues[i].initialDiceState);
                     diceValues[i].dice.simulationRunning = false;
                 }
 
                 this.simulating = false;
+                this.gameState.world.addEventListener('postStep', this.rollFinishedCheck);
             } else {
                 this.gameState.world.step(this.gameState.world.dt);
             }
@@ -104,30 +135,43 @@ class DiceController implements GameController {
         this.gameState.world.addEventListener('postStep', check);
     }
 
-    addDice = () => {
+    genColor = () => {
+        let color = '#';
+        for (let i = 0; i < 6; i++)
+            color += (Math.floor(Math.random() * 16)).toString(16);
+        return color;
+    };
+
+    rollLoadedDice = (loadedDiceRolls: LoadedDiceRoll[]) => {
         this.clearDice();
-        const wantedValues = [
-            {
-                dice: new D4Die({material: this.diceBodyMaterial, backColor: '#ff0000'}),
-                value: 1
-            },
-            {
-                dice: new D6Die({material: this.diceBodyMaterial, backColor: '#ff0000'}),
-                value: 1
-            },
-            {
-                dice: new D8Die({material: this.diceBodyMaterial, backColor: '#ff0000'}),
-                value: 1
-            },
-            {
-                dice: new D10Die({material: this.diceBodyMaterial, backColor: '#ff0000'}),
-                value: 1
-            },
-            {
-                dice: new D20Dice({material: this.diceBodyMaterial, backColor: '#ff0000'}),
-                value: 1
+        this.rolling = true;
+        const wantedValues = [];
+        loadedDiceRolls.forEach(roll => {
+            let dice;
+            const color = this.genColor();
+            console.log(color);
+            switch (roll.dice) {
+                case DiceType.D4:
+                    dice = new D4Die({material: this.diceBodyMaterial, backColor: color});
+                    break;
+                case DiceType.D6:
+                    dice = new D6Die({material: this.diceBodyMaterial, backColor: color});
+                    break;
+                case DiceType.D8:
+                    dice = new D8Die({material: this.diceBodyMaterial, backColor: color});
+                    break;
+                case DiceType.D10:
+                    dice = new D10Die({material: this.diceBodyMaterial, backColor: color});
+                    break;
+                case DiceType.D12:
+                    dice = new D12Die({material: this.diceBodyMaterial, backColor: color});
+                    break;
+                case DiceType.D20:
+                    dice = new D20Die({material: this.diceBodyMaterial, backColor: color});
+                    break;
             }
-        ];
+            wantedValues.push({dice, value: roll.expectedValue});
+        });
 
         wantedValues.forEach(({dice}, index) => {
             dice.assemble();
@@ -148,7 +192,7 @@ class DiceController implements GameController {
 
 
         // Run a simulation, and set final resting top faces to the wanted values
-        this.prepareValues(wantedValues);
+        this.executeRollSim(wantedValues);
     }
 
     clearDice = () => {

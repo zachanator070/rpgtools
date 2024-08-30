@@ -21,9 +21,9 @@ interface GameChatSubscriptionResult extends GqlSubscriptionResult<GameMessage> 
 	gameChat: GameMessage;
 }
 
-export default function useGameChatSubscription(): GameChatSubscriptionResult {
+export default function useGameChatSubscription(onData?: (message: GameMessage) => any): GameChatSubscriptionResult {
 	const { game_id } = useParams();
-	const result = useGQLSubscription<GameMessage, GameChatSubscriptionVariables>(GAME_CHAT_SUBSCRIPTION, { gameId: game_id });
+	const result = useGQLSubscription<GameMessage, GameChatSubscriptionVariables>(GAME_CHAT_SUBSCRIPTION, { gameId: game_id }, {onData});
 	return {
 		...result,
 		gameChat: result.data

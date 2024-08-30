@@ -14,7 +14,7 @@ import FogController from "./controller/FogController";
 import {v4 as uuidv4} from "uuid";
 import HotkeyController from "./controller/HotkeyController";
 import ModelController from "./controller/ModelController";
-import DiceController from "./controller/DiceController";
+import DiceController, {DiceType, LoadedDiceRoll} from "./controller/DiceController";
 
 
 export default class GameControllerFacade {
@@ -100,7 +100,15 @@ export default class GameControllerFacade {
                 false
             );
         }
-        this._diceController.addDice();
+    }
+
+    rollLoadedDice(loadedDiceRolls: LoadedDiceRoll[], callback: () => any) {
+        this._gameState.addRollFinishedCallback(callback);
+        this._diceController.rollLoadedDice(loadedDiceRolls);
+    }
+
+    isRolling() {
+        return this._diceController.rolling;
     }
 
     setDrawGrid(drawGrid: boolean) {

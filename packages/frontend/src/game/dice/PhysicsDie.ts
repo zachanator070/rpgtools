@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import CANNON from "cannon";
-import {Vector} from "../controller/DiceController";
+import {DiceState} from "../controller/DiceController";
 
 export interface MeshWithBody {
     mesh: THREE.Mesh;
@@ -23,7 +23,8 @@ export abstract class PhysicsDie {
     private labelColor: string;
     private diceColor: string;
     public simulationRunning: boolean = false;
-    public values: number;
+    public maxValue: number;
+    public minValue: number = 1;
     protected scaleFactor: number;
     protected tab: number;
     protected af: number;
@@ -120,14 +121,14 @@ export abstract class PhysicsDie {
         };
     }
 
-    setVectors(vectors: Vector) {
-        this.object.body.position = vectors.position;
-        this.object.body.quaternion = vectors.quaternion;
-        this.object.body.velocity = vectors.velocity;
-        this.object.body.angularVelocity = vectors.angularVelocity;
+    setDiceState(newState: DiceState) {
+        this.object.body.position = newState.position;
+        this.object.body.quaternion = newState.quaternion;
+        this.object.body.velocity = newState.velocity;
+        this.object.body.angularVelocity = newState.angularVelocity;
     }
 
-    shiftUpperValue(toValue) {
+    shiftUpperValue(toValue: number) {
         let geometry = this.object.mesh.geometry.clone();
 
         let fromValue = this.getUpsideValue();
@@ -136,8 +137,8 @@ export abstract class PhysicsDie {
             if (materialIndex === 0) continue;
 
             materialIndex += toValue - fromValue - 1;
-            while (materialIndex > this.values) materialIndex -= this.values;
-            while (materialIndex < 1) materialIndex += this.values;
+            while (materialIndex > this.maxValue) materialIndex -= this.maxValue;
+            while (materialIndex < 1) materialIndex += this.maxValue;
 
             geometry.groups[i].materialIndex = materialIndex + 1;
         }
