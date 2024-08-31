@@ -1,13 +1,12 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
 import {Pin} from "../pin";
-import {PinDocument} from "../../dal/mongodb/models/pin";
 import {PinAuthorizationPolicy} from "../../security/policy/pin-authorization-policy";
 import PinModel from "../../dal/sql/models/pin-model";
 
 
 @injectable()
-export default class PinFactory implements EntityFactory<Pin, PinDocument, PinModel> {
+export default class PinFactory implements EntityFactory<Pin, PinModel> {
     build(
         {
             _id,
@@ -24,24 +23,6 @@ export default class PinFactory implements EntityFactory<Pin, PinDocument, PinMo
         pin.y = y;
         pin.map = map;
         pin.page = page;
-        pin.world = world;
-        return pin;
-    }
-
-    fromMongodbDocument({
-        _id,
-        x,
-        y,
-        map,
-        page,
-        world
-    }: PinDocument): Pin {
-        const pin = new Pin(new PinAuthorizationPolicy(), this);
-        pin._id = _id && _id.toString();
-        pin.x = x;
-        pin.y = y;
-        pin.map = map && map.toString();
-        pin.page = page && page.toString();
         pin.world = world;
         return pin;
     }

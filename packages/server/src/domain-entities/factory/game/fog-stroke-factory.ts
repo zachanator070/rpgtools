@@ -4,13 +4,12 @@ import {PathNode} from "../../game";
 import FogStrokeModel from "../../../dal/sql/models/game/fog-stroke-model";
 import PathNodeFactory from "./path-node-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import {FogStrokeDocument} from "../../../dal/mongodb/models/fog-stroke";
 import {FogStroke} from "../../fog-stroke";
 import FogStrokeAuthorization from "../../../security/policy/fog-stroke-authorization-policy";
 
 
 @injectable()
-export default class FogStrokeFactory implements EntityFactory<FogStroke, FogStrokeDocument, FogStrokeModel> {
+export default class FogStrokeFactory implements EntityFactory<FogStroke, FogStrokeModel> {
 
     @inject(INJECTABLE_TYPES.PathNodeFactory)
     nodePathFactory: PathNodeFactory;
@@ -23,16 +22,6 @@ export default class FogStrokeFactory implements EntityFactory<FogStroke, FogStr
         stroke.size = size;
         stroke.strokeType = strokeType;
         return stroke;
-    }
-
-    fromMongodbDocument(doc: FogStrokeDocument): FogStroke {
-        return this.build({
-            _id: doc._id && doc._id.toString(),
-            game: doc.game && doc.game.toString(),
-            path: doc.path.map(node => this.nodePathFactory.fromMongodbDocument(node)),
-            size: doc.size,
-            strokeType: doc.strokeType
-        });
     }
 
     async fromSqlModel(model: FogStrokeModel): Promise<FogStroke> {

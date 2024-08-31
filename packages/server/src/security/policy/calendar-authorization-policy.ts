@@ -11,7 +11,7 @@ import {
 import {injectable} from "inversify";
 
 @injectable()
-export default class CalendarAuthorizationPolicy implements EntityAuthorizationPolicy<Calendar> {
+export default class CalendarAuthorizationPolicy implements EntityAuthorizationPolicy{
 
     entity: Calendar;
 

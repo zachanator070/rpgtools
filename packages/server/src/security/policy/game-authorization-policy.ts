@@ -14,7 +14,7 @@ import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
-export class GameAuthorizationPolicy implements EntityAuthorizationPolicy<Game> {
+export class GameAuthorizationPolicy implements EntityAuthorizationPolicy {
 
 	entity: Game;
 

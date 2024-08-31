@@ -12,24 +12,7 @@ import {
 	DbEngine
 } from "../types";
 import { INJECTABLE_TYPES } from "./injectable-types";
-import { MongodbArticleRepository } from "../dal/mongodb/repositories/mongodb-article-repository";
 import { ApolloExpressEventPublisher } from "../server/apollo-express-event-publisher";
-import { MongodbChunkRepository } from "../dal/mongodb/repositories/mongodb-chunk-repository";
-import { MongodbGameRepository } from "../dal/mongodb/repositories/mongodb-game-repository";
-import { MongodbItemRepository } from "../dal/mongodb/repositories/mongodb-item-repository";
-import { MongodbFileRepository } from "../dal/mongodb/repositories/mongodb-file-repository";
-import { MongodbWorldRepository } from "../dal/mongodb/repositories/mongodb-world-repository";
-import { MongodbWikiPageRepository } from "../dal/mongodb/repositories/mongodb-wiki-page-repository";
-import { MongodbWikiFolderRepository } from "../dal/mongodb/repositories/mongodb-wiki-folder-repository";
-import { MongodbUserRepository } from "../dal/mongodb/repositories/mongodb-user-repository";
-import { MongodbServerConfigRepository } from "../dal/mongodb/repositories/mongodb-server-config-repository";
-import { MongodbRoleRepository } from "../dal/mongodb/repositories/mongodb-role-repository";
-import { MongodbPlaceRepository } from "../dal/mongodb/repositories/mongodb-place-repository";
-import { MongodbPinRepository } from "../dal/mongodb/repositories/mongodb-pin-repository";
-import { MongodbPersonRepository } from "../dal/mongodb/repositories/mongodb-person-repository";
-import { MongodbMonsterRepository } from "../dal/mongodb/repositories/mongodb-monster-repository";
-import { MongodbModelRepository } from "../dal/mongodb/repositories/mongodb-model-repository";
-import { MongodbImageRepository } from "../dal/mongodb/repositories/mongodb-image-repository";
 import { InMemoryArticleRepository } from "../dal/in-memory/repositories/in-memory-article-repository";
 import { InMemoryChunkRepository } from "../dal/in-memory/repositories/in-memory-chunk-repository";
 import { InMemoryGameRepository } from "../dal/in-memory/repositories/in-memory-game-repository";
@@ -118,14 +101,11 @@ import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-au
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
 import {ServerProperties} from "../server/server-properties";
-import FilterFactory from "../dal/mongodb/FilterFactory";
 import {NoCacheClient} from "../dal/cache/no-cache-client";
 import {RoleService} from "../services/role-service";
 import {ZipArchive} from "../archive/zip-archive";
 import EntityMapper from "../domain-entities/entity-mapper";
 import RpgToolsServer from "../server/rpgtools-server";
-import MongodbDbEngine from "../dal/mongodb/mongodb-db-engine";
-import MongoDbMigrationV40 from "../dal/mongodb/migrations/mongodb-migration-v40";
 import {ChunkRepository} from "../dal/repository/chunk-repository";
 import {FileRepository} from "../dal/repository/file-repository";
 import {GameRepository} from "../dal/repository/game-repository";
@@ -199,8 +179,6 @@ import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-reposit
 import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory";
 import MonthFactory from "../domain-entities/factory/calendar/month-factory";
 import AgeFactory from "../domain-entities/factory/calendar/age-factory";
-import MongodbEventWikiRepository from "../dal/mongodb/repositories/mongodb-event-wiki-repository";
-import MongodbCalendarRepository from "../dal/mongodb/repositories/mongodb-calendar-repository";
 import {CalendarRepository} from "../dal/repository/calendar-repository";
 import SqlCalendarRepository from "../dal/sql/repository/sql-calendar-repository";
 import InMemoryEventWikiRepository from "../dal/in-memory/repositories/in-memory-event-wiki-repository";
@@ -216,8 +194,6 @@ import InMemoryFogStrokeRepository from "../dal/in-memory/repositories/in-memory
 import InMemoryStrokeRepository from "../dal/in-memory/repositories/in-memory-stroke-repository";
 import SqlFogStrokeRepository from "../dal/sql/repository/sql-fog-stroke-repository";
 import SqlStrokeRepository from "../dal/sql/repository/sql-stroke-repository";
-import MongodbFogStrokeRepository from "../dal/mongodb/repositories/mongodb-fog-stroke-repository";
-import MongodbStrokeRepository from "../dal/mongodb/repositories/mongodb-stroke-repository";
 
 const container = new Container();
 
@@ -350,35 +326,7 @@ const bindAll = () => {
 		.to(AgeFactory);
 
 	// db repositories
-	if (process.env.MONGODB_HOST) {
-		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(MongodbArticleRepository);
-		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(MongodbChunkRepository);
-		container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(MongodbFileRepository);
-		container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(MongodbGameRepository);
-		container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(MongodbImageRepository);
-		container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(MongodbItemRepository);
-		container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(MongodbModelRepository);
-		container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(MongodbMonsterRepository);
-		container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(MongodbPersonRepository);
-		container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(MongodbPinRepository);
-		container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(MongodbPlaceRepository);
-		container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(MongodbRoleRepository);
-		container
-			.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
-			.to(MongodbServerConfigRepository);
-		container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(MongodbUserRepository);
-		container
-			.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
-			.to(MongodbWikiFolderRepository);
-		container
-			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
-			.to(MongodbWikiPageRepository);
-		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(MongodbWorldRepository);
-		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(MongodbEventWikiRepository);
-		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(MongodbCalendarRepository);
-		container.bind<MongodbFogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(MongodbFogStrokeRepository);
-		container.bind<MongodbStrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(MongodbStrokeRepository);
-	} else if (process.env.POSTGRES_HOST || process.env.SQLITE_DIRECTORY_PATH) {
+	if (process.env.POSTGRES_HOST || process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(SqlArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(SqlChunkRepository);
 		container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(SqlFileRepository);
@@ -601,9 +549,7 @@ const bindAll = () => {
 	container.bind<ApiServer>(INJECTABLE_TYPES.ApiServer).to(ExpressApiServer);
 	container.bind<ServerProperties>(INJECTABLE_TYPES.ServerProperties).to(ServerProperties).inSingletonScope();
 	container.bind<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer).to(RpgToolsServer).inSingletonScope();
-	if(process.env.MONGODB_HOST) {
-		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(MongodbDbEngine).inSingletonScope();
-	} else if (process.env.POSTGRES_HOST) {
+	if (process.env.POSTGRES_HOST) {
 		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(PostgresDbEngine).inSingletonScope();
 	} else if (process.env.SQLITE_DIRECTORY_PATH) {
 		container.bind<DbEngine>(INJECTABLE_TYPES.DbEngine).to(SqliteDbEngine).inSingletonScope();
@@ -667,10 +613,6 @@ const bindAll = () => {
 
 // mappers
 	container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);
-
-// mongodb
-	container.bind<FilterFactory>(INJECTABLE_TYPES.FilterFactory).to(FilterFactory);
-	container.bind<MongoDbMigrationV40>(INJECTABLE_TYPES.MongoDbMigrationV40).to(MongoDbMigrationV40);
 
 // sql
 	container.bind<AbstractSqlDbEngine>(INJECTABLE_TYPES.SqlDbEngine).to(AbstractSqlDbEngine);

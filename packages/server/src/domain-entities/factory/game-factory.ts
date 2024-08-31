@@ -1,9 +1,6 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
 import {Character, Game, InGameModel, Message} from "../game";
-import {
-    GameDocument,
-} from "../../dal/mongodb/models/game";
 import {GameAuthorizationPolicy} from "../../security/policy/game-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
@@ -14,12 +11,10 @@ import StrokeFactory from "./game/stroke-factory";
 import MessageFactory from "./game/message-factory";
 import InGameModelFactory from "./game/in-game-model-factory";
 import FogStrokeFactory from "./game/fog-stroke-factory";
-import {FogStroke} from "../fog-stroke";
-import {Stroke} from "../stroke";
 
 
 @injectable()
-export default class GameFactory implements EntityFactory<Game, GameDocument, GameModel> {
+export default class GameFactory implements EntityFactory<Game, GameModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory;
@@ -75,30 +70,6 @@ export default class GameFactory implements EntityFactory<Game, GameDocument, Ga
         game.models = models;
         game.host = host;
         game.acl = acl;
-        return game;
-    }
-
-    fromMongodbDocument({
-        _id,
-        passwordHash,
-        world,
-        map,
-        characters,
-        messages,
-        models,
-        host,
-        acl
-    }: GameDocument): Game {
-        const game: Game = new Game(new GameAuthorizationPolicy(), this);
-        game._id = _id && _id.toString();
-        game.passwordHash = passwordHash;
-        game.world = world && world.toString();
-        game.map = map && map.toString();
-        game.characters = characters.map(character => this.characterFactory.fromMongodbDocument(character))
-        game.messages = messages.map(message => this.messageFactory.fromMongodbDocument(message));
-        game.models = models.map(model => this.inGameModelFactory.fromMongodbDocument(model));
-        game.host = host && host.toString();
-        game.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return game;
     }
 

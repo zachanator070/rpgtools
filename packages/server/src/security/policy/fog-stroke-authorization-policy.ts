@@ -5,7 +5,7 @@ import {DatabaseContext} from "../../dal/database-context";
 import {injectable} from "inversify";
 
 @injectable()
-export default class FogStrokeAuthorization implements EntityAuthorizationPolicy<FogStroke> {
+export default class FogStrokeAuthorization implements EntityAuthorizationPolicy {
 
     entity: FogStroke;
 

@@ -15,8 +15,7 @@ import {
 import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
-export class WikiPageAuthorizationPolicy
-	implements EntityAuthorizationPolicy<WikiPage>
+export class WikiPageAuthorizationPolicy implements EntityAuthorizationPolicy
 {
 
 	entity: WikiPage;

@@ -16,7 +16,7 @@ import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model";
 export default class SqlEventWikiRepository extends AbstractSqlRepository<EventWiki, WikiPageModel> implements EventWikiRepository {
 
     @inject(INJECTABLE_TYPES.EventWikiFactory)
-    entityFactory: EntityFactory<EventWiki, any, WikiPageModel>;
+    entityFactory: EntityFactory<EventWiki, WikiPageModel>;
 
     async modelFactory(entity: EventWiki): Promise<WikiPageModel> {
         return WikiPageModel.build({

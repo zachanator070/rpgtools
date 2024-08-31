@@ -2,14 +2,13 @@ import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
 import {Article} from "../article";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
-import {ArticleDocument} from "../../dal/mongodb/models/article";
 import AclFactory from "./acl-factory";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 
 
 @injectable()
-export default class ArticleFactory implements EntityFactory<Article, ArticleDocument, WikiPageModel> {
+export default class ArticleFactory implements EntityFactory<Article, WikiPageModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -39,18 +38,6 @@ export default class ArticleFactory implements EntityFactory<Article, ArticleDoc
         article.contentId = contentId;
         article.acl = acl;
         article.relatedWikis = relatedWikis;
-        return article;
-    }
-
-    fromMongodbDocument(doc: ArticleDocument): Article {
-        const article = new Article(this, new WikiPageAuthorizationPolicy());
-        article._id = doc._id && doc._id.toString();
-        article.name = doc.name;
-        article.world = doc.world && doc.world.toString();
-        article.coverImage = doc.coverImage && doc.coverImage.toString();
-        article.contentId = doc.contentId && doc.contentId.toString();
-        article.acl = doc.acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
-        article.relatedWikis = doc.relatedWikis.map(_id => _id.toString());
         return article;
     }
 

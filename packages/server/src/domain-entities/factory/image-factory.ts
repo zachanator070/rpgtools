@@ -1,13 +1,11 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
 import {Image} from "../image";
-import {ImageDocument} from "../../dal/mongodb/models/image";
-import {ObjectId} from "mongoose";
 import {ImageAuthorizationPolicy} from "../../security/policy/image-authorization-policy";
 import ImageModel from "../../dal/sql/models/image-model";
 
 @injectable()
-export default class ImageFactory implements EntityFactory<Image, ImageDocument, ImageModel> {
+export default class ImageFactory implements EntityFactory<Image, ImageModel> {
     build(
         {
             _id,
@@ -20,42 +18,18 @@ export default class ImageFactory implements EntityFactory<Image, ImageDocument,
             chunks,
             icon
         }: {
-            _id?: string | ObjectId,
+            _id?: string,
             name: string,
-            world: string | ObjectId,
+            world: string,
             width: number,
             height: number,
             chunkWidth: number,
             chunkHeight: number,
-            chunks: string[] | ObjectId[],
-            icon: string | ObjectId
+            chunks: string[],
+            icon: string
         }
     ) {
         const image: Image = new Image(new ImageAuthorizationPolicy(), this);
-        image._id = _id && _id.toString();
-        image.name = name;
-        image.world = world && world.toString();
-        image.width = width;
-        image.height = height;
-        image.chunkWidth = chunkWidth;
-        image.chunkHeight = chunkHeight;
-        image.chunks = chunks.map(chunk => chunk.toString());
-        image.icon = icon && icon.toString();
-        return image;
-    }
-
-    fromMongodbDocument({
-        _id,
-        name,
-        world,
-        width,
-        height,
-        chunkWidth,
-        chunkHeight,
-        chunks,
-        icon
-    }: ImageDocument): Image {
-        const image = new Image(new ImageAuthorizationPolicy(), this);
         image._id = _id && _id.toString();
         image.name = name;
         image.world = world && world.toString();

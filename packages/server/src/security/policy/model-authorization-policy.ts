@@ -14,7 +14,7 @@ import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
-export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy<Model> {
+export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy {
 	entity: Model;
 	canAdmin = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {
 		const world = await databaseContext.worldRepository.findOneById(this.entity.world);

@@ -1,13 +1,12 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
 import {Chunk} from "../chunk";
-import {ChunkDocument} from "../../dal/mongodb/models/chunk";
 import {ChunkAuthorizationPolicy} from "../../security/policy/chunk-authorization-policy";
 import ChunkModel from "../../dal/sql/models/chunk-model";
 
 
 @injectable()
-export default class ChunkFactory implements EntityFactory<Chunk, ChunkDocument, ChunkModel> {
+export default class ChunkFactory implements EntityFactory<Chunk, ChunkModel> {
     build(
         {
             _id,
@@ -35,18 +34,6 @@ export default class ChunkFactory implements EntityFactory<Chunk, ChunkDocument,
         chunk.height = height;
         chunk.fileId = fileId;
         chunk.image = image;
-        return chunk;
-    }
-
-    fromMongodbDocument(doc: ChunkDocument): Chunk {
-        const chunk = new Chunk(new ChunkAuthorizationPolicy(), this);
-        chunk._id = doc._id && doc._id.toString();
-        chunk.x = doc.x;
-        chunk.y = doc.y;
-        chunk.width = doc.width;
-        chunk.height = doc.height;
-        chunk.fileId = doc.fileId && doc.fileId.toString();
-        chunk.image = doc.image && doc.image.toString();
         return chunk;
     }
 

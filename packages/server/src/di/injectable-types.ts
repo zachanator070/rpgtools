@@ -205,9 +205,4 @@ export const INJECTABLE_TYPES = {
 	// repo mapper
 	EntityMapper: Symbol.for("EntityMapper"),
 
-	// mongodb
-	FilterFactory: Symbol.for("FilterFactory"),
-	MongoDbMigrationV40: Symbol.for("MongoDbMigrationV40"),
-
-
 };

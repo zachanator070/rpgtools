@@ -4,7 +4,6 @@ import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import {WorldDocument} from "../dal/mongodb/models/world";
 import WorldModel from "../dal/sql/models/world-model";
 
 @injectable()
@@ -17,12 +16,12 @@ export class World implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: WorldAuthorizationPolicy;
-	factory: EntityFactory<World, WorldDocument, WorldModel>;
+	factory: EntityFactory<World, WorldModel>;
 
 	constructor(@inject(INJECTABLE_TYPES.WorldAuthorizationPolicy)
 					authorizationPolicy: WorldAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.WorldFactory)
-					factory: EntityFactory<World, WorldDocument, WorldModel>) {
+					factory: EntityFactory<World, WorldModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

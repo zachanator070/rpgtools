@@ -33,7 +33,6 @@ services:
       - rpgtools
     depends_on:
       - postgres
-      - mongodb
       - redis
       - ui-builder
 
@@ -60,7 +59,6 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     depends_on:
-      - mongodb
       - redis
       - postgres
     networks:
@@ -80,18 +78,6 @@ services:
   ############
   # Database #
   ############
-
-  mongodb:
-    image: "mongo:latest"
-    environment:
-      MONGO_INITDB_DATABASE: "rpgtools"
-    volumes:
-      - ./dev/mongodb-init:/docker-entrypoint-initdb.d
-      - ./dev/mongodb-dump:/mongodb-dump
-    ports:
-      - "27017:27017"
-    networks:
-      rpgtools:
 
   postgres:
     image: "postgres:latest"

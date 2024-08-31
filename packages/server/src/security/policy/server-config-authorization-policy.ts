@@ -6,7 +6,7 @@ import { injectable } from "inversify";
 
 @injectable()
 export class ServerConfigAuthorizationPolicy
-	implements EntityAuthorizationPolicy<ServerConfig>
+	implements EntityAuthorizationPolicy
 {
 	entity: ServerConfig;
 

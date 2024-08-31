@@ -1,6 +1,5 @@
 import {AclEntry, EntityFactory} from "../../types";
 import {inject, injectable} from "inversify";
-import {EventDocument} from "../../dal/mongodb/models/event-wiki";
 import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
@@ -10,7 +9,7 @@ import EventWikiModel from "../../dal/sql/models/event-wiki-model";
 
 
 @injectable()
-export default class EventWikiFactory implements EntityFactory<EventWiki, EventDocument, WikiPageModel> {
+export default class EventWikiFactory implements EntityFactory<EventWiki, WikiPageModel> {
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
 
@@ -65,42 +64,6 @@ export default class EventWikiFactory implements EntityFactory<EventWiki, EventD
         event.second = second || 0;
         event.acl = acl;
         event.relatedWikis = relatedWikis;
-        return event;
-    }
-
-    fromMongodbDocument({
-        _id,
-        name,
-        world,
-        coverImage,
-        contentId,
-        calendar,
-        age,
-        year,
-        month,
-        day,
-        hour,
-        minute,
-        second,
-        acl,
-        relatedWikis
-    }: EventDocument): EventWiki {
-        const event = new EventWiki(this, new WikiPageAuthorizationPolicy());
-        event._id = _id && _id.toString();
-        event.name = name;
-        event.world = world && world.toString();
-        event.coverImage = coverImage && coverImage.toString();
-        event.contentId = contentId && contentId.toString();
-        event.calendar = calendar;
-        event.age = age;
-        event.year = year;
-        event.month = month;
-        event.day = day;
-        event.hour = hour;
-        event.minute = minute;
-        event.second = second;
-        event.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
-        event.relatedWikis = relatedWikis.map(_id => _id.toString());
         return event;
     }
 

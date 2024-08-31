@@ -1,6 +1,5 @@
 import {AclEntry, EntityFactory} from "../../types";
 import Calendar, {Age} from "../calendar";
-import {CalendarDocument} from "../../dal/mongodb/models/calendar";
 import CalendarModel from "../../dal/sql/models/calendar-model";
 import CalendarAuthorizationPolicy from "../../security/policy/calendar-authorization-policy";
 import {inject, injectable} from "inversify";
@@ -9,7 +8,7 @@ import AgeFactory from "./calendar/age-factory";
 import AclFactory from "./acl-factory";
 
 @injectable()
-export default class CalendarFactory implements EntityFactory<Calendar, CalendarDocument, CalendarModel> {
+export default class CalendarFactory implements EntityFactory<Calendar, CalendarModel> {
 
     @inject(INJECTABLE_TYPES.AgeFactory)
     ageFactory: AgeFactory;
@@ -37,16 +36,6 @@ export default class CalendarFactory implements EntityFactory<Calendar, Calendar
         calendar.ages = ages;
         calendar.acl = acl ?? [];
         return calendar;
-    }
-
-    fromMongodbDocument(doc: CalendarDocument): Calendar {
-        return this.build({
-            _id: doc._id && doc._id.toString(),
-            world: doc.world,
-            name: doc.name,
-            ages: doc.ages.map(age => this.ageFactory.fromMongodbDocument(age)),
-            acl: doc.acl.map(entry => this.aclFactory.fromMongodbDocument(entry))
-        })
     }
 
     async fromSqlModel(model?: CalendarModel): Promise<Calendar> {

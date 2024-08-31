@@ -1,8 +1,8 @@
 [Unit]
 Description=Tool set for playing an RPG game
 Documentation=https://github.com/zachanator070/rpgtools
-After=docker.service mongodb.service
-Wants=docker.service mongodb.service
+After=docker.service postgres.service
+Wants=docker.service postgres.service
 
 [Install]
 WantedBy=multi-user.target

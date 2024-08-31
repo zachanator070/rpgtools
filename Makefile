@@ -31,7 +31,7 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 ################
 # RUN COMMANDS #
 ################
-.PHONY: run-prod run-dev run-dev-brk run-mongodb run-postgres down restart install run-electron
+.PHONY: run-prod run-dev run-dev-brk run-postgres down restart install run-electron
 
 # runs production version of docker image with minimal depending services
 run-prod: .env $(PROD_SERVER_CONTAINER)
@@ -44,9 +44,6 @@ run-dev: .env $(SERVER_BUILD_DEST) db containers $(DEV_SERVER_CONTAINER) $(DEV_F
 # same as the `dev` target but makes the server wait for a debug connection before it starts the application
 run-dev-brk: .env  $(SERVER_BUILD_DEST) db
 	docker compose up server-brk ui-builder
-
-run-mongodb: .env
-	docker compose up -d mongodb
 
 run-postgres: .env
 	docker compose up -d postgres
@@ -61,11 +58,11 @@ restart: .env
 
 # performs minimal install on a debian host
 install:
-	sudo apt install mongodb
-	sudo systemctl enable mongodb
+	sudo apt install postgresql
+	sudo systemctl enable postgresql
 	sudo mkdir /etc/rpgtools
 	sudo cp .env.example /etc/rpgtools/.env
-	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=localhost/' .env
+	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=localhost/' .env
 	sudo cp rpgtools.service /lib/systemd/system
 	sudo systemctl daemon-reload
 	sudo systemctl start rpgtools
@@ -78,8 +75,8 @@ run-electron: $(ELECTRON_EXEC)
 #########
 # TESTS #
 #########
-.PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-mongodb test-integration-sqlite
-.PHONY: test-e2e test-e2e-mongodb test-e2e-postgres test-e2e-sqlite run-cypress
+.PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-sqlite
+.PHONY: test-e2e test-e2e-postgres test-e2e-sqlite run-cypress
 
 test: test-unit test-integration test-e2e
 
@@ -88,7 +85,7 @@ JEST_OPTIONS=
 test-unit:
 	npm run test:unit --workspace=packages/server
 
-test-integration: test-integration-mongodb test-integration-postgres
+test-integration: test-integration-postgres
 
 test-integration-update-snapshots: JEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
@@ -100,29 +97,13 @@ test-integration-postgres: .env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-test-integration-mongodb: .env
-	docker compose up -d mongodb
-	cp .env.example packages/server/jest.env
-	sed -i 's/^#MONGODB_HOST=mongodb/MONGODB_HOST=localhost/' packages/server/jest.env
-	npm run test:integration --workspace=packages/server
-	docker compose down
-
 test-integration-sqlite: .env
 	cp .env.example packages/server/jest.env
 	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' packages/server/jest.env
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
-test-e2e: test-e2e-mongodb test-e2e-postgres test-e2e-sqlite
-
-test-e2e-mongodb: .env $(PROD_SERVER_CONTAINER)
-	cp .env.example .env
-	sed -i 's/#MONGODB_HOST=.*/MONGODB_HOST=mongodb/' .env
-	docker compose up -d prod mongodb
-	./wait_for_server.sh
-	> packages/frontend/seed.log
-	npm run -w packages/frontend test
-	docker compose down
+test-e2e: test-e2e-postgres test-e2e-sqlite
 
 test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 	cp .env.example .env

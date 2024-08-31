@@ -1,11 +1,7 @@
-import {Document} from "mongoose";
-import {User} from "./domain-entities/user";
 import {SecurityContext} from "./security/security-context";
-import {Role} from "./domain-entities/role";
 import {Readable, Writable} from "stream";
 import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
 import {DocumentNode} from "graphql";
-import {AclEntryDocument} from "./dal/mongodb/models/acl-entry";
 import {Repository} from "./dal/repository/repository";
 import {ChunkRepository} from "./dal/repository/chunk-repository";
 import {FileRepository} from "./dal/repository/file-repository";
@@ -28,7 +24,6 @@ import {DatabaseContext} from "./dal/database-context";
 import {DatabaseSession} from "./dal/database-session";
 import {Model} from "sequelize";
 import SqlModel from "./dal/sql/models/sql-model";
-import {ObjectId} from "mongoose";
 import {CalendarRepository} from "./dal/repository/calendar-repository";
 import EventWikiRepository from "./dal/repository/event-wiki-repository";
 import FogStrokeRepository from "./dal/repository/fog-stroke-repository";
@@ -37,8 +32,8 @@ import StrokeRepository from "./dal/repository/stroke-repository";
 export interface DomainEntity {
 	_id: string;
 	type: string;
-	authorizationPolicy: EntityAuthorizationPolicy<this>;
-	factory: EntityFactory<DomainEntity, MongoDBDocument, SqlModel>;
+	authorizationPolicy: EntityAuthorizationPolicy;
+	factory: EntityFactory<DomainEntity, SqlModel>;
 
 	getRepository(accessor: RepositoryAccessor): Repository<DomainEntity>;
 }
@@ -53,17 +48,9 @@ export interface PermissionControlledEntity extends DomainEntity{
 	acl: AclEntry[]
 }
 
-export interface EntityFactory<T, D extends MongoDBDocument | MongoDBDocument[], M extends Model> {
+export interface EntityFactory<T, M extends Model> {
 	build(args: any): T;
-	fromMongodbDocument(doc: D): T;
 	fromSqlModel(model?: M): Promise<T>;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DatabaseEntity {}
-
-export interface MongoDBDocument extends DatabaseEntity, Document {
-	_id: string | ObjectId;
 }
 
 export interface CookieManager {
@@ -85,7 +72,7 @@ export interface Seeder {
 	seed: () => Promise<void>;
 }
 
-export interface EntityAuthorizationPolicy<Type extends DomainEntity> {
+export interface EntityAuthorizationPolicy {
 	canRead: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
 	canWrite: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
 	canAdmin: (context: SecurityContext, databaseContext: DatabaseContext) => Promise<boolean>;
@@ -171,22 +158,4 @@ export interface DbEngine {
 	changeDb: (name: string) => Promise<void>;
 
 	createDatabaseSession(): Promise<DatabaseSession>;
-}
-
-export interface PermissionControlledDocument {
-	acl: AclEntryDocument[];
-}
-
-export interface WikiPageDocument extends MongoDBDocument, PermissionControlledDocument {
-	type: string;
-	name: string;
-	world: string;
-	coverImage?: string;
-	contentId?: string;
-	relatedWikis: string[];
-}
-
-export interface ModeledWikiDocument extends WikiPageDocument {
-	pageModel: string;
-	modelColor: string;
 }

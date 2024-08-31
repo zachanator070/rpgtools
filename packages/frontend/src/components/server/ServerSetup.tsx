@@ -30,7 +30,7 @@ export default function ServerSetup() {
 					<p>
 						The server has not been configured with an admin user yet, please
 						retrieve the server unlock code from the server logs or from the
-						server document in the servers collection in mongodb, then register
+						server config table in the database, then register
 						an admin user.
 					</p>
 				</div>

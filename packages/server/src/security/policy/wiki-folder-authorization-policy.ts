@@ -16,8 +16,7 @@ import {DatabaseContext} from "../../dal/database-context";
 
 
 @injectable()
-export class WikiFolderAuthorizationPolicy
-	implements EntityAuthorizationPolicy<WikiFolder>
+export class WikiFolderAuthorizationPolicy implements EntityAuthorizationPolicy
 {
 
 	entity: WikiFolder;

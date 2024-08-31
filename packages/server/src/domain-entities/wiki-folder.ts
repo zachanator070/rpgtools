@@ -9,7 +9,6 @@ import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import {WikiFolderDocument} from "../dal/mongodb/models/wiki-folder";
 import WikiFolderModel from "../dal/sql/models/wiki-folder-model";
 
 @injectable()
@@ -22,14 +21,14 @@ export class WikiFolder implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: WikiFolderAuthorizationPolicy;
-	factory: EntityFactory<WikiFolder, WikiFolderDocument, WikiFolderModel>;
+	factory: EntityFactory<WikiFolder, WikiFolderModel>;
 
 	type: string = WIKI_FOLDER;
 
 	constructor(@inject(INJECTABLE_TYPES.WikiFolderAuthorizationPolicy)
 					authorizationPolicy: WikiFolderAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.WikiFolderFactory)
-					factory: EntityFactory<WikiFolder, WikiFolderDocument, WikiFolderModel>) {
+					factory: EntityFactory<WikiFolder, WikiFolderModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

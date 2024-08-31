@@ -4,7 +4,6 @@ import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import {ServerConfigDocument} from "../dal/mongodb/models/server-config";
 import ServerConfigModel from "../dal/sql/models/server-config-model";
 
 @injectable()
@@ -18,14 +17,14 @@ export class ServerConfig implements PermissionControlledEntity {
 	public defaultWorld: string;
 
 	authorizationPolicy: ServerConfigAuthorizationPolicy;
-	factory: EntityFactory<ServerConfig, ServerConfigDocument, ServerConfigModel>;
+	factory: EntityFactory<ServerConfig, ServerConfigModel>;
 
 	type: string = SERVER_CONFIG;
 
 	constructor(@inject(INJECTABLE_TYPES.ServerConfigAuthorizationPolicy)
 					authorizationPolicy: ServerConfigAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.ServerConfigFactory)
-					factory: EntityFactory<ServerConfig, ServerConfigDocument, ServerConfigModel>) {
+					factory: EntityFactory<ServerConfig, ServerConfigModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

@@ -1,7 +1,6 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
 import {Place} from "../place";
-import {PlaceDocument} from "../../dal/mongodb/models/place";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
@@ -9,7 +8,7 @@ import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 
 
 @injectable()
-export default class PlaceFactory implements EntityFactory<Place, PlaceDocument, WikiPageModel> {
+export default class PlaceFactory implements EntityFactory<Place, WikiPageModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -47,30 +46,6 @@ export default class PlaceFactory implements EntityFactory<Place, PlaceDocument,
         place.pixelsPerFoot = pixelsPerFoot;
         place.acl = acl;
         place.relatedWikis = relatedWikis;
-        return place;
-    }
-
-    fromMongodbDocument({
-        _id,
-        name,
-        world,
-        coverImage,
-        contentId,
-        mapImage,
-        pixelsPerFoot,
-        acl,
-        relatedWikis
-    }: PlaceDocument): Place {
-        const place = new Place(this, new WikiPageAuthorizationPolicy());
-        place._id = _id && _id.toString();
-        place.name = name;
-        place.world = world && world.toString();
-        place.coverImage = coverImage && coverImage.toString();
-        place.contentId = contentId && contentId.toString();
-        place.mapImage = mapImage && mapImage.toString();
-        place.pixelsPerFoot = pixelsPerFoot;
-        place.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
-        place.relatedWikis = relatedWikis.map(_id => _id.toString());
         return place;
     }
 

@@ -4,7 +4,6 @@ import {GAME} from "@rpgtools/common/src/type-constants";
 import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import {GameDocument} from "../dal/mongodb/models/game";
 import GameModel from "../dal/sql/models/game-model";
 
 @injectable()
@@ -20,14 +19,14 @@ export class Game implements PermissionControlledEntity {
 	public acl: AclEntry[];
 
 	authorizationPolicy: GameAuthorizationPolicy;
-	factory: EntityFactory<Game, GameDocument, GameModel>;
+	factory: EntityFactory<Game, GameModel>;
 
 	type: string = GAME;
 
 	constructor(@inject(INJECTABLE_TYPES.GameAuthorizationPolicy)
 					authorizationPolicy: GameAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.GameFactory)
-					factory: EntityFactory<Game, GameDocument, GameModel>) {
+					factory: EntityFactory<Game, GameModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;
