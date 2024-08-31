@@ -1,12 +1,11 @@
 import {EntityFactory} from "../../../types";
 import {Month} from "../../calendar";
 import {injectable} from "inversify";
-import {MonthDocument} from "../../../dal/mongodb/models/calendar";
 import MonthModel from "../../../dal/sql/models/calendar/month-model";
 
 
 @injectable()
-export default class MonthFactory implements EntityFactory<Month, MonthDocument, MonthModel> {
+export default class MonthFactory implements EntityFactory<Month, MonthModel> {
 
     build({
         _id,
@@ -22,14 +21,6 @@ export default class MonthFactory implements EntityFactory<Month, MonthDocument,
         month.name = name;
         month.numDays = numDays;
         return month
-    }
-
-    fromMongodbDocument(doc: MonthDocument): Month {
-        return this.build({
-            _id: doc._id && doc._id.toString(),
-            name: doc.name,
-            numDays: doc.numDays,
-        });
     }
 
     async fromSqlModel(model: MonthModel): Promise<Month> {

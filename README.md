@@ -40,14 +40,14 @@ where users will interact with the service.
 
 To run the service:
 1. Download the `.env.example` and save as `.env`
-2. Change the line with `#MONGODB_HOST=mongodb` to `MONGODB_HOST=mongodb`
+2. Change the line with `#POSTGRES_HOST=postgres` to `POSTGRES_HOST=postgres`
 3. Download the `docker-compose.yml` file
 4. Run the command `docker compose up -d prod`
 
 The production environment will run the following docker containers:
 
 - nodejs webserver
-- mongodb database
+- postgres database
 
 ### Development Environment
 
@@ -80,14 +80,14 @@ A simple make target has been provided to install on a linux debian-based host.
 This simple installation will:
 
 - install a systemd unit file
-- install mongodb
+- install postgres
 - install a basic config under /etc/rpgtools
 
 To run this simple installation use the command:
 
 `make install`
 
-This script will set up mongodb and ensure that the RPGTools docker container is always running.
+This script will set up postgres and ensure that the RPGTools docker container is always running.
 
 #### WARNING
 

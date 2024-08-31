@@ -4,13 +4,12 @@ import {PathNode} from "../../game";
 import StrokeModel from "../../../dal/sql/models/game/stroke-model";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
 import PathNodeFactory from "./path-node-factory";
-import {StrokeDocument} from "../../../dal/mongodb/models/stroke";
 import {Stroke} from "../../stroke";
 import StrokeAuthorizationPolicy from "../../../security/policy/stroke-authorization-policy";
 
 
 @injectable()
-export default class StrokeFactory implements EntityFactory<Stroke, StrokeDocument, StrokeModel> {
+export default class StrokeFactory implements EntityFactory<Stroke, StrokeModel> {
 
     @inject(INJECTABLE_TYPES.PathNodeFactory)
     nodePathFactory: PathNodeFactory;
@@ -25,18 +24,6 @@ export default class StrokeFactory implements EntityFactory<Stroke, StrokeDocume
         stroke.fill = fill;
         stroke.strokeType = strokeType;
         return stroke;
-    }
-
-    fromMongodbDocument(doc: StrokeDocument): Stroke {
-        return this.build({
-            _id: doc._id && doc._id.toString(),
-            game: doc.game && doc.game.toString(),
-            path: doc.path.map(node => this.nodePathFactory.fromMongodbDocument(node)),
-            color: doc.color,
-            size: doc.size,
-            fill: doc.fill,
-            strokeType: doc.strokeType
-        });
     }
 
     async fromSqlModel(model: StrokeModel): Promise<Stroke> {

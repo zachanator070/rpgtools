@@ -1,12 +1,11 @@
 import {EntityFactory} from "../../../types";
 import {DayOfTheWeek} from "../../calendar";
-import {DayOfTheWeekDocument} from "../../../dal/mongodb/models/calendar";
 import DayOfTheWeekModel from "../../../dal/sql/models/calendar/day-of-the-week-model";
 import {injectable} from "inversify";
 
 
 @injectable()
-export default class DayOfTheWeekFactory implements EntityFactory<DayOfTheWeek, DayOfTheWeekDocument, DayOfTheWeekModel> {
+export default class DayOfTheWeekFactory implements EntityFactory<DayOfTheWeek, DayOfTheWeekModel> {
 
     build({
         _id,
@@ -19,13 +18,6 @@ export default class DayOfTheWeekFactory implements EntityFactory<DayOfTheWeek, 
         dayOfTheWeek._id = _id;
         dayOfTheWeek.name = name;
         return dayOfTheWeek;
-    }
-
-    fromMongodbDocument(doc: DayOfTheWeekDocument): DayOfTheWeek {
-        return this.build({
-            _id: doc._id && doc._id.toString(),
-            name: doc.name
-        });
     }
 
     async fromSqlModel(model: DayOfTheWeekModel): Promise<DayOfTheWeek> {

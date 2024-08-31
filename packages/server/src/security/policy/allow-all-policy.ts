@@ -1,9 +1,9 @@
-import { DomainEntity, EntityAuthorizationPolicy } from "../../types";
+import { EntityAuthorizationPolicy } from "../../types";
 import { injectable } from "inversify";
 
 @injectable()
-export abstract class AllowAllPolicy<T extends DomainEntity>
-	implements EntityAuthorizationPolicy<T>
+export abstract class AllowAllPolicy
+	implements EntityAuthorizationPolicy
 {
 	canAdmin = async (): Promise<boolean> => true;
 

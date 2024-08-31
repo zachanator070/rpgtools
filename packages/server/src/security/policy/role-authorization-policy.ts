@@ -15,7 +15,7 @@ import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
-export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy<Role> {
+export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy {
 	entity: Role;
 
 	canAdmin = async (context: SecurityContext, databaseContext: DatabaseContext): Promise<boolean> => {

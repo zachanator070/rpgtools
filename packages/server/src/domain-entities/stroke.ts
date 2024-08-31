@@ -2,7 +2,6 @@ import {PathNode} from "./game";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import {Repository} from "../dal/repository/repository";
 import StrokeModel from "../dal/sql/models/game/stroke-model";
-import {StrokeDocument} from "../dal/mongodb/models/stroke";
 import {inject} from "inversify";
 import {INJECTABLE_TYPES} from "../di/injectable-types";
 import {STROKE} from "@rpgtools/common/src/type-constants";
@@ -15,7 +14,7 @@ export class Stroke implements DomainEntity {
 	authorizationPolicy: StrokeAuthorizationPolicy;
 
 	@inject(INJECTABLE_TYPES.StrokeFactory)
-	factory: EntityFactory<Stroke, StrokeDocument, StrokeModel>;
+	factory: EntityFactory<Stroke, StrokeModel>;
 
     public _id: string;
 	public game: string;
@@ -29,7 +28,7 @@ export class Stroke implements DomainEntity {
 		@inject(INJECTABLE_TYPES.StrokeAuthorizationPolicy)
 			authorizationPolicy: StrokeAuthorizationPolicy,
 		@inject(INJECTABLE_TYPES.StrokeFactory)
-			factory: EntityFactory<Stroke, StrokeDocument, StrokeModel>
+			factory: EntityFactory<Stroke, StrokeModel>
 	) {
 		this.authorizationPolicy = authorizationPolicy;
 		this.authorizationPolicy.entity = this;

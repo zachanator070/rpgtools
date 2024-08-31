@@ -1,15 +1,13 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
 import {Item} from "../item";
-import {ItemDocument} from "../../dal/mongodb/models/item";
 import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
-import ItemModel from "../../dal/sql/models/item-model";
 import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 
 @injectable()
-export default class ItemFactory implements EntityFactory<Item, ItemDocument, WikiPageModel> {
+export default class ItemFactory implements EntityFactory<Item, WikiPageModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -47,30 +45,6 @@ export default class ItemFactory implements EntityFactory<Item, ItemDocument, Wi
         item.modelColor = modelColor;
         item.acl = acl;
         item.relatedWikis = relatedWikis;
-        return item;
-    }
-
-    fromMongodbDocument({
-        _id,
-        name,
-        world,
-        coverImage,
-        contentId,
-        pageModel,
-        modelColor,
-        acl,
-        relatedWikis
-    }: ItemDocument): Item {
-        const item = new Item(this, new WikiPageAuthorizationPolicy());
-        item._id = _id && _id.toString();
-        item.name = name;
-        item.world = world && world.toString();
-        item.coverImage = coverImage && coverImage.toString();
-        item.contentId = contentId && contentId.toString();
-        item.pageModel = pageModel && pageModel.toString();
-        item.modelColor = modelColor;
-        item.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
-        item.relatedWikis = relatedWikis.map(_id => _id.toString());
         return item;
     }
 

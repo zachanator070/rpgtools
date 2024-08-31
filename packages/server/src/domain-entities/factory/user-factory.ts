@@ -1,13 +1,12 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
 import {User} from "../user";
-import {UserDocument} from "../../dal/mongodb/models/user";
 import {UserAuthorizationPolicy} from "../../security/policy/user-authorization-policy";
 import UserModel from "../../dal/sql/models/user-model";
 
 
 @injectable()
-export default class UserFactory implements EntityFactory<User, UserDocument, UserModel> {
+export default class UserFactory implements EntityFactory<User, UserModel> {
     build(
         {
             _id,
@@ -35,26 +34,6 @@ export default class UserFactory implements EntityFactory<User, UserDocument, Us
         user.tokenVersion = tokenVersion;
         user.currentWorld = currentWorld;
         user.roles = roles;
-        return user;
-    }
-
-    fromMongodbDocument({
-        _id,
-        email,
-        username,
-        password,
-        tokenVersion,
-        currentWorld,
-        roles,
-    }: UserDocument): User {
-        const user = new User(new UserAuthorizationPolicy(), this);
-        user._id = _id && _id.toString();
-        user.email = email;
-        user.username = username;
-        user.password = password;
-        user.tokenVersion = tokenVersion;
-        user.currentWorld = currentWorld && currentWorld.toString();
-        user.roles = roles.map(role => role.toString());
         return user;
     }
 

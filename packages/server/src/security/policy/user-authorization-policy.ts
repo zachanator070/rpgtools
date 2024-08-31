@@ -4,7 +4,7 @@ import { SecurityContext } from "../security-context";
 import { injectable } from "inversify";
 
 @injectable()
-export class UserAuthorizationPolicy implements EntityAuthorizationPolicy<User> {
+export class UserAuthorizationPolicy implements EntityAuthorizationPolicy {
 	entity: User;
 
 	canAdmin = async (context: SecurityContext): Promise<boolean> => {

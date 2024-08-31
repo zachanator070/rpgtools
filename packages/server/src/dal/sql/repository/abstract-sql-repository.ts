@@ -10,7 +10,7 @@ import {v4} from "uuid";
 export default abstract class AbstractSqlRepository<T extends DomainEntity, M extends SqlModel> {
 
     abstract modelFactory(entity?: T): Promise<M>;
-    abstract entityFactory: EntityFactory<T, any, M>;
+    abstract entityFactory: EntityFactory<T, M>;
     abstract staticModel: ModelStatic<any>;
 
     PAGE_LIMIT = 10;

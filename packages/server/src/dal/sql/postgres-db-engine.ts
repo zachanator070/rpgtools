@@ -96,7 +96,7 @@ export default class PostgresDbEngine implements DbEngine {
     }
 
     async createDatabaseSession(): Promise<DatabaseSession> {
-        return new DatabaseSession(null, null);
+        return new DatabaseSession(null);
     }
 
 }

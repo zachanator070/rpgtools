@@ -1,6 +1,5 @@
 import {EntityFactory} from "../../../types";
 import {Age, DayOfTheWeek, Month} from "../../calendar";
-import {AgeDocument, DayOfTheWeekDocument} from "../../../dal/mongodb/models/calendar";
 import AgeModel from "../../../dal/sql/models/calendar/age-model";
 import {inject, injectable} from "inversify";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
@@ -9,13 +8,13 @@ import DayOfTheWeekModel from "../../../dal/sql/models/calendar/day-of-the-week-
 
 
 @injectable()
-export default class AgeFactory implements EntityFactory<Age, AgeDocument, AgeModel> {
+export default class AgeFactory implements EntityFactory<Age, AgeModel> {
 
     @inject(INJECTABLE_TYPES.MonthFactory)
     monthFactory: MonthFactory;
 
     @inject(INJECTABLE_TYPES.DayOfTheWeekFactory)
-    dayOfTheWeekFactory: EntityFactory<DayOfTheWeek, DayOfTheWeekDocument, DayOfTheWeekModel>;
+    dayOfTheWeekFactory: EntityFactory<DayOfTheWeek, DayOfTheWeekModel>;
 
     build({
         _id,
@@ -37,16 +36,6 @@ export default class AgeFactory implements EntityFactory<Age, AgeDocument, AgeMo
         age.months = months;
         age.daysOfTheWeek = daysOfTheWeek;
         return age;
-    }
-
-    fromMongodbDocument(doc: AgeDocument): Age {
-        return this.build({
-            _id: doc._id && doc._id.toString(),
-            name: doc.name,
-            numYears: doc.numYears,
-            months: doc.months.map(month => this.monthFactory.fromMongodbDocument(month)),
-            daysOfTheWeek: doc.daysOfTheWeek.map(day => this.dayOfTheWeekFactory.fromMongodbDocument(day))
-        });
     }
 
     async fromSqlModel(model?: AgeModel): Promise<Age> {

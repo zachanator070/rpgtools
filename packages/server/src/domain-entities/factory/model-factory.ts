@@ -1,7 +1,6 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
 import {Model} from "../model";
-import {ModelDocument} from "../../dal/mongodb/models/model";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AclFactory from "./acl-factory";
 import {ModelAuthorizationPolicy} from "../../security/policy/model-authorization-policy";
@@ -9,7 +8,7 @@ import ModelModel from "../../dal/sql/models/model-model";
 
 
 @injectable()
-export default class ModelFactory implements EntityFactory<Model, ModelDocument, ModelModel> {
+export default class ModelFactory implements EntityFactory<Model, ModelModel> {
 
     @inject(INJECTABLE_TYPES.AclFactory)
     aclFactory: AclFactory
@@ -50,32 +49,6 @@ export default class ModelFactory implements EntityFactory<Model, ModelDocument,
         model.fileId = fileId;
         model.notes = notes;
         model.acl = acl;
-        return model;
-    }
-
-    fromMongodbDocument({
-        _id,
-        world,
-        name,
-        depth,
-        width,
-        height,
-        fileName,
-        fileId,
-        notes,
-        acl
-    }: ModelDocument): Model {
-        const model = new Model(new ModelAuthorizationPolicy(), this);
-        model._id = _id && _id.toString();
-        model.world = world && world.toString();
-        model.name = name;
-        model.depth = depth;
-        model.width = width;
-        model.height = height;
-        model.fileName = fileName;
-        model.fileId = fileId && fileId.toString();
-        model.notes = notes;
-        model.acl = acl.map(entry => this.aclFactory.fromMongodbDocument(entry));
         return model;
     }
 

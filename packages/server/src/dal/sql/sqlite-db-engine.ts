@@ -3,10 +3,6 @@ import {DbEngine} from "../../types";
 import {DatabaseSession} from "../database-session";
 import {Sequelize} from "sequelize";
 import path from 'path';
-import {SequelizeStorage, Umzug} from "umzug";
-
-import * as initial from './migrations/00_initial';
-import * as events from './migrations/01_events';
 import AbstractSqlDbEngine from "./abstract-sql-db-engine";
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 
@@ -57,7 +53,7 @@ export default class SqliteDbEngine implements DbEngine {
     }
 
     async createDatabaseSession(): Promise<DatabaseSession> {
-        return new DatabaseSession(null, null);
+        return new DatabaseSession(null);
     }
 
 }

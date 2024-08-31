@@ -4,7 +4,6 @@ import { USER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import {UserDocument} from "../dal/mongodb/models/user";
 import UserModel from "../dal/sql/models/user-model";
 
 @injectable()
@@ -18,14 +17,14 @@ export class User implements DomainEntity {
 	public roles: string[];
 
 	authorizationPolicy: UserAuthorizationPolicy;
-	factory: EntityFactory<User, UserDocument, UserModel>;
+	factory: EntityFactory<User, UserModel>;
 
 	type: string = USER;
 
 	constructor(@inject(INJECTABLE_TYPES.UserAuthorizationPolicy)
 					authorizationPolicy: UserAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.UserFactory)
-					factory: EntityFactory<User, UserDocument, UserModel>) {
+					factory: EntityFactory<User, UserModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;

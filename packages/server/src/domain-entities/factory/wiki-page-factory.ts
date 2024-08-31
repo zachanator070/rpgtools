@@ -1,5 +1,5 @@
 import {inject, injectable} from "inversify";
-import {AclEntry, EntityFactory, WikiPageDocument} from "../../types";
+import {AclEntry, EntityFactory} from "../../types";
 import {WikiPage} from "../wiki-page";
 import WikiPageModel from "../../dal/sql/models/wiki-page-model";
 import {Article} from "../article";
@@ -11,7 +11,7 @@ import {ALL_WIKI_TYPES} from "@rpgtools/common/src/type-constants";
 
 
 @injectable()
-export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPageDocument, WikiPageModel> {
+export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPageModel> {
 
     @inject(INJECTABLE_TYPES.ArticleFactory)
     articleFactory: ArticleFactory;
@@ -47,17 +47,9 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
         return article;
     }
 
-    fromMongodbDocument(doc: WikiPageDocument): WikiPage {
-        if(!ALL_WIKI_TYPES.includes(doc.type)) {
-            throw new Error(`Cannot create mongodb document from wiki type ${doc.type}`)
-        }
-        // this should be a safe cast b/c of the type checking above
-        return this.entityMapper.map(doc.type).factory.fromMongodbDocument(doc) as WikiPage;
-    }
-
     async fromSqlModel(model: WikiPageModel): Promise<WikiPage> {
         if(!ALL_WIKI_TYPES.includes(model.type)) {
-            throw new Error(`Cannot create mongodb document from wiki type ${model.type}`)
+            throw new Error(`Cannot create sql model from wiki type ${model.type}`)
         }
         // this should be a safe cast b/c of the type checking above
         return (await this.entityMapper.map(model.type).factory.fromSqlModel(model)) as WikiPage;

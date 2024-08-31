@@ -6,7 +6,7 @@ import {injectable} from "inversify";
 
 
 @injectable()
-export default class StrokeAuthorizationPolicy implements EntityAuthorizationPolicy<Stroke> {
+export default class StrokeAuthorizationPolicy implements EntityAuthorizationPolicy {
 
     entity: Stroke;
 

@@ -1,6 +1,5 @@
 import {PathNode} from "./game";
-import {DomainEntity, EntityAuthorizationPolicy, EntityFactory, RepositoryAccessor} from "../types";
-import {FogStrokeDocument} from "../dal/mongodb/models/fog-stroke";
+import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import FogStrokeModel from "../dal/sql/models/game/fog-stroke-model";
 import {Repository} from "../dal/repository/repository";
 import {FOG_STROKE} from "@rpgtools/common/src/type-constants";
@@ -21,13 +20,13 @@ export class FogStroke implements DomainEntity {
 
 	authorizationPolicy: FogStrokeAuthorization;
 
-	factory: EntityFactory<FogStroke, FogStrokeDocument, FogStrokeModel>;
+	factory: EntityFactory<FogStroke, FogStrokeModel>;
 
 	constructor(
 		@inject(INJECTABLE_TYPES.FogStrokeAuthorizationPolicy)
 				authorizationPolicy: FogStrokeAuthorization,
 		@inject(INJECTABLE_TYPES.FogStrokeFactory)
-			factory: EntityFactory<FogStroke, FogStrokeDocument, FogStrokeModel>
+			factory: EntityFactory<FogStroke, FogStrokeModel>
 	) {
 		this.authorizationPolicy = authorizationPolicy;
 		this.authorizationPolicy.entity = this;

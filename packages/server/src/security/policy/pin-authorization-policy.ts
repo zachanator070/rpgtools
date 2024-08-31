@@ -7,7 +7,7 @@ import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context";
 
 @injectable()
-export class PinAuthorizationPolicy implements EntityAuthorizationPolicy<Pin> {
+export class PinAuthorizationPolicy implements EntityAuthorizationPolicy {
 
 	entity: Pin;
 

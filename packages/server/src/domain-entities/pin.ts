@@ -4,7 +4,6 @@ import { PIN } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
-import {PinDocument} from "../dal/mongodb/models/pin";
 import PinModel from "../dal/sql/models/pin-model";
 
 @injectable()
@@ -17,14 +16,14 @@ export class Pin implements DomainEntity {
 	public world: string;
 
 	authorizationPolicy: PinAuthorizationPolicy;
-	factory: EntityFactory<Pin, PinDocument, PinModel>;
+	factory: EntityFactory<Pin, PinModel>;
 
 	type: string = PIN;
 
 	constructor(@inject(INJECTABLE_TYPES.PinAuthorizationPolicy)
 					authorizationPolicy: PinAuthorizationPolicy,
 				@inject(INJECTABLE_TYPES.PinFactory)
-					factory: EntityFactory<Pin, PinDocument, PinModel>) {
+					factory: EntityFactory<Pin, PinModel>) {
 		authorizationPolicy.entity = this;
 		this.authorizationPolicy = authorizationPolicy;
 		this.factory = factory;
