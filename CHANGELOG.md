@@ -1,2 +1,3 @@
- ### RPG Tools v5.1.0 Changelog
- - Added ability to roll any combination of 3d dice in game
+ ### RPG Tools v5.1.1 Changelog
+ - Fixed paint and fog layer flickering
+ - Upped render distance of game renderer
