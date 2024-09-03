@@ -12,7 +12,7 @@ export const wikiFolderMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.createFolder(securityContext, name, parentFolderId, databaseContext);
+		return await databaseContext.openTransaction(async () => wikiFolderService.createFolder(securityContext, name, parentFolderId, databaseContext));
 	},
 	renameFolder: async (
 		_: any,
@@ -20,7 +20,7 @@ export const wikiFolderMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.renameFolder(securityContext, folderId, name, databaseContext);
+		return await databaseContext.openTransaction(async () => wikiFolderService.renameFolder(securityContext, folderId, name, databaseContext));
 	},
 	deleteFolder: async (
 		_: any,
@@ -28,7 +28,7 @@ export const wikiFolderMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.deleteFolder(securityContext, folderId, databaseContext);
+		return await databaseContext.openTransaction(async () => wikiFolderService.deleteFolder(securityContext, folderId, databaseContext));
 	},
 	moveFolder: async (
 		_: any,
@@ -36,7 +36,7 @@ export const wikiFolderMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
-		return await wikiFolderService.moveFolder(securityContext, folderId, parentFolderId, databaseContext);
+		return await databaseContext.openTransaction(async () => wikiFolderService.moveFolder(securityContext, folderId, parentFolderId, databaseContext));
 	},
 	importContent: async (
 		_: any,
@@ -47,6 +47,6 @@ export const wikiFolderMutations = {
 			INJECTABLE_TYPES.ContentImportService
 		);
 		const file = await zipFile;
-		return await importContentService.importContent(securityContext, folderId, file.createReadStream(), databaseContext);
+		return await databaseContext.openTransaction(async () => importContentService.importContent(securityContext, folderId, file.createReadStream(), databaseContext));
 	},
 };

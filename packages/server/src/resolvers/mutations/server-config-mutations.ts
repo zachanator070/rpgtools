@@ -15,7 +15,7 @@ export const serverConfigMutations = {
 		{databaseContext}: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await service.unlockServer(unlockCode, email, username, password, databaseContext);
+		return await databaseContext.openTransaction(async () => service.unlockServer(unlockCode, email, username, password, databaseContext));
 	},
 	generateRegisterCodes: async (
 		_: any,
@@ -23,7 +23,7 @@ export const serverConfigMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await service.generateRegisterCodes(securityContext, amount, databaseContext);
+		return await databaseContext.openTransaction(async () => service.generateRegisterCodes(securityContext, amount, databaseContext));
 	},
 	setDefaultWorld: async (
 		_: any,
@@ -31,6 +31,6 @@ export const serverConfigMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await service.setDefaultWorld(securityContext, worldId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.setDefaultWorld(securityContext, worldId, databaseContext));
 	},
 };

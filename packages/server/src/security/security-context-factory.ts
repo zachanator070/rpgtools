@@ -1,32 +1,28 @@
 import { User } from "../domain-entities/user";
-import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { injectable } from "inversify";
 import { Role } from "../domain-entities/role";
 import { SecurityContext } from "./security-context";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
-import {RoleRepository} from "../dal/repository/role-repository";
+import {DatabaseContext} from "../dal/database-context";
 
 @injectable()
 export class SecurityContextFactory {
 
-	@inject(INJECTABLE_TYPES.RoleRepository)
-	roleRepository: RoleRepository;
-
-	getRoles = async (user: User): Promise<Role[]> => {
+	getRoles = async (user: User, databaseContext: DatabaseContext): Promise<Role[]> => {
 		const roles: Role[] = [];
 		for (let roleId of user.roles) {
-			roles.push(await this.roleRepository.findOneById(roleId));
+			roles.push(await databaseContext.roleRepository.findOneById(roleId));
 		}
 		if (user.username !== ANON_USERNAME) {
-			roles.push(await this.roleRepository.findOneByName(LOGGED_IN));
+			roles.push(await databaseContext.roleRepository.findOneByName(LOGGED_IN));
 		}
-		roles.push(await this.roleRepository.findOneByName(EVERYONE));
+		roles.push(await databaseContext.roleRepository.findOneByName(EVERYONE));
 		return roles;
 	};
 
-	create = async (user: User): Promise<SecurityContext> => {
-		const roles = await this.getRoles(user);
+	create = async (user: User, databaseContext: DatabaseContext): Promise<SecurityContext> => {
+		const roles = await this.getRoles(user, databaseContext);
 		return new SecurityContext(user, roles);
 	};
 }

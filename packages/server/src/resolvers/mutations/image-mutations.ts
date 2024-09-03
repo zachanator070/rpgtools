@@ -13,6 +13,6 @@ export const imageMutations = {
 		file = await file;
 		const stream = file.createReadStream();
 		const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
-		return imageService.createImage(worldId, chunkify, file.filename, stream, databaseContext);
+		return await databaseContext.openTransaction(async () => imageService.createImage(worldId, chunkify, file.filename, stream, databaseContext));
 	},
 };

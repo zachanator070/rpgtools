@@ -8,14 +8,10 @@ import {PaginatedResult} from "../../paginated-result";
 import {injectable} from "inversify";
 import {v4 as uuidv4} from 'uuid';
 import {Repository} from "../../repository/repository";
-import {DatabaseSession} from "../../database-session";
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	implements Repository<Type> {
-
-    setDatabaseSession(session: DatabaseSession): void {
-    }
 
 	items = new Map<string, Type>();
 

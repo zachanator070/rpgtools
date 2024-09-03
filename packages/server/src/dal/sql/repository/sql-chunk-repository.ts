@@ -5,7 +5,6 @@ import AbstractSqlRepository from "./abstract-sql-repository";
 import ChunkModel from "../models/chunk-model";
 import ChunkFactory from "../../../domain-entities/factory/chunk-factory";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import {DatabaseSession} from "../../database-session";
 
 
 @injectable()

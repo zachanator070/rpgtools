@@ -1,7 +1,7 @@
 import { WIKI_READ, WORLD_READ} from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
 import { container } from "../../../../src/di/inversify";
-import {DbEngine, Factory} from "../../../../src/types";
+import {DbEngine} from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import {
 	ADD_USER_ROLE,
@@ -14,13 +14,11 @@ import {AuthorizationService} from "../../../../src/services/authorization-servi
 import {DefaultTestingContext} from "../../default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {accessControlList} from "../common-testing-assertions";
-import {DatabaseContext} from "../../../../src/dal/database-context";
 import RoleFactory from "../../../../src/domain-entities/factory/role-factory";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 
 describe("authorization-mutations", () => {
-	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
@@ -70,8 +68,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeUserPermission", async () => {
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await authorizationService.grantUserPermission(
 				testingContext.tester1SecurityContext,
 				WIKI_READ,
@@ -80,7 +77,6 @@ describe("authorization-mutations", () => {
 				testingContext.tester2._id,
 				databaseContext
 			);
-			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_USER_PERMISSION,
 				variables: {
@@ -150,8 +146,7 @@ describe("authorization-mutations", () => {
 		});
 
 		test("revokeRolePermission", async () => {
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await authorizationService.grantRolePermission(
 				testingContext.tester1SecurityContext,
 				WIKI_READ,
@@ -160,7 +155,6 @@ describe("authorization-mutations", () => {
 				testingContext.testRole._id,
 				databaseContext
 			);
-			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_ROLE_PERMISSION,
 				variables: {
@@ -182,8 +176,7 @@ describe("authorization-mutations", () => {
 
 		test("revokeRolePermission permission denied", async () => {
 			testingContext.mockSessionContextFactory.useAnonUser();
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await authorizationService.grantRolePermission(
 				testingContext.tester1SecurityContext,
 				WIKI_READ,
@@ -192,7 +185,6 @@ describe("authorization-mutations", () => {
 				testingContext.testRole._id,
 				databaseContext
 			);
-			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: REVOKE_ROLE_PERMISSION,
 				variables: {
@@ -236,10 +228,8 @@ describe("authorization-mutations", () => {
 
 		test("deleteRole", async () => {
 			const role = roleFactory.build({name: "other delete role", world: testingContext.world._id, acl: []});
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await databaseContext.roleRepository.create(role);
-			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_ROLE,
 				variables: { roleId: role._id.toString() },
@@ -257,10 +247,8 @@ describe("authorization-mutations", () => {
 		test("deleteRole permission denied", async () => {
 			testingContext.mockSessionContextFactory.useAnonUser();
 			const role = roleFactory.build({name: "other role", world: testingContext.world._id, acl: []});
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await databaseContext.roleRepository.create(role);
-			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_ROLE,
 				variables: { roleId: role._id.toString() },
@@ -331,10 +319,8 @@ describe("authorization-mutations", () => {
 		});
 
 		test("removeUserRole permission denied", async () => {
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await authorizationService.addUserRole(testingContext.tester1SecurityContext, testingContext.tester2._id, testingContext.testRole._id, databaseContext);
-			await session.commit();
 			testingContext.mockSessionContextFactory.useAnonUser();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: REMOVE_USER_ROLE,

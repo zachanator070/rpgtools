@@ -10,6 +10,6 @@ export const userResolvers = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<UserService>(INJECTABLE_TYPES.UserService);
-		return service.setCurrentWorld(securityContext, worldId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.setCurrentWorld(securityContext, worldId, databaseContext));
 	},
 };

@@ -1,7 +1,6 @@
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
-import {DbEngine, Factory} from "../../../../src/types";
-import {DatabaseContext} from "../../../../src/dal/database-context";
+import {DbEngine} from "../../../../src/types";
 import {DefaultTestingContext, testGamePassword} from "../../default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {GameService} from "../../../../src/services/game-service";
@@ -25,7 +24,6 @@ process.env.TEST_SUITE = "game-mutations-test";
 
 describe("game mutations", () => {
     const gameService = container.get<GameService>(INJECTABLE_TYPES.GameService);
-    const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
     const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
     const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
@@ -86,11 +84,9 @@ describe("game mutations", () => {
 
                 test('set game map', async () => {
                     const filename = "tests/integration/resolvers/mutations/testmap.png";
-                    const session = await dbEngine.createDatabaseSession();
-                    const databaseContext = databaseContextFactory({session});
+                    const databaseContext = await dbEngine.createDatabaseContext();
                     const mapImage = await imageService.createImage(testingContext.world._id, true, filename, fs.createReadStream(filename), databaseContext);
                     await wikiPageService.updatePlace(testingContext.tester1SecurityContext, testingContext.world.wikiPage, 50, databaseContext, mapImage._id);
-                    await session.commit();
                     const result = await testingContext.server.executeGraphQLQuery({
                         query: SET_GAME_MAP,
                         variables: { gameId: testingContext.game._id, placeId: testingContext.world.wikiPage},
@@ -282,10 +278,8 @@ describe("game mutations", () => {
                 });
 
                 test('set character order', async () => {
-                    const session = await dbEngine.createDatabaseSession();
-                    const databaseContext = databaseContextFactory({session});
+                    const databaseContext = await dbEngine.createDatabaseContext();
                     await gameService.joinGame(testingContext.tester2SecurityContext, testingContext.game._id, testGamePassword, testingContext.tester2.username, databaseContext);
-                    await session.commit();
 
                     const result = await testingContext.server.executeGraphQLQuery({
                         query: SET_CHARACTER_ORDER,
@@ -380,10 +374,8 @@ describe("game mutations", () => {
 
                 describe('while having joined a game', () => {
                     beforeEach(async () => {
-                        const session = await dbEngine.createDatabaseSession();
-                        const databaseContext = databaseContextFactory({session});
+                        const databaseContext = await dbEngine.createDatabaseContext();
                         await gameService.joinGame(testingContext.tester2SecurityContext, testingContext.game._id, testGamePassword, testingContext.tester2.username, databaseContext);
-                        await session.commit();
                     });
 
                     test('leave game', async () => {
@@ -452,8 +444,7 @@ describe("game mutations", () => {
                             filename: filename,
                             createReadStream: () => fs.createReadStream(filename),
                         };
-                        const session = await dbEngine.createDatabaseSession();
-                        const databaseContext = databaseContextFactory({session});
+                        const databaseContext = await dbEngine.createDatabaseContext();
                         const testModel = await modelService.createModel(
                             testingContext.tester1SecurityContext,
                             testingContext.world._id,
@@ -465,7 +456,6 @@ describe("game mutations", () => {
                             "some notes",
                             databaseContext
                         );
-                        await session.commit();
 
                         const result = await testingContext.server.executeGraphQLQuery({
                             query: ADD_MODEL,

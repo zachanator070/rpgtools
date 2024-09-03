@@ -21,7 +21,6 @@ import {WikiPageRepository} from "./dal/repository/wiki-page-repository";
 import {WorldRepository} from "./dal/repository/world-repository";
 import {ArticleRepository} from "./dal/repository/article-repository";
 import {DatabaseContext} from "./dal/database-context";
-import {DatabaseSession} from "./dal/database-session";
 import {Model} from "sequelize";
 import SqlModel from "./dal/sql/models/sql-model";
 import {CalendarRepository} from "./dal/repository/calendar-repository";
@@ -69,7 +68,7 @@ export interface SessionContextFactory {
 }
 
 export interface Seeder {
-	seed: () => Promise<void>;
+	seed: (databaseContext: DatabaseContext) => Promise<void>;
 }
 
 export interface EntityAuthorizationPolicy {
@@ -103,7 +102,7 @@ export interface RepositoryAccessor {
 	strokeRepository: StrokeRepository;
 }
 
-export type Factory<T> = (args: any) => T;
+export type Factory<T> = (args?: any) => T;
 
 export interface Archive extends RepositoryAccessor {
 
@@ -157,5 +156,5 @@ export interface DbEngine {
 	setDbHost: (host: string) => void;
 	changeDb: (name: string) => Promise<void>;
 
-	createDatabaseSession(): Promise<DatabaseSession>;
+	createDatabaseContext(): Promise<DatabaseContext>;
 }

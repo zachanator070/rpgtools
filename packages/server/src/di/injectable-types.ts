@@ -1,4 +1,3 @@
-import {DatabaseContext} from "../dal/database-context";
 
 export const INJECTABLE_TYPES = {
 
@@ -82,8 +81,6 @@ export const INJECTABLE_TYPES = {
 	StrokeRepository: Symbol.for('StrokeRepository'),
 	FogStrokeRepository: Symbol.for('FogStrokeRepository'),
 
-	SqlPermissionControlledRepository: Symbol.for('SqlPermissionControlledRepository'),
-
 	// authorization policies
 	ArticleAuthorizationPolicy: Symbol.for("ArticleAuthorizationPolicy"),
 	ChunkAuthorizationPolicy: Symbol.for("ChunkAuthorizationPolicy"),
@@ -125,6 +122,13 @@ export const INJECTABLE_TYPES = {
 	ArchiveWikiPageRepository: Symbol.for("ArchiveWikiPageRepository"),
 	ArchiveWorldRepository: Symbol.for("ArchiveWorldRepository"),
 	ArchiveFileRepository: Symbol.for("ArchiveFileRepository"),
+	ArchiveEventWikiRepository: Symbol.for("ArchiveEventWikiRepository"),
+	ArchiveCalendarRepository: Symbol.for("ArchiveCalendarRepository"),
+	ArchiveFogStrokeRepository: Symbol.for("ArchiveFogStrokeRepository"),
+	ArchiveStrokeRepository: Symbol.for("ArchiveStrokeRepository"),
+
+	//sql helpers
+	SqlPermissionControlledRepository: Symbol.for("SqlPermissionControlledRepository"),
 
 	// services
 	AuthenticationService: Symbol.for("AuthenticationService"),
@@ -142,7 +146,7 @@ export const INJECTABLE_TYPES = {
 	WikiPageService: Symbol.for("WikiPageService"),
 	WorldService: Symbol.for("WorldService"),
 
-	// session contexts
+	// request contexts
 	SessionContextFactory: Symbol.for("SessionContextFactory"),
 	SecurityContextFactory: Symbol.for("SecurityContextFactory"),
 
@@ -197,10 +201,6 @@ export const INJECTABLE_TYPES = {
 	// seeders
 	RoleSeeder: Symbol.for("RoleSeeder"),
 	ServerConfigSeeder: Symbol.for("ServerConfigSeeder"),
-
-	// database context
-	DatabaseContext: Symbol.for("DatabaseContext"),
-	DatabaseContextFactory: Symbol.for("DatabaseContextFactory"),
 
 	// repo mapper
 	EntityMapper: Symbol.for("EntityMapper"),

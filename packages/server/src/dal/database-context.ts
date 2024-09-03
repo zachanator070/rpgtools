@@ -17,59 +17,36 @@ import {UserRepository} from "./repository/user-repository";
 import {WikiFolderRepository} from "./repository/wiki-folder-repository";
 import {WikiPageRepository} from "./repository/wiki-page-repository";
 import {WorldRepository} from "./repository/world-repository";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import {DatabaseSession} from "./database-session";
 import EventWikiRepository from "./repository/event-wiki-repository";
 import {CalendarRepository} from "./repository/calendar-repository";
 import FogStrokeRepository from "./repository/fog-stroke-repository";
 import StrokeRepository from "./repository/stroke-repository";
 
 @injectable()
-export class DatabaseContext implements RepositoryAccessor {
+export abstract class DatabaseContext implements RepositoryAccessor {
 
-    @inject(INJECTABLE_TYPES.ArticleRepository)
     articleRepository: ArticleRepository;
-    @inject(INJECTABLE_TYPES.ChunkRepository)
     chunkRepository: ChunkRepository;
-    @inject(INJECTABLE_TYPES.FileRepository)
     fileRepository: FileRepository;
-    @inject(INJECTABLE_TYPES.GameRepository)
     gameRepository: GameRepository;
-    @inject(INJECTABLE_TYPES.ImageRepository)
     imageRepository: ImageRepository;
-    @inject(INJECTABLE_TYPES.ItemRepository)
     itemRepository: ItemRepository;
-    @inject(INJECTABLE_TYPES.ModelRepository)
     modelRepository: ModelRepository;
-    @inject(INJECTABLE_TYPES.MonsterRepository)
     monsterRepository: MonsterRepository;
-    @inject(INJECTABLE_TYPES.PersonRepository)
     personRepository: PersonRepository;
-    @inject(INJECTABLE_TYPES.PinRepository)
     pinRepository: PinRepository;
-    @inject(INJECTABLE_TYPES.PlaceRepository)
     placeRepository: PlaceRepository;
-    @inject(INJECTABLE_TYPES.RoleRepository)
     roleRepository: RoleRepository;
-    @inject(INJECTABLE_TYPES.ServerConfigRepository)
     serverConfigRepository: ServerConfigRepository;
-    @inject(INJECTABLE_TYPES.UserRepository)
     userRepository: UserRepository;
-    @inject(INJECTABLE_TYPES.WikiFolderRepository)
     wikiFolderRepository: WikiFolderRepository;
-    @inject(INJECTABLE_TYPES.WikiPageRepository)
     wikiPageRepository: WikiPageRepository;
-    @inject(INJECTABLE_TYPES.WorldRepository)
     worldRepository: WorldRepository;
-    @inject(INJECTABLE_TYPES.EventWikiRepository)
     eventRepository: EventWikiRepository;
-    @inject(INJECTABLE_TYPES.CalendarRepository)
     calendarRepository: CalendarRepository;
-    @inject(INJECTABLE_TYPES.FogStrokeRepository)
     fogStrokeRepository: FogStrokeRepository;
-    @inject(INJECTABLE_TYPES.StrokeRepository)
     strokeRepository: StrokeRepository;
 
-    databaseSession: DatabaseSession;
+    abstract openTransaction(callback: () => any): Promise<void>;
 
 }

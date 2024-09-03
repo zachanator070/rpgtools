@@ -17,7 +17,7 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.createWorld(name, isPublic, securityContext, databaseContext);
+		return await databaseContext.openTransaction(async () => service.createWorld(name, isPublic, securityContext, databaseContext));
 	},
 
 	renameWorld: async (
@@ -26,7 +26,7 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.renameWorld(securityContext, worldId, newName, databaseContext);
+		return await databaseContext.openTransaction(async () => service.renameWorld(securityContext, worldId, newName, databaseContext));
 	},
 	createPin: async (
 		_: any,
@@ -34,7 +34,7 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.createPin(securityContext, mapId, wikiId, x, y, databaseContext);
+		return await databaseContext.openTransaction(async () => service.createPin(securityContext, mapId, wikiId, x, y, databaseContext));
 	},
 	updatePin: async (
 		_: any,
@@ -42,11 +42,11 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.updatePin(securityContext, pinId, pageId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.updatePin(securityContext, pinId, pageId, databaseContext));
 	},
 	deletePin: async (_: any, { pinId }: { pinId: string }, { securityContext, databaseContext }: SessionContext) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.deletePin(securityContext, pinId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.deletePin(securityContext, pinId, databaseContext));
 	},
 	load5eContent: async (
 		_: any,
@@ -56,7 +56,7 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<ContentImportService>(INJECTABLE_TYPES.ContentImportService);
-		return await service.import5eSrd(securityContext, worldId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.import5eSrd(securityContext, worldId, databaseContext));
 	},
 	upsertCalendar: async (
 		_: any,
@@ -64,7 +64,7 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.upsertCalendar(calendarId, world, name, ages, securityContext, databaseContext);
+		return await databaseContext.openTransaction(async () => service.upsertCalendar(calendarId, world, name, ages, securityContext, databaseContext));
 	},
 	deleteCalendar: async (
 		_: any,
@@ -72,6 +72,6 @@ export const worldMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
-		return await service.deleteCalendar(calendarId, securityContext, databaseContext);
+		return await databaseContext.openTransaction(async () => service.deleteCalendar(calendarId, securityContext, databaseContext));
 	},
 };

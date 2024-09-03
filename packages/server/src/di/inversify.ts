@@ -123,8 +123,6 @@ import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 import {WikiPageRepository} from "../dal/repository/wiki-page-repository";
 import {WorldRepository} from "../dal/repository/world-repository";
 import {ArticleRepository} from "../dal/repository/article-repository";
-import {DatabaseContext} from "../dal/database-context";
-import {DatabaseSession} from "../dal/database-session";
 import PostgresDbEngine from "../dal/sql/postgres-db-engine";
 import ArticleFactory from "../domain-entities/factory/article-factory";
 import ChunkFactory from "../domain-entities/factory/chunk-factory";
@@ -143,6 +141,38 @@ import UserFactory from "../domain-entities/factory/user-factory";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 import WorldFactory from "../domain-entities/factory/world-factory";
 import AclFactory from "../domain-entities/factory/acl-factory";
+import WikiPageFactory from "../domain-entities/factory/wiki-page-factory";
+import CharacterFactory from "../domain-entities/factory/game/character-factory";
+import CharacterAttributeFactory from "../domain-entities/factory/game/character-attribute-factory";
+import PathNodeFactory from "../domain-entities/factory/game/path-node-factory";
+import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
+import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
+import MessageFactory from "../domain-entities/factory/game/message-factory";
+import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory";
+import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine";
+import SqliteDbEngine from "../dal/sql/sqlite-db-engine";
+import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine";
+import {EventWiki} from "../domain-entities/event-wiki";
+import EventWikiFactory from "../domain-entities/factory/event-wiki-factory";
+import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory";
+import MonthFactory from "../domain-entities/factory/calendar/month-factory";
+import AgeFactory from "../domain-entities/factory/calendar/age-factory";
+import CalendarFactory from "../domain-entities/factory/calendar-factory";
+import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
+import Calendar from "../domain-entities/calendar";
+import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
+import {EventWikiDataLoader} from "../dal/dataloaders/EventWikiDataLoader";
+import FogStrokeAuthorization from "../security/policy/fog-stroke-authorization-policy";
+import StrokeAuthorizationPolicy from "../security/policy/stroke-authorization-policy";
+import EventWikiRepository from "../dal/repository/event-wiki-repository";
+import InMemoryEventWikiRepository from "../dal/in-memory/repositories/in-memory-event-wiki-repository";
+import {CalendarRepository} from "../dal/repository/calendar-repository";
+import InMemoryCalendarRepository from "../dal/in-memory/repositories/in-memory-calendar-repository";
+import FogStrokeRepository from "../dal/repository/fog-stroke-repository";
+import InMemoryFogStrokeRepository from "../dal/in-memory/repositories/in-memory-fog-stroke-repository";
+import StrokeRepository from "../dal/repository/stroke-repository";
+import InMemoryStrokeRepository from "../dal/in-memory/repositories/in-memory-stroke-repository";
+import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permission-controlled-repository";
 import SqlArticleRepository from "../dal/sql/repository/sql-article-repository";
 import SqlChunkRepository from "../dal/sql/repository/sql-chunk-repository";
 import SqlFileRepository from "../dal/sql/repository/sql-file-repository";
@@ -160,38 +190,8 @@ import SqlUserRepository from "../dal/sql/repository/sql-user-repository";
 import SqlWikiFolderRepository from "../dal/sql/repository/sql-wiki-folder-repository";
 import SqlWikiPageRepository from "../dal/sql/repository/sql-wiki-page-repository";
 import SqlWorldRepository from "../dal/sql/repository/sql-world-repository";
-import WikiPageFactory from "../domain-entities/factory/wiki-page-factory";
-import CharacterFactory from "../domain-entities/factory/game/character-factory";
-import CharacterAttributeFactory from "../domain-entities/factory/game/character-attribute-factory";
-import PathNodeFactory from "../domain-entities/factory/game/path-node-factory";
-import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
-import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
-import MessageFactory from "../domain-entities/factory/game/message-factory";
-import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory";
-import SqlPermissionControlledRepository from "../dal/sql/repository/sql-permission-controlled-repository";
-import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine";
-import SqliteDbEngine from "../dal/sql/sqlite-db-engine";
-import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine";
-import {EventWiki} from "../domain-entities/event-wiki";
-import EventWikiFactory from "../domain-entities/factory/event-wiki-factory";
-import EventWikiRepository from "../dal/repository/event-wiki-repository";
-import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-repository";
-import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory";
-import MonthFactory from "../domain-entities/factory/calendar/month-factory";
-import AgeFactory from "../domain-entities/factory/calendar/age-factory";
-import {CalendarRepository} from "../dal/repository/calendar-repository";
 import SqlCalendarRepository from "../dal/sql/repository/sql-calendar-repository";
-import InMemoryEventWikiRepository from "../dal/in-memory/repositories/in-memory-event-wiki-repository";
-import InMemoryCalendarRepository from "../dal/in-memory/repositories/in-memory-calendar-repository";
-import CalendarFactory from "../domain-entities/factory/calendar-factory";
-import CalendarDataLoader from "../dal/dataloaders/calendar-data-loader";
-import Calendar from "../domain-entities/calendar";
-import CalendarAuthorizationPolicy from "../security/policy/calendar-authorization-policy";
-import {EventWikiDataLoader} from "../dal/dataloaders/EventWikiDataLoader";
-import FogStrokeAuthorization from "../security/policy/fog-stroke-authorization-policy";
-import StrokeAuthorizationPolicy from "../security/policy/stroke-authorization-policy";
-import InMemoryFogStrokeRepository from "../dal/in-memory/repositories/in-memory-fog-stroke-repository";
-import InMemoryStrokeRepository from "../dal/in-memory/repositories/in-memory-stroke-repository";
+import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-repository";
 import SqlFogStrokeRepository from "../dal/sql/repository/sql-fog-stroke-repository";
 import SqlStrokeRepository from "../dal/sql/repository/sql-stroke-repository";
 
@@ -352,10 +352,9 @@ const bindAll = () => {
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(SqlWorldRepository);
 		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(SqlEventWikiRepository);
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(SqlCalendarRepository);
-		container.bind<SqlFogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(SqlFogStrokeRepository);
-		container.bind<SqlStrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(SqlStrokeRepository);
+		container.bind<FogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(SqlFogStrokeRepository);
+		container.bind<StrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(SqlStrokeRepository);
 
-		container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 	} else {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(InMemoryArticleRepository);
 		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(InMemoryChunkRepository);
@@ -382,8 +381,8 @@ const bindAll = () => {
 		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
 		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(InMemoryEventWikiRepository);
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository);
-		container.bind<InMemoryFogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(InMemoryFogStrokeRepository)
-		container.bind<InMemoryStrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(InMemoryStrokeRepository)
+		container.bind<FogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(InMemoryFogStrokeRepository)
+		container.bind<StrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(InMemoryStrokeRepository)
 	}
 
 // authorization rule sets
@@ -488,6 +487,21 @@ const bindAll = () => {
 	container
 		.bind<WorldRepository>(INJECTABLE_TYPES.ArchiveWorldRepository)
 		.to(InMemoryWorldRepository);
+	container
+		.bind<EventWikiRepository>(INJECTABLE_TYPES.ArchiveEventWikiRepository)
+		.to(InMemoryEventWikiRepository);
+	container
+		.bind<CalendarRepository>(INJECTABLE_TYPES.ArchiveCalendarRepository)
+		.to(InMemoryCalendarRepository);
+	container
+		.bind<FogStrokeRepository>(INJECTABLE_TYPES.ArchiveFogStrokeRepository)
+		.to(InMemoryFogStrokeRepository);
+	container
+		.bind<StrokeRepository>(INJECTABLE_TYPES.ArchiveStrokeRepository)
+		.to(InMemoryStrokeRepository);
+
+// sql helpers
+	container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
 
 // services
 	container
@@ -516,7 +530,7 @@ const bindAll = () => {
 	container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldService);
 	container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleService);
 
-// session contexts
+// request contexts
 	container
 		.bind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)
 		.to(ExpressSessionContextFactory);
@@ -585,31 +599,6 @@ const bindAll = () => {
 // seeders
 	container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);
 	container.bind<ServerConfigSeeder>(INJECTABLE_TYPES.ServerConfigSeeder).to(ServerConfigSeeder);
-
-// database context
-	container.bind<DatabaseContext>(INJECTABLE_TYPES.DatabaseContext).to(DatabaseContext);
-	container.bind<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory).toFactory((context) => ({session}: {session: DatabaseSession}) => {
-		const databaseContext = context.container.get<DatabaseContext>(INJECTABLE_TYPES.DatabaseContext);
-		databaseContext.articleRepository.setDatabaseSession(session);
-		databaseContext.chunkRepository.setDatabaseSession(session);
-		databaseContext.fileRepository.setDatabaseSession(session);
-		databaseContext.gameRepository.setDatabaseSession(session);
-		databaseContext.imageRepository.setDatabaseSession(session);
-		databaseContext.itemRepository.setDatabaseSession(session);
-		databaseContext.modelRepository.setDatabaseSession(session);
-		databaseContext.monsterRepository.setDatabaseSession(session);
-		databaseContext.personRepository.setDatabaseSession(session);
-		databaseContext.pinRepository.setDatabaseSession(session);
-		databaseContext.placeRepository.setDatabaseSession(session);
-		databaseContext.roleRepository.setDatabaseSession(session);
-		databaseContext.serverConfigRepository.setDatabaseSession(session);
-		databaseContext.userRepository.setDatabaseSession(session);
-		databaseContext.wikiFolderRepository.setDatabaseSession(session);
-		databaseContext.wikiPageRepository.setDatabaseSession(session);
-		databaseContext.worldRepository.setDatabaseSession(session);
-		databaseContext.databaseSession = session;
-		return databaseContext;
-	})
 
 // mappers
 	container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);

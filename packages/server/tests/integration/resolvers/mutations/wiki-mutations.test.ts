@@ -1,5 +1,5 @@
 import fs from "fs";
-import {ARTICLE, EVENT_WIKI, PLACE} from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI, PLACE} from "@rpgtools/common/src/type-constants";
 import {DefaultTestingContext} from "../../default-testing-context";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
@@ -7,16 +7,14 @@ import {Image} from "../../../../src/domain-entities/image";
 import {FileUpload, Upload} from "graphql-upload";
 import {CREATE_WIKI, DELETE_WIKI, UPDATE_EVENT, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 import {ImageService} from "../../../../src/services/image-service";
-import {DbEngine, Factory} from "../../../../src/types";
+import {DbEngine} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {DatabaseContext} from "../../../../src/dal/database-context";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 
 describe("wiki page mutations", () => {
 	const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
-	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 	const wikiPageService = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
@@ -240,10 +238,8 @@ describe("wiki page mutations", () => {
 				};
 				let image: Image = null;
 				beforeEach(async () => {
-					const session = await dbEngine.createDatabaseSession();
-					const databaseContext = databaseContextFactory({session});
+					const databaseContext = await dbEngine.createDatabaseContext();
 					image = await imageService.createImage(testingContext.world._id, false, testFile.filename, testFile.createReadStream(), databaseContext);
-					await session.commit();
 				});
 
 				test("update place", async () => {
@@ -335,16 +331,13 @@ describe("wiki page mutations", () => {
 			describe('with new event wiki', () => {
 				let eventId: string = null;
 				beforeEach(async () => {
-					const session = await dbEngine.createDatabaseSession();
-					const databaseContext = databaseContextFactory({session});
+					const databaseContext = await dbEngine.createDatabaseContext();
 					if(eventId) {
 						await wikiPageService.deleteWiki(testingContext.currentUserSecurityContext, eventId, databaseContext);
 					}
 					await wikiPageService.createWiki(testingContext.currentUserSecurityContext, 'event wiki', testingContext.world.rootFolder, databaseContext);
 					eventId = (await databaseContext.wikiPageRepository.findOneByNameAndWorld('event wiki', testingContext.world._id))._id;
 					await wikiPageService.updateWiki(testingContext.currentUserSecurityContext, eventId, databaseContext, undefined, undefined, undefined, EVENT_WIKI);
-
-					await session.commit();
 				});
 
 				test('update event', async () => {

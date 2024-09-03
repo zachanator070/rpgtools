@@ -84,13 +84,13 @@ export class ZipArchive implements Archive {
 	wikiPageRepository: WikiPageRepository;
 	@inject(INJECTABLE_TYPES.ArchiveWorldRepository)
 	worldRepository: WorldRepository;
-	@inject(INJECTABLE_TYPES.EventWikiRepository)
+	@inject(INJECTABLE_TYPES.ArchiveEventWikiRepository)
 	eventRepository: EventWikiRepository;
-	@inject(INJECTABLE_TYPES.CalendarRepository)
+	@inject(INJECTABLE_TYPES.ArchiveCalendarRepository)
 	calendarRepository: CalendarRepository;
-	@inject(INJECTABLE_TYPES.FogStrokeAuthorizationPolicy)
+	@inject(INJECTABLE_TYPES.ArchiveFogStrokeRepository)
 	fogStrokeRepository: FogStrokeRepository;
-	@inject(INJECTABLE_TYPES.StrokeAuthorizationPolicy)
+	@inject(INJECTABLE_TYPES.ArchiveStrokeRepository)
 	strokeRepository: StrokeRepository;
 
 	archive = archiver("zip", {

@@ -11,7 +11,7 @@ export const wikiMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.createWiki(securityContext, name, folderId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.createWiki(securityContext, name, folderId, databaseContext));
 	},
 	updateWiki: async (
 		_: any,
@@ -26,7 +26,7 @@ export const wikiMutations = {
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 		content = await content;
-		return await service.updateWiki(
+		return await databaseContext.openTransaction(async () => service.updateWiki(
 			securityContext,
 			wikiId,
 			databaseContext,
@@ -34,7 +34,7 @@ export const wikiMutations = {
 			name,
 			coverImageId,
 			type
-		);
+		));
 	},
 	deleteWiki: async (
 		_: any,
@@ -42,7 +42,7 @@ export const wikiMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.deleteWiki(securityContext, wikiId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.deleteWiki(securityContext, wikiId, databaseContext));
 	},
 	updatePlace: async (
 		_: any,
@@ -54,7 +54,7 @@ export const wikiMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.updatePlace(securityContext, placeId, pixelsPerFoot, databaseContext, mapImageId);
+		return await databaseContext.openTransaction(async () => service.updatePlace(securityContext, placeId, pixelsPerFoot, databaseContext, mapImageId));
 	},
 	updateModeledWiki: async (
 		_: any,
@@ -62,7 +62,7 @@ export const wikiMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.updateModeledWiki(securityContext, wikiId, model, color, databaseContext);
+		return await databaseContext.openTransaction(async () => service.updateModeledWiki(securityContext, wikiId, model, color, databaseContext));
 	},
 	updateEventWiki: async(
 		_: any,
@@ -90,7 +90,7 @@ export const wikiMutations = {
 		{securityContext, databaseContext}: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.updateEventWiki(securityContext, wikiId, calendarId, age, year, month, day, hour, minute, second, databaseContext);
+		return await databaseContext.openTransaction(async () => service.updateEventWiki(securityContext, wikiId, calendarId, age, year, month, day, hour, minute, second, databaseContext));
 	},
 	moveWiki: async (
 		_: any,
@@ -98,6 +98,6 @@ export const wikiMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
-		return await service.moveWiki(securityContext, wikiId, folderId, databaseContext);
+		return await databaseContext.openTransaction(async () => service.moveWiki(securityContext, wikiId, folderId, databaseContext));
 	},
 };
