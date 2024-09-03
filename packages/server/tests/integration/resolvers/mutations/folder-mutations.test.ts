@@ -5,16 +5,14 @@ import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import {CREATE_FOLDER, DELETE_FOLDER, RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
 import {AuthorizationService} from "../../../../src/services/authorization-service";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
-import {DbEngine, Factory} from "../../../../src/types";
+import {DbEngine} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {DefaultTestingContext} from "../../default-testing-context";
-import {DatabaseContext} from "../../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "folder-mutations-test";
 
 describe("folder-mutations", () => {
 
-	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
@@ -142,8 +140,7 @@ describe("folder-mutations", () => {
 			beforeEach(async () => {
 				await testingContext.reset();
 				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
-				const session = await dbEngine.createDatabaseSession();
-				const databaseContext = databaseContextFactory({session});
+				const databaseContext = await dbEngine.createDatabaseContext();
 				await wikiPageService.createWiki(testingContext.tester1SecurityContext, "new page", testingContext.newFolder._id, databaseContext);
 				await authorizationService.grantUserPermission(
 					testingContext.tester1SecurityContext,
@@ -153,7 +150,6 @@ describe("folder-mutations", () => {
 					testingContext.tester2._id,
 					databaseContext
 				);
-				await session.commit();
 				testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 			});
 

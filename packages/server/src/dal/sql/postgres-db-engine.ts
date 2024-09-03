@@ -1,10 +1,13 @@
 import {DbEngine} from "../../types";
 import {inject, injectable} from "inversify";
 import {Sequelize} from "sequelize";
-import {DatabaseSession} from "../database-session";
 import pg from 'pg';
 import {INJECTABLE_TYPES} from "../../di/injectable-types";
 import AbstractSqlDbEngine from "./abstract-sql-db-engine";
+import {DatabaseContext} from "../database-context";
+import cls from 'cls-hooked';
+const namespace = cls.createNamespace('rpgtools');
+Sequelize.useCLS(namespace);
 
 @injectable()
 export default class PostgresDbEngine implements DbEngine {
@@ -95,8 +98,8 @@ export default class PostgresDbEngine implements DbEngine {
         });
     }
 
-    async createDatabaseSession(): Promise<DatabaseSession> {
-        return new DatabaseSession(null);
+    createDatabaseContext(): Promise<DatabaseContext> {
+        return this.abstractEngine.createDatabaseContext(this.connection);
     }
 
 }

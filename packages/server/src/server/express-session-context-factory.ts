@@ -1,6 +1,5 @@
 import {
 	CookieManager, DbEngine,
-	Factory,
 	SessionContext,
 	SessionContextFactory,
 } from "../types";
@@ -17,7 +16,6 @@ import {
 	REFRESH_TOKEN_MAX_AGE,
 } from "../services/authentication-service";
 import {DatabaseContext} from "../dal/database-context";
-import {DatabaseSession} from "../dal/database-session";
 import UserFactory from "../domain-entities/factory/user-factory";
 
 @injectable()
@@ -31,17 +29,12 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 	@inject(INJECTABLE_TYPES.UserFactory)
 	userFactory: UserFactory;
 
-	@inject(INJECTABLE_TYPES.DatabaseContextFactory)
-	databaseContextFactory: Factory<DatabaseContext>
-
 	@inject(INJECTABLE_TYPES.DbEngine)
 	dbEngine: DbEngine;
 
 	create = async (accessToken: string, refreshToken: string, cookieManager?: CookieManager): Promise<SessionContext> => {
 
-		const databaseSession: DatabaseSession = await this.dbEngine.createDatabaseSession();
-
-		const databaseContext: DatabaseContext = this.databaseContextFactory({session: databaseSession});
+		const databaseContext: DatabaseContext = await this.dbEngine.createDatabaseContext();
 
 		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, databaseContext);
 
@@ -81,7 +74,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 			}
 		}
 
-		const securityContext = await this.securityContextFactory.create(currentUser);
+		const securityContext = await this.securityContextFactory.create(currentUser, databaseContext);
 
 		return {
 			cookieManager,

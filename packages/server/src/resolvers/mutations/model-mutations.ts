@@ -27,7 +27,7 @@ export const modelMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
-		return await modelService.createModel(
+		return await databaseContext.openTransaction(async () => modelService.createModel(
 			securityContext,
 			worldId,
 			name,
@@ -37,7 +37,7 @@ export const modelMutations = {
 			height,
 			notes,
 			databaseContext
-		);
+		));
 	},
 	updateModel: async (
 		_: any,
@@ -61,7 +61,7 @@ export const modelMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
-		return await modelService.updateModel(
+		return await databaseContext.openTransaction(async () => modelService.updateModel(
 			securityContext,
 			modelId,
 			name,
@@ -71,7 +71,7 @@ export const modelMutations = {
 			notes,
 			databaseContext,
 			file
-		);
+		));
 	},
 	deleteModel: async (
 		_: any,
@@ -79,6 +79,6 @@ export const modelMutations = {
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const modelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
-		return await modelService.deleteModel(securityContext, modelId, databaseContext);
+		return await databaseContext.openTransaction(async () => modelService.deleteModel(securityContext, modelId, databaseContext));
 	},
 };

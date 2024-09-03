@@ -1,7 +1,6 @@
 import sequelize, {ModelStatic} from "sequelize";
 import {DomainEntity, EntityFactory} from "../../../types";
 import SqlModel from "../models/sql-model";
-import {DatabaseSession} from "../../database-session";
 import {PaginatedResult} from "../../paginated-result";
 import {injectable} from "inversify";
 import {v4} from "uuid";
@@ -14,9 +13,6 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
     abstract staticModel: ModelStatic<any>;
 
     PAGE_LIMIT = 10;
-
-    setDatabaseSession(session: DatabaseSession): void {
-    }
 
     async create(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);

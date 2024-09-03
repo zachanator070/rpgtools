@@ -1,15 +1,13 @@
 import { container } from "../../../../src/di/inversify";
-import {DbEngine, Factory} from "../../../../src/types";
+import {DbEngine} from "../../../../src/types";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
 import {DefaultTestingContext} from "../../default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {LOGIN_QUERY, REGISTER_MUTATION} from "@rpgtools/common/src/gql-mutations";
-import {DatabaseContext} from "../../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 
 describe("authentication-mutations", () => {
-	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
@@ -51,12 +49,10 @@ describe("authentication-mutations", () => {
 	describe("with good register code available", () => {
 
 		beforeEach(async () => {
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session})
+			const databaseContext = await dbEngine.createDatabaseContext();
 			const serverConfig = await databaseContext.serverConfigRepository.findOne();
 			serverConfig.registerCodes.push("asdf");
 			await databaseContext.serverConfigRepository.update(serverConfig);
-			await session.commit();
 		});
 
 		test("register good", async () => {

@@ -10,8 +10,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { inject, injectable } from "inversify";
 import {
 	ApiServer,
-	CookieManager, SessionContext,
-	SessionContextFactory
+	CookieManager,
 } from "../types";
 import { graphqlUploadExpress } from "graphql-upload";
 import { ModelRouter } from "../routers/model-router";
@@ -23,14 +22,12 @@ import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import {GraphQLRequest, GraphQLRequestContextWillSendResponse} from "apollo-server-types";
+import {GraphQLRequest} from "apollo-server-types";
 import cors from "cors";
 import {ExpressCookieManager} from "./express-cookie-manager";
-import {RoleRepository} from "../dal/repository/role-repository";
-import {ServerConfigRepository} from "../dal/repository/server-config-repository";
-import {UserRepository} from "../dal/repository/user-repository";
-import {ApolloServerPlugin, BaseContext, GraphQLRequestListener} from 'apollo-server-plugin-base';
 import * as url from 'url';
+import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware";
+import {ExpressSessionContextFactory} from "./express-session-context-factory";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -41,17 +38,10 @@ export class ExpressApiServer implements ApiServer {
 	gqlServer: ApolloServer = null;
 	webSocketServer: WebSocketServer = null;
 
-	@inject(INJECTABLE_TYPES.RoleRepository)
-	roleRepository: RoleRepository;
-	@inject(INJECTABLE_TYPES.UserRepository)
-	userRepository: UserRepository;
-	@inject(INJECTABLE_TYPES.ServerConfigRepository)
-	serverConfigRepository: ServerConfigRepository;
+	// use constructor injection so middleware can capture injectables
+	constructor(@inject(INJECTABLE_TYPES.SessionContextFactory)
+					sessionContextFactory: ExpressSessionContextFactory) {
 
-	@inject(INJECTABLE_TYPES.SessionContextFactory)
-	sessionContextFactory: SessionContextFactory
-
-	constructor() {
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
 
 		this.expressServer = express();
@@ -66,20 +56,9 @@ export class ExpressApiServer implements ApiServer {
 		const serverCleanup = useServer({
 			schema,
 			context: (params) => {
-				return this.sessionContextFactory.create(params.connectionParams.accessToken as string, params.connectionParams.refreshToken as string, null);
+				return sessionContextFactory.create(params.connectionParams.accessToken as string, params.connectionParams.refreshToken as string, null);
 			},
 		}, this.webSocketServer);
-		const closeSessionPlugin: ApolloServerPlugin = {
-			requestDidStart: async (): Promise<GraphQLRequestListener<BaseContext> | void> => {
-				return {
-					willSendResponse: async (requestContext: GraphQLRequestContextWillSendResponse<GraphQLRequestContextWillSendResponse<"response">>) => {
-						const context: SessionContext = requestContext.context as unknown as SessionContext;
-						await context.databaseContext.databaseSession.commit();
-					}
-				}
-			}
-
-		};
 		this.gqlServer = new ApolloServer({
 			introspection: true,
 			schema,
@@ -88,16 +67,15 @@ export class ExpressApiServer implements ApiServer {
 
 				const refreshToken: string = req?.cookies["refreshToken"];
 				const accessToken: string = req?.cookies["accessToken"];
-				const session = await this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
+				const context = await sessionContextFactory.create(accessToken, refreshToken, cookieManager);
 				if (res) {
-					res.locals.session = session;
+					res.locals.session = context;
 				}
-				return session;
+				return context;
 			},
 			csrfPrevention: true,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
-				closeSessionPlugin,
 				{
 					async serverWillStart() {
 						return {
@@ -128,6 +106,8 @@ export class ExpressApiServer implements ApiServer {
 			res.set("Content-Type", "text/css");
 			next();
 		});
+
+		this.expressServer.use(expressRequestContextMiddleware(sessionContextFactory));
 
 		this.expressServer.use("/images", ImageRouter);
 		this.expressServer.use("/models", ModelRouter);

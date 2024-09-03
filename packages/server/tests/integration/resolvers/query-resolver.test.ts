@@ -13,9 +13,8 @@ import {
 import {WorldService} from "../../../src/services/world-service";
 import {WikiFolderService} from "../../../src/services/wiki-folder-service";
 import {TEST_INJECTABLE_TYPES} from "../injectable-types";
-import {DbEngine, Factory} from "../../../src/types";
+import {DbEngine} from "../../../src/types";
 import {accessControlList} from "./common-testing-assertions";
-import {DatabaseContext} from "../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
@@ -23,7 +22,6 @@ describe("query resolver", () => {
 	const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 	const wikiFolderService = container.get<WikiFolderService>(INJECTABLE_TYPES.WikiFolderService);
 	const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
-	const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
 	const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
 	describe("with world", () => {
@@ -73,10 +71,8 @@ describe("query resolver", () => {
 		});
 
 		test("worlds with one private and one public world", async () => {
-			const session = await dbEngine.createDatabaseSession();
-			const databaseContext = databaseContextFactory({session});
+			const databaseContext = await dbEngine.createDatabaseContext();
 			await worldService.createWorld("Azeroth", true, testingContext.tester1SecurityContext, databaseContext);
-			await session.commit();
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_WORLDS,
 				variables: { page: 1 },
@@ -181,10 +177,8 @@ describe("query resolver", () => {
 			});
 
 			test("worlds with one private and one public world", async () => {
-				const session = await dbEngine.createDatabaseSession();
-				const databaseContext = databaseContextFactory({session});
+				const databaseContext = await dbEngine.createDatabaseContext();
 				await worldService.createWorld("Azeroth", false, testingContext.tester1SecurityContext, databaseContext);
-				await session.commit();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: GET_WORLDS,
 					variables: { page: 1 },
@@ -228,10 +222,8 @@ describe("query resolver", () => {
 			});
 
 			test("wikis in folder", async () => {
-				const session = await dbEngine.createDatabaseSession();
-				const databaseContext = databaseContextFactory({session});
+				const databaseContext = await dbEngine.createDatabaseContext();
 				const placesFolder = (await wikiFolderService.getFolders(testingContext.tester1SecurityContext, testingContext.world._id, "Places", undefined, databaseContext)).filter(folder => folder.name === "Places");
-				await session.commit();
 				const result = await testingContext.server.executeGraphQLQuery({
 					query: WIKIS_IN_FOLDER,
 					variables: { folderId: placesFolder[0]._id},

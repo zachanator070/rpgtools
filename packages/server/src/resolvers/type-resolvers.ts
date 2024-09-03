@@ -28,7 +28,6 @@ import {ServerConfigService} from "../services/server-config-service";
 import {FileRepository} from "../dal/repository/file-repository";
 import {RoleRepository} from "../dal/repository/role-repository";
 import {UserRepository} from "../dal/repository/user-repository";
-import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
 import RoleFactory from "../domain-entities/factory/role-factory";
 import GameFactory from "../domain-entities/factory/game-factory";
 import ModelFactory from "../domain-entities/factory/model-factory";
@@ -42,8 +41,8 @@ const wikiPageInterfaceAttributes = {
 		const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
 		return dataLoader.getDocument(page.world, databaseContext);
 	},
-	folder: async (page: WikiPage): Promise<WikiFolder> => {
-		const repository = container.get<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository);
+	folder: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<WikiFolder> => {
+		const repository = databaseContext.wikiFolderRepository;
 		return repository.findOneWithPage(page._id);
 	},
 	coverImage: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<Image> => {
@@ -58,9 +57,9 @@ const wikiPageInterfaceAttributes = {
 	canAdmin: async (page: WikiPage, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 		return page.authorizationPolicy.canAdmin(securityContext, databaseContext);
 	},
-	content: async (page: WikiPage, _: any, __: SessionContext): Promise<String> => {
+	content: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<String> => {
 		if(page.contentId){
-			const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
+			const fileRepository = databaseContext.fileRepository;
 			const contentFile = await fileRepository.findOneById(page.contentId);
 			const buffer: string[] = []
 			const contents = new Promise<String>((resolve, reject) => {
@@ -167,7 +166,7 @@ export const TypeResolvers = {
 			) {
 				return [];
 			}
-			const repository = container.get<UserRepository>(INJECTABLE_TYPES.UserRepository);
+			const repository = databaseContext.userRepository;
 			return repository.findWithRole(role._id);
 		},
 		...permissionControlledInterfaceAttributes,
@@ -268,7 +267,7 @@ export const TypeResolvers = {
 			return server.registerCodes;
 		},
 		roles: async (server: ServerConfig, _: any, { securityContext, databaseContext }: SessionContext): Promise<Role[]> => {
-			const repository = container.get<RoleRepository>(INJECTABLE_TYPES.RoleRepository);
+			const repository = databaseContext.roleRepository;
 			const roles = await repository.findAll();
 			const returnRoles = [];
 			for (let role of roles) {

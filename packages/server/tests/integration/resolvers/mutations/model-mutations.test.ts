@@ -5,16 +5,14 @@ import {ModelService} from "../../../../src/services/model-service";
 import {container} from "../../../../src/di/inversify";
 import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
 import {CREATE_MODEL, DELETE_MODEL, UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
-import {DbEngine, Factory} from "../../../../src/types";
+import {DbEngine} from "../../../../src/types";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
 import {accessControlList} from "../common-testing-assertions";
-import {DatabaseContext} from "../../../../src/dal/database-context";
 
 process.env.TEST_SUITE = "model-mutations-test";
 
 describe("model mutations", () => {
     const modelApplicationService: ModelService = container.get<ModelService>(INJECTABLE_TYPES.ModelService);
-    const databaseContextFactory = container.get<Factory<DatabaseContext>>(INJECTABLE_TYPES.DatabaseContextFactory);
     const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
 
@@ -50,10 +48,8 @@ describe("model mutations", () => {
         });
 
         test("update model no permission", async () => {
-            const session = await dbEngine.createDatabaseSession();
-            const databaseContext = databaseContextFactory({session});
+            const databaseContext = await dbEngine.createDatabaseContext();
             const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", databaseContext);
-            await session.commit();
             const result = await testingContext.server.executeGraphQLQuery({
                 query: UPDATE_MODEL,
                 variables: {modelId: model._id, name: "new wiki", file: testUpload, worldId: testingContext.world._id, depth: 2, width: 1, height: 1, notes: 'pika pika'},
@@ -64,10 +60,8 @@ describe("model mutations", () => {
         });
 
         test("delete model no permission", async () => {
-            const session = await dbEngine.createDatabaseSession();
-            const databaseContext = databaseContextFactory({session});
+            const databaseContext = await dbEngine.createDatabaseContext();
             const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", databaseContext);
-            await session.commit();
             const result = await testingContext.server.executeGraphQLQuery({
                 query: DELETE_MODEL,
                 variables: {modelId: model._id},
@@ -125,10 +119,8 @@ describe("model mutations", () => {
             });
 
             test("update model", async () => {
-                const session = await dbEngine.createDatabaseSession();
-                const databaseContext = databaseContextFactory({session});
+                const databaseContext = await dbEngine.createDatabaseContext();
                 const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", databaseContext);
-                await session.commit();
                 const result = await testingContext.server.executeGraphQLQuery({
                     query: UPDATE_MODEL,
                     variables: {modelId: model._id, name: "new wiki", file: testUpload, worldId: testingContext.world._id, depth: 2, width: 1, height: 1, notes: 'pika pika'},
@@ -146,10 +138,8 @@ describe("model mutations", () => {
             });
 
             test("delete model", async () => {
-                const session = await dbEngine.createDatabaseSession();
-                const databaseContext = databaseContextFactory({session});
+                const databaseContext = await dbEngine.createDatabaseContext();
                 const model = await modelApplicationService.createModel(testingContext.tester1SecurityContext, testingContext.world._id, "pikachu", testFile, 2, 1, 1, "pika pika", databaseContext);
-                await session.commit();
                 const result = await testingContext.server.executeGraphQLQuery({
                     query: DELETE_MODEL,
                     variables: {modelId: model._id},

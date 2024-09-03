@@ -1,7 +1,6 @@
 import { container } from "../../src/di/inversify";
 import {
 	ApiServer, DbEngine,
-	Factory,
 } from "../../src/types";
 import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
 import { SecurityContextFactory } from "../../src/security/security-context-factory";
@@ -18,7 +17,6 @@ import {Role} from "../../src/domain-entities/role";
 import {WikiFolder} from "../../src/domain-entities/wiki-folder";
 import {WikiPage} from "../../src/domain-entities/wiki-page";
 import {Pin} from "../../src/domain-entities/pin";
-import {DatabaseContext} from "../../src/dal/database-context";
 import UserFactory from "../../src/domain-entities/factory/user-factory";
 import {ImageService} from "../../src/services/image-service";
 import fs from "fs";
@@ -62,9 +60,6 @@ export class DefaultTestingContext {
 	@inject(INJECTABLE_TYPES.GameService)
 	gameService: GameService;
 
-	@inject(INJECTABLE_TYPES.DatabaseContextFactory)
-	databaseContextFactory: Factory<DatabaseContext>;
-
 	@inject(INJECTABLE_TYPES.DbEngine)
 	dbEngine: DbEngine;
 
@@ -95,18 +90,17 @@ export class DefaultTestingContext {
     calendar2: Calendar;
 
 	async reset() {
-		const session = await this.dbEngine.createDatabaseSession();
-		const databaseContext = this.databaseContextFactory({session});
+		const databaseContext = await this.dbEngine.createDatabaseContext();
 
 		this.tester1 = await databaseContext.userRepository.findOneByUsername("tester");
-		this.tester1SecurityContext = await this.securityContextFactory.create(this.tester1);
+		this.tester1SecurityContext = await this.securityContextFactory.create(this.tester1, databaseContext);
 
 		this.currentUser = this.tester1;
 		this.currentUserSecurityContext = this.tester1SecurityContext;
 
 		this.tester2 = this.userFactory.build({email: "tester2@gmail.com", username: "tester2", password: "", tokenVersion: "", currentWorld: null, roles: []});
 		await databaseContext.userRepository.create(this.tester2);
-		this.tester2SecurityContext = await this.securityContextFactory.create(this.tester2);
+		this.tester2SecurityContext = await this.securityContextFactory.create(this.tester2, databaseContext);
 
 		this.mockSessionContextFactory.setCurrentUser(this.currentUser);
 
@@ -187,14 +181,12 @@ export class DefaultTestingContext {
             this.tester1SecurityContext,
             databaseContext
         );
-		await session.commit();
 		return this;
 	};
 
 	async setupGame() {
 
-		const session = await this.dbEngine.createDatabaseSession();
-		const databaseContext = this.databaseContextFactory({session});
+		const databaseContext = await this.dbEngine.createDatabaseContext();
 
 		this.game = await this.gameService.createGame(
 			this.tester1SecurityContext,
@@ -234,14 +226,12 @@ export class DefaultTestingContext {
 		);
 
 		this.game = await this.gameService.getGame(this.tester1SecurityContext, this.game._id, databaseContext);
-		await session.commit();
 	}
 
 	async setupEvents() {
 
         // create 3 events in calendar1, 2 events in calendar2, 2 events in calendar 1 and 1 event in calendar2 link to root wiki page
-		const session = await this.dbEngine.createDatabaseSession();
-		const databaseContext = this.databaseContextFactory({session});
+		const databaseContext = await this.dbEngine.createDatabaseContext();
 
 		const createEventContent = (linkedWikiId: string): Buffer => {
 			const testData = `{"ops":[{"insert":"At a time where "},{"insert":{"mention":{"index":"0","denotationChar":"","value":"<a href=\\"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view\\" target=_self>Middle Earth","link":"/ui/world/${this.world._id}/wiki/${linkedWikiId}/view","target":"_self"}}},{"insert":" comes to a time of peace.\\n"}]}`;

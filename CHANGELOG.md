@@ -1,3 +1,2 @@
- ### RPG Tools v5.1.1 Changelog
- - Fixed paint and fog layer flickering
- - Upped render distance of game renderer
+ ### RPG Tools v5.2.0 Changelog
+ - Made all mutations execute under database transactions

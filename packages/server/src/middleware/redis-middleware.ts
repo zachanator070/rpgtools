@@ -1,15 +1,15 @@
 import e from "express";
-import { Cache } from "../types";
+import {Cache, SessionContext} from "../types";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {FileRepository} from "../dal/repository/file-repository";
 
 export const redisMiddleware = (lookupKeyName: string) => async (
 	req: e.Request,
 	res: e.Response,
 	next: e.NextFunction
 ) => {
-	const fileRepository = container.get<FileRepository>(INJECTABLE_TYPES.FileRepository);
+	const context: SessionContext = req.app.locals.context;
+	const fileRepository = context.databaseContext.fileRepository;
 	const lookupKey = req.params[lookupKeyName];
 
 	if (!lookupKey) {
