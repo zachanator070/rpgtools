@@ -48,6 +48,9 @@ run-dev-brk: .env  $(SERVER_BUILD_DEST) db
 run-postgres: .env
 	docker compose up -d postgres
 
+shell: .env
+	docker compose run --rm dev bash
+
 # stops and destroys any running containers
 down: .env
 	docker compose down
@@ -181,6 +184,7 @@ clean-deps:
 	rm -rf packages/common/node_modules
 	-rm -rf node_modules_prod
 	-rm -rf node_modules_dev
+	-rm -rf .ccache
 
 clean-docker: down
 	-docker ps -a | grep rpgtools | awk '{print $$1}' | xargs docker rm -f
@@ -269,7 +273,7 @@ containers:
 	mkdir -p containers
 
 # builds local docker compose containers, usually only used in a dev environment
-build-dev: .env $(DEV_FRONTEND_JS) $(SERVER_JS)
+build-dev: .env
 	docker compose build
 
 $(DEV_SERVER_CONTAINER): .env containers $(NODE_MODULES) $(DEV_SERVER_CONTAINER_SRC)
