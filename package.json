@@ -1,6 +1,6 @@
 {
 	"name": "rpgtools",
-	"version": "5.2.0",
+	"version": "5.2.1",
 	"description": "Tool set for playing an RPG game",
 	"license": "MIT",
 	"private": true,

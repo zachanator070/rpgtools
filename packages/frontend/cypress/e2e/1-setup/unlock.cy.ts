@@ -31,7 +31,7 @@ describe("Unlock server test", () => {
         cy.get("#registerRepeatPassword").type(`${ADMIN_PASSWORD}`);
         cy.get("#submit").click();
         cy.location().should((location) => {
-            expect(location.href).eq("http://localhost:3000/")
+            expect(location.href).eq("http://localhost:3000/ui")
         })
     });
 });

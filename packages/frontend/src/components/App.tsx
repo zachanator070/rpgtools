@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "@babel/polyfill";
-import { Route, useNavigate, useLocation, Routes } from "react-router-dom";
+import {Route, useNavigate, useLocation, Routes, Navigate} from "react-router-dom";
 import "../css/index.css";
 import "antd/dist/antd.css";
 import NavBar from "./nav/NavBar";
@@ -40,11 +40,19 @@ export default function App() {
 		}}>
 			<Routes>
 				<Route
+					path="/ui"
+					element={<>
+						<NavBar />
+						<DefaultView />
+					</>}
+				/>
+				<Route
 					path="/ui/world/:world_id/*"
 					element={<>
 						<NavBar />
 						<AppContent />
-					</>}/>
+					</>}
+				/>
 				<Route
 					path={`/ui/serverSettings`}
 					element={<ServerSettings />}
@@ -56,8 +64,7 @@ export default function App() {
 				<Route
 					path={"/"}
 					element={<>
-						<NavBar />
-						<DefaultView />
+						<Navigate to="/ui" replace={true}/>
 					</>}
 				/>
 				{serverConfig.serverNeedsSetup &&
