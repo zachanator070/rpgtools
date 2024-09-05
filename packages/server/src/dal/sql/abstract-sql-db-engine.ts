@@ -1,4 +1,4 @@
-import {inject, injectable, interfaces} from "inversify";
+import {inject, injectable} from "inversify";
 import AclEntryModel from "./models/acl-entry-model";
 import {
     ACL_ENTRY, AGE,
@@ -138,7 +138,7 @@ export default class AbstractSqlDbEngine {
     wikiPageRepository: WikiPageRepository;
     @inject(INJECTABLE_TYPES.WorldRepository)
     worldRepository: WorldRepository;
-    
+
     connectAll(connection: Sequelize) {
         // Is there any better way to do this? How to handle a bunch of static methods with the same signature?
         // This violates the open/closed principle
@@ -246,8 +246,7 @@ export default class AbstractSqlDbEngine {
     }
 
     async createDatabaseContext(connection: Sequelize): Promise<DatabaseContext> {
-        return new SQLDatabaseContext(
-            connection,
+        const context = new SQLDatabaseContext(
             this.articleRepository,
             this.calendarRepository,
             this.chunkRepository,
@@ -270,6 +269,8 @@ export default class AbstractSqlDbEngine {
             this.wikiPageRepository,
             this.worldRepository,
         );
+        context.connection = connection;
+        return context;
     }
-    
+
 }

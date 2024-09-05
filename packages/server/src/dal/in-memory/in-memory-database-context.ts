@@ -21,7 +21,7 @@ import {WikiFolderRepository} from "../repository/wiki-folder-repository";
 import {WikiPageRepository} from "../repository/wiki-page-repository";
 import {WorldRepository} from "../repository/world-repository";
 
-export default class InMemoryDatabaseContext implements DatabaseContext {
+export default class InMemoryDatabaseContext extends DatabaseContext {
 
     articleRepository: ArticleRepository;
     calendarRepository: CalendarRepository;
@@ -44,52 +44,6 @@ export default class InMemoryDatabaseContext implements DatabaseContext {
     wikiFolderRepository: WikiFolderRepository;
     wikiPageRepository: WikiPageRepository;
     worldRepository: WorldRepository;
-
-    constructor(
-        articleRepository: ArticleRepository,
-        calendarRepository: CalendarRepository,
-        chunkRepository: ChunkRepository,
-        eventRepository: EventWikiRepository,
-        fileRepository: FileRepository,
-        fogStrokeRepository: FogStrokeRepository,
-        gameRepository: GameRepository,
-        imageRepository: ImageRepository,
-        itemRepository: ItemRepository,
-        modelRepository: ModelRepository,
-        monsterRepository: MonsterRepository,
-        personRepository: PersonRepository,
-        pinRepository: PinRepository,
-        placeRepository: PlaceRepository,
-        roleRepository: RoleRepository,
-        serverConfigRepository: ServerConfigRepository,
-        strokeRepository: StrokeRepository,
-        userRepository: UserRepository,
-        wikiFolderRepository: WikiFolderRepository,
-        wikiPageRepository: WikiPageRepository,
-        worldRepository: WorldRepository,
-    ) {
-        this.articleRepository = articleRepository;
-        this.calendarRepository = calendarRepository;
-        this.chunkRepository = chunkRepository;
-        this.eventRepository = eventRepository;
-        this.fileRepository = fileRepository;
-        this.fogStrokeRepository = fogStrokeRepository;
-        this.gameRepository = gameRepository;
-        this.imageRepository = imageRepository;
-        this.itemRepository = itemRepository;
-        this.modelRepository = modelRepository;
-        this.monsterRepository = monsterRepository;
-        this.personRepository = personRepository;
-        this.pinRepository = pinRepository;
-        this.placeRepository = placeRepository;
-        this.roleRepository = roleRepository;
-        this.serverConfigRepository = serverConfigRepository;
-        this.strokeRepository = strokeRepository;
-        this.userRepository = userRepository;
-        this.wikiFolderRepository = wikiFolderRepository;
-        this.wikiPageRepository = wikiPageRepository;
-        this.worldRepository = worldRepository;
-    }
 
     openTransaction(callback: () => any): Promise<void> {
         return callback();

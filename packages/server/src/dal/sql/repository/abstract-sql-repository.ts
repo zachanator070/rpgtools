@@ -14,9 +14,14 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     PAGE_LIMIT = 10;
 
-    async create(entity: T): Promise<void> {
+    async create(entity: T, preserveId: boolean = false): Promise<void> {
         const model = await this.modelFactory(entity);
-        model._id = v4();
+        // if preserveId is explicitly set to false, generate a new id
+        if (!preserveId) {
+            model._id = v4();
+        } else {
+            model.isNewRecord = true;
+        }
         await model.save();
         entity._id = model._id;
         await this.updateAssociations(entity, model);
@@ -111,5 +116,10 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
             nextPage: page < totalPages ? page +1 : null,
             docs: await this.buildResults(results)
         };
+    }
+
+    withConstraintsDisabled = async <T>(callback: () => Promise<T>): Promise<T> => {
+        await this.staticModel.sequelize.query(`ALTER TABLE ${this.staticModel.tableName} DISABLE TRIGGER ALL;`);
+        return callback();
     }
 }

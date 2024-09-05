@@ -2,7 +2,7 @@ import { SecurityContext } from "../security/security-context";
 import { inject, injectable } from "inversify";
 import {
 	Archive,
-	AbstractArchiveFactory,
+	AbstractArchiveFactory, RepositoryAccessor,
 } from "../types";
 import { Model } from "../domain-entities/model";
 import { WikiFolder } from "../domain-entities/wiki-folder";
@@ -14,12 +14,21 @@ import { INJECTABLE_TYPES } from "../di/injectable-types";
 import {Repository} from "../dal/repository/repository";
 import {DatabaseContext} from "../dal/database-context";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
-import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
-import {USER} from "@rpgtools/common/src/type-constants";
+import {
+	MODEL_ADMIN,
+	MODEL_RW,
+	WIKI_ADMIN,
+	WIKI_FOLDER_PERMISSIONS,
+	WIKI_RW
+} from "@rpgtools/common/src/permission-constants";
+import {ALL_WIKI_TYPES, CHUNK, FILE, IMAGE, MODEL, USER} from "@rpgtools/common/src/type-constants";
 import {World} from "../domain-entities/world";
 
 import fetch from 'node-fetch';
 import {Readable} from "stream";
+import unzipper from "unzipper";
+import EntityMapper from "../domain-entities/entity-mapper";
+import FileFactory from "../domain-entities/factory/file-factory";
 
 @injectable()
 export class ContentImportService {
@@ -29,6 +38,12 @@ export class ContentImportService {
 
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
+
+	@inject(INJECTABLE_TYPES.EntityMapper)
+	entityMapper: EntityMapper;
+
+	@inject(INJECTABLE_TYPES.FileFactory)
+	fileFactory: FileFactory;
 
 	srdZipUrl = process.env.SRD_ZIP_URL || 'https://github.com/zachanator070/rpgtools-srd/releases/download/4.0.1/rpgtools-srd-4.0.1.zip';
 
@@ -70,16 +85,160 @@ export class ContentImportService {
 			throw new Error("You do not have permission to add content to this folder");
 		}
 
-		// probably need to detect here what kind of file we are dealing with then create an archive based upon the file type
-		const archive = await this.archiveFactory.zipFromZipStream(zipFile);
-		try {
-			await this.processArchive(archive, folder, databaseContext, context);
-		} catch (e) {
-			throw new Error(`Error occurred while processing archive: ${e.message}`);
-		}
+		await this.processZip(folder, zipFile, databaseContext, context);
 
 		return folder;
 	};
+
+	private async processZip(
+		destinationFolder: WikiFolder,
+		archiveReadStream: Readable,
+	   	databaseContext: DatabaseContext,
+	   	securityContext: SecurityContext
+	) {
+		if (!await destinationFolder.authorizationPolicy.canWrite(securityContext, databaseContext)) {
+			throw new Error("You do not have permission to add content to this folder");
+		}
+		const directory = await unzipper.Open.buffer(await this.readFile(archiveReadStream));
+		const fileEntries: unzipper.File[] = directory.files.filter((entry) => this.getModelFromPath(entry.path) === FILE);
+		const chunkEntries = directory.files.filter((entry) => this.getModelFromPath(entry.path) === CHUNK);
+		const imageEntries = directory.files.filter((entry) => this.getModelFromPath(entry.path) === IMAGE);
+		const modelEntries = directory.files.filter((entry) => this.getModelFromPath(entry.path) === MODEL);
+		const wikiEntries = directory.files.filter((entry) => ALL_WIKI_TYPES.includes(this.getModelFromPath(entry.path)));
+
+		for (let entries of [fileEntries, chunkEntries, modelEntries]) {
+			for (let entry of entries) {
+				await this.addEntryToRepository(entry, destinationFolder, databaseContext, securityContext);
+			}
+		}
+
+		const parentImageEntries = [];
+		for (let entry of imageEntries) {
+			const rawEntity = await this.getEntryContent(entry);
+			if (rawEntity.icon) {
+				await this.addEntryToRepository(entry, destinationFolder, databaseContext, securityContext);
+			} else {
+				parentImageEntries.push(entry);
+			}
+		}
+
+		for (let entries of [parentImageEntries, wikiEntries]) {
+			for (let entry of entries) {
+				await this.addEntryToRepository(entry, destinationFolder, databaseContext, securityContext);
+			}
+		}
+	}
+
+	private readFile = async (entry: Readable): Promise<Buffer> => {
+		const chunks: Buffer[] = [];
+		return await new Promise((resolve, reject) => {
+			entry.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+			entry.on('error', (err) => reject(err));
+			entry.on('end', () => resolve(Buffer.concat(chunks)));
+		});
+	}
+
+	private createReadStream = async (entry: unzipper.File): Promise<Readable> => {
+		return Readable.from(await entry.buffer());
+	}
+
+	private addEntryToRepository = async (entry: unzipper.File, rootFolder: WikiFolder, archive: RepositoryAccessor, securityContext: SecurityContext): Promise<void> => {
+		const entryType = this.getModelFromPath(entry.path);
+		if (entryType === FILE) {
+			const filename: string = this.getFilenameFromPath(entry.path);
+			const id = filename.split(".")[1];
+			const newFile = this.fileFactory.build({
+				_id: id,
+				filename,
+				readStream: await this.createReadStream(entry),
+				mimeType: 'application/json'
+			})
+			await archive.fileRepository.create(newFile, true);
+		} else {
+			const rawEntity = await this.getEntryContent(entry);
+			const sibling = this.entityMapper.map(entryType);
+			const entity = sibling.factory.build(rawEntity);
+			const repo = entity.getRepository(archive);
+			await repo.create(entity, true);
+			if (ALL_WIKI_TYPES.includes(entryType)) {
+				const page = entity as WikiPage;
+				await this.addWikiToFolder(page, entry.path, rootFolder, archive, securityContext);
+				page.acl = [];
+				page.acl.push({
+					permission: WIKI_RW,
+					principal: securityContext.user._id,
+					principalType: USER
+				});
+				page.acl.push({
+					permission: WIKI_ADMIN,
+					principal: securityContext.user._id,
+					principalType: USER
+				});
+				page.world = rootFolder.world;
+			}
+		}
+	};
+
+	private async addWikiToFolder(wikiPage: WikiPage, path: string, rootFolder: WikiFolder, archive: RepositoryAccessor, securityContext: SecurityContext) {
+		const wikiFolder = await this.addPath(path.split('/').slice(1, -1).join('/'), rootFolder, archive, securityContext);
+		wikiFolder.pages.push(wikiPage._id);
+		await archive.wikiFolderRepository.update(wikiFolder);
+	}
+
+	private async addPath(path: string, currentFolder: WikiFolder, archive: RepositoryAccessor, securityContext: SecurityContext): Promise<WikiFolder> {
+		const nextFolderName = path.split('/')[0];
+		const currentFolderChildren = await Promise.all(currentFolder.children.map(async child => await archive.wikiFolderRepository.findOneById(child)));
+		let nextFolder = currentFolderChildren.find(folder => folder.name === nextFolderName);
+		if (!nextFolder) {
+			nextFolder = await this.addFolder(nextFolderName, currentFolder, archive, securityContext);
+		}
+
+		if (path.split('/').length !== 1) {
+			return this.addPath(path.split('/').slice(1).join(), nextFolder, archive, securityContext);
+		}
+		return nextFolder;
+	}
+
+	private async addFolder(name: string, currentFolder: WikiFolder, archive: RepositoryAccessor, securityContext: SecurityContext) {
+		const newFolder = this.wikiFolderFactory.build(
+			{
+				name,
+				world: currentFolder.world,
+				pages: [],
+				children: [],
+				acl: WIKI_FOLDER_PERMISSIONS.map((permission) => {
+					return {
+						permission,
+						principal: securityContext.user._id,
+						principalType: USER
+					}
+				})
+			}
+		);
+		await archive.wikiFolderRepository.create(newFolder);
+		if (currentFolder) {
+			currentFolder.children.push(newFolder._id);
+			await archive.wikiFolderRepository.update(currentFolder);
+		}
+		return newFolder;
+	}
+
+	private getEntryContent = async (entry: unzipper.File): Promise<any> => {
+		const buffer: Buffer = await this.readFile(await this.createReadStream(entry));
+		const bufferContent = buffer.toString('utf-8');
+		return JSON.parse(bufferContent);
+	};
+
+	private getModelFromPath(path: string): string {
+		return this.getFilenameFromPath(path).split(".")[0];
+	}
+
+	private getFilenameFromPath(path: string): string {
+		const pathComponents = path.split("/");
+		return pathComponents[pathComponents.length - 1];
+	}
+
+	// old process
 
 	private processArchive = async (
 		archive: Archive,

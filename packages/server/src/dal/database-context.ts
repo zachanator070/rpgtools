@@ -1,5 +1,5 @@
 import {RepositoryAccessor} from "../types";
-import {inject, injectable} from "inversify";
+import {injectable} from "inversify";
 import {ArticleRepository} from "./repository/article-repository";
 import {GameRepository} from "./repository/game-repository";
 import {FileRepository} from "./repository/file-repository";
@@ -26,8 +26,11 @@ import StrokeRepository from "./repository/stroke-repository";
 export abstract class DatabaseContext implements RepositoryAccessor {
 
     articleRepository: ArticleRepository;
+    calendarRepository: CalendarRepository;
     chunkRepository: ChunkRepository;
+    eventRepository: EventWikiRepository;
     fileRepository: FileRepository;
+    fogStrokeRepository: FogStrokeRepository;
     gameRepository: GameRepository;
     imageRepository: ImageRepository;
     itemRepository: ItemRepository;
@@ -38,14 +41,57 @@ export abstract class DatabaseContext implements RepositoryAccessor {
     placeRepository: PlaceRepository;
     roleRepository: RoleRepository;
     serverConfigRepository: ServerConfigRepository;
+    strokeRepository: StrokeRepository;
     userRepository: UserRepository;
     wikiFolderRepository: WikiFolderRepository;
     wikiPageRepository: WikiPageRepository;
     worldRepository: WorldRepository;
-    eventRepository: EventWikiRepository;
-    calendarRepository: CalendarRepository;
-    fogStrokeRepository: FogStrokeRepository;
-    strokeRepository: StrokeRepository;
+
+    constructor(
+        articleRepository: ArticleRepository,
+        calendarRepository: CalendarRepository,
+        chunkRepository: ChunkRepository,
+        eventRepository: EventWikiRepository,
+        fileRepository: FileRepository,
+        fogStrokeRepository: FogStrokeRepository,
+        gameRepository: GameRepository,
+        imageRepository: ImageRepository,
+        itemRepository: ItemRepository,
+        modelRepository: ModelRepository,
+        monsterRepository: MonsterRepository,
+        personRepository: PersonRepository,
+        pinRepository: PinRepository,
+        placeRepository: PlaceRepository,
+        roleRepository: RoleRepository,
+        serverConfigRepository: ServerConfigRepository,
+        strokeRepository: StrokeRepository,
+        userRepository: UserRepository,
+        wikiFolderRepository: WikiFolderRepository,
+        wikiPageRepository: WikiPageRepository,
+        worldRepository: WorldRepository,
+    ) {
+        this.articleRepository = articleRepository;
+        this.calendarRepository = calendarRepository;
+        this.chunkRepository = chunkRepository;
+        this.eventRepository = eventRepository;
+        this.fileRepository = fileRepository;
+        this.fogStrokeRepository = fogStrokeRepository;
+        this.gameRepository = gameRepository;
+        this.imageRepository = imageRepository;
+        this.itemRepository = itemRepository;
+        this.modelRepository = modelRepository;
+        this.monsterRepository = monsterRepository;
+        this.personRepository = personRepository;
+        this.pinRepository = pinRepository;
+        this.placeRepository = placeRepository;
+        this.roleRepository = roleRepository;
+        this.serverConfigRepository = serverConfigRepository;
+        this.strokeRepository = strokeRepository;
+        this.userRepository = userRepository;
+        this.wikiFolderRepository = wikiFolderRepository;
+        this.wikiPageRepository = wikiPageRepository;
+        this.worldRepository = worldRepository;
+    }
 
     abstract openTransaction(callback: () => any): Promise<void>;
 

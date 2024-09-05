@@ -12,6 +12,9 @@ import {Repository} from "../../repository/repository";
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	implements Repository<Type> {
+    withConstraintsDisabled = async <T>(callback: () => Promise<T>): Promise<T> => {
+		return callback();
+	};
 
 	items = new Map<string, Type>();
 

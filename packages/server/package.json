@@ -61,7 +61,7 @@
     "umzug": "^3.2.1",
     "unified": "^10.1.0",
     "unist-util-visit": "^4.0.0",
-    "unzipper": "^0.10.11",
+    "unzipper": "^0.12.3",
     "uuid": "^8.3.2",
     "ws": "^8.17.1"
   },

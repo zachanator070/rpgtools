@@ -21,11 +21,10 @@ import {WikiFolderRepository} from "../repository/wiki-folder-repository";
 import {WikiPageRepository} from "../repository/wiki-page-repository";
 import {WorldRepository} from "../repository/world-repository";
 import {Sequelize} from "sequelize";
-import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
+import {injectable} from "inversify";
 
 @injectable()
-export default class SQLDatabaseContext implements DatabaseContext {
+export default class SQLDatabaseContext extends DatabaseContext {
 
     connection: Sequelize;
 
@@ -50,54 +49,6 @@ export default class SQLDatabaseContext implements DatabaseContext {
     wikiFolderRepository: WikiFolderRepository;
     wikiPageRepository: WikiPageRepository;
     worldRepository: WorldRepository;
-
-    constructor(
-        connection: Sequelize,
-        articleRepository: ArticleRepository,
-        calendarRepository: CalendarRepository,
-        chunkRepository: ChunkRepository,
-        eventRepository: EventWikiRepository,
-        fileRepository: FileRepository,
-        fogStrokeRepository: FogStrokeRepository,
-        gameRepository: GameRepository,
-        imageRepository: ImageRepository,
-        itemRepository: ItemRepository,
-        modelRepository: ModelRepository,
-        monsterRepository: MonsterRepository,
-        personRepository: PersonRepository,
-        pinRepository: PinRepository,
-        placeRepository: PlaceRepository,
-        roleRepository: RoleRepository,
-        serverConfigRepository: ServerConfigRepository,
-        strokeRepository: StrokeRepository,
-        userRepository: UserRepository,
-        wikiFolderRepository: WikiFolderRepository,
-        wikiPageRepository: WikiPageRepository,
-        worldRepository: WorldRepository,
-    ) {
-        this.connection = connection;
-        this.articleRepository = articleRepository;
-        this.calendarRepository = calendarRepository;
-        this.chunkRepository = chunkRepository;
-        this.eventRepository = eventRepository;
-        this.fileRepository = fileRepository;
-        this.fogStrokeRepository = fogStrokeRepository;
-        this.gameRepository = gameRepository;
-        this.imageRepository = imageRepository;
-        this.itemRepository = itemRepository;
-        this.modelRepository = modelRepository;
-        this.monsterRepository = monsterRepository;
-        this.personRepository = personRepository;
-        this.pinRepository = pinRepository;
-        this.placeRepository = placeRepository;
-        this.roleRepository = roleRepository;
-        this.serverConfigRepository = serverConfigRepository;
-        this.strokeRepository = strokeRepository;
-        this.userRepository = userRepository;
-        this.wikiFolderRepository = wikiFolderRepository;
-        this.wikiPageRepository = wikiPageRepository;
-        this.worldRepository = worldRepository;
-    }
 
     openTransaction(callback: () => any): Promise<any> {
         return this.connection.transaction(callback);
