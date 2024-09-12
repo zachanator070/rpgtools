@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import TabCollection from "../../widgets/TabCollection";
-import useCalendars from "../../../hooks/calendar/useCalendars";
-import useUpsertCalendar from "../../../hooks/calendar/useUpsertCalendar";
-import LoadingView from "../../LoadingView";
-import {Age, Calendar, DayOfTheWeek, Month} from "../../../types";
-import AgeEditor from "./AgeEditor";
-import TextInput from "../../widgets/input/TextInput";
-import PrimaryButton from "../../widgets/PrimaryButton";
-import ToolTip from "../../widgets/ToolTip";
-import QuestionMarkIcon from "../../widgets/icons/QuestionMarkIcon";
+import TabCollection from "../../widgets/TabCollection.tsx";
+import useCalendars from "../../../hooks/calendar/useCalendars.js";
+import useUpsertCalendar from "../../../hooks/calendar/useUpsertCalendar.js";
+import LoadingView from "../../LoadingView.tsx";
+import {Age, Calendar, DayOfTheWeek, Month} from "../../../types.js";
+import AgeEditor from "./AgeEditor.tsx";
+import TextInput from "../../widgets/input/TextInput.tsx";
+import PrimaryButton from "../../widgets/PrimaryButton.tsx";
+import ToolTip from "../../widgets/ToolTip.tsx";
+import QuestionMarkIcon from "../../widgets/icons/QuestionMarkIcon.tsx";
 
 function filterAge(age: Age): Age {
     return {

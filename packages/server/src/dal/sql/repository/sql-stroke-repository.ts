@@ -1,14 +1,14 @@
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Stroke} from "../../../domain-entities/stroke";
-import StrokeModel from "../models/game/stroke-model";
-import StrokeRepository from "../../repository/stroke-repository";
-import StrokeFactory from "../../../domain-entities/factory/game/stroke-factory";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Stroke} from "../../../domain-entities/stroke.js";
+import StrokeModel from "../models/game/stroke-model.js";
+import StrokeRepository from "../../repository/stroke-repository.js";
+import StrokeFactory from "../../../domain-entities/factory/game/stroke-factory.js";
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
 import {ModelStatic} from "sequelize";
-import PathNodeModel from "../models/game/path-node-model";
+import PathNodeModel from "../models/game/path-node-model.js";
 import {v4} from "uuid";
-import {PaginatedResult} from "../../paginated-result";
+import {PaginatedResult} from "../../paginated-result.js";
 
 @injectable()
 export default class SqlStrokeRepository extends AbstractSqlRepository<Stroke, StrokeModel> implements StrokeRepository {
@@ -33,7 +33,7 @@ export default class SqlStrokeRepository extends AbstractSqlRepository<Stroke, S
     async updateAssociations(entity: Stroke, model: StrokeModel): Promise<void> {
         super.updateAssociations(entity, model);
 
-        for(let pathNode of entity.path) {
+        for(const pathNode of entity.path) {
             const nodeModel = PathNodeModel.build({
                 _id: pathNode._id,
                 x: pathNode.x,

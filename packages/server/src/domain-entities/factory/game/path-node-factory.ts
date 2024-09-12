@@ -1,7 +1,7 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../../types";
-import {PathNode} from "../../game";
-import PathNodeModel from "../../../dal/sql/models/game/path-node-model";
+import {PathNode} from "../../game.js";
+import PathNodeModel from "../../../dal/sql/models/game/path-node-model.js";
 
 
 @injectable()

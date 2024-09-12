@@ -5,21 +5,21 @@ import {
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
 } from "@rpgtools/common/src/permission-constants";
-import { SecurityContext } from "../security/security-context";
+import { SecurityContext } from "../security/security-context.js";
 import {PLACE, ROLE, USER} from "@rpgtools/common/src/type-constants";
 import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
-import { World } from "../domain-entities/world";
+import { World } from "../domain-entities/world.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {PaginatedResult} from "../dal/paginated-result";
-import {DatabaseContext} from "../dal/database-context";
-import RoleFactory from "../domain-entities/factory/role-factory";
-import PinFactory from "../domain-entities/factory/pin-factory";
-import WorldFactory from "../domain-entities/factory/world-factory";
-import PlaceFactory from "../domain-entities/factory/place-factory";
-import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
-import Calendar, {Age} from "../domain-entities/calendar";
-import CalendarFactory from "../domain-entities/factory/calendar-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {PaginatedResult} from "../dal/paginated-result.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
+import PinFactory from "../domain-entities/factory/pin-factory.js";
+import WorldFactory from "../domain-entities/factory/world-factory.js";
+import PlaceFactory from "../domain-entities/factory/place-factory.js";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
+import Calendar, {Age} from "../domain-entities/calendar.js";
+import CalendarFactory from "../domain-entities/factory/calendar-factory.js";
 
 @injectable()
 export class WorldService {
@@ -74,7 +74,7 @@ export class WorldService {
 	) => {
 		const pinsPage = await databaseContext.pinRepository.findByWorldPaginated(worldId, page);
 		const results = [];
-		for (let pin of pinsPage.docs) {
+		for (const pin of pinsPage.docs) {
 			if (await pin.authorizationPolicy.canRead(context, databaseContext)) {
 				results.push(pin);
 			}
@@ -174,7 +174,7 @@ export class WorldService {
 			results = await databaseContext.worldRepository.findAllPaginated(page);
 		}
 		const docs = [];
-		for (let world of results.docs) {
+		for (const world of results.docs) {
 			if (await world.authorizationPolicy.canRead(context, databaseContext)) {
 				docs.push(world);
 			}
@@ -222,7 +222,7 @@ export class WorldService {
 
 		const everyoneRole = await databaseContext.roleRepository.findOneByName(EVERYONE);
 		if (isPublic) {
-			for (let permission of PUBLIC_WORLD_PERMISSIONS) {
+			for (const permission of PUBLIC_WORLD_PERMISSIONS) {
 				world.acl.push({
 					permission: permission,
 					principal: everyoneRole._id,
@@ -275,7 +275,7 @@ export class WorldService {
 			throw new Error(`You do not have permission to delete this calendar`);
 		}
 		const events = await databaseContext.eventRepository.findByCalendarId(calendarId);
-		for(let event of events) {
+		for(const event of events) {
 			event.calendar = null;
 			await databaseContext.eventRepository.update(event);
 		}

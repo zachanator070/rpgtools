@@ -1,9 +1,9 @@
-import GameState from "../GameState";
+import GameState from "../GameState.js";
 import * as THREE from "three";
-import {GROUND_Y_POSITION, MAP_Y_POSITION} from "../GameState";
-import {DEFAULT_MAP_SIZE} from "./PaintController";
-import {Place} from "../../types";
-import useNotification from "../../components/widgets/useNotification";
+import {GROUND_Y_POSITION, MAP_Y_POSITION} from "../GameState.js";
+import {DEFAULT_MAP_SIZE} from "./PaintController.js";
+import {Place} from "../../types.js";
+import useNotification from "../../components/widgets/useNotification.tsx";
 import {CanvasTexture, Mesh} from "three";
 
 
@@ -101,7 +101,7 @@ export default class MapController {
 
         const imagesLoading: Promise<void>[] = [];
 
-        for (let chunk of this.gameState.location.mapImage.chunks) {
+        for (const chunk of this.gameState.location.mapImage.chunks) {
             const base_image = new Image();
             base_image.src = `/images/${chunk.fileId}`;
             const imagePromise = new Promise<void>((resolve) => {

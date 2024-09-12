@@ -1,6 +1,6 @@
 import { EntityAuthorizationPolicy } from "../../types";
-import { ServerConfig } from "../../domain-entities/server-config";
-import { SecurityContext } from "../security-context";
+import { ServerConfig } from "../../domain-entities/server-config.js";
+import { SecurityContext } from "../security-context.js";
 import {SERVER_ADMIN, SERVER_RW, WORLD_CREATE} from "@rpgtools/common/src/permission-constants";
 import { injectable } from "inversify";
 

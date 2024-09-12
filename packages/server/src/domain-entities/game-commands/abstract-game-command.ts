@@ -1,6 +1,6 @@
-import { Character, Message } from "../game";
+import { Character, Message } from "../game.js";
 import { v4 as uuidv4 } from "uuid";
-import {MESSAGE_SERVER_USER} from "../../services/game-service";
+import {MESSAGE_SERVER_USER} from "../../services/game-service.js";
 
 export interface GameCommandArgDefinition {
 	name: string;
@@ -46,7 +46,7 @@ export abstract class AbstractGameCommand {
 		if (this.options.length > 0) {
 			usage += " [OPTION]...";
 		}
-		for (let arg of this.args) {
+		for (const arg of this.args) {
 			if (!arg.optional) {
 				usage += ` ${arg.name}`;
 			} else {
@@ -57,19 +57,19 @@ export abstract class AbstractGameCommand {
 		if (this.args.length > 0) {
 			message += "\nArguments:";
 		}
-		for (let arg of this.args) {
+		for (const arg of this.args) {
 			message += `\n${arg.name} - ${arg.description}`;
 		}
 		if (this.options.length > 0) {
 			message += "\nOptions:";
 		}
-		for (let option of this.options) {
+		for (const option of this.options) {
 			message += `\n${option.name} ${option.args.map((arg) => arg.name).join(" ")} - ${
 				option.description
 			}`;
 			if (option.args.length > 0) {
 				message += `\n\tOption Args:`;
-				for (let arg of option.args) {
+				for (const arg of option.args) {
 					message += `\n\t${arg.name} - ${arg.description}`;
 				}
 			}

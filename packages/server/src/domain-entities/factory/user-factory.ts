@@ -1,8 +1,8 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
-import {User} from "../user";
-import {UserAuthorizationPolicy} from "../../security/policy/user-authorization-policy";
-import UserModel from "../../dal/sql/models/user-model";
+import {User} from "../user.js";
+import {UserAuthorizationPolicy} from "../../security/policy/user-authorization-policy.js";
+import UserModel from "../../dal/sql/models/user-model.js";
 
 
 @injectable()

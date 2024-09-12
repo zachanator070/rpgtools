@@ -1,13 +1,13 @@
 import * as CANNON from 'cannon';
-import {PhysicsDie} from "../dice/PhysicsDie";
-import {GameController} from "./GameController";
-import GameState from "../GameState";
-import {D6Die} from "../dice/D6Die";
-import {D8Die} from "../dice/D8Die";
-import {D10Die} from "../dice/D10Die";
-import {D20Die} from "../dice/D20Die";
-import {D4Die} from "../dice/D4Die";
-import {D12Die} from "../dice/D12Die";
+import {PhysicsDie} from "../dice/PhysicsDie.js";
+import {GameController} from "./GameController.js";
+import GameState from "../GameState.js";
+import {D6Die} from "../dice/D6Die.js";
+import {D8Die} from "../dice/D8Die.js";
+import {D10Die} from "../dice/D10Die.js";
+import {D20Die} from "../dice/D20Die.js";
+import {D4Die} from "../dice/D4Die.js";
+import {D12Die} from "../dice/D12Die.js";
 
 export interface DiceValues {
     dice: PhysicsDie;
@@ -70,7 +70,7 @@ class DiceController implements GameController {
         this.gameState.world.broadphase = new CANNON.NaiveBroadphase();
         this.gameState.world.solver.iterations = 16;
         const floorShape = new CANNON.Plane();
-        let floorBody = new CANNON.Body({mass: 0, shape: floorShape, material: this.floorBodyMaterial});
+        const floorBody = new CANNON.Body({mass: 0, shape: floorShape, material: this.floorBodyMaterial});
         floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
         this.gameState.world.addBody(floorBody);
     }
@@ -109,7 +109,7 @@ class DiceController implements GameController {
 
         this.gameState.world.step(this.gameState.world.dt);
 
-        let check = () => {
+        const check = () => {
             let allStable = true;
             diceValues.forEach((diceValue) => {
                 allStable = allStable && diceValue.dice.isFinished();

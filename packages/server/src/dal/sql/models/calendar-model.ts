@@ -1,8 +1,8 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
-import WorldModel from "./world-model";
-import {defaultAttributes} from "./default-attributes";
-import AgeModel from "./calendar/age-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import WorldModel from "./world-model.js";
+import {defaultAttributes} from "./default-attributes.js";
+import AgeModel from "./calendar/age-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import {WORLD} from "@rpgtools/common/src/type-constants";
 
 

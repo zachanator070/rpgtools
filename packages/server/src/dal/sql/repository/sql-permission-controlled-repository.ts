@@ -1,6 +1,6 @@
-import PermissionControlledModel from "../models/permission-controlled-model";
+import PermissionControlledModel from "../models/permission-controlled-model.js";
 import {PermissionControlledEntity} from "../../../types";
-import AclEntryModel from "../models/acl-entry-model";
+import AclEntryModel from "../models/acl-entry-model.js";
 import {injectable} from "inversify";
 import {v4} from "uuid";
 
@@ -10,9 +10,9 @@ export default class SqlPermissionControlledRepository {
     async updateAssociations(entity: PermissionControlledEntity, model: PermissionControlledModel) {
         const aclModels: AclEntryModel[] = [];
         // delete old entries
-        for(let entryModel of await model.getAcl()){
+        for(const entryModel of await model.getAcl()){
             let found = false;
-            for(let entry of entity.acl) {
+            for(const entry of entity.acl) {
                 if(entry.principal === entryModel.principal && entry.principalType === entryModel.principalType && entry.permission === entryModel.permission) {
                     found = true;
                     break;
@@ -23,9 +23,9 @@ export default class SqlPermissionControlledRepository {
             }
         }
         // create new entries
-        for(let entry of entity.acl) {
+        for(const entry of entity.acl) {
             let found = false;
-            for (let entryModel of await model.getAcl()) {
+            for (const entryModel of await model.getAcl()) {
                 if (entry.principal === entryModel.principal && entry.principalType === entryModel.principalType && entry.permission === entryModel.permission) {
                     found = true;
                     aclModels.push(entryModel);

@@ -1,4 +1,4 @@
-import { ALL_WIKI_TYPES, CALENDAR, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WIKI_PAGE, WORLD, } from "./type-constants";
+import { ALL_WIKI_TYPES, CALENDAR, GAME, MODEL, ROLE, SERVER_CONFIG, WIKI_FOLDER, WIKI_PAGE, WORLD, } from "./type-constants.js";
 // server permissions
 export const WORLD_CREATE = "Create world access";
 export const WORLD_ADMIN_ALL = "Able to change permissions for all worlds";

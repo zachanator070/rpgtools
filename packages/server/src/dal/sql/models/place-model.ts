@@ -1,8 +1,8 @@
-import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
+import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model.js";
 import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
-import ImageModel from "./image-model";
-import {defaultAttributes} from "./default-attributes";
-import WikiPageChild from "./wiki-page-child";
+import ImageModel from "./image-model.js";
+import {defaultAttributes} from "./default-attributes.js";
+import WikiPageChild from "./wiki-page-child.js";
 import {IMAGE, PLACE} from "@rpgtools/common/src/type-constants";
 
 

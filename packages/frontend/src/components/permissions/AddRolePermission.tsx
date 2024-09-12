@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
-import SelectRole from "../select/SelectRole";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import SelectWiki from "../select/SelectWiki";
-import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission";
-import Errors from "../Errors";
-import SelectFolder from "../select/SelectFolder";
-import {Role} from "../../types";
-import DropdownSelect from "../widgets/DropdownSelect";
-import PrimaryButton from "../widgets/PrimaryButton";
+import SelectRole from "../select/SelectRole.tsx";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import SelectWiki from "../select/SelectWiki.tsx";
+import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission.js";
+import Errors from "../Errors.tsx";
+import SelectFolder from "../select/SelectFolder.tsx";
+import {Role} from "../../types.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
 
 interface AddRolePermissionProps {
 	role: Role;
@@ -53,7 +53,7 @@ export default function AddRolePermission({ role, refetch }: AddRolePermissionPr
 		selectSubject = <SelectFolder canAdmin={true} onChange={(folder) => setSubjectId(folder._id)} />;
 	}
 
-	let availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
+	const availablePermissions = getPermissionsBySubjectType(subjectTypeSelected);
 
 	return (
 		<div className={"margin-lg-top"}>

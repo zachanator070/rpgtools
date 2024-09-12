@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {World} from "../world";
-import {WorldAuthorizationPolicy} from "../../security/policy/world-authorization-policy";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import WorldModel from "../../dal/sql/models/world-model";
+import {World} from "../world.js";
+import {WorldAuthorizationPolicy} from "../../security/policy/world-authorization-policy.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import WorldModel from "../../dal/sql/models/world-model.js";
 
 
 @injectable()

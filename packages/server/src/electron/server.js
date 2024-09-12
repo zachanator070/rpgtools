@@ -63,6 +63,7 @@ function strip(s) {
     // regex from: http://stackoverflow.com/a/29497680/170217
     // REGEX to Remove all ANSI colors/styles from strings
     return s.replace(
+        // eslint-disable-next-line no-control-regex
         /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
         ""
     );

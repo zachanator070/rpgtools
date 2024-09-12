@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useGetModels from "./useGetModels";
-import {Model} from "../../types";
+import useGetModels from "./useGetModels.js";
+import {Model} from "../../types.js";
 
 interface SearchModelsResult {
 	searchModels: (name: string) => Promise<void>;

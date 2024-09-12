@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import SelectFolder from "../../select/SelectFolder";
-import useMoveWiki from "../../../hooks/wiki/useMoveWiki";
-import {WikiPage} from "../../../types";
-import FullScreenModal from "../../widgets/FullScreenModal";
-import PrimaryButton from "../../widgets/PrimaryButton";
+import SelectFolder from "../../select/SelectFolder.tsx";
+import useMoveWiki from "../../../hooks/wiki/useMoveWiki.js";
+import {WikiPage} from "../../../types.js";
+import FullScreenModal from "../../widgets/FullScreenModal.tsx";
+import PrimaryButton from "../../widgets/PrimaryButton.tsx";
 
 interface MoveWikiButtonProps {
 	wikiPage: WikiPage;

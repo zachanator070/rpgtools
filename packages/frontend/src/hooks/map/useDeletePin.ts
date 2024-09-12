@@ -1,5 +1,5 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {World} from "../../types.js";
 import {DELETE_PIN} from "@rpgtools/common/src/gql-mutations";
 import {GET_PINS} from "@rpgtools/common/src/gql-queries";
 

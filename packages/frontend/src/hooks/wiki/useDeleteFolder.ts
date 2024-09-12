@@ -1,5 +1,5 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
+import {World} from "../../types.js";
 import {FOLDERS} from "@rpgtools/common/src/gql-queries";
 import {DELETE_FOLDER} from "@rpgtools/common/src/gql-mutations";
 

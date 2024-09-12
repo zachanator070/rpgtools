@@ -1,9 +1,9 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
-import {File} from "../file";
-import {FileAuthorizationPolicy} from "../../security/policy/file-authorization-policy";
+import {File} from "../file.js";
+import {FileAuthorizationPolicy} from "../../security/policy/file-authorization-policy.js";
 import {Readable} from "stream";
-import FileModel from "../../dal/sql/models/file-model";
+import FileModel from "../../dal/sql/models/file-model.js";
 
 
 @injectable()

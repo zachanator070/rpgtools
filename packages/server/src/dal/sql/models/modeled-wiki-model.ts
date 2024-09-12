@@ -1,8 +1,8 @@
 import {BelongsToGetAssociationMixin, DataTypes, ModelAttributes, ModelStatic} from "sequelize";
-import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model";
-import ModelModel from "./model-model";
-import {defaultAttributes} from "./default-attributes";
-import WikiPageChild from "./wiki-page-child";
+import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model.js";
+import ModelModel from "./model-model.js";
+import {defaultAttributes} from "./default-attributes.js";
+import WikiPageChild from "./wiki-page-child.js";
 import {MODEL} from "@rpgtools/common/src/type-constants";
 
 export const modeledWikiAttributes: ModelAttributes = {

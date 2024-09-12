@@ -1,8 +1,8 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import SqlModel from "./sql-model";
-import ChunkModel from "./chunk-model";
-import WorldModel from "./world-model";
+import {defaultAttributes} from "./default-attributes.js";
+import SqlModel from "./sql-model.js";
+import ChunkModel from "./chunk-model.js";
+import WorldModel from "./world-model.js";
 import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
 
 

@@ -1,5 +1,5 @@
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
-import {EventWiki, WikiPagePaginatedResult} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
+import {EventWiki, WikiPagePaginatedResult} from "../../types.js";
 import {SEARCH_WIKIS, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
 import {useParams} from "react-router-dom";
 import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";

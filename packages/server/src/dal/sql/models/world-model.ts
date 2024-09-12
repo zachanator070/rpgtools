@@ -1,8 +1,8 @@
 import {DataTypes} from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import ArticleModel from "./article-model";
-import WikiFolderModel from "./wiki-folder-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import {defaultAttributes} from "./default-attributes.js";
+import ArticleModel from "./article-model.js";
+import WikiFolderModel from "./wiki-folder-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants";
 
 

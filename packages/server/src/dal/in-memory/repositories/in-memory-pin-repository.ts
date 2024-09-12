@@ -1,9 +1,9 @@
-import { Pin } from "../../../domain-entities/pin";
+import { Pin } from "../../../domain-entities/pin.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {PinRepository} from "../../repository/pin-repository";
-import {PaginatedResult} from "../../paginated-result";
-import {FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {PinRepository} from "../../repository/pin-repository.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import {FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryPinRepository extends AbstractInMemoryRepository<Pin> implements PinRepository {

@@ -1,8 +1,8 @@
-import { Model } from "../../../domain-entities/model";
+import { Model } from "../../../domain-entities/model.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {ModelRepository} from "../../repository/model-repository";
-import {FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {ModelRepository} from "../../repository/model-repository.js";
+import {FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryModelRepository extends AbstractInMemoryRepository<Model> implements ModelRepository{

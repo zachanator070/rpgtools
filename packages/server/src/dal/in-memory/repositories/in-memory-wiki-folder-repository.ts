@@ -1,8 +1,8 @@
-import { WikiFolder } from "../../../domain-entities/wiki-folder";
+import { WikiFolder } from "../../../domain-entities/wiki-folder.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {WikiFolderRepository} from "../../repository/wiki-folder-repository";
-import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {WikiFolderRepository} from "../../repository/wiki-folder-repository.js";
+import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryWikiFolderRepository extends AbstractInMemoryRepository<WikiFolder> implements WikiFolderRepository {

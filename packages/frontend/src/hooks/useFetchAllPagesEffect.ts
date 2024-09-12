@@ -1,5 +1,5 @@
 import {DocumentNode} from "@apollo/client";
-import getQueryName from "./getQueryName";
+import getQueryName from "./getQueryName.js";
 import {useEffect} from "react";
 
 

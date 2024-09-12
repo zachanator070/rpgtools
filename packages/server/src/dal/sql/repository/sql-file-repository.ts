@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {File} from "../../../domain-entities/file";
-import FileModel from "../models/file-model";
-import {FileRepository} from "../../repository/file-repository";
-import FileFactory from "../../../domain-entities/factory/file-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {File} from "../../../domain-entities/file.js";
+import FileModel from "../models/file-model.js";
+import {FileRepository} from "../../repository/file-repository.js";
+import FileFactory from "../../../domain-entities/factory/file-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
 
 
 @injectable()

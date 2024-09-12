@@ -1,9 +1,9 @@
-import { World } from "../../../domain-entities/world";
+import { World } from "../../../domain-entities/world.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {WorldRepository} from "../../repository/world-repository";
-import {PaginatedResult} from "../../paginated-result";
-import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {WorldRepository} from "../../repository/world-repository.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryWorldRepository extends AbstractInMemoryRepository<World> implements WorldRepository {

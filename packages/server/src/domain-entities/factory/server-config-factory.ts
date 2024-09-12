@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {ServerConfig} from "../server-config";
-import {ServerConfigAuthorizationPolicy} from "../../security/policy/server-config-authorization-policy";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import ServerConfigModel from "../../dal/sql/models/server-config-model";
+import {ServerConfig} from "../server-config.js";
+import {ServerConfigAuthorizationPolicy} from "../../security/policy/server-config-authorization-policy.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import ServerConfigModel from "../../dal/sql/models/server-config-model.js";
 
 @injectable()
 export default class ServerConfigFactory implements EntityFactory<ServerConfig, ServerConfigModel> {

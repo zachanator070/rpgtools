@@ -1,8 +1,8 @@
 import { SessionContext } from "../../types";
 import { FileUpload } from "graphql-upload";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import {ModelService} from "../../services/model-service";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import {ModelService} from "../../services/model-service.js";
 
 export const modelMutations = {
 	createModel: async (

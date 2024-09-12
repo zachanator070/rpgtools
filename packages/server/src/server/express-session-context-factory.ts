@@ -4,19 +4,19 @@ import {
 	SessionContextFactory,
 } from "../types";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { v4 as uuidv4 } from "uuid";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
-import { SecurityContextFactory } from "../security/security-context-factory";
+import { SecurityContextFactory } from "../security/security-context-factory.js";
 
 import {
 	ACCESS_TOKEN,
 	ACCESS_TOKEN_MAX_AGE, AuthenticationService,
 	REFRESH_TOKEN,
 	REFRESH_TOKEN_MAX_AGE,
-} from "../services/authentication-service";
-import {DatabaseContext} from "../dal/database-context";
-import UserFactory from "../domain-entities/factory/user-factory";
+} from "../services/authentication-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import UserFactory from "../domain-entities/factory/user-factory.js";
 
 @injectable()
 export class ExpressSessionContextFactory implements SessionContextFactory {
@@ -54,7 +54,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					refreshToken
 				);
 				if (currentUser.tokenVersion === version) {
-					let tokens = await this.authenticationService.createTokens(
+					const tokens = await this.authenticationService.createTokens(
 						currentUser,
 						version,
 						databaseContext

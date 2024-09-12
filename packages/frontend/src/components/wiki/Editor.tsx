@@ -5,9 +5,9 @@ import "quill-mention";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill-mention/dist/quill.mention.min.css";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import LoadingView from "../LoadingView";
-import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import LoadingView from "../LoadingView.tsx";
+import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages.js";
 import {useNavigate, useParams} from "react-router-dom";
 
 Quill.debug("error");
@@ -77,7 +77,7 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 							});
 							renderList(
 								results.docs.map((wiki) => {
-									let url = `/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`;
+									const url = `/ui/world/${currentWorld._id}/wiki/${wiki._id}/view`;
 									const result: any = {};
 									result.value = wiki.name;
 									result.link = url;

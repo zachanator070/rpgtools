@@ -1,14 +1,14 @@
 import React, {useRef, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import LoadingView from "../LoadingView";
-import ModelViewer from "./ModelViewer";
-import {Model} from "../../types";
-import PrimaryButton from "../widgets/PrimaryButton";
-import FormattedTable from "../widgets/FormattedTable";
-import EditIcon from "../widgets/icons/EditIcon";
-import DownloadIcon from "../widgets/icons/DownloadIcon";
-import TextAreaInput from "../widgets/input/TextAreaInput";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import LoadingView from "../LoadingView.tsx";
+import ModelViewer from "./ModelViewer.tsx";
+import {Model} from "../../types.js";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import FormattedTable from "../widgets/FormattedTable.tsx";
+import EditIcon from "../widgets/icons/EditIcon.tsx";
+import DownloadIcon from "../widgets/icons/DownloadIcon.tsx";
+import TextAreaInput from "../widgets/input/TextAreaInput.tsx";
 
 interface ModelContentProps {
 	model: Model;

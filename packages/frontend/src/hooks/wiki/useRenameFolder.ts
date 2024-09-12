@@ -1,5 +1,5 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {WikiFolder} from "../../types";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {WikiFolder} from "../../types.js";
 import {RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
 
 interface RenameFolderVariables {

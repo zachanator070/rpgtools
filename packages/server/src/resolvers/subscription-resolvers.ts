@@ -1,8 +1,8 @@
 import { withFilter } from "graphql-subscriptions";
-import { container } from "../di/inversify";
+import { container } from "../di/inversify.js";
 import {EventPublisher, SessionContext} from "../types";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {MESSAGE_ALL_RECEIVE} from "../services/game-service.js";
 
 export const GAME_CHAT_EVENT = "GAME_CHAT_EVENT";
 export const ROSTER_CHANGE_EVENT = "PLAYER_JOINED_EVENT";

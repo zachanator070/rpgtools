@@ -1,10 +1,10 @@
 import {EntityFactory} from "../../../types";
-import {Age, DayOfTheWeek, Month} from "../../calendar";
-import AgeModel from "../../../dal/sql/models/calendar/age-model";
+import {Age, DayOfTheWeek, Month} from "../../calendar.js";
+import AgeModel from "../../../dal/sql/models/calendar/age-model.js";
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import MonthFactory from "./month-factory";
-import DayOfTheWeekModel from "../../../dal/sql/models/calendar/day-of-the-week-model";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import MonthFactory from "./month-factory.js";
+import DayOfTheWeekModel from "../../../dal/sql/models/calendar/day-of-the-week-model.js";
 
 
 @injectable()

@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
-import useSearchUsers from "../../hooks/authentication/useSearchUsers";
-import DropdownSelect from "../widgets/DropdownSelect";
-import SearchIcon from "../widgets/icons/SearchIcon";
+import useSearchUsers from "../../hooks/authentication/useSearchUsers.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import SearchIcon from "../widgets/icons/SearchIcon.tsx";
 
 interface SelectUserProps {
 	onChange: (userId: string) => Promise<any>;

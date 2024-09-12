@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
 import {ApiServer, DbEngine, Seeder} from "../types";
-import {RoleSeeder} from "../seeders/role-seeder";
-import {ServerConfigSeeder} from "../seeders/server-config-seeder";
-import {ServerConfigService} from "../services/server-config-service";
-import {DatabaseContext} from "../dal/database-context";
+import {RoleSeeder} from "../seeders/role-seeder.js";
+import {ServerConfigSeeder} from "../seeders/server-config-seeder.js";
+import {ServerConfigService} from "../services/server-config-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export default class RpgToolsServer {
@@ -26,7 +26,7 @@ export default class RpgToolsServer {
         const seeders: Seeder[] = [this.serverConfigSeeder, this.roleSeeder];
 
         await databaseContext.openTransaction(async () => {
-            for (let seeder of seeders) {
+            for (const seeder of seeders) {
                 await seeder.seed(databaseContext);
             }
         });

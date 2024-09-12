@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
-import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermisison";
-import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission";
-import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission";
-import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission";
-import SelectUser from "../select/SelectUser";
-import SelectRole from "../select/SelectRole";
-import {PermissionControlled, Role, User} from "../../types";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import PrimaryButton from "../widgets/PrimaryButton";
-import ItemList from "../widgets/ItemList";
-import TabCollection from "../widgets/TabCollection";
-import RadioButtonGroup from "../widgets/RadioButtonGroup";
-import RadioButton from "../widgets/RadioButton";
-import DeleteIcon from "../widgets/icons/DeleteIcon";
+import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermisison.js";
+import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission.js";
+import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission.js";
+import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission.js";
+import SelectUser from "../select/SelectUser.tsx";
+import SelectRole from "../select/SelectRole.tsx";
+import {PermissionControlled, Role, User} from "../../types.js";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import ItemList from "../widgets/ItemList.tsx";
+import TabCollection from "../widgets/TabCollection.tsx";
+import RadioButtonGroup from "../widgets/RadioButtonGroup.tsx";
+import RadioButton from "../widgets/RadioButton.tsx";
+import DeleteIcon from "../widgets/icons/DeleteIcon.tsx";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 
 interface PermissionEditorProps {

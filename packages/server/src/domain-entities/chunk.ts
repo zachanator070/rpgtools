@@ -1,10 +1,10 @@
 import {DomainEntity, EntityFactory, RepositoryAccessor,} from "../types";
 import { CHUNK } from "@rpgtools/common/src/type-constants";
-import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy";
+import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import ChunkModel from "../dal/sql/models/chunk-model";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import ChunkModel from "../dal/sql/models/chunk-model.js";
 
 @injectable()
 export class Chunk implements DomainEntity {

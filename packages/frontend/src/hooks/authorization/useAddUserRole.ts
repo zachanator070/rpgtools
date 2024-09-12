@@ -1,6 +1,6 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
-import {ApiHookResponse} from "../types";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
+import {World} from "../../types.js";
+import {ApiHookResponse} from "../types.js";
 import {ADD_USER_ROLE} from "@rpgtools/common/src/gql-mutations";
 import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 

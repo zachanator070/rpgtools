@@ -1,8 +1,8 @@
 import 'react';
-import PermissionEditor from "../permissions/PermissionEditor";
+import PermissionEditor from "../permissions/PermissionEditor.tsx";
 import {WORLD} from "@rpgtools/common/src/type-constants";
 import React from "react";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 
 export default function () {
     const { currentWorld, refetch } = useCurrentWorld();

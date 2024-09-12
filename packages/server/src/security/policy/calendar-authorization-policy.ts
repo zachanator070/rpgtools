@@ -1,7 +1,7 @@
 import {EntityAuthorizationPolicy} from "../../types";
-import Calendar from "../../domain-entities/calendar";
-import {SecurityContext} from "../security-context";
-import {DatabaseContext} from "../../dal/database-context";
+import Calendar from "../../domain-entities/calendar.js";
+import {SecurityContext} from "../security-context.js";
+import {DatabaseContext} from "../../dal/database-context.js";
 import {
     CALENDAR_ADMIN,
     CALENDAR_ADMIN_ALL,

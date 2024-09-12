@@ -1,7 +1,7 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../../types";
-import MessageModel from "../../../dal/sql/models/game/message-model";
-import {Message} from "../../game";
+import MessageModel from "../../../dal/sql/models/game/message-model.js";
+import {Message} from "../../game.js";
 
 
 @injectable()

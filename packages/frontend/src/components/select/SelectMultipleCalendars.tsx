@@ -1,7 +1,7 @@
 import React from 'react';
-import MultiSelect from "../widgets/MultiSelect";
-import useCalendars from "../../hooks/calendar/useCalendars";
-import LoadingView from "../LoadingView";
+import MultiSelect from "../widgets/MultiSelect.tsx";
+import useCalendars from "../../hooks/calendar/useCalendars.js";
+import LoadingView from "../LoadingView.tsx";
 
 
 export default function SelectMultipleCalendars({onChange}: {onChange: (values: string[]) => any}) {

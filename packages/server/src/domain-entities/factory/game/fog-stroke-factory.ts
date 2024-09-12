@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
 import {EntityFactory} from "../../../types";
-import {PathNode} from "../../game";
-import FogStrokeModel from "../../../dal/sql/models/game/fog-stroke-model";
-import PathNodeFactory from "./path-node-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import {FogStroke} from "../../fog-stroke";
-import FogStrokeAuthorization from "../../../security/policy/fog-stroke-authorization-policy";
+import {PathNode} from "../../game.js";
+import FogStrokeModel from "../../../dal/sql/models/game/fog-stroke-model.js";
+import PathNodeFactory from "./path-node-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import {FogStroke} from "../../fog-stroke.js";
+import FogStrokeAuthorization from "../../../security/policy/fog-stroke-authorization-policy.js";
 
 
 @injectable()

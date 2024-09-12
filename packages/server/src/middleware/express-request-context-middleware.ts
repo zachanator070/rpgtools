@@ -1,7 +1,7 @@
 import express from "express";
 import {CookieManager} from "../types";
-import {ExpressCookieManager} from "../server/express-cookie-manager";
-import {ExpressSessionContextFactory} from "../server/express-session-context-factory";
+import {ExpressCookieManager} from "../server/express-cookie-manager.js";
+import {ExpressSessionContextFactory} from "../server/express-session-context-factory.js";
 
 export const expressRequestContextMiddleware = (contextFactory: ExpressSessionContextFactory) => async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
     const cookieManager: CookieManager = new ExpressCookieManager(res);

@@ -1,11 +1,11 @@
 import {AclEntry, EntityFactory} from "../../types";
-import Calendar, {Age} from "../calendar";
-import CalendarModel from "../../dal/sql/models/calendar-model";
-import CalendarAuthorizationPolicy from "../../security/policy/calendar-authorization-policy";
+import Calendar, {Age} from "../calendar.js";
+import CalendarModel from "../../dal/sql/models/calendar-model.js";
+import CalendarAuthorizationPolicy from "../../security/policy/calendar-authorization-policy.js";
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AgeFactory from "./calendar/age-factory";
-import AclFactory from "./acl-factory";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AgeFactory from "./calendar/age-factory.js";
+import AclFactory from "./acl-factory.js";
 
 @injectable()
 export default class CalendarFactory implements EntityFactory<Calendar, CalendarModel> {

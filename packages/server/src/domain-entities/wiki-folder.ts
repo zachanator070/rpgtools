@@ -4,12 +4,12 @@ import {
 	PermissionControlledEntity,
 	RepositoryAccessor
 } from "../types";
-import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy";
+import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy.js";
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import WikiFolderModel from "../dal/sql/models/wiki-folder-model";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import WikiFolderModel from "../dal/sql/models/wiki-folder-model.js";
 
 @injectable()
 export class WikiFolder implements PermissionControlledEntity {

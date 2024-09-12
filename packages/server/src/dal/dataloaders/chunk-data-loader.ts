@@ -1,8 +1,8 @@
-import { GraphqlDataloader } from "../graphql-dataloader";
-import { Chunk } from "../../domain-entities/chunk";
+import { GraphqlDataloader } from "../graphql-dataloader.js";
+import { Chunk } from "../../domain-entities/chunk.js";
 import { injectable } from "inversify";
-import {Repository} from "../repository/repository";
-import {DatabaseContext} from "../database-context";
+import {Repository} from "../repository/repository.js";
+import {DatabaseContext} from "../database-context.js";
 
 @injectable()
 export class ChunkDataLoader extends GraphqlDataloader<Chunk> {

@@ -1,5 +1,5 @@
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
-import {WikiFolder} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
+import {WikiFolder} from "../../types.js";
 import {GET_FOLDER_PATH} from "@rpgtools/common/src/gql-queries";
 
 interface GetFolderPathVariables {

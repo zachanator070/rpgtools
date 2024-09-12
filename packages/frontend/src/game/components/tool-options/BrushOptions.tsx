@@ -1,17 +1,17 @@
 import React, {useContext, useState} from "react";
-import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
-import ColorInput from "../../../components/widgets/input/ColorInput";
-import DropdownSelect from "../../../components/widgets/DropdownSelect";
-import NumberSlider from "../../../components/widgets/NumberSlider";
+import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox.tsx";
+import ColorInput from "../../../components/widgets/input/ColorInput.tsx";
+import DropdownSelect from "../../../components/widgets/DropdownSelect.tsx";
+import NumberSlider from "../../../components/widgets/NumberSlider.tsx";
 import {
 	BRUSH_CIRCLE,
 	BRUSH_ERASE,
 	BRUSH_LINE,
 	BRUSH_SQUARE,
 	DEFAULT_BRUSH_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE, DEFAULT_BRUSH_TYPE
-} from "../../controller/PaintController";
-import {ControllerContext} from "../GameContent";
-import GameControllerFacade from "../../GameControllerFacade";
+} from "../../controller/PaintController.js";
+import {ControllerContext} from "../GameContent.tsx";
+import GameControllerFacade from "../../GameControllerFacade.js";
 
 export default function BrushOptions() {
 	const [brushColor, setBrushColor] = useState(DEFAULT_BRUSH_COLOR);

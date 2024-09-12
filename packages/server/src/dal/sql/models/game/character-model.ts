@@ -1,8 +1,8 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Model, Sequelize} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
-import UserModel from "../user-model";
-import CharacterAttributeModel from "./character-attribute-model";
-import SqlModel from "../sql-model";
+import {defaultAttributes} from "../default-attributes.js";
+import UserModel from "../user-model.js";
+import CharacterAttributeModel from "./character-attribute-model.js";
+import SqlModel from "../sql-model.js";
 import {GAME, USER} from "@rpgtools/common/src/type-constants";
 
 

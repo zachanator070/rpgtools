@@ -1,5 +1,5 @@
-import {GameController} from "./GameController";
-import GameState, {MeshedModel} from "../GameState";
+import {GameController} from "./GameController.js";
+import GameState, {MeshedModel} from "../GameState.js";
 import {RenderPass} from "three/examples/jsm/postprocessing/RenderPass";
 import {OutlinePass} from "three/examples/jsm/postprocessing/OutlinePass";
 import * as THREE from "three";
@@ -8,7 +8,7 @@ import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
 import {FXAAShader} from "three/examples/jsm/shaders/FXAAShader";
 import {Object3D} from "three/src/core/Object3D";
 import {Vector3} from "three";
-import {PositionedModel} from "../../types";
+import {PositionedModel} from "../../types.js";
 
 export default class ModelController implements GameController {
 
@@ -88,7 +88,7 @@ export default class ModelController implements GameController {
         if (selectedMesh) {
             if (this.gameState.currentGame.canModel) {
                 let selectedMeshedModel: MeshedModel;
-                for (let meshedModel of this.gameState.meshedModels) {
+                for (const meshedModel of this.gameState.meshedModels) {
                     if (meshedModel.mesh.id === selectedMesh.id) {
                         selectedMeshedModel = meshedModel;
                         break;
@@ -118,7 +118,7 @@ export default class ModelController implements GameController {
         this.removeGlow();
         this.selectedMeshedModel = null;
 
-        for (let meshedModel of this.gameState.meshedModels) {
+        for (const meshedModel of this.gameState.meshedModels) {
             if (meshedModel.mesh.id === selectedMesh?.id) {
                 this.selectedMeshedModel = meshedModel;
                 break;

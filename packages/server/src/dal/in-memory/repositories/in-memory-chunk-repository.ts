@@ -1,7 +1,7 @@
-import { Chunk } from "../../../domain-entities/chunk";
+import { Chunk } from "../../../domain-entities/chunk.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {ChunkRepository} from "../../repository/chunk-repository";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {ChunkRepository} from "../../repository/chunk-repository.js";
 
 @injectable()
 export class InMemoryChunkRepository

@@ -1,9 +1,9 @@
 import React, {CSSProperties, useState} from "react";
-import useWorlds from "../../hooks/world/useWorlds";
-import {World} from "../../types";
-import DropdownSelect from "../widgets/DropdownSelect";
-import PrimaryButton from "../widgets/PrimaryButton";
-import SearchIcon from "../widgets/icons/SearchIcon";
+import useWorlds from "../../hooks/world/useWorlds.js";
+import {World} from "../../types.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import SearchIcon from "../widgets/icons/SearchIcon.tsx";
 
 interface SelectWorldProps {
 	onChange?: (world: World) => any;
@@ -26,7 +26,7 @@ export default function SelectWorld ({ onChange, style, showClear = false }: Sel
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
 		if (onChange) {
-			for (let world of worlds.docs) {
+			for (const world of worlds.docs) {
 				if (world._id === newValue) {
 					await onChange(world);
 				}

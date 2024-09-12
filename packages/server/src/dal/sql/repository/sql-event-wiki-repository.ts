@@ -1,16 +1,16 @@
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {EventWiki} from "../../../domain-entities/event-wiki";
-import EventWikiModel from "../models/event-wiki-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {EventWiki} from "../../../domain-entities/event-wiki.js";
+import EventWikiModel from "../models/event-wiki-model.js";
 import {ModelStatic, Op} from "sequelize";
 import {EntityFactory} from "../../../types";
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiPageModel from "../models/wiki-page-model";
-import EventWikiRepository from "../../repository/event-wiki-repository";
-import {PaginatedResult} from "../../paginated-result";
-import {WikiPage} from "../../../domain-entities/wiki-page";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiPageModel from "../models/wiki-page-model.js";
+import EventWikiRepository from "../../repository/event-wiki-repository.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import {WikiPage} from "../../../domain-entities/wiki-page.js";
 import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
-import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model";
+import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model.js";
 
 @injectable()
 export default class SqlEventWikiRepository extends AbstractSqlRepository<EventWiki, WikiPageModel> implements EventWikiRepository {

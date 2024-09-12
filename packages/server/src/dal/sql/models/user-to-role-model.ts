@@ -1,4 +1,4 @@
-import SqlModel from "./sql-model";
+import SqlModel from "./sql-model.js";
 import {DataTypes} from "sequelize";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 

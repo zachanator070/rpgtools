@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
 import {EntityFactory} from "../../../types";
-import {PathNode} from "../../game";
-import StrokeModel from "../../../dal/sql/models/game/stroke-model";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import PathNodeFactory from "./path-node-factory";
-import {Stroke} from "../../stroke";
-import StrokeAuthorizationPolicy from "../../../security/policy/stroke-authorization-policy";
+import {PathNode} from "../../game.js";
+import StrokeModel from "../../../dal/sql/models/game/stroke-model.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import PathNodeFactory from "./path-node-factory.js";
+import {Stroke} from "../../stroke.js";
+import StrokeAuthorizationPolicy from "../../../security/policy/stroke-authorization-policy.js";
 
 
 @injectable()

@@ -1,4 +1,4 @@
-import ModeledWikiModel, {configModeledWikiModel, modeledWikiAttributes} from "./modeled-wiki-model";
+import ModeledWikiModel, {configModeledWikiModel, modeledWikiAttributes} from "./modeled-wiki-model.js";
 import {PERSON} from "@rpgtools/common/src/type-constants";
 
 

@@ -1,10 +1,10 @@
 import {AclEntry, DomainEntity, EntityFactory, PermissionControlledEntity, RepositoryAccessor} from "../types";
-import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy";
+import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy.js";
 import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import ServerConfigModel from "../dal/sql/models/server-config-model";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import ServerConfigModel from "../dal/sql/models/server-config-model.js";
 
 @injectable()
 export class ServerConfig implements PermissionControlledEntity {

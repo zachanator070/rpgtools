@@ -1,5 +1,5 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Game} from "../../types";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {Game} from "../../types.js";
 import {CREATE_GAME} from "@rpgtools/common/src/gql-mutations";
 import {useParams} from "react-router-dom";
 

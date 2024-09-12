@@ -1,6 +1,6 @@
 import React, {CSSProperties} from 'react';
 import {Tabs} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "./WidgetProps.js";
 
 export interface TabPaneProps  {
     title: string;

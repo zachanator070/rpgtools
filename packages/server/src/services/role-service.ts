@@ -1,8 +1,8 @@
-import { Role } from "../domain-entities/role";
+import { Role } from "../domain-entities/role.js";
 import {injectable} from "inversify";
-import { SecurityContext } from "../security/security-context";
-import { PaginatedResult } from "../dal/paginated-result";
-import {DatabaseContext} from "../dal/database-context";
+import { SecurityContext } from "../security/security-context.js";
+import { PaginatedResult } from "../dal/paginated-result.js";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class RoleService {
@@ -28,7 +28,7 @@ export class RoleService {
 		const results = await databaseContext.roleRepository.findByWorldAndNamePaginated(worldId, page, name);
 
 		const roles = [];
-		for (let role of results.docs) {
+		for (const role of results.docs) {
 			if (canAdmin !== undefined && !(await role.authorizationPolicy.canAdmin(context, databaseContext))) {
 				continue;
 			}

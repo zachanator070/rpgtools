@@ -1,11 +1,11 @@
-import {PathNode} from "./game";
+import {PathNode} from "./game.js";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
-import FogStrokeModel from "../dal/sql/models/game/fog-stroke-model";
-import {Repository} from "../dal/repository/repository";
+import FogStrokeModel from "../dal/sql/models/game/fog-stroke-model.js";
+import {Repository} from "../dal/repository/repository.js";
 import {FOG_STROKE} from "@rpgtools/common/src/type-constants";
 import {inject} from "inversify";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import FogStrokeAuthorization from "../security/policy/fog-stroke-authorization-policy";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
+import FogStrokeAuthorization from "../security/policy/fog-stroke-authorization-policy.js";
 
 
 export class FogStroke implements DomainEntity {

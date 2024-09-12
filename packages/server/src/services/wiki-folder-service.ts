@@ -1,12 +1,12 @@
-import { WikiFolder } from "../domain-entities/wiki-folder";
-import { SecurityContext } from "../security/security-context";
+import { WikiFolder } from "../domain-entities/wiki-folder.js";
+import { SecurityContext } from "../security/security-context.js";
 import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
 import {USER} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {AuthorizationService} from "./authorization-service";
-import {DatabaseContext} from "../dal/database-context";
-import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {AuthorizationService} from "./authorization-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 
 @injectable()
 export class WikiFolderService {
@@ -36,7 +36,7 @@ export class WikiFolderService {
 		parentFolder.children.push(newFolder._id);
 		await databaseContext.wikiFolderRepository.update(parentFolder);
 
-		for (let permission of [FOLDER_RW, FOLDER_ADMIN]) {
+		for (const permission of [FOLDER_RW, FOLDER_ADMIN]) {
 			newFolder.acl.push({
 				permission,
 				principal: context.user._id,
@@ -109,7 +109,7 @@ export class WikiFolderService {
 
 		const currentParent = await databaseContext.wikiFolderRepository.findOneWithChild(folderId);
 
-		for (let folderToCheck of [folder, parentFolder, currentParent]) {
+		for (const folderToCheck of [folder, parentFolder, currentParent]) {
 			if (!(await folderToCheck.authorizationPolicy.canWrite(context, databaseContext))) {
 				throw new Error(`You do not have permission to edit folder ${folderToCheck.name}`);
 			}
@@ -140,7 +140,7 @@ export class WikiFolderService {
 		const results = await databaseContext.wikiFolderRepository.findByWorldAndName(worldId, name);
 
 		const docs = [];
-		for (let doc of results) {
+		for (const doc of results) {
 			if (
 				canAdmin !== undefined &&
 				!(await doc.authorizationPolicy.canAdmin(context, databaseContext))
@@ -166,11 +166,11 @@ export class WikiFolderService {
 
 	private recurseDeleteFolder = async (folder: WikiFolder, databaseContext: DatabaseContext) => {
 		const children = await databaseContext.wikiFolderRepository.findByIds(folder.children);
-		for (let child of children) {
+		for (const child of children) {
 			await this.recurseDeleteFolder(child, databaseContext);
 		}
 
-		for (let pageId of folder.pages) {
+		for (const pageId of folder.pages) {
 			const page = await databaseContext.wikiPageRepository.findOneById(pageId);
 			await databaseContext.wikiPageRepository.delete(page);
 		}
@@ -190,7 +190,7 @@ export class WikiFolderService {
 		}
 
 		// pages are auto populated
-		for (let childPage of folder.pages) {
+		for (const childPage of folder.pages) {
 			const wikiPage = await databaseContext.wikiPageRepository.findOneById(childPage);
 			if (
 				!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))
@@ -200,7 +200,7 @@ export class WikiFolderService {
 		}
 
 		// children folders are not auto populated
-		for (let childFolder of folder.children) {
+		for (const childFolder of folder.children) {
 			await this.checkUserWritePermissionForFolderContents(context, childFolder, databaseContext);
 		}
 	};

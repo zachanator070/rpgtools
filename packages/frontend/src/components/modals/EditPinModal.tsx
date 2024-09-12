@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
-import useUpdatePin from "../../hooks/map/useUpdatePin";
-import useDeletePin from "../../hooks/map/useDeletePin";
-import SelectWiki from "../select/SelectWiki";
-import usePins from "../../hooks/map/usePins";
-import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/input/InputForm";
+import useUpdatePin from "../../hooks/map/useUpdatePin.js";
+import useDeletePin from "../../hooks/map/useDeletePin.js";
+import SelectWiki from "../select/SelectWiki.tsx";
+import usePins from "../../hooks/map/usePins.js";
+import FullScreenModal from "../widgets/FullScreenModal.tsx";
+import InputForm from "../widgets/input/InputForm.tsx";
 import {PLACE} from "@rpgtools/common/src/type-constants";
-import FormItem from "../widgets/input/FormItem";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import {Pin, WikiPage} from "../../types";
+import FormItem from "../widgets/input/FormItem.tsx";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
+import {Pin, WikiPage} from "../../types.js";
 
 interface EditPinModalProps {
 	visibility: boolean;
@@ -26,8 +26,8 @@ export default function EditPinModal({ visibility, setVisibility, pinId }: EditP
 
 	useEffect(() => {
 		if (pins && pinBeingEdited) {
-			let possiblePins = pins.docs;
-			for (let pin of possiblePins) {
+			const possiblePins = pins.docs;
+			for (const pin of possiblePins) {
 				if (pin._id === pinId) {
 					setPinBeingEdited(pin);
 					break;

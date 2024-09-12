@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Pin} from "../../../domain-entities/pin";
-import PinModel from "../models/pin-model";
-import {PinRepository} from "../../repository/pin-repository";
-import PinFactory from "../../../domain-entities/factory/pin-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import {PaginatedResult} from "../../paginated-result";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Pin} from "../../../domain-entities/pin.js";
+import PinModel from "../models/pin-model.js";
+import {PinRepository} from "../../repository/pin-repository.js";
+import PinFactory from "../../../domain-entities/factory/pin-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import {PaginatedResult} from "../../paginated-result.js";
 
 
 @injectable()

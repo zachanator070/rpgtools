@@ -1,9 +1,9 @@
-import {AbstractInMemoryRepository} from "./abstract-in-memory-repository";
-import {Stroke} from "../../../domain-entities/stroke";
-import StrokeRepository from "../../repository/stroke-repository";
-import {FilterCondition} from "../../filter-condition";
+import {AbstractInMemoryRepository} from "./abstract-in-memory-repository.js";
+import {Stroke} from "../../../domain-entities/stroke.js";
+import StrokeRepository from "../../repository/stroke-repository.js";
+import {FilterCondition} from "../../filter-condition.js";
 import {injectable} from "inversify";
-import {PaginatedResult} from "../../paginated-result";
+import {PaginatedResult} from "../../paginated-result.js";
 
 @injectable()
 export default class InMemoryStrokeRepository extends AbstractInMemoryRepository<Stroke> implements StrokeRepository {
@@ -14,7 +14,7 @@ export default class InMemoryStrokeRepository extends AbstractInMemoryRepository
 
     async deleteAllByGameId(id: string): Promise<void> {
         const toDelete = [...this.items.entries()].filter(([id, stroke]) => stroke.game !== id );
-        for(let [id, stroke] of toDelete) {
+        for(const [id, stroke] of toDelete) {
             await this.delete(stroke);
         }
     }

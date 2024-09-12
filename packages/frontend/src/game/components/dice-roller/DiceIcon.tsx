@@ -1,8 +1,8 @@
 import React from "react";
-import {SET_BONUS_ACTION, SET_COUNT_ACTION} from "./DiceRoller";
-import ToolTip from "../../../components/widgets/ToolTip";
-import NumberBadge from "../../../components/widgets/NumberBadge";
-import NumberInput from "../../../components/widgets/input/NumberInput";
+import {SET_BONUS_ACTION, SET_COUNT_ACTION} from "./DiceRoller.tsx";
+import ToolTip from "../../../components/widgets/ToolTip.tsx";
+import NumberBadge from "../../../components/widgets/NumberBadge.tsx";
+import NumberInput from "../../../components/widgets/input/NumberInput.tsx";
 
 interface DiceIconProps {
 	reducer: any;

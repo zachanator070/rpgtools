@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import ModelModel from "../models/model-model";
-import {Model} from "../../../domain-entities/model";
-import {ModelRepository} from "../../repository/model-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import ModelFactory from "../../../domain-entities/factory/model-factory";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import ModelModel from "../models/model-model.js";
+import {Model} from "../../../domain-entities/model.js";
+import {ModelRepository} from "../../repository/model-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import ModelFactory from "../../../domain-entities/factory/model-factory.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 
 
 @injectable()

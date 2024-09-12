@@ -1,6 +1,6 @@
 import React from 'react';
 import {Badge} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "./WidgetProps.js";
 
 interface NumberBadgeProps extends WidgetProps {
     count: number, children: React.ReactNode

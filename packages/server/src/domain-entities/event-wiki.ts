@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import {WikiPage} from "./wiki-page";
+import {WikiPage} from "./wiki-page.js";
 import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
-import {Repository} from "../dal/repository/repository";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import WikiPageModel from "../dal/sql/models/wiki-page-model";
-import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
+import {Repository} from "../dal/repository/repository.js";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
+import WikiPageModel from "../dal/sql/models/wiki-page-model.js";
+import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy.js";
 
 @injectable()
 export class EventWiki extends WikiPage {

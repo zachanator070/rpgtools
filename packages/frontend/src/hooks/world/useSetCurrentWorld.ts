@@ -1,6 +1,6 @@
-import useCurrentUser from "../authentication/useCurrentUser";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
+import useCurrentUser from "../authentication/useCurrentUser.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {World} from "../../types.js";
 import {SET_CURRENT_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 interface SetCurrentWorldVariables {

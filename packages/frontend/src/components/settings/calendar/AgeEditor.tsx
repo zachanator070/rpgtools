@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import TextInput from "../../widgets/input/TextInput";
-import NumberInput from "../../widgets/input/NumberInput";
-import {Age} from "../../../types";
-import PrimaryDangerButton from "../../widgets/PrimaryDangerButton";
-import DeleteIcon from "../../widgets/icons/DeleteIcon";
-import AddIcon from "../../widgets/icons/AddIcon";
+import TextInput from "../../widgets/input/TextInput.tsx";
+import NumberInput from "../../widgets/input/NumberInput.tsx";
+import {Age} from "../../../types.js";
+import PrimaryDangerButton from "../../widgets/PrimaryDangerButton.tsx";
+import DeleteIcon from "../../widgets/icons/DeleteIcon.tsx";
+import AddIcon from "../../widgets/icons/AddIcon.tsx";
 
 export default function AgeEditor({age, onChange = () => {}, editable}: {age: Age, onChange?: (age: Age) => any, editable: boolean}) {
 

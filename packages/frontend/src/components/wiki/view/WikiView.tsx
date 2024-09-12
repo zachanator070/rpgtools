@@ -1,15 +1,15 @@
 import React, {ReactElement, useRef, useState} from "react";
-import Editor from "../Editor";
-import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
+import Editor from "../Editor.tsx";
+import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import LoadingView from "../../LoadingView";
+import LoadingView from "../../LoadingView.tsx";
 import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
-import ModelViewer from "../../models/ModelViewer";
-import {EventWiki, ModeledWiki, Place, WikiPage} from "../../../types";
-import usePins from "../../../hooks/map/usePins";
-import ToolTip from "../../widgets/ToolTip";
-import GotoIcon from "../../widgets/icons/GotoIcon";
-import WikiViewButtonBar from "./WikiViewButtonBar";
+import ModelViewer from "../../models/ModelViewer.tsx";
+import {EventWiki, ModeledWiki, Place, WikiPage} from "../../../types.js";
+import usePins from "../../../hooks/map/usePins.js";
+import ToolTip from "../../widgets/ToolTip.tsx";
+import GotoIcon from "../../widgets/icons/GotoIcon.tsx";
+import WikiViewButtonBar from "./WikiViewButtonBar.tsx";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;
@@ -46,7 +46,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	const getPinFromPageId = (pageId) => {
-		for (let pin of pins.docs) {
+		for (const pin of pins.docs) {
 			if (pin.page && pin.page._id === pageId) {
 				return pin;
 			}
@@ -62,7 +62,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 	}
 
 	let gotoMap = null;
-	let pin = getPinFromPageId(currentWiki._id);
+	const pin = getPinFromPageId(currentWiki._id);
 	if (pin) {
 		gotoMap = (
 			<a
@@ -127,7 +127,7 @@ export default function WikiView({ currentWiki, wikiLoading }: WikiContentProps)
 			);
 		}
 	} else if(currentWiki.type === EVENT_WIKI) {
-		let eventWiki = currentWiki as EventWiki
+		const eventWiki = currentWiki as EventWiki
 		typeSpecificContent = (<div>
 			{eventWiki.calendar && <>
 				<div className={'margin-md'}>

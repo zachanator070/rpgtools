@@ -1,12 +1,12 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {WikiPage} from "../wiki-page";
-import WikiPageModel from "../../dal/sql/models/wiki-page-model";
-import {Article} from "../article";
-import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import ArticleFactory from "./article-factory";
-import EntityMapper from "../entity-mapper";
+import {WikiPage} from "../wiki-page.js";
+import WikiPageModel from "../../dal/sql/models/wiki-page-model.js";
+import {Article} from "../article.js";
+import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import ArticleFactory from "./article-factory.js";
+import EntityMapper from "../entity-mapper.js";
 import {ALL_WIKI_TYPES} from "@rpgtools/common/src/type-constants";
 
 

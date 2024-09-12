@@ -1,8 +1,8 @@
 import {DataTypes} from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import WorldModel from "./world-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
-import FileModel from "./file-model";
+import {defaultAttributes} from "./default-attributes.js";
+import WorldModel from "./world-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
+import FileModel from "./file-model.js";
 import {FILE, WORLD} from "@rpgtools/common/src/type-constants";
 
 export default class ModelModel extends PermissionControlledModel {

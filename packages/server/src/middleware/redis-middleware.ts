@@ -1,7 +1,7 @@
 import e from "express";
 import {Cache, SessionContext} from "../types";
-import { container } from "../di/inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { container } from "../di/inversify.js";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 
 export const redisMiddleware = (lookupKeyName: string) => async (
 	req: e.Request,

@@ -1,14 +1,14 @@
 import React, {useState} from "react";
-import useCreateWorld from "../../hooks/world/useCreateWorld";
+import useCreateWorld from "../../hooks/world/useCreateWorld.js";
 import { useNavigate } from "react-router-dom";
-import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
+import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld.js";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import ToolTip from "../widgets/ToolTip";
-import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
-import InputForm from "../widgets/input/InputForm";
-import FormItem from "../widgets/input/FormItem";
-import TextInput from "../widgets/input/TextInput";
-import FullScreenModal from "../widgets/FullScreenModal";
+import ToolTip from "../widgets/ToolTip.tsx";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox.tsx";
+import InputForm from "../widgets/input/InputForm.tsx";
+import FormItem from "../widgets/input/FormItem.tsx";
+import TextInput from "../widgets/input/TextInput.tsx";
+import FullScreenModal from "../widgets/FullScreenModal.tsx";
 
 interface CreateWorldModalProps {
 	visibility: boolean;

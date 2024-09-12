@@ -1,5 +1,5 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {ModeledWiki} from "../../types";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
+import {ModeledWiki} from "../../types.js";
 import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
 import {UPDATE_MODELED_WIKI} from "@rpgtools/common/src/gql-mutations";
 

@@ -1,5 +1,5 @@
 import {useApolloClient} from "@apollo/client";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {LOGOUT_QUERY} from "@rpgtools/common/src/gql-mutations";
 
 interface LogoutResult extends GqlMutationResult<boolean> {

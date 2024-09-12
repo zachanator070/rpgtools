@@ -1,5 +1,5 @@
-import {Repository} from "./repository";
-import {WikiFolder} from "../../domain-entities/wiki-folder";
+import {Repository} from "./repository.js";
+import {WikiFolder} from "../../domain-entities/wiki-folder.js";
 
 export interface WikiFolderRepository extends Repository<WikiFolder> {
     findOneWithPage(pageId: string): Promise<WikiFolder>;

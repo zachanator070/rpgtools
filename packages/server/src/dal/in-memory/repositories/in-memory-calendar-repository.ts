@@ -1,6 +1,6 @@
-import {AbstractInMemoryRepository} from "./abstract-in-memory-repository";
-import Calendar from "../../../domain-entities/calendar";
-import {CalendarRepository} from "../../repository/calendar-repository";
+import {AbstractInMemoryRepository} from "./abstract-in-memory-repository.js";
+import Calendar from "../../../domain-entities/calendar.js";
+import {CalendarRepository} from "../../repository/calendar-repository.js";
 import {injectable} from "inversify";
 
 @injectable()

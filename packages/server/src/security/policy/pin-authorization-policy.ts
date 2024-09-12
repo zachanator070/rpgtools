@@ -1,10 +1,10 @@
 import {
 	EntityAuthorizationPolicy,
 } from "../../types";
-import { Pin } from "../../domain-entities/pin";
-import { SecurityContext } from "../security-context";
+import { Pin } from "../../domain-entities/pin.js";
+import { SecurityContext } from "../security-context.js";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()
 export class PinAuthorizationPolicy implements EntityAuthorizationPolicy {

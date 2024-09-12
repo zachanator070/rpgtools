@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import LoadingView from "../LoadingView";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import useCreateRole from "../../hooks/authorization/useCreateRole";
-import useDeleteRole from "../../hooks/authorization/useDeleteRole";
-import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole";
-import SelectUser from "../select/SelectUser";
-import useAddUserRole from "../../hooks/authorization/useAddUserRole";
-import {Role, User} from "../../types";
-import useSearchRoles from "../../hooks/authorization/useSearchRoles";
-import ColumnedContent from "../widgets/ColumnedContent";
-import PrimaryButton from "../widgets/PrimaryButton";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
-import TextInput from "../widgets/input/TextInput";
-import ItemList from "../widgets/ItemList";
-import DropdownSelect from "../widgets/DropdownSelect";
-import TabCollection, {TabPaneProps} from "../widgets/TabCollection";
-import DeleteIcon from "../widgets/icons/DeleteIcon";
+import LoadingView from "../LoadingView.tsx";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import useCreateRole from "../../hooks/authorization/useCreateRole.js";
+import useDeleteRole from "../../hooks/authorization/useDeleteRole.js";
+import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole.js";
+import SelectUser from "../select/SelectUser.tsx";
+import useAddUserRole from "../../hooks/authorization/useAddUserRole.js";
+import {Role, User} from "../../types.js";
+import useSearchRoles from "../../hooks/authorization/useSearchRoles.js";
+import ColumnedContent from "../widgets/ColumnedContent.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
+import TextInput from "../widgets/input/TextInput.tsx";
+import ItemList from "../widgets/ItemList.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import TabCollection, {TabPaneProps} from "../widgets/TabCollection.tsx";
+import DeleteIcon from "../widgets/icons/DeleteIcon.tsx";
 
 
 export default function RolesView() {
@@ -35,7 +35,7 @@ export default function RolesView() {
 
 	let selectedRole = null;
 	if (selectedRoleId) {
-		for (let role of roles.docs) {
+		for (const role of roles.docs) {
 			if (role._id === selectedRoleId) {
 				selectedRole = role;
 			}

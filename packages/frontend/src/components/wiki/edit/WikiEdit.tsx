@@ -1,26 +1,26 @@
 import React, {useEffect, useReducer, useState} from "react";
-import useCurrentWiki from "../../../hooks/wiki/useCurrentWiki";
+import useCurrentWiki from "../../../hooks/wiki/useCurrentWiki.js";
 import { useParams } from "react-router-dom";
 import {ALL_WIKI_TYPES, EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
-import ToolTip from "../../widgets/ToolTip";
-import SelectModel from "../../select/SelectModel";
-import ModelViewer from "../../models/ModelViewer";
-import LoadingView from "../../LoadingView";
-import MoveWikiButton from "./MoveWikiButton";
-import {EventWiki, Model, ModeledWiki, Place} from "../../../types";
-import Errors from "../../Errors";
-import TextInput from "../../widgets/input/TextInput";
-import DropdownSelect from "../../widgets/DropdownSelect";
-import ImageInput from "../../widgets/input/ImageInput";
-import Editor from "../Editor";
-import NumberInput from "../../widgets/input/NumberInput";
-import FormItem from "../../widgets/input/FormItem";
-import SelectCalendar from "../../select/SelectCalendar";
-import SelectAge from "../../select/SelectAge";
-import SelectMonth from "../../select/SelectMonth";
-import SaveWikiButton, {UpdateWikiParams} from "./SaveWikiButton";
-import DiscardWikiChangesButton from "./DiscardWikiChangesButton";
-import DeleteWikiButton from "./DeleteWikiButton";
+import ToolTip from "../../widgets/ToolTip.tsx";
+import SelectModel from "../../select/SelectModel.tsx";
+import ModelViewer from "../../models/ModelViewer.tsx";
+import LoadingView from "../../LoadingView.tsx";
+import MoveWikiButton from "./MoveWikiButton.tsx";
+import {EventWiki, Model, ModeledWiki, Place} from "../../../types.js";
+import Errors from "../../Errors.tsx";
+import TextInput from "../../widgets/input/TextInput.tsx";
+import DropdownSelect from "../../widgets/DropdownSelect.tsx";
+import ImageInput from "../../widgets/input/ImageInput.tsx";
+import Editor from "../Editor.tsx";
+import NumberInput from "../../widgets/input/NumberInput.tsx";
+import FormItem from "../../widgets/input/FormItem.tsx";
+import SelectCalendar from "../../select/SelectCalendar.tsx";
+import SelectAge from "../../select/SelectAge.tsx";
+import SelectMonth from "../../select/SelectMonth.tsx";
+import SaveWikiButton, {UpdateWikiParams} from "./SaveWikiButton.tsx";
+import DiscardWikiChangesButton from "./DiscardWikiChangesButton.tsx";
+import DeleteWikiButton from "./DeleteWikiButton.tsx";
 
 export default function WikiEdit() {
 
@@ -103,7 +103,7 @@ export default function WikiEdit() {
 
 	const wikiTypes = ALL_WIKI_TYPES;
 	const options = [];
-	for (let type of wikiTypes) {
+	for (const type of wikiTypes) {
 		options.push({
 			label: type,
 			value: type

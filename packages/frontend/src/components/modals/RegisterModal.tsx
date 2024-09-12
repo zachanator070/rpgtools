@@ -1,14 +1,14 @@
 import React from "react";
-import useRegister from "../../hooks/authentication/useRegister";
-import useLogin from "../../hooks/authentication/useLogin";
-import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/input/InputForm";
-import FormItem from "../widgets/input/FormItem";
-import TextInput from "../widgets/input/TextInput";
-import PasswordInput from "../widgets/input/PasswordInput";
-import KeyIcon from "../widgets/icons/KeyIcon";
-import PersonIcon from "../widgets/icons/PersonIcon";
-import MailIcon from "../widgets/icons/MailIcon";
+import useRegister from "../../hooks/authentication/useRegister.js";
+import useLogin from "../../hooks/authentication/useLogin.js";
+import FullScreenModal from "../widgets/FullScreenModal.tsx";
+import InputForm from "../widgets/input/InputForm.tsx";
+import FormItem from "../widgets/input/FormItem.tsx";
+import TextInput from "../widgets/input/TextInput.tsx";
+import PasswordInput from "../widgets/input/PasswordInput.tsx";
+import KeyIcon from "../widgets/icons/KeyIcon.tsx";
+import PersonIcon from "../widgets/icons/PersonIcon.tsx";
+import MailIcon from "../widgets/icons/MailIcon.tsx";
 
 interface RegisterModalProps {
 	visibility: boolean;

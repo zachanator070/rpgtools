@@ -1,10 +1,10 @@
 import 'react';
 import {Link} from "react-router-dom";
-import PrimaryButton from "../../widgets/PrimaryButton";
-import EditIcon from "../../widgets/icons/EditIcon";
+import PrimaryButton from "../../widgets/PrimaryButton.tsx";
+import EditIcon from "../../widgets/icons/EditIcon.tsx";
 import React from "react";
-import {WikiPage} from "../../../types";
-import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
+import {WikiPage} from "../../../types.js";
+import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
 
 export default function WikiViewButtonBar({currentWiki, currentWikiLoading} : {currentWiki: WikiPage, currentWikiLoading: boolean}) {
 

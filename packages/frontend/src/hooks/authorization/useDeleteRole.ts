@@ -1,6 +1,6 @@
-import useCurrentUser from "../authentication/useCurrentUser";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {World} from "../../types";
+import useCurrentUser from "../authentication/useCurrentUser.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {World} from "../../types.js";
 import {DELETE_ROLE} from "@rpgtools/common/src/gql-mutations";
 import {GET_CURRENT_USER, GET_CURRENT_WORLD, SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 

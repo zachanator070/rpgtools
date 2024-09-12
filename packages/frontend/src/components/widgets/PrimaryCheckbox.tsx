@@ -1,6 +1,6 @@
 import React from 'react';
 import {Checkbox} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "./WidgetProps.js";
 
 interface PrimaryCheckboxProps extends WidgetProps {
     checked?: boolean,

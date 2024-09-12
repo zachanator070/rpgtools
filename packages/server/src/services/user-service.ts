@@ -1,9 +1,9 @@
-import { SecurityContext } from "../security/security-context";
+import { SecurityContext } from "../security/security-context.js";
 import { injectable } from "inversify";
-import { User } from "../domain-entities/user";
-import {PaginatedResult} from "../dal/paginated-result";
+import { User } from "../domain-entities/user.js";
+import {PaginatedResult} from "../dal/paginated-result.js";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
-import {DatabaseContext} from "../dal/database-context";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class UserService {

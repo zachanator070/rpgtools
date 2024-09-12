@@ -1,6 +1,6 @@
 import {EntityAuthorizationPolicy} from "../../types";
-import { WikiPage } from "../../domain-entities/wiki-page";
-import { SecurityContext } from "../security-context";
+import { WikiPage } from "../../domain-entities/wiki-page.js";
+import { SecurityContext } from "../security-context.js";
 import {injectable } from "inversify";
 import {
 	FOLDER_READ_ALL_PAGES,
@@ -12,7 +12,7 @@ import {
 	WIKI_RW,
 	WIKI_RW_ALL,
 } from "@rpgtools/common/src/permission-constants";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()
 export class WikiPageAuthorizationPolicy implements EntityAuthorizationPolicy

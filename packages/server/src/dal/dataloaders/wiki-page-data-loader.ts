@@ -1,8 +1,8 @@
-import { GraphqlDataloader } from "../graphql-dataloader";
-import { WikiPage } from "../../domain-entities/wiki-page";
+import { GraphqlDataloader } from "../graphql-dataloader.js";
+import { WikiPage } from "../../domain-entities/wiki-page.js";
 import { injectable } from "inversify";
-import {Repository} from "../repository/repository";
-import {DatabaseContext} from "../database-context";
+import {Repository} from "../repository/repository.js";
+import {DatabaseContext} from "../database-context.js";
 
 @injectable()
 export class WikiPageDataLoader extends GraphqlDataloader<WikiPage> {

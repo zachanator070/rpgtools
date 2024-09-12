@@ -1,6 +1,6 @@
-import {setupWikiPageAssociations} from "./wiki-page-model";
-import {defaultAttributes} from "./default-attributes";
-import WikiPageChild from "./wiki-page-child";
+import {setupWikiPageAssociations} from "./wiki-page-model.js";
+import {defaultAttributes} from "./default-attributes.js";
+import WikiPageChild from "./wiki-page-child.js";
 import {ARTICLE} from "@rpgtools/common/src/type-constants";
 
 

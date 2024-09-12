@@ -1,22 +1,22 @@
 import { inject, injectable } from "inversify";
-import { SecurityContext } from "../security/security-context";
+import { SecurityContext } from "../security/security-context.js";
 import {USER} from "@rpgtools/common/src/type-constants";
 import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
 import { Readable } from "stream";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { ModeledPage } from "../domain-entities/modeled-page";
-import { WikiPage } from "../domain-entities/wiki-page";
-import { PaginatedResult } from "../dal/paginated-result";
-import {AuthorizationService} from "./authorization-service";
-import EntityMapper from "../domain-entities/entity-mapper";
-import {WikiFolder} from "../domain-entities/wiki-folder";
-import {DatabaseContext} from "../dal/database-context";
-import ArticleFactory from "../domain-entities/factory/article-factory";
-import ItemFactory from "../domain-entities/factory/item-factory";
-import MonsterFactory from "../domain-entities/factory/monster-factory";
-import PersonFactory from "../domain-entities/factory/person-factory";
-import PlaceFactory from "../domain-entities/factory/place-factory";
-import FileFactory from "../domain-entities/factory/file-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { ModeledPage } from "../domain-entities/modeled-page.js";
+import { WikiPage } from "../domain-entities/wiki-page.js";
+import { PaginatedResult } from "../dal/paginated-result.js";
+import {AuthorizationService} from "./authorization-service.js";
+import EntityMapper from "../domain-entities/entity-mapper.js";
+import {WikiFolder} from "../domain-entities/wiki-folder.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import ArticleFactory from "../domain-entities/factory/article-factory.js";
+import ItemFactory from "../domain-entities/factory/item-factory.js";
+import MonsterFactory from "../domain-entities/factory/monster-factory.js";
+import PersonFactory from "../domain-entities/factory/person-factory.js";
+import PlaceFactory from "../domain-entities/factory/place-factory.js";
+import FileFactory from "../domain-entities/factory/file-factory.js";
 import stream from "stream";
 
 @injectable()
@@ -102,7 +102,7 @@ export class WikiPageService {
 				const current = Buffer.concat(chunks).toString('utf8');
 				const matches = current.matchAll(/\/ui\/world\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/wiki\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/view/g);
 				if(matches) {
-					for(let match of matches) {
+					for(const match of matches) {
 						relatedWikis.add(match[1]);
 					}
 				}
@@ -218,7 +218,7 @@ export class WikiPageService {
 		color: string,
 		databaseContext: DatabaseContext
 	) => {
-		let wikiPage: ModeledPage = await databaseContext.wikiPageRepository.findOneById(wikiId) as ModeledPage;
+		const wikiPage: ModeledPage = await databaseContext.wikiPageRepository.findOneById(wikiId) as ModeledPage;
 		if (!wikiPage) {
 			throw new Error(`Wiki ${wikiId} does not exist`);
 		}
@@ -364,7 +364,7 @@ export class WikiPageService {
 		const results = await databaseContext.wikiPageRepository.findByNameAndTypesPaginatedSortByName(page, name, types);
 
 		const docs = [];
-		for (let doc of results.docs) {
+		for (const doc of results.docs) {
 			if (canAdmin !== undefined && !(await doc.authorizationPolicy.canAdmin(context, databaseContext))) {
 				continue;
 			}
@@ -398,7 +398,7 @@ export class WikiPageService {
 		}
 		const results = await databaseContext.wikiPageRepository.findByIdsPaginated(folder.pages, page,"name");
 		const docs = [];
-		for (let doc of results.docs) {
+		for (const doc of results.docs) {
 			if (await doc.authorizationPolicy.canRead(context, databaseContext)) {
 				docs.push(doc);
 			}
@@ -423,7 +423,7 @@ export class WikiPageService {
 			calendarIds
 		);
 		const docs = [];
-		for (let doc of results.docs) {
+		for (const doc of results.docs) {
 			if (await doc.authorizationPolicy.canRead(securityContext, databaseContext)) {
 				docs.push(doc);
 			}

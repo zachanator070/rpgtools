@@ -1,11 +1,11 @@
-import {PathNode} from "./game";
+import {PathNode} from "./game.js";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
-import {Repository} from "../dal/repository/repository";
-import StrokeModel from "../dal/sql/models/game/stroke-model";
+import {Repository} from "../dal/repository/repository.js";
+import StrokeModel from "../dal/sql/models/game/stroke-model.js";
 import {inject} from "inversify";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
 import {STROKE} from "@rpgtools/common/src/type-constants";
-import StrokeAuthorizationPolicy from "../security/policy/stroke-authorization-policy";
+import StrokeAuthorizationPolicy from "../security/policy/stroke-authorization-policy.js";
 
 export class Stroke implements DomainEntity {
 

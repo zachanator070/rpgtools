@@ -1,9 +1,9 @@
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import {WorldService} from "../../services/world-service";
-import {Age} from "../../domain-entities/calendar";
-import {ContentImportService} from "../../services/content-import-service";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import {WorldService} from "../../services/world-service.js";
+import {Age} from "../../domain-entities/calendar.js";
+import {ContentImportService} from "../../services/content-import-service.js";
 
 interface createWorldArgs {
 	name: string;

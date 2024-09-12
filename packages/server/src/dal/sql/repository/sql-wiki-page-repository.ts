@@ -1,12 +1,12 @@
 import {inject, injectable} from "inversify";
-import {WikiPageRepository} from "../../repository/wiki-page-repository";
-import {WikiPage} from "../../../domain-entities/wiki-page";
-import {PaginatedResult} from "../../paginated-result";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import WikiPageModel from "../models/wiki-page-model";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import {WikiPageRepository} from "../../repository/wiki-page-repository.js";
+import {WikiPage} from "../../../domain-entities/wiki-page.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import WikiPageModel from "../models/wiki-page-model.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 import {Op} from "sequelize";
 
 @injectable()

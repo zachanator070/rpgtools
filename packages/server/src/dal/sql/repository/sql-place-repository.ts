@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Place} from "../../../domain-entities/place";
-import PlaceModel from "../models/place-model";
-import {PlaceRepository} from "../../repository/place-repository";
-import PlaceFactory from "../../../domain-entities/factory/place-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiPageModel from "../models/wiki-page-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Place} from "../../../domain-entities/place.js";
+import PlaceModel from "../models/place-model.js";
+import {PlaceRepository} from "../../repository/place-repository.js";
+import PlaceFactory from "../../../domain-entities/factory/place-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiPageModel from "../models/wiki-page-model.js";
 
 @injectable()
 export default class SqlPlaceRepository extends AbstractSqlRepository<Place, WikiPageModel> implements PlaceRepository {

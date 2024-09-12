@@ -4,17 +4,17 @@ import {
 	WIKI_FOLDER,
 	WIKI_PAGE,
 } from "@rpgtools/common/src/type-constants";
-import { WikiPage } from "../domain-entities/wiki-page";
-import { SecurityContext } from "../security/security-context";
-import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors";
-import { ModeledPage } from "../domain-entities/modeled-page";
-import { Image } from "../domain-entities/image";
-import { Chunk } from "../domain-entities/chunk";
-import { WikiFolder } from "../domain-entities/wiki-folder";
-import { Model } from "../domain-entities/model";
-import { File } from "../domain-entities/file";
+import { WikiPage } from "../domain-entities/wiki-page.js";
+import { SecurityContext } from "../security/security-context.js";
+import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors.js";
+import { ModeledPage } from "../domain-entities/modeled-page.js";
+import { Image } from "../domain-entities/image.js";
+import { Chunk } from "../domain-entities/chunk.js";
+import { WikiFolder } from "../domain-entities/wiki-folder.js";
+import { Model } from "../domain-entities/model.js";
+import { File } from "../domain-entities/file.js";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../dal/database-context";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class ContentExportService {
@@ -92,12 +92,12 @@ export class ContentExportService {
 			return;
 		}
 
-		for (let pageId of folder.pages) {
+		for (const pageId of folder.pages) {
 			const page = await databaseContext.wikiPageRepository.findOneById(pageId);
 			await this.exportWikiPage(context, pageId, page.type, archive, databaseContext);
 		}
 
-		for (let childId of folder.children) {
+		for (const childId of folder.children) {
 			const child = await databaseContext.wikiFolderRepository.findOneById(childId);
 			await this.addWikiFolder(context, child, archive, databaseContext, false);
 		}
@@ -116,7 +116,7 @@ export class ContentExportService {
 			await this.addImage(context, icon, archive, databaseContext);
 		}
 		const chunks: Chunk[] = await databaseContext.chunkRepository.findByIds(image.chunks);
-		for (let chunk of chunks) {
+		for (const chunk of chunks) {
 			await archive.chunkRepository.create(chunk);
 			const file = await databaseContext.fileRepository.findOneById(chunk.fileId);
 			await this.addFile(file, archive);

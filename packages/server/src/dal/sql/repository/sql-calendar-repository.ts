@@ -1,16 +1,16 @@
-import AbstractSqlRepository from "./abstract-sql-repository";
-import Calendar, {Age} from "../../../domain-entities/calendar";
-import CalendarModel from "../models/calendar-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import Calendar, {Age} from "../../../domain-entities/calendar.js";
+import CalendarModel from "../models/calendar-model.js";
 import {inject, injectable} from "inversify";
 import {ModelStatic} from "sequelize";
-import CalendarFactory from "../../../domain-entities/factory/calendar-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-import {CalendarRepository} from "../../repository/calendar-repository";
+import CalendarFactory from "../../../domain-entities/factory/calendar-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
+import {CalendarRepository} from "../../repository/calendar-repository.js";
 import {v4} from "uuid";
-import AgeModel from "../models/calendar/age-model";
-import MonthModel from "../models/calendar/month-model";
-import DayOfTheWeekModel from "../models/calendar/day-of-the-week-model";
+import AgeModel from "../models/calendar/age-model.js";
+import MonthModel from "../models/calendar/month-model.js";
+import DayOfTheWeekModel from "../models/calendar/day-of-the-week-model.js";
 
 
 @injectable()
@@ -43,7 +43,7 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
 
     async updateAges(entity: Calendar, model: CalendarModel) {
         const ageModels = [];
-        for(let [index, age] of entity.ages.entries()) {
+        for(const [index, age] of entity.ages.entries()) {
 
             let ageModel = null;
 
@@ -72,9 +72,9 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         }
 
         // delete old ages
-        for(let oldAgeModel of await AgeModel.findAll({where: {calendarId: entity._id}})) {
+        for(const oldAgeModel of await AgeModel.findAll({where: {calendarId: entity._id}})) {
             let keep = false;
-            for(let currentAgeModel of ageModels) {
+            for(const currentAgeModel of ageModels) {
                 if(oldAgeModel._id === currentAgeModel._id) {
                     keep = true;
                     break;
@@ -91,7 +91,7 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
     async updateMonths(entity: Age, model: AgeModel) {
         // save new months
         const monthModels = [];
-        for(let [index, month] of entity.months.entries()) {
+        for(const [index, month] of entity.months.entries()) {
             let monthModel = null;
             if (!month._id) {
                 monthModel = MonthModel.build({
@@ -116,9 +116,9 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         }
 
         // delete old months
-        for(let oldMonthModel of await MonthModel.findAll({where: {ageId: entity._id}})) {
+        for(const oldMonthModel of await MonthModel.findAll({where: {ageId: entity._id}})) {
             let keep = false;
-            for(let currentMonthModel of monthModels) {
+            for(const currentMonthModel of monthModels) {
                 if(oldMonthModel._id === currentMonthModel._id) {
                     keep = true;
                     break;
@@ -135,7 +135,7 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
     async updateDays(entity: Age, model: AgeModel) {
         // save new days
         const dayModels = [];
-        for(let [index, day] of entity.daysOfTheWeek.entries()) {
+        for(const [index, day] of entity.daysOfTheWeek.entries()) {
             let dayModel = null;
             if (!day._id) {
                 dayModel = DayOfTheWeekModel.build({
@@ -158,9 +158,9 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
         }
 
         // delete old days
-        for(let oldDayModel of await DayOfTheWeekModel.findAll({where: {ageId: entity._id}})) {
+        for(const oldDayModel of await DayOfTheWeekModel.findAll({where: {ageId: entity._id}})) {
             let keep = false;
-            for(let currentDayModel of dayModels) {
+            for(const currentDayModel of dayModels) {
                 if(oldDayModel._id === currentDayModel._id) {
                     keep = true;
                     break;

@@ -1,8 +1,8 @@
 import React, {useContext} from "react";
-import SlidingDrawer from "../widgets/SlidingDrawer";
-import WikiView from "../wiki/view/WikiView";
-import MapWikiContext from "../../MapWikiContext";
-import useGetWiki from "../../hooks/wiki/useGetWiki";
+import SlidingDrawer from "../widgets/SlidingDrawer.tsx";
+import WikiView from "../wiki/view/WikiView.tsx";
+import MapWikiContext from "../../MapWikiContext.js";
+import useGetWiki from "../../hooks/wiki/useGetWiki.js";
 
 export default function MapDrawer() {
 	const { mapWikiId, showMapDrawer, setShowMapDrawer } = useContext(MapWikiContext);

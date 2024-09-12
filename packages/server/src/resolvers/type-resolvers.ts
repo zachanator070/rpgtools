@@ -1,7 +1,7 @@
 import { GraphQLUpload } from "graphql-upload";
-import { container } from "../di/inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { World } from "../domain-entities/world";
+import { container } from "../di/inversify.js";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { World } from "../domain-entities/world.js";
 import {
 	AclEntry,
 	DataLoader,
@@ -10,31 +10,31 @@ import {
 	SessionContext,
 
 } from "../types";
-import { WikiFolder } from "../domain-entities/wiki-folder";
-import { WikiPage } from "../domain-entities/wiki-page";
-import { Image } from "../domain-entities/image";
-import { Model } from "../domain-entities/model";
-import { ModeledPage } from "../domain-entities/modeled-page";
-import { Role } from "../domain-entities/role";
-import { User } from "../domain-entities/user";
-import { Pin } from "../domain-entities/pin";
-import { Place } from "../domain-entities/place";
-import { Chunk } from "../domain-entities/chunk";
-import { ServerConfig } from "../domain-entities/server-config";
-import {Game, InGameModel, Message} from "../domain-entities/game";
-import EntityMapper from "../domain-entities/entity-mapper";
-import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
-import {ServerConfigService} from "../services/server-config-service";
-import {FileRepository} from "../dal/repository/file-repository";
-import {RoleRepository} from "../dal/repository/role-repository";
-import {UserRepository} from "../dal/repository/user-repository";
-import RoleFactory from "../domain-entities/factory/role-factory";
-import GameFactory from "../domain-entities/factory/game-factory";
-import ModelFactory from "../domain-entities/factory/model-factory";
-import {EventWiki} from "../domain-entities/event-wiki";
-import Calendar from "../domain-entities/calendar";
-import {Stroke} from "../domain-entities/stroke";
-import {FogStroke} from "../domain-entities/fog-stroke";
+import { WikiFolder } from "../domain-entities/wiki-folder.js";
+import { WikiPage } from "../domain-entities/wiki-page.js";
+import { Image } from "../domain-entities/image.js";
+import { Model } from "../domain-entities/model.js";
+import { ModeledPage } from "../domain-entities/modeled-page.js";
+import { Role } from "../domain-entities/role.js";
+import { User } from "../domain-entities/user.js";
+import { Pin } from "../domain-entities/pin.js";
+import { Place } from "../domain-entities/place.js";
+import { Chunk } from "../domain-entities/chunk.js";
+import { ServerConfig } from "../domain-entities/server-config.js";
+import {Game, InGameModel, Message} from "../domain-entities/game.js";
+import EntityMapper from "../domain-entities/entity-mapper.js";
+import {MESSAGE_ALL_RECEIVE} from "../services/game-service.js";
+import {ServerConfigService} from "../services/server-config-service.js";
+import {FileRepository} from "../dal/repository/file-repository.js";
+import {RoleRepository} from "../dal/repository/role-repository.js";
+import {UserRepository} from "../dal/repository/user-repository.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
+import GameFactory from "../domain-entities/factory/game-factory.js";
+import ModelFactory from "../domain-entities/factory/model-factory.js";
+import {EventWiki} from "../domain-entities/event-wiki.js";
+import Calendar from "../domain-entities/calendar.js";
+import {Stroke} from "../domain-entities/stroke.js";
+import {FogStroke} from "../domain-entities/fog-stroke.js";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<World> => {
@@ -57,12 +57,12 @@ const wikiPageInterfaceAttributes = {
 	canAdmin: async (page: WikiPage, _: any, { securityContext, databaseContext }: SessionContext): Promise<boolean> => {
 		return page.authorizationPolicy.canAdmin(securityContext, databaseContext);
 	},
-	content: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<String> => {
+	content: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<string> => {
 		if(page.contentId){
 			const fileRepository = databaseContext.fileRepository;
 			const contentFile = await fileRepository.findOneById(page.contentId);
 			const buffer: string[] = []
-			const contents = new Promise<String>((resolve, reject) => {
+			const contents = new Promise<string>((resolve, reject) => {
 				contentFile.readStream.on('data', (chunk) => { buffer.push(chunk.toString())});
 				contentFile.readStream.on('error', (err) => reject(err));
 				contentFile.readStream.on('end', () => { resolve(buffer.join()) });
@@ -270,7 +270,7 @@ export const TypeResolvers = {
 			const repository = databaseContext.roleRepository;
 			const roles = await repository.findAll();
 			const returnRoles = [];
-			for (let role of roles) {
+			for (const role of roles) {
 				if (await role.authorizationPolicy.canAdmin(securityContext, databaseContext)) {
 					returnRoles.push(role);
 				}
@@ -317,7 +317,7 @@ export const TypeResolvers = {
 		characters: async (game: Game, _: any, {databaseContext}: SessionContext): Promise<any[]> => {
 			const dataLoader = container.get<DataLoader<User>>(INJECTABLE_TYPES.UserDataLoader);
 			const characters = [];
-			for (let character of game.characters) {
+			for (const character of game.characters) {
 				characters.push({
 					_id: character._id,
 					name: character.name,

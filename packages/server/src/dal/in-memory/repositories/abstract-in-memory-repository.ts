@@ -3,11 +3,11 @@ import {
 	FILTER_CONDITION_OPERATOR_EQUALS,
 	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
-} from "../../filter-condition";
-import {PaginatedResult} from "../../paginated-result";
+} from "../../filter-condition.js";
+import {PaginatedResult} from "../../paginated-result.js";
 import {injectable} from "inversify";
 import {v4 as uuidv4} from 'uuid';
-import {Repository} from "../../repository/repository";
+import {Repository} from "../../repository/repository.js";
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
@@ -94,7 +94,7 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 
 	private filter = (conditions: FilterCondition[], resultsArray: Type[]): Type[] => {
 		let results = [...resultsArray];
-		for (let filter of conditions) {
+		for (const filter of conditions) {
 			results = results.filter((entity: any) => {
 				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
 					return entity[filter.field] === filter.value;

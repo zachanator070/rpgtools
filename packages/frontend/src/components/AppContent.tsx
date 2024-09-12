@@ -1,16 +1,16 @@
 import {useParams, Route, Routes} from "react-router-dom";
-import useCurrentWorld from "../hooks/world/useCurrentWorld";
-import LoadingView from "./LoadingView";
-import MapView from "./map/MapView";
+import useCurrentWorld from "../hooks/world/useCurrentWorld.js";
+import LoadingView from "./LoadingView.tsx";
+import MapView from "./map/MapView.tsx";
 import React from "react";
-import WorldSettings from "./settings/WorldSettings";
-import RolesView from "./permissions/RolesView";
-import GameView from "../game/components/GameView";
-import GameLoginView from "../game/components/GameLoginView";
-import WikiIndex from "./wiki/WikiIndex";
-import ModelView from "./models/ModelView";
-import DefaultView from "./DefaultView";
-import TimelineView from "./timeline/TimelineView";
+import WorldSettings from "./settings/WorldSettings.tsx";
+import RolesView from "./permissions/RolesView.tsx";
+import GameView from "../game/components/GameView.tsx";
+import GameLoginView from "../game/components/GameLoginView.tsx";
+import WikiIndex from "./wiki/WikiIndex.tsx";
+import ModelView from "./models/ModelView.tsx";
+import DefaultView from "./DefaultView.tsx";
+import TimelineView from "./timeline/TimelineView.tsx";
 
 export default function AppContent(){
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();

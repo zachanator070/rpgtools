@@ -1,6 +1,6 @@
-import SqlModel from "../sql-model";
+import SqlModel from "../sql-model.js";
 import {DataTypes} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
+import {defaultAttributes} from "../default-attributes.js";
 import {AGE} from "@rpgtools/common/src/type-constants";
 
 

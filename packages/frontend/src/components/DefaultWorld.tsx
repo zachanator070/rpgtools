@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
-import useServerConfig from "../hooks/server/useServerConfig";
+import useServerConfig from "../hooks/server/useServerConfig.js";
 import {useNavigate} from "react-router-dom";
-import LoadingView from "./LoadingView";
-import DefaultView from "./DefaultView";
+import LoadingView from "./LoadingView.tsx";
+import DefaultView from "./DefaultView.tsx";
 
 
 export default function DefaultWorld() {

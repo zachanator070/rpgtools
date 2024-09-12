@@ -1,16 +1,16 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {Character, Game, InGameModel, Message} from "../game";
-import {GameAuthorizationPolicy} from "../../security/policy/game-authorization-policy";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import GameModel from "../../dal/sql/models/game-model";
-import CharacterFactory from "./game/character-factory";
-import PathNodeFactory from "./game/path-node-factory";
-import StrokeFactory from "./game/stroke-factory";
-import MessageFactory from "./game/message-factory";
-import InGameModelFactory from "./game/in-game-model-factory";
-import FogStrokeFactory from "./game/fog-stroke-factory";
+import {Character, Game, InGameModel, Message} from "../game.js";
+import {GameAuthorizationPolicy} from "../../security/policy/game-authorization-policy.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import GameModel from "../../dal/sql/models/game-model.js";
+import CharacterFactory from "./game/character-factory.js";
+import PathNodeFactory from "./game/path-node-factory.js";
+import StrokeFactory from "./game/stroke-factory.js";
+import MessageFactory from "./game/message-factory.js";
+import InGameModelFactory from "./game/in-game-model-factory.js";
+import FogStrokeFactory from "./game/fog-stroke-factory.js";
 
 
 @injectable()

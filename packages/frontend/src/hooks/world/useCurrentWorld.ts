@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
-import {World} from "../../types";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {World} from "../../types.js";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {GET_CURRENT_WORLD} from "@rpgtools/common/src/gql-queries";
 
 interface CurrentWorldVariables {

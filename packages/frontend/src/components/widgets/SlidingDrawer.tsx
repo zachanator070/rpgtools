@@ -1,8 +1,8 @@
 import React, { CSSProperties, useState} from "react";
 import {Drawer} from "antd";
-import PrimaryButton from "./PrimaryButton";
-import HamburgerMenuIcon from "./icons/HamburgerMenuIcon";
-import {WidgetProps} from "./WidgetProps";
+import PrimaryButton from "./PrimaryButton.tsx";
+import HamburgerMenuIcon from "./icons/HamburgerMenuIcon.tsx";
+import {WidgetProps} from "./WidgetProps.js";
 
 interface SlidingDrawerProps extends WidgetProps {
 	title?: string;

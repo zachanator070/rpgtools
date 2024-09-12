@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "./WidgetProps.js";
 
 interface SecondaryButtonProps extends WidgetProps {
     children: React.ReactNode;

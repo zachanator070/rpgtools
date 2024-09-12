@@ -1,10 +1,10 @@
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import { IMAGE } from "@rpgtools/common/src/type-constants";
-import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy";
+import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy.js";
 import {inject, injectable} from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import ImageModel from "../dal/sql/models/image-model";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import ImageModel from "../dal/sql/models/image-model.js";
 
 @injectable()
 export class Image implements DomainEntity {

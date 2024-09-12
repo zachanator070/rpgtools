@@ -1,10 +1,10 @@
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
-import { UserAuthorizationPolicy } from "../security/policy/user-authorization-policy";
+import { UserAuthorizationPolicy } from "../security/policy/user-authorization-policy.js";
 import { USER } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import UserModel from "../dal/sql/models/user-model";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import UserModel from "../dal/sql/models/user-model.js";
 
 @injectable()
 export class User implements DomainEntity {

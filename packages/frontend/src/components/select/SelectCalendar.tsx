@@ -1,8 +1,8 @@
 import React, {CSSProperties, useState} from 'react';
-import useCalendars from "../../hooks/calendar/useCalendars";
-import DropdownSelect from "../widgets/DropdownSelect";
-import {Calendar} from "../../types";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
+import useCalendars from "../../hooks/calendar/useCalendars.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import {Calendar} from "../../types.js";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
 
 interface SelectCalendarProps {
     onChange?: (calendar: Calendar) => Promise<any>;
@@ -32,7 +32,7 @@ export default function SelectCalendar({onChange, style, defaultCalendar, showCl
             onChange={async (newValue) => {
                 await setValue(newValue);
                 if (onChange) {
-                    for (let calendar of calendars) {
+                    for (const calendar of calendars) {
                         if (calendar._id === newValue) {
                             await onChange(calendar);
                             break;

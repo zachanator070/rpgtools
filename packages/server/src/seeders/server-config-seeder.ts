@@ -1,9 +1,9 @@
 import { Seeder } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import ServerConfigFactory from "../domain-entities/factory/server-config-factory";
-import {DatabaseContext} from "../dal/database-context";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import ServerConfigFactory from "../domain-entities/factory/server-config-factory.js";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class ServerConfigSeeder implements Seeder {

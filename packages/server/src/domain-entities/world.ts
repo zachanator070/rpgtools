@@ -1,10 +1,10 @@
 import {AclEntry, DomainEntity, EntityFactory, PermissionControlledEntity, RepositoryAccessor} from "../types";
-import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy";
+import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy.js";
 import { WORLD } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import WorldModel from "../dal/sql/models/world-model";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import WorldModel from "../dal/sql/models/world-model.js";
 
 @injectable()
 export class World implements PermissionControlledEntity {

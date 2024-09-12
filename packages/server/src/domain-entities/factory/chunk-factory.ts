@@ -1,8 +1,8 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
-import {Chunk} from "../chunk";
-import {ChunkAuthorizationPolicy} from "../../security/policy/chunk-authorization-policy";
-import ChunkModel from "../../dal/sql/models/chunk-model";
+import {Chunk} from "../chunk.js";
+import {ChunkAuthorizationPolicy} from "../../security/policy/chunk-authorization-policy.js";
+import ChunkModel from "../../dal/sql/models/chunk-model.js";
 
 
 @injectable()

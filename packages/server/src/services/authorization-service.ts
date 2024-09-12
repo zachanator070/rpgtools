@@ -1,17 +1,17 @@
 import {
 	DomainEntity, PermissionControlledEntity,
 } from "../types";
-import { SecurityContext } from "../security/security-context";
-import { Role } from "../domain-entities/role";
+import { SecurityContext } from "../security/security-context.js";
+import { Role } from "../domain-entities/role.js";
 import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { User } from "../domain-entities/user";
-import EntityMapper from "../domain-entities/entity-mapper";
-import {DatabaseContext} from "../dal/database-context";
-import RoleFactory from "../domain-entities/factory/role-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { User } from "../domain-entities/user.js";
+import EntityMapper from "../domain-entities/entity-mapper.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
 
 @injectable()
 export class AuthorizationService {
@@ -128,7 +128,7 @@ export class AuthorizationService {
 		}
 		const newRole = this.roleFactory.build({name, world: worldId, acl: []});
 		await databaseContext.roleRepository.create(newRole);
-		for (let permission of [ROLE_ADMIN, ROLE_RW]) {
+		for (const permission of [ROLE_ADMIN, ROLE_RW]) {
 			newRole.acl.push({
 				permission,
 				principal: context.user._id,
@@ -151,7 +151,7 @@ export class AuthorizationService {
 			throw new Error("You cannot delete this role");
 		}
 		const usersWithRole = await databaseContext.userRepository.findWithRole(role._id);
-		for(let user of usersWithRole) {
+		for(const user of usersWithRole) {
 			user.roles = user.roles.filter(id => id !== role._id);
 			await databaseContext.userRepository.update(user);
 		}

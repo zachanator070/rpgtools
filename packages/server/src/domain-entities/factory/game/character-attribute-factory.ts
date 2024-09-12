@@ -1,7 +1,7 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../../types";
-import {CharacterAttribute} from "../../game";
-import CharacterAttributeModel from "../../../dal/sql/models/game/character-attribute-model";
+import {CharacterAttribute} from "../../game.js";
+import CharacterAttributeModel from "../../../dal/sql/models/game/character-attribute-model.js";
 
 
 @injectable()

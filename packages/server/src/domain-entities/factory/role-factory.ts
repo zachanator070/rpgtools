@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {Role} from "../role";
-import {RoleAuthorizationPolicy} from "../../security/policy/role-authorization-policy";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import {RoleModel} from "../../dal/sql/models/role-model";
+import {Role} from "../role.js";
+import {RoleAuthorizationPolicy} from "../../security/policy/role-authorization-policy.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import {RoleModel} from "../../dal/sql/models/role-model.js";
 
 
 @injectable()

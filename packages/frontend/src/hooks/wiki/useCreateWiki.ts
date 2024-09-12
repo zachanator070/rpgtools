@@ -1,5 +1,5 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {WikiFolder, WikiPage, World} from "../../types";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
+import {WikiFolder, WikiPage, World} from "../../types.js";
 import {CREATE_WIKI} from "@rpgtools/common/src/gql-mutations";
 import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
 

@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Item} from "../../../domain-entities/item";
-import ItemModel from "../models/item-model";
-import {ItemRepository} from "../../repository/item-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import ItemFactory from "../../../domain-entities/factory/item-factory";
-import WikiPageModel from "../models/wiki-page-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Item} from "../../../domain-entities/item.js";
+import ItemModel from "../models/item-model.js";
+import {ItemRepository} from "../../repository/item-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import ItemFactory from "../../../domain-entities/factory/item-factory.js";
+import WikiPageModel from "../models/wiki-page-model.js";
 
 
 @injectable()

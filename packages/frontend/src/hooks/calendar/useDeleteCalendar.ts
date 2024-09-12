@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {DELETE_CALENDAR} from "@rpgtools/common/src/gql-mutations";
-import {Calendar} from "../../types";
+import {Calendar} from "../../types.js";
 import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries";
 
 export interface DeleteCalendarVariables {

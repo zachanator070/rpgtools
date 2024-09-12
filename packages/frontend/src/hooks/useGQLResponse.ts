@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import {DocumentNode} from "graphql";
 import {ApolloError} from "@apollo/client/errors";
-import getQueryName from "./getQueryName";
-import useNotification from "../components/widgets/useNotification";
+import getQueryName from "./getQueryName.js";
+import useNotification from "../components/widgets/useNotification.tsx";
 
 interface GenericGqlResponse<T> {
 	data: T;
@@ -36,7 +36,7 @@ export default function useGQLResponse
 
 	useEffect(() => {
 		if (displayErrors) {
-			for (let message of errors) {
+			for (const message of errors) {
 				errorNotification({
 					message: errorTitle,
 					description: message,

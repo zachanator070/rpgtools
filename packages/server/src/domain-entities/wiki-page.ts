@@ -4,10 +4,10 @@ import {
 	PermissionControlledEntity,
 	RepositoryAccessor
 } from "../types";
-import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy";
+import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
 
 @injectable()
 export abstract class WikiPage implements PermissionControlledEntity {

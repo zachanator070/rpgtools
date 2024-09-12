@@ -1,6 +1,6 @@
 import { EntityAuthorizationPolicy } from "../../types";
-import { User } from "../../domain-entities/user";
-import { SecurityContext } from "../security-context";
+import { User } from "../../domain-entities/user.js";
+import { SecurityContext } from "../security-context.js";
 import { injectable } from "inversify";
 
 @injectable()

@@ -1,6 +1,6 @@
 import {DocumentNode, MutationHookOptions, useMutation} from "@apollo/client";
-import useGQLResponse from "./useGQLResponse";
-import {ApiHookResponse} from "./types";
+import useGQLResponse from "./useGQLResponse.js";
+import {ApiHookResponse} from "./types.js";
 
 export interface GqlMutationResult<TData, TVariables=void> extends ApiHookResponse<TData> {
 	mutate: MutationMethod<TData, TVariables>

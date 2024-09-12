@@ -1,8 +1,8 @@
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
-import {EventWikiPaginatedResult} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
+import {EventWikiPaginatedResult} from "../../types.js";
 import {SEARCH_EVENTS} from "@rpgtools/common/src/gql-queries";
 import {useParams} from "react-router-dom";
-import useFetchAllPagesEffect from "../useFetchAllPagesEffect";
+import useFetchAllPagesEffect from "../useFetchAllPagesEffect.js";
 
 interface SearchEventsVariables {
     calendarIds?: string[],

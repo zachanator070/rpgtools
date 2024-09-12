@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import { ZipArchive } from "./zip-archive";
+import { ZipArchive } from "./zip-archive.js";
 import unzipper, { Entry } from "unzipper";
 import {Archive, AbstractArchiveFactory, Factory} from "../types";
 import {
@@ -7,12 +7,12 @@ import {
 	FILE,
 } from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {WikiFolder} from "../domain-entities/wiki-folder";
-import {WikiPage} from "../domain-entities/wiki-page";
-import EntityMapper from "../domain-entities/entity-mapper";
-import FileFactory from "../domain-entities/factory/file-factory";
-import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {WikiFolder} from "../domain-entities/wiki-folder.js";
+import {WikiPage} from "../domain-entities/wiki-page.js";
+import EntityMapper from "../domain-entities/entity-mapper.js";
+import FileFactory from "../domain-entities/factory/file-factory.js";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 
 class TempFolder {
 	children: TempFolder[] = [];

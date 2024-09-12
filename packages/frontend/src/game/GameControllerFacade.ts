@@ -1,4 +1,4 @@
-import {BRUSH_FOG, PaintController} from "./controller/PaintController";
+import {BRUSH_FOG, PaintController} from "./controller/PaintController.js";
 import GameState, {
     DICE_CONTROLS,
     FOG_CONTROLS,
@@ -6,15 +6,15 @@ import GameState, {
     PAINT_CONTROLS,
     SCENE_CONTROLS,
     SELECT_MODEL_CONTROLS
-} from "./GameState";
-import SceneController from "./controller/SceneController";
-import MapController from "./controller/MapController";
-import {FogStroke, Place, PositionedModel, Stroke} from "../types";
-import FogController from "./controller/FogController";
+} from "./GameState.js";
+import SceneController from "./controller/SceneController.js";
+import MapController from "./controller/MapController.js";
+import {FogStroke, Place, PositionedModel, Stroke} from "../types.js";
+import FogController from "./controller/FogController.js";
 import {v4 as uuidv4} from "uuid";
-import HotkeyController from "./controller/HotkeyController";
-import ModelController from "./controller/ModelController";
-import DiceController, {DiceType, LoadedDiceRoll} from "./controller/DiceController";
+import HotkeyController from "./controller/HotkeyController.js";
+import ModelController from "./controller/ModelController.js";
+import DiceController, {DiceType, LoadedDiceRoll} from "./controller/DiceController.js";
 
 
 export default class GameControllerFacade {

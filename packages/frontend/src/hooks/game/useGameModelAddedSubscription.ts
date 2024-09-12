@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
+import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription.js";
 import gql from "graphql-tag";
-import {Game, PositionedModel} from "../../types";
+import {Game, PositionedModel} from "../../types.js";
 import {GAME_MODEL} from "@rpgtools/common/src/gql-fragments";
 
 export const GAME_MODEL_ADDED_SUBSCRIPTION = gql`

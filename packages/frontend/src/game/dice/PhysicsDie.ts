@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import CANNON from "cannon";
-import {DiceState} from "../controller/DiceController";
+import {DiceState} from "../controller/DiceController.js";
 
 export interface MeshWithBody {
     mesh: THREE.Mesh;
@@ -80,29 +80,29 @@ export abstract class PhysicsDie {
     }
 
     isFinished() {
-        let threshold = 1;
+        const threshold = 1;
 
-        let angularVelocity = this.object.body.angularVelocity;
-        let velocity = this.object.body.velocity;
+        const angularVelocity = this.object.body.angularVelocity;
+        const velocity = this.object.body.velocity;
 
         return (Math.abs(angularVelocity.x) < threshold && Math.abs(angularVelocity.y) < threshold && Math.abs(angularVelocity.z) < threshold &&
             Math.abs(velocity.x) < threshold && Math.abs(velocity.y) < threshold && Math.abs(velocity.z) < threshold);
     }
 
     getUpsideValue() {
-        let vector = new THREE.Vector3(0, this.invertUpside ? -1 : 1);
+        const vector = new THREE.Vector3(0, this.invertUpside ? -1 : 1);
         let closest_face;
         let closest_angle = Math.PI * 2;
 
-        let normals = this.object.mesh.geometry.getAttribute('normal').array;
+        const normals = this.object.mesh.geometry.getAttribute('normal').array;
         for (let i = 0; i < this.object.mesh.geometry.groups.length; ++i) {
-            let face = this.object.mesh.geometry.groups[i];
+            const face = this.object.mesh.geometry.groups[i];
             if (face.materialIndex === 0) continue;
 
             //Each group consists in 3 vertices of 3 elements (x, y, z) so the offset between faces in the Float32BufferAttribute is 9
-            let startVertex = i * 9;
-            let normal = new THREE.Vector3(normals[startVertex], normals[startVertex + 1], normals[startVertex + 2]);
-            let angle = normal.clone().applyQuaternion(this.object.body.quaternion).angleTo(vector);
+            const startVertex = i * 9;
+            const normal = new THREE.Vector3(normals[startVertex], normals[startVertex + 1], normals[startVertex + 2]);
+            const angle = normal.clone().applyQuaternion(this.object.body.quaternion).angleTo(vector);
             if (angle < closest_angle) {
                 closest_angle = angle;
                 closest_face = face;
@@ -129,9 +129,9 @@ export abstract class PhysicsDie {
     }
 
     shiftUpperValue(toValue: number) {
-        let geometry = this.object.mesh.geometry.clone();
+        const geometry = this.object.mesh.geometry.clone();
 
-        let fromValue = this.getUpsideValue();
+        const fromValue = this.getUpsideValue();
         for (let i = 0, l = geometry.groups.length; i < l; ++i) {
             let materialIndex = geometry.groups[i].materialIndex;
             if (materialIndex === 0) continue;
@@ -149,20 +149,20 @@ export abstract class PhysicsDie {
     }
 
     getChamferGeometry(vectors, faces, chamfer) {
-        let chamfer_vectors = [], chamfer_faces = [], corner_faces = new Array(vectors.length);
+        const chamfer_vectors = [], chamfer_faces = [], corner_faces = new Array(vectors.length);
         for (let i = 0; i < vectors.length; ++i) corner_faces[i] = [];
         for (let i = 0; i < faces.length; ++i) {
-            let ii = faces[i], fl = ii.length - 1;
-            let center_point = new THREE.Vector3();
-            let face = new Array(fl);
+            const ii = faces[i], fl = ii.length - 1;
+            const center_point = new THREE.Vector3();
+            const face = new Array(fl);
             for (let j = 0; j < fl; ++j) {
-                let vv = vectors[ii[j]].clone();
+                const vv = vectors[ii[j]].clone();
                 center_point.add(vv);
                 corner_faces[ii[j]].push(face[j] = chamfer_vectors.push(vv) - 1);
             }
             center_point.divideScalar(fl);
             for (let j = 0; j < fl; ++j) {
-                let vv = chamfer_vectors[face[j]];
+                const vv = chamfer_vectors[face[j]];
                 vv.subVectors(vv, center_point).multiplyScalar(chamfer).addVectors(vv, center_point);
             }
             face.push(ii[fl]);
@@ -172,7 +172,7 @@ export abstract class PhysicsDie {
             for (let j = i + 1; j < faces.length; ++j) {
                 let pairs = [], lastm = -1;
                 for (let m = 0; m < faces[i].length - 1; ++m) {
-                    let n = faces[j].indexOf(faces[i][m]);
+                    const n = faces[j].indexOf(faces[i][m]);
                     if (n >= 0 && n < faces[j].length - 1) {
                         if (lastm >= 0 && m !== lastm + 1) pairs.unshift([i, m], [j, n]);
                         else pairs.push([i, m], [j, n]);
@@ -193,7 +193,7 @@ export abstract class PhysicsDie {
                     let index = chamfer_faces[m].indexOf(face[face.length - 1]);
                     if (index >= 0 && index < 4) {
                         if (--index === -1) index = 3;
-                        let next_vertex = chamfer_faces[m][index];
+                        const next_vertex = chamfer_faces[m][index];
                         if (cf.indexOf(next_vertex) >= 0) {
                             face.push(next_vertex);
                             break;
@@ -209,13 +209,13 @@ export abstract class PhysicsDie {
     }
 
     makeGeometry(vertices, faces, radius, tab, af) {
-        let geom = new THREE.BufferGeometry();
+        const geom = new THREE.BufferGeometry();
 
         for (let i = 0; i < vertices.length; ++i) {
             vertices[i] = vertices[i].multiplyScalar(radius);
         }
 
-        let positions = [];
+        const positions = [];
         const normals = [];
         const uvs = [];
 
@@ -225,8 +225,8 @@ export abstract class PhysicsDie {
         let faceFirstVertexIndex = 0;
 
         for (let i = 0; i < faces.length; ++i) {
-            let ii = faces[i], fl = ii.length - 1;
-            let aa = Math.PI * 2 / fl;
+            const ii = faces[i], fl = ii.length - 1;
+            const aa = Math.PI * 2 / fl;
             materialIndex = ii[fl] + 1;
             for (let j = 0; j < fl - 2; ++j) {
 
@@ -254,7 +254,7 @@ export abstract class PhysicsDie {
             }
 
             //Set Group for face materials.
-            let numOfVertices = (fl - 2) * 3;
+            const numOfVertices = (fl - 2) * 3;
             for (let i = 0; i < numOfVertices / 3; i++) {
                 geom.addGroup(faceFirstVertexIndex, 3, materialIndex);
                 faceFirstVertexIndex += 3;
@@ -271,9 +271,9 @@ export abstract class PhysicsDie {
     }
 
     createShape(vertices, faces, radius) {
-        let cv = new Array(vertices.length), cf = new Array(faces.length);
+        const cv = new Array(vertices.length), cf = new Array(faces.length);
         for (let i = 0; i < vertices.length; ++i) {
-            let v = vertices[i];
+            const v = vertices[i];
             cv[i] = new CANNON.Vec3(v.x * radius, v.y * radius, v.z * radius);
         }
         for (let i = 0; i < faces.length; ++i) {
@@ -283,15 +283,15 @@ export abstract class PhysicsDie {
     }
 
     getGeometry() {
-        let radius = this.size * this.scaleFactor;
+        const radius = this.size * this.scaleFactor;
 
-        let vectors = new Array(this.vertices.length);
+        const vectors = new Array(this.vertices.length);
         for (let i = 0; i < this.vertices.length; ++i) {
             vectors[i] = (new THREE.Vector3).fromArray(this.vertices[i]).normalize();
         }
 
-        let chamferGeometry = this.getChamferGeometry(vectors, this.faces, this.chamfer);
-        let geometry = this.makeGeometry(chamferGeometry.vectors, chamferGeometry.faces, radius, this.tab, this.af);
+        const chamferGeometry = this.getChamferGeometry(vectors, this.faces, this.chamfer);
+        const geometry = this.makeGeometry(chamferGeometry.vectors, chamferGeometry.faces, radius, this.tab, this.af);
         this.cannon_shape = this.createShape(vectors, this.faces, radius);
 
         return geometry;
@@ -302,9 +302,9 @@ export abstract class PhysicsDie {
     }
 
     createTextTexture(text: string, color: string, backColor: string) {
-        let canvas = document.createElement("canvas");
-        let context = canvas.getContext("2d");
-        let ts = this.calculateTextureSize(this.size / 2 + this.size * this.textMargin) * 2;
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        const ts = this.calculateTextureSize(this.size / 2 + this.size * this.textMargin) * 2;
         canvas.width = canvas.height = ts;
         context.font = ts / (1 + 2 * this.textMargin) + "pt Arial";
         context.fillStyle = backColor;
@@ -313,15 +313,15 @@ export abstract class PhysicsDie {
         context.textBaseline = "middle";
         context.fillStyle = color;
         context.fillText(text, canvas.width / 2, canvas.height / 2);
-        let texture = new THREE.Texture(canvas);
+        const texture = new THREE.Texture(canvas);
         texture.needsUpdate = true;
         return texture;
     }
 
     getMaterials() {
-        let materials = [];
+        const materials = [];
         for (let i = 0; i < this.faceTexts.length; ++i) {
-            let texture = this.createTextTexture(this.faceTexts[i], this.labelColor, this.diceColor);
+            const texture = this.createTextTexture(this.faceTexts[i], this.labelColor, this.diceColor);
 
             materials.push(new THREE.MeshPhongMaterial(Object.assign({}, this.materialOptions, {map: texture})));
         }

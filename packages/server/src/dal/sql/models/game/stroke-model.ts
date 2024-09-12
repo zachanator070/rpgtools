@@ -1,7 +1,7 @@
 import {DataTypes, HasManyGetAssociationsMixin, Model, Sequelize} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
-import PathNodeModel from "./path-node-model";
-import SqlModel from "../sql-model";
+import {defaultAttributes} from "../default-attributes.js";
+import PathNodeModel from "./path-node-model.js";
+import SqlModel from "../sql-model.js";
 import {GAME} from "@rpgtools/common/src/type-constants";
 
 

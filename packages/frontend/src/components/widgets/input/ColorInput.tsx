@@ -1,6 +1,6 @@
 import React, {CSSProperties} from 'react';
 import {Input} from "antd";
-import {WidgetProps} from "../WidgetProps";
+import {WidgetProps} from "../WidgetProps.js";
 
 interface ColorInputProps extends WidgetProps {
     value: string;

@@ -67,11 +67,11 @@ export class ModelRenderer {
 		const verticalFOV = (CAMERA_FOV * Math.PI) / 180;
 		const horizontalFOV =
 			2 * Math.atan(Math.tan(verticalFOV / 2) * this.aspect);
-		let cameraZ = Math.max(
+		const cameraZ = Math.max(
 			(this.modelHeight * 1.1) / 2 / Math.tan(verticalFOV / 2),
 			(this.modelWidth * 1.1) / 2 / Math.tan(horizontalFOV / 2)
 		);
-		let cameraY = this.modelHeight * 0.7;
+		const cameraY = this.modelHeight * 0.7;
 
 		this.camera.position.set(0, cameraY, cameraZ);
 		this.orbitControls.target = new Vector3(0, this.modelHeight / 2, 0);
@@ -96,8 +96,8 @@ export class ModelRenderer {
 	}
 
 	setupScene() {
-		let renderHeight = this.renderRoot.clientHeight;
-		let renderWidth = this.renderRoot.clientWidth;
+		const renderHeight = this.renderRoot.clientHeight;
+		const renderWidth = this.renderRoot.clientWidth;
 
 		this.scene = new THREE.Scene();
 

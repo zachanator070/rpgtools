@@ -1,8 +1,8 @@
 import React from 'react';
-import {EventWiki} from "../../types";
-import VerticalTimeline from "../widgets/VerticalTimeline";
+import {EventWiki} from "../../types.js";
+import VerticalTimeline from "../widgets/VerticalTimeline.tsx";
 import {Link, useParams} from "react-router-dom";
-import {getDate, getTime} from "../wiki/view/WikiView";
+import {getDate, getTime} from "../wiki/view/WikiView.tsx";
 
 
 function sortEvents(eventA: EventWiki, eventB: EventWiki): number {

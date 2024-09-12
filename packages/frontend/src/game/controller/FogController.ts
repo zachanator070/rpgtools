@@ -1,8 +1,8 @@
-import {FogStroke, PathNode} from "../../types";
-import GameState, {BrushOptions, FOG_Y_POSITION} from "../GameState";
-import DrawingController from "./DrawingController";
+import {FogStroke, PathNode} from "../../types.js";
+import GameState, {BrushOptions, FOG_Y_POSITION} from "../GameState.js";
+import DrawingController from "./DrawingController.js";
 import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
-import {BRUSH_FOG, BRUSH_FOG_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE} from "./PaintController";
+import {BRUSH_FOG, BRUSH_FOG_COLOR, DEFAULT_BRUSH_FILL, DEFAULT_BRUSH_SIZE} from "./PaintController.js";
 
 export default class FogController extends DrawingController<FogStroke>{
     private fogCanvas: HTMLCanvasElement;

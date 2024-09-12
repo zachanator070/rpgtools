@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import useServerConfig from "../../hooks/server/useServerConfig";
-import LoadingView from "../LoadingView";
+import useServerConfig from "../../hooks/server/useServerConfig.js";
+import LoadingView from "../LoadingView.tsx";
 import { Link } from "react-router-dom";
-import useGenerateRegisterCodes from "../../hooks/server/useGenerateRegisterCodes";
-import PermissionEditor from "../permissions/PermissionEditor";
+import useGenerateRegisterCodes from "../../hooks/server/useGenerateRegisterCodes.js";
+import PermissionEditor from "../permissions/PermissionEditor.tsx";
 import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
-import PrimaryButton from "../widgets/PrimaryButton";
-import NumberInput from "../widgets/input/NumberInput";
-import ItemList from "../widgets/ItemList";
-import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
-import ColumnedContent from "../widgets/ColumnedContent";
-import useSetDefaultWorld from "../../hooks/server/useSetDefaultWorld";
-import SelectWorld from "../select/SelectWorld";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import NumberInput from "../widgets/input/NumberInput.tsx";
+import ItemList from "../widgets/ItemList.tsx";
+import LeftArrowIcon from "../widgets/icons/LeftArrowIcon.tsx";
+import ColumnedContent from "../widgets/ColumnedContent.tsx";
+import useSetDefaultWorld from "../../hooks/server/useSetDefaultWorld.js";
+import SelectWorld from "../select/SelectWorld.tsx";
 
 export default function ServerSettings() {
 	const { serverConfig, loading, refetch } = useServerConfig();

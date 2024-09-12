@@ -1,6 +1,6 @@
 import 'react';
-import UndoIcon from "../../widgets/icons/UndoIcon";
-import SecondaryDangerButton from "../../widgets/SecondaryDangerButton";
+import UndoIcon from "../../widgets/icons/UndoIcon.tsx";
+import SecondaryDangerButton from "../../widgets/SecondaryDangerButton.tsx";
 import React from "react";
 import {useNavigate, useParams} from "react-router-dom";
 

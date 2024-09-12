@@ -1,17 +1,17 @@
-import { User } from "../domain-entities/user";
+import { User } from "../domain-entities/user.js";
 import { injectable } from "inversify";
-import { Role } from "../domain-entities/role";
-import { SecurityContext } from "./security-context";
+import { Role } from "../domain-entities/role.js";
+import { SecurityContext } from "./security-context.js";
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
-import {DatabaseContext} from "../dal/database-context";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class SecurityContextFactory {
 
 	getRoles = async (user: User, databaseContext: DatabaseContext): Promise<Role[]> => {
 		const roles: Role[] = [];
-		for (let roleId of user.roles) {
+		for (const roleId of user.roles) {
 			roles.push(await databaseContext.roleRepository.findOneById(roleId));
 		}
 		if (user.username !== ANON_USERNAME) {

@@ -1,7 +1,7 @@
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import {UserService} from "../../services/user-service";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import {UserService} from "../../services/user-service.js";
 
 export const userResolvers = {
 	setCurrentWorld: async (

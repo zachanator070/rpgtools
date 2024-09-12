@@ -1,8 +1,8 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
-import ModelModel from "../model-model";
-import ArticleModel from "../article-model";
-import SqlModel from "../sql-model";
+import {defaultAttributes} from "../default-attributes.js";
+import ModelModel from "../model-model.js";
+import ArticleModel from "../article-model.js";
+import SqlModel from "../sql-model.js";
 import {GAME, MODEL} from "@rpgtools/common/src/type-constants";
 
 

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import useGetModels from "../../hooks/model/useGetModels";
+import useGetModels from "../../hooks/model/useGetModels.js";
 import { Route, Routes } from "react-router-dom";
-import PermissionModal from "../modals/PermissionModal";
+import PermissionModal from "../modals/PermissionModal.tsx";
 import { MODEL } from "@rpgtools/common/src/type-constants";
-import LoadingView from "../LoadingView";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import CreateModelModal from "./CreateModelModal";
-import ModelEdit from "./ModelEdit";
-import ModelContent from "./ModelContent";
+import LoadingView from "../LoadingView.tsx";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import CreateModelModal from "./CreateModelModal.tsx";
+import ModelEdit from "./ModelEdit.tsx";
+import ModelContent from "./ModelContent.tsx";
 import { useParams, useNavigate } from "react-router-dom";
-import {Model} from "../../types";
-import ColumnedContent from "../widgets/ColumnedContent";
-import PrimaryButton from "../widgets/PrimaryButton";
-import ItemList from "../widgets/ItemList";
-import PeopleIcon from "../widgets/icons/PeopleIcon";
+import {Model} from "../../types.js";
+import ColumnedContent from "../widgets/ColumnedContent.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import ItemList from "../widgets/ItemList.tsx";
+import PeopleIcon from "../widgets/icons/PeopleIcon.tsx";
 
 export default function ModelView() {
 	const { models, loading, refetch } = useGetModels();
@@ -28,7 +28,7 @@ export default function ModelView() {
 	useEffect(() => {
 		(async () => {
 			if (models) {
-				for (let model of models) {
+				for (const model of models) {
 					if (model._id === params.model_id) {
 						await setSelectedModel(model);
 					}

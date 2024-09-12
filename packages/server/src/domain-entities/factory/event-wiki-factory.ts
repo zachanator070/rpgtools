@@ -1,11 +1,11 @@
 import {AclEntry, EntityFactory} from "../../types";
 import {inject, injectable} from "inversify";
-import WikiPageModel from "../../dal/sql/models/wiki-page-model";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
-import {EventWiki} from "../event-wiki";
-import EventWikiModel from "../../dal/sql/models/event-wiki-model";
+import WikiPageModel from "../../dal/sql/models/wiki-page-model.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy.js";
+import {EventWiki} from "../event-wiki.js";
+import EventWikiModel from "../../dal/sql/models/event-wiki-model.js";
 
 
 @injectable()

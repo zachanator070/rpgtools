@@ -1,8 +1,8 @@
 import {DocumentNode, useQuery} from "@apollo/client";
-import useGQLResponse from "./useGQLResponse";
-import {ApiHookResponse} from "./types";
+import useGQLResponse from "./useGQLResponse.js";
+import {ApiHookResponse} from "./types.js";
 import {ApolloQueryResult} from "@apollo/client/core";
-import getQueryName from "./getQueryName";
+import getQueryName from "./getQueryName.js";
 
 export interface GqlQueryResult<TData, TVariables=void> extends ApiHookResponse<TData> {
 	refetch: (variables?: TVariables) => Promise<TData>;

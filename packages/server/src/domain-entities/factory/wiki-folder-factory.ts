@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {WikiFolder} from "../wiki-folder";
-import {WikiFolderAuthorizationPolicy} from "../../security/policy/wiki-folder-authorization-policy";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import WikiFolderModel from "../../dal/sql/models/wiki-folder-model";
+import {WikiFolder} from "../wiki-folder.js";
+import {WikiFolderAuthorizationPolicy} from "../../security/policy/wiki-folder-authorization-policy.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import WikiFolderModel from "../../dal/sql/models/wiki-folder-model.js";
 
 
 @injectable()

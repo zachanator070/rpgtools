@@ -1,9 +1,9 @@
-import {GameController} from "./GameController";
-import GameState, {BrushOptions} from "../GameState";
+import {GameController} from "./GameController.js";
+import GameState, {BrushOptions} from "../GameState.js";
 import * as THREE from "three";
-import {FogStroke, PathNode, Stroke} from "../../types";
+import {FogStroke, PathNode, Stroke} from "../../types.js";
 import {v4 as uuidv4} from "uuid";
-import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_FOG, BRUSH_LINE, BRUSH_SQUARE, DEFAULT_BRUSH_SIZE} from "./PaintController";
+import {BRUSH_CIRCLE, BRUSH_ERASE, BRUSH_FOG, BRUSH_LINE, BRUSH_SQUARE, DEFAULT_BRUSH_SIZE} from "./PaintController.js";
 import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
 
 export default abstract class DrawingController<T extends Stroke | FogStroke> implements GameController{
@@ -128,13 +128,13 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
                 if (path.length > 0) {
                     ctx.moveTo(path[0].x, path[0].y);
                 }
-                for (let part of path) {
+                for (const part of path) {
                     ctx.lineTo(part.x, part.y);
                 }
                 ctx.stroke();
                 break;
             case BRUSH_SQUARE:
-                for (let part of path) {
+                for (const part of path) {
                     if (fill) {
                         ctx.fillStyle = color;
                         ctx.fillRect(part.x - size / 2, part.y - size / 2, size, size);
@@ -146,13 +146,13 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
                 }
                 break;
             case BRUSH_FOG:
-                for (let part of path) {
+                for (const part of path) {
                     ctx.fillStyle = color;
                     ctx.fillRect(part.x - size / 2, part.y - size / 2, size, size);
                 }
                 break;
             case BRUSH_CIRCLE:
-                for (let part of path) {
+                for (const part of path) {
                     ctx.beginPath();
                     ctx.arc(part.x, part.y, size / 2, 0, Math.PI * 2);
                     if (fill) {
@@ -166,7 +166,7 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
                 }
                 break;
             case BRUSH_ERASE:
-                for (let part of path) {
+                for (const part of path) {
                     ctx.clearRect(part.x - size / 2, part.y - size / 2, size, size);
                 }
                 break;
@@ -185,7 +185,7 @@ export default abstract class DrawingController<T extends Stroke | FogStroke> im
         }
         const intersects = this.gameState.raycaster.intersectObject(this.gameState.mapMesh);
 
-        for (let intersect of intersects) {
+        for (const intersect of intersects) {
             const currentPath = [];
             if (this.pathBeingDrawn.length > 0 && this.brushOptions.brushType === BRUSH_LINE) {
                 currentPath.push(

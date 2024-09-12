@@ -1,22 +1,22 @@
-import { SecurityContext } from "../security/security-context";
+import { SecurityContext } from "../security/security-context.js";
 import { inject, injectable } from "inversify";
 import {
 	Archive,
 	AbstractArchiveFactory,
 } from "../types";
-import { Model } from "../domain-entities/model";
-import { WikiFolder } from "../domain-entities/wiki-folder";
-import { Image } from "../domain-entities/image";
-import { WikiPage } from "../domain-entities/wiki-page";
-import { ModeledPage } from "../domain-entities/modeled-page";
-import { Place } from "../domain-entities/place";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import {DatabaseContext} from "../dal/database-context";
-import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
+import { Model } from "../domain-entities/model.js";
+import { WikiFolder } from "../domain-entities/wiki-folder.js";
+import { Image } from "../domain-entities/image.js";
+import { WikiPage } from "../domain-entities/wiki-page.js";
+import { ModeledPage } from "../domain-entities/modeled-page.js";
+import { Place } from "../domain-entities/place.js";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
 import {USER} from "@rpgtools/common/src/type-constants";
-import {World} from "../domain-entities/world";
+import {World} from "../domain-entities/world.js";
 
 import fetch from 'node-fetch';
 import {Readable} from "stream";
@@ -87,7 +87,7 @@ export class ContentImportService {
 		databaseContext: DatabaseContext,
 		securityContext: SecurityContext
 	) => {
-		for (let page of await archive.articleRepository.findAll()) {
+		for (const page of await archive.articleRepository.findAll()) {
 			await this.importWikiPage(
 				page,
 				archive,
@@ -97,7 +97,7 @@ export class ContentImportService {
 				securityContext
 			);
 		}
-		for (let page of await archive.itemRepository.findAll()) {
+		for (const page of await archive.itemRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
@@ -107,7 +107,7 @@ export class ContentImportService {
 				securityContext
 			);
 		}
-		for (let page of await archive.monsterRepository.findAll()) {
+		for (const page of await archive.monsterRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
@@ -117,7 +117,7 @@ export class ContentImportService {
 				securityContext
 			);
 		}
-		for (let page of await archive.personRepository.findAll()) {
+		for (const page of await archive.personRepository.findAll()) {
 			await this.importModeledWiki(
 				page,
 				archive,
@@ -127,10 +127,10 @@ export class ContentImportService {
 				securityContext
 			);
 		}
-		for (let page of await archive.placeRepository.findAll()) {
+		for (const page of await archive.placeRepository.findAll()) {
 			await this.importPlace(page, archive, destinationFolder, databaseContext, securityContext);
 		}
-		for (let model of await archive.modelRepository.findAll()) {
+		for (const model of await archive.modelRepository.findAll()) {
 			await this.importModel(model, archive, destinationFolder, databaseContext, securityContext);
 		}
 	};
@@ -150,7 +150,7 @@ export class ContentImportService {
 			image.icon = icon._id;
 		}
 		await databaseContext.imageRepository.create(image);
-		for (let chunkId of chunks) {
+		for (const chunkId of chunks) {
 			const chunk = await archive.chunkRepository.findOneById(chunkId);
 			const file = await archive.fileRepository.findOneById(chunk.fileId);
 			await databaseContext.fileRepository.create(file);
@@ -187,7 +187,7 @@ export class ContentImportService {
 		while (path.length > 0) {
 			let foundChild = false;
 			const children: WikiFolder[] = await databaseContext.wikiFolderRepository.findByIds(destinationFolder.children);
-			for (let child of children) {
+			for (const child of children) {
 				if (child.name === path[0].name) {
 					foundChild = true;
 					destinationFolder = child;
@@ -293,7 +293,7 @@ export class ContentImportService {
 			model.fileId = file._id;
 		}
 		model.acl = [];
-		for (let permission of [MODEL_RW, MODEL_ADMIN]) {
+		for (const permission of [MODEL_RW, MODEL_ADMIN]) {
 			model.acl.push({
 				permission,
 				principal: securityContext.user._id,

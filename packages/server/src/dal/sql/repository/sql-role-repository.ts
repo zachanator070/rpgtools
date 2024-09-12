@@ -1,14 +1,14 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Role} from "../../../domain-entities/role";
-import {RoleModel} from "../models/role-model";
-import {RoleRepository} from "../../repository/role-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import {PaginatedResult} from "../../paginated-result";
-import RoleFactory from "../../../domain-entities/factory/role-factory";
-import {ServerConfig} from "../../../domain-entities/server-config";
-import ServerConfigModel from "../models/server-config-model";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Role} from "../../../domain-entities/role.js";
+import {RoleModel} from "../models/role-model.js";
+import {RoleRepository} from "../../repository/role-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import RoleFactory from "../../../domain-entities/factory/role-factory.js";
+import {ServerConfig} from "../../../domain-entities/server-config.js";
+import ServerConfigModel from "../models/server-config-model.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 import sequelize, {Op} from "sequelize";
 
 

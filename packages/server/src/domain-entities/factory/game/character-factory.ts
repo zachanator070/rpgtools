@@ -1,9 +1,9 @@
 import {inject, injectable} from "inversify";
 import {EntityFactory} from "../../../types";
-import {Character, CharacterAttribute} from "../../game";
-import CharacterModel from "../../../dal/sql/models/game/character-model";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import CharacterAttributeFactory from "./character-attribute-factory";
+import {Character, CharacterAttribute} from "../../game.js";
+import CharacterModel from "../../../dal/sql/models/game/character-model.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import CharacterAttributeFactory from "./character-attribute-factory.js";
 
 
 @injectable()

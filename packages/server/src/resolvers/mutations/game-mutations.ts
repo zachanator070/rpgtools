@@ -1,8 +1,8 @@
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import {Character, CharacterAttribute, PathNode} from "../../domain-entities/game";
-import {GameService} from "../../services/game-service";
+import { container } from "../../di/inversify.js";
+import {Character, CharacterAttribute, PathNode} from "../../domain-entities/game.js";
+import {GameService} from "../../services/game-service.js";
 
 export const gameMutations = {
 	createGame: async (

@@ -1,5 +1,5 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {Model} from "../../types";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {Model} from "../../types.js";
 import {UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
 interface UpdateModelVariables {

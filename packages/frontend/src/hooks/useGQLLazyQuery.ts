@@ -1,5 +1,5 @@
 import {DocumentNode, useLazyQuery} from "@apollo/client";
-import useGQLResponse from "./useGQLResponse";
+import useGQLResponse from "./useGQLResponse.js";
 // extends GqlQueryResult<TData, TVariables>
 export interface GqlLazyHookResult<TData, TVariables=void>  {
 	loading: boolean;

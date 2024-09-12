@@ -1,15 +1,15 @@
 import 'react';
 import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
-import {Calendar, Model, Place, WikiPage, World} from "../../../types";
-import useCreateImage from "../../../hooks/wiki/useCreateImage";
-import useUpdateWiki from "../../../hooks/wiki/useUpdateWiki";
-import useUpdatePlace from "../../../hooks/wiki/useUpdatePlace";
-import useUpdateModeledWiki from "../../../hooks/wiki/useUpdateModeledWiki";
-import useUpdateEventWiki from "../../../hooks/wiki/useUpdateEventWiki";
-import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
+import {Calendar, Model, Place, WikiPage, World} from "../../../types.js";
+import useCreateImage from "../../../hooks/wiki/useCreateImage.js";
+import useUpdateWiki from "../../../hooks/wiki/useUpdateWiki.js";
+import useUpdatePlace from "../../../hooks/wiki/useUpdatePlace.js";
+import useUpdateModeledWiki from "../../../hooks/wiki/useUpdateModeledWiki.js";
+import useUpdateEventWiki from "../../../hooks/wiki/useUpdateEventWiki.js";
+import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
 import {useNavigate} from "react-router-dom";
-import SaveIcon from "../../widgets/icons/SaveIcon";
-import PrimaryButton from "../../widgets/PrimaryButton";
+import SaveIcon from "../../widgets/icons/SaveIcon.tsx";
+import PrimaryButton from "../../widgets/PrimaryButton.tsx";
 import React from "react";
 
 export interface UpdateWikiParams {

@@ -1,15 +1,15 @@
 import React, {useContext, useState} from "react";
 import { PLACE } from "@rpgtools/common/src/type-constants";
-import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import useSetGameMap from "../../../hooks/game/useSetGameMap";
-import LoadingView from "../../../components/LoadingView";
-import Toggle from "../../../components/widgets/Toggle";
-import SelectWiki from "../../../components/select/SelectWiki";
-import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox";
-import PrimaryButton from "../../../components/widgets/PrimaryButton";
-import {DEFAULT_MAP_DRAW_GRID} from "../../GameState";
-import {ControllerContext} from "../GameContent";
-import GameControllerFacade from "../../GameControllerFacade";
+import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
+import useSetGameMap from "../../../hooks/game/useSetGameMap.js";
+import LoadingView from "../../../components/LoadingView.tsx";
+import Toggle from "../../../components/widgets/Toggle.tsx";
+import SelectWiki from "../../../components/select/SelectWiki.tsx";
+import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox.tsx";
+import PrimaryButton from "../../../components/widgets/PrimaryButton.tsx";
+import {DEFAULT_MAP_DRAW_GRID} from "../../GameState.js";
+import {ControllerContext} from "../GameContent.tsx";
+import GameControllerFacade from "../../GameControllerFacade.js";
 
  interface GameLocationSettingsProps {
 	 setGameWikiId: (wikiId: string) => Promise<any>;

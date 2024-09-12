@@ -4,9 +4,9 @@ import {
 	GameCommandArgDefinition,
 	GameCommandOption,
 	GameCommandOptionDefinition,
-} from "./abstract-game-command";
-import { Character, Message } from "../game";
-import {MESSAGE_ALL_RECEIVE} from "../../services/game-service";
+} from "./abstract-game-command.js";
+import { Character, Message } from "../game.js";
+import {MESSAGE_ALL_RECEIVE} from "../../services/game-service.js";
 
 export class RollGameCommand extends AbstractGameCommand {
 	args: GameCommandArgDefinition[] = [
@@ -30,16 +30,16 @@ export class RollGameCommand extends AbstractGameCommand {
 	];
 
 	exec(executor: Character, args: GameCommandArg[], options: GameCommandOption[]): Message[] {
-		let response = this.getDefaultResponse(executor);
+		const response = this.getDefaultResponse(executor);
 		const diceArg = args.find((arg) => arg.name === "DICE");
 		const matches = diceArg.value.match(/(\d+d\d+([+-]\d+)?)+/gm);
 		if (matches) {
 			const rollResults: string[] = [];
 			const roller = options.find((option) => option.name === "-q") ? "You" : executor.name;
-			let rollSummary = `${roller} roll${roller === "You" ? "" : "s"} ${diceArg.value} ...`;
+			const rollSummary = `${roller} roll${roller === "You" ? "" : "s"} ${diceArg.value} ...`;
 			rollResults.push(rollSummary);
 			let rollTotal = 0;
-			for (let match of matches) {
+			for (const match of matches) {
 				const newMatches = match.match(/(?<numDice>\d+)d(?<diceType>\d+)(?<modifier>[+-]\d+)?/);
 				const numDice = parseInt(newMatches.groups.numDice);
 				const diceType = parseInt(newMatches.groups.diceType);

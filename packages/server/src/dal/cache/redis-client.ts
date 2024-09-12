@@ -35,7 +35,7 @@ export class RedisClient implements Cache {
 			// return this.client.set(key, chunks.toString(), {EX: timeout});
 		}
 		return new Duplex({
-			write(chunk: any, encoding: BufferEncoding, callback: (error?: (Error | null)) => void) {
+			write(chunk: any, encoding: string, callback: (error?: (Error | null)) => void) {
 				chunks = Buffer.concat([chunks, chunk], chunks.length + chunk.length);
 				callback();
 			},

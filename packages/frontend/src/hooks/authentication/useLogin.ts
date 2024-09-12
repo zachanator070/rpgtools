@@ -1,6 +1,6 @@
 import {useApolloClient} from "@apollo/client";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
-import {User} from "../../types";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
+import {User} from "../../types.js";
 import {LOGIN_QUERY} from "@rpgtools/common/src/gql-mutations";
 
 interface LoginVariables {

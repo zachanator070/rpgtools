@@ -1,8 +1,8 @@
 import { FileUpload } from "graphql-upload";
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import {ImageService} from "../../services/image-service";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import {ImageService} from "../../services/image-service.js";
 
 export const imageMutations = {
 	createImage: async (

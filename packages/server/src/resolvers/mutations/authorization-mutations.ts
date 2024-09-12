@@ -1,7 +1,7 @@
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import {AuthorizationService} from "../../services/authorization-service";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import {AuthorizationService} from "../../services/authorization-service.js";
 
 export const authorizationMutations = {
 	grantUserPermission: async (

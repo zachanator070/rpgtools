@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import WikiTimeline from "./WikiTimeline";
-import SelectMultipleCalendars from "../select/SelectMultipleCalendars";
-import useSearchEvents from "../../hooks/wiki/useSearchEvents";
-import LoadingView from "../LoadingView";
-import SelectMultipleWikis from "../select/SelectMultipleWikis";
+import WikiTimeline from "./WikiTimeline.tsx";
+import SelectMultipleCalendars from "../select/SelectMultipleCalendars.tsx";
+import useSearchEvents from "../../hooks/wiki/useSearchEvents.js";
+import LoadingView from "../LoadingView.tsx";
+import SelectMultipleWikis from "../select/SelectMultipleWikis.tsx";
 
 export default function TimelineView() {
 

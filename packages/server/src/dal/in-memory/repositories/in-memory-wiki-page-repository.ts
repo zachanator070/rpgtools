@@ -1,9 +1,9 @@
 import { injectable } from "inversify";
-import { WikiPage } from "../../../domain-entities/wiki-page";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {WikiPageRepository} from "../../repository/wiki-page-repository";
-import {PaginatedResult} from "../../paginated-result";
-import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
+import { WikiPage } from "../../../domain-entities/wiki-page.js";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {WikiPageRepository} from "../../repository/wiki-page-repository.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
 import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
 
 @injectable()

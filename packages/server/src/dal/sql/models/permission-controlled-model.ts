@@ -1,6 +1,6 @@
 import {HasManyGetAssociationsMixin, HasManySetAssociationsMixin, ModelStatic} from "sequelize";
-import AclEntryModel from "./acl-entry-model";
-import SqlModel from "./sql-model";
+import AclEntryModel from "./acl-entry-model.js";
+import SqlModel from "./sql-model.js";
 
 
 export function configPermissionControlledModel(model: ModelStatic<any>) {

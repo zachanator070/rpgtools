@@ -11,7 +11,7 @@ import {
 	PIN_ATTRIBUTES,
 	SERVER_CONFIG_ROLES,
 	WIKIS_IN_FOLDER_ATTRIBUTES
-} from "./gql-fragments";
+} from "./gql-fragments.js";
 
 //region User
 export const GET_CURRENT_USER = gql`

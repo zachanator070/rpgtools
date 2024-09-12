@@ -1,5 +1,5 @@
-import useGQLLazyQuery, {GqlLazyHookResult} from "../useGQLLazyQuery";
-import {WikiPage} from "../../types";
+import useGQLLazyQuery, {GqlLazyHookResult} from "../useGQLLazyQuery.js";
+import {WikiPage} from "../../types.js";
 import {GAME_WIKI} from "@rpgtools/common/src/gql-queries";
 
 interface GameWikiVariables {

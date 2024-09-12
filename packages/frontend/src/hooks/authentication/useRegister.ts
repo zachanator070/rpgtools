@@ -1,5 +1,5 @@
-import {User} from "../../types";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {User} from "../../types.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {REGISTER_MUTATION} from "@rpgtools/common/src/gql-mutations";
 
 interface RegisterVariables {

@@ -1,8 +1,8 @@
 import React, {CSSProperties, useState} from "react";
-import useSearchModels from "../../hooks/model/useSearchModels";
-import {Model} from "../../types";
-import DropdownSelect from "../widgets/DropdownSelect";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
+import useSearchModels from "../../hooks/model/useSearchModels.js";
+import {Model} from "../../types.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
 
 interface SelectModelProps {
 	onChange?: (model: Model) => Promise<any>;
@@ -38,7 +38,7 @@ export default function SelectModel({
 				onChange={async (newValue) => {
 					await setValue(newValue);
 					if (onChange) {
-						for (let model of models) {
+						for (const model of models) {
 							if (model._id === newValue) {
 								await onChange(model);
 								break;

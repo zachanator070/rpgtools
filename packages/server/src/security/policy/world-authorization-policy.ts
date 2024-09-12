@@ -1,7 +1,7 @@
 import {EntityAuthorizationPolicy} from "../../types";
-import { World } from "../../domain-entities/world";
-import { SecurityContext } from "../security-context";
-import { ServerConfig } from "../../domain-entities/server-config";
+import { World } from "../../domain-entities/world.js";
+import { SecurityContext } from "../security-context.js";
+import { ServerConfig } from "../../domain-entities/server-config.js";
 import {
 	WORLD_ADMIN,
 	WORLD_ADMIN_ALL,
@@ -11,7 +11,7 @@ import {
 	WORLD_RW,
 } from "@rpgtools/common/src/permission-constants";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()
 export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy {

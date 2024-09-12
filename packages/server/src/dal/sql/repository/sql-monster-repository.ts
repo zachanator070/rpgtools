@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Monster} from "../../../domain-entities/monster";
-import MonsterModel from "../models/monster-model";
-import {MonsterRepository} from "../../repository/monster-repository";
-import MonsterFactory from "../../../domain-entities/factory/monster-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiPageModel from "../models/wiki-page-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Monster} from "../../../domain-entities/monster.js";
+import MonsterModel from "../models/monster-model.js";
+import {MonsterRepository} from "../../repository/monster-repository.js";
+import MonsterFactory from "../../../domain-entities/factory/monster-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiPageModel from "../models/wiki-page-model.js";
 
 
 @injectable()

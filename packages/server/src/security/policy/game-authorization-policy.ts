@@ -1,6 +1,6 @@
 import {EntityAuthorizationPolicy} from "../../types";
-import { Game } from "../../domain-entities/game";
-import { SecurityContext } from "../security-context";
+import { Game } from "../../domain-entities/game.js";
+import { SecurityContext } from "../security-context.js";
 import {
 	GAME_ADMIN,
 	GAME_ADMIN_ALL,
@@ -11,7 +11,7 @@ import {
 	GAME_RW,
 } from "@rpgtools/common/src/permission-constants";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()
 export class GameAuthorizationPolicy implements EntityAuthorizationPolicy {

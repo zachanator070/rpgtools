@@ -1,9 +1,9 @@
 import React from "react";
-import App from "./components/App";
+import App from "./components/App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { createUploadLink } from "apollo-upload-client";
-import { clientTypeDefs } from "./clientTypeDefs";
-import { clientResolvers } from "./clientResolvers";
+import { clientTypeDefs } from "./clientTypeDefs.js";
+import { clientResolvers } from "./clientResolvers.js";
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { gql, ApolloClient, ApolloProvider, split, ApolloLink, InMemoryCache  } from "@apollo/client";
@@ -12,7 +12,7 @@ import { DndProvider } from "react-dnd";
 import { getMainDefinition } from "@apollo/client/utilities";
 import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
-import fetchSubtypes from "./fetchSubtypes";
+import fetchSubtypes from "./fetchSubtypes.js";
 import {createRoot} from "react-dom/client";
 
 fetchSubtypes().then(possibleTypes => {

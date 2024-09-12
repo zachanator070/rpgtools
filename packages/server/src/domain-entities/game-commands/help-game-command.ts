@@ -4,9 +4,9 @@ import {
 	GameCommandArgDefinition,
 	GameCommandOption,
 	GameCommandOptionDefinition,
-} from "./abstract-game-command";
-import { Character, Message } from "../game";
-import {MESSAGE_ALL_RECEIVE} from "../../services/game-service";
+} from "./abstract-game-command.js";
+import { Character, Message } from "../game.js";
+import {MESSAGE_ALL_RECEIVE} from "../../services/game-service.js";
 
 export class HelpGameCommand extends AbstractGameCommand {
 	args: GameCommandArgDefinition[] = [

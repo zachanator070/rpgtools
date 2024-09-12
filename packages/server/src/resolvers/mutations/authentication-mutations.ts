@@ -1,7 +1,7 @@
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
-import {AuthenticationService} from "../../services/authentication-service";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import {AuthenticationService} from "../../services/authentication-service.js";
 export const SALT_ROUNDS = 10;
 
 interface LoginArgs {

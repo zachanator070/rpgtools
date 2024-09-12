@@ -1,8 +1,8 @@
-import SqlModel from "../sql-model";
-import {defaultAttributes} from "../default-attributes";
+import SqlModel from "../sql-model.js";
+import {defaultAttributes} from "../default-attributes.js";
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
-import MonthModel from "./month-model";
-import DayOfTheWeekModel from "./day-of-the-week-model";
+import MonthModel from "./month-model.js";
+import DayOfTheWeekModel from "./day-of-the-week-model.js";
 import {CALENDAR} from "@rpgtools/common/src/type-constants";
 
 

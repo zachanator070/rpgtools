@@ -1,7 +1,7 @@
 import {EntityAuthorizationPolicy} from "../../types";
-import {Stroke} from "../../domain-entities/stroke";
-import {SecurityContext} from "../security-context";
-import {DatabaseContext} from "../../dal/database-context";
+import {Stroke} from "../../domain-entities/stroke.js";
+import {SecurityContext} from "../security-context.js";
+import {DatabaseContext} from "../../dal/database-context.js";
 import {injectable} from "inversify";
 
 

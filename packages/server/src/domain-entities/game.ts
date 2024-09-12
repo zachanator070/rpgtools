@@ -1,10 +1,10 @@
 import {AclEntry, EntityFactory, PermissionControlledEntity, RepositoryAccessor,} from "../types";
-import {GameAuthorizationPolicy} from "../security/policy/game-authorization-policy";
+import {GameAuthorizationPolicy} from "../security/policy/game-authorization-policy.js";
 import {GAME} from "@rpgtools/common/src/type-constants";
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import GameModel from "../dal/sql/models/game-model";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import GameModel from "../dal/sql/models/game-model.js";
 
 @injectable()
 export class Game implements PermissionControlledEntity {

@@ -6,28 +6,28 @@ import http, { Server } from "http";
 import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import express, { Express } from "express";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { inject, injectable } from "inversify";
 import {
 	ApiServer,
 	CookieManager,
 } from "../types";
 import { graphqlUploadExpress } from "graphql-upload";
-import { ModelRouter } from "../routers/model-router";
-import ExportRouter from "../routers/export-router";
-import { ImageRouter } from "../routers/image-router";
-import { typeDefs } from "../gql-server-schema";
-import { allResolvers } from "../resolvers/all-resolvers";
+import { ModelRouter } from "../routers/model-router.js";
+import ExportRouter from "../routers/export-router.js";
+import { ImageRouter } from "../routers/image-router.js";
+import { typeDefs } from "../gql-server-schema.js";
+import { allResolvers } from "../resolvers/all-resolvers.js";
 import { DocumentNode } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import {GraphQLRequest} from "apollo-server-types";
 import cors from "cors";
-import {ExpressCookieManager} from "./express-cookie-manager";
+import {ExpressCookieManager} from "./express-cookie-manager.js";
 import * as url from 'url';
-import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware";
-import {ExpressSessionContextFactory} from "./express-session-context-factory";
+import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
+import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Progress} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "./WidgetProps.js";
 
 interface StrokeColor extends WidgetProps{
     from: string,

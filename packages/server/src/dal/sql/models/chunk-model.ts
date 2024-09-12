@@ -1,7 +1,7 @@
 import {DataTypes} from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import FileModel from "./file-model";
-import SqlModel from "./sql-model";
+import {defaultAttributes} from "./default-attributes.js";
+import FileModel from "./file-model.js";
+import SqlModel from "./sql-model.js";
 import {FILE, IMAGE} from "@rpgtools/common/src/type-constants";
 
 

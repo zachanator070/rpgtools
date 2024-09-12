@@ -8,9 +8,9 @@ import {
 	GAME_READ,
 } from "@rpgtools/common/src/permission-constants";
 import bcrypt from "bcrypt";
-import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations";
+import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations.js";
 import { USER } from "@rpgtools/common/src/type-constants";
-import { SecurityContext } from "../security/security-context";
+import { SecurityContext } from "../security/security-context.js";
 import {
 	Character, CharacterAttribute,
 	Game,
@@ -18,7 +18,7 @@ import {
 	Message,
 	PathNode,
 
-} from "../domain-entities/game";
+} from "../domain-entities/game.js";
 import {
 	GAME_CHAT_EVENT,
 	GAME_FOG_STROKE_ADDED,
@@ -28,23 +28,23 @@ import {
 	GAME_MODEL_POSITIONED,
 	GAME_STROKE_EVENT,
 	ROSTER_CHANGE_EVENT,
-} from "../resolvers/subscription-resolvers";
+} from "../resolvers/subscription-resolvers.js";
 import { v4 as uuidv4 } from "uuid";
-import { HelpGameCommand } from "../domain-entities/game-commands/help-game-command";
-import { RollGameCommand } from "../domain-entities/game-commands/roll-game-command";
-import { WhisperGameCommand } from "../domain-entities/game-commands/whisper-game-command";
-import { AbstractGameCommand } from "../domain-entities/game-commands/abstract-game-command";
-import { User } from "../domain-entities/user";
+import { HelpGameCommand } from "../domain-entities/game-commands/help-game-command.js";
+import { RollGameCommand } from "../domain-entities/game-commands/roll-game-command.js";
+import { WhisperGameCommand } from "../domain-entities/game-commands/whisper-game-command.js";
+import { AbstractGameCommand } from "../domain-entities/game-commands/abstract-game-command.js";
+import { User } from "../domain-entities/user.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { AuthorizationService } from "./authorization-service";
-import { DatabaseContext } from "../dal/database-context";
-import GameFactory from "../domain-entities/factory/game-factory";
-import StrokeFactory from "../domain-entities/factory/game/stroke-factory";
-import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory";
-import { PaginatedResult } from "../dal/paginated-result";
-import { FogStroke } from "../domain-entities/fog-stroke";
-import { Stroke } from "../domain-entities/stroke";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { AuthorizationService } from "./authorization-service.js";
+import { DatabaseContext } from "../dal/database-context.js";
+import GameFactory from "../domain-entities/factory/game-factory.js";
+import StrokeFactory from "../domain-entities/factory/game/stroke-factory.js";
+import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory.js";
+import { PaginatedResult } from "../dal/paginated-result.js";
+import { FogStroke } from "../domain-entities/fog-stroke.js";
+import { Stroke } from "../domain-entities/stroke.js";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -103,7 +103,7 @@ export class GameService {
 		);
 
 		await databaseContext.gameRepository.create(game);
-		for (let permission of GAME_PERMISSIONS) {
+		for (const permission of GAME_PERMISSIONS) {
 			game.acl.push({
 				permission,
 				principal: context.user._id,
@@ -188,7 +188,7 @@ export class GameService {
 		game.messages = game.messages.concat(messages);
 		await databaseContext.gameRepository.update(game);
 
-		for (let message of messages) {
+		for (const message of messages) {
 			await this.eventPublisher.publish(GAME_CHAT_EVENT, { gameId, gameChat: message });
 		}
 		return game;
@@ -349,7 +349,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel: InGameModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -385,7 +385,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -417,7 +417,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -448,7 +448,7 @@ export class GameService {
 			throw new Error("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
-		for (let model of game.models) {
+		for (const model of game.models) {
 			if (model._id === positionedModelId) {
 				positionedModel = model;
 			}
@@ -477,8 +477,8 @@ export class GameService {
 			throw new Error("You do not have permission to change the character order for this game.");
 		}
 		const newOrder = [];
-		for (let newCharacter of characters) {
-			for (let character of game.characters) {
+		for (const newCharacter of characters) {
+			for (const character of game.characters) {
 				if (character.name === newCharacter.name) {
 					newOrder.push(character);
 					break;
@@ -501,7 +501,7 @@ export class GameService {
 			throw new Error("Game does not exist");
 		}
 		let userCharacter = null;
-		for (let character of game.characters) {
+		for (const character of game.characters) {
 			if (character.player === context.user._id) {
 				userCharacter = character;
 				break;
@@ -560,7 +560,7 @@ export class GameService {
 		const commandString = parts.shift();
 		const command = commands.find((command) => command.command === commandString);
 		const executor = game.characters.find((character) => character.player === currentUser._id);
-		let serverResponse = command.getDefaultResponse(executor);
+		const serverResponse = command.getDefaultResponse(executor);
 		const messages: Message[] = [];
 		if (command.echoCommand) {
 			messages.push(new Message(executor.name, executor.player, MESSAGE_SERVER_USER, MESSAGE_SERVER_USER, message, Date.now(), uuidv4()));
@@ -572,7 +572,7 @@ export class GameService {
 		}
 		const options = [];
 		const args = [];
-		for (let option of command.options) {
+		for (const option of command.options) {
 			const currentArg = parts.shift();
 			if (currentArg) {
 				if (currentArg === option.name) {
@@ -585,7 +585,7 @@ export class GameService {
 				break;
 			}
 		}
-		for (let arg of command.args) {
+		for (const arg of command.args) {
 			const currentArg = parts.shift();
 			if (currentArg) {
 				if (currentArg.substr(0, 1) === "-") {

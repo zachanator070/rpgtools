@@ -1,30 +1,30 @@
 import {QueryInterface} from "sequelize";
-import AclEntryModel from "../models/acl-entry-model";
-import ArticleModel from "../models/article-model";
-import WikiPageModel from "../models/wiki-page-model";
-import ChunkModel from "../models/chunk-model";
-import FileModel from "../models/file-model";
-import GameModel from "../models/game-model";
-import CharacterAttributeModel from "../models/game/character-attribute-model";
-import CharacterModel from "../models/game/character-model";
-import FogStrokeModel from "../models/game/fog-stroke-model";
-import InGameModelModel from "../models/game/in-game-model-model";
-import MessageModel from "../models/game/message-model";
-import PathNodeModel from "../models/game/path-node-model";
-import StrokeModel from "../models/game/stroke-model";
-import ImageModel from "../models/image-model";
-import ItemModel from "../models/item-model";
-import ModelModel from "../models/model-model";
-import MonsterModel from "../models/monster-model";
-import PersonModel from "../models/person-model";
-import PinModel from "../models/pin-model";
-import PlaceModel from "../models/place-model";
-import {RoleModel} from "../models/role-model";
-import ServerConfigModel from "../models/server-config-model";
-import RegisterCodeModel from "../models/register-code-model";
-import UserModel from "../models/user-model";
-import WikiFolderModel from "../models/wiki-folder-model";
-import WorldModel from "../models/world-model";
+import AclEntryModel from "../models/acl-entry-model.js";
+import ArticleModel from "../models/article-model.js";
+import WikiPageModel from "../models/wiki-page-model.js";
+import ChunkModel from "../models/chunk-model.js";
+import FileModel from "../models/file-model.js";
+import GameModel from "../models/game-model.js";
+import CharacterAttributeModel from "../models/game/character-attribute-model.js";
+import CharacterModel from "../models/game/character-model.js";
+import FogStrokeModel from "../models/game/fog-stroke-model.js";
+import InGameModelModel from "../models/game/in-game-model-model.js";
+import MessageModel from "../models/game/message-model.js";
+import PathNodeModel from "../models/game/path-node-model.js";
+import StrokeModel from "../models/game/stroke-model.js";
+import ImageModel from "../models/image-model.js";
+import ItemModel from "../models/item-model.js";
+import ModelModel from "../models/model-model.js";
+import MonsterModel from "../models/monster-model.js";
+import PersonModel from "../models/person-model.js";
+import PinModel from "../models/pin-model.js";
+import PlaceModel from "../models/place-model.js";
+import {RoleModel} from "../models/role-model.js";
+import ServerConfigModel from "../models/server-config-model.js";
+import RegisterCodeModel from "../models/register-code-model.js";
+import UserModel from "../models/user-model.js";
+import WikiFolderModel from "../models/wiki-folder-model.js";
+import WorldModel from "../models/world-model.js";
 import {
     ACL_ENTRY,
     ARTICLE,
@@ -50,9 +50,9 @@ import {
     USER, WIKI_FOLDER,
     WIKI_PAGE, WORLD, REGISTER_CODE
 } from "@rpgtools/common/src/type-constants";
-import AdminUsersToServerConfigModel from "../models/admin-users-to-server-config-model";
-import UserToRoleModel from "../models/user-to-role-model";
-import WikiFolderToWikiPageModel from "../models/wiki-folder-to-wiki-page-model";
+import AdminUsersToServerConfigModel from "../models/admin-users-to-server-config-model.js";
+import UserToRoleModel from "../models/user-to-role-model.js";
+import WikiFolderToWikiPageModel from "../models/wiki-folder-to-wiki-page-model.js";
 
 async function up({ context: queryInterface }: {context: QueryInterface}) {
 

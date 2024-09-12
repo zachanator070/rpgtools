@@ -1,6 +1,6 @@
 import {EntityFactory} from "../../../types";
-import {DayOfTheWeek} from "../../calendar";
-import DayOfTheWeekModel from "../../../dal/sql/models/calendar/day-of-the-week-model";
+import {DayOfTheWeek} from "../../calendar.js";
+import DayOfTheWeekModel from "../../../dal/sql/models/calendar/day-of-the-week-model.js";
 import {injectable} from "inversify";
 
 

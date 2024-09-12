@@ -1,12 +1,12 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {WikiFolder} from "../../../domain-entities/wiki-folder";
-import WikiFolderModel from "../models/wiki-folder-model";
-import {WikiFolderRepository} from "../../repository/wiki-folder-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiFolderFactory from "../../../domain-entities/factory/wiki-folder-factory";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-import WikiPageModel from "../models/wiki-page-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {WikiFolder} from "../../../domain-entities/wiki-folder.js";
+import WikiFolderModel from "../models/wiki-folder-model.js";
+import {WikiFolderRepository} from "../../repository/wiki-folder-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiFolderFactory from "../../../domain-entities/factory/wiki-folder-factory.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
+import WikiPageModel from "../models/wiki-page-model.js";
 
 
 @injectable()

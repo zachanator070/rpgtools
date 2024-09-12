@@ -1,14 +1,14 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import WorldModel from "./world-model";
-import PlaceModel from "./place-model";
-import CharacterModel from "./game/character-model";
-import UserModel from "./user-model";
-import StrokeModel from "./game/stroke-model";
-import FogStrokeModel from "./game/fog-stroke-model";
-import MessageModel from "./game/message-model";
-import InGameModelModel from "./game/in-game-model-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
+import {defaultAttributes} from "./default-attributes.js";
+import WorldModel from "./world-model.js";
+import PlaceModel from "./place-model.js";
+import CharacterModel from "./game/character-model.js";
+import UserModel from "./user-model.js";
+import StrokeModel from "./game/stroke-model.js";
+import FogStrokeModel from "./game/fog-stroke-model.js";
+import MessageModel from "./game/message-model.js";
+import InGameModelModel from "./game/in-game-model-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import {PLACE, USER, WORLD} from "@rpgtools/common/src/type-constants";
 
 export default class GameModel extends PermissionControlledModel {

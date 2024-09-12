@@ -1,5 +1,5 @@
-import { Role } from "../domain-entities/role";
-import { User } from "../domain-entities/user";
+import { Role } from "../domain-entities/role.js";
+import { User } from "../domain-entities/user.js";
 import {PermissionControlledEntity} from "../types";
 import {ROLE} from "@rpgtools/common/src/type-constants";
 
@@ -16,10 +16,10 @@ export class SecurityContext {
 		if (!entity) {
 			return false;
 		}
-		for (let entry of entity.acl) {
+		for (const entry of entity.acl) {
 			if (entry.permission === permission) {
 				if (entry.principalType === ROLE) {
-					for (let role of this.roles) {
+					for (const role of this.roles) {
 						if (entry.principal === role._id) {
 							return true;
 						}
@@ -33,7 +33,7 @@ export class SecurityContext {
 	};
 
 	hasRole = (name: string) => {
-		for (let role of this.roles) {
+		for (const role of this.roles) {
 			if (role.name === name) {
 				return true;
 			}

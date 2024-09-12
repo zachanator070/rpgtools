@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
-import useSearchRoles from "../../hooks/authorization/useSearchRoles";
-import DropdownSelect from "../widgets/DropdownSelect";
-import SearchIcon from "../widgets/icons/SearchIcon";
+import useSearchRoles from "../../hooks/authorization/useSearchRoles.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import SearchIcon from "../widgets/icons/SearchIcon.tsx";
 
 interface SelectRoleProps {
 	onChange: (roleId: string) => any;

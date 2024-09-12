@@ -1,4 +1,4 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
 import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries";
 

@@ -1,6 +1,6 @@
-import {Repository} from "./repository";
-import {Stroke} from "../../domain-entities/stroke";
-import {PaginatedResult} from "../paginated-result";
+import {Repository} from "./repository.js";
+import {Stroke} from "../../domain-entities/stroke.js";
+import {PaginatedResult} from "../paginated-result.js";
 
 
 export default interface StrokeRepository extends Repository<Stroke> {

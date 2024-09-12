@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
 import {AclEntry, EntityFactory} from "../../types";
-import {Person} from "../person";
-import {INJECTABLE_TYPES} from "../../di/injectable-types";
-import AclFactory from "./acl-factory";
-import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy";
-import WikiPageModel from "../../dal/sql/models/wiki-page-model";
+import {Person} from "../person.js";
+import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
+import AclFactory from "./acl-factory.js";
+import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-authorization-policy.js";
+import WikiPageModel from "../../dal/sql/models/wiki-page-model.js";
 
 
 @injectable()

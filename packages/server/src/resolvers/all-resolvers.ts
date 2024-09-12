@@ -1,7 +1,7 @@
-import QueryResolver from "./query-resolver";
-import MutationResolver from "./mutation-resolver";
-import { TypeResolvers } from "./type-resolvers";
-import { SubscriptionResolvers } from "./subscription-resolvers";
+import QueryResolver from "./query-resolver.js";
+import MutationResolver from "./mutation-resolver.js";
+import { TypeResolvers } from "./type-resolvers.js";
+import { SubscriptionResolvers } from "./subscription-resolvers.js";
 
 export const allResolvers = {
 	Query: QueryResolver,

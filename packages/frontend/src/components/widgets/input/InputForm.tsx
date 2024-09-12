@@ -1,10 +1,10 @@
 import React, {ReactElement, useState} from 'react';
 import {Form} from "antd";
-import FormItem, {FormItemProps} from "./FormItem";
-import PrimaryButton from "../PrimaryButton";
-import Errors from "../../Errors";
-import {WidgetProps} from "../WidgetProps";
-import LoadingIcon from "../icons/LoadingIcon";
+import FormItem, {FormItemProps} from "./FormItem.tsx";
+import PrimaryButton from "../PrimaryButton.tsx";
+import Errors from "../../Errors.tsx";
+import {WidgetProps} from "../WidgetProps.js";
+import LoadingIcon from "../icons/LoadingIcon.tsx";
 
 interface InputFormProps<T> extends WidgetProps {
     onSubmit: (T) => any;
@@ -31,7 +31,7 @@ export default function InputForm<T>({ onSubmit, children, loading, errors, butt
         }}
         onSubmitCapture={(event) => {
             const values = {};
-            for (let key of (event.target as HTMLFormElement).elements) {
+            for (const key of (event.target as HTMLFormElement).elements) {
                 const name = (key as HTMLInputElement)?.name;
                 const value = (key as HTMLInputElement)?.value;
                 if (name && value) {

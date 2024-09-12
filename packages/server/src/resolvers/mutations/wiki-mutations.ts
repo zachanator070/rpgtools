@@ -1,8 +1,8 @@
 import { SessionContext } from "../../types";
-import { container } from "../../di/inversify";
-import { INJECTABLE_TYPES } from "../../di/injectable-types";
+import { container } from "../../di/inversify.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
 import { FileUpload } from "graphql-upload";
-import {WikiPageService} from "../../services/wiki-page-service";
+import {WikiPageService} from "../../services/wiki-page-service.js";
 
 export const wikiMutations = {
 	createWiki: async (

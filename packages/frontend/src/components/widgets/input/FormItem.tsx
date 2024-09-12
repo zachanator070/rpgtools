@@ -1,6 +1,6 @@
 import { Form } from 'antd';
 import React from 'react';
-import {WidgetProps} from "../WidgetProps";
+import {WidgetProps} from "../WidgetProps.js";
 
 export interface FormItemProps extends WidgetProps{
     label?: React.ReactNode;
@@ -18,7 +18,7 @@ export default function FormItem({label, children, lastItem, required, validatio
         },
     ];
     if (validationRules) {
-        for(let rule of validationRules) {
+        for(const rule of validationRules) {
             rules.push({validator: async (rule, value) => rule(value)})
         }
     }

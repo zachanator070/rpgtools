@@ -1,7 +1,7 @@
-import SqlModel from "./sql-model";
-import {defaultAttributes} from "./default-attributes";
+import SqlModel from "./sql-model.js";
+import {defaultAttributes} from "./default-attributes.js";
 import {DataTypes} from "sequelize";
-import ServerConfigModel from "./server-config-model";
+import ServerConfigModel from "./server-config-model.js";
 import {SERVER_CONFIG} from "@rpgtools/common/src/type-constants";
 
 

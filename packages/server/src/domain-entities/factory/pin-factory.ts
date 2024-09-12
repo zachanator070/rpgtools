@@ -1,8 +1,8 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
-import {Pin} from "../pin";
-import {PinAuthorizationPolicy} from "../../security/policy/pin-authorization-policy";
-import PinModel from "../../dal/sql/models/pin-model";
+import {Pin} from "../pin.js";
+import {PinAuthorizationPolicy} from "../../security/policy/pin-authorization-policy.js";
+import PinModel from "../../dal/sql/models/pin-model.js";
 
 
 @injectable()

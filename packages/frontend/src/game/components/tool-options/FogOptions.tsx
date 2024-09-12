@@ -1,10 +1,10 @@
 import React, {useContext, useState} from "react";
-import {BRUSH_ERASE, BRUSH_FOG, DEFAULT_BRUSH_SIZE} from "../../controller/PaintController";
-import DropdownSelect from "../../../components/widgets/DropdownSelect";
-import NumberSlider from "../../../components/widgets/NumberSlider";
-import ToolTip from "../../../components/widgets/ToolTip";
-import {ControllerContext} from "../GameContent";
-import GameControllerFacade from "../../GameControllerFacade";
+import {BRUSH_ERASE, BRUSH_FOG, DEFAULT_BRUSH_SIZE} from "../../controller/PaintController.js";
+import DropdownSelect from "../../../components/widgets/DropdownSelect.tsx";
+import NumberSlider from "../../../components/widgets/NumberSlider.tsx";
+import ToolTip from "../../../components/widgets/ToolTip.tsx";
+import {ControllerContext} from "../GameContent.tsx";
+import GameControllerFacade from "../../GameControllerFacade.js";
 
 export default function FogOptions() {
 	const [brushType, setBrushType] = useState(BRUSH_FOG);

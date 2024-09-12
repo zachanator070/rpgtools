@@ -1,6 +1,6 @@
 import React from 'react';
 import {Slider} from "antd";
-import {WidgetProps} from "./WidgetProps";
+import {WidgetProps} from "./WidgetProps.js";
 
 interface NumberSliderPorps extends WidgetProps {
     min: number;

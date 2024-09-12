@@ -1,10 +1,10 @@
-import {ChunkRepository} from "../../repository/chunk-repository";
+import {ChunkRepository} from "../../repository/chunk-repository.js";
 import {inject, injectable} from "inversify";
-import {Chunk} from "../../../domain-entities/chunk";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import ChunkModel from "../models/chunk-model";
-import ChunkFactory from "../../../domain-entities/factory/chunk-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {Chunk} from "../../../domain-entities/chunk.js";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import ChunkModel from "../models/chunk-model.js";
+import ChunkFactory from "../../../domain-entities/factory/chunk-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
 
 
 @injectable()

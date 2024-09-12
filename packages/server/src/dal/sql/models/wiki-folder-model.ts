@@ -4,12 +4,12 @@ import {
     HasManyGetAssociationsMixin,
     HasManySetAssociationsMixin
 } from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import WorldModel from "./world-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
-import WikiPageModel from "./wiki-page-model";
+import {defaultAttributes} from "./default-attributes.js";
+import WorldModel from "./world-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
+import WikiPageModel from "./wiki-page-model.js";
 import {WIKI_FOLDER, WORLD} from "@rpgtools/common/src/type-constants";
-import WikiFolderToWikiPageModel from "./wiki-folder-to-wiki-page-model";
+import WikiFolderToWikiPageModel from "./wiki-folder-to-wiki-page-model.js";
 
 
 export default class WikiFolderModel extends PermissionControlledModel {

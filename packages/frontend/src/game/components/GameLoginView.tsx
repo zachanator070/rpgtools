@@ -1,16 +1,16 @@
 import React from "react";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld";
-import useCreateGame from "../../hooks/game/useCreateGame";
-import useJoinGame from "../../hooks/game/useJoinGame";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import useCreateGame from "../../hooks/game/useCreateGame.js";
+import useJoinGame from "../../hooks/game/useJoinGame.js";
 import { Link, useNavigate } from "react-router-dom";
-import useMyGames from "../../hooks/game/useMyGames";
-import LoadingView from "../../components/LoadingView";
-import ColumnedContent from "../../components/widgets/ColumnedContent";
-import ItemList from "../../components/widgets/ItemList";
-import InputForm from "../../components/widgets/input/InputForm";
+import useMyGames from "../../hooks/game/useMyGames.js";
+import LoadingView from "../../components/LoadingView.tsx";
+import ColumnedContent from "../../components/widgets/ColumnedContent.tsx";
+import ItemList from "../../components/widgets/ItemList.tsx";
+import InputForm from "../../components/widgets/input/InputForm.tsx";
 import FormItem from "antd/es/form/FormItem";
-import PasswordInput from "../../components/widgets/input/PasswordInput";
-import TextInput from "../../components/widgets/input/TextInput";
+import PasswordInput from "../../components/widgets/input/PasswordInput.tsx";
+import TextInput from "../../components/widgets/input/TextInput.tsx";
 
 export default function GameLoginView() {
 	const navigate = useNavigate();

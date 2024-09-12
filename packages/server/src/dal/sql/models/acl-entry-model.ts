@@ -1,10 +1,10 @@
 import {DataTypes} from "sequelize";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 import {ALL_PERMISSIONS} from "@rpgtools/common/src/permission-constants";
-import {defaultAttributes} from "./default-attributes";
-import UserModel from "./user-model";
-import {RoleModel} from "./role-model";
-import SqlModel from "./sql-model";
+import {defaultAttributes} from "./default-attributes.js";
+import UserModel from "./user-model.js";
+import {RoleModel} from "./role-model.js";
+import SqlModel from "./sql-model.js";
 
 
 export default class AclEntryModel extends SqlModel {

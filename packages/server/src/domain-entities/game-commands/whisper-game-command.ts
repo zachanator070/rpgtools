@@ -4,8 +4,8 @@ import {
 	GameCommandArgDefinition,
 	GameCommandOption,
 	GameCommandOptionDefinition,
-} from "./abstract-game-command";
-import { Character, Message } from "../game";
+} from "./abstract-game-command.js";
+import { Character, Message } from "../game.js";
 
 export class WhisperGameCommand extends AbstractGameCommand {
 	args: GameCommandArgDefinition[] = [
@@ -38,7 +38,7 @@ export class WhisperGameCommand extends AbstractGameCommand {
 		const message = args.find((arg) => arg.name === "MESSAGE").value;
 		const response = this.getDefaultResponse(executor);
 		let foundPlayer = false;
-		for (let character of this.characters) {
+		for (const character of this.characters) {
 			if (character.name === receiver) {
 				foundPlayer = true;
 				break;

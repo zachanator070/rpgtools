@@ -1,13 +1,13 @@
 import {inject, injectable} from "inversify";
-import {ServerConfig} from "../../../domain-entities/server-config";
-import ServerConfigModel from "../models/server-config-model";
-import {ServerConfigRepository} from "../../repository/server-config-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import ServerConfigFactory from "../../../domain-entities/factory/server-config-factory";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-import UserModel from "../models/user-model";
-import RegisterCodeModel from "../models/register-code-model";
+import {ServerConfig} from "../../../domain-entities/server-config.js";
+import ServerConfigModel from "../models/server-config-model.js";
+import {ServerConfigRepository} from "../../repository/server-config-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import ServerConfigFactory from "../../../domain-entities/factory/server-config-factory.js";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
+import UserModel from "../models/user-model.js";
+import RegisterCodeModel from "../models/register-code-model.js";
 import {v4} from "uuid";
 
 
@@ -38,9 +38,9 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
         const codesToSet = [];
 
         const currentCodes = await model.getCodes();
-        for(let currentCode of currentCodes) {
+        for(const currentCode of currentCodes) {
             let found = false;
-            for(let newCode of entity.registerCodes) {
+            for(const newCode of entity.registerCodes) {
                 if(currentCode.code === newCode) {
                     found = true;
                     codesToSet.push(currentCode);
@@ -51,9 +51,9 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
             }
         }
 
-        for(let newCode of entity.registerCodes) {
+        for(const newCode of entity.registerCodes) {
             let found = false;
-            for(let currentCode of currentCodes) {
+            for(const currentCode of currentCodes) {
                 if(currentCode.code === newCode) {
                     found = true;
                 }

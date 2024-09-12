@@ -1,8 +1,8 @@
 import React, {CSSProperties} from "react";
 import { useDrag, useDrop} from "react-dnd";
-import { INITIATIVE_CARD } from "./DragAndDropConstants";
-import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import {GameCharacter} from "../../../types";
+import { INITIATIVE_CARD } from "./DragAndDropConstants.tsx";
+import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
+import {GameCharacter} from "../../../types.js";
 
 export interface DraggableCharacterItem {
 	type: string;
@@ -38,7 +38,7 @@ export default function InitiativeTrackerCard({
 		canDrop: (item: DraggableCharacterItem, monitor) => item.name !== character.name,
 		drop: async (draggedItem, monitor) => {
 			const newData = [];
-			for (let oldItem of data.filter(
+			for (const oldItem of data.filter(
 				(oldItem) => oldItem.name !== draggedItem.name
 			)) {
 				if (oldItem.name === character.name) {

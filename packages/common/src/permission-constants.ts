@@ -7,7 +7,7 @@ import {
 	WIKI_FOLDER,
 	WIKI_PAGE,
 	WORLD,
-} from "./type-constants";
+} from "./type-constants.js";
 
 // server permissions
 export const WORLD_CREATE = "Create world access";

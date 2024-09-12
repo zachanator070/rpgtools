@@ -1,5 +1,5 @@
-import {Game} from "../../types";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {Game} from "../../types.js";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {MY_GAMES} from "@rpgtools/common/src/gql-queries";
 
 interface MyGamesResult extends GqlQueryResult<Game[]>{

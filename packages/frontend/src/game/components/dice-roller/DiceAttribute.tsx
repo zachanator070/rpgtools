@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import useGameChat from "../../../hooks/game/useGameChat";
-import useCurrentGame from "../../../hooks/game/useCurrentGame";
-import useSetCharacterAttributes from "../../../hooks/game/useSetCharacterAttributes";
-import {GameCharacterAttribute} from "../../../types";
-import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter";
-import EditIcon from "../../../components/widgets/icons/EditIcon";
-import FullScreenModal from "../../../components/widgets/FullScreenModal";
-import InputForm from "../../../components/widgets/input/InputForm";
+import useGameChat from "../../../hooks/game/useGameChat.js";
+import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
+import useSetCharacterAttributes from "../../../hooks/game/useSetCharacterAttributes.js";
+import {GameCharacterAttribute} from "../../../types.js";
+import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter.js";
+import EditIcon from "../../../components/widgets/icons/EditIcon.tsx";
+import FullScreenModal from "../../../components/widgets/FullScreenModal.tsx";
+import InputForm from "../../../components/widgets/input/InputForm.tsx";
 import FormItem from "antd/es/form/FormItem";
-import NumberInput from "../../../components/widgets/input/NumberInput";
+import NumberInput from "../../../components/widgets/input/NumberInput.tsx";
 
 interface DiceAttributeProps {
 	attribute: GameCharacterAttribute
@@ -67,7 +67,7 @@ export default function DiceAttribute({ attribute }: DiceAttributeProps) {
 					errors={errors}
 					onSubmit={async ({ value }) => {
 						const attributes: GameCharacterAttribute[] = [];
-						for (let oldAttribute of currentCharacter.attributes) {
+						for (const oldAttribute of currentCharacter.attributes) {
 							if (oldAttribute._id === attribute._id) {
 								attributes.push({
 									_id: oldAttribute._id,

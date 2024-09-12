@@ -1,8 +1,8 @@
 import {injectable} from "inversify";
 import {EntityFactory} from "../../types";
-import {Image} from "../image";
-import {ImageAuthorizationPolicy} from "../../security/policy/image-authorization-policy";
-import ImageModel from "../../dal/sql/models/image-model";
+import {Image} from "../image.js";
+import {ImageAuthorizationPolicy} from "../../security/policy/image-authorization-policy.js";
+import ImageModel from "../../dal/sql/models/image-model.js";
 
 @injectable()
 export default class ImageFactory implements EntityFactory<Image, ImageModel> {

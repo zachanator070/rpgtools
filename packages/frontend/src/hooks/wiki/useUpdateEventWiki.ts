@@ -1,5 +1,5 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation";
-import {EventWiki} from "../../types";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
+import {EventWiki} from "../../types.js";
 import {UPDATE_EVENT} from "@rpgtools/common/src/gql-mutations";
 import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
 

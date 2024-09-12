@@ -1,7 +1,7 @@
 import sequelize, {ModelStatic} from "sequelize";
 import {DomainEntity, EntityFactory} from "../../../types";
-import SqlModel from "../models/sql-model";
-import {PaginatedResult} from "../../paginated-result";
+import SqlModel from "../models/sql-model.js";
+import {PaginatedResult} from "../../paginated-result.js";
 import {injectable} from "inversify";
 import {v4} from "uuid";
 
@@ -68,7 +68,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     async buildResults(models: M[]){
         const results = [];
-        for(let model of models) {
+        for(const model of models) {
             results.push(await this.entityFactory.fromSqlModel(model));
         }
         return results;

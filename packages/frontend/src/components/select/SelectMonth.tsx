@@ -1,6 +1,6 @@
 import React from 'react';
-import {Age} from "../../types";
-import DropdownSelect from "../widgets/DropdownSelect";
+import {Age} from "../../types.js";
+import DropdownSelect from "../widgets/DropdownSelect.tsx";
 
 export default function SelectMonth({age, onChange, defaultMonth}: {age: Age, onChange: (newValue: number) => any, defaultMonth: number}) {
     return <DropdownSelect

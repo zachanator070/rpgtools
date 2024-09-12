@@ -14,7 +14,7 @@ import {
 	MODEL_ATTRIBUTES,
 	PIN_ATTRIBUTES,
 	WIKIS_IN_FOLDER_ATTRIBUTES
-} from "./gql-fragments";
+} from "./gql-fragments.js";
 
 //region Authentication
 

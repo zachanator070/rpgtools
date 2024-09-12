@@ -1,5 +1,5 @@
 
-import ModeledWikiModel, {configModeledWikiModel, modeledWikiAttributes} from "./modeled-wiki-model";
+import ModeledWikiModel, {configModeledWikiModel, modeledWikiAttributes} from "./modeled-wiki-model.js";
 import {ITEM} from "@rpgtools/common/src/type-constants";
 
 

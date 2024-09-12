@@ -1,15 +1,15 @@
 import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
 import {ROLE} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {
 	ApiServer,
 } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import { SecurityContext } from "../security/security-context";
-import {AuthenticationService} from "./authentication-service";
-import {DatabaseContext} from "../dal/database-context";
-import RoleFactory from "../domain-entities/factory/role-factory";
+import { SecurityContext } from "../security/security-context.js";
+import {AuthenticationService} from "./authentication-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
 
 @injectable()
 export class ServerConfigService {
@@ -23,7 +23,7 @@ export class ServerConfigService {
 	roleFactory: RoleFactory;
 
 	serverNeedsSetup = async (databaseContext: DatabaseContext): Promise<boolean> => {
-		let adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
+		const adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
 
 		if (!adminRole) {
 			return true;
@@ -59,7 +59,7 @@ export class ServerConfigService {
 		);
 		const adminRole = this.roleFactory.build({name: SERVER_ADMIN_ROLE, world: null, acl: []});
 		await databaseContext.roleRepository.create(adminRole);
-		for (let permission of SERVER_PERMISSIONS) {
+		for (const permission of SERVER_PERMISSIONS) {
 
 			server.acl.push({
 				permission,

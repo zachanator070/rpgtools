@@ -1,7 +1,7 @@
 import React from 'react';
 import {Upload} from "antd";
-import PrimaryButton from "../PrimaryButton";
-import UploadIcon from "../icons/UploadIcon";
+import PrimaryButton from "../PrimaryButton.tsx";
+import UploadIcon from "../icons/UploadIcon.tsx";
 
 interface FileInputProps {
     onChange: (any) => any;

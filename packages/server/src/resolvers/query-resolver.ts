@@ -1,16 +1,16 @@
 import {
 	SessionContext,
 } from "../types";
-import { container } from "../di/inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {GameService} from "../services/game-service";
-import {WorldService} from "../services/world-service";
-import {ModelService} from "../services/model-service";
-import {ServerConfigService} from "../services/server-config-service";
-import {UserService} from "../services/user-service";
-import {WikiFolderService} from "../services/wiki-folder-service";
-import {RoleService} from "../services/role-service";
-import {WikiPageService} from "../services/wiki-page-service";
+import { container } from "../di/inversify.js";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {GameService} from "../services/game-service.js";
+import {WorldService} from "../services/world-service.js";
+import {ModelService} from "../services/model-service.js";
+import {ServerConfigService} from "../services/server-config-service.js";
+import {UserService} from "../services/user-service.js";
+import {WikiFolderService} from "../services/wiki-folder-service.js";
+import {RoleService} from "../services/role-service.js";
+import {WikiPageService} from "../services/wiki-page-service.js";
 
 export default {
 	currentUser: (_: any, __: any, { securityContext }: SessionContext) => securityContext.user,
