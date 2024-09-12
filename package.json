@@ -5,11 +5,12 @@
 	"license": "MIT",
 	"private": true,
 	"repository": "https://github.com/zachanator070/rpgtools",
-	"scripts": {
-		"lint": "npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/**",
-		"lint-fix": "npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/** --fix"
-	},
+	"scripts": {},
 	"workspaces": [
 		"packages/*"
-	]
+	],
+	"devDependencies": {
+		"eslint": "^8.57.0",
+		"eslint-plugin-import": "^2.30.0"
+	}
 }

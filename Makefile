@@ -151,8 +151,10 @@ seed-new: .env
 ci: .env $(NODE_MODULES) test
 
 lint:
-	npx eslint packages/server/src packages/common/src --ext .ts
-	npx eslint packages/frontend/src --ext .ts
+	npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/**
+
+lint-fix:
+	npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/** --fix
 
 #########################
 # CONTINUOUS DEPLOYMENT #

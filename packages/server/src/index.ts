@@ -1,4 +1,4 @@
-import {container, bindAll} from "./di/inversify";
+import {container, bindAll} from "./di/inversify.js";
 import {INJECTABLE_TYPES} from "./di/injectable-types";
 import RpgToolsServer from "./server/rpgtools-server";
 
