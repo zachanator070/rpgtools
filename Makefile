@@ -151,10 +151,10 @@ seed-new: .env
 ci: .env $(NODE_MODULES) test
 
 lint:
-	npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/**
+	npm run lint
 
 lint-fix:
-	npx eslint --ignore-pattern */node_modules --ignore-pattern dist packages/** --fix
+	npm run lint-fix
 
 #########################
 # CONTINUOUS DEPLOYMENT #
