@@ -157,12 +157,16 @@ export default {
     // transform: {
     // 	"^.+\\.(js|jsx)?$": "babel-jest",
     // },
-    // transform: {
-    //     "^.+\\.(ts|tsx)$": ["ts-jest", {"useESM": true}],
-    //     "^.+\\.(js|jsx)?$": "babel-jest",
-    // },
-    //
-    // "extensionsToTreatAsEsm": [".ts"],
+    transform: {
+        "^.+\\.(ts|tsx)$": ["ts-jest", {"useESM": true}],
+        "^.+\\.(js|jsx)?$": "babel-jest",
+    },
+
+    "extensionsToTreatAsEsm": [".ts"],
+
+    "moduleNameMapper": {
+        "^(\\.\\.?\\/.+)\\.js$": "$1",
+    },
 
     // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
     transformIgnorePatterns: [],
