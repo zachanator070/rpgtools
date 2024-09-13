@@ -18,6 +18,11 @@ export default [
         ...globals.browser
       }
     },
+    "settings": {
+      "node": {
+        "tryExtensions": [".js", ".json", ".ts", ".tsx", ".css"]
+      }
+    },
     plugins: {
       "file-extension-in-import-ts": fileExtensionsInImportTs
     },
@@ -25,7 +30,6 @@ export default [
       'file-extension-in-import-ts/file-extension-in-import-ts': [
         'error',
         'always',
-        { extMapping: {'.ts': '.js' } }
       ],
       "no-unused-vars": "warn"
     }
