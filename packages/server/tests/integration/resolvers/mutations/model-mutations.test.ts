@@ -1,13 +1,13 @@
-import {DefaultTestingContext} from "../../default-testing-context";
+import {DefaultTestingContext} from "../../default-testing-context.js";
 import {FileUpload, Upload} from "graphql-upload";
 import fs from "fs";
-import {ModelService} from "../../../../src/services/model-service";
-import {container} from "../../../../src/di/inversify";
-import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
+import {ModelService} from "../../../../src/services/model-service.js";
+import {container} from "../../../../src/di/inversify.js";
+import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types.js";
 import {CREATE_MODEL, DELETE_MODEL, UPDATE_MODEL} from "@rpgtools/common/src/gql-mutations";
 import {DbEngine} from "../../../../src/types";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {accessControlList} from "../common-testing-assertions";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {accessControlList} from "../common-testing-assertions.js";
 
 process.env.TEST_SUITE = "model-mutations-test";
 

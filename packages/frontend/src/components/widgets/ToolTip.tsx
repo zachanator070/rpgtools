@@ -1,6 +1,6 @@
 import React from "react";
 import { Tooltip } from "antd";
-import QuestionMarkIcon from "./icons/QuestionMarkIcon.tsx";
+import QuestionMarkIcon from "./icons/QuestionMarkIcon.js";
 import {WidgetProps} from "./WidgetProps.js";
 
 interface ToolTipProps extends WidgetProps {

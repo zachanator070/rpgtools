@@ -1,9 +1,9 @@
 import React, {Ref, RefObject, useEffect, useRef, useState} from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer.js";
-import LoadingView from "../LoadingView.tsx";
+import LoadingView from "../LoadingView.js";
 import {Model} from "../../types.js";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
-import ColorInput from "../widgets/input/ColorInput.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.js";
+import ColorInput from "../widgets/input/ColorInput.js";
 
 interface ModelViewerProps {
 	model: Model;

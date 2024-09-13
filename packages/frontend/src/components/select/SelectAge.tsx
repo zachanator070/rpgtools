@@ -1,6 +1,6 @@
 import React from 'react';
 import {Calendar} from "../../types.js";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.js";
 
 
 export default function SelectAge({calendar, defaultAge, onChange}: {calendar: Calendar, defaultAge: number, onChange: (newValue: number) => any}) {

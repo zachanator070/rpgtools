@@ -1,7 +1,7 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
 import useCurrentMap from "../../hooks/map/useCurrentMap.js";
-import LoadingView from "../LoadingView.tsx";
-import ContextMenu from "../widgets/ContextMenu.tsx";
+import LoadingView from "../LoadingView.js";
+import ContextMenu from "../widgets/ContextMenu.js";
 
 interface MapProps {
 	menuItems: MapMenuItem[];

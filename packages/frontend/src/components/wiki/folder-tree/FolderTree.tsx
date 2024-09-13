@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {WikiFolder} from "../../../types.js";
-import FolderNode from "./FolderNode.tsx";
+import FolderNode from "./FolderNode.js";
 import useGetFolderPath from "../../../hooks/wiki/useGetFolderPath.js";
 import {useParams} from "react-router-dom";
 

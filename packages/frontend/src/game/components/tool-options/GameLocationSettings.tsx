@@ -2,13 +2,13 @@ import React, {useContext, useState} from "react";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
 import useSetGameMap from "../../../hooks/game/useSetGameMap.js";
-import LoadingView from "../../../components/LoadingView.tsx";
-import Toggle from "../../../components/widgets/Toggle.tsx";
-import SelectWiki from "../../../components/select/SelectWiki.tsx";
-import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox.tsx";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.tsx";
+import LoadingView from "../../../components/LoadingView.js";
+import Toggle from "../../../components/widgets/Toggle.js";
+import SelectWiki from "../../../components/select/SelectWiki.js";
+import PrimaryCheckbox from "../../../components/widgets/PrimaryCheckbox.js";
+import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
 import {DEFAULT_MAP_DRAW_GRID} from "../../GameState.js";
-import {ControllerContext} from "../GameContent.tsx";
+import {ControllerContext} from "../GameContent.js";
 import GameControllerFacade from "../../GameControllerFacade.js";
 
  interface GameLocationSettingsProps {

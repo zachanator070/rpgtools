@@ -4,16 +4,16 @@ import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermis
 import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission.js";
 import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission.js";
 import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission.js";
-import SelectUser from "../select/SelectUser.tsx";
-import SelectRole from "../select/SelectRole.tsx";
+import SelectUser from "../select/SelectUser.js";
+import SelectRole from "../select/SelectRole.js";
 import {PermissionControlled, Role, User} from "../../types.js";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
-import ItemList from "../widgets/ItemList.tsx";
-import TabCollection from "../widgets/TabCollection.tsx";
-import RadioButtonGroup from "../widgets/RadioButtonGroup.tsx";
-import RadioButton from "../widgets/RadioButton.tsx";
-import DeleteIcon from "../widgets/icons/DeleteIcon.tsx";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
+import ItemList from "../widgets/ItemList.js";
+import TabCollection from "../widgets/TabCollection.js";
+import RadioButtonGroup from "../widgets/RadioButtonGroup.js";
+import RadioButton from "../widgets/RadioButton.js";
+import DeleteIcon from "../widgets/icons/DeleteIcon.js";
 import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 
 interface PermissionEditorProps {

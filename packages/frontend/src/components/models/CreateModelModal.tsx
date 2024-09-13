@@ -2,8 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import useCreateModel from "../../hooks/model/useCreateModel.js";
-import ModelForm from "./ModelForm.tsx";
-import FullScreenModal from "../widgets/FullScreenModal.tsx";
+import ModelForm from "./ModelForm.js";
+import FullScreenModal from "../widgets/FullScreenModal.js";
 
 interface CreateModelModalProps {
 	visibility: boolean;

@@ -1,6 +1,6 @@
 import React, {CSSProperties} from "react";
 import { useDrag, useDrop} from "react-dnd";
-import { INITIATIVE_CARD } from "./DragAndDropConstants.tsx";
+import { INITIATIVE_CARD } from "./DragAndDropConstants.js";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
 import {GameCharacter} from "../../../types.js";
 

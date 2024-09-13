@@ -1,9 +1,9 @@
 import React from 'react';
 import {WikiFolder} from "../../../types.js";
 import {Link} from "react-router-dom";
-import FileIcon from "../../widgets/icons/FileIcon.tsx";
+import FileIcon from "../../widgets/icons/FileIcon.js";
 import useWikisInFolder from "../../../hooks/wiki/useWikisInFolder.js";
-import LoadingView from "../../LoadingView.tsx";
+import LoadingView from "../../LoadingView.js";
 
 export default function WikiList({folder}: {folder: WikiFolder}) {
 

@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {GROUND_Y_POSITION, MAP_Y_POSITION} from "../GameState.js";
 import {DEFAULT_MAP_SIZE} from "./PaintController.js";
 import {Place} from "../../types.js";
-import useNotification from "../../components/widgets/useNotification.tsx";
+import useNotification from "../../components/widgets/useNotification.js";
 import {CanvasTexture, Mesh} from "three";
 
 

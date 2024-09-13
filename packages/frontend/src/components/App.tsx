@@ -4,14 +4,14 @@ import {Route, useNavigate, useLocation, Routes, Navigate} from "react-router-do
 import "../css/index.css";
 import "antd/dist/antd.css";
 import NavBar from "./nav/NavBar";
-import DefaultView from "./DefaultView.tsx";
-import AppContent from "./AppContent.tsx";
-import ServerSetup from "./server/ServerSetup.tsx";
-import ServerSettings from "./server/ServerSettings.tsx";
+import DefaultView from "./DefaultView.js";
+import AppContent from "./AppContent.js";
+import ServerSetup from "./server/ServerSetup.js";
+import ServerSettings from "./server/ServerSettings.js";
 import MapWikiContext from "../MapWikiContext.js";
 import useServerConfig from "../hooks/server/useServerConfig.js";
-import LoadingView from "./LoadingView.tsx";
-import DefaultWorld from "./DefaultWorld.tsx";
+import LoadingView from "./LoadingView.js";
+import DefaultWorld from "./DefaultWorld.js";
 
 export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();

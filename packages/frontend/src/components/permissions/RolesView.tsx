@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import LoadingView from "../LoadingView.tsx";
+import LoadingView from "../LoadingView.js";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import useCreateRole from "../../hooks/authorization/useCreateRole.js";
 import useDeleteRole from "../../hooks/authorization/useDeleteRole.js";
 import useRemoveUserRole from "../../hooks/authorization/useRemoveUserRole.js";
-import SelectUser from "../select/SelectUser.tsx";
+import SelectUser from "../select/SelectUser.js";
 import useAddUserRole from "../../hooks/authorization/useAddUserRole.js";
 import {Role, User} from "../../types.js";
 import useSearchRoles from "../../hooks/authorization/useSearchRoles.js";
-import ColumnedContent from "../widgets/ColumnedContent.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
-import TextInput from "../widgets/input/TextInput.tsx";
-import ItemList from "../widgets/ItemList.tsx";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
-import TabCollection, {TabPaneProps} from "../widgets/TabCollection.tsx";
-import DeleteIcon from "../widgets/icons/DeleteIcon.tsx";
+import ColumnedContent from "../widgets/ColumnedContent.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
+import TextInput from "../widgets/input/TextInput.js";
+import ItemList from "../widgets/ItemList.js";
+import DropdownSelect from "../widgets/DropdownSelect.js";
+import TabCollection, {TabPaneProps} from "../widgets/TabCollection.js";
+import DeleteIcon from "../widgets/icons/DeleteIcon.js";
 
 
 export default function RolesView() {

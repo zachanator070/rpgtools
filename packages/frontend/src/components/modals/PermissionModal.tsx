@@ -1,6 +1,6 @@
 import React from "react";
-import PermissionEditor from "../permissions/PermissionEditor.tsx";
-import FullScreenModal from "../widgets/FullScreenModal.tsx";
+import PermissionEditor from "../permissions/PermissionEditor.js";
+import FullScreenModal from "../widgets/FullScreenModal.js";
 
 interface PermissionModalProps {
 	visibility: boolean;

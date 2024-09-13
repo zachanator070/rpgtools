@@ -1,7 +1,7 @@
 import React, {ReactElement} from 'react';
 import {Radio} from "antd";
 import {WidgetProps} from "./WidgetProps.js";
-import {RadioButtonProps} from "./RadioButton.tsx";
+import {RadioButtonProps} from "./RadioButton.js";
 
 interface RadioGroupProps extends WidgetProps {
     onChange: (string) => any,

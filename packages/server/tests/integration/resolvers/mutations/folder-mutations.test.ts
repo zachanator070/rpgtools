@@ -1,13 +1,13 @@
 import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
 import { WIKI_RW } from "@rpgtools/common/src/permission-constants";
-import { container } from "../../../../src/di/inversify";
-import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
+import { container } from "../../../../src/di/inversify.js";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types.js";
 import {CREATE_FOLDER, DELETE_FOLDER, RENAME_FOLDER} from "@rpgtools/common/src/gql-mutations";
-import {AuthorizationService} from "../../../../src/services/authorization-service";
-import {WikiPageService} from "../../../../src/services/wiki-page-service";
+import {AuthorizationService} from "../../../../src/services/authorization-service.js";
+import {WikiPageService} from "../../../../src/services/wiki-page-service.js";
 import {DbEngine} from "../../../../src/types";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {DefaultTestingContext} from "../../default-testing-context";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {DefaultTestingContext} from "../../default-testing-context.js";
 
 process.env.TEST_SUITE = "folder-mutations-test";
 

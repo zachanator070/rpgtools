@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import useGetModels from "../../hooks/model/useGetModels.js";
 import { Route, Routes } from "react-router-dom";
-import PermissionModal from "../modals/PermissionModal.tsx";
+import PermissionModal from "../modals/PermissionModal.js";
 import { MODEL } from "@rpgtools/common/src/type-constants";
-import LoadingView from "../LoadingView.tsx";
+import LoadingView from "../LoadingView.js";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import CreateModelModal from "./CreateModelModal.tsx";
-import ModelEdit from "./ModelEdit.tsx";
-import ModelContent from "./ModelContent.tsx";
+import CreateModelModal from "./CreateModelModal.js";
+import ModelEdit from "./ModelEdit.js";
+import ModelContent from "./ModelContent.js";
 import { useParams, useNavigate } from "react-router-dom";
 import {Model} from "../../types.js";
-import ColumnedContent from "../widgets/ColumnedContent.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
-import ItemList from "../widgets/ItemList.tsx";
-import PeopleIcon from "../widgets/icons/PeopleIcon.tsx";
+import ColumnedContent from "../widgets/ColumnedContent.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
+import ItemList from "../widgets/ItemList.js";
+import PeopleIcon from "../widgets/icons/PeopleIcon.js";
 
 export default function ModelView() {
 	const { models, loading, refetch } = useGetModels();

@@ -1,8 +1,8 @@
 import React, {CSSProperties, useState} from "react";
 import { useParams } from "react-router-dom";
 import useFolders from "../../hooks/wiki/useFolders.js";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
-import SearchIcon from "../widgets/icons/SearchIcon.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.js";
+import SearchIcon from "../widgets/icons/SearchIcon.js";
 import {WikiFolder} from "../../types.js";
 
 interface SelectFolderProps {

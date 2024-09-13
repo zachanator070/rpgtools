@@ -1,9 +1,9 @@
 import fs from "fs";
 import { FileUpload, Upload } from "graphql-upload";
 import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
-import {container} from "../../../../src/di/inversify";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {DefaultTestingContext} from "../../default-testing-context";
+import {container} from "../../../../src/di/inversify.js";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {DefaultTestingContext} from "../../default-testing-context.js";
 
 process.env.TEST_SUITE = "image-mutations-test";
 

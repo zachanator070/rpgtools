@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCurrentUser from "../hooks/authentication/useCurrentUser.js";
-import LoadingView from "./LoadingView.tsx";
-import WorldSelectPrompt from "./prompts/WorldSelectPrompt.tsx";
+import LoadingView from "./LoadingView.js";
+import WorldSelectPrompt from "./prompts/WorldSelectPrompt.js";
 
 export default function DefaultView() {
 	const navigate = useNavigate();

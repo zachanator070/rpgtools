@@ -2,9 +2,9 @@ import React, {ReactComponentElement, useState} from "react";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages.js";
 import { useParams } from "react-router-dom";
 import {WikiPage} from "../../types.js";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
-import SearchIcon from "../widgets/icons/SearchIcon.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.js";
+import DropdownSelect from "../widgets/DropdownSelect.js";
+import SearchIcon from "../widgets/icons/SearchIcon.js";
 
 interface SelectWikiProps <T extends WikiPage>{
 	types?: string[];

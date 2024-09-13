@@ -1,9 +1,9 @@
 import React, {CSSProperties, useState} from "react";
 import useWorlds from "../../hooks/world/useWorlds.js";
 import {World} from "../../types.js";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
-import SearchIcon from "../widgets/icons/SearchIcon.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
+import SearchIcon from "../widgets/icons/SearchIcon.js";
 
 interface SelectWorldProps {
 	onChange?: (world: World) => any;

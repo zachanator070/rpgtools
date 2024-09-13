@@ -1,14 +1,14 @@
 import * as dotenv from 'dotenv'
 dotenv.config({path: './jest.env'});
 
-import { container, bindAll } from "../../src/di/inversify";
-import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
+import { container, bindAll } from "../../src/di/inversify.js";
+import { INJECTABLE_TYPES } from "../../src/di/injectable-types.js";
 import {DbEngine, SessionContextFactory} from "../../src/types";
-import {ServerConfigService} from "../../src/services/server-config-service";
-import {MockSessionContextFactory} from "./mock-session-context-factory";
-import {DefaultTestingContext} from "./default-testing-context";
-import {TEST_INJECTABLE_TYPES} from "./injectable-types";
-import RpgToolsServer from "../../src/server/rpgtools-server";
+import {ServerConfigService} from "../../src/services/server-config-service.js";
+import {MockSessionContextFactory} from "./mock-session-context-factory.js";
+import {DefaultTestingContext} from "./default-testing-context.js";
+import {TEST_INJECTABLE_TYPES} from "./injectable-types.js";
+import RpgToolsServer from "../../src/server/rpgtools-server.js";
 import {jest} from '@jest/globals'
 
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";

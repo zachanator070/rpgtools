@@ -1,7 +1,7 @@
 import 'react';
 import {Link} from "react-router-dom";
-import PrimaryButton from "../../widgets/PrimaryButton.tsx";
-import EditIcon from "../../widgets/icons/EditIcon.tsx";
+import PrimaryButton from "../../widgets/PrimaryButton.js";
+import EditIcon from "../../widgets/icons/EditIcon.js";
 import React from "react";
 import {WikiPage} from "../../../types.js";
 import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";

@@ -2,10 +2,10 @@ import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld.js";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser.js";
-import SelectWorld from "../select/SelectWorld.tsx";
-import FullScreenModal from "../widgets/FullScreenModal.tsx";
-import InputForm from "../widgets/input/InputForm.tsx";
-import FormItem from "../widgets/input/FormItem.tsx";
+import SelectWorld from "../select/SelectWorld.js";
+import FullScreenModal from "../widgets/FullScreenModal.js";
+import InputForm from "../widgets/input/InputForm.js";
+import FormItem from "../widgets/input/FormItem.js";
 import {World} from "../../types.js";
 
 interface SelectWorldModalProps {

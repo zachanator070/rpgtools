@@ -6,12 +6,12 @@ import useGameModelPositionedSubscription from "../../../hooks/game/useGameModel
 import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel.js";
 import {PositionedModel, WikiPage} from "../../../types.js";
 import GameControllerFacade from "../../GameControllerFacade.js";
-import LoadingView from "../../../components/LoadingView.tsx";
-import SelectWiki from "../../../components/select/SelectWiki.tsx";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.tsx";
-import ColorInput from "../../../components/widgets/input/ColorInput.tsx";
-import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton.tsx";
-import {ControllerContext} from "../GameContent.tsx";
+import LoadingView from "../../../components/LoadingView.js";
+import SelectWiki from "../../../components/select/SelectWiki.js";
+import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
+import ColorInput from "../../../components/widgets/input/ColorInput.js";
+import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton.js";
+import {ControllerContext} from "../GameContent.js";
 import useGameModelDeletedSubscription from "../../../hooks/game/useGameModelDeletedSubscription.js";
 
 interface ModelInfoProps {

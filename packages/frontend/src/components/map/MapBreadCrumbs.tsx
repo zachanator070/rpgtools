@@ -4,7 +4,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import { Link } from "react-router-dom";
 import {Pin, Place} from "../../types.js";
 import usePins from "../../hooks/map/usePins.js";
-import Breadcrumbs from "../widgets/Breadcrumbs.tsx";
+import Breadcrumbs from "../widgets/Breadcrumbs.js";
 
 export default function MapBreadCrumbs() {
 	const { currentMap, loading } = useCurrentMap();

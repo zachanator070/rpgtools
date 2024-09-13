@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame.js";
-import LeaveGameButton from "./LeaveGameButton.tsx";
+import LeaveGameButton from "./LeaveGameButton.js";
 import { GAME } from "@rpgtools/common/src/type-constants";
 import {
 	ADD_MODEL_CONTROLS,
@@ -9,14 +9,14 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
 } from "../GameState.js";
-import HighlightIcon from "../../components/widgets/icons/HighlightIcon.tsx";
-import AddIcon from "../../components/widgets/icons/AddIcon.tsx";
-import CloudIcon from "../../components/widgets/icons/CloudIcon.tsx";
-import SelectIcon from "../../components/widgets/icons/SelectIcon.tsx";
-import LocationIcon from "../../components/widgets/icons/LocationIcon.tsx";
-import ToolTip from "../../components/widgets/ToolTip.tsx";
-import PermissionModal from "../../components/modals/PermissionModal.tsx";
-import PeopleIcon from "../../components/widgets/icons/PeopleIcon.tsx";
+import HighlightIcon from "../../components/widgets/icons/HighlightIcon.js";
+import AddIcon from "../../components/widgets/icons/AddIcon.js";
+import CloudIcon from "../../components/widgets/icons/CloudIcon.js";
+import SelectIcon from "../../components/widgets/icons/SelectIcon.js";
+import LocationIcon from "../../components/widgets/icons/LocationIcon.js";
+import ToolTip from "../../components/widgets/ToolTip.js";
+import PermissionModal from "../../components/modals/PermissionModal.js";
+import PeopleIcon from "../../components/widgets/icons/PeopleIcon.js";
 
 
 interface GameControlsToolbarProps {

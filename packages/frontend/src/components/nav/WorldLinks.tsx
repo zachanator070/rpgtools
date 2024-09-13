@@ -1,6 +1,6 @@
 import React from 'react';
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import VerticalBar from "../widgets/VerticalBar.tsx";
+import VerticalBar from "../widgets/VerticalBar.js";
 import {Link} from "react-router-dom";
 
 export default function WorldLinks() {

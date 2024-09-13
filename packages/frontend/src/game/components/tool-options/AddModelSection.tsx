@@ -3,11 +3,11 @@ import useAddModel from "../../../hooks/game/useAddModel.js";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
 import {ModeledWiki} from "../../../types.js";
-import Toggle from "../../../components/widgets/Toggle.tsx";
-import SelectWiki from "../../../components/select/SelectWiki.tsx";
-import SelectModel from "../../../components/select/SelectModel.tsx";
-import ModelViewer from "../../../components/models/ModelViewer.tsx";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.tsx";
+import Toggle from "../../../components/widgets/Toggle.js";
+import SelectWiki from "../../../components/select/SelectWiki.js";
+import SelectModel from "../../../components/select/SelectModel.js";
+import ModelViewer from "../../../components/models/ModelViewer.js";
+import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
 interface SelectedModel {
 	model: any;
 	wiki?: any;

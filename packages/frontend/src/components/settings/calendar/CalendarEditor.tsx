@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import TabCollection from "../../widgets/TabCollection.tsx";
+import TabCollection from "../../widgets/TabCollection.js";
 import useCalendars from "../../../hooks/calendar/useCalendars.js";
 import useUpsertCalendar from "../../../hooks/calendar/useUpsertCalendar.js";
-import LoadingView from "../../LoadingView.tsx";
+import LoadingView from "../../LoadingView.js";
 import {Age, Calendar, DayOfTheWeek, Month} from "../../../types.js";
-import AgeEditor from "./AgeEditor.tsx";
-import TextInput from "../../widgets/input/TextInput.tsx";
-import PrimaryButton from "../../widgets/PrimaryButton.tsx";
-import ToolTip from "../../widgets/ToolTip.tsx";
-import QuestionMarkIcon from "../../widgets/icons/QuestionMarkIcon.tsx";
+import AgeEditor from "./AgeEditor.js";
+import TextInput from "../../widgets/input/TextInput.js";
+import PrimaryButton from "../../widgets/PrimaryButton.js";
+import ToolTip from "../../widgets/ToolTip.js";
+import QuestionMarkIcon from "../../widgets/icons/QuestionMarkIcon.js";
 
 function filterAge(age: Age): Age {
     return {

@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
-import SlidingDrawer from "../widgets/SlidingDrawer.tsx";
-import WikiView from "../wiki/view/WikiView.tsx";
+import SlidingDrawer from "../widgets/SlidingDrawer.js";
+import WikiView from "../wiki/view/WikiView.js";
 import MapWikiContext from "../../MapWikiContext.js";
 import useGetWiki from "../../hooks/wiki/useGetWiki.js";
 

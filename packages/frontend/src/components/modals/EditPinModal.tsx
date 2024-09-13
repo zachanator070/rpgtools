@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import useUpdatePin from "../../hooks/map/useUpdatePin.js";
 import useDeletePin from "../../hooks/map/useDeletePin.js";
-import SelectWiki from "../select/SelectWiki.tsx";
+import SelectWiki from "../select/SelectWiki.js";
 import usePins from "../../hooks/map/usePins.js";
-import FullScreenModal from "../widgets/FullScreenModal.tsx";
-import InputForm from "../widgets/input/InputForm.tsx";
+import FullScreenModal from "../widgets/FullScreenModal.js";
+import InputForm from "../widgets/input/InputForm.js";
 import {PLACE} from "@rpgtools/common/src/type-constants";
-import FormItem from "../widgets/input/FormItem.tsx";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
+import FormItem from "../widgets/input/FormItem.js";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
 import {Pin, WikiPage} from "../../types.js";
 
 interface EditPinModalProps {

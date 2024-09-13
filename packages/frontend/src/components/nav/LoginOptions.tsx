@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import PrimaryButton from "../widgets/PrimaryButton.js";
 import useLogout from "../../hooks/authentication/useLogout.js";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser.js";
-import LoadingView from "../LoadingView.tsx";
-import LoginModal from "../modals/LoginModal.tsx";
-import RegisterModal from "../modals/RegisterModal.tsx";
+import LoadingView from "../LoadingView.js";
+import LoginModal from "../modals/LoginModal.js";
+import RegisterModal from "../modals/RegisterModal.js";
 
 export default function LoginOptions() {
 

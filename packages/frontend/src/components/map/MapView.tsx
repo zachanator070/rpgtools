@@ -1,13 +1,13 @@
 import React, {useContext} from "react";
-import Map from "./Map.tsx";
+import Map from "./Map.js";
 import PinComponent from "./PinComponent";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import useCurrentMap from "../../hooks/map/useCurrentMap.js";
-import LoadingView from "../LoadingView.tsx";
+import LoadingView from "../LoadingView.js";
 import useCreatePin from "../../hooks/map/useCreatePin.js";
 import { Link } from "react-router-dom";
-import MapBreadCrumbs from "./MapBreadCrumbs.tsx";
-import MapDrawer from "./MapDrawer.tsx";
+import MapBreadCrumbs from "./MapBreadCrumbs.js";
+import MapDrawer from "./MapDrawer.js";
 import MapWikiContext from "../../MapWikiContext.js";
 import usePins from "../../hooks/map/usePins.js";
 

@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import WorldMenu from "./WorldMenu.tsx";
+import WorldMenu from "./WorldMenu.js";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import SearchBar from "./SearchBar.tsx";
+import SearchBar from "./SearchBar.js";
 import useServerConfig from "../../hooks/server/useServerConfig.js";
-import WorldIcon from "../widgets/icons/WorldIcon.tsx";
-import ServerIcon from "../widgets/icons/ServerIcon.tsx";
-import LoginOptions from "./LoginOptions.tsx";
-import WorldLinks from "./WorldLinks.tsx";
+import WorldIcon from "../widgets/icons/WorldIcon.js";
+import ServerIcon from "../widgets/icons/ServerIcon.js";
+import LoginOptions from "./LoginOptions.js";
+import WorldLinks from "./WorldLinks.js";
 
 export default function NavBar() {
 

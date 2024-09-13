@@ -1,15 +1,15 @@
 import React, {ReactElement, useRef, useState} from "react";
-import Editor from "../Editor.tsx";
+import Editor from "../Editor.js";
 import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import LoadingView from "../../LoadingView.tsx";
+import LoadingView from "../../LoadingView.js";
 import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
-import ModelViewer from "../../models/ModelViewer.tsx";
+import ModelViewer from "../../models/ModelViewer.js";
 import {EventWiki, ModeledWiki, Place, WikiPage} from "../../../types.js";
 import usePins from "../../../hooks/map/usePins.js";
-import ToolTip from "../../widgets/ToolTip.tsx";
-import GotoIcon from "../../widgets/icons/GotoIcon.tsx";
-import WikiViewButtonBar from "./WikiViewButtonBar.tsx";
+import ToolTip from "../../widgets/ToolTip.js";
+import GotoIcon from "../../widgets/icons/GotoIcon.js";
+import WikiViewButtonBar from "./WikiViewButtonBar.js";
 
 interface WikiContentProps {
 	currentWiki: WikiPage;

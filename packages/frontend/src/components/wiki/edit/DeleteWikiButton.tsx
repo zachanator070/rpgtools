@@ -1,8 +1,8 @@
 import 'react';
-import DeleteIcon from "../../widgets/icons/DeleteIcon.tsx";
-import PrimaryDangerButton from "../../widgets/PrimaryDangerButton.tsx";
+import DeleteIcon from "../../widgets/icons/DeleteIcon.js";
+import PrimaryDangerButton from "../../widgets/PrimaryDangerButton.js";
 import React from "react";
-import useModal from "../../widgets/useModal.tsx";
+import useModal from "../../widgets/useModal.js";
 import useDeleteWiki from "../../../hooks/wiki/useDeleteWiki.js";
 import {WikiPage} from "../../../types.js";
 import {useNavigate} from "react-router-dom";

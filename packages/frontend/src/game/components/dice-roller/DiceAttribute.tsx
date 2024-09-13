@@ -4,11 +4,11 @@ import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
 import useSetCharacterAttributes from "../../../hooks/game/useSetCharacterAttributes.js";
 import {GameCharacterAttribute} from "../../../types.js";
 import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter.js";
-import EditIcon from "../../../components/widgets/icons/EditIcon.tsx";
-import FullScreenModal from "../../../components/widgets/FullScreenModal.tsx";
-import InputForm from "../../../components/widgets/input/InputForm.tsx";
+import EditIcon from "../../../components/widgets/icons/EditIcon.js";
+import FullScreenModal from "../../../components/widgets/FullScreenModal.js";
+import InputForm from "../../../components/widgets/input/InputForm.js";
 import FormItem from "antd/es/form/FormItem";
-import NumberInput from "../../../components/widgets/input/NumberInput.tsx";
+import NumberInput from "../../../components/widgets/input/NumberInput.js";
 
 interface DiceAttributeProps {
 	attribute: GameCharacterAttribute

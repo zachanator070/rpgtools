@@ -1,5 +1,5 @@
 import 'react';
-import PermissionEditor from "../permissions/PermissionEditor.tsx";
+import PermissionEditor from "../permissions/PermissionEditor.js";
 import {WORLD} from "@rpgtools/common/src/type-constants";
 import React from "react";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";

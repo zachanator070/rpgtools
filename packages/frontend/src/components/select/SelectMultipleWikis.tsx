@@ -1,6 +1,6 @@
 import React from 'react';
-import LoadingView from "../LoadingView.tsx";
-import MultiSelect from "../widgets/MultiSelect.tsx";
+import LoadingView from "../LoadingView.js";
+import MultiSelect from "../widgets/MultiSelect.js";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages.js";
 import {useParams} from "react-router-dom";
 

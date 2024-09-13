@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Upload} from "antd";
 import {WidgetProps} from "../WidgetProps.js";
-import PrimaryButton from "../PrimaryButton.tsx";
-import UploadIcon from "../icons/UploadIcon.tsx";
+import PrimaryButton from "../PrimaryButton.js";
+import UploadIcon from "../icons/UploadIcon.js";
 import {Image, Place} from "../../../types.js";
-import SecondaryDangerButton from "../SecondaryDangerButton.tsx";
+import SecondaryDangerButton from "../SecondaryDangerButton.js";
 
 interface PictureInputProps extends WidgetProps {
     onChange: (picture: any) => any;

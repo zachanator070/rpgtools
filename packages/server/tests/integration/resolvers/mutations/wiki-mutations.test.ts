@@ -1,15 +1,15 @@
 import fs from "fs";
 import {EVENT_WIKI, PLACE} from "@rpgtools/common/src/type-constants";
-import {DefaultTestingContext} from "../../default-testing-context";
-import {container} from "../../../../src/di/inversify";
-import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
-import {Image} from "../../../../src/domain-entities/image";
+import {DefaultTestingContext} from "../../default-testing-context.js";
+import {container} from "../../../../src/di/inversify.js";
+import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types.js";
+import {Image} from "../../../../src/domain-entities/image.js";
 import {FileUpload, Upload} from "graphql-upload";
 import {CREATE_WIKI, DELETE_WIKI, UPDATE_EVENT, UPDATE_PLACE, UPDATE_WIKI} from "@rpgtools/common/src/gql-mutations";
-import {ImageService} from "../../../../src/services/image-service";
+import {ImageService} from "../../../../src/services/image-service.js";
 import {DbEngine} from "../../../../src/types";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {WikiPageService} from "../../../../src/services/wiki-page-service";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {WikiPageService} from "../../../../src/services/wiki-page-service.js";
 
 process.env.TEST_SUITE = "wiki-mutations-test";
 

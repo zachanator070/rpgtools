@@ -1,9 +1,9 @@
 import 'react';
-import PermissionModal from "../../modals/PermissionModal.tsx";
-import PeopleIcon from "../../widgets/icons/PeopleIcon.tsx";
+import PermissionModal from "../../modals/PermissionModal.js";
+import PeopleIcon from "../../widgets/icons/PeopleIcon.js";
 import React, {useState} from "react";
 import useCurrentWiki from "../../../hooks/wiki/useCurrentWiki.js";
-import LoadingView from "../../LoadingView.tsx";
+import LoadingView from "../../LoadingView.js";
 
 export default function WikiPermissionsButton() {
 

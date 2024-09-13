@@ -1,13 +1,13 @@
 import React, {useContext, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import EditPinModal from "../modals/EditPinModal.tsx";
+import EditPinModal from "../modals/EditPinModal.js";
 import { PLACE } from "@rpgtools/common/src/type-constants";
 import {Pin} from "../../types.js";
 import MapWikiContext from "../../MapWikiContext.js";
 
 import './PinComponent.css';
-import PopoverBubble from "../widgets/PopoverBubble.tsx";
+import PopoverBubble from "../widgets/PopoverBubble.js";
 
 interface PinComponentProps {
 	pin: Pin;

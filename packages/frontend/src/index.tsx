@@ -1,5 +1,5 @@
 import React from "react";
-import App from "./components/App.tsx";
+import App from "./components/App.js";
 import { BrowserRouter } from "react-router-dom";
 import { createUploadLink } from "apollo-upload-client";
 import { clientTypeDefs } from "./clientTypeDefs.js";

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {DocumentNode} from "graphql";
 import {ApolloError} from "@apollo/client/errors";
 import getQueryName from "./getQueryName.js";
-import useNotification from "../components/widgets/useNotification.tsx";
+import useNotification from "../components/widgets/useNotification.js";
 
 interface GenericGqlResponse<T> {
 	data: T;

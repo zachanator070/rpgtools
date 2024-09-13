@@ -1,7 +1,7 @@
-import {DefaultTestingContext} from "../../default-testing-context";
+import {DefaultTestingContext} from "../../default-testing-context.js";
 import {SET_CURRENT_WORLD} from "@rpgtools/common/src/gql-mutations";
-import {container} from "../../../../src/di/inversify";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import {container} from "../../../../src/di/inversify.js";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
 
 process.env.TEST_SUITE = "user-mutations-test";
 

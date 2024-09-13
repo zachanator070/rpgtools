@@ -1,10 +1,10 @@
 import React, {ReactElement, useState} from 'react';
 import {Form} from "antd";
-import FormItem, {FormItemProps} from "./FormItem.tsx";
-import PrimaryButton from "../PrimaryButton.tsx";
-import Errors from "../../Errors.tsx";
+import FormItem, {FormItemProps} from "./FormItem.js";
+import PrimaryButton from "../PrimaryButton.js";
+import Errors from "../../Errors.js";
 import {WidgetProps} from "../WidgetProps.js";
-import LoadingIcon from "../icons/LoadingIcon.tsx";
+import LoadingIcon from "../icons/LoadingIcon.js";
 
 interface InputFormProps<T> extends WidgetProps {
     onSubmit: (T) => any;

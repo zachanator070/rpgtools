@@ -8,8 +8,8 @@ import useUpdateModeledWiki from "../../../hooks/wiki/useUpdateModeledWiki.js";
 import useUpdateEventWiki from "../../../hooks/wiki/useUpdateEventWiki.js";
 import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
 import {useNavigate} from "react-router-dom";
-import SaveIcon from "../../widgets/icons/SaveIcon.tsx";
-import PrimaryButton from "../../widgets/PrimaryButton.tsx";
+import SaveIcon from "../../widgets/icons/SaveIcon.js";
+import PrimaryButton from "../../widgets/PrimaryButton.js";
 import React from "react";
 
 export interface UpdateWikiParams {

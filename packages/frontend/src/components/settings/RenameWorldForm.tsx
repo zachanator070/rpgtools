@@ -1,7 +1,7 @@
 
 import 'react';
-import TextInput from "../widgets/input/TextInput.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import TextInput from "../widgets/input/TextInput.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
 import React, {useState} from "react";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import useRenameWorld from "../../hooks/world/useRenameWorld.js";

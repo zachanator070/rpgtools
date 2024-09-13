@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import LoadingView from "../LoadingView.tsx";
-import CreateWorldModal from "../modals/CreateWorldModal.tsx";
-import SelectWorldModal from "../modals/SelectWorldModal.tsx";
-import SecondaryButton from "../widgets/SecondaryButton.tsx";
-import DropdownMenu from "../widgets/DropdownMenu.tsx";
+import LoadingView from "../LoadingView.js";
+import CreateWorldModal from "../modals/CreateWorldModal.js";
+import SelectWorldModal from "../modals/SelectWorldModal.js";
+import SecondaryButton from "../widgets/SecondaryButton.js";
+import DropdownMenu from "../widgets/DropdownMenu.js";
 import useServerConfig from "../../hooks/server/useServerConfig.js";
-import DownArrowIcon from "../widgets/icons/DownArrowIcon.tsx";
+import DownArrowIcon from "../widgets/icons/DownArrowIcon.js";
 
 export default function WorldMenu() {
 	const [createWorldModalVisibility, setCreateWorldModalVisibility] = useState(false);

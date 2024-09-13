@@ -3,10 +3,10 @@ import useGameChatSubscription from "../../hooks/game/useGameChatSubscription.js
 import useGameChat from "../../hooks/game/useGameChat.js";
 import useCurrentGame from "../../hooks/game/useCurrentGame.js";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter.js";
-import CommentMessage from "../../components/widgets/CommentMessage.tsx";
-import TextInput from "../../components/widgets/input/TextInput.tsx";
-import PrimaryButton from "../../components/widgets/PrimaryButton.tsx";
-import {ControllerContext} from "./GameContent.tsx";
+import CommentMessage from "../../components/widgets/CommentMessage.js";
+import TextInput from "../../components/widgets/input/TextInput.js";
+import PrimaryButton from "../../components/widgets/PrimaryButton.js";
+import {ControllerContext} from "./GameContent.js";
 import {DiceType, LoadedDiceRoll} from "../controller/DiceController.js";
 import GameControllerFacade from "../GameControllerFacade.js";
 import {GameMessage} from "../../types.js";

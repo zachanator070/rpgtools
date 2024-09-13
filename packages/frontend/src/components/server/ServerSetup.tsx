@@ -2,15 +2,15 @@ import React, {useEffect} from "react";
 import useUnlockServer from "../../hooks/server/useUnlockServer.js";
 import { useNavigate } from "react-router-dom";
 import useLogin from "../../hooks/authentication/useLogin.js";
-import ColumnedContent from "../widgets/ColumnedContent.tsx";
-import InputForm from "../widgets/input/InputForm.tsx";
-import FormItem from "../widgets/input/FormItem.tsx";
-import TextInput from "../widgets/input/TextInput.tsx";
-import PasswordInput from "../widgets/input/PasswordInput.tsx";
-import KeyIcon from "../widgets/icons/KeyIcon.tsx";
-import MailIcon from "../widgets/icons/MailIcon.tsx";
-import PersonIcon from "../widgets/icons/PersonIcon.tsx";
-import InlineMargin from "../widgets/InlineMargin.tsx";
+import ColumnedContent from "../widgets/ColumnedContent.js";
+import InputForm from "../widgets/input/InputForm.js";
+import FormItem from "../widgets/input/FormItem.js";
+import TextInput from "../widgets/input/TextInput.js";
+import PasswordInput from "../widgets/input/PasswordInput.js";
+import KeyIcon from "../widgets/icons/KeyIcon.js";
+import MailIcon from "../widgets/icons/MailIcon.js";
+import PersonIcon from "../widgets/icons/PersonIcon.js";
+import InlineMargin from "../widgets/InlineMargin.js";
 import useServerConfig from "../../hooks/server/useServerConfig.js";
 
 export default function ServerSetup() {

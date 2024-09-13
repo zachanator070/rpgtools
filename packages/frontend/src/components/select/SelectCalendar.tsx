@@ -1,8 +1,8 @@
 import React, {CSSProperties, useState} from 'react';
 import useCalendars from "../../hooks/calendar/useCalendars.js";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.js";
 import {Calendar} from "../../types.js";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
 
 interface SelectCalendarProps {
     onChange?: (calendar: Calendar) => Promise<any>;

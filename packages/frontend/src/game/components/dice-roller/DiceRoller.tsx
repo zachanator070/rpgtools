@@ -7,11 +7,11 @@ import dodecahedron from "../../../icons/dodecahedron.svg";
 import icosahedron from "../../../icons/icosahedron.svg";
 import doubleDecahedron from "../../../icons/double-decahedron.svg";
 
-import DiceIcon from "./DiceIcon.tsx";
+import DiceIcon from "./DiceIcon.js";
 import useGameChat from "../../../hooks/game/useGameChat.js";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
-import ToolTip from "../../../components/widgets/ToolTip.tsx";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.tsx";
+import ToolTip from "../../../components/widgets/ToolTip.js";
+import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
 
 export const SET_COUNT_ACTION = 'SET_COUNT_ACTION';
 export const SET_BONUS_ACTION = 'SET_BONUS_ACTION';

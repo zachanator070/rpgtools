@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
-import FolderMenu from "./FolderMenu.tsx";
-import DownArrowIcon from "../../widgets/icons/DownArrowIcon.tsx";
-import OpenFolderIcon from "../../widgets/icons/OpenFolderIcon.tsx";
-import FolderIcon from "../../widgets/icons/FolderIcon.tsx";
-import WikiList from "./WikiList.tsx";
+import FolderMenu from "./FolderMenu.js";
+import DownArrowIcon from "../../widgets/icons/DownArrowIcon.js";
+import OpenFolderIcon from "../../widgets/icons/OpenFolderIcon.js";
+import FolderIcon from "../../widgets/icons/FolderIcon.js";
+import WikiList from "./WikiList.js";
 import useFolders from "../../../hooks/wiki/useFolders.js";
-import LoadingView from "../../LoadingView.tsx";
+import LoadingView from "../../LoadingView.js";
 import {WikiFolder} from "../../../types.js";
-import {WikiFolderTreeExpanded} from "./FolderTree.tsx";
+import {WikiFolderTreeExpanded} from "./FolderTree.js";
 
 export default function FolderNode({folderId, indent = 0}: {folderId: string, indent?: number}) {
 

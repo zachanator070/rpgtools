@@ -1,7 +1,7 @@
 import React, {createContext, useEffect, useRef, useState} from "react";
 import useAddStroke from "../../hooks/game/useAddStroke.js";
 import useGameStrokeSubscription from "../../hooks/game/useGameStrokeSubscription.js";
-import GameControlsToolbar from "./GameControlsToolbar.tsx";
+import GameControlsToolbar from "./GameControlsToolbar.js";
 import useGameModelAddedSubscription from "../../hooks/game/useGameModelAddedSubscription.js";
 import useSetModelPosition from "../../hooks/game/useSetModelPosition.js";
 import useGameModelPositionedSubscription from "../../hooks/game/useGameModelPosistionedSubscription.js";
@@ -9,12 +9,12 @@ import useDeletePositionedModel from "../../hooks/game/useDeletePositionedModel.
 import useGameModelDeletedSubscription from "../../hooks/game/useGameModelDeletedSubscription.js";
 import useAddFogStroke from "../../hooks/game/useAddFogStroke.js";
 import useGameFogSubscription from "../../hooks/game/useGameFogSubscription.js";
-import GameWikiDrawer from "./GameWikiDrawer.tsx";
-import InitiativeTracker from "./initiative-tracker/InitiativeTracker.tsx";
-import GameDrawer from "./GameDrawer.tsx";
+import GameWikiDrawer from "./GameWikiDrawer.js";
+import InitiativeTracker from "./initiative-tracker/InitiativeTracker.js";
+import GameDrawer from "./GameDrawer.js";
 import {FogStroke, Game, Stroke} from "../../types.js";
-import FullScreenModal from "../../components/widgets/FullScreenModal.tsx";
-import ProgressBar from "../../components/widgets/ProgressBar.tsx";
+import FullScreenModal from "../../components/widgets/FullScreenModal.js";
+import ProgressBar from "../../components/widgets/ProgressBar.js";
 import GameControllerFacade from "../GameControllerFacade.js";
 import GameStateFactory from "../GameStateFactory.js";
 import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription.js";

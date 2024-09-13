@@ -1,16 +1,16 @@
 import React, {useState} from "react";
-import DiceAttribute from "./DiceAttribute.tsx";
+import DiceAttribute from "./DiceAttribute.js";
 import useCurrentCharacter from "../../../hooks/game/useCurrentCharacter.js";
-import DiceRoller from "./DiceRoller.tsx";
+import DiceRoller from "./DiceRoller.js";
 import useSetCharacterAttributes, {CharacterAttributeInput} from "../../../hooks/game/useSetCharacterAttributes.js";
-import LoadingView from "../../../components/LoadingView.tsx";
-import FullScreenModal from "../../../components/widgets/FullScreenModal.tsx";
-import InputForm from "../../../components/widgets/input/InputForm.tsx";
+import LoadingView from "../../../components/LoadingView.js";
+import FullScreenModal from "../../../components/widgets/FullScreenModal.js";
+import InputForm from "../../../components/widgets/input/InputForm.js";
 import FormItem from "antd/es/form/FormItem";
-import TextInput from "../../../components/widgets/input/TextInput.tsx";
-import NumberInput from "../../../components/widgets/input/NumberInput.tsx";
-import ToolTip from "../../../components/widgets/ToolTip.tsx";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.tsx";
+import TextInput from "../../../components/widgets/input/TextInput.js";
+import NumberInput from "../../../components/widgets/input/NumberInput.js";
+import ToolTip from "../../../components/widgets/ToolTip.js";
+import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
 
 export default function DiceOptions() {
 	const { currentCharacter } = useCurrentCharacter();

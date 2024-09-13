@@ -3,15 +3,20 @@ import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 // import pluginReact from "eslint-plugin-react";
 import fileExtensionsInImportTs from 'eslint-plugin-file-extension-in-import-ts';
-
+import jest from 'eslint-plugin-jest';
 
 export default [
   {files: ["**/*.{ts,tsx}"]},
-  {languageOptions: { globals: globals.node }},
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      }
+    }
+  },
   pluginJs.configs.recommended,
   tseslint.configs.base,
-  // ...tseslint.configs.recommended,
-  // pluginReact.configs.flat.recommended,
+  jest.configs['flat/style'],
   {
     languageOptions: {
       globals: {
@@ -24,7 +29,7 @@ export default [
       }
     },
     plugins: {
-      "file-extension-in-import-ts": fileExtensionsInImportTs
+      "file-extension-in-import-ts": fileExtensionsInImportTs,
     },
     rules: {
       'file-extension-in-import-ts/file-extension-in-import-ts': [

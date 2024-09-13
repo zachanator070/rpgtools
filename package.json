@@ -6,8 +6,8 @@
 	"private": true,
 	"repository": "https://github.com/zachanator070/rpgtools",
 	"scripts": {
-		"lint": "eslint --quiet packages/*/src",
-		"lint-fix": "eslint --fix packages/*/src"
+		"lint": "eslint --quiet packages/*/src packages/server/tests",
+		"lint-fix": "eslint --fix packages/*/src packages/server/tests"
 	},
 	"workspaces": [
 		"packages/*"
@@ -16,6 +16,7 @@
 		"@eslint/js": "^9.10.0",
 		"eslint": "^8.57.0",
 		"eslint-plugin-file-extension-in-import-ts": "^2.1.1",
+		"eslint-plugin-jest": "^28.8.3",
 		"eslint-plugin-react": "^7.36.0",
 		"globals": "^15.9.0",
 		"typescript-eslint": "^8.5.0"

@@ -1,7 +1,7 @@
-import FullScreenModal from "../widgets/FullScreenModal.tsx";
-import LoadingView from "../LoadingView.tsx";
-import PrimaryCheckbox from "../widgets/PrimaryCheckbox.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import FullScreenModal from "../widgets/FullScreenModal.js";
+import LoadingView from "../LoadingView.js";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
 import React, {useState} from "react";
 import useLoad5eContent from "../../hooks/world/useLoad5eContent.js";
 import {useNavigate} from "react-router-dom";

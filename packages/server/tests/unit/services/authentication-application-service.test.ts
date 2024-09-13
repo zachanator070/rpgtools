@@ -1,9 +1,9 @@
-import {container, bindAll} from "../../../src/di/inversify";
+import {container, bindAll} from "../../../src/di/inversify.js";
 import {DbEngine} from "../../../src/types";
-import {INJECTABLE_TYPES} from "../../../src/di/injectable-types";
-import {AuthenticationService} from "../../../src/services/authentication-service";
-import UserFactory from "../../../src/domain-entities/factory/user-factory";
-import InMemoryDbEngine from "../../../src/dal/in-memory/in-memory-db-engine";
+import {INJECTABLE_TYPES} from "../../../src/di/injectable-types.js";
+import {AuthenticationService} from "../../../src/services/authentication-service.js";
+import UserFactory from "../../../src/domain-entities/factory/user-factory.js";
+import InMemoryDbEngine from "../../../src/dal/in-memory/in-memory-db-engine.js";
 
 bindAll()
 

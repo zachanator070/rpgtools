@@ -2,13 +2,13 @@
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import { Route, Routes } from "react-router-dom";
 import React from "react";
-import WikiEdit from "./edit/WikiEdit.tsx";
-import FolderTree from "./folder-tree/FolderTree.tsx";
-import LoadingView from "../LoadingView.tsx";
-import ColumnedContent from "../widgets/ColumnedContent.tsx";
-import WikiView from "./view/WikiView.tsx";
+import WikiEdit from "./edit/WikiEdit.js";
+import FolderTree from "./folder-tree/FolderTree.js";
+import LoadingView from "../LoadingView.js";
+import ColumnedContent from "../widgets/ColumnedContent.js";
+import WikiView from "./view/WikiView.js";
 import useCurrentWiki from "../../hooks/wiki/useCurrentWiki.js";
-import WikiPermissionsButton from "./view/WikiPermissionsButton.tsx";
+import WikiPermissionsButton from "./view/WikiPermissionsButton.js";
 
 export default function WikiIndex() {
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();

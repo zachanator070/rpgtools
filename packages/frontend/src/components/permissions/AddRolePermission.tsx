@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
 import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
-import SelectRole from "../select/SelectRole.tsx";
+import SelectRole from "../select/SelectRole.js";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import SelectWiki from "../select/SelectWiki.tsx";
+import SelectWiki from "../select/SelectWiki.js";
 import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission.js";
-import Errors from "../Errors.tsx";
-import SelectFolder from "../select/SelectFolder.tsx";
+import Errors from "../Errors.js";
+import SelectFolder from "../select/SelectFolder.js";
 import {Role} from "../../types.js";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
-import PrimaryButton from "../widgets/PrimaryButton.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.js";
+import PrimaryButton from "../widgets/PrimaryButton.js";
 
 interface AddRolePermissionProps {
 	role: Role;

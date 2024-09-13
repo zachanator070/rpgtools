@@ -1,6 +1,6 @@
 import React, { useEffect} from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame.js";
-import GameContent from "./GameContent.tsx";
+import GameContent from "./GameContent.js";
 import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription.js";
@@ -8,8 +8,8 @@ import useMyGames from "../../hooks/game/useMyGames.js";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser.js";
 import useGameStrokes from "../../hooks/game/useGameStrokes.js";
 import useGameFogStrokes from "../../hooks/game/useGameFogStrokes.js";
-import LoadingView from "../../components/LoadingView.tsx";
-import useModal from "../../components/widgets/useModal.tsx";
+import LoadingView from "../../components/LoadingView.js";
+import useModal from "../../components/widgets/useModal.js";
 
 export default function GameView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();

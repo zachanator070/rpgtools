@@ -1,8 +1,8 @@
 import React, {CSSProperties, useState} from "react";
 import useSearchModels from "../../hooks/model/useSearchModels.js";
 import {Model} from "../../types.js";
-import DropdownSelect from "../widgets/DropdownSelect.tsx";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.tsx";
+import DropdownSelect from "../widgets/DropdownSelect.js";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
 
 interface SelectModelProps {
 	onChange?: (model: Model) => Promise<any>;

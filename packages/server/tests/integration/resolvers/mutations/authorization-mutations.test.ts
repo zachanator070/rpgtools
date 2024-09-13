@@ -1,8 +1,8 @@
 import { WIKI_READ, WORLD_READ} from "@rpgtools/common/src/permission-constants";
 import { PLACE, WORLD } from "@rpgtools/common/src/type-constants";
-import { container } from "../../../../src/di/inversify";
+import { container } from "../../../../src/di/inversify.js";
 import {DbEngine} from "../../../../src/types";
-import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types.js";
 import {
 	ADD_USER_ROLE,
 	CREATE_ROLE,
@@ -10,11 +10,11 @@ import {
 	GRANT_ROLE_PERMISSION,
 	GRANT_USER_PERMISSION, REMOVE_USER_ROLE, REVOKE_ROLE_PERMISSION, REVOKE_USER_PERMISSION
 } from "@rpgtools/common/src/gql-mutations";
-import {AuthorizationService} from "../../../../src/services/authorization-service";
-import {DefaultTestingContext} from "../../default-testing-context";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {accessControlList} from "../common-testing-assertions";
-import RoleFactory from "../../../../src/domain-entities/factory/role-factory";
+import {AuthorizationService} from "../../../../src/services/authorization-service.js";
+import {DefaultTestingContext} from "../../default-testing-context.js";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {accessControlList} from "../common-testing-assertions.js";
+import RoleFactory from "../../../../src/domain-entities/factory/role-factory.js";
 
 process.env.TEST_SUITE = "authorization-mutations-test";
 

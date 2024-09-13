@@ -1,6 +1,6 @@
-import {DefaultTestingContext} from "../default-testing-context";
-import { container } from "../../../src/di/inversify";
-import { INJECTABLE_TYPES } from "../../../src/di/injectable-types";
+import {DefaultTestingContext} from "../default-testing-context.js";
+import { container } from "../../../src/di/inversify.js";
+import { INJECTABLE_TYPES } from "../../../src/di/injectable-types.js";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import {
 	GET_CURRENT_USER,
@@ -10,11 +10,11 @@ import {
 	SEARCH_USERS,
 	WIKIS_IN_FOLDER, GET_GAME, MY_GAMES, SEARCH_EVENTS
 } from "@rpgtools/common/src/gql-queries";
-import {WorldService} from "../../../src/services/world-service";
-import {WikiFolderService} from "../../../src/services/wiki-folder-service";
-import {TEST_INJECTABLE_TYPES} from "../injectable-types";
+import {WorldService} from "../../../src/services/world-service.js";
+import {WikiFolderService} from "../../../src/services/wiki-folder-service.js";
+import {TEST_INJECTABLE_TYPES} from "../injectable-types.js";
 import {DbEngine} from "../../../src/types";
-import {accessControlList} from "./common-testing-assertions";
+import {accessControlList} from "./common-testing-assertions.js";
 
 process.env.TEST_SUITE = "query-resolver-test";
 
@@ -339,7 +339,7 @@ describe("query resolver", () => {
 							worldId: testingContext.world._id
 						}
 					});
-					expect(result.errors).toBe(undefined);
+					expect(result.errors).toBeUndefined();
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -363,7 +363,7 @@ describe("query resolver", () => {
 							calendarIds: [testingContext.calendar2._id]
 						}
 					});
-					expect(result.errors).toBe(undefined);
+					expect(result.errors).toBeUndefined();
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -387,7 +387,7 @@ describe("query resolver", () => {
 							relatedWikiIds: [testingContext.world.wikiPage]
 						}
 					});
-					expect(result.errors).toBe(undefined);
+					expect(result.errors).toBeUndefined();
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {
@@ -412,7 +412,7 @@ describe("query resolver", () => {
 							calendarIds: [testingContext.calendar2._id]
 						}
 					});
-					expect(result.errors).toBe(undefined);
+					expect(result.errors).toBeUndefined();
 					expect(result).toMatchSnapshot({
 						data: {
 							events: {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import GameChat from "./GameChat.tsx";
-import ToolOptions from "./tool-options/ToolOptions.tsx";
-import DiceOptions from "./dice-roller/DiceOptions.tsx";
+import GameChat from "./GameChat.js";
+import ToolOptions from "./tool-options/ToolOptions.js";
+import DiceOptions from "./dice-roller/DiceOptions.js";
 import useGameChatSubscription from "../../hooks/game/useGameChatSubscription.js";
 import useCurrentCharacter from "../../hooks/game/useCurrentCharacter.js";
 import {
@@ -11,8 +11,8 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
 } from "../GameState.js";
-import SlidingDrawer from "../../components/widgets/SlidingDrawer.tsx";
-import TabCollection from "../../components/widgets/TabCollection.tsx";
+import SlidingDrawer from "../../components/widgets/SlidingDrawer.js";
+import TabCollection from "../../components/widgets/TabCollection.js";
 
 const GAME_CONTROLS_WITH_CONTEXT = [
 	SELECT_MODEL_CONTROLS,

@@ -1,9 +1,9 @@
 import React, {useContext, useState} from "react";
 import {BRUSH_ERASE, BRUSH_FOG, DEFAULT_BRUSH_SIZE} from "../../controller/PaintController.js";
-import DropdownSelect from "../../../components/widgets/DropdownSelect.tsx";
-import NumberSlider from "../../../components/widgets/NumberSlider.tsx";
-import ToolTip from "../../../components/widgets/ToolTip.tsx";
-import {ControllerContext} from "../GameContent.tsx";
+import DropdownSelect from "../../../components/widgets/DropdownSelect.js";
+import NumberSlider from "../../../components/widgets/NumberSlider.js";
+import ToolTip from "../../../components/widgets/ToolTip.js";
+import {ControllerContext} from "../GameContent.js";
 import GameControllerFacade from "../../GameControllerFacade.js";
 
 export default function FogOptions() {

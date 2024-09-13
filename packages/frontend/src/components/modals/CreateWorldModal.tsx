@@ -3,12 +3,12 @@ import useCreateWorld from "../../hooks/world/useCreateWorld.js";
 import { useNavigate } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld.js";
 import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import ToolTip from "../widgets/ToolTip.tsx";
-import PrimaryCheckbox from "../widgets/PrimaryCheckbox.tsx";
-import InputForm from "../widgets/input/InputForm.tsx";
-import FormItem from "../widgets/input/FormItem.tsx";
-import TextInput from "../widgets/input/TextInput.tsx";
-import FullScreenModal from "../widgets/FullScreenModal.tsx";
+import ToolTip from "../widgets/ToolTip.js";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox.js";
+import InputForm from "../widgets/input/InputForm.js";
+import FormItem from "../widgets/input/FormItem.js";
+import TextInput from "../widgets/input/TextInput.js";
+import FullScreenModal from "../widgets/FullScreenModal.js";
 
 interface CreateWorldModalProps {
 	visibility: boolean;

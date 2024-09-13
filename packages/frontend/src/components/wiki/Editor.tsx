@@ -6,7 +6,7 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill-mention/dist/quill.mention.min.css";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import LoadingView from "../LoadingView.tsx";
+import LoadingView from "../LoadingView.js";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages.js";
 import {useNavigate, useParams} from "react-router-dom";
 

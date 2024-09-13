@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
 import {CookieManager, DbEngine, SessionContext, SessionContextFactory} from "../../src/types";
-import { INJECTABLE_TYPES } from "../../src/di/injectable-types";
-import { SecurityContextFactory } from "../../src/security/security-context-factory";
-import { User } from "../../src/domain-entities/user";
+import { INJECTABLE_TYPES } from "../../src/di/injectable-types.js";
+import { SecurityContextFactory } from "../../src/security/security-context-factory.js";
+import { User } from "../../src/domain-entities/user.js";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
 import {v4 as uuidv4} from 'uuid';
-import UserFactory from "../../src/domain-entities/factory/user-factory";
+import UserFactory from "../../src/domain-entities/factory/user-factory.js";
 
 class MockCookieManager implements CookieManager {
 	clearCookie(cookie: string): void {}

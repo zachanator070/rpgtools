@@ -1,9 +1,9 @@
 import React from "react";
-import BrushOptions from "./BrushOptions.tsx";
-import FogOptions from "./FogOptions.tsx";
-import ModelInfo from "./ModelInfo.tsx";
-import GameLocationSettings from "./GameLocationSettings.tsx";
-import AddModelSection from "./AddModelSection.tsx";
+import BrushOptions from "./BrushOptions.js";
+import FogOptions from "./FogOptions.js";
+import ModelInfo from "./ModelInfo.js";
+import GameLocationSettings from "./GameLocationSettings.js";
+import AddModelSection from "./AddModelSection.js";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS,

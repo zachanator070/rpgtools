@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import InitiativeTrackerCard from "./InitiativeTrackerCard.tsx";
-import InitiativeTrackerDummyCard from "./InitiativeTrackerDummyCard.tsx";
+import InitiativeTrackerCard from "./InitiativeTrackerCard.js";
+import InitiativeTrackerDummyCard from "./InitiativeTrackerDummyCard.js";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
 import useSetCharacterOrder from "../../../hooks/game/useSetCharacterOrder.js";
 import useGameRosterSubscription from "../../../hooks/game/useGameRosterSubscription.js";
