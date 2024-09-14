@@ -1,4 +1,4 @@
-FROM node:16-slim
+FROM node:20.17-slim
 RUN rm -rf /root/.npm
 RUN mkdir /opt/rpgtools
 RUN chown node:node /opt/rpgtools

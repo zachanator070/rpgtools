@@ -1,5 +1,5 @@
 # node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
-FROM node:16-slim as base
+FROM node:20.17-slim as base
 
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV

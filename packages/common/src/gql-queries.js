@@ -1,7 +1,13 @@
-import gql from "graphql-tag";
-import { ACCESS_CONTROL_LIST, CURRENT_WIKI_ATTRIBUTES, CURRENT_WORLD_CALENDAR, CURRENT_WORLD_FOLDERS, CURRENT_WORLD_ROLES, CURRENT_WORLD_WIKIS, EVENT_WIKI_ATTRIBUTES, GAME_ATTRIBUTES, GAME_FOG, GAME_STROKE, MODEL_ATTRIBUTES, PIN_ATTRIBUTES, SERVER_CONFIG_ROLES, WIKIS_IN_FOLDER_ATTRIBUTES } from "./gql-fragments";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GET_CALENDARS = exports.GET_PINS = exports.GET_WORLDS = exports.GET_CURRENT_WORLD = exports.GAME_WIKI = exports.GET_FOLDER_PATH = exports.FOLDERS = exports.SEARCH_EVENTS = exports.WIKIS_IN_FOLDER = exports.SEARCH_WIKIS = exports.GET_WIKI = exports.GET_SERVER_CONFIG = exports.GET_MODELS = exports.GET_CURRENT_MAP = exports.GET_FOG_STROKES = exports.GET_STROKES = exports.MY_GAMES = exports.GET_GAME = exports.SEARCH_ROLES = exports.SEARCH_USERS = exports.GET_CURRENT_USER = void 0;
+const graphql_tag_1 = __importDefault(require("graphql-tag"));
+const gql_fragments_1 = require("./gql-fragments");
 //region User
-export const GET_CURRENT_USER = gql `
+exports.GET_CURRENT_USER = (0, graphql_tag_1.default) `
 	query currentUser{
 		currentUser {
 			_id
@@ -20,7 +26,7 @@ export const GET_CURRENT_USER = gql `
 		}
 	}
 `;
-export const SEARCH_USERS = gql `
+exports.SEARCH_USERS = (0, graphql_tag_1.default) `
 	query searchUsers($username: String!) {
 		users(username: $username) {
 			page
@@ -34,8 +40,8 @@ export const SEARCH_USERS = gql `
 `;
 //endregion
 //region Roles
-export const SEARCH_ROLES = gql `
-	${CURRENT_WORLD_ROLES}
+exports.SEARCH_ROLES = (0, graphql_tag_1.default) `
+	${gql_fragments_1.CURRENT_WORLD_ROLES}
 	query roles($worldId: ID, $name: String, $canAdmin: Boolean) {
 		roles(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
 			docs {
@@ -48,23 +54,23 @@ export const SEARCH_ROLES = gql `
 `;
 //endregion
 //region Game
-export const GET_GAME = gql `
-	${GAME_ATTRIBUTES}
+exports.GET_GAME = (0, graphql_tag_1.default) `
+	${gql_fragments_1.GAME_ATTRIBUTES}
 	query getGame($gameId: ID!){
 		game(gameId: $gameId){
 			...gameAttributes
 		}
 	}
 `;
-export const MY_GAMES = gql `
+exports.MY_GAMES = (0, graphql_tag_1.default) `
 	query myGames {
 		myGames {
 			_id
 		}
 	}
 `;
-export const GET_STROKES = gql `
-	${GAME_STROKE}
+exports.GET_STROKES = (0, graphql_tag_1.default) `
+	${gql_fragments_1.GAME_STROKE}
 	query getStrokes($gameId: ID!, $page: Int) {
 		strokes(gameId: $gameId, page: $page) {
 			docs {
@@ -75,8 +81,8 @@ export const GET_STROKES = gql `
 		}
 	}
 `;
-export const GET_FOG_STROKES = gql `
-	${GAME_FOG}
+exports.GET_FOG_STROKES = (0, graphql_tag_1.default) `
+	${gql_fragments_1.GAME_FOG}
 	query getFogStrokes($gameId: ID!, $page: Int) {
 		fogStrokes(gameId: $gameId, page: $page) {
 			docs {
@@ -89,7 +95,7 @@ export const GET_FOG_STROKES = gql `
 `;
 //endregion
 //region Map
-export const GET_CURRENT_MAP = gql `
+exports.GET_CURRENT_MAP = (0, graphql_tag_1.default) `
 	query getWiki($wikiId: ID!) {
 		wiki(wikiId: $wikiId) {
 			_id
@@ -123,8 +129,8 @@ export const GET_CURRENT_MAP = gql `
 `;
 //endregion
 //region Model
-export const GET_MODELS = gql `
-	${MODEL_ATTRIBUTES}
+exports.GET_MODELS = (0, graphql_tag_1.default) `
+	${gql_fragments_1.MODEL_ATTRIBUTES}
 	query getModels($worldId: ID!){
 		models(worldId: $worldId){
 			...modelAttributes
@@ -133,9 +139,9 @@ export const GET_MODELS = gql `
 `;
 //endregion
 //region Server Settings
-export const GET_SERVER_CONFIG = gql `
-	${ACCESS_CONTROL_LIST}
-	${SERVER_CONFIG_ROLES}
+exports.GET_SERVER_CONFIG = (0, graphql_tag_1.default) `
+	${gql_fragments_1.ACCESS_CONTROL_LIST}
+	${gql_fragments_1.SERVER_CONFIG_ROLES}
 	query serverConfig{
 		serverConfig{
 			_id
@@ -157,17 +163,17 @@ export const GET_SERVER_CONFIG = gql `
 `;
 //endregion
 //region Wiki
-export const GET_WIKI = gql `
-	${CURRENT_WIKI_ATTRIBUTES}
+exports.GET_WIKI = (0, graphql_tag_1.default) `
+	${gql_fragments_1.CURRENT_WIKI_ATTRIBUTES}
 	query currentWiki($wikiId: ID!){
 		wiki(wikiId: $wikiId) {
 			...currentWikiAttributes		
 		}
 	}
 `;
-export const SEARCH_WIKIS = gql `
-	${MODEL_ATTRIBUTES}
-	${EVENT_WIKI_ATTRIBUTES}
+exports.SEARCH_WIKIS = (0, graphql_tag_1.default) `
+	${gql_fragments_1.MODEL_ATTRIBUTES}
+	${gql_fragments_1.EVENT_WIKI_ATTRIBUTES}
 	query wikis($worldId: ID!, $name: String, $types: [String!], $canAdmin: Boolean, $hasModel: Boolean, $page: Int){
 		wikis(worldId: $worldId, name: $name, types: $types, canAdmin: $canAdmin, hasModel: $hasModel, page: $page){
 			docs{
@@ -191,19 +197,19 @@ export const SEARCH_WIKIS = gql `
 		}
 	}
 `;
-export const WIKIS_IN_FOLDER = gql `
-	${CURRENT_WORLD_WIKIS}
+exports.WIKIS_IN_FOLDER = (0, graphql_tag_1.default) `
+	${gql_fragments_1.CURRENT_WORLD_WIKIS}
 	query wikisInFolder($folderId: ID!, $page: Int){
 		wikisInFolder(folderId: $folderId, page: $page){
 			docs {
-				${WIKIS_IN_FOLDER_ATTRIBUTES}
+				${gql_fragments_1.WIKIS_IN_FOLDER_ATTRIBUTES}
 			}
 			nextPage
 		}
 	}
 `;
-export const SEARCH_EVENTS = gql `
-	${EVENT_WIKI_ATTRIBUTES}
+exports.SEARCH_EVENTS = (0, graphql_tag_1.default) `
+	${gql_fragments_1.EVENT_WIKI_ATTRIBUTES}
 	query events($worldId: ID!, $relatedWikiIds: [String!], $calendarIds: [String!]) {
 		events(worldId: $worldId, relatedWikiIds: $relatedWikiIds, calendarIds: $calendarIds) {
 			docs {
@@ -215,7 +221,7 @@ export const SEARCH_EVENTS = gql `
 `;
 //endregion
 //region Folders
-export const FOLDERS = gql `
+exports.FOLDERS = (0, graphql_tag_1.default) `
 	query folders($worldId: ID!, $name: String, $canAdmin: Boolean) {
 		folders(worldId: $worldId, name: $name, canAdmin: $canAdmin) {
 			_id
@@ -229,7 +235,7 @@ export const FOLDERS = gql `
 		}
 	}
 `;
-export const GET_FOLDER_PATH = gql `
+exports.GET_FOLDER_PATH = (0, graphql_tag_1.default) `
 	query getFolderPath($wikiId: ID!) {
 		getFolderPath(wikiId: $wikiId) {
 			_id
@@ -239,8 +245,8 @@ export const GET_FOLDER_PATH = gql `
 `;
 //endregion
 //region Game
-export const GAME_WIKI = gql `
-	${CURRENT_WIKI_ATTRIBUTES}
+exports.GAME_WIKI = (0, graphql_tag_1.default) `
+	${gql_fragments_1.CURRENT_WIKI_ATTRIBUTES}
 	query wiki($wikiId: ID!){
 		wiki(wikiId: $wikiId) {
 			...currentWikiAttributes
@@ -249,9 +255,9 @@ export const GAME_WIKI = gql `
 `;
 //endregion
 //region World
-export const GET_CURRENT_WORLD = gql `
-	${CURRENT_WORLD_FOLDERS}
-	${ACCESS_CONTROL_LIST}
+exports.GET_CURRENT_WORLD = (0, graphql_tag_1.default) `
+	${gql_fragments_1.CURRENT_WORLD_FOLDERS}
+	${gql_fragments_1.ACCESS_CONTROL_LIST}
 	query currentWorld($worldId: ID){
 		world(worldId: $worldId){
 			_id
@@ -286,7 +292,7 @@ export const GET_CURRENT_WORLD = gql `
 		}
 	}
 `;
-export const GET_WORLDS = gql `
+exports.GET_WORLDS = (0, graphql_tag_1.default) `
 	query worlds($name: String, $page: Int) {
 		worlds(name: $name, page: $page) {
 			docs {
@@ -302,8 +308,8 @@ export const GET_WORLDS = gql `
 		}
 	}
 `;
-export const GET_PINS = gql `
-	${PIN_ATTRIBUTES}
+exports.GET_PINS = (0, graphql_tag_1.default) `
+	${gql_fragments_1.PIN_ATTRIBUTES}
 	query pins($worldId: ID!, $page: Int) {
 		pins(worldId: $worldId, page: $page) {
 			docs {
@@ -313,8 +319,8 @@ export const GET_PINS = gql `
 		
 	}
 `;
-export const GET_CALENDARS = gql `
-	${CURRENT_WORLD_CALENDAR}
+exports.GET_CALENDARS = (0, graphql_tag_1.default) `
+	${gql_fragments_1.CURRENT_WORLD_CALENDAR}
 	query calendars($worldId: ID!) {
 		calendars(worldId: $worldId) {
 			...currentWorldCalendar
