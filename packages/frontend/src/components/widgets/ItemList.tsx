@@ -1,6 +1,6 @@
 import React from 'react';
 import {List} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface ItemListProps extends WidgetProps {
     children: React.ReactNode;

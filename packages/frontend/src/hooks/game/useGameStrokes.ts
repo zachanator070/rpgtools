@@ -1,8 +1,8 @@
-import {StrokesPaginated} from "../../types.js";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_STROKES} from "@rpgtools/common/src/gql-queries.js";
+import {StrokesPaginated} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {GET_STROKES} from "@rpgtools/common/src/gql-queries";
 import {useParams} from "react-router-dom";
-import useFetchAllPagesEffect from "../useFetchAllPagesEffect.js";
+import useFetchAllPagesEffect from "../useFetchAllPagesEffect";
 
 interface GameStrokesVariables {
     gameId: number;

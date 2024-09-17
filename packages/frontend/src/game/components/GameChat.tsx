@@ -1,15 +1,15 @@
 import React, {Ref, useContext, useEffect, useRef, useState} from "react";
-import useGameChatSubscription from "../../hooks/game/useGameChatSubscription.js";
-import useGameChat from "../../hooks/game/useGameChat.js";
-import useCurrentGame from "../../hooks/game/useCurrentGame.js";
-import useCurrentCharacter from "../../hooks/game/useCurrentCharacter.js";
-import CommentMessage from "../../components/widgets/CommentMessage.js";
-import TextInput from "../../components/widgets/input/TextInput.js";
-import PrimaryButton from "../../components/widgets/PrimaryButton.js";
-import {ControllerContext} from "./GameContent.js";
-import {DiceType, LoadedDiceRoll} from "../controller/DiceController.js";
-import GameControllerFacade from "../GameControllerFacade.js";
-import {GameMessage} from "../../types.js";
+import useGameChatSubscription from "../../hooks/game/useGameChatSubscription";
+import useGameChat from "../../hooks/game/useGameChat";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
+import useCurrentCharacter from "../../hooks/game/useCurrentCharacter";
+import CommentMessage from "../../components/widgets/CommentMessage";
+import TextInput from "../../components/widgets/input/TextInput";
+import PrimaryButton from "../../components/widgets/PrimaryButton";
+import {ControllerContext} from "./GameContent";
+import {DiceType, LoadedDiceRoll} from "../controller/DiceController";
+import GameControllerFacade from "../GameControllerFacade";
+import {GameMessage} from "../../types";
 
 export default function GameChat() {
 	const { currentGame } = useCurrentGame();
@@ -171,9 +171,9 @@ export default function GameChat() {
 					setComment(value.target.value);
 				}}
 				onKeyDown={async (key) => {
-					const historyItem = getHistory(historyIndex + 1);
 					switch (key) {
 						case "ArrowUp":
+							const historyItem = getHistory(historyIndex + 1);
 							if (historyItem) {
 								setComment(historyItem);
 								setHistoryIndex(historyIndex + 1);

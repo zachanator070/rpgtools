@@ -1,5 +1,5 @@
 import React from "react";
-import AlertMessage from "./widgets/AlertMessage.js";
+import AlertMessage from "./widgets/AlertMessage";
 
 export default function Errors({ errors }) {
 	if (!errors || errors.length === 0) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Table} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface FormattedTableProps extends WidgetProps {
     headers: string[];

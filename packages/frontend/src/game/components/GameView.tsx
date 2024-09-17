@@ -1,15 +1,15 @@
 import React, { useEffect} from "react";
-import useCurrentGame from "../../hooks/game/useCurrentGame.js";
-import GameContent from "./GameContent.js";
+import useCurrentGame from "../../hooks/game/useCurrentGame";
+import GameContent from "./GameContent";
 import { useNavigate } from "react-router-dom";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription.js";
-import useMyGames from "../../hooks/game/useMyGames.js";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser.js";
-import useGameStrokes from "../../hooks/game/useGameStrokes.js";
-import useGameFogStrokes from "../../hooks/game/useGameFogStrokes.js";
-import LoadingView from "../../components/LoadingView.js";
-import useModal from "../../components/widgets/useModal.js";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useGameMapChangeSubscription from "../../hooks/game/useGameMapChangeSubscription";
+import useMyGames from "../../hooks/game/useMyGames";
+import useCurrentUser from "../../hooks/authentication/useCurrentUser";
+import useGameStrokes from "../../hooks/game/useGameStrokes";
+import useGameFogStrokes from "../../hooks/game/useGameFogStrokes";
+import LoadingView from "../../components/LoadingView";
+import useModal from "../../components/widgets/useModal";
 
 export default function GameView() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();
@@ -26,7 +26,7 @@ export default function GameView() {
 	useEffect(() => {
 		if (currentGame) {
 			let hostGone = true;
-			for (const character of currentGame.characters) {
+			for (let character of currentGame.characters) {
 				if (character.player._id === currentGame.host._id) {
 					hostGone = false;
 				}

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import useAddModel from "../../../hooks/game/useAddModel.js";
-import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
-import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants.js";
-import {ModeledWiki} from "../../../types.js";
-import Toggle from "../../../components/widgets/Toggle.js";
-import SelectWiki from "../../../components/select/SelectWiki.js";
-import SelectModel from "../../../components/select/SelectModel.js";
-import ModelViewer from "../../../components/models/ModelViewer.js";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
+import useAddModel from "../../../hooks/game/useAddModel";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
+import {ModeledWiki} from "../../../types";
+import Toggle from "../../../components/widgets/Toggle";
+import SelectWiki from "../../../components/select/SelectWiki";
+import SelectModel from "../../../components/select/SelectModel";
+import ModelViewer from "../../../components/models/ModelViewer";
+import PrimaryButton from "../../../components/widgets/PrimaryButton";
 interface SelectedModel {
 	model: any;
 	wiki?: any;

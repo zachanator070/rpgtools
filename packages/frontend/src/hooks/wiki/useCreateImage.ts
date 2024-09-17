@@ -1,6 +1,6 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
-import {Image} from "../../types.js";
-import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
+import {Image} from "../../types";
+import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateImageVariables {
 	file: any;

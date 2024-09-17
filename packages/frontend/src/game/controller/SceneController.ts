@@ -1,12 +1,12 @@
-import GameState from "../GameState.js";
-import {PositionedModel} from "../../types.js";
+import GameState from "../GameState";
+import {PositionedModel} from "../../types";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import * as THREE from "three";
 import {Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3} from "three";
 import {Object3D} from "three/src/core/Object3D";
-import {MeshedModel} from '../GameState.js';
-import {GameController} from "./GameController.js";
+import {MeshedModel} from '../GameState';
+import {GameController} from "./GameController";
 
 
 export default class SceneController implements GameController {
@@ -57,7 +57,7 @@ export default class SceneController implements GameController {
     };
 
     addModel(positionedModel: PositionedModel) {
-        for (const model of this.gameState.meshedModels) {
+        for (let model of this.gameState.meshedModels) {
             if (model.positionedModel._id === positionedModel._id) {
                 return;
             }
@@ -99,7 +99,7 @@ export default class SceneController implements GameController {
                         child.receiveShadow = true;
                     }
                 });
-                for (const meshedModel of this.gameState.meshedModels) {
+                for (let meshedModel of this.gameState.meshedModels) {
                     if (meshedModel.positionedModel._id === positionedModel._id) {
                         meshedModel.mesh = loadedMesh;
                         if (extension === "obj") {
@@ -135,7 +135,7 @@ export default class SceneController implements GameController {
 
     removeModel = (positionedModel: PositionedModel) => {
         let meshedModelToRemove = null;
-        for (const meshedModel of this.gameState.meshedModels) {
+        for (let meshedModel of this.gameState.meshedModels) {
             if (meshedModel.positionedModel._id === positionedModel._id) {
                 meshedModelToRemove = meshedModel;
             }
@@ -155,13 +155,13 @@ export default class SceneController implements GameController {
     updateModel(positionedModel: PositionedModel) {
         let targetModel = null;
         let targetOriginal = null;
-        for (const meshedModel of this.gameState.meshedModels) {
+        for (let meshedModel of this.gameState.meshedModels) {
             if (meshedModel.positionedModel._id === positionedModel._id) {
                 targetModel = meshedModel;
                 break;
             }
         }
-        for (const meshedModel of this.gameState.originalMeshedModels) {
+        for (let meshedModel of this.gameState.originalMeshedModels) {
             if (meshedModel.positionedModel._id === positionedModel._id) {
                 targetOriginal = meshedModel;
                 break;
@@ -199,7 +199,7 @@ export default class SceneController implements GameController {
         } else {
             this.gameState.scene.remove(meshedModel.mesh);
             let clonedModel = null;
-            for (const model of this.gameState.originalMeshedModels) {
+            for (let model of this.gameState.originalMeshedModels) {
                 if (model.positionedModel._id === meshedModel.positionedModel._id) {
                     clonedModel = model;
                 }

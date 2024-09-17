@@ -1,10 +1,10 @@
 
 import 'react';
-import TextInput from "../widgets/input/TextInput.js";
-import PrimaryButton from "../widgets/PrimaryButton.js";
+import TextInput from "../widgets/input/TextInput";
+import PrimaryButton from "../widgets/PrimaryButton";
 import React, {useState} from "react";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import useRenameWorld from "../../hooks/world/useRenameWorld.js";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useRenameWorld from "../../hooks/world/useRenameWorld";
 
 export default function RenameWorldForm() {
     const { currentWorld } = useCurrentWorld();

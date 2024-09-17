@@ -1,6 +1,6 @@
 import React from 'react';
 import {InputNumber} from "antd";
-import {WidgetProps} from "../WidgetProps.js";
+import {WidgetProps} from "../WidgetProps";
 
 interface NumberInputProps extends WidgetProps {
     value?: number;

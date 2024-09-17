@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {Game} from "../../types.js";
-import {SET_MODEL_POSITION} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {Game} from "../../types";
+import {SET_MODEL_POSITION} from "@rpgtools/common/src/gql-mutations";
 import {useParams} from "react-router-dom";
 
 export interface SetModelPositionVariables {

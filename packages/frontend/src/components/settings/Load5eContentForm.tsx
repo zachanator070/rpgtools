@@ -1,11 +1,11 @@
-import FullScreenModal from "../widgets/FullScreenModal.js";
-import LoadingView from "../LoadingView.js";
-import PrimaryCheckbox from "../widgets/PrimaryCheckbox.js";
-import PrimaryButton from "../widgets/PrimaryButton.js";
+import FullScreenModal from "../widgets/FullScreenModal";
+import LoadingView from "../LoadingView";
+import PrimaryCheckbox from "../widgets/PrimaryCheckbox";
+import PrimaryButton from "../widgets/PrimaryButton";
 import React, {useState} from "react";
-import useLoad5eContent from "../../hooks/world/useLoad5eContent.js";
+import useLoad5eContent from "../../hooks/world/useLoad5eContent";
 import {useNavigate} from "react-router-dom";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 
 export default function () {
     const { currentWorld } = useCurrentWorld();

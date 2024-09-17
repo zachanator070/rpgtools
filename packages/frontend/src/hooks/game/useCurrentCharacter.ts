@@ -1,6 +1,6 @@
-import useCurrentGame from "./useCurrentGame.js";
-import useCurrentUser from "../authentication/useCurrentUser.js";
-import {GameCharacter} from "../../types.js";
+import useCurrentGame from "./useCurrentGame";
+import useCurrentUser from "../authentication/useCurrentUser";
+import {GameCharacter} from "../../types";
 
 export default function useCurrentCharacter() {
 	const { currentGame } = useCurrentGame();
@@ -8,7 +8,7 @@ export default function useCurrentCharacter() {
 
 	const result: {currentCharacter: GameCharacter} = { currentCharacter: null };
 	if (currentGame && currentUser) {
-		for (const character of currentGame.characters) {
+		for (let character of currentGame.characters) {
 			if (character.player._id === currentUser._id) {
 				result.currentCharacter = character;
 				return result;

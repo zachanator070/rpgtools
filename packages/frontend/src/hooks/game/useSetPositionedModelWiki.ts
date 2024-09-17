@@ -1,6 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {Game} from "../../types.js";
-import {SET_POSITIONED_MODEL_WIKI} from "@rpgtools/common/src/gql-mutations.js";
+import useCurrentGame from "./useCurrentGame";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {Game} from "../../types";
+import {SET_POSITIONED_MODEL_WIKI} from "@rpgtools/common/src/gql-mutations";
 import {useParams} from "react-router-dom";
 
 interface SetPositionedModelWikiVariables {

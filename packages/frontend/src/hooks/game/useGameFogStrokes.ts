@@ -1,8 +1,8 @@
-import {FogStrokesPaginated} from "../../types.js";
+import {FogStrokesPaginated} from "../../types";
 import {useParams} from "react-router-dom";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_FOG_STROKES} from "@rpgtools/common/src/gql-queries.js";
-import useFetchAllPagesEffect from "../useFetchAllPagesEffect.js";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {GET_FOG_STROKES} from "@rpgtools/common/src/gql-queries";
+import useFetchAllPagesEffect from "../useFetchAllPagesEffect";
 
 interface GameFogStrokesVariables {
     gameId: number;

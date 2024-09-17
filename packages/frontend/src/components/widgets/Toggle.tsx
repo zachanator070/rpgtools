@@ -1,6 +1,6 @@
 import React from 'react';
 import {Switch} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface ToggleProps extends WidgetProps {
     checkedChildren: React.ReactNode;

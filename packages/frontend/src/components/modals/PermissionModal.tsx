@@ -1,6 +1,6 @@
 import React from "react";
-import PermissionEditor from "../permissions/PermissionEditor.js";
-import FullScreenModal from "../widgets/FullScreenModal.js";
+import PermissionEditor from "../permissions/PermissionEditor";
+import FullScreenModal from "../widgets/FullScreenModal";
 
 interface PermissionModalProps {
 	visibility: boolean;
@@ -21,7 +21,7 @@ export default function PermissionModal({
 		return <></>;
 	}
 
-	const subjectName = subject.name;
+	let subjectName = subject.name;
 
 	return (
 		<FullScreenModal

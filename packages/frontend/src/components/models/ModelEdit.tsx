@@ -1,15 +1,15 @@
 import React from "react";
-import ModelForm from "./ModelForm.js";
-import Errors from "../Errors.js";
-import useUpdateModel from "../../hooks/model/useUpdateModel.js";
+import ModelForm from "./ModelForm";
+import Errors from "../Errors";
+import useUpdateModel from "../../hooks/model/useUpdateModel";
 import { useNavigate, useParams } from "react-router-dom";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import LoadingView from "../LoadingView.js";
-import useDeleteModel from "../../hooks/model/useDeleteModel.js";
-import {Model} from "../../types.js";
-import ColumnedContent from "../widgets/ColumnedContent.js";
-import useModal from "../widgets/useModal.js";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import LoadingView from "../LoadingView";
+import useDeleteModel from "../../hooks/model/useDeleteModel";
+import {Model} from "../../types";
+import ColumnedContent from "../widgets/ColumnedContent";
+import useModal from "../widgets/useModal";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 
 interface ModelEditProps {
 	model: Model;

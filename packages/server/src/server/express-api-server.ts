@@ -113,9 +113,10 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/models", ModelRouter);
 		this.expressServer.use("/export", ExportRouter);
 
+		const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 		// /opt/rpgtools/packages/server/dist/frontend
 		// need to output in the server package so electron app is packaged with UI bundle
-		const uiPath = path.resolve(import.meta.url, '..', '..', 'dist', 'frontend');
+		const uiPath = path.resolve(__dirname, '..', '..', '..', '..', 'dist', 'frontend');
 
 		this.expressServer.get("/ui*", (req, res) => {
 			return res.sendFile(path.resolve(uiPath, "index.html"));

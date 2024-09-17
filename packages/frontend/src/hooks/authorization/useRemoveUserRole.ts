@@ -1,7 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {REMOVE_USER_ROLE} from "@rpgtools/common/src/gql-mutations.js";
-import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {REMOVE_USER_ROLE} from "@rpgtools/common/src/gql-mutations";
+import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 
 interface RemoveUserRoleVariables {
 	userId: string;

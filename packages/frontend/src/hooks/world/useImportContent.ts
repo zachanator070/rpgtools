@@ -1,7 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {IMPORT_CONTENT} from "@rpgtools/common/src/gql-mutations.js";
-import {FOLDERS} from "@rpgtools/common/src/gql-queries.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {IMPORT_CONTENT} from "@rpgtools/common/src/gql-mutations";
+import {FOLDERS} from "@rpgtools/common/src/gql-queries";
 
 interface ImportContentVariables {
 	folderId: string;

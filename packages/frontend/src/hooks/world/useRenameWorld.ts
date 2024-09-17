@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {RENAME_WORLD} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {RENAME_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 interface RenameWorldVariables {
 	worldId: string;

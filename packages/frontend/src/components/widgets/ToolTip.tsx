@@ -1,7 +1,7 @@
 import React from "react";
 import { Tooltip } from "antd";
-import QuestionMarkIcon from "./icons/QuestionMarkIcon.js";
-import {WidgetProps} from "./WidgetProps.js";
+import QuestionMarkIcon from "./icons/QuestionMarkIcon";
+import {WidgetProps} from "./WidgetProps";
 
 interface ToolTipProps extends WidgetProps {
 	title: React.ReactNode;

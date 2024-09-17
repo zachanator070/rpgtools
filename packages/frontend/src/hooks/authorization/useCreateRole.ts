@@ -1,9 +1,9 @@
-import useCurrentUser from "../authentication/useCurrentUser.js";
-import {ApiHookResponse} from "../types.js";
-import {World} from "../../types.js";
-import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
-import {CREATE_ROLE} from "@rpgtools/common/src/gql-mutations.js";
-import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries.js";
+import useCurrentUser from "../authentication/useCurrentUser";
+import {ApiHookResponse} from "../types";
+import {World} from "../../types";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
+import {CREATE_ROLE} from "@rpgtools/common/src/gql-mutations";
+import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
 
 interface CreateRoleVariables {
 	worldId: string;

@@ -1,6 +1,6 @@
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {WikiPage} from "../../types.js";
-import {GET_WIKI} from "@rpgtools/common/src/gql-queries.js";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {WikiPage} from "../../types";
+import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
 
 interface GetWikiVariables {
     wikiId?: string;

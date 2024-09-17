@@ -1,4 +1,4 @@
-import {DiceOptions, PhysicsDie} from "./PhysicsDie.js";
+import {DiceOptions, PhysicsDie} from "./PhysicsDie";
 import * as THREE from "three";
 
 export class D4Die extends PhysicsDie {
@@ -32,9 +32,9 @@ export class D4Die extends PhysicsDie {
     };
 
     createTextTexture(text, color, backColor) {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        const ts = this.calculateTextureSize(this.size / 2 + this.size * 2) * 2;
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d");
+        let ts = this.calculateTextureSize(this.size / 2 + this.size * 2) * 2;
         canvas.width = canvas.height = ts;
         context.font = ts / 5 + "pt Arial";
         context.fillStyle = backColor;
@@ -42,14 +42,14 @@ export class D4Die extends PhysicsDie {
         context.textAlign = "center";
         context.textBaseline = "middle";
         context.fillStyle = color;
-        for (const i in text) {
+        for (let i in text) {
             context.fillText(text[i], canvas.width / 2,
                 canvas.height / 2 - ts * 0.3);
             context.translate(canvas.width / 2, canvas.height / 2);
             context.rotate(Math.PI * 2 / 3);
             context.translate(-canvas.width / 2, -canvas.height / 2);
         }
-        const texture = new THREE.Texture(canvas);
+        let texture = new THREE.Texture(canvas);
         texture.needsUpdate = true;
         return texture;
     };

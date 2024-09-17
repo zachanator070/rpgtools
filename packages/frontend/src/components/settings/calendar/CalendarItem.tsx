@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
-import {Calendar} from "../../../types.js";
-import EditIcon from "../../widgets/icons/EditIcon.js";
-import {CALENDAR} from "@rpgtools/common/src/type-constants.js";
-import useCalendars from "../../../hooks/calendar/useCalendars.js";
-import PermissionModal from "../../modals/PermissionModal.js";
-import PeopleIcon from "../../widgets/icons/PeopleIcon.js";
-import EditCalendarModal from "./EditCalendarModal.js";
-import useDeleteCalendar from "../../../hooks/calendar/useDeleteCalendar.js";
-import LoadingView from "../../LoadingView.js";
-import DeleteIcon from "../../widgets/icons/DeleteIcon.js";
-import Collapsible from "../../widgets/Collapsible.js";
-import useModal from "../../widgets/useModal.js";
-import TabCollection from "../../widgets/TabCollection.js";
-import AgeEditor from "./AgeEditor.js";
+import {Calendar} from "../../../types";
+import EditIcon from "../../widgets/icons/EditIcon";
+import {CALENDAR} from "@rpgtools/common/src/type-constants";
+import useCalendars from "../../../hooks/calendar/useCalendars";
+import PermissionModal from "../../modals/PermissionModal";
+import PeopleIcon from "../../widgets/icons/PeopleIcon";
+import EditCalendarModal from "./EditCalendarModal";
+import useDeleteCalendar from "../../../hooks/calendar/useDeleteCalendar";
+import LoadingView from "../../LoadingView";
+import DeleteIcon from "../../widgets/icons/DeleteIcon";
+import Collapsible from "../../widgets/Collapsible";
+import useModal from "../../widgets/useModal";
+import TabCollection from "../../widgets/TabCollection";
+import AgeEditor from "./AgeEditor";
 
 export default function CalendarItem({calendar}: {calendar: Calendar}) {
     const {refetch} = useCalendars();

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {WidgetProps} from "../WidgetProps.js";
+import {WidgetProps} from "../WidgetProps";
 import TextArea from "antd/es/input/TextArea";
 
 interface TextAreaInputProps extends WidgetProps {

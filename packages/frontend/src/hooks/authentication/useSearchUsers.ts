@@ -1,6 +1,6 @@
-import {UserPaginatedResult} from "../../types.js";
-import useGQLLazyQuery, {GqlLazyHookResult, LazyHookFetch} from "../useGQLLazyQuery.js";
-import {SEARCH_USERS} from "@rpgtools/common/src/gql-queries.js";
+import {UserPaginatedResult} from "../../types";
+import useGQLLazyQuery, {GqlLazyHookResult, LazyHookFetch} from "../useGQLLazyQuery";
+import {SEARCH_USERS} from "@rpgtools/common/src/gql-queries";
 
 interface SearchUsersVariables {
 	username: string;

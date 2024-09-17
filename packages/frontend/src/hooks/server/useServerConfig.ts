@@ -1,6 +1,6 @@
-import {ServerConfig} from "../../types.js";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries.js";
+import {ServerConfig} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries";
 
 interface ServerConfigResult extends GqlQueryResult<ServerConfig> {
 	serverConfig: ServerConfig

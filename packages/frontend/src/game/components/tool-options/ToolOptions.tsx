@@ -1,16 +1,16 @@
 import React from "react";
-import BrushOptions from "./BrushOptions.js";
-import FogOptions from "./FogOptions.js";
-import ModelInfo from "./ModelInfo.js";
-import GameLocationSettings from "./GameLocationSettings.js";
-import AddModelSection from "./AddModelSection.js";
+import BrushOptions from "./BrushOptions";
+import FogOptions from "./FogOptions";
+import ModelInfo from "./ModelInfo";
+import GameLocationSettings from "./GameLocationSettings";
+import AddModelSection from "./AddModelSection";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS,
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
-} from "../../GameState.js";
+} from "../../GameState";
 
 interface ToolOptionsProps {
 	controlsMode: string;

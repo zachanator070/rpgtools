@@ -1,7 +1,7 @@
-import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries.js";
-import {DELETE_WIKI} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {DELETE_WIKI} from "@rpgtools/common/src/gql-mutations";
 
 interface DeleteWikiVariables {
 	wikiId: string;

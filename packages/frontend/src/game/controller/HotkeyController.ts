@@ -1,10 +1,10 @@
-import {GameController} from "./GameController.js";
+import {GameController} from "./GameController";
 import GameState, {
     ADD_MODEL_CONTROLS,
     FOG_CONTROLS,
     PAINT_CONTROLS,
     SELECT_LOCATION_CONTROLS, SELECT_MODEL_CONTROLS
-} from "../GameState.js";
+} from "../GameState";
 
 export default class HotkeyController implements GameController {
 

@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import ToolTip from "../widgets/ToolTip.js";
-import InputForm from "../widgets/input/InputForm.js";
-import FormItem from "../widgets/input/FormItem.js";
-import FileInput from "../widgets/input/FileInput.js";
-import TextInput from "../widgets/input/TextInput.js";
-import NumberInput from "../widgets/input/NumberInput.js";
-import TextAreaInput from "../widgets/input/TextAreaInput.js";
-import {Model} from "../../types.js";
+import ToolTip from "../widgets/ToolTip";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import FileInput from "../widgets/input/FileInput";
+import TextInput from "../widgets/input/TextInput";
+import NumberInput from "../widgets/input/NumberInput";
+import TextAreaInput from "../widgets/input/TextAreaInput";
+import {Model} from "../../types";
 
 interface CallbackValues {
 	name: string;

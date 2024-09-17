@@ -1,7 +1,7 @@
 import React from 'react';
 import {Select} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
-import SpinIcon from "./icons/SpinIcon.js";
+import {WidgetProps} from "./WidgetProps";
+import SpinIcon from "./icons/SpinIcon";
 
 interface DropdownSelectOption {
     value: string | number;

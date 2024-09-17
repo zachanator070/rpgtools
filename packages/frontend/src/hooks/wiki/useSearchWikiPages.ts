@@ -1,6 +1,6 @@
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {WikiPagePaginatedResult} from "../../types.js";
-import {SEARCH_WIKIS} from "@rpgtools/common/src/gql-queries.js";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {WikiPagePaginatedResult} from "../../types";
+import {SEARCH_WIKIS} from "@rpgtools/common/src/gql-queries";
 
 interface SearchWikiPagesVariables {
 	worldId: string;

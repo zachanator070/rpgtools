@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
-import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld.js";
-import useCurrentUser from "../../hooks/authentication/useCurrentUser.js";
-import SelectWorld from "../select/SelectWorld.js";
-import FullScreenModal from "../widgets/FullScreenModal.js";
-import InputForm from "../widgets/input/InputForm.js";
-import FormItem from "../widgets/input/FormItem.js";
-import {World} from "../../types.js";
+import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld";
+import useCurrentUser from "../../hooks/authentication/useCurrentUser";
+import SelectWorld from "../select/SelectWorld";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import {World} from "../../types";
 
 interface SelectWorldModalProps {
 	visibility: boolean;

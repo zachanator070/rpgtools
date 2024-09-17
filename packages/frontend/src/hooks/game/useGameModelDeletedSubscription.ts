@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription.js";
+import useGQLSubscription, {GqlSubscriptionResult} from "../useGQLSubscription";
 import gql from "graphql-tag";
-import {Game, PositionedModel} from "../../types.js";
+import {Game, PositionedModel} from "../../types";
 
 export const GAME_MODEL_DELETED_SUBSCRIPTION = gql`
 	subscription gameModelDeleted($gameId: ID!) {

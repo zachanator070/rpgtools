@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants.js";
-import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermisison.js";
-import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission.js";
-import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission.js";
-import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission.js";
-import SelectUser from "../select/SelectUser.js";
-import SelectRole from "../select/SelectRole.js";
-import {PermissionControlled, Role, User} from "../../types.js";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton.js";
-import PrimaryButton from "../widgets/PrimaryButton.js";
-import ItemList from "../widgets/ItemList.js";
-import TabCollection from "../widgets/TabCollection.js";
-import RadioButtonGroup from "../widgets/RadioButtonGroup.js";
-import RadioButton from "../widgets/RadioButton.js";
-import DeleteIcon from "../widgets/icons/DeleteIcon.js";
-import {ROLE, USER} from "@rpgtools/common/src/type-constants.js";
+import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
+import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermisison";
+import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission";
+import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission";
+import useRevokeRolePermission from "../../hooks/authorization/useRevokeRolePermission";
+import SelectUser from "../select/SelectUser";
+import SelectRole from "../select/SelectRole";
+import {PermissionControlled, Role, User} from "../../types";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
+import PrimaryButton from "../widgets/PrimaryButton";
+import ItemList from "../widgets/ItemList";
+import TabCollection from "../widgets/TabCollection";
+import RadioButtonGroup from "../widgets/RadioButtonGroup";
+import RadioButton from "../widgets/RadioButton";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants";
 
 interface PermissionEditorProps {
 	subject: PermissionControlled;

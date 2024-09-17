@@ -1,10 +1,10 @@
-import {DiceOptions, PhysicsDie} from "./PhysicsDie.js";
+import {DiceOptions, PhysicsDie} from "./PhysicsDie";
 
 export class D20Die extends PhysicsDie {
     constructor(options: DiceOptions) {
         super(options);
 
-        const t = (1 + Math.sqrt(5)) / 2;
+        let t = (1 + Math.sqrt(5)) / 2;
 
         this.tab = -0.2;
         this.af = -Math.PI / 4 / 2;

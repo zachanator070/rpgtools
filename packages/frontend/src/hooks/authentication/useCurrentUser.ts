@@ -1,6 +1,6 @@
-import {User} from "../../types.js";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_CURRENT_USER} from "@rpgtools/common/src/gql-queries.js";
+import {User} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {GET_CURRENT_USER} from "@rpgtools/common/src/gql-queries";
 
 interface CurrentUserResult extends GqlQueryResult<User> {
 	currentUser: User;

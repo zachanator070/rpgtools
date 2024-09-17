@@ -1,10 +1,10 @@
 import React, {ReactComponentElement, useState} from "react";
-import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages.js";
+import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
 import { useParams } from "react-router-dom";
-import {WikiPage} from "../../types.js";
-import PrimaryButton from "../widgets/PrimaryButton.js";
-import DropdownSelect from "../widgets/DropdownSelect.js";
-import SearchIcon from "../widgets/icons/SearchIcon.js";
+import {WikiPage} from "../../types";
+import PrimaryButton from "../widgets/PrimaryButton";
+import DropdownSelect from "../widgets/DropdownSelect";
+import SearchIcon from "../widgets/icons/SearchIcon";
 
 interface SelectWikiProps <T extends WikiPage>{
 	types?: string[];
@@ -45,7 +45,7 @@ export default function SelectWiki<T extends WikiPage>({
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
 		if (onChange) {
-			for (const wiki of wikis.docs) {
+			for (let wiki of wikis.docs) {
 				if (wiki._id === newValue) {
 					await onChange(wiki as T);
 				}

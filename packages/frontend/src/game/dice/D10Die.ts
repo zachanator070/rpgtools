@@ -1,4 +1,4 @@
-import {DiceOptions, PhysicsDie} from "./PhysicsDie.js";
+import {DiceOptions, PhysicsDie} from "./PhysicsDie";
 
 export class D10Die extends PhysicsDie {
 

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 
-import BrushOptions from "./tool-options/BrushOptions.js";
-import FogOptions from "./tool-options/FogOptions.js";
-import ModelInfo from "./tool-options/ModelInfo.js";
-import GameLocationSettings from "./tool-options/GameLocationSettings.js";
-import AddModelSection from "./tool-options/AddModelSection.js";
+import BrushOptions from "./tool-options/BrushOptions";
+import FogOptions from "./tool-options/FogOptions";
+import ModelInfo from "./tool-options/ModelInfo";
+import GameLocationSettings from "./tool-options/GameLocationSettings";
+import AddModelSection from "./tool-options/AddModelSection";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS,
 	PAINT_CONTROLS,
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
-} from "../GameState.js";
-import MenuIcon from "../../components/widgets/icons/MenuIcon.js";
-import CloseIcon from "../../components/widgets/icons/CloseIcon.js";
+} from "../GameState";
+import MenuIcon from "../../components/widgets/icons/MenuIcon";
+import CloseIcon from "../../components/widgets/icons/CloseIcon";
 
 interface ControlsContextWindowProps {
 	controlsMode: string;

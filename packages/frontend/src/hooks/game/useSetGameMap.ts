@@ -1,7 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {Game} from "../../types.js";
-import {SET_GAME_MAP} from "@rpgtools/common/src/gql-mutations.js";
-import {GET_FOG_STROKES, GET_STROKES} from "@rpgtools/common/src/gql-queries.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {Game} from "../../types";
+import {SET_GAME_MAP} from "@rpgtools/common/src/gql-mutations";
+import {GET_FOG_STROKES, GET_STROKES} from "@rpgtools/common/src/gql-queries";
 
 interface SetGameMapVariables {
 	gameId: string;

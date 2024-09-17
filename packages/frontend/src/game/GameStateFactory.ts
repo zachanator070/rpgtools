@@ -1,9 +1,9 @@
-import {Game} from "../types.js";
+import {Game} from "../types";
 import {Vector2, Vector3} from "three";
 import * as THREE from "three";
 import * as CANNON from 'cannon';
-import GameState from "./GameState.js";
-import {DEFAULT_MAP_SIZE} from "./controller/PaintController.js";
+import GameState from "./GameState";
+import {DEFAULT_MAP_SIZE} from "./controller/PaintController";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
@@ -26,8 +26,8 @@ export default function GameStateFactory(
     gameState.world = new CANNON.World();
 
     function setupScene(gameState: GameState) {
-        const renderHeight = gameState.renderRoot.clientHeight;
-        const renderWidth = gameState.renderRoot.clientWidth;
+        let renderHeight = gameState.renderRoot.clientHeight;
+        let renderWidth = gameState.renderRoot.clientWidth;
 
         gameState.scene = new THREE.Scene();
         gameState.scene.background = new THREE.Color(0x656970);
@@ -41,8 +41,8 @@ export default function GameStateFactory(
             .1,
             700
         );
-        const cameraZ = DEFAULT_MAP_SIZE;
-        const cameraY = DEFAULT_MAP_SIZE;
+        let cameraZ = DEFAULT_MAP_SIZE;
+        let cameraY = DEFAULT_MAP_SIZE;
 
         gameState.camera.position.z = cameraZ;
         gameState.camera.position.y = cameraY;

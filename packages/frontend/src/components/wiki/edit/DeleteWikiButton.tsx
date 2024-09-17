@@ -1,12 +1,12 @@
 import 'react';
-import DeleteIcon from "../../widgets/icons/DeleteIcon.js";
-import PrimaryDangerButton from "../../widgets/PrimaryDangerButton.js";
+import DeleteIcon from "../../widgets/icons/DeleteIcon";
+import PrimaryDangerButton from "../../widgets/PrimaryDangerButton";
 import React from "react";
-import useModal from "../../widgets/useModal.js";
-import useDeleteWiki from "../../../hooks/wiki/useDeleteWiki.js";
-import {WikiPage} from "../../../types.js";
+import useModal from "../../widgets/useModal";
+import useDeleteWiki from "../../../hooks/wiki/useDeleteWiki";
+import {WikiPage} from "../../../types";
 import {useNavigate} from "react-router-dom";
-import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
+import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
 
 
 export default function DeleteWikiButton({currentWiki}: {currentWiki: WikiPage}) {

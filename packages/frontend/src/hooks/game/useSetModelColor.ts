@@ -1,6 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {Game} from "../../types.js";
-import {SET_MODEL_COLOR} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import useCurrentGame from "./useCurrentGame";
+import {Game} from "../../types";
+import {SET_MODEL_COLOR} from "@rpgtools/common/src/gql-mutations";
 import {useParams} from "react-router-dom";
 
 interface SetModelColorVariables {

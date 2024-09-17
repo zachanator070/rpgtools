@@ -1,7 +1,7 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {DELETE_PIN} from "@rpgtools/common/src/gql-mutations.js";
-import {GET_PINS} from "@rpgtools/common/src/gql-queries.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {DELETE_PIN} from "@rpgtools/common/src/gql-mutations";
+import {GET_PINS} from "@rpgtools/common/src/gql-queries";
 
 interface DeletePinVariables {
 	pinId: string;

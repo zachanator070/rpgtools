@@ -1,15 +1,15 @@
 import React, {useContext} from "react";
-import Map from "./Map.js";
+import Map from "./Map";
 import PinComponent from "./PinComponent";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import useCurrentMap from "../../hooks/map/useCurrentMap.js";
-import LoadingView from "../LoadingView.js";
-import useCreatePin from "../../hooks/map/useCreatePin.js";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import useCurrentMap from "../../hooks/map/useCurrentMap";
+import LoadingView from "../LoadingView";
+import useCreatePin from "../../hooks/map/useCreatePin";
 import { Link } from "react-router-dom";
-import MapBreadCrumbs from "./MapBreadCrumbs.js";
-import MapDrawer from "./MapDrawer.js";
-import MapWikiContext from "../../MapWikiContext.js";
-import usePins from "../../hooks/map/usePins.js";
+import MapBreadCrumbs from "./MapBreadCrumbs";
+import MapDrawer from "./MapDrawer";
+import MapWikiContext from "../../MapWikiContext";
+import usePins from "../../hooks/map/usePins";
 
 export default function MapView() {
 	const { currentWorld, loading } = useCurrentWorld();
@@ -19,11 +19,11 @@ export default function MapView() {
 	const {mapWikiId} = useContext(MapWikiContext);
 
 	const getPins = () => {
-		const filteredPins = [];
-		const pinsOnThisMap = pins.docs.filter((pin) => {
+		let filteredPins = [];
+		let pinsOnThisMap = pins.docs.filter((pin) => {
 			return pin.map._id === currentMap._id;
 		});
-		for (const pin of pinsOnThisMap) {
+		for (let pin of pinsOnThisMap) {
 			filteredPins.push(<PinComponent pin={pin} key={pin._id} />);
 		}
 
@@ -35,7 +35,7 @@ export default function MapView() {
 	}
 	const pinComponents = getPins();
 
-	const map = (
+	let map = (
 		<Map
 			menuItems={[
 				{

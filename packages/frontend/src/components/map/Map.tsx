@@ -1,7 +1,7 @@
 import React, {ReactElement, useEffect, useRef, useState} from "react";
-import useCurrentMap from "../../hooks/map/useCurrentMap.js";
-import LoadingView from "../LoadingView.js";
-import ContextMenu from "../widgets/ContextMenu.js";
+import useCurrentMap from "../../hooks/map/useCurrentMap";
+import LoadingView from "../LoadingView";
+import ContextMenu from "../widgets/ContextMenu";
 
 interface MapProps {
 	menuItems: MapMenuItem[];
@@ -58,8 +58,8 @@ export default function Map({ menuItems, extras }: MapProps) {
 		const eventX = evt.clientX;
 		const eventY = evt.clientY;
 		if (lastMouseX.current && lastMouseY.current) {
-			const newX = x.current + (eventX - lastMouseX.current) / zoom.current;
-			const newY = y.current + (eventY - lastMouseY.current) / zoom.current;
+			let newX = x.current + (eventX - lastMouseX.current) / zoom.current;
+			let newY = y.current + (eventY - lastMouseY.current) / zoom.current;
 			// console.log(`Setting map coords to ${newX}, ${newY}`);
 			x.current = newX;
 			y.current = newY;
@@ -146,7 +146,7 @@ export default function Map({ menuItems, extras }: MapProps) {
 	};
 
 	const getChunks = () => {
-		for (const chunk of currentMap.mapImage.chunks) {
+		for (let chunk of currentMap.mapImage.chunks) {
 			const standardChunkWidth = 250;
 			const standardChunkHeight = 250;
 
@@ -192,7 +192,7 @@ export default function Map({ menuItems, extras }: MapProps) {
 
 	const clonedExtras = [];
 
-	for (const extra of extras || []) {
+	for (let extra of extras || []) {
 		clonedExtras.push(
 			React.cloneElement(extra, {
 				translate: translate,

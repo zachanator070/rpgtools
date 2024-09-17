@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {LOAD_5E_CONTENT} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {LOAD_5E_CONTENT} from "@rpgtools/common/src/gql-mutations";
 
 interface Load5eContentVariables {
 	worldId: string;

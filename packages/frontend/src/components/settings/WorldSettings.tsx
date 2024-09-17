@@ -1,11 +1,11 @@
 import React from "react";
-import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
-import LoadingView from "../LoadingView.js";
-import ColumnedContent from "../widgets/ColumnedContent.js";
-import RenameWorldForm from "./RenameWorldForm.js";
-import WorldPermissionsEditor from "./WorldPermissionsEditor.js";
-import Load5eContentForm from "./Load5eContentForm.js";
-import CalendarList from "./calendar/CalendarList.js";
+import useCurrentWorld from "../../hooks/world/useCurrentWorld";
+import LoadingView from "../LoadingView";
+import ColumnedContent from "../widgets/ColumnedContent";
+import RenameWorldForm from "./RenameWorldForm";
+import WorldPermissionsEditor from "./WorldPermissionsEditor";
+import Load5eContentForm from "./Load5eContentForm";
+import CalendarList from "./calendar/CalendarList";
 
 export default function WorldSettings() {
 	const { currentWorld, loading: currentWorldLoading } = useCurrentWorld();

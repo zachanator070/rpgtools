@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {World} from "../../types.js";
-import {REVOKE_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {World} from "../../types";
+import {REVOKE_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations";
 
 interface RevokeUserPermissionVariables {
 	userId: string;

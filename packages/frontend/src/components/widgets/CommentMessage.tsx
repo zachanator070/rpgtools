@@ -1,6 +1,6 @@
 import React from 'react';
 import {Comment} from 'antd';
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface CommentMessageProps extends WidgetProps {
     author: string;

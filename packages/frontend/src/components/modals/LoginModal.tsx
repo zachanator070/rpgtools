@@ -1,13 +1,13 @@
 import React from "react";
-import useLogin from "../../hooks/authentication/useLogin.js";
-import FullScreenModal from "../widgets/FullScreenModal.js";
-import InputForm from "../widgets/input/InputForm.js";
-import FormItem from "../widgets/input/FormItem.js";
-import TextInput from "../widgets/input/TextInput.js";
-import PasswordInput from "../widgets/input/PasswordInput.js";
-import PersonIcon from "../widgets/icons/PersonIcon.js";
-import KeyIcon from "../widgets/icons/KeyIcon.js";
-import InlineMargin from "../widgets/InlineMargin.js";
+import useLogin from "../../hooks/authentication/useLogin";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
+import TextInput from "../widgets/input/TextInput";
+import PasswordInput from "../widgets/input/PasswordInput";
+import PersonIcon from "../widgets/icons/PersonIcon";
+import KeyIcon from "../widgets/icons/KeyIcon";
+import InlineMargin from "../widgets/InlineMargin";
 
 interface LoginModalProps {
 	visibility: boolean;

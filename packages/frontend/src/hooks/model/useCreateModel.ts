@@ -1,8 +1,8 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import useGetModels from "./useGetModels.js";
-import {Model} from "../../types.js";
-import useCurrentWorld from "../world/useCurrentWorld.js";
-import {CREATE_MODEL} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import useGetModels from "./useGetModels";
+import {Model} from "../../types";
+import useCurrentWorld from "../world/useCurrentWorld";
+import {CREATE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateModelVariables {
 	name: string;

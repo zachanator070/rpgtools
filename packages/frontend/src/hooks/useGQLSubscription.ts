@@ -1,7 +1,7 @@
 import { useSubscription } from "@apollo/client";
-import useGQLResponse from "./useGQLResponse.js";
-import {ApiHookResponse} from "./types.js";
-import getQueryName from "./getQueryName.js";
+import useGQLResponse from "./useGQLResponse";
+import {ApiHookResponse} from "./types";
+import getQueryName from "./getQueryName";
 
 export interface GqlSubscriptionResult<TData> extends ApiHookResponse<TData> {}
 

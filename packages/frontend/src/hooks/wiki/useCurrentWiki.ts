@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
-import {GqlQueryResult} from "../useGQLQuery.js";
-import {WikiPage} from "../../types.js";
-import useGetWiki from "./useGetWiki.js";
+import {GqlQueryResult} from "../useGQLQuery";
+import {WikiPage} from "../../types";
+import useGetWiki from "./useGetWiki";
 
 interface CurrentWikiVariables {
 	wikiId?: string;

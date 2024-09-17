@@ -1,26 +1,26 @@
 import React, {useEffect, useReducer, useState} from "react";
-import useCurrentWiki from "../../../hooks/wiki/useCurrentWiki.js";
+import useCurrentWiki from "../../../hooks/wiki/useCurrentWiki";
 import { useParams } from "react-router-dom";
-import {ALL_WIKI_TYPES, EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants.js";
-import ToolTip from "../../widgets/ToolTip.js";
-import SelectModel from "../../select/SelectModel.js";
-import ModelViewer from "../../models/ModelViewer.js";
-import LoadingView from "../../LoadingView.js";
-import MoveWikiButton from "./MoveWikiButton.js";
-import {EventWiki, Model, ModeledWiki, Place} from "../../../types.js";
-import Errors from "../../Errors.js";
-import TextInput from "../../widgets/input/TextInput.js";
-import DropdownSelect from "../../widgets/DropdownSelect.js";
-import ImageInput from "../../widgets/input/ImageInput.js";
-import Editor from "../Editor.js";
-import NumberInput from "../../widgets/input/NumberInput.js";
-import FormItem from "../../widgets/input/FormItem.js";
-import SelectCalendar from "../../select/SelectCalendar.js";
-import SelectAge from "../../select/SelectAge.js";
-import SelectMonth from "../../select/SelectMonth.js";
-import SaveWikiButton, {UpdateWikiParams} from "./SaveWikiButton.js";
-import DiscardWikiChangesButton from "./DiscardWikiChangesButton.js";
-import DeleteWikiButton from "./DeleteWikiButton.js";
+import {ALL_WIKI_TYPES, EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
+import ToolTip from "../../widgets/ToolTip";
+import SelectModel from "../../select/SelectModel";
+import ModelViewer from "../../models/ModelViewer";
+import LoadingView from "../../LoadingView";
+import MoveWikiButton from "./MoveWikiButton";
+import {EventWiki, Model, ModeledWiki, Place} from "../../../types";
+import Errors from "../../Errors";
+import TextInput from "../../widgets/input/TextInput";
+import DropdownSelect from "../../widgets/DropdownSelect";
+import ImageInput from "../../widgets/input/ImageInput";
+import Editor from "../Editor";
+import NumberInput from "../../widgets/input/NumberInput";
+import FormItem from "../../widgets/input/FormItem";
+import SelectCalendar from "../../select/SelectCalendar";
+import SelectAge from "../../select/SelectAge";
+import SelectMonth from "../../select/SelectMonth";
+import SaveWikiButton, {UpdateWikiParams} from "./SaveWikiButton";
+import DiscardWikiChangesButton from "./DiscardWikiChangesButton";
+import DeleteWikiButton from "./DeleteWikiButton";
 
 export default function WikiEdit() {
 
@@ -103,7 +103,7 @@ export default function WikiEdit() {
 
 	const wikiTypes = ALL_WIKI_TYPES;
 	const options = [];
-	for (const type of wikiTypes) {
+	for (let type of wikiTypes) {
 		options.push({
 			label: type,
 			value: type

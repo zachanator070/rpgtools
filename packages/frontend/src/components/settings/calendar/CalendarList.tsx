@@ -1,9 +1,9 @@
 import React from 'react';
-import useCalendars from "../../../hooks/calendar/useCalendars.js";
-import LoadingView from "../../LoadingView.js";
-import useUpsertCalendar from "../../../hooks/calendar/useUpsertCalendar.js";
-import CalendarItem from "./CalendarItem.js";
-import PrimaryButton from "../../widgets/PrimaryButton.js";
+import useCalendars from "../../../hooks/calendar/useCalendars";
+import LoadingView from "../../LoadingView";
+import useUpsertCalendar from "../../../hooks/calendar/useUpsertCalendar";
+import CalendarItem from "./CalendarItem";
+import PrimaryButton from "../../widgets/PrimaryButton";
 
 export default function CalendarList() {
     const { calendars, loading: calendarsLoading } = useCalendars();

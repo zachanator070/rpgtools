@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import {Dropdown, Menu} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface DropdownMenuProps extends WidgetProps {
     menu: ReactNode[];

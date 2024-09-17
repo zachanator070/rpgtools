@@ -1,6 +1,6 @@
 import React, {CSSProperties} from 'react';
 import {Button} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface DangerButtonProps extends WidgetProps {
     onClick: () => any;

@@ -1,6 +1,6 @@
-import {PathNode, Stroke} from "../../types.js";
-import GameState, {BrushOptions, DRAW_Y_POSITION} from "../GameState.js";
-import DrawingController from "./DrawingController.js";
+import {PathNode, Stroke} from "../../types";
+import GameState, {BrushOptions, DRAW_Y_POSITION} from "../GameState";
+import DrawingController from "./DrawingController";
 import {BufferGeometry, Mesh, MeshBasicMaterial, Texture} from "three";
 
 export const BRUSH_CIRCLE = "circle";

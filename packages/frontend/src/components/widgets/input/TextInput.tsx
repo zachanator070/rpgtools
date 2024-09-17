@@ -1,6 +1,6 @@
 import React, {Ref} from 'react';
 import {Input} from "antd";
-import {WidgetProps} from "../WidgetProps.js";
+import {WidgetProps} from "../WidgetProps";
 
 interface TextInputProps extends WidgetProps{
     value?: string;

@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import useMoveFolder from "../../hooks/wiki/useMoveFolder.js";
-import SelectFolder from "../select/SelectFolder.js";
-import {WikiFolder} from "../../types.js";
-import FullScreenModal from "../widgets/FullScreenModal.js";
-import InputForm from "../widgets/input/InputForm.js";
-import FormItem from "../widgets/input/FormItem.js";
+import useMoveFolder from "../../hooks/wiki/useMoveFolder";
+import SelectFolder from "../select/SelectFolder";
+import {WikiFolder} from "../../types";
+import FullScreenModal from "../widgets/FullScreenModal";
+import InputForm from "../widgets/input/InputForm";
+import FormItem from "../widgets/input/FormItem";
 
 interface MoveFolderModalProps {
 	folder: WikiFolder;

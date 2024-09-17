@@ -1,6 +1,6 @@
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {ServerConfig} from "../../types.js";
-import {SET_DEFAULT_WORLD} from "@rpgtools/common/src/gql-mutations.js";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {ServerConfig} from "../../types";
+import {SET_DEFAULT_WORLD} from "@rpgtools/common/src/gql-mutations";
 
 interface SetDefaultWorldVariables {
     worldId: string;

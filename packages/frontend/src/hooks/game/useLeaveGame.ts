@@ -1,6 +1,6 @@
-import {Game} from "../../types.js";
-import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {LEAVE_GAME} from "@rpgtools/common/src/gql-mutations.js";
+import {Game} from "../../types";
+import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
+import {LEAVE_GAME} from "@rpgtools/common/src/gql-mutations";
 
 interface LeaveGameVariables {
 	gameId: string;

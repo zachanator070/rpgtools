@@ -1,7 +1,7 @@
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {Calendar} from "../../types.js";
-import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries.js";
-import useCurrentWorld from "../world/useCurrentWorld.js";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {Calendar} from "../../types";
+import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries";
+import useCurrentWorld from "../world/useCurrentWorld";
 
 
 interface CalendarsResult extends GqlQueryResult<Calendar[]> {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface AlertMessageProps extends WidgetProps {
     error: string

@@ -1,6 +1,6 @@
 import React, {MouseEventHandler} from 'react';
 import {Button} from "antd";
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface PrimaryButtonProps extends WidgetProps {
     loading?: boolean;

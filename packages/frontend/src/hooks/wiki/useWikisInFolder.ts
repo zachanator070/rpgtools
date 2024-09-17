@@ -1,7 +1,7 @@
 import {useEffect} from "react";
-import {WikiPagePaginatedResult} from "../../types.js";
-import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries.js";
+import {WikiPagePaginatedResult} from "../../types";
+import useGQLQuery, {GqlQueryResult} from "../useGQLQuery";
+import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
 
 interface WikisInFolderVariables {
 	folderId: string;

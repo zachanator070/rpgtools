@@ -1,18 +1,18 @@
 import React, {useContext, useEffect, useState} from "react";
-import useSetModelColor from "../../../hooks/game/useSetModelColor.js";
-import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
-import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModelWiki.js";
-import useGameModelPositionedSubscription from "../../../hooks/game/useGameModelPosistionedSubscription.js";
-import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel.js";
-import {PositionedModel, WikiPage} from "../../../types.js";
-import GameControllerFacade from "../../GameControllerFacade.js";
-import LoadingView from "../../../components/LoadingView.js";
-import SelectWiki from "../../../components/select/SelectWiki.js";
-import PrimaryButton from "../../../components/widgets/PrimaryButton.js";
-import ColorInput from "../../../components/widgets/input/ColorInput.js";
-import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton.js";
-import {ControllerContext} from "../GameContent.js";
-import useGameModelDeletedSubscription from "../../../hooks/game/useGameModelDeletedSubscription.js";
+import useSetModelColor from "../../../hooks/game/useSetModelColor";
+import useCurrentGame from "../../../hooks/game/useCurrentGame";
+import useSetPositionedModelWiki from "../../../hooks/game/useSetPositionedModelWiki";
+import useGameModelPositionedSubscription from "../../../hooks/game/useGameModelPosistionedSubscription";
+import useDeletePositionedModel from "../../../hooks/game/useDeletePositionedModel";
+import {PositionedModel, WikiPage} from "../../../types";
+import GameControllerFacade from "../../GameControllerFacade";
+import LoadingView from "../../../components/LoadingView";
+import SelectWiki from "../../../components/select/SelectWiki";
+import PrimaryButton from "../../../components/widgets/PrimaryButton";
+import ColorInput from "../../../components/widgets/input/ColorInput";
+import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
+import {ControllerContext} from "../GameContent";
+import useGameModelDeletedSubscription from "../../../hooks/game/useGameModelDeletedSubscription";
 
 interface ModelInfoProps {
 	setGameWikiId: (wikiId: string) => Promise<any>

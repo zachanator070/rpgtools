@@ -1,9 +1,9 @@
-import useGetModels from "./useGetModels.js";
-import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
+import useGetModels from "./useGetModels";
+import useGQLMutation, {MutationMethod} from "../useGQLMutation";
 import {useParams} from "react-router-dom";
-import useCurrentWorld from "../world/useCurrentWorld.js";
-import {Model} from "../../types.js";
-import {DELETE_MODEL} from "@rpgtools/common/src/gql-mutations.js";
+import useCurrentWorld from "../world/useCurrentWorld";
+import {Model} from "../../types";
+import {DELETE_MODEL} from "@rpgtools/common/src/gql-mutations";
 
 interface DeleteModelVariables {
 	modelId: string;

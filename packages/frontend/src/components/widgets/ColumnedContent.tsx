@@ -1,5 +1,5 @@
 import React, {CSSProperties} from 'react';
-import {WidgetProps} from "./WidgetProps.js";
+import {WidgetProps} from "./WidgetProps";
 
 interface ColumnedContentProps extends WidgetProps {
     children: React.ReactNode;
@@ -14,7 +14,7 @@ export default function ColumnedContent({children, style, childrenStyles, classN
         throw new Error("ColumnedContent component only supports three columns")
     }
     let leftColumn = kids[0] ?? null;
-    const leftSize = childrenSizes ? childrenSizes[0] : '20%';
+    let leftSize = childrenSizes ? childrenSizes[0] : '20%';
     let leftStyles: CSSProperties = {width: leftSize};
     if(childrenStyles && childrenStyles[0]) {
         leftStyles = Object.assign(leftStyles, childrenStyles[0])
@@ -26,7 +26,7 @@ export default function ColumnedContent({children, style, childrenStyles, classN
     }
 
     let centerColumn = kids[1] ?? null;
-    const centerSize = childrenSizes ? childrenSizes[1] : '60%';
+    let centerSize = childrenSizes ? childrenSizes[1] : '60%';
     let centerStyles: CSSProperties = {width: centerSize};
     if(childrenStyles && childrenStyles[0]) {
         centerStyles = Object.assign(centerStyles, childrenStyles[1])

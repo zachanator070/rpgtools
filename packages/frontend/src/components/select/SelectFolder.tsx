@@ -1,9 +1,9 @@
 import React, {CSSProperties, useState} from "react";
 import { useParams } from "react-router-dom";
-import useFolders from "../../hooks/wiki/useFolders.js";
-import DropdownSelect from "../widgets/DropdownSelect.js";
-import SearchIcon from "../widgets/icons/SearchIcon.js";
-import {WikiFolder} from "../../types.js";
+import useFolders from "../../hooks/wiki/useFolders";
+import DropdownSelect from "../widgets/DropdownSelect";
+import SearchIcon from "../widgets/icons/SearchIcon";
+import {WikiFolder} from "../../types";
 
 interface SelectFolderProps {
 	onChange?: (folder: WikiFolder) => any;
@@ -21,7 +21,7 @@ export default function SelectFolder({ onChange, style, canAdmin }: SelectFolder
 	const onSelect = async (newValue) => {
 		await setValue(newValue);
 		if (onChange) {
-			for (const folder of folders) {
+			for (let folder of folders) {
 				if (folder._id === newValue) {
 					await onChange(folder);
 				}

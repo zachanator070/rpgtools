@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from 'cannon';
-import {FogStroke, Game, Place, PositionedModel, Stroke} from "../types.js";
+import {FogStroke, Game, Place, PositionedModel, Stroke} from "../types";
 import {
     DirectionalLight,
     Mesh,
@@ -12,10 +12,10 @@ import {
 } from "three";
 import {Object3D} from "three/src/core/Object3D";
 import {EffectComposer} from "three/examples/jsm/postprocessing/EffectComposer";
-import {GameController} from "./controller/GameController.js";
+import {GameController} from "./controller/GameController";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
-import {PhysicsDie} from "./dice/PhysicsDie.js";
+import {PhysicsDie} from "./dice/PhysicsDie";
 
 export const PAINT_CONTROLS = "Paint Controls";
 export const FOG_CONTROLS = "Fog Controls";
@@ -229,7 +229,7 @@ export default class GameState {
 
     getFirstMeshUnderMouse(): null | Object3D {
         const allObjects = [];
-        for (const model of this.meshedModels) {
+        for (let model of this.meshedModels) {
             if (model.mesh) {
                 allObjects.push(...this.getAllChildren(model.mesh));
                 allObjects.push(model.mesh);
@@ -252,7 +252,7 @@ export default class GameState {
     getAllChildren = (object: Object3D) => {
         const children = object?.children ? [...object.children] : [];
         const returnChildren = [...children];
-        for (const child of children) {
+        for (let child of children) {
             returnChildren.push(...this.getAllChildren(child));
         }
         return returnChildren;
