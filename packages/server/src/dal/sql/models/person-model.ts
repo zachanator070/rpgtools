@@ -1,5 +1,5 @@
 import ModeledWikiModel, {configModeledWikiModel, modeledWikiAttributes} from "./modeled-wiki-model.js";
-import {PERSON} from "@rpgtools/common/src/type-constants";
+import {PERSON} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class PersonModel extends ModeledWikiModel {

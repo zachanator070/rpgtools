@@ -3,7 +3,7 @@ import {defaultAttributes} from "./default-attributes.js";
 import ArticleModel from "./article-model.js";
 import WikiFolderModel from "./wiki-folder-model.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
-import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants";
+import {WIKI_FOLDER} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class WorldModel extends PermissionControlledModel {

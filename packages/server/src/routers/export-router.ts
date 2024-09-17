@@ -1,5 +1,5 @@
 import express from "express";
-import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import { ALL_WIKI_TYPES, MODEL, WIKI_FOLDER } from "@rpgtools/common/src/type-constants.js";
 import { container } from "../di/inversify.js";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {AbstractArchiveFactory, CookieManager, SessionContextFactory} from "../types";

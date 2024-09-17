@@ -9,8 +9,7 @@ import WikiPageModel from "../models/wiki-page-model.js";
 import EventWikiRepository from "../../repository/event-wiki-repository.js";
 import {PaginatedResult} from "../../paginated-result.js";
 import {WikiPage} from "../../../domain-entities/wiki-page.js";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
-import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model.js";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants.js";
 
 @injectable()
 export default class SqlEventWikiRepository extends AbstractSqlRepository<EventWiki, WikiPageModel> implements EventWikiRepository {

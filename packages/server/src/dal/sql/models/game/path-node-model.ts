@@ -3,7 +3,7 @@
 import {DataTypes, Model} from "sequelize";
 import {defaultAttributes} from "../default-attributes.js";
 import SqlModel from "../sql-model.js";
-import {FOG_STROKE, STROKE} from "@rpgtools/common/src/type-constants";
+import {FOG_STROKE, STROKE} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class PathNodeModel extends SqlModel {

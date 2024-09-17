@@ -3,7 +3,7 @@ import {defaultAttributes} from "./default-attributes.js";
 import WorldModel from "./world-model.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import FileModel from "./file-model.js";
-import {FILE, WORLD} from "@rpgtools/common/src/type-constants";
+import {FILE, WORLD} from "@rpgtools/common/src/type-constants.js";
 
 export default class ModelModel extends PermissionControlledModel {
 

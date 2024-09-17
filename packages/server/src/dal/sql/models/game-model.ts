@@ -9,7 +9,7 @@ import FogStrokeModel from "./game/fog-stroke-model.js";
 import MessageModel from "./game/message-model.js";
 import InGameModelModel from "./game/in-game-model-model.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
-import {PLACE, USER, WORLD} from "@rpgtools/common/src/type-constants";
+import {PLACE, USER, WORLD} from "@rpgtools/common/src/type-constants.js";
 
 export default class GameModel extends PermissionControlledModel {
 

@@ -1,6 +1,6 @@
 import {DataTypes} from "sequelize";
-import {ROLE, USER} from "@rpgtools/common/src/type-constants";
-import {ALL_PERMISSIONS} from "@rpgtools/common/src/permission-constants";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants.js";
+import {ALL_PERMISSIONS} from "@rpgtools/common/src/permission-constants.js";
 import {defaultAttributes} from "./default-attributes.js";
 import UserModel from "./user-model.js";
 import {RoleModel} from "./role-model.js";

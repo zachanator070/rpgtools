@@ -3,7 +3,7 @@ import {defaultAttributes} from "../default-attributes.js";
 import UserModel from "../user-model.js";
 import CharacterAttributeModel from "./character-attribute-model.js";
 import SqlModel from "../sql-model.js";
-import {GAME, USER} from "@rpgtools/common/src/type-constants";
+import {GAME, USER} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class CharacterModel extends SqlModel {

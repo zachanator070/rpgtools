@@ -8,7 +8,7 @@ import {defaultAttributes} from "./default-attributes.js";
 import WorldModel from "./world-model.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import WikiPageModel from "./wiki-page-model.js";
-import {WIKI_FOLDER, WORLD} from "@rpgtools/common/src/type-constants";
+import {WIKI_FOLDER, WORLD} from "@rpgtools/common/src/type-constants.js";
 import WikiFolderToWikiPageModel from "./wiki-folder-to-wiki-page-model.js";
 
 

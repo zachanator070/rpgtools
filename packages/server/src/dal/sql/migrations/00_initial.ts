@@ -49,7 +49,7 @@ import {
     STROKE,
     USER, WIKI_FOLDER,
     WIKI_PAGE, WORLD, REGISTER_CODE
-} from "@rpgtools/common/src/type-constants";
+} from "@rpgtools/common/src/type-constants.js";
 import AdminUsersToServerConfigModel from "../models/admin-users-to-server-config-model.js";
 import UserToRoleModel from "../models/user-to-role-model.js";
 import WikiFolderToWikiPageModel from "../models/wiki-folder-to-wiki-page-model.js";

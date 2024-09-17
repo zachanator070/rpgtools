@@ -3,7 +3,7 @@ import {defaultAttributes} from "../default-attributes.js";
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
 import MonthModel from "./month-model.js";
 import DayOfTheWeekModel from "./day-of-the-week-model.js";
-import {CALENDAR} from "@rpgtools/common/src/type-constants";
+import {CALENDAR} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class AgeModel extends SqlModel {

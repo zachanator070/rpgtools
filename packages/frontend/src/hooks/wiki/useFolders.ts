@@ -1,7 +1,7 @@
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {WikiFolder} from "../../types.js";
 import {useParams} from 'react-router-dom';
-import {FOLDERS} from "@rpgtools/common/src/gql-queries";
+import {FOLDERS} from "@rpgtools/common/src/gql-queries.js";
 
 interface FoldersVariables {
 	worldId?: string;

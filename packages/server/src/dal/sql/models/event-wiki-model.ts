@@ -2,7 +2,7 @@ import WikiPageChild from "./wiki-page-child.js";
 import {defaultAttributes} from "./default-attributes.js";
 import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
 import WikiPageModel, {setupWikiPageAssociations} from "./wiki-page-model.js";
-import {CALENDAR, EVENT_WIKI, WORLD} from "@rpgtools/common/src/type-constants";
+import {CALENDAR, EVENT_WIKI, WORLD} from "@rpgtools/common/src/type-constants.js";
 import CalendarModel from "./calendar-model.js";
 
 export default class EventWikiModel extends WikiPageChild {

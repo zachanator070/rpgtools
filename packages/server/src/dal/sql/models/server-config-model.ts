@@ -7,7 +7,7 @@ import UserModel from "./user-model.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import RegisterCodeModel from "./register-code-model.js";
 import WorldModel from "./world-model.js";
-import {WORLD} from "@rpgtools/common/src/type-constants";
+import {WORLD} from "@rpgtools/common/src/type-constants.js";
 import AdminUsersToServerConfigModel from "./admin-users-to-server-config-model.js";
 
 

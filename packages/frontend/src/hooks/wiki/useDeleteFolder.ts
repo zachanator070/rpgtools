@@ -1,7 +1,7 @@
 import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
 import {World} from "../../types.js";
-import {FOLDERS} from "@rpgtools/common/src/gql-queries";
-import {DELETE_FOLDER} from "@rpgtools/common/src/gql-mutations";
+import {FOLDERS} from "@rpgtools/common/src/gql-queries.js";
+import {DELETE_FOLDER} from "@rpgtools/common/src/gql-mutations.js";
 
 interface DeleteFolderVariables {
 	folderId: string;

@@ -4,7 +4,7 @@ import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
 import {WikiPageRepository} from "../../repository/wiki-page-repository.js";
 import {PaginatedResult} from "../../paginated-result.js";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants.js";
 
 @injectable()
 export class InMemoryWikiPageRepository extends AbstractInMemoryRepository<WikiPage> implements WikiPageRepository {

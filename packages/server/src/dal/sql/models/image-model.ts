@@ -3,7 +3,7 @@ import {defaultAttributes} from "./default-attributes.js";
 import SqlModel from "./sql-model.js";
 import ChunkModel from "./chunk-model.js";
 import WorldModel from "./world-model.js";
-import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
+import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class ImageModel extends SqlModel {

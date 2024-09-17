@@ -1,7 +1,7 @@
 import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
 import {Place} from "../../types.js";
-import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
-import {UPDATE_PLACE} from "@rpgtools/common/src/gql-mutations";
+import {GET_WIKI} from "@rpgtools/common/src/gql-queries.js";
+import {UPDATE_PLACE} from "@rpgtools/common/src/gql-mutations.js";
 
 interface UpdatePlaceVariables {
 	placeId: string;

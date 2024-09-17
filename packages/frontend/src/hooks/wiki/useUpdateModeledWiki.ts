@@ -1,7 +1,7 @@
 import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
 import {ModeledWiki} from "../../types.js";
-import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
-import {UPDATE_MODELED_WIKI} from "@rpgtools/common/src/gql-mutations";
+import {GET_WIKI} from "@rpgtools/common/src/gql-queries.js";
+import {UPDATE_MODELED_WIKI} from "@rpgtools/common/src/gql-mutations.js";
 
 interface UpdateModeledWikiVariables {
 	wikiId: string;

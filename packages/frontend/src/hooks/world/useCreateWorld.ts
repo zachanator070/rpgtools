@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {World} from "../../types.js";
-import {CREATE_WORLD} from "@rpgtools/common/src/gql-mutations";
+import {CREATE_WORLD} from "@rpgtools/common/src/gql-mutations.js";
 
 interface CreateWorldVariables {
 	name: string;

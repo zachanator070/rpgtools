@@ -2,7 +2,7 @@ import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Mod
 import {defaultAttributes} from "../default-attributes.js";
 import PathNodeModel from "./path-node-model.js";
 import SqlModel from "../sql-model.js";
-import {GAME} from "@rpgtools/common/src/type-constants";
+import {GAME} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class FogStrokeModel extends SqlModel {

@@ -9,7 +9,7 @@ import {defaultAttributes} from "./default-attributes.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
 import WorldModel from "./world-model.js";
 import ImageModel from "./image-model.js";
-import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
+import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants.js";
 import WikiPageToWikiPageModel from "./wiki-page-to-wiki-page-model.js";
 
 export function setupWikiPageAssociations(model: ModelStatic<any>, type: string) {

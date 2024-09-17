@@ -1,7 +1,7 @@
 import {DataTypes} from "sequelize";
 import {defaultAttributes} from "../default-attributes.js";
 import SqlModel from "../sql-model.js";
-import {CHARACTER} from "@rpgtools/common/src/type-constants";
+import {CHARACTER} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class CharacterAttributeModel extends SqlModel {

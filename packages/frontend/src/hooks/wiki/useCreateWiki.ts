@@ -1,7 +1,7 @@
 import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
 import {WikiFolder, WikiPage, World} from "../../types.js";
-import {CREATE_WIKI} from "@rpgtools/common/src/gql-mutations";
-import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {CREATE_WIKI} from "@rpgtools/common/src/gql-mutations.js";
+import {WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries.js";
 
 interface CreateWikiVariables {
 	name: string;

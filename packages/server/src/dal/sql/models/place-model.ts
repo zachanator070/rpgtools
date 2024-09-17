@@ -3,7 +3,7 @@ import {BelongsToGetAssociationMixin, DataTypes} from "sequelize";
 import ImageModel from "./image-model.js";
 import {defaultAttributes} from "./default-attributes.js";
 import WikiPageChild from "./wiki-page-child.js";
-import {IMAGE, PLACE} from "@rpgtools/common/src/type-constants";
+import {IMAGE, PLACE} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class PlaceModel extends WikiPageChild {

@@ -4,12 +4,12 @@ import {
     DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin,
 } from "sequelize";
 import {defaultAttributes} from "./default-attributes.js";
-import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants.js";
 import WorldModel from "./world-model.js";
 import {RoleModel} from "./role-model.js";
 import SqlModel from "./sql-model.js";
 import UserToRoleModel from "./user-to-role-model.js";
-import {WORLD} from "@rpgtools/common/src/type-constants";
+import {WORLD} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class UserModel extends SqlModel {

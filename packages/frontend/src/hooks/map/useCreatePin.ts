@@ -1,7 +1,7 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Pin} from "../../types.js";
-import {CREATE_PIN} from "@rpgtools/common/src/gql-mutations";
-import {GET_PINS} from "@rpgtools/common/src/gql-queries";
+import {CREATE_PIN} from "@rpgtools/common/src/gql-mutations.js";
+import {GET_PINS} from "@rpgtools/common/src/gql-queries.js";
 
 interface CreatePinVariables {
 	mapId: string;

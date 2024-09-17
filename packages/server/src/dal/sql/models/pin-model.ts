@@ -3,7 +3,7 @@ import {defaultAttributes} from "./default-attributes.js";
 import SqlModel from "./sql-model.js";
 import WikiPageModel from "./wiki-page-model.js";
 import WorldModel from "./world-model.js";
-import {WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
+import {WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class PinModel extends SqlModel {

@@ -1,7 +1,7 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {World} from "../../types.js";
-import {MOVE_FOLDER} from "@rpgtools/common/src/gql-mutations";
-import {FOLDERS} from "@rpgtools/common/src/gql-queries";
+import {MOVE_FOLDER} from "@rpgtools/common/src/gql-mutations.js";
+import {FOLDERS} from "@rpgtools/common/src/gql-queries.js";
 
 interface MoveFolderVariables {
 	folderId: string;

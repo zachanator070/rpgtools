@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {ServerConfig} from "../../types.js";
-import {GENERATE_REGISTER_CODES} from "@rpgtools/common/src/gql-mutations";
+import {GENERATE_REGISTER_CODES} from "@rpgtools/common/src/gql-mutations.js";
 
 interface GenerateRegisterCodesVariables {
 	amount: number;

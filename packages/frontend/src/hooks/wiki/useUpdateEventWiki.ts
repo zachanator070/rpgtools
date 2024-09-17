@@ -1,7 +1,7 @@
 import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
 import {EventWiki} from "../../types.js";
-import {UPDATE_EVENT} from "@rpgtools/common/src/gql-mutations";
-import {GET_WIKI} from "@rpgtools/common/src/gql-queries";
+import {UPDATE_EVENT} from "@rpgtools/common/src/gql-mutations.js";
+import {GET_WIKI} from "@rpgtools/common/src/gql-queries.js";
 
 interface UpdateEventWikiVariables {
     wikiId: string,

@@ -6,6 +6,7 @@
     "types": ["reflect-metadata", "jest"],
     "esModuleInterop": true,
     "target": "es2017",
+    "module": "es2020",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,

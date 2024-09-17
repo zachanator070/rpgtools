@@ -1,6 +1,6 @@
 import {QueryInterface} from "sequelize";
 import EventWikiModel from "../models/event-wiki-model.js";
-import {AGE, CALENDAR, DAY_OF_THE_WEEK, EVENT_WIKI, MONTH} from "@rpgtools/common/src/type-constants";
+import {AGE, CALENDAR, DAY_OF_THE_WEEK, EVENT_WIKI, MONTH} from "@rpgtools/common/src/type-constants.js";
 import CalendarModel from "../models/calendar-model.js";
 import AgeModel from "../models/calendar/age-model.js";
 import MonthModel from "../models/calendar/month-model.js";

@@ -1,6 +1,6 @@
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {WorldPaginatedResult} from "../../types.js";
-import {GET_WORLDS} from "@rpgtools/common/src/gql-queries";
+import {GET_WORLDS} from "@rpgtools/common/src/gql-queries.js";
 
 interface WorldsVariables {
 	name?: string;

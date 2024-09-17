@@ -3,7 +3,7 @@ import WorldModel from "./world-model.js";
 import {defaultAttributes} from "./default-attributes.js";
 import AgeModel from "./calendar/age-model.js";
 import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
-import {WORLD} from "@rpgtools/common/src/type-constants";
+import {WORLD} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class CalendarModel extends PermissionControlledModel {

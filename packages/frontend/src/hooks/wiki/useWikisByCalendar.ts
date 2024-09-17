@@ -1,8 +1,8 @@
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {EventWiki, WikiPagePaginatedResult} from "../../types.js";
-import {SEARCH_WIKIS, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries";
+import {SEARCH_WIKIS, WIKIS_IN_FOLDER} from "@rpgtools/common/src/gql-queries.js";
 import {useParams} from "react-router-dom";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants.js";
 import {useEffect} from "react";
 
 interface WikisByCalendarVariables {

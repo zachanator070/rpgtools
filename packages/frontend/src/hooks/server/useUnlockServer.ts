@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
-import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries";
+import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations.js";
+import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries.js";
 
 interface UnlockServerVariables {
 	unlockCode: string;

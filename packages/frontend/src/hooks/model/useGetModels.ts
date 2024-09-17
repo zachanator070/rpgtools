@@ -2,7 +2,7 @@ import useCurrentWorld from "../world/useCurrentWorld.js";
 import {useEffect} from "react";
 import {Model} from "../../types.js";
 import useGQLLazyQuery, {GqlLazyHookResult} from "../useGQLLazyQuery.js";
-import {GET_MODELS} from "@rpgtools/common/src/gql-queries";
+import {GET_MODELS} from "@rpgtools/common/src/gql-queries.js";
 
 interface GetModelsVariables {
 	worldId?: string;

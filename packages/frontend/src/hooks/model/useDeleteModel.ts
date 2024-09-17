@@ -3,7 +3,7 @@ import useGQLMutation, {MutationMethod} from "../useGQLMutation.js";
 import {useParams} from "react-router-dom";
 import useCurrentWorld from "../world/useCurrentWorld.js";
 import {Model} from "../../types.js";
-import {DELETE_MODEL} from "@rpgtools/common/src/gql-mutations";
+import {DELETE_MODEL} from "@rpgtools/common/src/gql-mutations.js";
 
 interface DeleteModelVariables {
 	modelId: string;

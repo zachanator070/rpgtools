@@ -1,6 +1,6 @@
 import SqlModel from "./sql-model.js";
 import {DataTypes} from "sequelize";
-import {ROLE, USER} from "@rpgtools/common/src/type-constants";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class UserToRoleModel extends SqlModel {

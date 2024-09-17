@@ -2,7 +2,7 @@ import SqlModel from "./sql-model.js";
 import {defaultAttributes} from "./default-attributes.js";
 import {DataTypes} from "sequelize";
 import ServerConfigModel from "./server-config-model.js";
-import {SERVER_CONFIG} from "@rpgtools/common/src/type-constants";
+import {SERVER_CONFIG} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class RegisterCodeModel extends SqlModel {
