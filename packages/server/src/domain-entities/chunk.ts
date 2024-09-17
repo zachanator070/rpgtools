@@ -1,5 +1,5 @@
 import {DomainEntity, EntityFactory, RepositoryAccessor,} from "../types";
-import { CHUNK } from "@rpgtools/common/src/type-constants";
+import { CHUNK } from "@rpgtools/common/src/type-constants.js";
 import { ChunkAuthorizationPolicy } from "../security/policy/chunk-authorization-policy.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";

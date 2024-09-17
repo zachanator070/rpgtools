@@ -5,7 +5,7 @@ import {Archive, AbstractArchiveFactory, Factory} from "../types";
 import {
 	ALL_WIKI_TYPES,
 	FILE,
-} from "@rpgtools/common/src/type-constants";
+} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {WikiFolder} from "../domain-entities/wiki-folder.js";
@@ -13,11 +13,6 @@ import {WikiPage} from "../domain-entities/wiki-page.js";
 import EntityMapper from "../domain-entities/entity-mapper.js";
 import FileFactory from "../domain-entities/factory/file-factory.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
-
-class TempFolder {
-	children: TempFolder[] = [];
-	name: string;
-}
 
 @injectable()
 export class ArchiveFactory implements AbstractArchiveFactory {

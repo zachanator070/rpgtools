@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Game} from "../../types.js";
-import {DELETE_POSITIONED_MODEL} from "@rpgtools/common/src/gql-mutations";
+import {DELETE_POSITIONED_MODEL} from "@rpgtools/common/src/gql-mutations.js";
 
 interface DeletePositionedModelVariables {
 	gameId: string;

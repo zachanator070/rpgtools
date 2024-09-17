@@ -6,7 +6,7 @@ import {
 	RENAME_WORLD,
 	UPDATE_PIN,
 	UPSERT_CALENDAR
-} from "@rpgtools/common/src/gql-mutations";
+} from "@rpgtools/common/src/gql-mutations.js";
 import {container} from "../../../../src/di/inversify.js";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
 

@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Game, PathNodeInput} from "../../types.js";
-import {ADD_STROKE} from "@rpgtools/common/src/gql-mutations";
+import {ADD_STROKE} from "@rpgtools/common/src/gql-mutations.js";
 import {useParams} from "react-router-dom";
 
 export interface AddStrokeVariables {

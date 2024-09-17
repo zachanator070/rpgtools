@@ -6,7 +6,7 @@ import {
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { v4 as uuidv4 } from "uuid";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants.js";
 import { SecurityContextFactory } from "../security/security-context-factory.js";
 
 import {

@@ -7,7 +7,7 @@ import {WikiPageAuthorizationPolicy} from "../../security/policy/wiki-page-autho
 import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
 import ArticleFactory from "./article-factory.js";
 import EntityMapper from "../entity-mapper.js";
-import {ALL_WIKI_TYPES} from "@rpgtools/common/src/type-constants";
+import {ALL_WIKI_TYPES} from "@rpgtools/common/src/type-constants.js";
 
 
 @injectable()

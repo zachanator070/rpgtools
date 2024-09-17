@@ -1,7 +1,7 @@
 import React, {useEffect, useReducer, useState} from "react";
 import useCurrentWiki from "../../../hooks/wiki/useCurrentWiki.js";
 import { useParams } from "react-router-dom";
-import {ALL_WIKI_TYPES, EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
+import {ALL_WIKI_TYPES, EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants.js";
 import ToolTip from "../../widgets/ToolTip.js";
 import SelectModel from "../../select/SelectModel.js";
 import ModelViewer from "../../models/ModelViewer.js";

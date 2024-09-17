@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Game} from "../../types.js";
-import {GAME_CHAT} from "@rpgtools/common/src/gql-mutations";
+import {GAME_CHAT} from "@rpgtools/common/src/gql-mutations.js";
 
 interface GameChatVariables {
 	gameId: string;

@@ -4,10 +4,10 @@ import {
 	PUBLIC_WORLD_PERMISSIONS,
 	WORLD_CREATE,
 	WORLD_PERMISSIONS,
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import { SecurityContext } from "../security/security-context.js";
-import {PLACE, ROLE, USER} from "@rpgtools/common/src/type-constants";
-import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants";
+import {PLACE, ROLE, USER} from "@rpgtools/common/src/type-constants.js";
+import { EVERYONE, WORLD_OWNER } from "@rpgtools/common/src/role-constants.js";
 import { World } from "../domain-entities/world.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";

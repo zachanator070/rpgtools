@@ -14,8 +14,8 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {Repository} from "../dal/repository/repository.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
-import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
-import {USER} from "@rpgtools/common/src/type-constants";
+import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants.js";
+import {USER} from "@rpgtools/common/src/type-constants.js";
 import {World} from "../domain-entities/world.js";
 
 import fetch from 'node-fetch';

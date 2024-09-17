@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Calendar} from "../../../types.js";
 import EditIcon from "../../widgets/icons/EditIcon.js";
-import {CALENDAR} from "@rpgtools/common/src/type-constants";
+import {CALENDAR} from "@rpgtools/common/src/type-constants.js";
 import useCalendars from "../../../hooks/calendar/useCalendars.js";
 import PermissionModal from "../../modals/PermissionModal.js";
 import PeopleIcon from "../../widgets/icons/PeopleIcon.js";

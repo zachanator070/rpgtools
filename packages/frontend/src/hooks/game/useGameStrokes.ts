@@ -1,6 +1,6 @@
 import {StrokesPaginated} from "../../types.js";
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_STROKES} from "@rpgtools/common/src/gql-queries";
+import {GET_STROKES} from "@rpgtools/common/src/gql-queries.js";
 import {useParams} from "react-router-dom";
 import useFetchAllPagesEffect from "../useFetchAllPagesEffect.js";
 

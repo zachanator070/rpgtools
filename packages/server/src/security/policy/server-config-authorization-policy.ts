@@ -1,7 +1,7 @@
 import { EntityAuthorizationPolicy } from "../../types";
 import { ServerConfig } from "../../domain-entities/server-config.js";
 import { SecurityContext } from "../security-context.js";
-import {SERVER_ADMIN, SERVER_RW, WORLD_CREATE} from "@rpgtools/common/src/permission-constants";
+import {SERVER_ADMIN, SERVER_RW, WORLD_CREATE} from "@rpgtools/common/src/permission-constants.js";
 import { injectable } from "inversify";
 
 @injectable()

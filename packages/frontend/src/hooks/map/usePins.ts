@@ -1,6 +1,6 @@
 import {PinPaginatedResult} from "../../types.js";
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_PINS} from "@rpgtools/common/src/gql-queries";
+import {GET_PINS} from "@rpgtools/common/src/gql-queries.js";
 import {useParams} from 'react-router-dom';
 import {useEffect} from "react";
 

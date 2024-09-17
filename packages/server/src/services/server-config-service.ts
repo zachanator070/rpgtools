@@ -1,5 +1,5 @@
-import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import {ROLE} from "@rpgtools/common/src/type-constants";
+import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants.js";
+import {ROLE} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {

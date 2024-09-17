@@ -1,6 +1,6 @@
 import {useApolloClient} from "@apollo/client";
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {LOGOUT_QUERY} from "@rpgtools/common/src/gql-mutations";
+import {LOGOUT_QUERY} from "@rpgtools/common/src/gql-mutations.js";
 
 interface LogoutResult extends GqlMutationResult<boolean> {
 	logout: MutationMethod<boolean, undefined>
@@ -10,7 +10,7 @@ export default function useLogout(): LogoutResult {
 	const client = useApolloClient();
 
 	const result = useGQLMutation<boolean>(LOGOUT_QUERY, {}, {
-		update: async (cache, data) => {
+		update: async () => {
 			await client.resetStore();
 		},
 	})

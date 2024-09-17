@@ -1,6 +1,6 @@
-import {AclEntry, DomainEntity, EntityFactory, Factory, PermissionControlledEntity, RepositoryAccessor} from "../types";
+import {AclEntry, DomainEntity, EntityFactory, PermissionControlledEntity, RepositoryAccessor} from "../types";
 import { ModelAuthorizationPolicy } from "../security/policy/model-authorization-policy.js";
-import { MODEL } from "@rpgtools/common/src/type-constants";
+import { MODEL } from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {Repository} from "../dal/repository/repository.js";

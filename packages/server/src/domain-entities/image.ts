@@ -1,5 +1,5 @@
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
-import { IMAGE } from "@rpgtools/common/src/type-constants";
+import { IMAGE } from "@rpgtools/common/src/type-constants.js";
 import { ImageAuthorizationPolicy } from "../security/policy/image-authorization-policy.js";
 import {inject, injectable} from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";

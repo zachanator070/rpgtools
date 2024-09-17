@@ -3,9 +3,9 @@ import {
 } from "../types";
 import { SecurityContext } from "../security/security-context.js";
 import { Role } from "../domain-entities/role.js";
-import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
-import {ROLE, USER} from "@rpgtools/common/src/type-constants";
-import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
+import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants.js";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants.js";
+import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { User } from "../domain-entities/user.js";

@@ -9,7 +9,7 @@ import {
 	FOLDER_RW,
 	FOLDER_RW_ALL,
 	FOLDER_RW_ALL_CHILDREN,
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import { WikiFolder } from "../../domain-entities/wiki-folder.js";
 import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context.js";

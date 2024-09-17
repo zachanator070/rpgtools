@@ -1,7 +1,7 @@
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {useParams} from "react-router-dom";
 import {RolePaginatedResult} from "../../types.js";
-import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries";
+import {SEARCH_ROLES} from "@rpgtools/common/src/gql-queries.js";
 
 interface SearchRolesVariables {
 	worldId?: string;

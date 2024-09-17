@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants.js";
 import PrimaryButton from "../widgets/PrimaryButton.js";
 import useLogout from "../../hooks/authentication/useLogout.js";
 import useCurrentUser from "../../hooks/authentication/useCurrentUser.js";

@@ -1,5 +1,5 @@
 import { ModeledPage } from "./modeled-page.js";
-import { PERSON } from "@rpgtools/common/src/type-constants";
+import { PERSON } from "@rpgtools/common/src/type-constants.js";
 import {inject, injectable} from "inversify";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import {INJECTABLE_TYPES} from "../di/injectable-types.js";

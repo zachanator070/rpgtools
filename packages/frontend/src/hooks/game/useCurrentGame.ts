@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {Game} from "../../types.js";
-import {GET_GAME} from "@rpgtools/common/src/gql-queries";
+import {GET_GAME} from "@rpgtools/common/src/gql-queries.js";
 
 interface GetGameVariables {
 	gameId: string;

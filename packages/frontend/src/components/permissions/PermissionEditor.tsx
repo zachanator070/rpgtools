@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
+import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants.js";
 import useGrantUserPermission from "../../hooks/authorization/useGrantUserPermisison.js";
 import useGrantRolePermission from "../../hooks/authorization/useGrantRolePermission.js";
 import useRevokeUserPermission from "../../hooks/authorization/useRevokeUserPermission.js";
@@ -14,7 +14,7 @@ import TabCollection from "../widgets/TabCollection.js";
 import RadioButtonGroup from "../widgets/RadioButtonGroup.js";
 import RadioButton from "../widgets/RadioButton.js";
 import DeleteIcon from "../widgets/icons/DeleteIcon.js";
-import {ROLE, USER} from "@rpgtools/common/src/type-constants";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants.js";
 
 interface PermissionEditorProps {
 	subject: PermissionControlled;

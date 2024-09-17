@@ -1,4 +1,4 @@
-import {inject, injectable, interfaces} from "inversify";
+import {inject, injectable} from "inversify";
 import AclEntryModel from "./models/acl-entry-model.js";
 import {
     ACL_ENTRY, AGE,
@@ -24,7 +24,7 @@ import {
     SERVER_CONFIG,
     STROKE, USER, WIKI_FOLDER,
     WIKI_PAGE, WORLD
-} from "@rpgtools/common/src/type-constants";
+} from "@rpgtools/common/src/type-constants.js";
 import WikiPageModel from "./models/wiki-page-model.js";
 import ArticleModel from "./models/article-model.js";
 import ChunkModel from "./models/chunk-model.js";

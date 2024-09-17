@@ -2,8 +2,8 @@ import {
 	Cache,
 	EventPublisher,
 } from "../types";
-import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants";
-import {USER} from "@rpgtools/common/src/type-constants";
+import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants.js";
+import {USER} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { SecurityContext } from "../security/security-context.js";

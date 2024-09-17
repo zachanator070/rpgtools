@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { PLACE } from "@rpgtools/common/src/type-constants";
+import { PLACE } from "@rpgtools/common/src/type-constants.js";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
 import useSetGameMap from "../../../hooks/game/useSetGameMap.js";
 import LoadingView from "../../../components/LoadingView.js";

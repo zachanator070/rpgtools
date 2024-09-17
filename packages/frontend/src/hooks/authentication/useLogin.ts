@@ -1,7 +1,7 @@
 import {useApolloClient} from "@apollo/client";
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {User} from "../../types.js";
-import {LOGIN_QUERY} from "@rpgtools/common/src/gql-mutations";
+import {LOGIN_QUERY} from "@rpgtools/common/src/gql-mutations.js";
 
 interface LoginVariables {
 	username: string;
@@ -15,7 +15,7 @@ interface LoginResult extends GqlMutationResult<User, LoginVariables> {
 export default function useLogin(callback?): LoginResult {
 	const client = useApolloClient();
 	const result = useGQLMutation<User, LoginVariables>(LOGIN_QUERY, null, {
-		async update(cache, { data }) {
+		async update() {
 			await client.resetStore();
 		},
 		onCompleted: callback,

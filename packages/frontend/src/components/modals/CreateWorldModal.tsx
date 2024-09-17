@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import useCreateWorld from "../../hooks/world/useCreateWorld.js";
 import { useNavigate } from "react-router-dom";
 import useSetCurrentWorld from "../../hooks/world/useSetCurrentWorld.js";
-import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
+import { PUBLIC_WORLD_PERMISSIONS } from "@rpgtools/common/src/permission-constants.js";
 import ToolTip from "../widgets/ToolTip.js";
 import PrimaryCheckbox from "../widgets/PrimaryCheckbox.js";
 import InputForm from "../widgets/input/InputForm.js";

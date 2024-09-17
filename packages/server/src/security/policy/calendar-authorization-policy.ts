@@ -7,7 +7,7 @@ import {
     CALENDAR_ADMIN_ALL,
     CALENDAR_READ,
     CALENDAR_READ_ALL, CALENDAR_RW, CALENDAR_RW_ALL
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import {injectable} from "inversify";
 
 @injectable()

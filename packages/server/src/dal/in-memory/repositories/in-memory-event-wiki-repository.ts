@@ -5,7 +5,7 @@ import {injectable} from "inversify";
 import {PaginatedResult} from "../../paginated-result.js";
 import {WikiPage} from "../../../domain-entities/wiki-page.js";
 import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition.js";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants.js";
 
 @injectable()
 export default class InMemoryEventWikiRepository extends AbstractInMemoryRepository<EventWiki> implements EventWikiRepository {

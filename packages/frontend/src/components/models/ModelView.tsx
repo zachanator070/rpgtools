@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useGetModels from "../../hooks/model/useGetModels.js";
 import { Route, Routes } from "react-router-dom";
 import PermissionModal from "../modals/PermissionModal.js";
-import { MODEL } from "@rpgtools/common/src/type-constants";
+import { MODEL } from "@rpgtools/common/src/type-constants.js";
 import LoadingView from "../LoadingView.js";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import CreateModelModal from "./CreateModelModal.js";

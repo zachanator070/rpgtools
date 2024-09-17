@@ -3,7 +3,7 @@ import {
 	MODEL, MODELED_WIKI_TYPES,
 	WIKI_FOLDER,
 	WIKI_PAGE,
-} from "@rpgtools/common/src/type-constants";
+} from "@rpgtools/common/src/type-constants.js";
 import { WikiPage } from "../domain-entities/wiki-page.js";
 import { SecurityContext } from "../security/security-context.js";
 import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors.js";

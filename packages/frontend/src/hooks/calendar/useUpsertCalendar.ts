@@ -1,8 +1,8 @@
 import useCurrentWorld from "../world/useCurrentWorld.js";
 import {Age, Calendar} from "../../types.js";
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
-import {UPSERT_CALENDAR} from "@rpgtools/common/src/gql-mutations";
-import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries";
+import {UPSERT_CALENDAR} from "@rpgtools/common/src/gql-mutations.js";
+import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries.js";
 
 export interface UpsertCalendarVariables {
     calendarId?: string;

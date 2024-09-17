@@ -6,7 +6,7 @@ import useDeleteFolder from "../../../hooks/wiki/useDeleteFolder.js";
 import ToolTip from "../../widgets/ToolTip.js";
 import useImportContent from "../../../hooks/world/useImportContent.js";
 import PermissionEditor from "../../permissions/PermissionEditor.js";
-import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants.js";
 import {WikiFolder} from "../../../types.js";
 import MoveFolderModal from "../../modals/MoveFolderModal.js";
 import useModal from "../../widgets/useModal.js";

@@ -1,5 +1,5 @@
 import { WikiPage } from "./wiki-page.js";
-import { PLACE } from "@rpgtools/common/src/type-constants";
+import { PLACE } from "@rpgtools/common/src/type-constants.js";
 import {inject, injectable} from "inversify";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import {INJECTABLE_TYPES} from "../di/injectable-types.js";

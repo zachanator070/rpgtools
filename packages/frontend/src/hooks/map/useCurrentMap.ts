@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
 import {Place} from "../../types.js";
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
-import {GET_CURRENT_MAP} from "@rpgtools/common/src/gql-queries";
+import {GET_CURRENT_MAP} from "@rpgtools/common/src/gql-queries.js";
 
 interface CurrentMapVariables {
 	wikiId: string;

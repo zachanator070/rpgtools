@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Game} from "../../types.js";
-import {JOIN_GAME} from "@rpgtools/common/src/gql-mutations";
+import {JOIN_GAME} from "@rpgtools/common/src/gql-mutations.js";
 
 interface JoinGameVariables {
 	gameId: string;

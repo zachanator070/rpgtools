@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useCurrentGame from "../../hooks/game/useCurrentGame.js";
 import LeaveGameButton from "./LeaveGameButton.js";
-import { GAME } from "@rpgtools/common/src/type-constants";
+import { GAME } from "@rpgtools/common/src/type-constants.js";
 import {
 	ADD_MODEL_CONTROLS,
 	FOG_CONTROLS,

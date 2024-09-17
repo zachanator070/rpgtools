@@ -17,7 +17,7 @@ import {
 	PERSON,
 	PLACE,
 	WORLD,
-} from "@rpgtools/common/src/type-constants";
+} from "@rpgtools/common/src/type-constants.js";
 import { Model } from "../domain-entities/model.js";
 import { Chunk } from "../domain-entities/chunk.js";
 import { World } from "../domain-entities/world.js";

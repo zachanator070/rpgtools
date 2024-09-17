@@ -2,7 +2,7 @@ import {PathNode} from "./game.js";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import FogStrokeModel from "../dal/sql/models/game/fog-stroke-model.js";
 import {Repository} from "../dal/repository/repository.js";
-import {FOG_STROKE} from "@rpgtools/common/src/type-constants";
+import {FOG_STROKE} from "@rpgtools/common/src/type-constants.js";
 import {inject} from "inversify";
 import {INJECTABLE_TYPES} from "../di/injectable-types.js";
 import FogStrokeAuthorization from "../security/policy/fog-stroke-authorization-policy.js";

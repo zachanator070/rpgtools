@@ -1,7 +1,6 @@
-import useCurrentGame from "./useCurrentGame.js";
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {CharacterInput, Game} from "../../types.js";
-import {SET_CHARACTER_ORDER} from "@rpgtools/common/src/gql-mutations";
+import {SET_CHARACTER_ORDER} from "@rpgtools/common/src/gql-mutations.js";
 import {useParams} from "react-router-dom";
 
 interface SetCharacterOrderVariables {

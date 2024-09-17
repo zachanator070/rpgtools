@@ -1,6 +1,6 @@
 import {inject, injectable} from "inversify";
 import {WikiPage} from "./wiki-page.js";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants.js";
 import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
 import {Repository} from "../dal/repository/repository.js";
 import {INJECTABLE_TYPES} from "../di/injectable-types.js";

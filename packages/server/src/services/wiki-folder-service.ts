@@ -1,7 +1,7 @@
 import { WikiFolder } from "../domain-entities/wiki-folder.js";
 import { SecurityContext } from "../security/security-context.js";
-import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants";
-import {USER} from "@rpgtools/common/src/type-constants";
+import { FOLDER_ADMIN, FOLDER_RW } from "@rpgtools/common/src/permission-constants.js";
+import {USER} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {AuthorizationService} from "./authorization-service.js";

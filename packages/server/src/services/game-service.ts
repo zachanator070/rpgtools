@@ -6,10 +6,10 @@ import {
 	GAME_HOST,
 	GAME_PERMISSIONS,
 	GAME_READ,
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../resolvers/mutations/authentication-mutations.js";
-import { USER } from "@rpgtools/common/src/type-constants";
+import { USER } from "@rpgtools/common/src/type-constants.js";
 import { SecurityContext } from "../security/security-context.js";
 import {
 	Character, CharacterAttribute,

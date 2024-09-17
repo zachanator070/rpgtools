@@ -4,7 +4,7 @@ import LoadingView from "../LoadingView.js";
 import { Link } from "react-router-dom";
 import useGenerateRegisterCodes from "../../hooks/server/useGenerateRegisterCodes.js";
 import PermissionEditor from "../permissions/PermissionEditor.js";
-import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
+import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants.js";
 import PrimaryButton from "../widgets/PrimaryButton.js";
 import NumberInput from "../widgets/input/NumberInput.js";
 import ItemList from "../widgets/ItemList.js";

@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Game} from "../../types.js";
-import {CREATE_GAME} from "@rpgtools/common/src/gql-mutations";
+import {CREATE_GAME} from "@rpgtools/common/src/gql-mutations.js";
 import {useParams} from "react-router-dom";
 
 interface CreateGameVariables {

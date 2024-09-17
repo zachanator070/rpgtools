@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import EditPinModal from "../modals/EditPinModal.js";
-import { PLACE } from "@rpgtools/common/src/type-constants";
+import { PLACE } from "@rpgtools/common/src/type-constants.js";
 import {Pin} from "../../types.js";
 import MapWikiContext from "../../MapWikiContext.js";
 

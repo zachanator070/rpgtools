@@ -1,6 +1,6 @@
 import 'react';
-import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
-import {Calendar, Model, Place, WikiPage, World} from "../../../types.js";
+import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants.js";
+import {Calendar, Model, Place, WikiPage} from "../../../types.js";
 import useCreateImage from "../../../hooks/wiki/useCreateImage.js";
 import useUpdateWiki from "../../../hooks/wiki/useUpdateWiki.js";
 import useUpdatePlace from "../../../hooks/wiki/useUpdatePlace.js";

@@ -11,7 +11,7 @@ import {
 	WIKI_READ_ALL,
 	WIKI_RW,
 	WIKI_RW_ALL,
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()

@@ -5,7 +5,7 @@ import {
 	RepositoryAccessor
 } from "../types";
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy.js";
-import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants";
+import { WIKI_FOLDER } from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {Repository} from "../dal/repository/repository.js";

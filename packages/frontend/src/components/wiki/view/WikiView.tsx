@@ -1,9 +1,9 @@
 import React, {ReactElement, useRef, useState} from "react";
 import Editor from "../Editor.js";
 import useCurrentWorld from "../../../hooks/world/useCurrentWorld.js";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingView from "../../LoadingView.js";
-import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants";
+import {EVENT_WIKI, MODELED_WIKI_TYPES, PLACE} from "@rpgtools/common/src/type-constants.js";
 import ModelViewer from "../../models/ModelViewer.js";
 import {EventWiki, ModeledWiki, Place, WikiPage} from "../../../types.js";
 import usePins from "../../../hooks/map/usePins.js";

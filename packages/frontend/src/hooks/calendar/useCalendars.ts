@@ -1,6 +1,6 @@
 import useGQLQuery, {GqlQueryResult} from "../useGQLQuery.js";
 import {Calendar} from "../../types.js";
-import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries";
+import {GET_CALENDARS} from "@rpgtools/common/src/gql-queries.js";
 import useCurrentWorld from "../world/useCurrentWorld.js";
 
 

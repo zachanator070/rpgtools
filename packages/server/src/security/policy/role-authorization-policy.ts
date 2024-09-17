@@ -9,8 +9,8 @@ import {
 	ROLE_READ_ALL,
 	ROLE_RW,
 	ROLE_RW_ALL,
-} from "@rpgtools/common/src/permission-constants";
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
+} from "@rpgtools/common/src/permission-constants.js";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants.js";
 import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context.js";
 

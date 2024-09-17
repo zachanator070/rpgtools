@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { SecurityContext } from "../security/security-context.js";
-import {USER} from "@rpgtools/common/src/type-constants";
-import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants";
+import {USER} from "@rpgtools/common/src/type-constants.js";
+import { WIKI_ADMIN, WIKI_RW } from "@rpgtools/common/src/permission-constants.js";
 import { Readable } from "stream";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { ModeledPage } from "../domain-entities/modeled-page.js";

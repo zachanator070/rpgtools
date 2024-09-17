@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {Game} from "../../types.js";
-import {ADD_MODEL} from "@rpgtools/common/src/gql-mutations";
+import {ADD_MODEL} from "@rpgtools/common/src/gql-mutations.js";
 
 interface AddModelVariables {
 	gameId: string;

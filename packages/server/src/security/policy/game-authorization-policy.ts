@@ -9,7 +9,7 @@ import {
 	GAME_PAINT,
 	GAME_READ,
 	GAME_RW,
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context.js";
 

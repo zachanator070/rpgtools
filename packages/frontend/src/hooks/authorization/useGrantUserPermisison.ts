@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation.js";
 import {World} from "../../types.js";
-import {GRANT_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations";
+import {GRANT_USER_PERMISSION} from "@rpgtools/common/src/gql-mutations.js";
 
 interface GrantUserPermissionVariables {
 	userId: string;

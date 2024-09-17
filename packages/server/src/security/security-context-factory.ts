@@ -2,8 +2,8 @@ import { User } from "../domain-entities/user.js";
 import { injectable } from "inversify";
 import { Role } from "../domain-entities/role.js";
 import { SecurityContext } from "./security-context.js";
-import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants.js";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants.js";
 import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()

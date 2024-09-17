@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants";
-import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants";
+import {ROLE, WIKI_FOLDER, WIKI_PAGE, WORLD} from "@rpgtools/common/src/type-constants.js";
+import { getPermissionsBySubjectType } from "@rpgtools/common/src/permission-constants.js";
 import SelectRole from "../select/SelectRole.js";
 import useCurrentWorld from "../../hooks/world/useCurrentWorld.js";
 import SelectWiki from "../select/SelectWiki.js";

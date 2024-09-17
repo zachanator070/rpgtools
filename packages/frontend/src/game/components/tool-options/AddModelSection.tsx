@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useAddModel from "../../../hooks/game/useAddModel.js";
 import useCurrentGame from "../../../hooks/game/useCurrentGame.js";
-import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
+import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants.js";
 import {ModeledWiki} from "../../../types.js";
 import Toggle from "../../../components/widgets/Toggle.js";
 import SelectWiki from "../../../components/select/SelectWiki.js";
