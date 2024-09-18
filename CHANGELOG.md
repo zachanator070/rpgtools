@@ -1,2 +1,2 @@
- ### RPG Tools v5.2.2 Changelog
- - updated to using latest LTS Node v22.17
+ ### RPG Tools v5.2.3 Changelog
+ - Fixed a bug where linking wikis in the wiki content while using sqlite would not work properly.
