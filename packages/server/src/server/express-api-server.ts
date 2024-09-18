@@ -25,10 +25,8 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import {GraphQLRequest} from "apollo-server-types";
 import cors from "cors";
 import {ExpressCookieManager} from "./express-cookie-manager";
-import * as url from 'url';
 import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware";
 import {ExpressSessionContextFactory} from "./express-session-context-factory";
-import * as module from "node:module";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -114,8 +112,7 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/models", ModelRouter);
 		this.expressServer.use("/export", ExportRouter);
 
-		// @ts-expect-error
-		const currentDir = __dirname || import.meta.directory;
+		const currentDir = __dirname;
 		// /opt/rpgtools/packages/server/dist/frontend
 		// need to output in the server package so electron app is packaged with UI bundle
 		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
