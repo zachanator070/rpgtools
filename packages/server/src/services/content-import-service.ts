@@ -17,8 +17,8 @@ import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory";
 import {MODEL_ADMIN, MODEL_RW, WIKI_ADMIN, WIKI_RW} from "@rpgtools/common/src/permission-constants";
 import {USER} from "@rpgtools/common/src/type-constants";
 import {World} from "../domain-entities/world";
+import axios from 'axios';
 
-import fetch from 'node-fetch';
 import {Readable} from "stream";
 
 @injectable()
@@ -50,9 +50,13 @@ export class ContentImportService {
 		rootFolder.children.push(topFolder._id);
 		await databaseContext.wikiFolderRepository.update(rootFolder);
 
-		const response = await fetch(this.srdZipUrl);
+		const response = await axios({
+			method: 'get',
+			url: this.srdZipUrl,
+			responseType: 'stream',
+		});
 
-		await this.importContent(context, rootFolder._id, new Readable().wrap(response.body), databaseContext);
+		await this.importContent(context, rootFolder._id, new Readable().wrap(response.data), databaseContext);
 
 		return world;
 	}

@@ -1,5 +1,11 @@
-import gql from "graphql-tag";
-export const WIKIS_IN_FOLDER_ATTRIBUTES = `
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PIN_ATTRIBUTES = exports.GAME_ATTRIBUTES = exports.GAME_FOG = exports.GAME_MODELS = exports.GAME_MODEL = exports.GAME_STROKE = exports.GAME_MAP = exports.GAME_CHARACTERS = exports.GAME_MESSAGE = exports.CURRENT_WIKI_ATTRIBUTES = exports.EVENT_WIKI_ATTRIBUTES = exports.MODEL_ATTRIBUTES = exports.CURRENT_WIKI_PLACE_ATTRIBUTES = exports.SERVER_CONFIG_ROLES = exports.CURRENT_WORLD_CALENDAR = exports.CURRENT_WORLD_ROLES = exports.CURRENT_WORLD_FOLDERS = exports.CURRENT_WORLD_WIKIS = exports.ACCESS_CONTROL_LIST = exports.WIKIS_IN_FOLDER_ATTRIBUTES = void 0;
+const graphql_tag_1 = __importDefault(require("graphql-tag"));
+exports.WIKIS_IN_FOLDER_ATTRIBUTES = `
 	...currentWorldWikis
 	folder{
 		_id
@@ -9,7 +15,7 @@ export const WIKIS_IN_FOLDER_ATTRIBUTES = `
 		_id
 	}
 `;
-export const ACCESS_CONTROL_LIST = gql `
+exports.ACCESS_CONTROL_LIST = (0, graphql_tag_1.default) `
     fragment accessControlList on PermissionControlled {
         ... on PermissionControlled {
             canWrite
@@ -31,7 +37,7 @@ export const ACCESS_CONTROL_LIST = gql `
         }
     }
 `;
-export const CURRENT_WORLD_WIKIS = gql `
+exports.CURRENT_WORLD_WIKIS = (0, graphql_tag_1.default) `
     fragment currentWorldWikis on WikiPage {
         _id
         name
@@ -53,8 +59,8 @@ export const CURRENT_WORLD_WIKIS = gql `
         }
     }
 `;
-export const CURRENT_WORLD_FOLDERS = gql `
-    ${ACCESS_CONTROL_LIST}
+exports.CURRENT_WORLD_FOLDERS = (0, graphql_tag_1.default) `
+    ${exports.ACCESS_CONTROL_LIST}
     fragment currentWorldFolders on WikiFolder {
         _id
         name
@@ -67,8 +73,8 @@ export const CURRENT_WORLD_FOLDERS = gql `
         ...accessControlList
 	}
 `;
-export const CURRENT_WORLD_ROLES = gql `
-    ${ACCESS_CONTROL_LIST}
+exports.CURRENT_WORLD_ROLES = (0, graphql_tag_1.default) `
+    ${exports.ACCESS_CONTROL_LIST}
     fragment currentWorldRoles on Role {
         _id
         name
@@ -84,8 +90,8 @@ export const CURRENT_WORLD_ROLES = gql `
         ...accessControlList
     }
 `;
-export const CURRENT_WORLD_CALENDAR = gql `
-    ${ACCESS_CONTROL_LIST}
+exports.CURRENT_WORLD_CALENDAR = (0, graphql_tag_1.default) `
+    ${exports.ACCESS_CONTROL_LIST}
     fragment currentWorldCalendar on Calendar {
         _id
         name
@@ -106,8 +112,8 @@ export const CURRENT_WORLD_CALENDAR = gql `
         ...accessControlList
     }
 `;
-export const SERVER_CONFIG_ROLES = gql `
-    ${ACCESS_CONTROL_LIST}
+exports.SERVER_CONFIG_ROLES = (0, graphql_tag_1.default) `
+    ${exports.ACCESS_CONTROL_LIST}
     fragment serverConfigRoles on ServerConfig {
         roles{
             _id
@@ -125,7 +131,7 @@ export const SERVER_CONFIG_ROLES = gql `
         }
     }
 `;
-export const CURRENT_WIKI_PLACE_ATTRIBUTES = gql `
+exports.CURRENT_WIKI_PLACE_ATTRIBUTES = (0, graphql_tag_1.default) `
     fragment currentWikiPlaceAttributes on Place {
         mapImage {
             _id
@@ -147,8 +153,8 @@ export const CURRENT_WIKI_PLACE_ATTRIBUTES = gql `
         pixelsPerFoot
     }
 `;
-export const MODEL_ATTRIBUTES = gql `
-    ${ACCESS_CONTROL_LIST}
+exports.MODEL_ATTRIBUTES = (0, graphql_tag_1.default) `
+    ${exports.ACCESS_CONTROL_LIST}
     fragment modelAttributes on Model {
         _id
         name
@@ -161,7 +167,7 @@ export const MODEL_ATTRIBUTES = gql `
         ...accessControlList
     }
 `;
-export const EVENT_WIKI_ATTRIBUTES = gql `
+exports.EVENT_WIKI_ATTRIBUTES = (0, graphql_tag_1.default) `
     fragment eventWikiAttributes on Event {
         _id
         name
@@ -192,11 +198,11 @@ export const EVENT_WIKI_ATTRIBUTES = gql `
         second
     }
 `;
-export const CURRENT_WIKI_ATTRIBUTES = gql `
-    ${EVENT_WIKI_ATTRIBUTES}
-    ${CURRENT_WIKI_PLACE_ATTRIBUTES}
-    ${MODEL_ATTRIBUTES}
-    ${ACCESS_CONTROL_LIST}
+exports.CURRENT_WIKI_ATTRIBUTES = (0, graphql_tag_1.default) `
+    ${exports.EVENT_WIKI_ATTRIBUTES}
+    ${exports.CURRENT_WIKI_PLACE_ATTRIBUTES}
+    ${exports.MODEL_ATTRIBUTES}
+    ${exports.ACCESS_CONTROL_LIST}
     fragment currentWikiAttributes on WikiPage {
         _id
         type
@@ -244,7 +250,7 @@ export const CURRENT_WIKI_ATTRIBUTES = gql `
         }
     }
 `;
-export const GAME_MESSAGE = gql `
+exports.GAME_MESSAGE = (0, graphql_tag_1.default) `
     fragment gameMessage on GameMessage {
         sender
         receiver
@@ -252,7 +258,7 @@ export const GAME_MESSAGE = gql `
         timestamp
     }
 `;
-export const GAME_CHARACTERS = gql `
+exports.GAME_CHARACTERS = (0, graphql_tag_1.default) `
     fragment gameCharacters on Game {
         characters {
             _id
@@ -270,7 +276,7 @@ export const GAME_CHARACTERS = gql `
         }
     }
 `;
-export const GAME_MAP = gql `
+exports.GAME_MAP = (0, graphql_tag_1.default) `
     fragment gameMap on Place {
         _id
         name
@@ -288,7 +294,7 @@ export const GAME_MAP = gql `
         pixelsPerFoot
     }
 `;
-export const GAME_STROKE = gql `
+exports.GAME_STROKE = (0, graphql_tag_1.default) `
     fragment gameStroke on Stroke {
         _id
         path{
@@ -302,7 +308,7 @@ export const GAME_STROKE = gql `
         fill
     }
 `;
-export const GAME_MODEL = gql `
+exports.GAME_MODEL = (0, graphql_tag_1.default) `
     fragment gameModel on PositionedModel {
         _id
         model{
@@ -325,15 +331,15 @@ export const GAME_MODEL = gql `
         }
     }
 `;
-export const GAME_MODELS = gql `
-    ${GAME_MODEL}
+exports.GAME_MODELS = (0, graphql_tag_1.default) `
+    ${exports.GAME_MODEL}
     fragment gameModels on Game {
         models{
             ...gameModel
         }
     }
 `;
-export const GAME_FOG = gql `
+exports.GAME_FOG = (0, graphql_tag_1.default) `
     fragment gameFog on FogStroke {
         _id
         path{
@@ -345,12 +351,12 @@ export const GAME_FOG = gql `
         size
     }
 `;
-export const GAME_ATTRIBUTES = gql `
-    ${GAME_MAP}
-    ${GAME_CHARACTERS}
-    ${GAME_MESSAGE}
-    ${GAME_MODELS}
-    ${ACCESS_CONTROL_LIST}
+exports.GAME_ATTRIBUTES = (0, graphql_tag_1.default) `
+    ${exports.GAME_MAP}
+    ${exports.GAME_CHARACTERS}
+    ${exports.GAME_MESSAGE}
+    ${exports.GAME_MODELS}
+    ${exports.ACCESS_CONTROL_LIST}
     fragment gameAttributes on Game {
         _id
         map {
@@ -373,7 +379,7 @@ export const GAME_ATTRIBUTES = gql `
     }
 	
 `;
-export const PIN_ATTRIBUTES = gql `
+exports.PIN_ATTRIBUTES = (0, graphql_tag_1.default) `
     fragment pinAttributes on Pin {
         _id
         canWrite
