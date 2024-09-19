@@ -45,7 +45,7 @@
     "graphql-ws": "^5.9.0",
     "gridfs-stream": "^1.1.1",
     "inversify": "^5.1.1",
-    "jimp": "^0.16.1",
+    "jimp": "^1.6.0",
     "jsonwebtoken": "^9.0.0",
     "minimist": "^1.2.5",
     "morgan": "^1.10.0",
