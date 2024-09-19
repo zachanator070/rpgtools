@@ -27,7 +27,7 @@
 		"@types/three": "^0.167.1",
 		"@webpack-cli/generators": "^2.5.0",
 		"antd": "^4.21.4",
-		"apollo-upload-client": "^17.0.0",
+		"apollo-upload-client": "^18.0.1",
 		"babel-loader": "^8.2.5",
 		"babel-plugin-dynamic-import-node": "^2.3.3",
 		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
