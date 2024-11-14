@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "@graphql-tools/schema": "^8.1.0",
+    "@graphql-tools/schema": "^10.0.8",
     "@rpgtools/common": "*",
     "@types/bson": "^4.2.0",
     "apollo-server": "^3.1.2",
