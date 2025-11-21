@@ -1,5 +1,7 @@
 # node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
-FROM node:20.17-slim as base
+FROM node:24-slim AS base
+
+RUN apt-get update && apt-get upgrade -y && apt-get clean
 
 ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
@@ -40,7 +42,7 @@ EXPOSE 3000
 
 CMD ["npm", "run", "--workspace=packages/server", "dev:start"]
 
-FROM base as prod
+FROM base AS prod
 ADD  packages/server/dist packages/server/dist
 
 CMD ["npm", "run", "--workspace=packages/server", "start"]
