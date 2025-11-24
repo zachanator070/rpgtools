@@ -17,7 +17,7 @@ import fs from "fs";
 import {ImageService} from "../../../../src/services/image-service";
 import {WikiPageService} from "../../../../src/services/wiki-page-service";
 import {ModelService} from "../../../../src/services/model-service";
-import {FileUpload} from "graphql-upload";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
 import {v4 as uuidv4} from 'uuid';
 
 process.env.TEST_SUITE = "game-mutations-test";

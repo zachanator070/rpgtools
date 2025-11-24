@@ -21,7 +21,7 @@ import UserFactory from "../../src/domain-entities/factory/user-factory";
 import {ImageService} from "../../src/services/image-service";
 import fs from "fs";
 import {Image} from "../../src/domain-entities/image";
-import {FileUpload} from "graphql-upload";
+import { FileUpload } from "graphql-upload/processRequest.mjs";
 import { Model } from "../../src/domain-entities/model";
 import {Game} from "../../src/domain-entities/game";
 import {ModelService} from "../../src/services/model-service";

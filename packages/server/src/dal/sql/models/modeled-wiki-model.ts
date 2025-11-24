@@ -28,5 +28,5 @@ export default class ModeledWikiModel extends WikiPageChild {
     declare modelColor: string;
     declare pageModelId: string;
 
-    getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
+    declare getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
 }

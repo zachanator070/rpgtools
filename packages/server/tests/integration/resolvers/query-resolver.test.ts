@@ -15,6 +15,7 @@ import {WikiFolderService} from "../../../src/services/wiki-folder-service";
 import {TEST_INJECTABLE_TYPES} from "../injectable-types";
 import {DbEngine} from "../../../src/types";
 import {accessControlList} from "./common-testing-assertions";
+import { expect, it } from 'vitest';
 
 process.env.TEST_SUITE = "query-resolver-test";
 

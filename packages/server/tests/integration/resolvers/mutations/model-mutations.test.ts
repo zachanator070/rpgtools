@@ -1,5 +1,6 @@
 import {DefaultTestingContext} from "../../default-testing-context";
-import {FileUpload, Upload} from "graphql-upload";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 import fs from "fs";
 import {ModelService} from "../../../../src/services/model-service";
 import {container} from "../../../../src/di/inversify";

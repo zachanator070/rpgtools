@@ -1,4 +1,108 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`server mutations > generate register codes no permission 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "generateRegisterCodes",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`server mutations > set default world no permission 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "setDefaultWorld",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`server mutations > with locked server > unlock twice 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": {
+        "unlockServer": null,
+      },
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "unlockServer",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
 
 exports[`server mutations generate register codes no permission 1`] = `
 {

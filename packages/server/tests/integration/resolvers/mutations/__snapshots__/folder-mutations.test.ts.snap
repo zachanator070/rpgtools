@@ -1,4 +1,106 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`folder-mutations > with tester logged in and world created > delete root folder 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "deleteFolder",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`folder-mutations > with tester logged in and world created > with unauthenticated user > create folder permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "createFolder",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`folder-mutations > with tester logged in and world created > with unauthenticated user > rename folder permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "renameFolder",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
 
 exports[`folder-mutations with tester logged in and world created as other user no permission to child 1`] = `
 {

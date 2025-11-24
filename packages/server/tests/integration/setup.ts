@@ -9,7 +9,6 @@ import {MockSessionContextFactory} from "./mock-session-context-factory";
 import {DefaultTestingContext} from "./default-testing-context";
 import {TEST_INJECTABLE_TYPES} from "./injectable-types";
 import RpgToolsServer from "../../src/server/rpgtools-server";
-import {jest} from '@jest/globals'
 
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";
 process.env.REFRESH_TOKEN_SECRET = "asdf1234";
@@ -17,9 +16,6 @@ process.env.REFRESH_TOKEN_SECRET = "asdf1234";
 process.env.NODE_ENV = "test";
 
 bindAll();
-
-// 5 minutes
-jest.setTimeout(1000 * 60 * 5);
 
 container
 	.rebind<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory)

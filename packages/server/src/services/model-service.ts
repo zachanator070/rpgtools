@@ -7,7 +7,7 @@ import {USER} from "@rpgtools/common/src/type-constants";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { SecurityContext } from "../security/security-context";
-import { FileUpload } from "graphql-upload";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
 import { Model } from "../domain-entities/model";
 import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
 import {AuthorizationService} from "./authorization-service";

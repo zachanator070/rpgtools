@@ -57,7 +57,7 @@ export default class EventWikiModel extends WikiPageChild {
     };
 
 
-    getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
+    declare getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
 
     static connect() {
         setupWikiPageAssociations(EventWikiModel, EVENT_WIKI);

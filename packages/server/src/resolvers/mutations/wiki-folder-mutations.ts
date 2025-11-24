@@ -1,5 +1,5 @@
 import { SessionContext } from "../../types";
-import { FileUpload } from "graphql-upload";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
 import { container } from "../../di/inversify";
 import { INJECTABLE_TYPES } from "../../di/injectable-types";
 import {ContentImportService} from "../../services/content-import-service";

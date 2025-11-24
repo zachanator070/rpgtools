@@ -1,4 +1,74 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`query resolver > with world > with authenticated user > get roles permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 38,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'worldRepository')",
+          "path": [
+            "roles",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`query resolver > with world > world 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": {
+        "world": null,
+      },
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 35,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'worldRepository')",
+          "path": [
+            "world",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
 
 exports[`query resolver with world no current user 1`] = `
 {

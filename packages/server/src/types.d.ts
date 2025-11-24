@@ -1,6 +1,6 @@
 import {SecurityContext} from "./security/security-context";
 import {Readable, Writable} from "stream";
-import {GraphQLRequest, GraphQLResponse} from "apollo-server-types"
+import {GraphQLRequest} from "@apollo/server";
 import {DocumentNode} from "graphql";
 import {Repository} from "./dal/repository/repository";
 import {ChunkRepository} from "./dal/repository/chunk-repository";
@@ -140,13 +140,20 @@ export interface DataLoader<T extends DomainEntity> {
 	getPermissionControlledDocuments: (context: SecurityContext, ids: string[], databaseContext: DatabaseContext) => Promise<T[]>;
 }
 
+export interface ApiServerRequest {
+	query: DocumentNode;
+	variables?: {[key: string]: any};
+	headers?: {[key: string]: string};
+}
+
+export interface ApiServerResponse {
+	data?: any;
+	errors?: any;
+}
+
 export interface ApiServer {
 	start: () => Promise<void>;
-	executeGraphQLQuery: (
-		request: Omit<GraphQLRequest, 'query'> & {
-			query?: string | DocumentNode;
-		},
-	) => Promise<GraphQLResponse>;
+	executeGraphQLQuery: (request: ApiServerRequest) => Promise<ApiServerResponse>;
 }
 
 export interface DbEngine {

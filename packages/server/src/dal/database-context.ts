@@ -1,5 +1,5 @@
 import {RepositoryAccessor} from "../types";
-import {inject, injectable} from "inversify";
+import {injectable} from "inversify";
 import {ArticleRepository} from "./repository/article-repository";
 import {GameRepository} from "./repository/game-repository";
 import {FileRepository} from "./repository/file-repository";

@@ -3,21 +3,15 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["reflect-metadata", "jest"],
-    "lib": ["es2020", "es6"],
-    "module": "commonjs",
+    "types": ["reflect-metadata", "vitest/globals"],
+    "module": "node20",
     "esModuleInterop": true,
-    "target": "es2017",
+    "target": "ES2024",
     "noImplicitAny": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "sourceMap": true,
     "outDir": "./dist/server",
     "baseUrl": ".",
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    }
   },
   "include": [
     "src/**/*.ts",

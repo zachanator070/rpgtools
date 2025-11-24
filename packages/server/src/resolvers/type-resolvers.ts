@@ -1,4 +1,4 @@
-import { GraphQLUpload } from "graphql-upload";
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 import { container } from "../di/inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types";
 import { World } from "../domain-entities/world";
@@ -25,9 +25,6 @@ import {Game, InGameModel, Message} from "../domain-entities/game";
 import EntityMapper from "../domain-entities/entity-mapper";
 import {MESSAGE_ALL_RECEIVE} from "../services/game-service";
 import {ServerConfigService} from "../services/server-config-service";
-import {FileRepository} from "../dal/repository/file-repository";
-import {RoleRepository} from "../dal/repository/role-repository";
-import {UserRepository} from "../dal/repository/user-repository";
 import RoleFactory from "../domain-entities/factory/role-factory";
 import GameFactory from "../domain-entities/factory/game-factory";
 import ModelFactory from "../domain-entities/factory/model-factory";

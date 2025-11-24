@@ -1,4 +1,276 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`authorization-mutations > with tester logged in and world created > addUserRole permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 38,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "addUserRole",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > createRole permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 38,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "createRole",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > deleteRole permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "deleteRole",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > grantRolePermission permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "grantRolePermission",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > grantUserPermission permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 23,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "grantUserPermission",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > removeUserRole permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 38,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "removeUserRole",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > revokeRolePermission permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 2,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "revokeRolePermission",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > revokeUserPermission permission denied 1`] = `
+{
+  "body": {
+    "kind": "single",
+    "singleResult": {
+      "data": null,
+      "errors": [
+        {
+          "extensions": {
+            "code": "INTERNAL_SERVER_ERROR",
+          },
+          "locations": [
+            {
+              "column": 3,
+              "line": 23,
+            },
+          ],
+          "message": "Cannot read properties of undefined (reading 'openTransaction')",
+          "path": [
+            "revokeUserPermission",
+          ],
+        },
+      ],
+    },
+  },
+  "http": {
+    "headers": Map {
+      "cache-control" => "no-store",
+    },
+    "status": undefined,
+  },
+}
+`;
 
 exports[`authorization-mutations with tester logged in and world created addUserRole 1`] = `
 {

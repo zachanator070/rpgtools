@@ -1,5 +1,6 @@
 import fs from "fs";
-import { FileUpload, Upload } from "graphql-upload";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
 import {container} from "../../../../src/di/inversify";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types";

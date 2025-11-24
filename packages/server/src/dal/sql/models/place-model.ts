@@ -25,7 +25,7 @@ export default class PlaceModel extends WikiPageChild {
         }
     };
 
-    getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
+    declare getWikiPage: BelongsToGetAssociationMixin<WikiPageModel>;
 
     static connect() {
         PlaceModel.belongsTo(ImageModel, {as: 'mapImage'});
