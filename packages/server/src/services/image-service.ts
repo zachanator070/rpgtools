@@ -1,14 +1,14 @@
-import { Image } from "../domain-entities/image";
-import { File } from "../domain-entities/file";
-import { Chunk } from "../domain-entities/chunk";
+import { Image } from "../domain-entities/image.js";
+import { File } from "../domain-entities/file.js";
+import { Chunk } from "../domain-entities/chunk.js";
 import Jimp from "jimp";
 import { Readable } from "stream";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {DatabaseContext} from "../dal/database-context";
-import ImageFactory from "../domain-entities/factory/image-factory";
-import ChunkFactory from "../domain-entities/factory/chunk-factory";
-import FileFactory from "../domain-entities/factory/file-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import ImageFactory from "../domain-entities/factory/image-factory.js";
+import ChunkFactory from "../domain-entities/factory/chunk-factory.js";
+import FileFactory from "../domain-entities/factory/file-factory.js";
 
 @injectable()
 export class ImageService {

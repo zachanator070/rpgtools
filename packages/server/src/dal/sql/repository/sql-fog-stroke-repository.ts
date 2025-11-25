@@ -1,14 +1,14 @@
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {FogStroke} from "../../../domain-entities/fog-stroke";
-import FogStrokeModel from "../models/game/fog-stroke-model";
-import FogStrokeFactory from "../../../domain-entities/factory/game/fog-stroke-factory";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {FogStroke} from "../../../domain-entities/fog-stroke.js";
+import FogStrokeModel from "../models/game/fog-stroke-model.js";
+import FogStrokeFactory from "../../../domain-entities/factory/game/fog-stroke-factory.js";
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
 import {ModelStatic} from "sequelize";
-import FogStrokeRepository from "../../repository/fog-stroke-repository";
-import PathNodeModel from "../models/game/path-node-model";
+import FogStrokeRepository from "../../repository/fog-stroke-repository.js";
+import PathNodeModel from "../models/game/path-node-model.js";
 import {v4} from "uuid";
-import {PaginatedResult} from "../../paginated-result";
+import {PaginatedResult} from "../../paginated-result.js";
 
 @injectable()
 export default class SqlFogStrokeRepository extends AbstractSqlRepository<FogStroke, FogStrokeModel> implements FogStrokeRepository{

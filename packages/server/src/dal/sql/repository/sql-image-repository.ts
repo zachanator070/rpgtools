@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Image} from "../../../domain-entities/image";
-import ImageModel from "../models/image-model";
-import {ImageRepository} from "../../repository/image-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import ImageFactory from "../../../domain-entities/factory/image-factory";
-import ChunkModel from "../models/chunk-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Image} from "../../../domain-entities/image.js";
+import ImageModel from "../models/image-model.js";
+import {ImageRepository} from "../../repository/image-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import ImageFactory from "../../../domain-entities/factory/image-factory.js";
+import ChunkModel from "../models/chunk-model.js";
 
 
 @injectable()

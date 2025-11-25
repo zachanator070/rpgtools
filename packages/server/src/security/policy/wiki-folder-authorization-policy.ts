@@ -1,5 +1,5 @@
-import {EntityAuthorizationPolicy} from "../../types";
-import { SecurityContext } from "../security-context";
+import {EntityAuthorizationPolicy} from "../../types.js";
+import { SecurityContext } from "../security-context.js";
 import {
 	FOLDER_ADMIN,
 	FOLDER_ADMIN_ALL,
@@ -9,10 +9,10 @@ import {
 	FOLDER_RW,
 	FOLDER_RW_ALL,
 	FOLDER_RW_ALL_CHILDREN,
-} from "@rpgtools/common/src/permission-constants";
-import { WikiFolder } from "../../domain-entities/wiki-folder";
+} from "@rpgtools/common/src/permission-constants.js";
+import { WikiFolder } from "../../domain-entities/wiki-folder.js";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 
 @injectable()

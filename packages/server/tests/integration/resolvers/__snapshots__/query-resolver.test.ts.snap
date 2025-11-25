@@ -1,72 +1,341 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`query resolver > with world > with authenticated user > get roles permission denied 1`] = `
+exports[`query resolver > with world > no current user 1`] = `
 {
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
+  "data": {
+    "currentUser": {
+      "_id": Any<String>,
+      "currentWorld": null,
+      "email": null,
+      "roles": [],
+      "username": "Anonymous",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > users 1`] = `
+{
+  "data": {
+    "users": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "page": 1,
+      "totalPages": 1,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > wiki no permission 1`] = `
+{
+  "data": {
+    "wiki": null,
+  },
+  "errors": ArrayContaining [
+    ObjectContaining {
+      "message": Any<String>,
+    },
+  ],
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > current user 1`] = `
+{
+  "data": {
+    "currentUser": {
+      "_id": Any<String>,
+      "currentWorld": null,
+      "email": "tester@gmail.com",
+      "roles": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "username": "tester",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > get roles 1`] = `
+{
+  "data": {
+    "roles": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "accessControlList": Any<Array>,
+          "members": Any<Array>,
+          "world": {
+            "_id": Any<String>,
           },
-          "locations": [
-            {
-              "column": 3,
-              "line": 38,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'worldRepository')",
-          "path": [
-            "roles",
-          ],
         },
       ],
     },
   },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > get roles permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 38,
+        },
+      ],
+      "message": "You do not have permission to read this World",
+      "path": [
+        "roles",
+      ],
     },
-    "status": undefined,
+  ],
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > wiki 1`] = `
+{
+  "data": {
+    "wiki": {
+      "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "Earth",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
   },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > wikis in folder 1`] = `
+{
+  "data": {
+    "wikisInFolder": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > with hosted game > get a game 1`] = `
+{
+  "data": {
+    "game": ObjectContaining {
+      "_id": Any<String>,
+      "characters": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "name": "tester",
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > with hosted game > get my games 1`] = `
+{
+  "data": {
+    "myGames": ArrayContaining [
+      ObjectContaining {
+        "_id": Any<String>,
+      },
+    ],
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get all events 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get all events in second calendar 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get only events related to world wiki page 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get only events related to world wiki page in second calendar 1`] = `
+{
+  "data": {
+    "events": {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+        },
+      ],
+      "nextPage": null,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > world 1`] = `
+{
+  "data": {
+    "world": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "canAddModels": true,
+      "canAddRoles": true,
+      "canAdmin": true,
+      "canHostGame": true,
+      "canWrite": true,
+      "name": "Earth",
+      "rootFolder": {
+        "_id": Any<String>,
+        "accessControlList": [],
+        "canAdmin": true,
+        "canWrite": true,
+        "children": ArrayContaining [
+          ObjectContaining {
+            "_id": Any<String>,
+          },
+        ],
+        "name": "Earth",
+      },
+      "wikiPage": {
+        "_id": Any<String>,
+        "mapImage": null,
+        "name": "Earth",
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with authenticated user > worlds with one private and one public world 1`] = `
+{
+  "data": {
+    "worlds": ObjectContaining {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "wikiPage": ObjectContaining {
+            "_id": Any<String>,
+          },
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > with hosted game > get a game permission denied 1`] = `
+{
+  "data": null,
+  "errors": Any<Array>,
 }
 `;
 
 exports[`query resolver > with world > world 1`] = `
 {
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": {
-        "world": null,
-      },
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
+  "data": {
+    "world": null,
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`query resolver > with world > worlds with one private and one public world 1`] = `
+{
+  "data": {
+    "worlds": ObjectContaining {
+      "docs": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "wikiPage": ObjectContaining {
+            "_id": Any<String>,
           },
-          "locations": [
-            {
-              "column": 3,
-              "line": 35,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'worldRepository')",
-          "path": [
-            "world",
-          ],
         },
       ],
     },
   },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
+  "errors": undefined,
 }
 `;
 
@@ -79,29 +348,6 @@ exports[`query resolver with world no current user 1`] = `
       "email": null,
       "roles": [],
       "username": "Anonymous",
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`query resolver with world users 1`] = `
-{
-  "data": {
-    "users": {
-      "docs": ArrayContaining [
-        ObjectContaining {
-          "_id": Any<String>,
-        },
-      ],
-      "page": 1,
-      "totalPages": 1,
     },
   },
   "errors": undefined,
@@ -461,21 +707,6 @@ exports[`query resolver with world with hosted game get a game permission denied
 {
   "data": null,
   "errors": Any<Array>,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`query resolver with world world 1`] = `
-{
-  "data": {
-    "world": null,
-  },
-  "errors": undefined,
   "extensions": undefined,
   "http": {
     "headers": Headers {

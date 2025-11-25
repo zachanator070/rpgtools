@@ -1,8 +1,8 @@
 import {injectable} from "inversify";
-import {GraphqlDataloader} from "../graphql-dataloader";
-import Calendar from "../../domain-entities/calendar";
-import {DatabaseContext} from "../database-context";
-import {Repository} from "../repository/repository";
+import {GraphqlDataloader} from "../graphql-dataloader.js";
+import Calendar from "../../domain-entities/calendar.js";
+import {DatabaseContext} from "../database-context.js";
+import {Repository} from "../repository/repository.js";
 
 
 @injectable()

@@ -1,12 +1,12 @@
 import {
 	DataLoader as DataLoaderInt,
 	DomainEntity
-} from "../types";
+} from "../types.js";
 import DataLoader from "dataloader";
-import { SecurityContext } from "../security/security-context";
+import { SecurityContext } from "../security/security-context.js";
 import { injectable } from "inversify";
-import {Repository} from "./repository/repository";
-import {DatabaseContext} from "./database-context";
+import {Repository} from "./repository/repository.js";
+import {DatabaseContext} from "./database-context.js";
 
 @injectable()
 export abstract class GraphqlDataloader<T extends DomainEntity> implements DataLoaderInt<T> {

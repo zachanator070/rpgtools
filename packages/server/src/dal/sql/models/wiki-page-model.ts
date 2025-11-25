@@ -5,12 +5,12 @@ import {
     DataTypes,
     ModelStatic
 } from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
-import WorldModel from "./world-model";
-import ImageModel from "./image-model";
-import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
-import WikiPageToWikiPageModel from "./wiki-page-to-wiki-page-model";
+import {defaultAttributes} from "./default-attributes.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
+import WorldModel from "./world-model.js";
+import ImageModel from "./image-model.js";
+import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants.js";
+import WikiPageToWikiPageModel from "./wiki-page-to-wiki-page-model.js";
 
 export function setupWikiPageAssociations(model: ModelStatic<any>, type: string) {
     model.hasOne(WikiPageModel, {foreignKey: 'wiki', constraints: false, scope: {type}});
@@ -26,8 +26,8 @@ export default class WikiPageModel extends PermissionControlledModel {
     declare coverImageId: string;
     declare wiki: string;
 
-    getRelatedWikis: BelongsToManyGetAssociationsMixin<WikiPageModel>;
-    setRelatedWikis: BelongsToManySetAssociationsMixin<WikiPageModel, string>;
+    declare getRelatedWikis: BelongsToManyGetAssociationsMixin<WikiPageModel>;
+    declare setRelatedWikis: BelongsToManySetAssociationsMixin<WikiPageModel, string>;
 
     static attributes = {
         ...defaultAttributes,

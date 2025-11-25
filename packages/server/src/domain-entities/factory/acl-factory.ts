@@ -1,6 +1,6 @@
 import {injectable} from "inversify";
-import {AclEntry, EntityFactory} from "../../types";
-import AclEntryModel from "../../dal/sql/models/acl-entry-model";
+import {AclEntry, EntityFactory} from "../../types.js";
+import AclEntryModel from "../../dal/sql/models/acl-entry-model.js";
 
 @injectable()
 export default class AclFactory implements EntityFactory<AclEntry, AclEntryModel>{

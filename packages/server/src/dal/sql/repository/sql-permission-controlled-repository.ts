@@ -1,6 +1,6 @@
-import PermissionControlledModel from "../models/permission-controlled-model";
-import {PermissionControlledEntity} from "../../../types";
-import AclEntryModel from "../models/acl-entry-model";
+import PermissionControlledModel from "../models/permission-controlled-model.js";
+import {PermissionControlledEntity} from "../../../types.js";
+import AclEntryModel from "../models/acl-entry-model.js";
 import {injectable} from "inversify";
 import {v4} from "uuid";
 

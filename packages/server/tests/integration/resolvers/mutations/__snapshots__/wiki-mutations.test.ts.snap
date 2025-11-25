@@ -1,66 +1,329 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`wiki page mutations with world create wiki no permission 1`] = `
+exports[`wiki page mutations > with world > create wiki no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world delete wiki no permission 1`] = `
+exports[`wiki page mutations > with world > delete wiki no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+}
+`;
+
+exports[`wiki page mutations > with world > update cover image no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`wiki page mutations > with world > update place no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`wiki page mutations > with world > update wiki no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > create wiki 1`] = `
+{
+  "data": {
+    "createWiki": {
+      "_id": Any<String>,
+      "canAdmin": true,
+      "canWrite": true,
+      "folder": {
+        "_id": Any<String>,
+        "name": Any<String>,
+      },
+      "name": Any<String>,
+      "type": "Article",
+      "world": {
+        "_id": Any<String>,
+      },
     },
   },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > delete wiki 1`] = `
+{
+  "data": {
+    "deleteWiki": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > delete wiki root wiki 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You cannot delete the main page of a world",
+      "path": [
+        "deleteWiki",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > update type 1`] = `
+{
+  "data": {
+    "updateWiki": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "other page",
+      "pixelsPerFoot": null,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > update wiki just content 1`] = `
+{
+  "data": {
+    "updateWiki": {
+      "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": Any<String>,
+      "coverImage": null,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "Earth",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > update wiki just name 1`] = `
+{
+  "data": {
+    "updateWiki": {
+      "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "new name",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > with image > update cover image 1`] = `
+{
+  "data": {
+    "updateWiki": {
+      "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": {
+        "_id": Any<String>,
+        "chunks": ArrayContaining [
+          ObjectContaining {
+            "_id": Any<String>,
+            "fileId": Any<String>,
+          },
+        ],
+        "height": 830,
+        "icon": {
+          "_id": Any<String>,
+          "chunks": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "fileId": Any<String>,
+            },
+          ],
+        },
+        "name": "tests/integration/resolvers/mutations/testmap.png",
+        "width": 1000,
+      },
+      "folder": {
+        "_id": Any<String>,
+      },
+      "mapImage": null,
+      "name": "Earth",
+      "pixelsPerFoot": 0,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > with image > update place 1`] = `
+{
+  "data": {
+    "updatePlace": {
+      "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "mapImage": {
+        "_id": Any<String>,
+        "chunks": ArrayContaining [
+          ObjectContaining {
+            "_id": Any<String>,
+            "fileId": Any<String>,
+          },
+        ],
+        "height": 830,
+        "icon": {
+          "_id": Any<String>,
+          "chunks": ArrayContaining [
+            ObjectContaining {
+              "_id": Any<String>,
+              "fileId": Any<String>,
+            },
+          ],
+        },
+        "name": "tests/integration/resolvers/mutations/testmap.png",
+        "width": 1000,
+      },
+      "name": "Earth",
+      "pixelsPerFoot": null,
+      "type": "Place",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`wiki page mutations > with world > with authenticated user > with new event wiki > update event 1`] = `
+{
+  "data": {
+    "updateEventWiki": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "age": 1,
+      "calendar": ObjectContaining {
+        "_id": Any<String>,
+      },
+      "canAdmin": true,
+      "canWrite": true,
+      "content": null,
+      "coverImage": null,
+      "day": 1,
+      "folder": {
+        "_id": Any<String>,
+      },
+      "hour": 1,
+      "minute": 1,
+      "month": 1,
+      "name": "event wiki",
+      "second": 1,
+      "type": "Event",
+      "world": {
+        "_id": Any<String>,
+      },
+      "year": 1,
+    },
+  },
+  "errors": undefined,
 }
 `;
 
 exports[`wiki page mutations with world update cover image no permission 1`] = `
-{
-  "data": null,
-  "errors": ArrayContaining [
-    Any<Object>,
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`wiki page mutations with world update place no permission 1`] = `
-{
-  "data": null,
-  "errors": ArrayContaining [
-    Any<Object>,
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`wiki page mutations with world update wiki no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [

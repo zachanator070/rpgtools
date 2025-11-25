@@ -1,278 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`authorization-mutations > with tester logged in and world created > addUserRole permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 38,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "addUserRole",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > createRole permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 38,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "createRole",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > deleteRole permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "deleteRole",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > grantRolePermission permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "grantRolePermission",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > grantUserPermission permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 23,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "grantUserPermission",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > removeUserRole permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 38,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "removeUserRole",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > revokeRolePermission permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "revokeRolePermission",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations > with tester logged in and world created > revokeUserPermission permission denied 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 23,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "revokeUserPermission",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authorization-mutations with tester logged in and world created addUserRole 1`] = `
+exports[`authorization-mutations > with tester logged in and world created > addUserRole 1`] = `
 {
   "data": {
     "addUserRole": {
@@ -301,31 +29,33 @@ exports[`authorization-mutations with tester logged in and world created addUser
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`authorization-mutations with tester logged in and world created addUserRole permission denied 1`] = `
+exports[`authorization-mutations > with tester logged in and world created > addUserRole permission denied 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You do not have permission to manage this role],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 38,
+        },
+      ],
+      "message": "You do not have permission to manage this role",
+      "path": [
+        "addUserRole",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`authorization-mutations with tester logged in and world created createRole 1`] = `
+exports[`authorization-mutations > with tester logged in and world created > createRole 1`] = `
 {
   "data": {
     "createRole": {
@@ -350,6 +80,272 @@ exports[`authorization-mutations with tester logged in and world created createR
     },
   },
   "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > createRole permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 38,
+        },
+      ],
+      "message": "You do not have permission to add roles to this world",
+      "path": [
+        "createRole",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > deleteRole 1`] = `
+{
+  "data": {
+    "deleteRole": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > deleteRole permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have write permissions for this role",
+      "path": [
+        "deleteRole",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > grantRolePermission 1`] = `
+{
+  "data": {
+    "grantRolePermission": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > grantRolePermission permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission to assign the permission "Read access to a single wiki page" for this subject",
+      "path": [
+        "grantRolePermission",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > grantUserPermission 1`] = `
+{
+  "data": {
+    "grantUserPermission": ObjectContaining {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > grantUserPermission permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 23,
+        },
+      ],
+      "message": "You do not have permission to assign the permission "See this world in search results" for this subject",
+      "path": [
+        "grantUserPermission",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > removeUserRole 1`] = `
+{
+  "data": {
+    "removeUserRole": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        ObjectContaining {
+          "permission": Any<String>,
+          "principal": ObjectContaining {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "members": Any<Array>,
+      "name": "other role",
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > removeUserRole permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 38,
+        },
+      ],
+      "message": "You do not have permission to manage this role",
+      "path": [
+        "removeUserRole",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > revokeRolePermission 1`] = `
+{
+  "data": {
+    "revokeRolePermission": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > revokeRolePermission permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission to revoke the permission "Read access to a single wiki page"",
+      "path": [
+        "revokeRolePermission",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > revokeUserPermission 1`] = `
+{
+  "data": {
+    "revokeUserPermission": {
+      "_id": Any<String>,
+      "accessControlList": [],
+      "canAdmin": true,
+      "canWrite": true,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authorization-mutations > with tester logged in and world created > revokeUserPermission permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 23,
+        },
+      ],
+      "message": "You do not have permission to revoke the permission "See this world in search results"",
+      "path": [
+        "revokeUserPermission",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authorization-mutations with tester logged in and world created addUserRole permission denied 1`] = `
+{
+  "data": null,
+  "errors": [
+    [GraphQLError: You do not have permission to manage this role],
+  ],
   "extensions": undefined,
   "http": {
     "headers": Headers {
@@ -365,23 +361,6 @@ exports[`authorization-mutations with tester logged in and world created createR
   "errors": [
     [GraphQLError: You do not have permission to add roles to this world],
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`authorization-mutations with tester logged in and world created deleteRole 1`] = `
-{
-  "data": {
-    "deleteRole": {
-      "_id": Any<String>,
-    },
-  },
-  "errors": undefined,
   "extensions": undefined,
   "http": {
     "headers": Headers {

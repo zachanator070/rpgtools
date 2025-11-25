@@ -1,9 +1,11 @@
-import { container } from "../../../../src/di/inversify";
-import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import {DbEngine} from "../../../../src/types";
-import {DefaultTestingContext} from "../../default-testing-context";
-import {GENERATE_REGISTER_CODES, SET_DEFAULT_WORLD, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
+import { container } from "../../../../src/di/inversify.js";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types.js";
+import {DbEngine} from "../../../../src/types.js";
+import {DefaultTestingContext} from "../../default-testing-context.js";
+import {GENERATE_REGISTER_CODES, SET_DEFAULT_WORLD, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations.js";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import { SERVER_ADMIN_ROLE } from "@rpgtools/common/src/permission-constants.js";
+import { ServerConfigService } from "src/services/server-config-service.js";
 
 process.env.TEST_SUITE = "server-mutations-test";
 
@@ -17,29 +19,49 @@ describe("server mutations", () => {
 	});
 
 	describe("with locked server", () => {
-		const resetConfig = async () => {
+		const adminUserEmail = "tester@gmail.com";
+		const adminUsername = "tester";
+		const adminPassword = "tester";
+
+		const unlockCode = "asdf";
+
+		const lockServer = async () => {
 			const databaseContext = await dbEngine.createDatabaseContext();
+			const adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
+			if (adminRole) {
+				await databaseContext.roleRepository.delete(adminRole);
+			}
+			const adminUser = await databaseContext.userRepository.findOneByUsername(adminUsername);
+			if (adminUser) {
+				await databaseContext.userRepository.delete(adminUser);
+			}
 			const serverConfig = await databaseContext.serverConfigRepository.findOne();
-			serverConfig.unlockCode = "asdf";
+			serverConfig.unlockCode = unlockCode;
 			serverConfig.adminUsers = [];
 			await databaseContext.serverConfigRepository.update(serverConfig);
 		};
+
 		beforeEach(async () => {
-			await resetConfig();
+			await lockServer();
 		});
 
 		afterEach(async () => {
-			await resetConfig();
+			await lockServer();
+			const databaseContext = await dbEngine.createDatabaseContext();
+			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+			const serverConfig = await service.getServerConfig(databaseContext);
+			await service.unlockServer(serverConfig.unlockCode, adminUserEmail, adminUsername, adminPassword, databaseContext);
+			await testingContext.reset();
 		});
 
 		test("unlock", async () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
-					unlockCode: "asdf",
-					email: "zach@thezachcave.com",
-					username: "otherTester",
-					password: "zach",
+					unlockCode: unlockCode,
+					email: adminUserEmail,
+					username: adminUsername,
+					password: adminPassword,
 				},
 			});
 			expect(result).toMatchSnapshot({
@@ -51,25 +73,31 @@ describe("server mutations", () => {
 		});
 
 		test("unlock twice", async () => {
-			await testingContext.server.executeGraphQLQuery({
+			const firstResult = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
-					unlockCode: "asdf",
-					email: "zach@thezachcave.com",
-					username: "otherTester",
-					password: "zach",
+					unlockCode: unlockCode,
+					email: adminUserEmail,
+					username: adminUsername,
+					password: adminPassword,
 				},
 			});
-			const result = await testingContext.server.executeGraphQLQuery({
+			expect(firstResult).toMatchSnapshot({
+				data: {
+					unlockServer: true,
+				},
+				errors: undefined,
+			});
+			const secondResult = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
-					unlockCode: "asdf",
-					email: "zach@thezachcave.com",
-					username: "otherTester",
-					password: "zach",
+					unlockCode: unlockCode,
+					email: adminUserEmail,
+					username: adminUsername,
+					password: adminPassword,
 				},
 			});
-			expect(result).toMatchSnapshot();
+			expect(secondResult).toMatchSnapshot();
 		});
 	});
 

@@ -1,16 +1,16 @@
-import AbstractSqlRepository from "./abstract-sql-repository";
-import Calendar, {Age} from "../../../domain-entities/calendar";
-import CalendarModel from "../models/calendar-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import Calendar, {Age} from "../../../domain-entities/calendar.js";
+import CalendarModel from "../models/calendar-model.js";
 import {inject, injectable} from "inversify";
 import {ModelStatic} from "sequelize";
-import CalendarFactory from "../../../domain-entities/factory/calendar-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
-import {CalendarRepository} from "../../repository/calendar-repository";
+import CalendarFactory from "../../../domain-entities/factory/calendar-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
+import {CalendarRepository} from "../../repository/calendar-repository.js";
 import {v4} from "uuid";
-import AgeModel from "../models/calendar/age-model";
-import MonthModel from "../models/calendar/month-model";
-import DayOfTheWeekModel from "../models/calendar/day-of-the-week-model";
+import AgeModel from "../models/calendar/age-model.js";
+import MonthModel from "../models/calendar/month-model.js";
+import DayOfTheWeekModel from "../models/calendar/day-of-the-week-model.js";
 
 
 @injectable()

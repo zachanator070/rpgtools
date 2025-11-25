@@ -1,7 +1,7 @@
-import {DefaultTestingContext} from "../default-testing-context";
-import { container } from "../../../src/di/inversify";
-import { INJECTABLE_TYPES } from "../../../src/di/injectable-types";
-import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants";
+import {DefaultTestingContext} from "../default-testing-context.js";
+import { container } from "../../../src/di/inversify.js";
+import { INJECTABLE_TYPES } from "../../../src/di/injectable-types.js";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants.js";
 import {
 	GET_CURRENT_USER,
 	GET_WIKI,
@@ -9,12 +9,12 @@ import {
 	GET_WORLDS, SEARCH_ROLES,
 	SEARCH_USERS,
 	WIKIS_IN_FOLDER, GET_GAME, MY_GAMES, SEARCH_EVENTS
-} from "@rpgtools/common/src/gql-queries";
-import {WorldService} from "../../../src/services/world-service";
-import {WikiFolderService} from "../../../src/services/wiki-folder-service";
-import {TEST_INJECTABLE_TYPES} from "../injectable-types";
-import {DbEngine} from "../../../src/types";
-import {accessControlList} from "./common-testing-assertions";
+} from "@rpgtools/common/src/gql-queries.js";
+import {WorldService} from "../../../src/services/world-service.js";
+import {WikiFolderService} from "../../../src/services/wiki-folder-service.js";
+import {TEST_INJECTABLE_TYPES} from "../injectable-types.js";
+import {DbEngine} from "../../../src/types.js";
+import {accessControlList} from "./common-testing-assertions.js";
 import { expect, it } from 'vitest';
 
 process.env.TEST_SUITE = "query-resolver-test";

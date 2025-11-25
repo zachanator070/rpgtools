@@ -1,4 +1,4 @@
-import { EventPublisher } from "../types";
+import { EventPublisher } from "../types.js";
 import { PubSub } from "graphql-subscriptions";
 import { injectable } from "inversify";
 

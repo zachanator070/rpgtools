@@ -2,105 +2,122 @@
 
 exports[`server mutations > generate register codes no permission 1`] = `
 {
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
         {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "generateRegisterCodes",
-          ],
+          "column": 3,
+          "line": 2,
         },
       ],
+      "message": "You do not have permission to call this method",
+      "path": [
+        "generateRegisterCodes",
+      ],
     },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
+  ],
 }
 `;
 
 exports[`server mutations > set default world no permission 1`] = `
 {
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
         {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "setDefaultWorld",
-          ],
+          "column": 3,
+          "line": 2,
         },
+      ],
+      "message": "You do not have permission to call this method",
+      "path": [
+        "setDefaultWorld",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`server mutations > with authenticated user > generate register codes 1`] = `
+{
+  "data": {
+    "generateRegisterCodes": {
+      "_id": Any<String>,
+      "registerCodes": ArrayContaining [
+        Any<String>,
       ],
     },
   },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
+  "errors": undefined,
+}
+`;
+
+exports[`server mutations > with authenticated user > set default world 1`] = `
+{
+  "data": {
+    "setDefaultWorld": {
+      "_id": Any<String>,
+      "defaultWorld": {
+        "_id": Any<String>,
+        "name": Any<String>,
+        "wikiPage": {
+          "_id": Any<String>,
+        },
+      },
     },
-    "status": undefined,
   },
+  "errors": undefined,
+}
+`;
+
+exports[`server mutations > with locked server > unlock 1`] = `
+{
+  "data": {
+    "unlockServer": true,
+  },
+  "errors": undefined,
 }
 `;
 
 exports[`server mutations > with locked server > unlock twice 1`] = `
 {
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": {
-        "unlockServer": null,
+  "data": {
+    "unlockServer": true,
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`server mutations > with locked server > unlock twice 2`] = `
+{
+  "data": {
+    "unlockServer": null,
+  },
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
       },
-      "errors": [
+      "locations": [
         {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "unlockServer",
-          ],
+          "column": 3,
+          "line": 2,
         },
       ],
+      "message": "Server already unlocked!",
+      "path": [
+        "unlockServer",
+      ],
     },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
+  ],
 }
 `;
 
@@ -167,21 +184,6 @@ exports[`server mutations with authenticated user set default world 1`] = `
         },
       },
     },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`server mutations with locked server unlock 1`] = `
-{
-  "data": {
-    "unlockServer": true,
   },
   "errors": undefined,
   "extensions": undefined,

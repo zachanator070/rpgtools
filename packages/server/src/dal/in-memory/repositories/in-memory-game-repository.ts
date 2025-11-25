@@ -1,8 +1,8 @@
-import { Game } from "../../../domain-entities/game";
+import { Game } from "../../../domain-entities/game.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {GameRepository} from "../../repository/game-repository";
-import {FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {GameRepository} from "../../repository/game-repository.js";
+import {FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryGameRepository extends AbstractInMemoryRepository<Game> implements GameRepository{

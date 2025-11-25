@@ -3,13 +3,13 @@ import {
     BelongsToManySetAssociationsMixin,
     DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin,
 } from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
-import WorldModel from "./world-model";
-import {RoleModel} from "./role-model";
-import SqlModel from "./sql-model";
-import UserToRoleModel from "./user-to-role-model";
-import {WORLD} from "@rpgtools/common/src/type-constants";
+import {defaultAttributes} from "./default-attributes.js";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants.js";
+import WorldModel from "./world-model.js";
+import {RoleModel} from "./role-model.js";
+import SqlModel from "./sql-model.js";
+import UserToRoleModel from "./user-to-role-model.js";
+import {WORLD} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class UserModel extends SqlModel {
@@ -20,8 +20,8 @@ export default class UserModel extends SqlModel {
     declare tokenVersion: string;
     declare currentWorldId: string;
 
-    getRoles: HasManyGetAssociationsMixin<RoleModel>;
-    setRoles: HasManySetAssociationsMixin<RoleModel, string>;
+    declare getRoles: HasManyGetAssociationsMixin<RoleModel>;
+    declare setRoles: HasManySetAssociationsMixin<RoleModel, string>;
 
     static attributes = {
         ...defaultAttributes,

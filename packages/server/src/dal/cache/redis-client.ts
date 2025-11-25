@@ -1,5 +1,5 @@
 import {createClient, RedisClientType} from "redis";
-import { Cache } from "../../types";
+import { Cache } from "../../types.js";
 import { Readable, Writable, Duplex } from "stream";
 import { injectable } from "inversify";
 import { Buffer } from "buffer";

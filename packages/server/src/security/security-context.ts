@@ -1,7 +1,7 @@
-import { Role } from "../domain-entities/role";
-import { User } from "../domain-entities/user";
-import {PermissionControlledEntity} from "../types";
-import {ROLE} from "@rpgtools/common/src/type-constants";
+import { Role } from "../domain-entities/role.js";
+import { User } from "../domain-entities/user.js";
+import {PermissionControlledEntity} from "../types.js";
+import {ROLE} from "@rpgtools/common/src/type-constants.js";
 
 export class SecurityContext {
 	roles: Role[];

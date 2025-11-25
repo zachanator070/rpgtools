@@ -4,12 +4,12 @@ import {
     HasManyGetAssociationsMixin,
     HasManySetAssociationsMixin
 } from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import WorldModel from "./world-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
-import WikiPageModel from "./wiki-page-model";
-import {WIKI_FOLDER, WORLD} from "@rpgtools/common/src/type-constants";
-import WikiFolderToWikiPageModel from "./wiki-folder-to-wiki-page-model";
+import {defaultAttributes} from "./default-attributes.js";
+import WorldModel from "./world-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
+import WikiPageModel from "./wiki-page-model.js";
+import {WIKI_FOLDER, WORLD} from "@rpgtools/common/src/type-constants.js";
+import WikiFolderToWikiPageModel from "./wiki-folder-to-wiki-page-model.js";
 
 
 export default class WikiFolderModel extends PermissionControlledModel {
@@ -17,10 +17,10 @@ export default class WikiFolderModel extends PermissionControlledModel {
     declare name: string;
     declare worldId: string;
 
-    getPages: BelongsToManyGetAssociationsMixin<WikiPageModel>;
-    setPages: BelongsToManySetAssociationsMixin<WikiPageModel, string>;
-    getChildren: HasManyGetAssociationsMixin<WikiFolderModel>;
-    setChildren: HasManySetAssociationsMixin<WikiFolderModel, string>;
+    declare getPages: BelongsToManyGetAssociationsMixin<WikiPageModel>;
+    declare setPages: BelongsToManySetAssociationsMixin<WikiPageModel, string>;
+    declare getChildren: HasManyGetAssociationsMixin<WikiFolderModel>;
+    declare setChildren: HasManySetAssociationsMixin<WikiFolderModel, string>;
 
     static attributes = {
         ...defaultAttributes,

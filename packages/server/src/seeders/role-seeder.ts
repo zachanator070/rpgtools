@@ -1,15 +1,12 @@
-import { Seeder } from "../types";
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
-import { WORLD_CREATE } from "@rpgtools/common/src/permission-constants";
-import {ROLE} from "@rpgtools/common/src/type-constants";
+import { Seeder } from "../types.js";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants.js";
+import { WORLD_CREATE } from "@rpgtools/common/src/permission-constants.js";
+import {ROLE} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { Role } from "../domain-entities/role";
-import RoleFactory from "../domain-entities/factory/role-factory";
-import {RoleRepository} from "../dal/repository/role-repository";
-import {ServerConfigRepository} from "../dal/repository/server-config-repository";
-import {UserRepository} from "../dal/repository/user-repository";
-import {DatabaseContext} from "../dal/database-context";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { Role } from "../domain-entities/role.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class RoleSeeder implements Seeder {

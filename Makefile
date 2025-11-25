@@ -78,6 +78,9 @@ run-electron: $(ELECTRON_EXEC)
 #########
 # TESTS #
 #########
+
+TEST_ENV_FILE=packages/server/test.env
+
 .PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-sqlite
 .PHONY: test-e2e test-e2e-postgres test-e2e-sqlite run-cypress
 
@@ -95,14 +98,14 @@ test-integration-update-snapshots: test-integration-postgres
 
 test-integration-postgres: .env
 	docker compose up -d postgres
-	cp .env.example packages/server/jest.env
-	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
+	cp .env.example $(TEST_ENV_FILE)
+	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
 test-integration-sqlite: .env
-	cp .env.example packages/server/jest.env
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' packages/server/jest.env
+	cp .env.example $(TEST_ENV_FILE)
+	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server
 	docker compose down
 

@@ -7,27 +7,27 @@ import { ApolloServer, GraphQLRequest, GraphQLResponse } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@as-integrations/express4';
 import express, { Express } from "express";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { inject, injectable } from "inversify";
 import {
 	ApiServer,
 	ApiServerRequest,
 	CookieManager,
-} from "../types";
+} from "../types.js";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
-import { ModelRouter } from "../routers/model-router";
-import ExportRouter from "../routers/export-router";
-import { ImageRouter } from "../routers/image-router";
-import { typeDefs } from "../gql-server-schema";
-import { allResolvers } from "../resolvers/all-resolvers";
+import { ModelRouter } from "../routers/model-router.js";
+import ExportRouter from "../routers/export-router.js";
+import { ImageRouter } from "../routers/image-router.js";
+import { typeDefs } from "../gql-server-schema.js";
+import { allResolvers } from "../resolvers/all-resolvers.js";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from 'ws';
 // @ts-ignore
 import { useServer } from 'graphql-ws/use/ws';
 import cors from "cors";
-import {ExpressCookieManager} from "./express-cookie-manager";
-import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware";
-import {ExpressSessionContextFactory} from "./express-session-context-factory";
+import {ExpressCookieManager} from "./express-cookie-manager.js";
+import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
+import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -100,7 +100,7 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/models", ModelRouter);
 		this.expressServer.use("/export", ExportRouter);
 
-		const currentDir = __dirname;
+		const currentDir = import.meta.dirname;
 		// /opt/rpgtools/packages/server/dist/frontend
 		// need to output in the server package so electron app is packaged with UI bundle
 		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
@@ -117,7 +117,10 @@ export class ExpressApiServer implements ApiServer {
 	executeGraphQLQuery = async (
 		request: ApiServerRequest,
 	) => {
-		const response: GraphQLResponse = await this.gqlServer.executeOperation(request);
+		const response: GraphQLResponse = await this.gqlServer.executeOperation(request, {
+			// this function is only used in a testing context, so no parameters are expected when creating the session context
+			contextValue: await this.sessionContextFactory.create(undefined, undefined),
+		});
 		if (response.body.kind === 'single') {
 			return {
 				data: response.body.singleResult.data,
@@ -150,16 +153,16 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/graphql",
 			expressMiddleware(this.gqlServer, {
 				context: async ({req, res}) => {
-				const cookieManager: CookieManager = new ExpressCookieManager(res);
+					const cookieManager: CookieManager = new ExpressCookieManager(res);
 
-				const refreshToken: string = req?.cookies["refreshToken"];
-				const accessToken: string = req?.cookies["accessToken"];
-				const context = await this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
-				if (res) {
-					res.locals.session = context;
-				}
-				return context;
-			},
+					const refreshToken: string = req?.cookies["refreshToken"];
+					const accessToken: string = req?.cookies["accessToken"];
+					const context = await this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
+					if (res) {
+						res.locals.session = context;
+					}
+					return context;
+				},
 			}),
 		);
 		this.expressServer.use(graphqlUploadExpress());

@@ -1,17 +1,17 @@
 import {
 	DomainEntity, PermissionControlledEntity,
-} from "../types";
-import { SecurityContext } from "../security/security-context";
-import { Role } from "../domain-entities/role";
-import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants";
-import {ROLE, USER} from "@rpgtools/common/src/type-constants";
-import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants";
+} from "../types.js";
+import { SecurityContext } from "../security/security-context.js";
+import { Role } from "../domain-entities/role.js";
+import { ROLE_ADD, ROLE_ADMIN, ROLE_RW } from "@rpgtools/common/src/permission-constants.js";
+import {ROLE, USER} from "@rpgtools/common/src/type-constants.js";
+import {EVERYONE, LOGGED_IN, WORLD_OWNER} from "@rpgtools/common/src/role-constants.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { User } from "../domain-entities/user";
-import EntityMapper from "../domain-entities/entity-mapper";
-import {DatabaseContext} from "../dal/database-context";
-import RoleFactory from "../domain-entities/factory/role-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { User } from "../domain-entities/user.js";
+import EntityMapper from "../domain-entities/entity-mapper.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
 
 @injectable()
 export class AuthorizationService {

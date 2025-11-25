@@ -1,4 +1,4 @@
-import {DomainEntity} from "../../types";
+import {DomainEntity} from "../../types.js";
 
 export interface Repository<Type extends DomainEntity> {
     create: (entity: Type) => Promise<void>;

@@ -1,9 +1,9 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Model, Sequelize} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
-import UserModel from "../user-model";
-import CharacterAttributeModel from "./character-attribute-model";
-import SqlModel from "../sql-model";
-import {GAME, USER} from "@rpgtools/common/src/type-constants";
+import {defaultAttributes} from "../default-attributes.js";
+import UserModel from "../user-model.js";
+import CharacterAttributeModel from "./character-attribute-model.js";
+import SqlModel from "../sql-model.js";
+import {GAME, USER} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class CharacterModel extends SqlModel {
@@ -12,8 +12,8 @@ export default class CharacterModel extends SqlModel {
     declare color: string;
     declare playerId: string;
 
-    getCharacterAttributes: HasManyGetAssociationsMixin<CharacterAttributeModel>;
-    setCharacterAttributes: HasManySetAssociationsMixin<CharacterAttributeModel, string>;
+    declare getCharacterAttributes: HasManyGetAssociationsMixin<CharacterAttributeModel>;
+    declare setCharacterAttributes: HasManySetAssociationsMixin<CharacterAttributeModel, string>;
 
     static attributes = {
         ...defaultAttributes,

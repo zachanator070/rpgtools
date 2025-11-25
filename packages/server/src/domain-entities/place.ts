@@ -1,11 +1,11 @@
-import { WikiPage } from "./wiki-page";
-import { PLACE } from "@rpgtools/common/src/type-constants";
+import { WikiPage } from "./wiki-page.js";
+import { PLACE } from "@rpgtools/common/src/type-constants.js";
 import {inject, injectable} from "inversify";
-import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy";
-import WikiPageModel from "../dal/sql/models/wiki-page-model";
+import {DomainEntity, EntityFactory, RepositoryAccessor} from "../types.js";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import {WikiPageAuthorizationPolicy} from "../security/policy/wiki-page-authorization-policy.js";
+import WikiPageModel from "../dal/sql/models/wiki-page-model.js";
 
 @injectable()
 export class Place extends WikiPage {

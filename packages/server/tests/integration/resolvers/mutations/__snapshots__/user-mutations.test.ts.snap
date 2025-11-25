@@ -1,5 +1,27 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`user mutations > with world and not logged in > set current world not logged in 1`] = `
+{
+  "data": {
+    "setCurrentWorld": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`user mutations > with world and not logged in > with authenticated user > set current world 1`] = `
+{
+  "data": {
+    "setCurrentWorld": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
 exports[`user mutations with world and not logged in set current world not logged in 1`] = `
 {
   "data": {

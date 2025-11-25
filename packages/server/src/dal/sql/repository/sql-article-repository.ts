@@ -1,14 +1,14 @@
 import {inject, injectable} from "inversify";
-import {ArticleRepository} from "../../repository/article-repository";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Article} from "../../../domain-entities/article";
+import {ArticleRepository} from "../../repository/article-repository.js";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Article} from "../../../domain-entities/article.js";
 import {Op} from "sequelize";
-import ArticleFactory from "../../../domain-entities/factory/article-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory";
-import WikiPageModel from "../models/wiki-page-model";
-import {WikiPage} from "../../../domain-entities/wiki-page";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import ArticleFactory from "../../../domain-entities/factory/article-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiPageFactory from "../../../domain-entities/factory/wiki-page-factory.js";
+import WikiPageModel from "../models/wiki-page-model.js";
+import {WikiPage} from "../../../domain-entities/wiki-page.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 
 @injectable()
 export default class SqlArticleRepository extends AbstractSqlRepository<Article, WikiPageModel> implements ArticleRepository {

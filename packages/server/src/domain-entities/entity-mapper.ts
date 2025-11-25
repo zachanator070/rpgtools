@@ -1,6 +1,6 @@
 import {injectable, multiInject} from "inversify";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import {DomainEntity} from "../types";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
+import {DomainEntity} from "../types.js";
 
 @injectable()
 export default class EntityMapper {

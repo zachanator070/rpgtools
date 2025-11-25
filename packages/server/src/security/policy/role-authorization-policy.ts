@@ -1,6 +1,6 @@
-import {EntityAuthorizationPolicy} from "../../types";
-import { Role } from "../../domain-entities/role";
-import { SecurityContext } from "../security-context";
+import {EntityAuthorizationPolicy} from "../../types.js";
+import { Role } from "../../domain-entities/role.js";
+import { SecurityContext } from "../security-context.js";
 import {
 	ROLE_ADD,
 	ROLE_ADMIN,
@@ -9,10 +9,10 @@ import {
 	ROLE_READ_ALL,
 	ROLE_RW,
 	ROLE_RW_ALL,
-} from "@rpgtools/common/src/permission-constants";
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
+} from "@rpgtools/common/src/permission-constants.js";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants.js";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()
 export class RoleAuthorizationPolicy implements EntityAuthorizationPolicy {

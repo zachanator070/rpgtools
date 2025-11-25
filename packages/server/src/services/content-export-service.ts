@@ -1,20 +1,20 @@
-import { Archive } from "../types";
+import { Archive } from "../types.js";
 import {
 	MODEL, MODELED_WIKI_TYPES,
 	WIKI_FOLDER,
 	WIKI_PAGE,
-} from "@rpgtools/common/src/type-constants";
-import { WikiPage } from "../domain-entities/wiki-page";
-import { SecurityContext } from "../security/security-context";
-import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors";
-import { ModeledPage } from "../domain-entities/modeled-page";
-import { Image } from "../domain-entities/image";
-import { Chunk } from "../domain-entities/chunk";
-import { WikiFolder } from "../domain-entities/wiki-folder";
-import { Model } from "../domain-entities/model";
-import { File } from "../domain-entities/file";
+} from "@rpgtools/common/src/type-constants.js";
+import { WikiPage } from "../domain-entities/wiki-page.js";
+import { SecurityContext } from "../security/security-context.js";
+import { EntityNotFoundError, ReadPermissionDeniedError } from "../errors.js";
+import { ModeledPage } from "../domain-entities/modeled-page.js";
+import { Image } from "../domain-entities/image.js";
+import { Chunk } from "../domain-entities/chunk.js";
+import { WikiFolder } from "../domain-entities/wiki-folder.js";
+import { Model } from "../domain-entities/model.js";
+import { File } from "../domain-entities/file.js";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../dal/database-context";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class ContentExportService {

@@ -1,10 +1,10 @@
 import {inject, injectable} from "inversify";
-import {INJECTABLE_TYPES} from "../di/injectable-types";
-import {ApiServer, DbEngine, Seeder} from "../types";
-import {RoleSeeder} from "../seeders/role-seeder";
-import {ServerConfigSeeder} from "../seeders/server-config-seeder";
-import {ServerConfigService} from "../services/server-config-service";
-import {DatabaseContext} from "../dal/database-context";
+import {INJECTABLE_TYPES} from "../di/injectable-types.js";
+import {ApiServer, DbEngine, Seeder} from "../types.js";
+import {RoleSeeder} from "../seeders/role-seeder.js";
+import {ServerConfigSeeder} from "../seeders/server-config-seeder.js";
+import {ServerConfigService} from "../services/server-config-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export default class RpgToolsServer {

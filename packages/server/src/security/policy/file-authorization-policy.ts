@@ -1,4 +1,4 @@
-import { AllowAllPolicy } from "./allow-all-policy";
+import { AllowAllPolicy } from "./allow-all-policy.js";
 import { injectable } from "inversify";
 
 @injectable()

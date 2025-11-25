@@ -1,5 +1,300 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`world-mutations > with world and logged in > create calendar 1`] = `
+{
+  "data": {
+    "upsertCalendar": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "ages": [
+        {
+          "_id": Any<String>,
+          "daysOfTheWeek": [
+            {
+              "_id": Any<String>,
+              "name": "new day",
+            },
+          ],
+          "months": [
+            {
+              "_id": Any<String>,
+              "name": "new month",
+              "numDays": 30,
+            },
+          ],
+          "name": "new age",
+          "numYears": 1000,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "name": "new calendar",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > create pin 1`] = `
+{
+  "data": {
+    "createPin": {
+      "_id": Any<String>,
+      "canWrite": true,
+      "map": {
+        "_id": Any<String>,
+        "name": "Earth",
+      },
+      "page": {
+        "_id": Any<String>,
+        "name": "Earth",
+        "type": "Place",
+      },
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > create world 1`] = `
+{
+  "data": {
+    "createWorld": {
+      "_id": Any<String>,
+      "wikiPage": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > delete calendar 1`] = `
+{
+  "data": {
+    "deleteCalendar": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > delete pin 1`] = `
+{
+  "data": {
+    "deletePin": {
+      "_id": Any<String>,
+      "canWrite": true,
+      "map": {
+        "_id": Any<String>,
+        "name": "Earth",
+      },
+      "page": {
+        "_id": Any<String>,
+        "name": "other page",
+        "type": "Article",
+      },
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > create calendar no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > create pin no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > create world no permissions 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > delete pin no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > rename world no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > update calendar no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > not logged in > update pin no permission 1`] = `
+{
+  "data": null,
+  "errors": ArrayContaining [
+    Any<Object>,
+  ],
+}
+`;
+
+exports[`world-mutations > with world and logged in > rename world 1`] = `
+{
+  "data": {
+    "renameWorld": {
+      "_id": Any<String>,
+      "name": "Azeroth",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > update calendar age years 1`] = `
+{
+  "data": {
+    "upsertCalendar": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "ages": [
+        {
+          "_id": Any<String>,
+          "daysOfTheWeek": [
+            {
+              "_id": Any<String>,
+              "name": "Monday",
+            },
+          ],
+          "months": [
+            {
+              "_id": Any<String>,
+              "name": "month 1",
+              "numDays": 60,
+            },
+          ],
+          "name": "age 1",
+          "numYears": 1000,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "name": "Earth calendar1",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > update calendar delete month 1`] = `
+{
+  "data": {
+    "upsertCalendar": {
+      "_id": Any<String>,
+      "accessControlList": ArrayContaining [
+        {
+          "permission": Any<String>,
+          "principal": {
+            "_id": Any<String>,
+            "name": Any<String>,
+          },
+          "principalType": Any<String>,
+        },
+      ],
+      "ages": [
+        {
+          "_id": Any<String>,
+          "daysOfTheWeek": [
+            {
+              "_id": Any<String>,
+              "name": "Monday",
+            },
+          ],
+          "months": [],
+          "name": "age 1",
+          "numYears": 100,
+        },
+      ],
+      "canAdmin": true,
+      "canWrite": true,
+      "name": "Earth calendar1",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`world-mutations > with world and logged in > update pin 1`] = `
+{
+  "data": {
+    "updatePin": {
+      "_id": Any<String>,
+      "canWrite": true,
+      "map": {
+        "_id": Any<String>,
+        "name": "Earth",
+      },
+      "page": {
+        "_id": Any<String>,
+        "name": "other page",
+        "type": "Article",
+      },
+      "x": 0,
+      "y": 0,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
 exports[`world-mutations with world and logged in create calendar 1`] = `
 {
   "data": {

@@ -1,4 +1,4 @@
-import { EntityAuthorizationPolicy } from "../../types";
+import { EntityAuthorizationPolicy } from "../../types.js";
 import { injectable } from "inversify";
 
 @injectable()

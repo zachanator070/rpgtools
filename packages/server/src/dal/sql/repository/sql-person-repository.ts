@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Person} from "../../../domain-entities/person";
-import PersonModel from "../models/person-model";
-import {PersonRepository} from "../../repository/person-repository";
-import PersonFactory from "../../../domain-entities/factory/person-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WikiPageModel from "../models/wiki-page-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Person} from "../../../domain-entities/person.js";
+import PersonModel from "../models/person-model.js";
+import {PersonRepository} from "../../repository/person-repository.js";
+import PersonFactory from "../../../domain-entities/factory/person-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WikiPageModel from "../models/wiki-page-model.js";
 
 
 @injectable()

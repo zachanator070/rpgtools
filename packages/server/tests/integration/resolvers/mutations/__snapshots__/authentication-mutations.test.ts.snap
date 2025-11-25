@@ -1,210 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`authentication-mutations > login bad password 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "login",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authentication-mutations > login bad username 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "login",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authentication-mutations > register bad code 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "register",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authentication-mutations > with good register code available > register use code twice 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "register",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authentication-mutations > with good register code available > register use email twice 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "register",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authentication-mutations > with good register code available > register use username twice 1`] = `
-{
-  "body": {
-    "kind": "single",
-    "singleResult": {
-      "data": null,
-      "errors": [
-        {
-          "extensions": {
-            "code": "INTERNAL_SERVER_ERROR",
-          },
-          "locations": [
-            {
-              "column": 3,
-              "line": 2,
-            },
-          ],
-          "message": "Cannot read properties of undefined (reading 'openTransaction')",
-          "path": [
-            "register",
-          ],
-        },
-      ],
-    },
-  },
-  "http": {
-    "headers": Map {
-      "cache-control" => "no-store",
-    },
-    "status": undefined,
-  },
-}
-`;
-
-exports[`authentication-mutations login 1`] = `
+exports[`authentication-mutations > login 1`] = `
 {
   "data": {
     "login": {
@@ -212,12 +8,155 @@ exports[`authentication-mutations login 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+}
+`;
+
+exports[`authentication-mutations > login bad password 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Login failure: username or password are incorrect",
+      "path": [
+        "login",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > login bad username 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Login failure: username or password are incorrect",
+      "path": [
+        "login",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > register bad code 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Register code not valid",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > with good register code available > register good 1`] = `
+{
+  "data": {
+    "register": {
+      "_id": Any<String>,
     },
   },
+  "errors": undefined,
+}
+`;
+
+exports[`authentication-mutations > with good register code available > register use code twice 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Register code not valid",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > with good register code available > register use email twice 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Register code not valid",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > with good register code available > register use username twice 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Register code not valid",
+      "path": [
+        "register",
+      ],
+    },
+  ],
 }
 `;
 
