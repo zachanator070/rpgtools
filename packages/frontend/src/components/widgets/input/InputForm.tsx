@@ -31,9 +31,10 @@ export default function InputForm<T>({ onSubmit, children, loading, errors, butt
         }}
         onSubmitCapture={(event) => {
             const values = {};
-            for (let key of (event.target as HTMLFormElement).elements) {
-                const name = (key as HTMLInputElement)?.name;
-                const value = (key as HTMLInputElement)?.value;
+            for (let index = 0; index < (event.target as HTMLFormElement).elements.length; index++) {
+                const key = (event.target as HTMLFormElement).elements.item(index);
+                const name = (key as unknown as HTMLInputElement)?.name;
+                const value = (key as unknown as HTMLInputElement)?.value;
                 if (name && value) {
                     values[name] = value;
                 }
