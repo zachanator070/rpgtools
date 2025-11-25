@@ -86,21 +86,21 @@ TEST_ENV_FILE=packages/server/test.env
 
 test: test-unit test-integration test-e2e
 
-JEST_OPTIONS=
+VITEST_OPTIONS=
 
 test-unit:
 	npm run test:unit --workspace=packages/server
 
 test-integration: test-integration-postgres
 
-test-integration-update-snapshots: JEST_OPTIONS:=-u
+test-integration-update-snapshots: VITEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
 
 test-integration-postgres: .env
 	docker compose up -d postgres
 	cp .env.example $(TEST_ENV_FILE)
 	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
-	npm run test:integration --workspace=packages/server
+	npm run test:integration --workspace=packages/server $(VITEST_OPTIONS)
 	docker compose down
 
 test-integration-sqlite: .env

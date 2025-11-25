@@ -21,37 +21,3 @@ exports[`image-mutations > with existing world and logged in user > with unauthe
   "errors": undefined,
 }
 `;
-
-exports[`image-mutations with existing world and logged in user create image no permission 1`] = `
-{
-  "data": {
-    "createImage": {
-      "_id": Any<String>,
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;
-
-exports[`image-mutations with existing world and logged in user with unauthenticated user create image no permission 1`] = `
-{
-  "data": {
-    "createImage": {
-      "_id": Any<String>,
-    },
-  },
-  "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
-}
-`;

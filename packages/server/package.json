@@ -15,7 +15,7 @@
     "build": "tsc",
     "dev": "nodemon --watch src -e ts,ejs --signal SIGTERM --exec npm run dev:start",
     "dev-brk": "nodemon --watch src -e ts,ejs --exec npm-run-all build dev:start-brk",
-    "test:integration": "vitest run --config vitest.integration.config.ts --dir tests/integration",
+    "test:integration": "vitest run --config vitest.integration.config.ts --dir tests/integration ${VITEST_OPTIONS}",
     "test:unit": "vitest run --dir tests/unit",
     "preelectron": "cp -R ../frontend/dist dist/frontend",
     "electron": "electron-forge start",
