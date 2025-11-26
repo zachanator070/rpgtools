@@ -149,9 +149,18 @@ seed-new: .env
 ######
 # CI #
 ######
-.PHONY: ci lint
+.PHONY: ci lint ci-unit ci-integration ci-e2e-postgres ci-e2e-sqlite
 
+# runs all tests for continuous integration environment
 ci: .env $(NODE_MODULES) test
+
+ci-unit: .env $(NODE_MODULES) test-unit
+
+ci-integration: .env $(NODE_MODULES) test-integration
+
+ci-e2e-postgres: .env $(NODE_MODULES) test-e2e-postgres
+
+ci-e2e-sqlite: .env $(NODE_MODULES) test-e2e-sqlite
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
