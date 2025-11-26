@@ -150,6 +150,8 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use(morgan("tiny"));
 
 		this.expressServer.use(cookieParser());
+		this.expressServer.use(graphqlUploadExpress());
+
 		this.expressServer.use("/graphql",
 			expressMiddleware(this.gqlServer, {
 				context: async ({req, res}) => {
@@ -165,7 +167,6 @@ export class ExpressApiServer implements ApiServer {
 				},
 			}),
 		);
-		this.expressServer.use(graphqlUploadExpress());
 
 		this.expressServer.use(cors({
 			origin: ["https://studio.apollographql.com"],
