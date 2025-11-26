@@ -5,8 +5,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { clientTypeDefs } from "./clientTypeDefs";
 import { clientResolvers } from "./clientResolvers";
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { createClient } from 'graphql-ws'; lru_cache_1.LRUCache is not a constructor
-at new InMemoryLRUCache 
+import { createClient } from 'graphql-ws';
 import { gql, ApolloClient, ApolloProvider, split, ApolloLink, InMemoryCache  } from "@apollo/client";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
