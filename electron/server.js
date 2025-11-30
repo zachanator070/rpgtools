@@ -12,7 +12,7 @@ const expressApp = document.getElementById("expressApp");
 const loading = document.getElementById("loading");
 
 const node = child_process.fork(
-    `${app.getAppPath()}/dist/server/src/index.js`,
+    `${app.getAppPath()}/packages/server/dist/server/src/index.js`,
     [],
     {
         stdio: ["pipe", "pipe", "pipe", "ipc"],

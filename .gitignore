@@ -10,7 +10,7 @@ packages/frontend/cypress/screenshots
 packages/frontend/cypress/videos
 packages/frontend/seed.log
 packages/server/test.env
-packages/server/out
+out/
 db/
 containers/
 nohup.out

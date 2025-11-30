@@ -4,8 +4,6 @@ VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
 NODE_MODULES=node_modules/.package-lock.json
-PROD_NODE_MODULES_CACHE=node_modules_prod/apollo-server/package.json
-DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
 
 SERVER_BUILD_DEST=packages/server/dist/server
 FRONTEND_BUILD_DEST=packages/server/dist/frontend
@@ -17,8 +15,8 @@ FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 
-ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
-ELECTRON_DEB=packages/server/out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
+ELECTRON_EXEC=out/rpgtools-linux-x64/@rpgtools-server
+ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
 DEV_SERVER_CONTAINER_SRC=packages/server/Dockerfile packages/server/tsconfig.json package-lock.json
@@ -186,7 +184,7 @@ publish:
 clean: clean-deps clean-docker
 	rm -rf db
 	rm -rf packages/server/dist
-	rm -rf packages/server/out
+	rm -rf out
 
 clean-deps:
 	rm -rf node_modules
@@ -216,17 +214,6 @@ prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
 	npm ci
-
-$(PROD_NODE_MODULES_CACHE): .env
-	npm ci --omit=dev
-	mkdir -p node_modules_prod
-	cp -R node_modules/* node_modules_prod
-	rm -rf node_modules_prod/@rpgtools
-
-$(DEV_NODE_MODULES_CACHE): .env
-	npm ci
-	mkdir -p node_modules_dev
-	cp -R node_modules/* node_modules_dev
 
 ################
 # BUILD SERVER #
@@ -308,20 +295,15 @@ build-common:
 ##################
 .PHONY: electron-prep electron-package electron-make electron
 
-ELECTRON_DEPS=$(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
+ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS)
 
 # creates executable
 electron-package: $(ELECTRON_EXEC)
 
 $(ELECTRON_EXEC): $(ELECTRON_DEPS)
-	cp -R node_modules_prod/* packages/server/node_modules
-	mkdir -p packages/server/node_modules/@rpgtools
-	cp -R packages/common packages/server/node_modules/@rpgtools
-	npm run -w packages/server package
+	npm run electron:package
 
 # creates installable package
 electron-make: $(ELECTRON_DEPS)
-	cp -R node_modules_prod/* packages/server/node_modules
-	mkdir -p packages/server/node_modules/@rpgtools
-	cp -R packages/common packages/server/node_modules/@rpgtools
-	npm run -w packages/server make
+	npm i -w packages/server --omit=dev
+	npm run electron:make
