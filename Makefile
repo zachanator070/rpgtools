@@ -303,7 +303,7 @@ electron-package: $(ELECTRON_EXEC)
 $(ELECTRON_EXEC): $(ELECTRON_DEPS)
 	npm run electron:package
 	chmod 4755 ./out/rpgtools-linux-x64/chrome-sandbox
-	sudo chown root ./out/rpgtools-linux-x64/chrome-sandbox
+	sudo chown root:root ./out/rpgtools-linux-x64/chrome-sandbox
 
 # creates installable package
 electron-make: $(ELECTRON_DEPS)
