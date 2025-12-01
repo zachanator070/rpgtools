@@ -302,7 +302,7 @@ electron-package: $(ELECTRON_EXEC)
 
 $(ELECTRON_EXEC): $(ELECTRON_DEPS)
 	npm run electron:package
-ifdef GTIHUB_ACTIONS
+ifeq ($(origin GITHUB_ACTIONS),environment)
 	sudo chown root:root ./out/rpgtools-linux-x64/chrome-sandbox
 	sudo chmod 4755 ./out/rpgtools-linux-x64/chrome-sandbox
 endif
