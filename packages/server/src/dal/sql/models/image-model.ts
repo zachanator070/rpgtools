@@ -1,9 +1,9 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import SqlModel from "./sql-model";
-import ChunkModel from "./chunk-model";
-import WorldModel from "./world-model";
-import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants";
+import {defaultAttributes} from "./default-attributes.js";
+import SqlModel from "./sql-model.js";
+import ChunkModel from "./chunk-model.js";
+import WorldModel from "./world-model.js";
+import {IMAGE, WORLD} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class ImageModel extends SqlModel {
@@ -16,8 +16,8 @@ export default class ImageModel extends SqlModel {
     declare iconId: string;
     declare worldId: string;
 
-    getChunks: HasManyGetAssociationsMixin<ChunkModel>;
-    setChunks: HasManySetAssociationsMixin<ChunkModel, string>;
+    declare getChunks: HasManyGetAssociationsMixin<ChunkModel>;
+    declare setChunks: HasManySetAssociationsMixin<ChunkModel, string>;
 
     static attributes = {
         ...defaultAttributes,

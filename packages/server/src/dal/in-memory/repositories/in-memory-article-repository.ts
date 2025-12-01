@@ -1,8 +1,8 @@
-import { Article } from "../../../domain-entities/article";
+import { Article } from "../../../domain-entities/article.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {ArticleRepository} from "../../repository/article-repository";
-import {FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {ArticleRepository} from "../../repository/article-repository.js";
+import {FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryArticleRepository

@@ -1,6 +1,6 @@
-import {EntityAuthorizationPolicy} from "../../types";
-import { Model } from "../../domain-entities/model";
-import { SecurityContext } from "../security-context";
+import {EntityAuthorizationPolicy} from "../../types.js";
+import { Model } from "../../domain-entities/model.js";
+import { SecurityContext } from "../security-context.js";
 import {
 	MODEL_ADD,
 	MODEL_ADMIN,
@@ -9,9 +9,9 @@ import {
 	MODEL_READ_ALL,
 	MODEL_RW,
 	MODEL_RW_ALL,
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import { injectable } from "inversify";
-import {DatabaseContext} from "../../dal/database-context";
+import {DatabaseContext} from "../../dal/database-context.js";
 
 @injectable()
 export class ModelAuthorizationPolicy implements EntityAuthorizationPolicy {

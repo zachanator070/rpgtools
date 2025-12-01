@@ -1,9 +1,9 @@
-import { container } from "../../../../src/di/inversify";
-import {DbEngine} from "../../../../src/types";
-import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types";
-import {DefaultTestingContext} from "../../default-testing-context";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {LOGIN_QUERY, REGISTER_MUTATION} from "@rpgtools/common/src/gql-mutations";
+import { container } from "../../../../src/di/inversify.js";
+import {DbEngine} from "../../../../src/types.js";
+import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types.js";
+import {DefaultTestingContext} from "../../default-testing-context.js";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {LOGIN_QUERY, REGISTER_MUTATION} from "@rpgtools/common/src/gql-mutations.js";
 
 process.env.TEST_SUITE = "authentication-mutations-test";
 

@@ -1,13 +1,13 @@
-import {EntityAuthorizationPolicy} from "../../types";
-import Calendar from "../../domain-entities/calendar";
-import {SecurityContext} from "../security-context";
-import {DatabaseContext} from "../../dal/database-context";
+import {EntityAuthorizationPolicy} from "../../types.js";
+import Calendar from "../../domain-entities/calendar.js";
+import {SecurityContext} from "../security-context.js";
+import {DatabaseContext} from "../../dal/database-context.js";
 import {
     CALENDAR_ADMIN,
     CALENDAR_ADMIN_ALL,
     CALENDAR_READ,
     CALENDAR_READ_ALL, CALENDAR_RW, CALENDAR_RW_ALL
-} from "@rpgtools/common/src/permission-constants";
+} from "@rpgtools/common/src/permission-constants.js";
 import {injectable} from "inversify";
 
 @injectable()

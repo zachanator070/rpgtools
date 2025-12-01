@@ -1,9 +1,9 @@
 import {injectable} from "inversify";
-import {AbstractInMemoryRepository} from "./abstract-in-memory-repository";
-import {FogStroke} from "../../../domain-entities/fog-stroke";
-import FogStrokeRepository from "../../repository/fog-stroke-repository";
-import {FilterCondition} from "../../filter-condition";
-import {PaginatedResult} from "../../paginated-result";
+import {AbstractInMemoryRepository} from "./abstract-in-memory-repository.js";
+import {FogStroke} from "../../../domain-entities/fog-stroke.js";
+import FogStrokeRepository from "../../repository/fog-stroke-repository.js";
+import {FilterCondition} from "../../filter-condition.js";
+import {PaginatedResult} from "../../paginated-result.js";
 
 
 @injectable()

@@ -1,9 +1,9 @@
-import {container} from "../../../../src/di/inversify";
-import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types";
-import {DbEngine} from "../../../../src/types";
-import {DefaultTestingContext, testGamePassword} from "../../default-testing-context";
-import {TEST_INJECTABLE_TYPES} from "../../injectable-types";
-import {GameService} from "../../../../src/services/game-service";
+import {container} from "../../../../src/di/inversify.js";
+import {INJECTABLE_TYPES} from "../../../../src/di/injectable-types.js";
+import {DbEngine} from "../../../../src/types.js";
+import {DefaultTestingContext, testGamePassword} from "../../default-testing-context.js";
+import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
+import {GameService} from "../../../../src/services/game-service.js";
 import {
     ADD_FOG_STROKE, ADD_MODEL,
     ADD_STROKE,
@@ -12,12 +12,12 @@ import {
     JOIN_GAME,
     LEAVE_GAME, SET_CHARACTER_ATTRIBUTES, SET_CHARACTER_ORDER,
     SET_GAME_MAP, SET_MODEL_COLOR, SET_MODEL_POSITION, SET_POSITIONED_MODEL_WIKI
-} from "@rpgtools/common/src/gql-mutations";
+} from "@rpgtools/common/src/gql-mutations.js";
 import fs from "fs";
-import {ImageService} from "../../../../src/services/image-service";
-import {WikiPageService} from "../../../../src/services/wiki-page-service";
-import {ModelService} from "../../../../src/services/model-service";
-import {FileUpload} from "graphql-upload";
+import {ImageService} from "../../../../src/services/image-service.js";
+import {WikiPageService} from "../../../../src/services/wiki-page-service.js";
+import {ModelService} from "../../../../src/services/model-service.js";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
 import {v4 as uuidv4} from 'uuid';
 
 process.env.TEST_SUITE = "game-mutations-test";

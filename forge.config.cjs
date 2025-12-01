@@ -5,7 +5,7 @@ let config = {};
 
 
 try {
-  const fileContents = fs.readFileSync('../../package.json', 'utf8');
+  const fileContents = fs.readFileSync('package.json', 'utf8');
   const data = JSON.parse(fileContents);
   const version = data.version;
   console.log(`Building Electron App version ${version}`);
@@ -13,7 +13,11 @@ try {
   config = {
     packagerConfig: { prune: false, executableName: '@rpgtools-server' },
     rebuildConfig: {},
-    hooks: {},
+    hooks: {
+      postPackage: async () => {
+        fs.rmSync(path.join(__dirname, 'out', `rpgtools-linux-x64`, `resources`, `app`, `packages`, `frontend`), { recursive: true, force: true });
+      }
+    },
     makers: [
       {
         name: '@electron-forge/maker-squirrel',

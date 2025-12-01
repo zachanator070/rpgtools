@@ -15,12 +15,11 @@ function createWindow() {
         autoHideMenuBar: true,
         width: 640,
         height: 480,
-        icon: path.join(__dirname, '..', '..', 'dist', 'frontend', 'favicon.ico'),
+        icon: path.join(__dirname, '..', 'packages', 'server', 'dist', 'frontend', 'favicon.ico'),
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
-            // preload: path.join(__dirname, 'preload.cjs'),
         }
     });
 

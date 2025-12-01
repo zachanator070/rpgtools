@@ -1,16 +1,16 @@
 import {
 	AuthenticationTokens,
 	CookieManager,
-} from "../types";
-import { User } from "../domain-entities/user";
+} from "../types.js";
+import { User } from "../domain-entities/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {ServerProperties} from "../server/server-properties";
-import {DatabaseContext} from "../dal/database-context";
-import UserFactory from "../domain-entities/factory/user-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {ServerProperties} from "../server/server-properties.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import UserFactory from "../domain-entities/factory/user-factory.js";
 
 export interface CookieConstants {
 	string: string;

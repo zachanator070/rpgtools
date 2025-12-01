@@ -1,19 +1,19 @@
 import {
 	Cache,
 	EventPublisher,
-} from "../types";
-import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants";
-import {USER} from "@rpgtools/common/src/type-constants";
+} from "../types.js";
+import { MODEL_ADMIN, MODEL_RW } from "@rpgtools/common/src/permission-constants.js";
+import {USER} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import { SecurityContext } from "../security/security-context";
-import { FileUpload } from "graphql-upload";
-import { Model } from "../domain-entities/model";
-import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers";
-import {AuthorizationService} from "./authorization-service";
-import {DatabaseContext} from "../dal/database-context";
-import FileFactory from "../domain-entities/factory/file-factory";
-import ModelFactory from "../domain-entities/factory/model-factory";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import { SecurityContext } from "../security/security-context.js";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
+import { Model } from "../domain-entities/model.js";
+import { GAME_MODEL_DELETED } from "../resolvers/subscription-resolvers.js";
+import {AuthorizationService} from "./authorization-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import FileFactory from "../domain-entities/factory/file-factory.js";
+import ModelFactory from "../domain-entities/factory/model-factory.js";
 
 @injectable()
 export class ModelService {

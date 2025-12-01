@@ -1,15 +1,15 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {Game} from "../../../domain-entities/game";
-import GameModel from "../models/game-model";
-import {GameRepository} from "../../repository/game-repository";
-import GameFactory from "../../../domain-entities/factory/game-factory";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import CharacterModel from "../models/game/character-model";
-import CharacterAttributeModel from "../models/game/character-attribute-model";
-import MessageModel from "../models/game/message-model";
-import InGameModelModel from "../models/game/in-game-model-model";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {Game} from "../../../domain-entities/game.js";
+import GameModel from "../models/game-model.js";
+import {GameRepository} from "../../repository/game-repository.js";
+import GameFactory from "../../../domain-entities/factory/game-factory.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import CharacterModel from "../models/game/character-model.js";
+import CharacterAttributeModel from "../models/game/character-attribute-model.js";
+import MessageModel from "../models/game/message-model.js";
+import InGameModelModel from "../models/game/in-game-model-model.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 import {v4} from "uuid";
 
 

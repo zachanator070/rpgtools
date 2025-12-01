@@ -1,15 +1,15 @@
-import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants";
-import {ROLE} from "@rpgtools/common/src/type-constants";
+import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/permission-constants.js";
+import {ROLE} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {
 	ApiServer,
-} from "../types";
+} from "../types.js";
 import { v4 as uuidv4 } from "uuid";
-import { SecurityContext } from "../security/security-context";
-import {AuthenticationService} from "./authentication-service";
-import {DatabaseContext} from "../dal/database-context";
-import RoleFactory from "../domain-entities/factory/role-factory";
+import { SecurityContext } from "../security/security-context.js";
+import {AuthenticationService} from "./authentication-service.js";
+import {DatabaseContext} from "../dal/database-context.js";
+import RoleFactory from "../domain-entities/factory/role-factory.js";
 
 @injectable()
 export class ServerConfigService {

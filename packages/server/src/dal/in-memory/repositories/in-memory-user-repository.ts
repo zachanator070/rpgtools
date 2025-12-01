@@ -1,9 +1,9 @@
-import { User } from "../../../domain-entities/user";
+import { User } from "../../../domain-entities/user.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {UserRepository} from "../../repository/user-repository";
-import {PaginatedResult} from "../../paginated-result";
-import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {UserRepository} from "../../repository/user-repository.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryUserRepository extends AbstractInMemoryRepository<User> implements UserRepository {

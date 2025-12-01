@@ -1,36 +1,52 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`server mutations generate register codes no permission 1`] = `
+exports[`server mutations > generate register codes no permission 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You do not have permission to call this method],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission to call this method",
+      "path": [
+        "generateRegisterCodes",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`server mutations set default world no permission 1`] = `
+exports[`server mutations > set default world no permission 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You do not have permission to call this method],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission to call this method",
+      "path": [
+        "setDefaultWorld",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`server mutations with authenticated user generate register codes 1`] = `
+exports[`server mutations > with authenticated user > generate register codes 1`] = `
 {
   "data": {
     "generateRegisterCodes": {
@@ -41,16 +57,10 @@ exports[`server mutations with authenticated user generate register codes 1`] = 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`server mutations with authenticated user set default world 1`] = `
+exports[`server mutations > with authenticated user > set default world 1`] = `
 {
   "data": {
     "setDefaultWorld": {
@@ -65,43 +75,48 @@ exports[`server mutations with authenticated user set default world 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`server mutations with locked server unlock 1`] = `
+exports[`server mutations > with locked server > unlock 1`] = `
 {
   "data": {
     "unlockServer": true,
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`server mutations with locked server unlock twice 1`] = `
+exports[`server mutations > with locked server > unlock twice 1`] = `
+{
+  "data": {
+    "unlockServer": true,
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`server mutations > with locked server > unlock twice 2`] = `
 {
   "data": {
     "unlockServer": null,
   },
   "errors": [
-    [GraphQLError: Registration Error: Email already used],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Server already unlocked!",
+      "path": [
+        "unlockServer",
+      ],
     },
-  },
+  ],
 }
 `;

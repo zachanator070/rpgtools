@@ -2,8 +2,8 @@ import {
 	Archive,
 	DomainEntity,
 
-} from "../types";
-import { WikiPage } from "../domain-entities/wiki-page";
+} from "../types.js";
+import { WikiPage } from "../domain-entities/wiki-page.js";
 import archiver from "archiver";
 import { Readable, Writable } from "stream";
 import {
@@ -17,36 +17,36 @@ import {
 	PERSON,
 	PLACE,
 	WORLD,
-} from "@rpgtools/common/src/type-constants";
-import { Model } from "../domain-entities/model";
-import { Chunk } from "../domain-entities/chunk";
-import { World } from "../domain-entities/world";
-import { Article } from "../domain-entities/article";
-import { Image } from "../domain-entities/image";
+} from "@rpgtools/common/src/type-constants.js";
+import { Model } from "../domain-entities/model.js";
+import { Chunk } from "../domain-entities/chunk.js";
+import { World } from "../domain-entities/world.js";
+import { Article } from "../domain-entities/article.js";
+import { Image } from "../domain-entities/image.js";
 import {inject, injectable} from "inversify";
-import { INJECTABLE_TYPES } from "../di/injectable-types";
-import {Repository} from "../dal/repository/repository";
-import {ChunkRepository} from "../dal/repository/chunk-repository";
-import {FileRepository} from "../dal/repository/file-repository";
-import {GameRepository} from "../dal/repository/game-repository";
-import {ImageRepository} from "../dal/repository/image-repository";
-import {ItemRepository} from "../dal/repository/item-repository";
-import {ModelRepository} from "../dal/repository/model-repository";
-import {MonsterRepository} from "../dal/repository/monster-repository";
-import {PersonRepository} from "../dal/repository/person-repository";
-import {PinRepository} from "../dal/repository/pin-repository";
-import {PlaceRepository} from "../dal/repository/place-repository";
-import {RoleRepository} from "../dal/repository/role-repository";
-import {ServerConfigRepository} from "../dal/repository/server-config-repository";
-import {UserRepository} from "../dal/repository/user-repository";
-import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository";
-import {WikiPageRepository} from "../dal/repository/wiki-page-repository";
-import {WorldRepository} from "../dal/repository/world-repository";
-import {ArticleRepository} from "../dal/repository/article-repository";
-import {CalendarRepository} from "../dal/repository/calendar-repository";
-import EventWikiRepository from "../dal/repository/event-wiki-repository";
-import FogStrokeRepository from "../dal/repository/fog-stroke-repository";
-import StrokeRepository from "../dal/repository/stroke-repository";
+import { INJECTABLE_TYPES } from "../di/injectable-types.js";
+import {Repository} from "../dal/repository/repository.js";
+import {ChunkRepository} from "../dal/repository/chunk-repository.js";
+import {FileRepository} from "../dal/repository/file-repository.js";
+import {GameRepository} from "../dal/repository/game-repository.js";
+import {ImageRepository} from "../dal/repository/image-repository.js";
+import {ItemRepository} from "../dal/repository/item-repository.js";
+import {ModelRepository} from "../dal/repository/model-repository.js";
+import {MonsterRepository} from "../dal/repository/monster-repository.js";
+import {PersonRepository} from "../dal/repository/person-repository.js";
+import {PinRepository} from "../dal/repository/pin-repository.js";
+import {PlaceRepository} from "../dal/repository/place-repository.js";
+import {RoleRepository} from "../dal/repository/role-repository.js";
+import {ServerConfigRepository} from "../dal/repository/server-config-repository.js";
+import {UserRepository} from "../dal/repository/user-repository.js";
+import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository.js";
+import {WikiPageRepository} from "../dal/repository/wiki-page-repository.js";
+import {WorldRepository} from "../dal/repository/world-repository.js";
+import {ArticleRepository} from "../dal/repository/article-repository.js";
+import {CalendarRepository} from "../dal/repository/calendar-repository.js";
+import EventWikiRepository from "../dal/repository/event-wiki-repository.js";
+import FogStrokeRepository from "../dal/repository/fog-stroke-repository.js";
+import StrokeRepository from "../dal/repository/stroke-repository.js";
 
 @injectable()
 export class ZipArchive implements Archive {

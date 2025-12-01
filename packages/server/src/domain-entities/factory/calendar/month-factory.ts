@@ -1,7 +1,7 @@
-import {EntityFactory} from "../../../types";
-import {Month} from "../../calendar";
+import {EntityFactory} from "../../../types.js";
+import {Month} from "../../calendar.js";
 import {injectable} from "inversify";
-import MonthModel from "../../../dal/sql/models/calendar/month-model";
+import MonthModel from "../../../dal/sql/models/calendar/month-model.js";
 
 
 @injectable()

@@ -1,12 +1,12 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {World} from "../../../domain-entities/world";
-import WorldModel from "../models/world-model";
-import {WorldRepository} from "../../repository/world-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import WorldFactory from "../../../domain-entities/factory/world-factory";
-import {PaginatedResult} from "../../paginated-result";
-import SqlPermissionControlledRepository from "./sql-permission-controlled-repository";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {World} from "../../../domain-entities/world.js";
+import WorldModel from "../models/world-model.js";
+import {WorldRepository} from "../../repository/world-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import WorldFactory from "../../../domain-entities/factory/world-factory.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 import sequelize, {Op} from 'sequelize';
 
 @injectable()

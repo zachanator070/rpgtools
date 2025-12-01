@@ -1,6 +1,6 @@
-import {Repository} from "./repository";
-import {User} from "../../domain-entities/user";
-import {PaginatedResult} from "../paginated-result";
+import {Repository} from "./repository.js";
+import {User} from "../../domain-entities/user.js";
+import {PaginatedResult} from "../paginated-result.js";
 
 export interface UserRepository extends Repository<User>{
     findByUsernamePaginated(username: string, page: number): Promise<PaginatedResult<User>>;

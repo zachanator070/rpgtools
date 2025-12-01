@@ -1,8 +1,8 @@
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin, Model} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
-import PathNodeModel from "./path-node-model";
-import SqlModel from "../sql-model";
-import {GAME} from "@rpgtools/common/src/type-constants";
+import {defaultAttributes} from "../default-attributes.js";
+import PathNodeModel from "./path-node-model.js";
+import SqlModel from "../sql-model.js";
+import {GAME} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class FogStrokeModel extends SqlModel {
@@ -11,8 +11,8 @@ export default class FogStrokeModel extends SqlModel {
     declare strokeType: string;
     declare GameId: string;
 
-    getPath: HasManyGetAssociationsMixin<PathNodeModel>;
-    setPath: HasManySetAssociationsMixin<PathNodeModel, any>;
+    declare getPath: HasManyGetAssociationsMixin<PathNodeModel>;
+    declare setPath: HasManySetAssociationsMixin<PathNodeModel, any>;
 
     static attributes = {
         ...defaultAttributes,

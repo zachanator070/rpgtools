@@ -4,8 +4,6 @@ VERSION=$(shell jq '.version' package.json | sed -e 's/^"//' -e 's/"/$//')
 CURRENT_UID=$(shell id -u):$(shell id -g)
 
 NODE_MODULES=node_modules/.package-lock.json
-PROD_NODE_MODULES_CACHE=node_modules_prod/apollo-server/package.json
-DEV_NODE_MODULES_CACHE=node_modules_dev/apollo-server/package.json
 
 SERVER_BUILD_DEST=packages/server/dist/server
 FRONTEND_BUILD_DEST=packages/server/dist/frontend
@@ -17,8 +15,8 @@ FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 
-ELECTRON_EXEC=packages/server/out/@rpgtools-server-linux-x64/@rpgtools-server
-ELECTRON_DEB=packages/server/out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
+ELECTRON_EXEC=out/rpgtools-linux-x64/@rpgtools-server
+ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
 DEV_SERVER_CONTAINER_SRC=packages/server/Dockerfile packages/server/tsconfig.json package-lock.json
@@ -78,31 +76,34 @@ run-electron: $(ELECTRON_EXEC)
 #########
 # TESTS #
 #########
+
+TEST_ENV_FILE=packages/server/test.env
+
 .PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-sqlite
 .PHONY: test-e2e test-e2e-postgres test-e2e-sqlite run-cypress
 
 test: test-unit test-integration test-e2e
 
-JEST_OPTIONS=
+VITEST_OPTIONS=
 
 test-unit:
 	npm run test:unit --workspace=packages/server
 
 test-integration: test-integration-postgres
 
-test-integration-update-snapshots: JEST_OPTIONS:=-u
+test-integration-update-snapshots: VITEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
 
 test-integration-postgres: .env
 	docker compose up -d postgres
-	cp .env.example packages/server/jest.env
-	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' packages/server/jest.env
-	npm run test:integration --workspace=packages/server
+	cp .env.example $(TEST_ENV_FILE)
+	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
+	npm run test:integration --workspace=packages/server $(VITEST_OPTIONS)
 	docker compose down
 
 test-integration-sqlite: .env
-	cp .env.example packages/server/jest.env
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' packages/server/jest.env
+	cp .env.example $(TEST_ENV_FILE)
+	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
@@ -146,9 +147,18 @@ seed-new: .env
 ######
 # CI #
 ######
-.PHONY: ci lint
+.PHONY: ci lint ci-unit ci-integration ci-e2e-postgres ci-e2e-sqlite
 
+# runs all tests for continuous integration environment
 ci: .env $(NODE_MODULES) test
+
+ci-unit: .env $(NODE_MODULES) test-unit
+
+ci-integration: .env $(NODE_MODULES) test-integration
+
+ci-e2e-postgres: .env $(NODE_MODULES) test-e2e-postgres
+
+ci-e2e-sqlite: .env $(NODE_MODULES) test-e2e-sqlite
 
 lint:
 	npx eslint packages/server/src packages/common/src --ext .ts
@@ -174,7 +184,7 @@ publish:
 clean: clean-deps clean-docker
 	rm -rf db
 	rm -rf packages/server/dist
-	rm -rf packages/server/out
+	rm -rf out
 
 clean-deps:
 	rm -rf node_modules
@@ -204,17 +214,6 @@ prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
 	npm ci
-
-$(PROD_NODE_MODULES_CACHE): .env
-	npm ci --omit=dev
-	mkdir -p node_modules_prod
-	cp -R node_modules/* node_modules_prod
-	rm -rf node_modules_prod/@rpgtools
-
-$(DEV_NODE_MODULES_CACHE): .env
-	npm ci
-	mkdir -p node_modules_dev
-	cp -R node_modules/* node_modules_dev
 
 ################
 # BUILD SERVER #
@@ -296,20 +295,19 @@ build-common:
 ##################
 .PHONY: electron-prep electron-package electron-make electron
 
-ELECTRON_DEPS=$(PROD_NODE_MODULES_CACHE) $(DEV_NODE_MODULES_CACHE) $(PROD_FRONTEND_JS) $(SERVER_JS)
+ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS)
 
 # creates executable
 electron-package: $(ELECTRON_EXEC)
 
 $(ELECTRON_EXEC): $(ELECTRON_DEPS)
-	cp -R node_modules_prod/* packages/server/node_modules
-	mkdir -p packages/server/node_modules/@rpgtools
-	cp -R packages/common packages/server/node_modules/@rpgtools
-	npm run -w packages/server package
+	npm run electron:package
+ifeq ($(origin GITHUB_ACTIONS),environment)
+	sudo chown root:root ./out/rpgtools-linux-x64/chrome-sandbox
+	sudo chmod 4755 ./out/rpgtools-linux-x64/chrome-sandbox
+endif
 
 # creates installable package
 electron-make: $(ELECTRON_DEPS)
-	cp -R node_modules_prod/* packages/server/node_modules
-	mkdir -p packages/server/node_modules/@rpgtools
-	cp -R packages/common packages/server/node_modules/@rpgtools
-	npm run -w packages/server make
+	npm i -w packages/server --omit=dev
+	npm run electron:make

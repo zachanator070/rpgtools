@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`image-mutations with existing world and logged in user create image no permission 1`] = `
+exports[`image-mutations > with existing world and logged in user > create image no permission 1`] = `
 {
   "data": {
     "createImage": {
@@ -8,16 +8,10 @@ exports[`image-mutations with existing world and logged in user create image no 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`image-mutations with existing world and logged in user with unauthenticated user create image no permission 1`] = `
+exports[`image-mutations > with existing world and logged in user > with unauthenticated user > create image no permission 1`] = `
 {
   "data": {
     "createImage": {
@@ -25,11 +19,5 @@ exports[`image-mutations with existing world and logged in user with unauthentic
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;

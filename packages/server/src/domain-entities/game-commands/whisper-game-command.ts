@@ -4,8 +4,8 @@ import {
 	GameCommandArgDefinition,
 	GameCommandOption,
 	GameCommandOptionDefinition,
-} from "./abstract-game-command";
-import { Character, Message } from "../game";
+} from "./abstract-game-command.js";
+import { Character, Message } from "../game.js";
 
 export class WhisperGameCommand extends AbstractGameCommand {
 	args: GameCommandArgDefinition[] = [

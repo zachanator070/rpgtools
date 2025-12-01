@@ -1,9 +1,9 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
-import {defaultAttributes} from "../default-attributes";
-import ModelModel from "../model-model";
-import ArticleModel from "../article-model";
-import SqlModel from "../sql-model";
-import {GAME, MODEL} from "@rpgtools/common/src/type-constants";
+import {defaultAttributes} from "../default-attributes.js";
+import ModelModel from "../model-model.js";
+import ArticleModel from "../article-model.js";
+import SqlModel from "../sql-model.js";
+import {ARTICLE, GAME, MODEL} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class InGameModelModel extends SqlModel {
@@ -51,11 +51,14 @@ export default class InGameModelModel extends SqlModel {
                 model: MODEL,
                 key: '_id'
             }
+        },
+        wikiId: {
+            type: DataTypes.UUID,
         }
     };
 
     static connect() {
-        InGameModelModel.belongsTo(ModelModel, {as: 'model'})
+        InGameModelModel.belongsTo(ModelModel, {as: 'model'});
         InGameModelModel.belongsTo(ArticleModel, {as: 'wiki', constraints: false});
     }
 }

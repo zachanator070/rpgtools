@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`world-mutations with world and logged in create calendar 1`] = `
+exports[`world-mutations > with world and logged in > create calendar 1`] = `
 {
   "data": {
     "upsertCalendar": {
@@ -41,16 +41,10 @@ exports[`world-mutations with world and logged in create calendar 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in create pin 1`] = `
+exports[`world-mutations > with world and logged in > create pin 1`] = `
 {
   "data": {
     "createPin": {
@@ -70,16 +64,10 @@ exports[`world-mutations with world and logged in create pin 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in create world 1`] = `
+exports[`world-mutations > with world and logged in > create world 1`] = `
 {
   "data": {
     "createWorld": {
@@ -90,16 +78,10 @@ exports[`world-mutations with world and logged in create world 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in delete calendar 1`] = `
+exports[`world-mutations > with world and logged in > delete calendar 1`] = `
 {
   "data": {
     "deleteCalendar": {
@@ -107,16 +89,10 @@ exports[`world-mutations with world and logged in delete calendar 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in delete pin 1`] = `
+exports[`world-mutations > with world and logged in > delete pin 1`] = `
 {
   "data": {
     "deletePin": {
@@ -136,121 +112,73 @@ exports[`world-mutations with world and logged in delete pin 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in create calendar no permission 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > create calendar no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in create pin no permission 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > create pin no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in create world no permissions 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > create world no permissions 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in delete pin no permission 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > delete pin no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in rename world no permission 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > rename world no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in update calendar no permission 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > update calendar no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in not logged in update pin no permission 1`] = `
+exports[`world-mutations > with world and logged in > not logged in > update pin no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in rename world 1`] = `
+exports[`world-mutations > with world and logged in > rename world 1`] = `
 {
   "data": {
     "renameWorld": {
@@ -259,16 +187,10 @@ exports[`world-mutations with world and logged in rename world 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in update calendar age years 1`] = `
+exports[`world-mutations > with world and logged in > update calendar age years 1`] = `
 {
   "data": {
     "upsertCalendar": {
@@ -309,16 +231,10 @@ exports[`world-mutations with world and logged in update calendar age years 1`] 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in update calendar delete month 1`] = `
+exports[`world-mutations > with world and logged in > update calendar delete month 1`] = `
 {
   "data": {
     "upsertCalendar": {
@@ -353,16 +269,10 @@ exports[`world-mutations with world and logged in update calendar delete month 1
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`world-mutations with world and logged in update pin 1`] = `
+exports[`world-mutations > with world and logged in > update pin 1`] = `
 {
   "data": {
     "updatePin": {
@@ -382,11 +292,5 @@ exports[`world-mutations with world and logged in update pin 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;

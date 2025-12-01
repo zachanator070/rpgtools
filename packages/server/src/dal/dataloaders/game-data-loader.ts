@@ -1,8 +1,8 @@
-import { GraphqlDataloader } from "../graphql-dataloader";
-import { Game } from "../../domain-entities/game";
+import { GraphqlDataloader } from "../graphql-dataloader.js";
+import { Game } from "../../domain-entities/game.js";
 import {injectable } from "inversify";
-import {Repository} from "../repository/repository";
-import {DatabaseContext} from "../database-context";
+import {Repository} from "../repository/repository.js";
+import {DatabaseContext} from "../database-context.js";
 
 @injectable()
 export class GameDataLoader extends GraphqlDataloader<Game> {

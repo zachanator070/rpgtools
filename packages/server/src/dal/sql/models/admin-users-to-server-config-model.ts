@@ -1,4 +1,4 @@
-import SqlModel from "./sql-model";
+import SqlModel from "./sql-model.js";
 import {DataTypes} from "sequelize";
 
 export default class AdminUsersToServerConfigModel extends SqlModel {

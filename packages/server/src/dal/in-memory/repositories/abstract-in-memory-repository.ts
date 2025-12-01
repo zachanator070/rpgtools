@@ -1,13 +1,13 @@
-import { DomainEntity} from "../../../types";
+import { DomainEntity} from "../../../types.js";
 import {
 	FILTER_CONDITION_OPERATOR_EQUALS,
 	FILTER_CONDITION_OPERATOR_IN,
 	FilterCondition,
-} from "../../filter-condition";
-import {PaginatedResult} from "../../paginated-result";
+} from "../../filter-condition.js";
+import {PaginatedResult} from "../../paginated-result.js";
 import {injectable} from "inversify";
 import {v4 as uuidv4} from 'uuid';
-import {Repository} from "../../repository/repository";
+import {Repository} from "../../repository/repository.js";
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>

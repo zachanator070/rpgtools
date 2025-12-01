@@ -1,5 +1,5 @@
 import {QueryInterface} from "sequelize";
-import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model";
+import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model.js";
 
 
 async function up({ context: queryInterface }: {context: QueryInterface}) {

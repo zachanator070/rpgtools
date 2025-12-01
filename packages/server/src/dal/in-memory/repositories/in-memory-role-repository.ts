@@ -1,9 +1,9 @@
-import { Role } from "../../../domain-entities/role";
+import { Role } from "../../../domain-entities/role.js";
 import { injectable } from "inversify";
-import { AbstractInMemoryRepository } from "./abstract-in-memory-repository";
-import {RoleRepository} from "../../repository/role-repository";
-import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition";
-import {PaginatedResult} from "../../paginated-result";
+import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
+import {RoleRepository} from "../../repository/role-repository.js";
+import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
+import {PaginatedResult} from "../../paginated-result.js";
 
 @injectable()
 export class InMemoryRoleRepository extends AbstractInMemoryRepository<Role> implements RoleRepository {

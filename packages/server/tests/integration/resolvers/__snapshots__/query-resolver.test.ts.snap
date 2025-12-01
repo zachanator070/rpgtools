@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`query resolver with world no current user 1`] = `
+exports[`query resolver > with world > no current user 1`] = `
 {
   "data": {
     "currentUser": {
@@ -12,16 +12,10 @@ exports[`query resolver with world no current user 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world users 1`] = `
+exports[`query resolver > with world > users 1`] = `
 {
   "data": {
     "users": {
@@ -35,16 +29,10 @@ exports[`query resolver with world users 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world wiki no permission 1`] = `
+exports[`query resolver > with world > wiki no permission 1`] = `
 {
   "data": {
     "wiki": null,
@@ -54,16 +42,10 @@ exports[`query resolver with world wiki no permission 1`] = `
       "message": Any<String>,
     },
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user current user 1`] = `
+exports[`query resolver > with world > with authenticated user > current user 1`] = `
 {
   "data": {
     "currentUser": {
@@ -79,16 +61,10 @@ exports[`query resolver with world with authenticated user current user 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user get roles 1`] = `
+exports[`query resolver > with world > with authenticated user > get roles 1`] = `
 {
   "data": {
     "roles": {
@@ -105,31 +81,33 @@ exports[`query resolver with world with authenticated user get roles 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user get roles permission denied 1`] = `
+exports[`query resolver > with world > with authenticated user > get roles permission denied 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You do not have permission to read this World],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 38,
+        },
+      ],
+      "message": "You do not have permission to read this World",
+      "path": [
+        "roles",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`query resolver with world with authenticated user wiki 1`] = `
+exports[`query resolver > with world > with authenticated user > wiki 1`] = `
 {
   "data": {
     "wiki": {
@@ -152,16 +130,10 @@ exports[`query resolver with world with authenticated user wiki 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user wikis in folder 1`] = `
+exports[`query resolver > with world > with authenticated user > wikis in folder 1`] = `
 {
   "data": {
     "wikisInFolder": {
@@ -174,16 +146,10 @@ exports[`query resolver with world with authenticated user wikis in folder 1`] =
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user with hosted game get a game 1`] = `
+exports[`query resolver > with world > with authenticated user > with hosted game > get a game 1`] = `
 {
   "data": {
     "game": ObjectContaining {
@@ -197,16 +163,10 @@ exports[`query resolver with world with authenticated user with hosted game get 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user with hosted game get my games 1`] = `
+exports[`query resolver > with world > with authenticated user > with hosted game > get my games 1`] = `
 {
   "data": {
     "myGames": ArrayContaining [
@@ -216,16 +176,10 @@ exports[`query resolver with world with authenticated user with hosted game get 
     ],
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get all events 1`] = `
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get all events 1`] = `
 {
   "data": {
     "events": {
@@ -238,16 +192,10 @@ exports[`query resolver with world with authenticated user with multiple events,
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get all events in second calendar 1`] = `
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get all events in second calendar 1`] = `
 {
   "data": {
     "events": {
@@ -260,16 +208,10 @@ exports[`query resolver with world with authenticated user with multiple events,
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page 1`] = `
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get only events related to world wiki page 1`] = `
 {
   "data": {
     "events": {
@@ -282,16 +224,10 @@ exports[`query resolver with world with authenticated user with multiple events,
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user with multiple events, calendars, and referenced wikis get only events related to world wiki page in second calendar 1`] = `
+exports[`query resolver > with world > with authenticated user > with multiple events, calendars, and referenced wikis > get only events related to world wiki page in second calendar 1`] = `
 {
   "data": {
     "events": {
@@ -304,16 +240,10 @@ exports[`query resolver with world with authenticated user with multiple events,
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user world 1`] = `
+exports[`query resolver > with world > with authenticated user > world 1`] = `
 {
   "data": {
     "world": {
@@ -354,16 +284,10 @@ exports[`query resolver with world with authenticated user world 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with authenticated user worlds with one private and one public world 1`] = `
+exports[`query resolver > with world > with authenticated user > worlds with one private and one public world 1`] = `
 {
   "data": {
     "worlds": ObjectContaining {
@@ -378,44 +302,26 @@ exports[`query resolver with world with authenticated user worlds with one priva
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world with hosted game get a game permission denied 1`] = `
+exports[`query resolver > with world > with hosted game > get a game permission denied 1`] = `
 {
   "data": null,
   "errors": Any<Array>,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world world 1`] = `
+exports[`query resolver > with world > world 1`] = `
 {
   "data": {
     "world": null,
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`query resolver with world worlds with one private and one public world 1`] = `
+exports[`query resolver > with world > worlds with one private and one public world 1`] = `
 {
   "data": {
     "worlds": ObjectContaining {
@@ -430,11 +336,5 @@ exports[`query resolver with world worlds with one private and one public world 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;

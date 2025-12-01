@@ -1,4 +1,4 @@
-import { EventPublisher } from "../types";
+import { EventPublisher } from "../types.js";
 import { PubSub } from "graphql-subscriptions";
 import { injectable } from "inversify";
 
@@ -7,7 +7,7 @@ export class ApolloExpressEventPublisher implements EventPublisher {
 	pubsub = new PubSub();
 
 	asyncIterator(events: string[]): AsyncIterator<any> {
-		return this.pubsub.asyncIterator(events);
+		return this.pubsub.asyncIterableIterator(events);
 	}
 
 	publish(event: string, payload: any): Promise<void> {

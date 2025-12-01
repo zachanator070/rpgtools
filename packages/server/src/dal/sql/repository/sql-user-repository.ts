@@ -1,12 +1,12 @@
 import {inject, injectable} from "inversify";
-import AbstractSqlRepository from "./abstract-sql-repository";
-import {User} from "../../../domain-entities/user";
-import UserModel from "../models/user-model";
-import {UserRepository} from "../../repository/user-repository";
-import {INJECTABLE_TYPES} from "../../../di/injectable-types";
-import UserFactory from "../../../domain-entities/factory/user-factory";
-import {PaginatedResult} from "../../paginated-result";
-import {RoleModel} from "../models/role-model";
+import AbstractSqlRepository from "./abstract-sql-repository.js";
+import {User} from "../../../domain-entities/user.js";
+import UserModel from "../models/user-model.js";
+import {UserRepository} from "../../repository/user-repository.js";
+import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
+import UserFactory from "../../../domain-entities/factory/user-factory.js";
+import {PaginatedResult} from "../../paginated-result.js";
+import {RoleModel} from "../models/role-model.js";
 import sequelize, {Op} from "sequelize";
 
 

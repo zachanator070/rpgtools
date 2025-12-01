@@ -1,7 +1,7 @@
 import sequelize, {ModelStatic} from "sequelize";
-import {DomainEntity, EntityFactory} from "../../../types";
-import SqlModel from "../models/sql-model";
-import {PaginatedResult} from "../../paginated-result";
+import {DomainEntity, EntityFactory} from "../../../types.js";
+import SqlModel from "../models/sql-model.js";
+import {PaginatedResult} from "../../paginated-result.js";
 import {injectable} from "inversify";
 import {v4} from "uuid";
 

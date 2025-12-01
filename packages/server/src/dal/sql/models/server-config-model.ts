@@ -2,13 +2,13 @@ import {
     BelongsToManyGetAssociationsMixin, BelongsToManySetAssociationsMixin,
     DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin,
 } from "sequelize";
-import {defaultAttributes} from "./default-attributes";
-import UserModel from "./user-model";
-import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model";
-import RegisterCodeModel from "./register-code-model";
-import WorldModel from "./world-model";
-import {WORLD} from "@rpgtools/common/src/type-constants";
-import AdminUsersToServerConfigModel from "./admin-users-to-server-config-model";
+import {defaultAttributes} from "./default-attributes.js";
+import UserModel from "./user-model.js";
+import PermissionControlledModel, {configPermissionControlledModel} from "./permission-controlled-model.js";
+import RegisterCodeModel from "./register-code-model.js";
+import WorldModel from "./world-model.js";
+import {WORLD} from "@rpgtools/common/src/type-constants.js";
+import AdminUsersToServerConfigModel from "./admin-users-to-server-config-model.js";
 
 
 export default class ServerConfigModel extends PermissionControlledModel {
@@ -17,11 +17,11 @@ export default class ServerConfigModel extends PermissionControlledModel {
     declare unlockCode: string;
     declare defaultWorldId: string;
 
-    getAdmins: BelongsToManyGetAssociationsMixin<UserModel>;
-    setAdmins: BelongsToManySetAssociationsMixin<UserModel, string>;
+    declare getAdmins: BelongsToManyGetAssociationsMixin<UserModel>;
+    declare setAdmins: BelongsToManySetAssociationsMixin<UserModel, string>;
 
-    getCodes: HasManyGetAssociationsMixin<RegisterCodeModel>;
-    setCodes: HasManySetAssociationsMixin<RegisterCodeModel, string>;
+    declare getCodes: HasManyGetAssociationsMixin<RegisterCodeModel>;
+    declare setCodes: HasManySetAssociationsMixin<RegisterCodeModel, string>;
 
     static attributes = {
         ...defaultAttributes,

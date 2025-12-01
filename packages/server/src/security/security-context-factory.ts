@@ -1,10 +1,10 @@
-import { User } from "../domain-entities/user";
+import { User } from "../domain-entities/user.js";
 import { injectable } from "inversify";
-import { Role } from "../domain-entities/role";
-import { SecurityContext } from "./security-context";
-import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
-import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants";
-import {DatabaseContext} from "../dal/database-context";
+import { Role } from "../domain-entities/role.js";
+import { SecurityContext } from "./security-context.js";
+import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants.js";
+import {EVERYONE, LOGGED_IN} from "@rpgtools/common/src/role-constants.js";
+import {DatabaseContext} from "../dal/database-context.js";
 
 @injectable()
 export class SecurityContextFactory {

@@ -1,9 +1,9 @@
-import SqlModel from "../sql-model";
-import {defaultAttributes} from "../default-attributes";
+import SqlModel from "../sql-model.js";
+import {defaultAttributes} from "../default-attributes.js";
 import {DataTypes, HasManyGetAssociationsMixin, HasManySetAssociationsMixin} from "sequelize";
-import MonthModel from "./month-model";
-import DayOfTheWeekModel from "./day-of-the-week-model";
-import {CALENDAR} from "@rpgtools/common/src/type-constants";
+import MonthModel from "./month-model.js";
+import DayOfTheWeekModel from "./day-of-the-week-model.js";
+import {CALENDAR} from "@rpgtools/common/src/type-constants.js";
 
 
 export default class AgeModel extends SqlModel {
@@ -34,10 +34,10 @@ export default class AgeModel extends SqlModel {
         }
     };
 
-    getMonths: HasManyGetAssociationsMixin<MonthModel>;
-    setMonths: HasManySetAssociationsMixin<MonthModel, string>;
-    getDays: HasManyGetAssociationsMixin<DayOfTheWeekModel>;
-    setDays: HasManySetAssociationsMixin<DayOfTheWeekModel, string>;
+    declare getMonths: HasManyGetAssociationsMixin<MonthModel>;
+    declare setMonths: HasManySetAssociationsMixin<MonthModel, string>;
+    declare getDays: HasManyGetAssociationsMixin<DayOfTheWeekModel>;
+    declare setDays: HasManySetAssociationsMixin<DayOfTheWeekModel, string>;
 
     static connect() {
         AgeModel.hasMany(MonthModel, {as: 'months', foreignKey: 'ageId', onDelete: 'CASCADE'});

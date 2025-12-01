@@ -1,6 +1,6 @@
-import { Character, Message } from "../game";
+import { Character, Message } from "../game.js";
 import { v4 as uuidv4 } from "uuid";
-import {MESSAGE_SERVER_USER} from "../../services/game-service";
+import {MESSAGE_SERVER_USER} from "../../services/game-service.js";
 
 export interface GameCommandArgDefinition {
 	name: string;

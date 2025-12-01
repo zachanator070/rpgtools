@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`folder-mutations with tester logged in and world created as other user no permission to child 1`] = `
+exports[`folder-mutations > with tester logged in and world created > as other user > no permission to child 1`] = `
 {
   "data": null,
   "errors": [
@@ -20,16 +20,10 @@ exports[`folder-mutations with tester logged in and world created as other user 
       ],
     },
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created create folder 1`] = `
+exports[`folder-mutations > with tester logged in and world created > create folder 1`] = `
 {
   "data": {
     "createFolder": {
@@ -43,16 +37,10 @@ exports[`folder-mutations with tester logged in and world created create folder 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created delete folder 1`] = `
+exports[`folder-mutations > with tester logged in and world created > delete folder 1`] = `
 {
   "data": {
     "deleteFolder": ObjectContaining {
@@ -66,31 +54,33 @@ exports[`folder-mutations with tester logged in and world created delete folder 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created delete root folder 1`] = `
+exports[`folder-mutations > with tester logged in and world created > delete root folder 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You cannot delete the root folder of a world],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You cannot delete the root folder of a world",
+      "path": [
+        "deleteFolder",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created rename folder 1`] = `
+exports[`folder-mutations > with tester logged in and world created > rename folder 1`] = `
 {
   "data": {
     "renameFolder": {
@@ -99,31 +89,33 @@ exports[`folder-mutations with tester logged in and world created rename folder 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created with unauthenticated user create folder permission denied 1`] = `
+exports[`folder-mutations > with tester logged in and world created > with unauthenticated user > create folder permission denied 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You do not have permission for this folder],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission for this folder",
+      "path": [
+        "createFolder",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created with unauthenticated user delete folder permission denied 1`] = `
+exports[`folder-mutations > with tester logged in and world created > with unauthenticated user > delete folder permission denied 1`] = `
 {
   "data": null,
   "errors": [
@@ -143,26 +135,28 @@ exports[`folder-mutations with tester logged in and world created with unauthent
       ],
     },
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`folder-mutations with tester logged in and world created with unauthenticated user rename folder permission denied 1`] = `
+exports[`folder-mutations > with tester logged in and world created > with unauthenticated user > rename folder permission denied 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You do not have permission for this folder],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission for this folder",
+      "path": [
+        "renameFolder",
+      ],
     },
-  },
+  ],
 }
 `;

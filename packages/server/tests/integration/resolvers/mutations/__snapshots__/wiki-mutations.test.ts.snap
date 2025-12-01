@@ -1,81 +1,51 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`wiki page mutations with world create wiki no permission 1`] = `
+exports[`wiki page mutations > with world > create wiki no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world delete wiki no permission 1`] = `
+exports[`wiki page mutations > with world > delete wiki no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world update cover image no permission 1`] = `
+exports[`wiki page mutations > with world > update cover image no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world update place no permission 1`] = `
+exports[`wiki page mutations > with world > update place no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world update wiki no permission 1`] = `
+exports[`wiki page mutations > with world > update wiki no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user create wiki 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > create wiki 1`] = `
 {
   "data": {
     "createWiki": {
@@ -94,16 +64,10 @@ exports[`wiki page mutations with world with authenticated user create wiki 1`] 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user delete wiki 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > delete wiki 1`] = `
 {
   "data": {
     "deleteWiki": {
@@ -111,31 +75,33 @@ exports[`wiki page mutations with world with authenticated user delete wiki 1`] 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user delete wiki root wiki 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > delete wiki root wiki 1`] = `
 {
   "data": null,
   "errors": [
-    [GraphQLError: You cannot delete the main page of a world],
-  ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You cannot delete the main page of a world",
+      "path": [
+        "deleteWiki",
+      ],
     },
-  },
+  ],
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user update type 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > update type 1`] = `
 {
   "data": {
     "updateWiki": {
@@ -167,16 +133,10 @@ exports[`wiki page mutations with world with authenticated user update type 1`] 
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user update wiki just content 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > update wiki just content 1`] = `
 {
   "data": {
     "updateWiki": {
@@ -199,16 +159,10 @@ exports[`wiki page mutations with world with authenticated user update wiki just
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user update wiki just name 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > update wiki just name 1`] = `
 {
   "data": {
     "updateWiki": {
@@ -231,16 +185,10 @@ exports[`wiki page mutations with world with authenticated user update wiki just
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user with image update cover image 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > with image > update cover image 1`] = `
 {
   "data": {
     "updateWiki": {
@@ -283,16 +231,10 @@ exports[`wiki page mutations with world with authenticated user with image updat
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user with image update place 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > with image > update place 1`] = `
 {
   "data": {
     "updatePlace": {
@@ -335,16 +277,10 @@ exports[`wiki page mutations with world with authenticated user with image updat
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`wiki page mutations with world with authenticated user with new event wiki update event 1`] = `
+exports[`wiki page mutations > with world > with authenticated user > with new event wiki > update event 1`] = `
 {
   "data": {
     "updateEventWiki": {
@@ -384,11 +320,5 @@ exports[`wiki page mutations with world with authenticated user with new event w
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;

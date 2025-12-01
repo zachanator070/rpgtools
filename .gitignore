@@ -9,8 +9,8 @@ coverage/
 packages/frontend/cypress/screenshots
 packages/frontend/cypress/videos
 packages/frontend/seed.log
-packages/server/jest.env
-packages/server/out
+packages/server/test.env
+out/
 db/
 containers/
 nohup.out

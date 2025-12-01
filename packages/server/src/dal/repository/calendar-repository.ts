@@ -1,5 +1,5 @@
-import {Repository} from "./repository";
-import Calendar from "../../domain-entities/calendar";
+import {Repository} from "./repository.js";
+import Calendar from "../../domain-entities/calendar.js";
 
 
 export interface CalendarRepository extends Repository<Calendar>{

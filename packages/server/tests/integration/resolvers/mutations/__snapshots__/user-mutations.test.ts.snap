@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`user mutations with world and not logged in set current world not logged in 1`] = `
+exports[`user mutations > with world and not logged in > set current world not logged in 1`] = `
 {
   "data": {
     "setCurrentWorld": {
@@ -8,16 +8,10 @@ exports[`user mutations with world and not logged in set current world not logge
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`user mutations with world and not logged in with authenticated user set current world 1`] = `
+exports[`user mutations > with world and not logged in > with authenticated user > set current world 1`] = `
 {
   "data": {
     "setCurrentWorld": {
@@ -25,11 +19,5 @@ exports[`user mutations with world and not logged in with authenticated user set
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;

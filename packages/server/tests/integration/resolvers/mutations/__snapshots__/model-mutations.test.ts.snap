@@ -1,51 +1,33 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`model mutations with world create model no permission 1`] = `
+exports[`model mutations > with world > create model no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world delete model no permission 1`] = `
+exports[`model mutations > with world > delete model no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world update model no permission 1`] = `
+exports[`model mutations > with world > update model no permission 1`] = `
 {
   "data": null,
   "errors": ArrayContaining [
     Any<Object>,
   ],
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world with authenticated user create model 1`] = `
+exports[`model mutations > with world > with authenticated user > create model 1`] = `
 {
   "data": {
     "createModel": {
@@ -53,16 +35,10 @@ exports[`model mutations with world with authenticated user create model 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world with authenticated user create two models with same filename 1`] = `
+exports[`model mutations > with world > with authenticated user > create two models with same filename 1`] = `
 {
   "data": {
     "createModel": {
@@ -70,16 +46,10 @@ exports[`model mutations with world with authenticated user create two models wi
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world with authenticated user create two models with same filename 2`] = `
+exports[`model mutations > with world > with authenticated user > create two models with same filename 2`] = `
 {
   "data": {
     "createModel": {
@@ -87,16 +57,10 @@ exports[`model mutations with world with authenticated user create two models wi
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world with authenticated user delete model 1`] = `
+exports[`model mutations > with world > with authenticated user > delete model 1`] = `
 {
   "data": {
     "deleteModel": {
@@ -104,16 +68,10 @@ exports[`model mutations with world with authenticated user delete model 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;
 
-exports[`model mutations with world with authenticated user update model 1`] = `
+exports[`model mutations > with world > with authenticated user > update model 1`] = `
 {
   "data": {
     "updateModel": {
@@ -140,11 +98,5 @@ exports[`model mutations with world with authenticated user update model 1`] = `
     },
   },
   "errors": undefined,
-  "extensions": undefined,
-  "http": {
-    "headers": Headers {
-      Symbol(map): {},
-    },
-  },
 }
 `;

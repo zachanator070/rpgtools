@@ -1,4 +1,4 @@
-import { CookieManager } from "../types";
+import { CookieManager } from "../types.js";
 import { Response } from "express";
 
 export class ExpressCookieManager implements CookieManager {

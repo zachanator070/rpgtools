@@ -1,11 +1,11 @@
-import {EventWiki} from "../../../domain-entities/event-wiki";
-import EventWikiRepository from "../../repository/event-wiki-repository";
-import {AbstractInMemoryRepository} from "./abstract-in-memory-repository";
+import {EventWiki} from "../../../domain-entities/event-wiki.js";
+import EventWikiRepository from "../../repository/event-wiki-repository.js";
+import {AbstractInMemoryRepository} from "./abstract-in-memory-repository.js";
 import {injectable} from "inversify";
-import {PaginatedResult} from "../../paginated-result";
-import {WikiPage} from "../../../domain-entities/wiki-page";
-import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition";
-import {EVENT_WIKI} from "@rpgtools/common/src/type-constants";
+import {PaginatedResult} from "../../paginated-result.js";
+import {WikiPage} from "../../../domain-entities/wiki-page.js";
+import {FILTER_CONDITION_OPERATOR_IN, FilterCondition} from "../../filter-condition.js";
+import {EVENT_WIKI} from "@rpgtools/common/src/type-constants.js";
 
 @injectable()
 export default class InMemoryEventWikiRepository extends AbstractInMemoryRepository<EventWiki> implements EventWikiRepository {

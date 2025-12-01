@@ -1,4 +1,4 @@
-import {Cache} from "../../types";
+import {Cache} from "../../types.js";
 import {Readable, Writable} from "stream";
 import {injectable} from "inversify";
 import * as Stream from "stream";
