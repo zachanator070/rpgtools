@@ -52,6 +52,8 @@ jobs:
         path: /home/runner/work/rpgtools/rpgtools/packages/frontend/seed.log
   ci-e2e-sqlite:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_ACTIONS: true
     steps:
     - uses: actions/setup-node@v3
       with:
