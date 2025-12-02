@@ -11,13 +11,9 @@ try {
   console.log(`Building Electron App version ${version}`);
 
   config = {
-    packagerConfig: { prune: true, executableName: '@rpgtools-server' },
+    packagerConfig: { prune: false, executableName: '@rpgtools-server' },
     rebuildConfig: {},
-    hooks: {
-      postPackage: async () => {
-        fs.rmSync(path.join(__dirname, 'out', `rpgtools-linux-x64`, `resources`, `app`, `packages`, `frontend`), { recursive: true, force: true });
-      }
-    },
+    hooks: {},
     makers: [
       {
         name: '@electron-forge/maker-squirrel',

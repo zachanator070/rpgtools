@@ -16,7 +16,6 @@ const node = child_process.fork(
     [],
     {
         stdio: ["pipe", "pipe", "pipe", "ipc"],
-        execArgv: ["--experimental-specifier-resolution=node"],
         env: {
             SQLITE_DIRECTORY_PATH: process.env.SQLITE_DIRECTORY_PATH || path.join(`${os.homedir()}`, '.rpgtools'),
             UNLOCK_CODE: "unlock_me"

@@ -181,10 +181,9 @@ publish:
 .PHONY: clean clean-deps clean-docker
 
 # cleans built transpiled js and node modules
-clean: clean-deps clean-docker
+clean: clean-deps clean-docker clean-electron
 	rm -rf db
 	rm -rf packages/server/dist
-	rm -rf out
 
 clean-deps:
 	rm -rf node_modules
@@ -201,6 +200,9 @@ clean-docker: down
 	-docker images -a | grep rpgtools | awk '{print $$3}' | xargs docker rmi -f
 	-docker rmi zachanator070/rpgtools:latest
 	-rm -rf containers
+
+clean-electron:
+	-rm -rf out
 
 ######################
 # BUILD DEPENDENCIES #
