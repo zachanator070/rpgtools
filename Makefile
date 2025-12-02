@@ -309,5 +309,4 @@ endif
 
 # creates installable package
 electron-make: $(ELECTRON_DEPS)
-	npm i -w packages/server --omit=dev
 	npm run electron:make

@@ -11,7 +11,7 @@ try {
   console.log(`Building Electron App version ${version}`);
 
   config = {
-    packagerConfig: { prune: false, executableName: '@rpgtools-server' },
+    packagerConfig: { prune: true, executableName: '@rpgtools-server' },
     rebuildConfig: {},
     hooks: {
       postPackage: async () => {
