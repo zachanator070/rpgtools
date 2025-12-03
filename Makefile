@@ -297,15 +297,15 @@ build-common:
 ##################
 .PHONY: electron-prep electron-package electron-make electron
 
-ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) optimize-electron-deps
+ELECTRON_PACKAGE_JSON=package.json
+SERVER_PACKAGE_JSON=packages/server/package.json
 
-optimize-electron-deps:
-	make clean-deps
-	npm ci --omit=dev
-	ls packages/server/node_modules/typescript
-	npm install $(shell jq -r '.devDependencies | keys | join(" ")' package.json)
-	rm -rf node_modules/@rpgtools/*
-	cp -R packages/common node_modules/@rpgtools/
+$(ELECTRON_PACKAGE_JSON): $(SERVER_PACKAGE_JSON)
+	# copy server dependencies to electron package.json, electron uses npm to prune unused packages so we cannot use forge hooks for this
+	jq -s '.[0] as $$src | .[1] as $$dest | $$dest | .dependencies = (( $$dest.dependencies // {} ) + ( $$src.dependencies // {} ))' packages/server/package.json package.json > target.tmp && mv target.tmp package.json
+	npm i
+
+ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) $(ELECTRON_PACKAGE_JSON)
 
 # creates executable
 electron-package: $(ELECTRON_EXEC)
