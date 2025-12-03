@@ -297,7 +297,15 @@ build-common:
 ##################
 .PHONY: electron-prep electron-package electron-make electron
 
-ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS)
+ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) optimize-electron-deps
+
+optimize-electron-deps:
+	make clean-deps
+	npm ci --omit=dev
+	ls packages/server/node_modules/typescript
+	npm install $(shell jq -r '.devDependencies | keys | join(" ")' package.json)
+	rm -rf node_modules/@rpgtools/*
+	cp -R packages/common node_modules/@rpgtools/
 
 # creates executable
 electron-package: $(ELECTRON_EXEC)
