@@ -11,11 +11,39 @@ try {
   console.log(`Building Electron App version ${version}`);
 
   config = {
-    packagerConfig: { prune: false, executableName: '@rpgtools-server' },
+    packagerConfig: { prune: true, executableName: '@rpgtools-server' },
     rebuildConfig: {},
     hooks: {
-      postPackage: async () => {
-        fs.rmSync(path.join(__dirname, 'out', `rpgtools-linux-x64`, `resources`, `app`, `packages`, `frontend`), { recursive: true, force: true });
+      async postPackage(_, { outputPaths }) {
+        // Electron Forge may produce multiple output paths (e.g., dmg + zip),
+        // so loop through them.
+        for (const outputPath of outputPaths) {
+          // The app directory inside the packaged output. In asar builds, this
+          // directory contains the app files unless you've enabled `asarUnpack`.
+          const appDir = path.join(outputPath, 'resources', 'app');
+
+          const toDelete = [
+            'db',
+            'dev',
+            'packages/frontend',
+            'packages/server/src',
+            'packages/server/tests',
+            'packages/server/db'
+          ];
+
+          for (const rel of toDelete) {
+            const target = path.join(appDir, rel);
+
+            if (fs.existsSync(target)) {
+              try {
+                fs.rmSync(target, { recursive: true, force: true });
+                console.log(`[postPackage] Deleted: ${target}`);
+              } catch (err) {
+                console.error(`[postPackage] Failed to delete: ${target}`, err);
+              }
+            }
+          }
+        }
       }
     },
     makers: [

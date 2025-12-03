@@ -181,10 +181,9 @@ publish:
 .PHONY: clean clean-deps clean-docker
 
 # cleans built transpiled js and node modules
-clean: clean-deps clean-docker
+clean: clean-deps clean-docker clean-electron
 	rm -rf db
 	rm -rf packages/server/dist
-	rm -rf out
 
 clean-deps:
 	rm -rf node_modules
@@ -201,6 +200,9 @@ clean-docker: down
 	-docker images -a | grep rpgtools | awk '{print $$3}' | xargs docker rmi -f
 	-docker rmi zachanator070/rpgtools:latest
 	-rm -rf containers
+
+clean-electron:
+	-rm -rf out
 
 ######################
 # BUILD DEPENDENCIES #
@@ -295,7 +297,15 @@ build-common:
 ##################
 .PHONY: electron-prep electron-package electron-make electron
 
-ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS)
+ELECTRON_PACKAGE_JSON=package.json
+SERVER_PACKAGE_JSON=packages/server/package.json
+
+$(ELECTRON_PACKAGE_JSON): $(SERVER_PACKAGE_JSON)
+	# copy server dependencies to electron package.json, electron uses npm to prune unused packages so we cannot use forge hooks for this
+	jq -s '.[0] as $$src | .[1] as $$dest | $$dest | .dependencies = (( $$dest.dependencies // {} ) + ( $$src.dependencies // {} ))' packages/server/package.json package.json > target.tmp && mv target.tmp package.json
+	npm i
+
+ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) $(ELECTRON_PACKAGE_JSON)
 
 # creates executable
 electron-package: $(ELECTRON_EXEC)
@@ -309,5 +319,4 @@ endif
 
 # creates installable package
 electron-make: $(ELECTRON_DEPS)
-	npm i -w packages/server --omit=dev
 	npm run electron:make
