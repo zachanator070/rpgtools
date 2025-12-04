@@ -24,8 +24,8 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
 
     async delete(entity: T): Promise<void> {
         const model = await this.modelFactory(entity);
-        await model.destroy();
         await this.deleteAssociations(entity, model);
+        await model.destroy();
     }
 
     async update(entity: T): Promise<void> {

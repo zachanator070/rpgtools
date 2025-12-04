@@ -1,4 +1,4 @@
-import {QueryInterface, DataTypes, ModelAttributes} from "sequelize";
+import { QueryInterface, DataTypes, ModelAttributes, Deferrable } from "sequelize";
 
 // server permissions
 export const WORLD_CREATE = "Create world access";
@@ -9,12 +9,12 @@ export const SERVER_ADMIN = "Able to change permissions for this server";
 export const SERVER_RW = "Able to edit this server";
 
 export const SERVER_PERMISSIONS = [
-	WORLD_CREATE,
-	WORLD_ADMIN_ALL,
-	WORLD_READ_ALL,
-	WORLD_RW_ALL,
-	SERVER_ADMIN,
-	SERVER_RW,
+    WORLD_CREATE,
+    WORLD_ADMIN_ALL,
+    WORLD_READ_ALL,
+    WORLD_RW_ALL,
+    SERVER_ADMIN,
+    SERVER_RW,
 ];
 
 // world permissions
@@ -42,28 +42,28 @@ export const CALENDAR_RW_ALL = "Write to any calendar";
 export const CALENDAR_ADMIN_ALL = "Able to change permissions for any calendar";
 
 export const WORLD_PERMISSIONS = [
-	WORLD_READ,
-	WORLD_ADMIN,
-	WIKI_READ_ALL,
-	WIKI_RW_ALL,
-	WIKI_ADMIN_ALL,
-	FOLDER_READ_ALL,
-	FOLDER_RW_ALL,
-	FOLDER_ADMIN_ALL,
-	GAME_HOST,
-	GAME_ADMIN_ALL,
-	ROLE_ADD,
-	ROLE_READ_ALL,
-	ROLE_RW_ALL,
-	ROLE_ADMIN_ALL,
-	MODEL_ADD,
-	MODEL_READ_ALL,
-	MODEL_RW_ALL,
-	MODEL_ADMIN_ALL,
-	WORLD_RW,
-	CALENDAR_READ_ALL,
-	CALENDAR_RW_ALL,
-	CALENDAR_ADMIN_ALL
+    WORLD_READ,
+    WORLD_ADMIN,
+    WIKI_READ_ALL,
+    WIKI_RW_ALL,
+    WIKI_ADMIN_ALL,
+    FOLDER_READ_ALL,
+    FOLDER_RW_ALL,
+    FOLDER_ADMIN_ALL,
+    GAME_HOST,
+    GAME_ADMIN_ALL,
+    ROLE_ADD,
+    ROLE_READ_ALL,
+    ROLE_RW_ALL,
+    ROLE_ADMIN_ALL,
+    MODEL_ADD,
+    MODEL_READ_ALL,
+    MODEL_RW_ALL,
+    MODEL_ADMIN_ALL,
+    WORLD_RW,
+    CALENDAR_READ_ALL,
+    CALENDAR_RW_ALL,
+    CALENDAR_ADMIN_ALL
 ];
 
 // calendar permissions
@@ -98,13 +98,13 @@ export const FOLDER_READ_ALL_PAGES = "Able to read any wiki page in a wiki folde
 export const FOLDER_RW_ALL_PAGES = "Able to write to any wiki page in a wiki folder";
 
 export const WIKI_FOLDER_PERMISSIONS = [
-	FOLDER_READ,
-	FOLDER_RW,
-	FOLDER_ADMIN,
-	FOLDER_READ_ALL_CHILDREN,
-	FOLDER_RW_ALL_CHILDREN,
-	FOLDER_READ_ALL_PAGES,
-	FOLDER_RW_ALL_PAGES,
+    FOLDER_READ,
+    FOLDER_RW,
+    FOLDER_ADMIN,
+    FOLDER_READ_ALL_CHILDREN,
+    FOLDER_RW_ALL_CHILDREN,
+    FOLDER_READ_ALL_PAGES,
+    FOLDER_RW_ALL_PAGES,
 ];
 
 // model permissions
@@ -123,12 +123,12 @@ export const GAME_ADMIN = "Able to change permissions for a single game";
 export const GAME_RW = "Able to change the location for a game";
 
 export const GAME_PERMISSIONS = [
-	GAME_READ,
-	GAME_PAINT,
-	GAME_MODEL,
-	GAME_RW,
-	GAME_FOG_WRITE,
-	GAME_ADMIN,
+    GAME_READ,
+    GAME_PAINT,
+    GAME_MODEL,
+    GAME_RW,
+    GAME_FOG_WRITE,
+    GAME_ADMIN,
 ];
 export const ALL_PERMISSIONS = [].concat(
     SERVER_PERMISSIONS,
@@ -139,54 +139,75 @@ export const ALL_PERMISSIONS = [].concat(
     MODEL_PERMISSIONS,
     GAME_PERMISSIONS,
     CALENDAR_PERMISSIONS
-)
+);
 
-async function up({ context: queryInterface }: {context: QueryInterface}) {
+const defaultAttributes: ModelAttributes = {
+    _id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    }
+};
 
-    const defaultAttributes: ModelAttributes = {
-        _id: {
-            type: DataTypes.UUID,
-            primaryKey: true,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            allowNull: false
+const modeledWikiAttributes: ModelAttributes = {
+    ...defaultAttributes,
+    modelColor: {
+        type: DataTypes.STRING,
+    },
+    pageModelId: {
+        type: DataTypes.UUID,
+        references: {
+            model: 'Model',
+            key: '_id'
         }
-    };
+    }
+};
 
-    const modeledWikiAttributes: ModelAttributes = {
-        ...defaultAttributes,
-        modelColor: {
-            type: DataTypes.STRING,
-        },
-        pageModelId: {
-            type: DataTypes.UUID,
-            references: {
-                model: 'Model',
-                key: '_id'
-            }
-        }
-    };
+async function up({ context: queryInterface }: { context: QueryInterface }) {
 
     await queryInterface.createTable('World', {
-            ...defaultAttributes,
+        ...defaultAttributes,
         name: {
             type: DataTypes.STRING,
             allowNull: false
         },
         wikiPageId: {
             type: DataTypes.UUID,
+        }
+    });
+    await queryInterface.createTable('WikiFolder', {
+        ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
         },
-        rootFolderId: {
+        WikiFolderId: {
             type: DataTypes.UUID,
             references: {
                 model: 'WikiFolder',
                 key: '_id'
             }
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.addColumn('World', 'rootFolderId', {
+        type: DataTypes.UUID,
+        references: {
+            model: 'WikiFolder',
+            key: '_id'
         }
     });
     await queryInterface.createTable('AclEntry', {
@@ -218,421 +239,508 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
             type: DataTypes.UUID
         }
     });
+    await queryInterface.createTable('Image', {
+        ...defaultAttributes,
+        width: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        height: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        chunkWidth: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        chunkHeight: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        },
+        iconId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Image',
+                key: '_id'
+            }
+        }
+    });
     await queryInterface.createTable('Article', {
         ...defaultAttributes
     });
-    await queryInterface.createTable('CharacterAttribute', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            value: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            CharacterId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Character',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Character', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            color: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            GameId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Game',
-                    key: '_id'
-                }
-            },
-            playerId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'User',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Chunk', {
-            ...defaultAttributes,
-            x: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            y: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            width: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            height: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            fileId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'File',
-                    key: '_id'
-                }
-            },
-            imageId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Image',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('File', {
-            ...defaultAttributes,
-            content: {
-                type: DataTypes.BLOB,
-                allowNull: false
-            },
-            filename: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            mimeType: {
-                type: DataTypes.STRING,
-                allowNull: false
-            }
-        });
-    await queryInterface.createTable('FogStroke', {
-            ...defaultAttributes,
-            size: {
-                type: DataTypes.FLOAT,
-            },
-            strokeType: {
-                type: DataTypes.STRING,
-                validate: {
-                    isIn: {
-                        args: [["fog", "erase"]],
-                        msg: `type is not one of the following values: ${["fog", "erase"]}`
-                    }
-                }
-            },
-            GameId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Game',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('GameModel', {
-            ...defaultAttributes,
-            x: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            z: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            lookAtX: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            lookAtZ: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            color: {
-                type: DataTypes.STRING,
-            },
-            GameId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Game',
-                    key: '_id'
-                }
-            },
-            modelId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Model',
-                    key: '_id'
-                }
-            },
-            wikiId: {
-                type: DataTypes.UUID,
-            }
-        });
-    await queryInterface.createTable('Game', {
-            ...defaultAttributes,
-            passwordHash: {
-                type: DataTypes.STRING
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            },
-            mapId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Place',
-                    key: '_id'
-                }
-            },
-            hostId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'User',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Image', {
-            ...defaultAttributes,
-            width: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            height: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            chunkWidth: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            chunkHeight: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            },
-            iconId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Image',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Item', {
-            ...modeledWikiAttributes
-        });
-    await queryInterface.createTable('Message', {
-            ...defaultAttributes,
-            sender: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            senderUser: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            receiver: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            receiverUser: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            message: {
-                type: DataTypes.STRING(255),
-                allowNull: false
-            },
-            timestamp: {
-                type: DataTypes.BIGINT,
-                allowNull: false
-            },
-            GameId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Game',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Model', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            depth: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            width: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            height: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            fileName: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            notes: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            },
-            fileId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'File',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Monster', {
-            ...modeledWikiAttributes
-        });
-    await queryInterface.createTable('PathNode', {
-            ...defaultAttributes,
-            x: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            y: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            FogStrokeId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'FogStroke',
-                    key: '_id'
-                }
-            },
-            StrokeId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Stroke',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('Person', {
-            ...modeledWikiAttributes
-        });
-    await queryInterface.createTable('Pin', {
-            ...defaultAttributes,
-            x: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            y: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            mapId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'WikiPage',
-                    key: '_id'
-                }
-            },
-            pageId: {
-                type: DataTypes.UUID,
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            }
-        });
     await queryInterface.createTable('Place', {
-            ...defaultAttributes,
-            pixelsPerFoot: {
-                type: DataTypes.INTEGER
-            },
-            mapImageId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Image',
-                    key: '_id'
+        ...defaultAttributes,
+        pixelsPerFoot: {
+            type: DataTypes.INTEGER
+        },
+        mapImageId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Image',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('User', {
+        ...defaultAttributes,
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                not: { args: 'Anonymous', msg: 'cannot save anonymous user' }
+            }
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        tokenVersion: {
+            type: DataTypes.STRING,
+        },
+        currentWorldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Game', {
+        ...defaultAttributes,
+        passwordHash: {
+            type: DataTypes.STRING
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        },
+        mapId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Place',
+                key: '_id'
+            }
+        },
+        hostId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'User',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Character', {
+        ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        color: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Game',
+                key: '_id'
+            }
+        },
+        playerId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'User',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('CharacterAttribute', {
+        ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        value: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        CharacterId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Character',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('File', {
+        ...defaultAttributes,
+        content: {
+            type: DataTypes.BLOB,
+            allowNull: false
+        },
+        filename: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        mimeType: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }
+    });
+    await queryInterface.createTable('Chunk', {
+        ...defaultAttributes,
+        x: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        y: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        width: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        height: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        fileId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'File',
+                key: '_id'
+            }
+        },
+        imageId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Image',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('FogStroke', {
+        ...defaultAttributes,
+        size: {
+            type: DataTypes.FLOAT,
+        },
+        strokeType: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: {
+                    args: [["fog", "erase"]],
+                    msg: `type is not one of the following values: ${["fog", "erase"]}`
                 }
             }
-        });
-    await queryInterface.createTable('RegisterCode', {
-            ...defaultAttributes,
-            code: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            ServerConfigId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'ServerConfig',
-                    key: '_id'
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Game',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Model', {
+        ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        depth: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        width: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        height: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        fileName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        notes: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        },
+        fileId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'File',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('GameModel', {
+        ...defaultAttributes,
+        x: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        z: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        lookAtX: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        lookAtZ: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        color: {
+            type: DataTypes.STRING,
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Game',
+                key: '_id'
+            }
+        },
+        modelId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Model',
+                key: '_id'
+            }
+        },
+        wikiId: {
+            type: DataTypes.UUID,
+        }
+    });
+    await queryInterface.createTable('Item', {
+        ...modeledWikiAttributes
+    });
+    await queryInterface.createTable('Message', {
+        ...defaultAttributes,
+        sender: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        senderUser: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        receiver: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        receiverUser: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        message: {
+            type: DataTypes.STRING(255),
+            allowNull: false
+        },
+        timestamp: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Game',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Monster', {
+        ...modeledWikiAttributes
+    });
+    await queryInterface.createTable('Stroke', {
+        ...defaultAttributes,
+        color: {
+            type: DataTypes.STRING,
+        },
+        size: {
+            type: DataTypes.FLOAT,
+        },
+        fill: {
+            type: DataTypes.BOOLEAN
+        },
+        strokeType: {
+            type: DataTypes.STRING,
+            validate: {
+                isIn: {
+                    args: [["circle", "square", "erase", "line"]],
+                    msg: `type is not one of the following values: ${["circle", "square", "erase", "line"]}`
                 }
             }
-        });
-    await queryInterface.createTable('Role', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
+        },
+        GameId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Game',
+                key: '_id'
             }
-        });
+        }
+    });
+    await queryInterface.createTable('PathNode', {
+        ...defaultAttributes,
+        x: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        y: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        FogStrokeId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'FogStroke',
+                key: '_id'
+            }
+        },
+        StrokeId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Stroke',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Person', {
+        ...modeledWikiAttributes
+    });
+    await queryInterface.createTable('WikiPage', {
+        ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        contentId: {
+            type: DataTypes.UUID
+        },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        wiki: {
+            type: DataTypes.UUID,
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        },
+        coverImageId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Image',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Pin', {
+        ...defaultAttributes,
+        x: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        y: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        mapId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'WikiPage',
+                key: '_id'
+            }
+        },
+        pageId: {
+            type: DataTypes.UUID,
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        }
+    });
     await queryInterface.createTable('ServerConfig', {
-            ...defaultAttributes,
-            version: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            unlockCode: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            defaultWorldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
+        ...defaultAttributes,
+        version: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        unlockCode: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        defaultWorldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
             }
-        });
+        }
+    });
+    await queryInterface.createTable('RegisterCode', {
+        ...defaultAttributes,
+        code: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        ServerConfigId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'ServerConfig',
+                key: '_id'
+            }
+        }
+    });
+    await queryInterface.createTable('Role', {
+        ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        worldId: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'World',
+                key: '_id'
+            }
+        }
+    });
     await queryInterface.createTable('AdminUsersToServerConfig', {
         ServerConfigId: {
             type: DataTypes.UUID
@@ -647,62 +755,6 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
             type: DataTypes.TIME
         }
     });
-    await queryInterface.createTable('Stroke', {
-            ...defaultAttributes,
-            color: {
-                type: DataTypes.STRING,
-            },
-            size: {
-                type: DataTypes.FLOAT,
-            },
-            fill: {
-                type: DataTypes.BOOLEAN
-            },
-            strokeType: {
-                type: DataTypes.STRING,
-                validate: {
-                    isIn: {
-                        args: [["circle", "square", "erase", "line"]],
-                        msg: `type is not one of the following values: ${["circle", "square", "erase", "line"]}`
-                    }
-                }
-            },
-            GameId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Game',
-                    key: '_id'
-                }
-            }
-        });
-    await queryInterface.createTable('User', {
-            ...defaultAttributes,
-            email: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            username: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                validate: {
-                    not: {args: 'Anonymous', msg: 'cannot save anonymous user'}
-                }
-            },
-            password: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            tokenVersion: {
-                type: DataTypes.STRING,
-            },
-            currentWorldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            }
-        });
     await queryInterface.createTable('UserToRole', {
         id: {
             type: DataTypes.INTEGER,
@@ -730,27 +782,6 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
             type: DataTypes.TIME
         }
     });
-    await queryInterface.createTable('WikiFolder', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            WikiFolderId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'WikiFolder',
-                    key: '_id'
-                }
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            }
-        });
     await queryInterface.createTable('WikiFolderToWikiPage', {
         WikiFolderId: {
             type: DataTypes.UUID,
@@ -765,40 +796,9 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
             type: DataTypes.TIME
         }
     });
-    await queryInterface.createTable('WikiPage', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            contentId: {
-                type: DataTypes.UUID
-            },
-            type: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            wiki: {
-                type: DataTypes.UUID,
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            },
-            coverImageId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'Image',
-                    key: '_id'
-                }
-            }
-        });
 }
 
-async function down({ context: queryInterface }: {context: QueryInterface}) {
+async function down({ context: queryInterface }: { context: QueryInterface }) {
     await queryInterface.dropTable('AclEntry');
     await queryInterface.dropTable('Article');
     await queryInterface.dropTable('CharacterAttribute');
@@ -830,4 +830,4 @@ async function down({ context: queryInterface }: {context: QueryInterface}) {
     await queryInterface.dropTable('World');
 }
 
-export {up, down};
+export { up, down };

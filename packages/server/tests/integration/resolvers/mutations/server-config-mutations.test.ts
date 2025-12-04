@@ -28,12 +28,14 @@ describe("server mutations", () => {
 		const lockServer = async () => {
 			const databaseContext = await dbEngine.createDatabaseContext();
 			const adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
-			if (adminRole) {
-				await databaseContext.roleRepository.delete(adminRole);
-			}
 			const adminUser = await databaseContext.userRepository.findOneByUsername(adminUsername);
 			if (adminUser) {
+				adminUser.roles = adminUser.roles = [];
+				await databaseContext.userRepository.update(adminUser);
 				await databaseContext.userRepository.delete(adminUser);
+			}
+			if (adminRole) {
+				await databaseContext.roleRepository.delete(adminRole);
 			}
 			const serverConfig = await databaseContext.serverConfigRepository.findOne();
 			serverConfig.unlockCode = unlockCode;

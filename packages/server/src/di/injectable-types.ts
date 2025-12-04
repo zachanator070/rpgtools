@@ -174,7 +174,6 @@ export const INJECTABLE_TYPES = {
 	ServerProperties: Symbol.for("ServerProperties"),
 	RpgToolsServer: Symbol.for('RpgToolsServer'),
 	DbEngine: Symbol.for("DbEngine"),
-	SqlDbEngine: Symbol.for('SqlDbEngine'),
 
 	// data loaders
 	ArticleDataLoader: Symbol.for("ArticleDataLoader"),

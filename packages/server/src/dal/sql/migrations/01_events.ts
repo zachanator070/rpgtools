@@ -16,6 +16,19 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
         }
     };
 
+    await queryInterface.createTable('Calendar', {
+            ...defaultAttributes,
+            name: {
+                type: DataTypes.STRING
+            },
+            worldId: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'World',
+                    key: '_id'
+                }
+            }
+        });
     await queryInterface.createTable('Event', {
             ...defaultAttributes,
             calendarId: {
@@ -53,19 +66,6 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-        });
-    await queryInterface.createTable('Calendar', {
-            ...defaultAttributes,
-            name: {
-                type: DataTypes.STRING
-            },
-            worldId: {
-                type: DataTypes.UUID,
-                references: {
-                    model: 'World',
-                    key: '_id'
-                }
-            }
         });
     await queryInterface.createTable('Age', {
             ...defaultAttributes,
