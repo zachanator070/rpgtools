@@ -1,9 +1,20 @@
-import {QueryInterface} from "sequelize";
-import WikiPageToWikiPageModel from "../models/wiki-page-to-wiki-page-model.js";
-
+import {DataTypes, QueryInterface} from "sequelize";
 
 async function up({ context: queryInterface }: {context: QueryInterface}) {
-    await queryInterface.createTable('WikiPageToWikiPage', WikiPageToWikiPageModel.attributes);
+    await queryInterface.createTable('WikiPageToWikiPage', {
+            WikiPageId: {
+                type: DataTypes.UUID,
+            },
+            relatedWikiId: {
+                type: DataTypes.UUID,
+            },
+            createdAt: {
+                type: DataTypes.TIME
+            },
+            updatedAt: {
+                type: DataTypes.TIME
+            }
+        });
 }
 
 async function down({ context: queryInterface }: {context: QueryInterface}) {

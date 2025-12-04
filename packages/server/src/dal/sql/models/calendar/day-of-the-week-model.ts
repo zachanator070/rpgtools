@@ -26,7 +26,7 @@ export default class DayOfTheWeekModel extends SqlModel {
                 key: '_id'
             }
         }
-    }
+    };
 
     static connect() {
     }

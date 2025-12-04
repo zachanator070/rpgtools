@@ -16,5 +16,5 @@ export default class WikiFolderToWikiPageModel extends SqlModel {
         updatedAt: {
             type: DataTypes.TIME
         }
-    }
+    };
 }

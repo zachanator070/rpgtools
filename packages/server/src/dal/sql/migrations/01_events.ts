@@ -1,26 +1,134 @@
-import {QueryInterface} from "sequelize";
-import EventWikiModel from "../models/event-wiki-model.js";
-import {AGE, CALENDAR, DAY_OF_THE_WEEK, EVENT_WIKI, MONTH} from "@rpgtools/common/src/type-constants.js";
-import CalendarModel from "../models/calendar-model.js";
-import AgeModel from "../models/calendar/age-model.js";
-import MonthModel from "../models/calendar/month-model.js";
-import DayOfTheWeekModel from "../models/calendar/day-of-the-week-model.js";
-
+import {DataTypes, ModelAttributes, QueryInterface} from "sequelize";
 
 async function up({ context: queryInterface }: {context: QueryInterface}) {
-    await queryInterface.createTable(EVENT_WIKI, EventWikiModel.attributes);
-    await queryInterface.createTable(CALENDAR, CalendarModel.attributes);
-    await queryInterface.createTable(AGE, AgeModel.attributes);
-    await queryInterface.createTable(MONTH, MonthModel.attributes);
-    await queryInterface.createTable(DAY_OF_THE_WEEK, DayOfTheWeekModel.attributes);
+    const defaultAttributes: ModelAttributes = {
+        _id: {
+            type: DataTypes.UUID,
+            primaryKey: true,
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false
+        }
+    };
+
+    await queryInterface.createTable('Event', {
+            ...defaultAttributes,
+            calendarId: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'Calendar',
+                    key: '_id'
+                }
+            },
+            age: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            year: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            month: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            day: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            hour: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            minute: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            second: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+        });
+    await queryInterface.createTable('Calendar', {
+            ...defaultAttributes,
+            name: {
+                type: DataTypes.STRING
+            },
+            worldId: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'World',
+                    key: '_id'
+                }
+            }
+        });
+    await queryInterface.createTable('Age', {
+            ...defaultAttributes,
+            name: {
+                type: DataTypes.STRING
+            },
+            index: {
+                type: DataTypes.INTEGER
+            },
+            numYears: {
+                type: DataTypes.INTEGER
+            },
+            calendarId: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'Calendar',
+                    key: '_id'
+                }
+            }
+        });
+    await queryInterface.createTable('Month', {
+            ...defaultAttributes,
+            name: {
+                type: DataTypes.STRING
+            },
+            numDays: {
+                type: DataTypes.INTEGER
+            },
+            index: {
+                type: DataTypes.INTEGER
+            },
+            ageId: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'Age',
+                    key: '_id'
+                }
+            }
+        });
+    await queryInterface.createTable('DayOfTheWeek', {
+            ...defaultAttributes,
+            name: {
+                type: DataTypes.STRING
+            },
+            index: {
+                type: DataTypes.INTEGER
+            },
+            ageId: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'Age',
+                    key: '_id'
+                }
+            }
+        });
 }
 
 async function down({ context: queryInterface }: {context: QueryInterface}) {
-    await queryInterface.dropTable(EVENT_WIKI);
-    await queryInterface.dropTable(CALENDAR);
-    await queryInterface.dropTable(AGE);
-    await queryInterface.dropTable(MONTH);
-    await queryInterface.dropTable(DAY_OF_THE_WEEK);
+    await queryInterface.dropTable('Event');
+    await queryInterface.dropTable('Calendar');
+    await queryInterface.dropTable('Age');
+    await queryInterface.dropTable('Month');
+    await queryInterface.dropTable('DayOfTheWeek');
 }
 
 export {up, down};
