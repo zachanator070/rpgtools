@@ -602,9 +602,6 @@ const bindAll = () => {
 
 // mappers
 	container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);
-
-// sql
-	container.bind<AbstractSqlDbEngine>(INJECTABLE_TYPES.SqlDbEngine).to(AbstractSqlDbEngine);
 }
 
 

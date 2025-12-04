@@ -90,10 +90,15 @@ import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
+import { DbEngine } from "src/types.js";
 
 
 @injectable()
-export default class AbstractSqlDbEngine {
+export default abstract class AbstractSqlDbEngine implements DbEngine {
+    
+    connection: Sequelize;
+
+    stdOutLogging = process.env.SQL_LOGGING || 'false';
 
 
     @inject(INJECTABLE_TYPES.ArticleRepository)
@@ -245,9 +250,52 @@ export default class AbstractSqlDbEngine {
         await umzug.up();
     }
 
-    async createDatabaseContext(connection: Sequelize): Promise<DatabaseContext> {
+    abstract getConnectionString(): string;
+    abstract getRedactedConnectionString(): string;
+    abstract createDatabaseIfNeeded(name: string): Promise<void>;
+
+    abstract dbName: string;
+    abstract host: string;
+    
+    async connect(): Promise<void> {
+        console.log(`Connecting to postgres database ${this.getRedactedConnectionString()}`)
+        await this.createDatabaseIfNeeded(this.dbName);
+        this.connection = new Sequelize(
+            this.getConnectionString(),
+            {
+                logging: this.stdOutLogging.toLowerCase() === 'true' && console.log
+            }
+        );
+
+        this.connectAll(this.connection);
+
+        console.log('Syncing table schemas');
+        await this.migrate(this.connection);
+    };
+
+    async clearDb() : Promise<void> {
+        await this.connection.drop();
+    }
+
+    async disconnect(): Promise<void> {
+        await this.connection.close();
+    }
+
+    setDbHost(host: string): void {
+        this.host = host;
+    }
+
+    async changeDb(name: string): Promise<void> {
+        this.dbName = name;
+        if(this.connection) {
+            await this.disconnect();
+            await this.connect();
+        }
+    }
+
+    async createDatabaseContext(): Promise<DatabaseContext> {
         return new SQLDatabaseContext(
-            connection,
+            this.connection,
             this.articleRepository,
             this.calendarRepository,
             this.chunkRepository,
@@ -271,5 +319,4 @@ export default class AbstractSqlDbEngine {
             this.worldRepository,
         );
     }
-    
 }

@@ -23,7 +23,7 @@ export default class RegisterCodeModel extends SqlModel {
                 key: '_id'
             }
         }
-    }
+    };
 
     static connect() {
     }

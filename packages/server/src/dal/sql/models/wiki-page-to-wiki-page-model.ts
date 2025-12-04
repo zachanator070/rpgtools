@@ -16,7 +16,7 @@ export default class WikiPageToWikiPageModel extends SqlModel {
         updatedAt: {
             type: DataTypes.TIME
         }
-    }
+    };
 
     static connect() {
     }

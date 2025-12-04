@@ -1,48 +1,21 @@
 import {DbEngine} from "../../types.js";
-import {inject, injectable} from "inversify";
+import {injectable} from "inversify";
 import {Sequelize} from "sequelize";
 import pg from 'pg';
-import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
 import AbstractSqlDbEngine from "./abstract-sql-db-engine.js";
-import {DatabaseContext} from "../database-context.js";
 import cls from 'cls-hooked';
 const namespace = cls.createNamespace('rpgtools');
 Sequelize.useCLS(namespace);
 
 @injectable()
-export default class PostgresDbEngine implements DbEngine {
-
-    connection: Sequelize;
+export default class PostgresDbEngine extends AbstractSqlDbEngine implements DbEngine {
 
     user = process.env.POSTGRES_USER || 'rpgtools';
     password = process.env.POSTGRES_PASSWORD || 'password';
     host = process.env.POSTGRES_HOST || 'postgres';
     dbName = process.env.POSTGRES_DB_NAME || 'rpgtools';
 
-    stdOutLogging = process.env.POSTGRES_SQL_LOGGING || 'false';
-
-    @inject(INJECTABLE_TYPES.SqlDbEngine)
-    abstractEngine: AbstractSqlDbEngine;
-
-    async clearDb(): Promise<void> {
-        await this.connection.drop();
-    }
-
-    async connect(): Promise<void> {
-        console.log(`Connecting to postgres database ${this.getRedactedConnectionString()}`)
-        await this.createDatabaseIfNeeded(this.dbName);
-        this.connection = new Sequelize(
-            this.getConnectionString(),
-            {
-                logging: this.stdOutLogging.toLowerCase() === 'true' && console.log
-            }
-        );
-
-        this.abstractEngine.connectAll(this.connection);
-
-        console.log('Syncing table schemas');
-        await this.connection.sync({alter: true});
-    }
+    stdOutLogging = process.env.SQL_LOGGING || 'false';
 
     getConnectionString(): string {
         return `postgres://${this.user}:${this.password}@${this.host}:5432/${this.dbName}`;
@@ -50,22 +23,6 @@ export default class PostgresDbEngine implements DbEngine {
 
     getRedactedConnectionString(): string {
         return `postgres://${this.user}:********@${this.host}:5432/${this.dbName}`;
-    }
-
-    async disconnect(): Promise<void> {
-        await this.connection.close();
-    }
-
-    setDbHost(host: string): void {
-        this.host = host;
-    }
-
-    async changeDb(name: string): Promise<void> {
-        this.dbName = name;
-        if(this.connection) {
-            await this.disconnect();
-            await this.connect();
-        }
     }
 
     async createDatabaseIfNeeded(name: string): Promise<void> {
@@ -96,10 +53,6 @@ export default class PostgresDbEngine implements DbEngine {
                 resolve(null);
             });
         });
-    }
-
-    createDatabaseContext(): Promise<DatabaseContext> {
-        return this.abstractEngine.createDatabaseContext(this.connection);
     }
 
 }

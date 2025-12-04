@@ -15,5 +15,5 @@ export default class AdminUsersToServerConfigModel extends SqlModel {
         updatedAt: {
             type: DataTypes.TIME
         }
-    }
+    };
 }

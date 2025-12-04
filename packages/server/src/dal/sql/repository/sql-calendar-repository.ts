@@ -39,6 +39,18 @@ export default class SqlCalendarRepository extends AbstractSqlRepository<Calenda
 
     async deleteAssociations(entity: Calendar, model: CalendarModel) {
         await this.sqlPermissionControlledRepository.deleteAssociations(entity, model);
+        const ages = await AgeModel.findAll({where: {calendarId: entity._id}});
+        for(let ageModel of await AgeModel.findAll({where: {calendarId: entity._id}})) {
+            const months = await MonthModel.findAll({where: {ageId: ageModel._id}});
+            for(let monthModel of months) {
+                await monthModel.destroy();
+            }
+            const days = await DayOfTheWeekModel.findAll({where: {ageId: ageModel._id}});
+            for(let dayModel of days) {
+                await dayModel.destroy();
+            }
+            await ageModel.destroy();
+        }
     }
 
     async updateAges(entity: Calendar, model: CalendarModel) {

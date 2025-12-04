@@ -1,3 +1,2 @@
- ### RPG Tools v5.2.5 Changelog
- - Updated to node v24
- - Updated most server dependencies to latest supported versions
+ ### RPG Tools v5.2.6 Changelog
+ - Use migration files with postgres db engine
