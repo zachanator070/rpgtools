@@ -16,7 +16,7 @@ elif [ ! -z "$SQLITE_DIRECTORY_PATH" ]
 then
   SQLITE_DB=../../${SQLITE_DIRECTORY_PATH}/rpgtools.sqlite
   pkill -f @rpgtools
-  sqlite3 ${SQLITE_DB} .tables | awk '{printf "%s\n%s\n%s\n",$1,$2,$3}' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'
+  sqlite3 ${SQLITE_DB} .tables | awk '{printf "%s\n%s\n%s\n",$1,$2,$3}' | grep -v 'SequelizeMeta' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'
   sqlite3 -line ${SQLITE_DB} ".read ../../dev/sqlite-dump/${DUMP_NAME}.sql"
   export SQLITE_DIRECTORY_PATH=../../db && nohup ../../out/rpgtools-linux-x64/@rpgtools-server >../../electron.log 2>&1 &
   ../../wait_for_server.sh
