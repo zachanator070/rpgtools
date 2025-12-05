@@ -3,10 +3,10 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
 import http, { Server } from "http";
-import { ApolloServer, GraphQLRequest, GraphQLResponse } from "@apollo/server";
+import { ApolloServer, GraphQLResponse } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@as-integrations/express4';
-import express, { Express } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { inject, injectable } from "inversify";
 import {
@@ -28,6 +28,7 @@ import cors from "cors";
 import {ExpressCookieManager} from "./express-cookie-manager.js";
 import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
 import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
+import { ValidationError } from "sequelize";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -62,6 +63,7 @@ export class ExpressApiServer implements ApiServer {
 				return sessionContextFactory.create(params.connectionParams.accessToken as string, params.connectionParams.refreshToken as string, null);
 			},
 		}, this.webSocketServer);
+
 		this.gqlServer = new ApolloServer({
 			introspection: true,
 			schema,
@@ -77,17 +79,43 @@ export class ExpressApiServer implements ApiServer {
 						};
 					},
 				},
-
+				// Plugin to enrich errors with Sequelize validation details when present
+				{
+					async requestDidStart() {
+						return {
+							async didEncounterErrors(ctx: any): Promise<void> {
+								for (const err of ctx.errors || []) {
+									const original = (err as any).originalError || (err as any).extensions?.exception || (err as any).extensions?.originalError;
+									if (!original) continue;
+									if (original instanceof ValidationError || original.name === 'SequelizeValidationError') {
+										const sequelizeError = original.original || original;
+										const details = {
+											message: sequelizeError.message,
+											path: sequelizeError.path,
+											value: sequelizeError.value,
+											type: sequelizeError.type,
+										};
+										(err as any).extensions = {
+											...(err as any).extensions,
+											sequelize: { details },
+											code: 'SEQUELIZE_VALIDATION_ERROR',
+										};
+									}
+								}
+							},
+						};
+					},
+				},
 			]
 		});
 
-		this.expressServer.get("*.js", function (req, res, next) {
+		this.expressServer.get("*.js", function (req: Request, res: Response, next: NextFunction) {
 			req.url = req.url + ".gz";
 			res.set("Content-Encoding", "gzip");
 			res.set("Content-Type", "text/javascript");
 			next();
 		});
-		this.expressServer.get("*.css", function (req, res, next) {
+		this.expressServer.get("*.css", function (req: Request, res: Response, next: NextFunction) {
 			req.url = req.url + ".gz";
 			res.set("Content-Encoding", "gzip");
 			res.set("Content-Type", "text/css");
@@ -105,7 +133,7 @@ export class ExpressApiServer implements ApiServer {
 		// need to output in the server package so electron app is packaged with UI bundle
 		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
 
-		this.expressServer.get("/ui*", (req, res) => {
+		this.expressServer.get("/ui*", (_: Request, res: Response) => {
 			return res.sendFile(path.resolve(uiPath, "index.html"));
 		});
 
@@ -152,9 +180,27 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use(cookieParser());
 		this.expressServer.use(graphqlUploadExpress());
 
+		// Middleware to log GraphQL errors in the response
+		this.expressServer.use("/graphql", (_: Request, res: Response, next: NextFunction) => {
+			// Intercept the response send method
+			const originalSend = res.send;
+			res.send = function (body: any) {
+				try {
+					const json = typeof body === 'string' ? JSON.parse(body) : body;
+					if (json && json.errors) {
+						console.error("GraphQL Errors:", JSON.stringify(json.errors, null, 2));
+					}
+				} catch (e) {
+					// Ignore JSON parse errors
+				}
+				return originalSend.call(this, body);
+			};
+			next();
+		});
+
 		this.expressServer.use("/graphql",
-			expressMiddleware(this.gqlServer, {
-				context: async ({req, res}) => {
+				expressMiddleware(this.gqlServer, {
+				context: async ({req, res}: {req: Request, res: Response}) => {
 					const cookieManager: CookieManager = new ExpressCookieManager(res);
 
 					const refreshToken: string = req?.cookies["refreshToken"];

@@ -60,6 +60,7 @@ import * as initial from "./migrations/00_initial.js";
 import * as events from "./migrations/01_events.js";
 import * as related_wikis from "./migrations/02_related_wikis.js";
 import * as game_message_size from './migrations/03_game_message_size.js';
+import * as message_to_text from './migrations/04_message-to-text.js';
 import EventWikiModel from "./models/event-wiki-model.js";
 import CalendarModel from "./models/calendar-model.js";
 import AgeModel from "./models/calendar/age-model.js";
@@ -241,6 +242,10 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
                 {
                     name: '03_game_message_size',
                     ...game_message_size
+                },
+                {
+                    name: '04_message_to_text',
+                    ...message_to_text
                 }
             ],
             context: connection.getQueryInterface(),

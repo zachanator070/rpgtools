@@ -2,11 +2,14 @@
 
 . ../../.env
 
+
 DUMP_NAME=$1
+RESTART_SERVER=${2:-false}
 if [ -z "$DUMP_NAME" ]
 then
-  echo "No dump name given. Usage: seed.sh DUMP_NAME"
+  echo "No dump name given. Usage: seed.sh DUMP_NAME [RESTART_SERVER]"
 fi
+
 
 if [ ! -z "$POSTGRES_HOST" ]
 then
@@ -18,8 +21,10 @@ then
   pkill -f @rpgtools
   sqlite3 ${SQLITE_DB} .tables | awk '{printf "%s\n%s\n%s\n",$1,$2,$3}' | grep -v 'SequelizeMeta' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'
   sqlite3 -line ${SQLITE_DB} ".read ../../dev/sqlite-dump/${DUMP_NAME}.sql"
-  export SQLITE_DIRECTORY_PATH=../../db && nohup ../../out/rpgtools-linux-x64/@rpgtools-server >../../electron.log 2>&1 &
-  ../../wait_for_server.sh
+  if [ "$RESTART_SERVER" = true ]; then
+    export SQLITE_DIRECTORY_PATH=../../db && nohup ../../out/rpgtools-linux-x64/@rpgtools-server >../../electron.log 2>&1 &
+    ../../wait_for_server.sh
+  fi
 else
   echo "Unable to detect database, check .env file for at least one database host defined"
   exit 1

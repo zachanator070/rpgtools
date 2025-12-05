@@ -32,7 +32,7 @@ export default class MessageModel extends SqlModel {
             allowNull: false
         },
         message: {
-            type: DataTypes.STRING(512),
+            type: DataTypes.TEXT,
             allowNull: false
         },
         timestamp: {
