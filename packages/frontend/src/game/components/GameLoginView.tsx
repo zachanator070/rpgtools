@@ -59,13 +59,14 @@ export default function GameLoginView() {
 							errors={createGameErrors}
 							loading={createGameLoading || joinGameLoading}
 							onSubmit={createGame}
+							buttonText="Create Game"
 						>
 							<FormItem label="Password" >
 								<PasswordInput name="createPassword" />
 							</FormItem>
 
 							<FormItem label="Character Name" >
-								<TextInput name="characterName"/>
+								<TextInput name="characterName" id="characterName"/>
 							</FormItem>
 						</InputForm>
 					</>
@@ -78,6 +79,7 @@ export default function GameLoginView() {
 						loading={joinGameLoading || createGameLoading}
 						errors={joinGameErrors}
 						onSubmit={async ({password, characterName, gameId}) => await joinGame({gameId, password, characterName})}
+						buttonText="Join Game"
 					>
 						<FormItem
 							label="Game ID"

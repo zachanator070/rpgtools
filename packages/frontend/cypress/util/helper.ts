@@ -4,15 +4,16 @@ import {
     MIDDLE_EARTH_MAP_URL,
     MIDDLE_EARTH_WIKI_URL,
     MIDDLE_EARTH_WIKI_EDIT_URL,
-    SERVER_SETTINGS_URL, WORLD_SETTINGS_URL, ROLES_URL
+    SERVER_SETTINGS_URL, WORLD_SETTINGS_URL, ROLES_URL,
+    GAME_JOIN_URL
 } from "./constants";
 
 export function seedNewServer() {
-    cy.exec("npm run seed:new >> seed.log 2>> seed.log", {log: true}).its('code').should('eq', 0);
+    cy.exec("npm run seed:new true >> seed.log 2>> seed.log", {log: true}).its('exitCode').should('eq', 0);
 }
 
 export function seedMiddleEarth() {
-    cy.exec("npm run seed:middle_earth >> seed.log 2>> seed.log", {log: true}).its('code').should('eq', 0);
+    cy.exec("npm run seed:middle_earth true >> seed.log 2>> seed.log", {log: true}).its('exitCode').should('eq', 0);
 }
 
 export function goHome() {
@@ -57,4 +58,8 @@ export function goToWorldSettings() {
 
 export function goToRoles() {
     cy.visit(ROLES_URL);
+}
+
+export function goToGame() {
+    cy.visit(GAME_JOIN_URL);
 }
