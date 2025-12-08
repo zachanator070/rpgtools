@@ -27,3 +27,5 @@ export const WORLD_SETTINGS_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-
 export const ROLES_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/roles';
 
 export const GAME_URL = 'http://localhost:3000/ui/game/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/join';
+
+export const GAME_JOIN_URL = 'http://localhost:3000/ui/world/68b85fd7-f1e4-490a-a9b6-c936b46f38cc/gameLogin';

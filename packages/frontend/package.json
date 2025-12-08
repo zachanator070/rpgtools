@@ -23,6 +23,7 @@
 		"@babel/preset-env": "^7.11.5",
 		"@babel/preset-react": "^7.24.7",
 		"@rpgtools/common": "^0.1.0",
+		"@types/cannon": "^0.1.13",
 		"@types/react": "^18.0.18",
 		"@types/three": "^0.167.1",
 		"@webpack-cli/generators": "^2.5.0",
@@ -31,10 +32,11 @@
 		"babel-loader": "^8.2.5",
 		"babel-plugin-dynamic-import-node": "^2.3.3",
 		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+		"cannon": "^0.6.2",
 		"clean-webpack-plugin": "^4.0.0",
 		"compression-webpack-plugin": "^10.0.0",
 		"css-loader": "^6.7.1",
-		"cypress": "^12.7.0",
+		"cypress": "^15.7.1",
 		"cypress-file-upload": "^5.0.8",
 		"cypress-xpath": "^2.0.1",
 		"file-loader": "^6.2.0",
@@ -58,8 +60,6 @@
 		"uuid": "latest",
 		"webpack": "^5.94.0",
 		"webpack-cli": "^4.10.0",
-		"webpack-visualizer-plugin": "^0.1.11",
-		"@types/cannon": "^0.1.13",
-		"cannon": "^0.6.2"
+		"webpack-visualizer-plugin": "^0.1.11"
 	}
 }
