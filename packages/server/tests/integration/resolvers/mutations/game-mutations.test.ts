@@ -203,28 +203,45 @@ describe("game mutations", () => {
                     });
                 });
 
-                test('add model with both tokenId and tokenType', async () => {
-                    const result = await testingContext.server.executeGraphQLQuery({
-                        query: ADD_MODEL,
-                        variables: { gameId: testingContext.game._id, modelId: testingContext.model._id, wikiId: testingContext.otherPage._id, color: '#ffffff', tokenId: uuidv4(), tokenType: 'SQUARE' },
+                describe('with a token uploaded', () => {
+                    let tokenId: string;
+
+                    beforeEach(async () => {
+                        const filename = "tests/integration/resolvers/mutations/adult_blue_dragon.png";
+                        const databaseContext = await dbEngine.createDatabaseContext();
+                        const image = await imageService.createImage(testingContext.world._id, true, filename, fs.createReadStream(filename), databaseContext);
+                        const token = await gameService.createTokenIcon(
+                            testingContext.tester1SecurityContext,
+                            testingContext.world._id,
+                            image._id,
+                            databaseContext
+                        );
+                        tokenId = token._id;
                     });
 
-                    expect(result).toMatchSnapshot({
-                        data: {
-                            addModel: {
-                                _id: expect.any(String),
-                                models: expect.arrayContaining([
-                                    expect.objectContaining({
-                                        _id: expect.any(String),
-                                        model: expect.objectContaining({
-                                            _id: expect.any(String)
-                                        }),
-                                        tokenType: 'SQUARE'
-                                    })
-                                ])
+                    test('add model with both tokenId and tokenType', async () => {
+                        const result = await testingContext.server.executeGraphQLQuery({
+                            query: ADD_MODEL,
+                            variables: { gameId: testingContext.game._id, modelId: testingContext.model._id, wikiId: testingContext.otherPage._id, color: '#ffffff', tokenId: tokenId, tokenType: 'SQUARE' },
+                        });
+
+                        expect(result).toMatchSnapshot({
+                            data: {
+                                addModel: {
+                                    _id: expect.any(String),
+                                    models: expect.arrayContaining([
+                                        expect.objectContaining({
+                                            _id: expect.any(String),
+                                            model: expect.objectContaining({
+                                                _id: expect.any(String)
+                                            }),
+                                            tokenType: 'SQUARE'
+                                        })
+                                    ])
+                                },
                             },
-                        },
-                        errors: undefined
+                            errors: undefined
+                        });
                     });
                 });
 

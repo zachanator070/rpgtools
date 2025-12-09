@@ -295,7 +295,13 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     };
 
     async clearDb() : Promise<void> {
-        await this.connection.drop();
+        try {
+            // Use raw SQL to drop all tables to avoid Sequelize enum issues
+            await this.connection.query('DROP SCHEMA public CASCADE');
+            await this.connection.query('CREATE SCHEMA public');
+        } catch (error) {
+            console.error('Error clearing database:', error);
+        }
     }
 
     async disconnect(): Promise<void> {

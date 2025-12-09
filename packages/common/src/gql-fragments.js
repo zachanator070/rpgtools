@@ -329,6 +329,8 @@ exports.GAME_MODEL = (0, graphql_tag_1.default) `
             _id
             name
         }
+        tokenId
+        tokenType
     }
 `;
 exports.GAME_MODELS = (0, graphql_tag_1.default) `

@@ -15,9 +15,8 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
   });
 
   await queryInterface.addColumn('GameModel', 'tokenType', {
-    type: DataTypes.ENUM('CIRCLE', 'SQUARE', 'STAR'),
-    allowNull: true,
-    values: ['CIRCLE', 'SQUARE', 'STAR']
+    type: DataTypes.STRING,
+    allowNull: true
   });
 }
 

@@ -329,6 +329,12 @@ export class GameService {
 		if (wikiId && !wiki) {
 			throw new Error(`Cannot find wiki with ID ${wikiId}`);
 		}
+		if (tokenId) {
+			const token = await databaseContext.tokenIconRepository.findOneById(tokenId);
+			if (!token) {
+				throw new Error(`TokenIcon with ID ${tokenId} does not exist`);
+			}
+		}
 		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId, tokenId, tokenType);
 		game.models.push(positionedModel);
 		await databaseContext.gameRepository.update(game);

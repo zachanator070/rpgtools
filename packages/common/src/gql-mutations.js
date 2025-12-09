@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UPSERT_CALENDAR = exports.RENAME_WORLD = exports.CREATE_WORLD = exports.UPDATE_EVENT = exports.UPDATE_WIKI = exports.UPDATE_PLACE = exports.UPDATE_MODELED_WIKI = exports.MOVE_WIKI = exports.DELETE_WIKI = exports.CREATE_WIKI = exports.CREATE_IMAGE = exports.RENAME_FOLDER = exports.MOVE_FOLDER = exports.DELETE_FOLDER = exports.CREATE_FOLDER = exports.SET_DEFAULT_WORLD = exports.UNLOCK_SERVER = exports.GENERATE_REGISTER_CODES = exports.UPDATE_MODEL = exports.DELETE_MODEL = exports.CREATE_MODEL = exports.UPDATE_PIN = exports.DELETE_PIN = exports.CREATE_PIN = exports.SET_GAME_MAP = exports.SET_CHARACTER_ORDER = exports.SET_CHARACTER_ATTRIBUTES = exports.GAME_CHAT = exports.ADD_STROKE = exports.ADD_FOG_STROKE = exports.SET_POSITIONED_MODEL_WIKI = exports.SET_MODEL_POSITION = exports.SET_MODEL_COLOR = exports.DELETE_POSITIONED_MODEL = exports.ADD_MODEL = exports.LEAVE_GAME = exports.JOIN_GAME = exports.CREATE_GAME = exports.REVOKE_USER_PERMISSION = exports.GRANT_USER_PERMISSION = exports.SET_CURRENT_WORLD = exports.REGISTER_MUTATION = exports.REVOKE_ROLE_PERMISSION = exports.GRANT_ROLE_PERMISSION = exports.REMOVE_USER_ROLE = exports.ADD_USER_ROLE = exports.DELETE_ROLE = exports.CREATE_ROLE = exports.LOGOUT_QUERY = exports.LOGIN_QUERY = exports.DELETE_TOKEN_ICON = exports.CREATE_TOKEN_ICON = void 0;
-exports.LOAD_5E_CONTENT = exports.IMPORT_CONTENT = exports.DELETE_CALENDAR = void 0;
+exports.UPSERT_CALENDAR = exports.RENAME_WORLD = exports.CREATE_WORLD = exports.UPDATE_EVENT = exports.UPDATE_WIKI = exports.UPDATE_PLACE = exports.UPDATE_MODELED_WIKI = exports.MOVE_WIKI = exports.DELETE_WIKI = exports.CREATE_WIKI = exports.CREATE_IMAGE = exports.RENAME_FOLDER = exports.MOVE_FOLDER = exports.DELETE_FOLDER = exports.CREATE_FOLDER = exports.SET_DEFAULT_WORLD = exports.UNLOCK_SERVER = exports.GENERATE_REGISTER_CODES = exports.UPDATE_MODEL = exports.DELETE_MODEL = exports.CREATE_MODEL = exports.UPDATE_PIN = exports.DELETE_PIN = exports.CREATE_PIN = exports.SET_GAME_MAP = exports.SET_CHARACTER_ORDER = exports.SET_CHARACTER_ATTRIBUTES = exports.GAME_CHAT = exports.ADD_STROKE = exports.ADD_FOG_STROKE = exports.SET_POSITIONED_MODEL_WIKI = exports.SET_MODEL_POSITION = exports.SET_MODEL_COLOR = exports.DELETE_POSITIONED_MODEL = exports.ADD_MODEL = exports.LEAVE_GAME = exports.JOIN_GAME = exports.CREATE_GAME = exports.REVOKE_USER_PERMISSION = exports.GRANT_USER_PERMISSION = exports.SET_CURRENT_WORLD = exports.REGISTER_MUTATION = exports.REVOKE_ROLE_PERMISSION = exports.GRANT_ROLE_PERMISSION = exports.REMOVE_USER_ROLE = exports.ADD_USER_ROLE = exports.DELETE_ROLE = exports.CREATE_ROLE = exports.LOGOUT_QUERY = exports.LOGIN_QUERY = void 0;
+exports.DELETE_TOKEN_ICON = exports.CREATE_TOKEN_ICON = exports.LOAD_5E_CONTENT = exports.IMPORT_CONTENT = exports.DELETE_CALENDAR = void 0;
 const graphql_tag_1 = __importDefault(require("graphql-tag"));
 const gql_fragments_1 = require("./gql-fragments");
 //region Authentication
@@ -557,26 +557,25 @@ exports.LOAD_5E_CONTENT = (0, graphql_tag_1.default) `
 		}
 	}
 `;
-//endregion
 //region TokenIcon
 exports.CREATE_TOKEN_ICON = (0, graphql_tag_1.default) `
-mutation createTokenIcon($worldId: ID!, $imageId: ID!) {
-createTokenIcon(worldId: $worldId, imageId: $imageId) {
-_id
-image {
-_id
-}
-world {
-_id
-}
-}
-}
+	mutation createTokenIcon($worldId: ID!, $imageId: ID!) {
+		createTokenIcon(worldId: $worldId, imageId: $imageId) {
+			_id
+			image {
+				_id
+			}
+			world {
+				_id
+			}
+		}
+	}
 `;
 exports.DELETE_TOKEN_ICON = (0, graphql_tag_1.default) `
-mutation deleteTokenIcon($tokenIconId: ID!) {
-deleteTokenIcon(tokenIconId: $tokenIconId) {
-_id
-}
-}
+	mutation deleteTokenIcon($tokenIconId: ID!) {
+		deleteTokenIcon(tokenIconId: $tokenIconId) {
+			_id
+		}
+	}
 `;
 //endregion

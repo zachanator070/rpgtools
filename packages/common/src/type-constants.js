@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MODELED_WIKI_TYPES = exports.ALL_WIKI_TYPES = exports.DAY_OF_THE_WEEK = exports.MONTH = exports.AGE = exports.CALENDAR = exports.TOKEN_ICON = exports.EVENT_WIKI = exports.ACL_ENTRY = exports.MODEL = exports.WORLD = exports.WIKI_PAGE = exports.WIKI_FOLDER = exports.USER = exports.SERVER_CONFIG = exports.ROLE = exports.PIN = exports.PATH_NODE = exports.MESSAGE = exports.STROKE = exports.FOG_STROKE = exports.REGISTER_CODE = exports.GAME_MODEL = exports.CHARACTER = exports.CHARACTER_ATTRIBUTE = exports.GAME = exports.CHUNK = exports.IMAGE = exports.MONSTER = exports.FILE = exports.ITEM = exports.PLACE = exports.PERSON = exports.ARTICLE = void 0;
+exports.MODELED_WIKI_TYPES = exports.ALL_WIKI_TYPES = exports.TOKEN_ICON = exports.DAY_OF_THE_WEEK = exports.MONTH = exports.AGE = exports.CALENDAR = exports.EVENT_WIKI = exports.ACL_ENTRY = exports.MODEL = exports.WORLD = exports.WIKI_PAGE = exports.WIKI_FOLDER = exports.USER = exports.SERVER_CONFIG = exports.ROLE = exports.PIN = exports.PATH_NODE = exports.MESSAGE = exports.STROKE = exports.FOG_STROKE = exports.REGISTER_CODE = exports.GAME_MODEL = exports.CHARACTER = exports.CHARACTER_ATTRIBUTE = exports.GAME = exports.CHUNK = exports.IMAGE = exports.MONSTER = exports.FILE = exports.ITEM = exports.PLACE = exports.PERSON = exports.ARTICLE = void 0;
 exports.ARTICLE = "Article";
 exports.PERSON = "Person";
 exports.PLACE = "Place";

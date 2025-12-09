@@ -513,12 +513,6 @@ export const typeDefs = gql`
 		timestamp: String!
 	}
 
-	enum TokenType {
-		CIRCLE
-		SQUARE
-		STAR
-	}
-
 	type Game implements PermissionControlled {
 		_id: ID!
 		world: World!
@@ -616,7 +610,7 @@ export const typeDefs = gql`
 		color: String
 		wiki: WikiPage
 		tokenId: ID
-		tokenType: TokenType
+		tokenType: String
 	}
 
 	scalar Upload

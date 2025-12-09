@@ -368,6 +368,9 @@ export const TypeResolvers = {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
 			return dataLoader.getDocument(model.wiki, databaseContext);
 		},
+		tokenType: async (model: InGameModel, _: any, __: SessionContext): Promise<string> => {
+			return model.tokenType;
+		}
 	},
 	Model: {
 		...permissionControlledInterfaceAttributes,

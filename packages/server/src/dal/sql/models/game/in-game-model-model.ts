@@ -68,8 +68,16 @@ export default class InGameModelModel extends SqlModel {
             }
         },
         tokenType: {
-            type: DataTypes.ENUM(TOKEN_TYPES.CIRCLE, TOKEN_TYPES.SQUARE, TOKEN_TYPES.STAR),
-            allowNull: true
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                isValidTokenType(value: any) {
+                    const validTypes = Object.values(TOKEN_TYPES);
+                    if (value && !validTypes.includes(value)) {
+                        throw new Error(`tokenType must be one of: ${validTypes.join(', ')}`);
+                    }
+                }
+            }
         }
     };
 

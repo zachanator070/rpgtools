@@ -53,6 +53,26 @@ exports[`game mutations > with world > with a game hosted by tester1 > as tester
 }
 `;
 
+exports[`game mutations > with world > with a game hosted by tester1 > as tester1 > add model with tokenType 1`] = `
+{
+  "data": {
+    "addModel": {
+      "_id": Any<String>,
+      "models": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "model": ObjectContaining {
+            "_id": Any<String>,
+          },
+          "tokenType": "CIRCLE",
+        },
+      ],
+    },
+  },
+  "errors": undefined,
+}
+`;
+
 exports[`game mutations > with world > with a game hosted by tester1 > as tester1 > add stroke 1`] = `
 {
   "data": {
@@ -193,6 +213,26 @@ exports[`game mutations > with world > with a game hosted by tester1 > as tester
         "_id": Any<String>,
         "name": "Earth",
       },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`game mutations > with world > with a game hosted by tester1 > as tester1 > with a token uploaded > add model with both tokenId and tokenType 1`] = `
+{
+  "data": {
+    "addModel": {
+      "_id": Any<String>,
+      "models": ArrayContaining [
+        ObjectContaining {
+          "_id": Any<String>,
+          "model": ObjectContaining {
+            "_id": Any<String>,
+          },
+          "tokenType": "SQUARE",
+        },
+      ],
     },
   },
   "errors": undefined,
