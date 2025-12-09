@@ -22,6 +22,7 @@ import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
 import {Sequelize} from "sequelize";
 import {injectable} from "inversify";
+import { TokenIconRepository } from "../repository/token-icon-repository.js";
 
 @injectable()
 export default class SQLDatabaseContext implements DatabaseContext {
@@ -49,6 +50,7 @@ export default class SQLDatabaseContext implements DatabaseContext {
     wikiFolderRepository: WikiFolderRepository;
     wikiPageRepository: WikiPageRepository;
     worldRepository: WorldRepository;
+    tokenIconRepository: TokenIconRepository;
 
     constructor(
         connection: Sequelize,
@@ -73,6 +75,7 @@ export default class SQLDatabaseContext implements DatabaseContext {
         wikiFolderRepository: WikiFolderRepository,
         wikiPageRepository: WikiPageRepository,
         worldRepository: WorldRepository,
+        tokenIconRepository: TokenIconRepository
     ) {
         this.connection = connection;
         this.articleRepository = articleRepository;
@@ -96,6 +99,7 @@ export default class SQLDatabaseContext implements DatabaseContext {
         this.wikiFolderRepository = wikiFolderRepository;
         this.wikiPageRepository = wikiPageRepository;
         this.worldRepository = worldRepository;
+        this.tokenIconRepository = tokenIconRepository;
     }
 
     openTransaction(callback: () => any): Promise<any> {

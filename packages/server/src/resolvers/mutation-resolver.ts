@@ -8,6 +8,7 @@ import { imageMutations } from "./mutations/image-mutations.js";
 import { serverConfigMutations } from "./mutations/server-config-mutations.js";
 import { gameMutations } from "./mutations/game-mutations.js";
 import { modelMutations } from "./mutations/model-mutations.js";
+import { tokenIconMutations } from "./mutations/token-icon-mutations.js";
 
 export default {
 	...authenticationMutations,
@@ -20,4 +21,5 @@ export default {
 	...serverConfigMutations,
 	...gameMutations,
 	...modelMutations,
+	...tokenIconMutations,
 };

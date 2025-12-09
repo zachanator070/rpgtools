@@ -32,6 +32,7 @@ import {EventWiki} from "../domain-entities/event-wiki.js";
 import Calendar from "../domain-entities/calendar.js";
 import {Stroke} from "../domain-entities/stroke.js";
 import {FogStroke} from "../domain-entities/fog-stroke.js";
+import { TokenIcon } from "../domain-entities/token-icon.js";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<World> => {
@@ -374,5 +375,15 @@ export const TypeResolvers = {
 	Upload: GraphQLUpload,
 	Calendar: {
 		...permissionControlledInterfaceAttributes,
-	}
+	},
+	TokenIcon: {
+		image: async (tokenIcon: TokenIcon, _: any, {databaseContext}: SessionContext): Promise<Image> => {
+			const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
+			return dataLoader.getDocument(tokenIcon.imageId, databaseContext);
+		},
+		world: async (tokenIcon: TokenIcon, _: any, {databaseContext}: SessionContext): Promise<World> => {
+			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
+			return dataLoader.getDocument(tokenIcon.worldId, databaseContext);
+		},
+	},
 };

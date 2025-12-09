@@ -21,6 +21,7 @@ import EventWikiRepository from "./repository/event-wiki-repository.js";
 import {CalendarRepository} from "./repository/calendar-repository.js";
 import FogStrokeRepository from "./repository/fog-stroke-repository.js";
 import StrokeRepository from "./repository/stroke-repository.js";
+import { TokenIconRepository } from "./repository/token-icon-repository.js";
 
 @injectable()
 export abstract class DatabaseContext implements RepositoryAccessor {
@@ -46,6 +47,7 @@ export abstract class DatabaseContext implements RepositoryAccessor {
     calendarRepository: CalendarRepository;
     fogStrokeRepository: FogStrokeRepository;
     strokeRepository: StrokeRepository;
+    tokenIconRepository: TokenIconRepository;
 
     abstract openTransaction(callback: () => any): Promise<void>;
 

@@ -16,6 +16,7 @@ import {PlaceRepository} from "../repository/place-repository.js";
 import {RoleRepository} from "../repository/role-repository.js";
 import {ServerConfigRepository} from "../repository/server-config-repository.js";
 import StrokeRepository from "../repository/stroke-repository.js";
+import { TokenIconRepository } from "../repository/token-icon-repository.js";
 import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../repository/wiki-page-repository.js";
@@ -44,6 +45,7 @@ export default class InMemoryDatabaseContext implements DatabaseContext {
     wikiFolderRepository: WikiFolderRepository;
     wikiPageRepository: WikiPageRepository;
     worldRepository: WorldRepository;
+    tokenIconRepository: TokenIconRepository;
 
     constructor(
         articleRepository: ArticleRepository,
@@ -67,6 +69,8 @@ export default class InMemoryDatabaseContext implements DatabaseContext {
         wikiFolderRepository: WikiFolderRepository,
         wikiPageRepository: WikiPageRepository,
         worldRepository: WorldRepository,
+        tokenIconRepository: TokenIconRepository
+
     ) {
         this.articleRepository = articleRepository;
         this.calendarRepository = calendarRepository;
@@ -89,6 +93,7 @@ export default class InMemoryDatabaseContext implements DatabaseContext {
         this.wikiFolderRepository = wikiFolderRepository;
         this.wikiPageRepository = wikiPageRepository;
         this.worldRepository = worldRepository;
+        this.tokenIconRepository = tokenIconRepository;
     }
 
     openTransaction(callback: () => any): Promise<void> {

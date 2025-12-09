@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WIKI_FOLDER_PERMISSIONS = exports.FOLDER_RW_ALL_PAGES = exports.FOLDER_READ_ALL_PAGES = exports.FOLDER_RW_ALL_CHILDREN = exports.FOLDER_READ_ALL_CHILDREN = exports.FOLDER_ADMIN = exports.FOLDER_RW = exports.FOLDER_READ = exports.WIKI_PERMISSIONS = exports.WIKI_ADMIN = exports.WIKI_RW = exports.WIKI_READ = exports.ROLE_PERMISSIONS = exports.ROLE_ADMIN = exports.ROLE_RW = exports.ROLE_READ = exports.CALENDAR_PERMISSIONS = exports.CALENDAR_ADMIN = exports.CALENDAR_READ = exports.CALENDAR_RW = exports.WORLD_PERMISSIONS = exports.CALENDAR_ADMIN_ALL = exports.CALENDAR_RW_ALL = exports.CALENDAR_READ_ALL = exports.MODEL_ADMIN_ALL = exports.MODEL_RW_ALL = exports.MODEL_READ_ALL = exports.MODEL_ADD = exports.ROLE_ADMIN_ALL = exports.ROLE_RW_ALL = exports.ROLE_READ_ALL = exports.ROLE_ADD = exports.GAME_ADMIN_ALL = exports.GAME_HOST = exports.FOLDER_ADMIN_ALL = exports.FOLDER_RW_ALL = exports.FOLDER_READ_ALL = exports.WIKI_ADMIN_ALL = exports.WIKI_RW_ALL = exports.WIKI_READ_ALL = exports.WORLD_RW = exports.WORLD_ADMIN = exports.WORLD_READ = exports.SERVER_PERMISSIONS = exports.SERVER_RW = exports.SERVER_ADMIN = exports.WORLD_RW_ALL = exports.WORLD_READ_ALL = exports.WORLD_ADMIN_ALL = exports.WORLD_CREATE = void 0;
+exports.WIKI_FOLDER_PERMISSIONS = exports.FOLDER_RW_ALL_PAGES = exports.FOLDER_READ_ALL_PAGES = exports.FOLDER_RW_ALL_CHILDREN = exports.FOLDER_READ_ALL_CHILDREN = exports.FOLDER_ADMIN = exports.FOLDER_RW = exports.FOLDER_READ = exports.WIKI_PERMISSIONS = exports.WIKI_ADMIN = exports.WIKI_RW = exports.WIKI_READ = exports.ROLE_PERMISSIONS = exports.ROLE_ADMIN = exports.ROLE_RW = exports.ROLE_READ = exports.CALENDAR_PERMISSIONS = exports.CALENDAR_ADMIN = exports.CALENDAR_READ = exports.CALENDAR_RW = exports.WORLD_PERMISSIONS = exports.TOKEN_RW_ALL = exports.TOKEN_READ_ALL = exports.TOKEN_ICON_ADD = exports.CALENDAR_ADMIN_ALL = exports.CALENDAR_RW_ALL = exports.CALENDAR_READ_ALL = exports.MODEL_ADMIN_ALL = exports.MODEL_RW_ALL = exports.MODEL_READ_ALL = exports.MODEL_ADD = exports.ROLE_ADMIN_ALL = exports.ROLE_RW_ALL = exports.ROLE_READ_ALL = exports.ROLE_ADD = exports.GAME_ADMIN_ALL = exports.GAME_HOST = exports.FOLDER_ADMIN_ALL = exports.FOLDER_RW_ALL = exports.FOLDER_READ_ALL = exports.WIKI_ADMIN_ALL = exports.WIKI_RW_ALL = exports.WIKI_READ_ALL = exports.WORLD_RW = exports.WORLD_ADMIN = exports.WORLD_READ = exports.SERVER_PERMISSIONS = exports.SERVER_RW = exports.SERVER_ADMIN = exports.WORLD_RW_ALL = exports.WORLD_READ_ALL = exports.WORLD_ADMIN_ALL = exports.WORLD_CREATE = void 0;
 exports.SERVER_ADMIN_ROLE = exports.ANON_USERNAME = exports.getPermissionsBySubjectType = exports.PUBLIC_WORLD_PERMISSIONS = exports.ALL_PERMISSIONS = exports.GAME_PERMISSIONS = exports.GAME_RW = exports.GAME_ADMIN = exports.GAME_FOG_WRITE = exports.GAME_MODEL = exports.GAME_PAINT = exports.GAME_READ = exports.MODEL_PERMISSIONS = exports.MODEL_ADMIN = exports.MODEL_RW = exports.MODEL_READ = void 0;
 const type_constants_1 = require("./type-constants");
 // server permissions
@@ -41,6 +41,9 @@ exports.MODEL_ADMIN_ALL = "Able to change permissions for any model";
 exports.CALENDAR_READ_ALL = "Read all calendars";
 exports.CALENDAR_RW_ALL = "Write to any calendar";
 exports.CALENDAR_ADMIN_ALL = "Able to change permissions for any calendar";
+exports.TOKEN_ICON_ADD = "Able to create token icons in this world";
+exports.TOKEN_READ_ALL = "Read all token icons";
+exports.TOKEN_RW_ALL = "Write to any token icon";
 exports.WORLD_PERMISSIONS = [
     exports.WORLD_READ,
     exports.WORLD_ADMIN,
@@ -63,7 +66,10 @@ exports.WORLD_PERMISSIONS = [
     exports.WORLD_RW,
     exports.CALENDAR_READ_ALL,
     exports.CALENDAR_RW_ALL,
-    exports.CALENDAR_ADMIN_ALL
+    exports.CALENDAR_ADMIN_ALL,
+    exports.TOKEN_ICON_ADD,
+    exports.TOKEN_READ_ALL,
+    exports.TOKEN_RW_ALL
 ];
 // calendar permissions
 exports.CALENDAR_RW = "Able to change this calendar definition";

@@ -600,4 +600,28 @@ export const LOAD_5E_CONTENT = gql`
 	}
 `;
 
+//region TokenIcon
+
+export const CREATE_TOKEN_ICON = gql`
+	mutation createTokenIcon($worldId: ID!, $imageId: ID!) {
+		createTokenIcon(worldId: $worldId, imageId: $imageId) {
+			_id
+			image {
+				_id
+			}
+			world {
+				_id
+			}
+		}
+	}
+`;
+
+export const DELETE_TOKEN_ICON = gql`
+	mutation deleteTokenIcon($tokenIconId: ID!) {
+		deleteTokenIcon(tokenIconId: $tokenIconId) {
+			_id
+		}
+	}
+`;
+
 //endregion

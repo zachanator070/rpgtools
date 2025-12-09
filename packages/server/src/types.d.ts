@@ -27,6 +27,7 @@ import {CalendarRepository} from "./dal/repository/calendar-repository.js";
 import EventWikiRepository from "./dal/repository/event-wiki-repository.js";
 import FogStrokeRepository from "./dal/repository/fog-stroke-repository.js";
 import StrokeRepository from "./dal/repository/stroke-repository.js";
+import { TokenIconRepository } from "./dal/repository/token-icon-repository.ts";
 
 export interface DomainEntity {
 	_id: string;
@@ -100,6 +101,7 @@ export interface RepositoryAccessor {
 	calendarRepository: CalendarRepository;
 	fogStrokeRepository: FogStrokeRepository;
 	strokeRepository: StrokeRepository;
+	tokenIconRepository: TokenIconRepository;
 }
 
 export type Factory<T> = (args?: any) => T;

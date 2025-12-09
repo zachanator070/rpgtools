@@ -25,6 +25,7 @@ export const typeDefs = gql`
 		
 		calendars(worldId: ID!): [Calendar!]!
 		events(worldId: ID!, relatedWikiIds: [String!], calendarIds: [String!]): WikiPagePaginatedResult!
+		tokenIcons(worldId: ID!, page: Int): TokenIconPaginatedResult!
 	}
 
 	type Mutation {
@@ -108,6 +109,9 @@ export const typeDefs = gql`
 		createPin(mapId: ID!, x: Float!, y: Float!, wikiId: ID): Pin!
 		updatePin(pinId: ID!, pageId: ID): Pin!
 		deletePin(pinId: ID!): Pin!
+
+		createTokenIcon(worldId: ID!, imageId: ID!): TokenIcon!
+		deleteTokenIcon(tokenIconId: ID!): TokenIcon!
 
 		createGame(worldId: ID!, password: String, characterName: String): Game!
 		joinGame(gameId: ID!, password: String, characterName: String): Game!
@@ -300,6 +304,19 @@ export const typeDefs = gql`
 		nextPage: Int
 	}
 	
+	type TokenIconPaginatedResult {
+		docs: [TokenIcon!]!
+		totalDocs: Int!
+		limit: Int!
+		page: Int!
+		totalPages: Int!
+		pagingCounter: Int!
+		hasPrevPage: Boolean!
+		hasNextPage: Boolean!
+		prevPage: Int
+		nextPage: Int
+	}
+	
 	interface WikiPage {
 		_id: ID!
 		name: String!
@@ -468,6 +485,12 @@ export const typeDefs = gql`
 		y: Float!
 		page: WikiPage
 		canWrite: Boolean!
+	}
+
+	type TokenIcon {
+		_id: ID!
+		image: Image!
+		world: World!
 	}
 
 	type ServerConfig implements PermissionControlled {

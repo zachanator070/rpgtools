@@ -352,4 +352,32 @@ export const GET_CALENDARS = gql`
 		}
 	}
 `;
+
+//region TokenIcon
+
+export const GET_TOKEN_ICONS = gql`
+	query tokenIcons($worldId: ID!, $page: Int) {
+		tokenIcons(worldId: $worldId, page: $page) {
+			docs {
+				_id
+				image {
+					_id
+				}
+				world {
+					_id
+				}
+			}
+			page
+			totalPages
+			totalDocs
+			pageCount: pagingCounter
+			limit
+			hasPrevPage
+			hasNextPage
+			prevPage
+			nextPage
+		}
+	}
+`;
+
 //endregion

@@ -130,5 +130,13 @@ export default {
 	) => {
 		const service = container.get<WikiPageService>(INJECTABLE_TYPES.WikiPageService);
 		return service.getEvents(worldId, securityContext, databaseContext, relatedWikiIds, calendarIds);
+	},
+	tokenIcons: async (
+		_: any,
+		{ worldId, page }: { worldId: string, page?: number },
+		{ securityContext, databaseContext }: SessionContext
+	) => {
+		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
+		return service.getTokenIcons(securityContext, worldId, page || 1, databaseContext);
 	}
 };
