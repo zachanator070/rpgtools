@@ -310,7 +310,9 @@ export class GameService {
 		modelId: string,
 		wikiId: string,
 		color: string,
-		databaseContext: DatabaseContext
+		tokenId?: string,
+		tokenType?: string,
+		databaseContext?: DatabaseContext
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
@@ -327,7 +329,7 @@ export class GameService {
 		if (wikiId && !wiki) {
 			throw new Error(`Cannot find wiki with ID ${wikiId}`);
 		}
-		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId);
+		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId, tokenId, tokenType);
 		game.models.push(positionedModel);
 		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MODEL_ADDED, {

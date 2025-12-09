@@ -742,6 +742,11 @@ async function up({ context: queryInterface }: { context: QueryInterface }) {
         }
     });
     await queryInterface.createTable('AdminUsersToServerConfig', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         ServerConfigId: {
             type: DataTypes.UUID
         },

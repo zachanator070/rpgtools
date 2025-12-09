@@ -326,6 +326,8 @@ export const GAME_MODEL = gql`
             _id
             name
         }
+        tokenId
+        tokenType
     }
 `;
 export const GAME_MODELS = gql`

@@ -1,0 +1,5 @@
+exports.TOKEN_TYPES = {
+	CIRCLE: 'CIRCLE',
+	SQUARE: 'SQUARE',
+	STAR: 'STAR'
+};

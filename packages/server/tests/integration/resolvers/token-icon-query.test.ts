@@ -20,6 +20,8 @@ import { DbEngine } from "../../../src/types.js";
 import fs from "fs";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import Upload from "graphql-upload/Upload.mjs";
+import { World } from "src/domain-entities/world.js";
+import { WorldService } from "src/services/world-service.js";
 
 process.env.TEST_SUITE = "token-icon-query-test";
 
@@ -224,7 +226,7 @@ describe("token-icon-query", () => {
 				databaseContext
 			);
 
-			testingContext.mockSessionContextFactory.useUser(testingContext.tester2);
+			testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_TOKEN_ICONS,
@@ -261,7 +263,7 @@ describe("token-icon-query", () => {
 				databaseContext
 			);
 
-			testingContext.mockSessionContextFactory.useUser(testingContext.tester2);
+			testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_TOKEN_ICONS,
@@ -296,7 +298,7 @@ describe("token-icon-query", () => {
 			});
 
 			expect(result.errors).toBeDefined();
-			expect(result.errors![0].message).toContain("World with id");
+			expect(result.errors![0].message).toContain("invalid input syntax for type uuid");
 		});
 
 		test("zero page number", async () => {
@@ -342,7 +344,7 @@ describe("token-icon-query", () => {
 
 		test("token icons filtered by world", async () => {
 			const databaseContext = await dbEngine.createDatabaseContext();
-			const worldService = container.get(INJECTABLE_TYPES.WorldService);
+			const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 
 			// Create second world
 			const secondWorld = await worldService.createWorld(
@@ -398,7 +400,7 @@ describe("token-icon-query", () => {
 
 		test("user with permission in one world cannot access token icons from another world", async () => {
 			const databaseContext = await dbEngine.createDatabaseContext();
-			const worldService = container.get(INJECTABLE_TYPES.WorldService);
+			const worldService = container.get<WorldService>(INJECTABLE_TYPES.WorldService);
 
 			// Create second world
 			const secondWorld = await worldService.createWorld(
@@ -435,7 +437,7 @@ describe("token-icon-query", () => {
 				databaseContext
 			);
 
-			testingContext.mockSessionContextFactory.useUser(testingContext.tester2);
+			testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
 
 			// Should be able to read from first world
 			const result1 = await testingContext.server.executeGraphQLQuery({

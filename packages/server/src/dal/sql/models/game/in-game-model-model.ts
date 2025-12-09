@@ -1,9 +1,11 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import {DataTypes} from "sequelize";
 import {defaultAttributes} from "../default-attributes.js";
 import ModelModel from "../model-model.js";
 import ArticleModel from "../article-model.js";
 import SqlModel from "../sql-model.js";
-import {ARTICLE, GAME, MODEL} from "@rpgtools/common/src/type-constants.js";
+import {GAME, MODEL} from "@rpgtools/common/src/type-constants.js";
+import {TOKEN_TYPES} from "@rpgtools/common/src/token-type-constants.js";
+import TokenIconModel from "../token-icon-model.js";
 
 
 export default class InGameModelModel extends SqlModel {
@@ -16,6 +18,8 @@ export default class InGameModelModel extends SqlModel {
 
     declare modelId: string;
     declare wikiId: string;
+    declare tokenId: string;
+    declare tokenType: string;
 
     static attributes = {
         ...defaultAttributes,
@@ -54,11 +58,24 @@ export default class InGameModelModel extends SqlModel {
         },
         wikiId: {
             type: DataTypes.UUID,
+        },
+        tokenId: {
+            type: DataTypes.UUID,
+            allowNull: true,
+            references: {
+                model: 'TokenIcon',
+                key: '_id'
+            }
+        },
+        tokenType: {
+            type: DataTypes.ENUM(TOKEN_TYPES.CIRCLE, TOKEN_TYPES.SQUARE, TOKEN_TYPES.STAR),
+            allowNull: true
         }
     };
 
     static connect() {
         InGameModelModel.belongsTo(ModelModel, {as: 'model'});
         InGameModelModel.belongsTo(ArticleModel, {as: 'wiki', constraints: false});
+        InGameModelModel.belongsTo(TokenIconModel, {as: 'token'});
     }
 }

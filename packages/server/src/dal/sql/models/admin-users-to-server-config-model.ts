@@ -3,6 +3,11 @@ import {DataTypes} from "sequelize";
 
 export default class AdminUsersToServerConfigModel extends SqlModel {
     static attributes = {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         ServerConfigId: {
             type: DataTypes.UUID
         },

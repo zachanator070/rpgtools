@@ -310,24 +310,45 @@ describe("query resolver", () => {
 					});
 				});
 
-				it('get my games', async () => {
-					const result = await testingContext.server.executeGraphQLQuery({
-						query: MY_GAMES,
-					});
-					expect(result).toMatchSnapshot({
-						data: {
-							myGames: expect.arrayContaining([
+			it('get my games', async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: MY_GAMES,
+				});
+				expect(result).toMatchSnapshot({
+					data: {
+						myGames: expect.arrayContaining([
+							expect.objectContaining({
+								_id: expect.any(String),
+							}),
+						])
+					},
+					errors: undefined
+				});
+			});
+
+			it('get game models returns tokenId and tokenType fields', async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: GET_GAME,
+					variables: { gameId: testingContext.game._id },
+				});
+				expect(result).toMatchSnapshot({
+					data: {
+						game: expect.objectContaining({
+							_id: expect.any(String),
+							models: expect.arrayContaining([
 								expect.objectContaining({
 									_id: expect.any(String),
-								}),
+									tokenId: expect.any(String) || null,
+									tokenType: expect.any(String) || null,
+								})
 							])
-						},
-						errors: undefined
-					});
+						})
+					},
+					errors: undefined
 				});
-			})
-
-			describe ('with multiple events, calendars, and referenced wikis', () => {
+			});
+		});
+		describe ('with multiple events, calendars, and referenced wikis', () => {
 
 				beforeEach(async () => {
 					await testingContext.setupEvents();

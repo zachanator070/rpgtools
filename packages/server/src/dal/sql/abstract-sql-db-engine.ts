@@ -63,6 +63,7 @@ import * as related_wikis from "./migrations/02_related_wikis.js";
 import * as game_message_size from './migrations/03_game_message_size.js';
 import * as message_to_text from './migrations/04_message-to-text.js';
 import * as token_icon from './migrations/05_token-icon.js';
+import * as token_fields from './migrations/06_in-game-model-token-fields.js';
 import EventWikiModel from "./models/event-wiki-model.js";
 import CalendarModel from "./models/calendar-model.js";
 import AgeModel from "./models/calendar/age-model.js";
@@ -257,6 +258,10 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
                 {
                     name: '05_token_icon',
                     ...token_icon
+                },
+                {
+                    name: '06_in-game-model-token-fields',
+                    ...token_fields
                 }
             ],
             context: connection.getQueryInterface(),

@@ -178,6 +178,56 @@ describe("game mutations", () => {
                     });
                 });
 
+                test('add model with tokenType', async () => {
+                    const result = await testingContext.server.executeGraphQLQuery({
+                        query: ADD_MODEL,
+                        variables: { gameId: testingContext.game._id, modelId: testingContext.model._id, wikiId: testingContext.otherPage._id, color: '#ffffff', tokenType: 'CIRCLE' },
+                    });
+
+                    expect(result).toMatchSnapshot({
+                        data: {
+                            addModel: {
+                                _id: expect.any(String),
+                                models: expect.arrayContaining([
+                                    expect.objectContaining({
+                                        _id: expect.any(String),
+                                        model: expect.objectContaining({
+                                            _id: expect.any(String)
+                                        }),
+                                        tokenType: 'CIRCLE'
+                                    })
+                                ])
+                            },
+                        },
+                        errors: undefined
+                    });
+                });
+
+                test('add model with both tokenId and tokenType', async () => {
+                    const result = await testingContext.server.executeGraphQLQuery({
+                        query: ADD_MODEL,
+                        variables: { gameId: testingContext.game._id, modelId: testingContext.model._id, wikiId: testingContext.otherPage._id, color: '#ffffff', tokenId: uuidv4(), tokenType: 'SQUARE' },
+                    });
+
+                    expect(result).toMatchSnapshot({
+                        data: {
+                            addModel: {
+                                _id: expect.any(String),
+                                models: expect.arrayContaining([
+                                    expect.objectContaining({
+                                        _id: expect.any(String),
+                                        model: expect.objectContaining({
+                                            _id: expect.any(String)
+                                        }),
+                                        tokenType: 'SQUARE'
+                                    })
+                                ])
+                            },
+                        },
+                        errors: undefined
+                    });
+                });
+
                 test('set model position', async () => {
                     const result = await testingContext.server.executeGraphQLQuery({
                         query: SET_MODEL_POSITION,

@@ -158,8 +158,8 @@ export const LEAVE_GAME = gql`
 
 export const ADD_MODEL = gql`
 	${GAME_MODELS}
-	mutation addModel($gameId: ID!, $modelId: ID!, $wikiId: ID, $color: String){
-		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color){
+	mutation addModel($gameId: ID!, $modelId: ID!, $wikiId: ID, $color: String, $tokenId: ID, $tokenType: String){
+		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color, tokenId: $tokenId, tokenType: $tokenType){
 			_id
 			...gameModels
 		}
