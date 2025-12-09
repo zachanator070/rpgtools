@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`token-icon-mutations > with world and logged in as world creator > create token icon 1`] = `
+{
+  "data": {
+    "createTokenIcon": {
+      "_id": Any<String>,
+      "image": {
+        "_id": Any<String>,
+      },
+      "world": {
+        "_id": Any<String>,
+      },
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`token-icon-mutations > with world and logged in as world creator > delete token icon 1`] = `
+{
+  "data": {
+    "deleteTokenIcon": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;

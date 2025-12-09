@@ -513,6 +513,12 @@ export const typeDefs = gql`
 		timestamp: String!
 	}
 
+	enum TokenType {
+		CIRCLE
+		SQUARE
+		STAR
+	}
+
 	type Game implements PermissionControlled {
 		_id: ID!
 		world: World!
