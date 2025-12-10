@@ -69,7 +69,7 @@ describe("token-icon-mutations", () => {
 			imageId = await createTestImage(testingContext);
 		});
 
-		test("create token icon", async () => {
+		test("create token icon without name defaults to image name", async () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_TOKEN_ICON,
 				variables: {
@@ -77,20 +77,29 @@ describe("token-icon-mutations", () => {
 					imageId: imageId,
 				},
 			});
-			expect(result).toMatchSnapshot({
-				data: {
-					createTokenIcon: {
-						_id: expect.any(String),
-						image: {
-							_id: expect.any(String),
-						},
-						world: {
-							_id: expect.any(String),
-						},
-					},
+			expect(result.errors).toBeUndefined();
+			expect(result.data?.createTokenIcon?._id).toBeDefined();
+			// When no custom name is provided, it defaults to the image filename
+			expect(result.data?.createTokenIcon?.name).toBe("tests/integration/resolvers/mutations/testmap.png");
+			expect(result.data?.createTokenIcon?.image?._id).toBe(imageId);
+			expect(result.data?.createTokenIcon?.world?._id).toBe(testingContext.world._id);
+		});
+
+		test("create token icon with custom name", async () => {
+			const customName = "My Dragon Token";
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: CREATE_TOKEN_ICON,
+				variables: {
+					worldId: testingContext.world._id,
+					imageId: imageId,
+					name: customName,
 				},
-				errors: undefined,
 			});
+			expect(result.errors).toBeUndefined();
+			expect(result.data?.createTokenIcon?._id).toBeDefined();
+			expect(result.data?.createTokenIcon?.name).toBe(customName);
+			expect(result.data?.createTokenIcon?.image?._id).toBe(imageId);
+			expect(result.data?.createTokenIcon?.world?._id).toBe(testingContext.world._id);
 		});
 
 		test("create token icon - invalid image", async () => {

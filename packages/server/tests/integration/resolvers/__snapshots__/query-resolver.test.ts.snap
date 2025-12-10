@@ -45,6 +45,18 @@ exports[`query resolver > with world > wiki no permission 1`] = `
 }
 `;
 
+exports[`query resolver > with world > with authenticated user > canCreateTokens is true after creating a new world 1`] = `
+{
+  "data": {
+    "world": ObjectContaining {
+      "_id": Any<String>,
+      "canCreateTokens": true,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
 exports[`query resolver > with world > with authenticated user > current user 1`] = `
 {
   "data": {
@@ -261,6 +273,7 @@ exports[`query resolver > with world > with authenticated user > world 1`] = `
       "canAddModels": true,
       "canAddRoles": true,
       "canAdmin": true,
+      "canCreateTokens": true,
       "canHostGame": true,
       "canWrite": true,
       "name": "Earth",

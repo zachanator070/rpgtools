@@ -18,6 +18,10 @@ const defaultAttributes: ModelAttributes = {
 async function up({ context: queryInterface }: {context: QueryInterface}) {
     await queryInterface.createTable('TokenIcon', {
         ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         imageId: {
             type: DataTypes.UUID,
             allowNull: false,
@@ -35,10 +39,26 @@ async function up({ context: queryInterface }: {context: QueryInterface}) {
             }
         }
     });
+
+      await queryInterface.addColumn('GameModel', 'tokenId', {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+        model: 'TokenIcon',
+        key: '_id'
+        }
+    });
+
+    await queryInterface.addColumn('GameModel', 'tokenType', {
+        type: DataTypes.STRING,
+        allowNull: true
+    });
 }
 
 async function down({ context: queryInterface }: {context: QueryInterface}) {
     await queryInterface.dropTable('TokenIcon');
+    await queryInterface.removeColumn('GameModel', 'tokenType');
+    await queryInterface.removeColumn('GameModel', 'tokenId');
 }
 
 export {up, down};

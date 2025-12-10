@@ -258,10 +258,6 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
                 {
                     name: '05_token_icon',
                     ...token_icon
-                },
-                {
-                    name: '06_in-game-model-token-fields',
-                    ...token_fields
                 }
             ],
             context: connection.getQueryInterface(),

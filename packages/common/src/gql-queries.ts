@@ -290,6 +290,7 @@ export const GET_CURRENT_WORLD = gql`
 			canAddRoles
 			canHostGame
 			canAddModels
+			canCreateTokens
 			wikiPage {
 				_id
 				name
@@ -362,15 +363,21 @@ export const GET_TOKEN_ICONS = gql`
 				_id
 				image {
 					_id
+					icon {
+						chunks {
+							fileId
+						}
+					}
 				}
 				world {
 					_id
 				}
+				name
 			}
 			page
 			totalPages
 			totalDocs
-			pageCount: pagingCounter
+			pagingCounter
 			limit
 			hasPrevPage
 			hasNextPage

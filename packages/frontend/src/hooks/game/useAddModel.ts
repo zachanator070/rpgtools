@@ -7,6 +7,8 @@ interface AddModelVariables {
 	modelId: string;
 	wikiId: string;
 	color: string;
+	tokenId?: string;
+	tokenType?: string;
 }
 
 interface AddModelResult extends GqlMutationResult<Game, AddModelVariables> {

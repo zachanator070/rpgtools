@@ -214,6 +214,7 @@ describe("game mutations", () => {
                             testingContext.tester1SecurityContext,
                             testingContext.world._id,
                             image._id,
+                            undefined,
                             databaseContext
                         );
                         tokenId = token._id;

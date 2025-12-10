@@ -110,7 +110,7 @@ export const typeDefs = gql`
 		updatePin(pinId: ID!, pageId: ID): Pin!
 		deletePin(pinId: ID!): Pin!
 
-		createTokenIcon(worldId: ID!, imageId: ID!): TokenIcon!
+		createTokenIcon(worldId: ID!, imageId: ID!, name: String): TokenIcon!
 		deleteTokenIcon(tokenIconId: ID!): TokenIcon!
 
 		createGame(worldId: ID!, password: String, characterName: String): Game!
@@ -211,6 +211,7 @@ export const typeDefs = gql`
 		canAddRoles: Boolean!
 		canHostGame: Boolean!
 		canAddModels: Boolean!
+		canCreateTokens: Boolean!
 	}
 
 	type WorldPaginatedResult {
@@ -489,6 +490,7 @@ export const typeDefs = gql`
 
 	type TokenIcon {
 		_id: ID!
+		name: String!
 		image: Image!
 		world: World!
 	}

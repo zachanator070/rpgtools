@@ -10,9 +10,14 @@ export default class TokenIconModel extends SqlModel {
 
     declare imageId: string;
     declare worldId: string;
+    declare name: string;
 
     static attributes = {
         ...defaultAttributes,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         imageId: {
             type: DataTypes.UUID,
             allowNull: false,

@@ -267,6 +267,7 @@ exports.GET_CURRENT_WORLD = (0, graphql_tag_1.default) `
 			canAddRoles
 			canHostGame
 			canAddModels
+			canCreateTokens
 			wikiPage {
 				_id
 				name
@@ -335,15 +336,21 @@ exports.GET_TOKEN_ICONS = (0, graphql_tag_1.default) `
 				_id
 				image {
 					_id
+					icon {
+						chunks {
+							fileId
+						}
+					}
 				}
 				world {
 					_id
 				}
+				name
 			}
 			page
 			totalPages
 			totalDocs
-			pageCount: pagingCounter
+			pagingCounter
 			limit
 			hasPrevPage
 			hasNextPage

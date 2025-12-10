@@ -5,6 +5,7 @@ import TokenIconModel from "../models/token-icon-model.js";
 import {TokenIconRepository} from "../../repository/token-icon-repository.js";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
 import TokenIconFactory from "../../../domain-entities/factory/token-icon-factory.js";
+import { PaginatedResult } from "../../paginated-result.js";
 
 
 @injectable()
@@ -19,12 +20,17 @@ export default class SqlTokenIconRepository extends AbstractSqlRepository<TokenI
         return TokenIconModel.build({
             _id: entity._id,
             imageId: entity.imageId,
-            worldId: entity.worldId
+            worldId: entity.worldId,
+            name: entity.name
         });
     }
 
     async updateAssociations(entity: TokenIcon, model: TokenIconModel) {
         // No associations to update
+    }
+
+    async getAllPaginated(page: number, worldId: string): Promise<PaginatedResult<TokenIcon>> {
+        return this.buildPaginatedResult(page, { worldId });
     }
 
 }

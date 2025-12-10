@@ -644,6 +644,7 @@ export class GameService {
 		context: SecurityContext,
 		worldId: string,
 		imageId: string,
+		name: string | undefined,
 		databaseContext: DatabaseContext
 	): Promise<TokenIcon> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
@@ -661,9 +662,14 @@ export class GameService {
 			throw new Error("You do not have permission to create token icons in this world");
 		}
 
+		if (name === '') {
+			name = undefined;
+		}
+
 		const tokenIcon = this.tokenIconFactory.build({
 			imageId: imageId,
-			worldId: worldId
+			worldId: worldId,
+			name: name || image.name
 		});
 
 		await databaseContext.tokenIconRepository.create(tokenIcon);

@@ -603,9 +603,10 @@ export const LOAD_5E_CONTENT = gql`
 //region TokenIcon
 
 export const CREATE_TOKEN_ICON = gql`
-	mutation createTokenIcon($worldId: ID!, $imageId: ID!) {
-		createTokenIcon(worldId: $worldId, imageId: $imageId) {
+	mutation createTokenIcon($worldId: ID!, $imageId: ID!, $name: String) {
+		createTokenIcon(worldId: $worldId, imageId: $imageId, name: $name) {
 			_id
+			name
 			image {
 				_id
 			}

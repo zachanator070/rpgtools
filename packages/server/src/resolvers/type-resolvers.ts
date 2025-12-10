@@ -122,6 +122,9 @@ export const TypeResolvers = {
 			const testModel = modelFactory.build({world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: "", acl: []});
 			return testModel.authorizationPolicy.canCreate(securityContext, databaseContext);
 		},
+		canCreateTokens: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+			return world.authorizationPolicy.canCreateTokenIcons(securityContext);
+		},
 		...permissionControlledInterfaceAttributes,
 	},
 	PermissionControlled: {

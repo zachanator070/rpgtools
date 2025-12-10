@@ -6,11 +6,11 @@ import { GameService } from "../../services/game-service.js";
 export const tokenIconMutations = {
 	createTokenIcon: async (
 		_: any,
-		{ worldId, imageId }: { worldId: string; imageId: string },
+		{ worldId, imageId, name }: { worldId: string; imageId: string; name?: string },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const gameService = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await databaseContext.openTransaction(async () => gameService.createTokenIcon(securityContext, worldId, imageId, databaseContext));
+		return await databaseContext.openTransaction(async () => gameService.createTokenIcon(securityContext, worldId, imageId, name, databaseContext));
 	},
 
 	deleteTokenIcon: async (

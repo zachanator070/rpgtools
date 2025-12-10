@@ -172,6 +172,7 @@ export const PUBLIC_WORLD_PERMISSIONS = [
 	FOLDER_READ_ALL,
 	WORLD_READ,
 	MODEL_READ_ALL,
+	TOKEN_READ_ALL
 ];
 
 export const getPermissionsBySubjectType = (subjectType: string) => {

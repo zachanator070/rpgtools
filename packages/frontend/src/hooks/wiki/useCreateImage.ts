@@ -10,6 +10,8 @@ interface CreateImageVariables {
 
 interface CreateImageResult {
 	createImage: MutationMethod<Image, CreateImageVariables>;
+	loading: boolean;
+	errors: string[];
 }
 
 export default function useCreateImage(): CreateImageResult {
@@ -17,5 +19,7 @@ export default function useCreateImage(): CreateImageResult {
 	return {
 		...result,
 		createImage: result.mutate,
+		loading: result.loading,
+		errors: result.errors
 	};
 };

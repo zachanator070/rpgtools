@@ -82,7 +82,6 @@ describe("token-icon-query", () => {
 					tokenIcons: {
 						docs: [],
 						page: 1,
-						pageCount: expect.any(Number),
 						totalDocs: 0,
 						limit: 10,
 						totalPages: expect.any(Number),
@@ -165,8 +164,8 @@ describe("token-icon-query", () => {
 
 			expect(page2Result.data?.tokenIcons.pagingCounter).toBe(11);
 			expect(page2Result.data?.tokenIcons.hasPrevPage).toBe(true);
-			expect(page2Result.data?.tokenIcons.hasNextPage).toBe(true);
-			expect(page2Result.data?.tokenIcons.nextPage).toBe(3);
+			expect(page2Result.data?.tokenIcons.hasNextPage).toBe(false);
+			expect(page2Result.data?.tokenIcons.nextPage).toBe(null);
 			expect(page2Result.data?.tokenIcons.prevPage).toBe(1);
 		});
 

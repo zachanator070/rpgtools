@@ -33,6 +33,7 @@ export class TokenIcon implements DomainEntity {
 	public _id: string;
 	public imageId: string;
 	public worldId: string;
+	public name: string;
 
 	authorizationPolicy: EntityAuthorizationPolicy;
 	factory: EntityFactory<TokenIcon, TokenIconModel>;

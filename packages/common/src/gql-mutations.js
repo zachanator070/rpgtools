@@ -559,9 +559,10 @@ exports.LOAD_5E_CONTENT = (0, graphql_tag_1.default) `
 `;
 //region TokenIcon
 exports.CREATE_TOKEN_ICON = (0, graphql_tag_1.default) `
-	mutation createTokenIcon($worldId: ID!, $imageId: ID!) {
-		createTokenIcon(worldId: $worldId, imageId: $imageId) {
+	mutation createTokenIcon($worldId: ID!, $imageId: ID!, $name: String) {
+		createTokenIcon(worldId: $worldId, imageId: $imageId, name: $name) {
 			_id
+			name
 			image {
 				_id
 			}

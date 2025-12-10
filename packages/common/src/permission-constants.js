@@ -135,6 +135,7 @@ exports.PUBLIC_WORLD_PERMISSIONS = [
     exports.FOLDER_READ_ALL,
     exports.WORLD_READ,
     exports.MODEL_READ_ALL,
+    exports.TOKEN_READ_ALL
 ];
 const getPermissionsBySubjectType = (subjectType) => {
     if (subjectType === type_constants_1.ROLE) {

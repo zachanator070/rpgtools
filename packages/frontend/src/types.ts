@@ -22,6 +22,7 @@ export interface World extends PermissionControlled {
     canAddRoles: boolean;
     canHostGame: boolean;
     canAddModels: boolean;
+    canCreateTokens: boolean;
 }
 
 export interface WorldPaginatedResult {
@@ -418,4 +419,24 @@ export interface Month {
 export interface DayOfTheWeek {
     _id?: string;
     name: string;
+}
+
+export interface TokenIcon {
+    _id: string;
+    name?: string;
+    image: Image;
+    world: World;
+}
+
+export interface TokenIconPaginatedResult {
+    docs: TokenIcon[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: number;
+    nextPage: number;
 }
