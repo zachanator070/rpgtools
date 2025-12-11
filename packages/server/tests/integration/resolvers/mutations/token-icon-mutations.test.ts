@@ -191,10 +191,11 @@ describe("token-icon-mutations", () => {
 				},
 			});
 
+			expect(result.errors).toBeUndefined();
 			expect(result.data?.tokenIcons).toBeDefined();
 			expect(result.data?.tokenIcons.docs).toHaveLength(2);
 			expect(result.data?.tokenIcons.page).toBe(1);
-			expect(result.data?.tokenIcons.pageCount).toBeGreaterThanOrEqual(1);
+			expect(result.data?.tokenIcons.pagingCounter).toBeGreaterThanOrEqual(1);
 		});
 
 		test("get token icons with pagination", async () => {
@@ -227,11 +228,11 @@ describe("token-icon-mutations", () => {
 
 			expect(page1Result.data?.tokenIcons.docs).toHaveLength(10);
 			expect(page1Result.data?.tokenIcons.page).toBe(1);
-			expect(page1Result.data?.tokenIcons.pageCount).toBe(1);
+			expect(page1Result.data?.tokenIcons.pagingCounter).toBe(1);
 
 			expect(page2Result.data?.tokenIcons.docs).toHaveLength(1);
 			expect(page2Result.data?.tokenIcons.page).toBe(2);
-			expect(page2Result.data?.tokenIcons.pageCount).toBe(11);
+			expect(page2Result.data?.tokenIcons.pagingCounter).toBe(11);
 		});
 	});
 

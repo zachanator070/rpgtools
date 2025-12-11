@@ -114,7 +114,7 @@ export const gameMutations = {
 			color,
 			tokenId,
 			tokenType,
-		}: { gameId: string; modelId: string; wikiId: string; color: string; tokenId?: string; tokenType?: string },
+		}: { gameId: string; modelId?: string; wikiId?: string; color?: string; tokenId?: string; tokenType?: string },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);

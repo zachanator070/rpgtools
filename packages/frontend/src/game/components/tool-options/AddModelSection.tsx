@@ -9,8 +9,8 @@ import ModelViewer from "../../../components/models/ModelViewer";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
 import RadioButtonGroup from "../../../components/widgets/RadioButtonGroup";
 import RadioButton from "../../../components/widgets/RadioButton";
-import useCurrentWorld from "../../../hooks/world/useCurrentWorld";
 import ManageTokenIcons from "../../../components/select/ManageTokenIcons";
+import ColorInput from "../../../components/widgets/input/ColorInput";
 
 interface TokenIcon {
 	_id: string;
@@ -29,7 +29,6 @@ interface SelectedModel {
 
 export default function AddModelSection() {
 	const [selectedModel, setSelectedModel] = useState<SelectedModel>(null);
-	const {currentWorld} = useCurrentWorld();
 	const { currentGame } = useCurrentGame();
 	const { addModel } = useAddModel();
 	const [modelColor, setModelColor] = useState<string>();
@@ -45,24 +44,50 @@ export default function AddModelSection() {
 	switch(addMode) {
 		case "wiki":
 			modelSearchSection = (
-				<SelectWiki
-					types={MODELED_WIKI_TYPES}
-					onChange={(wiki: ModeledWiki) => {
-						setSelectedModel({model: wiki.model, wiki});
-						setModelColor(wiki.modelColor);
-					}}
-					hasModel={true}
-				/>
+				<>
+					<SelectWiki
+						types={MODELED_WIKI_TYPES}
+						onChange={(wiki: ModeledWiki) => {
+							setSelectedModel({model: wiki.model, wiki});
+							setModelColor(wiki.modelColor);
+						}}
+						hasModel={true}
+					/>
+					{selectedModel && (
+						<div ref={setModelViewerContainer}>
+							<ModelViewer
+								model={selectedModel.model}
+								defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor}
+								showColorControls={true}
+								onChangeColor={async (color) => setModelColor(color)}
+								container={modelViewerContainer}
+							/>
+						</div>
+					)}
+				</>
 			);
 			break;
 		case "model":
 			modelSearchSection = (
-				<SelectModel
-					onChange={async (model) => {
-						setSelectedModel({ model })
-					}}
-					showClear={false}
-				/>
+				<>
+					<SelectModel
+						onChange={async (model) => {
+							setSelectedModel({ model })
+						}}
+						showClear={false}
+					/>
+					{selectedModel && (
+						<div ref={setModelViewerContainer}>
+							<ModelViewer
+								model={selectedModel.model}
+								defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor}
+								showColorControls={true}
+								onChangeColor={async (color) => setModelColor(color)}
+								container={modelViewerContainer}
+							/>
+						</div>
+					)}
+				</>
 			);
 			break;
 		case "token":
@@ -89,11 +114,20 @@ export default function AddModelSection() {
 					<RadioButton value={"SQUARE"}>
 						Square
 					</RadioButton>
-					<RadioButton value={"STAR"}>
-						Star
-					</RadioButton>
 				</RadioButtonGroup>
-
+				<div>
+					<span className={"margin-md-right"}>Token Color:</span>
+					<ColorInput
+						style={{
+							width: "100px",
+						}}
+						value={modelColor}
+						onChange={(e) => {
+							const value = e.target.value;
+							setModelColor(value);
+						}}
+					/>
+				</div>
 			</div>);
 			break;
 	}
@@ -103,6 +137,10 @@ export default function AddModelSection() {
 				<RadioButtonGroup 
 					onChange={function (string: any) {
 						setAddMode(string as "wiki" | "model" | "token");
+						setSelectedModel(null);
+						setModelColor(null);
+						setSelectedTokenIcon(null);
+						setSelectedTokenType("CIRCLE");
 					} } 
 					defaultValue={"wiki"}
 				>
@@ -120,25 +158,14 @@ export default function AddModelSection() {
 
 			{modelSearchSection}
 			
-			{selectedModel && (
-				<div ref={setModelViewerContainer}>
-					<ModelViewer
-						model={selectedModel.model}
-						defaultColor={selectedModel.wiki && selectedModel.wiki.modelColor}
-						showColorControls={true}
-						onChangeColor={async (color) => setModelColor(color)}
-						container={modelViewerContainer}
-					/>
-				</div>
-			)}
 			{(selectedModel || addMode === 'token') && (
 				<PrimaryButton
 					className={"margin-lg-top"}
 					onClick={async () => {
 						await addModel({
 							gameId: currentGame._id,
-							modelId: selectedModel.model._id,
-							wikiId: selectedModel.wiki ? selectedModel.wiki._id : null,
+							modelId: selectedModel?.model._id,
+							wikiId: selectedModel?.wiki ? selectedModel.wiki._id : null,
 							color: modelColor,
 							tokenId: selectedTokenIcon ? selectedTokenIcon._id : undefined,
 							tokenType: addMode === 'token' ? selectedTokenType : undefined,

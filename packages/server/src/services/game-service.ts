@@ -307,9 +307,9 @@ export class GameService {
 	addModel = async (
 		context: SecurityContext,
 		gameId: string,
-		modelId: string,
-		wikiId: string,
-		color: string,
+		modelId?: string,
+		wikiId?: string,
+		color?: string,
 		tokenId?: string,
 		tokenType?: string,
 		databaseContext?: DatabaseContext
@@ -321,13 +321,17 @@ export class GameService {
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
-		const model = await databaseContext.modelRepository.findOneById(modelId);
-		if (!model) {
-			throw new Error("Model does not exist");
+		if (modelId) {
+			const model = await databaseContext.modelRepository.findOneById(modelId);
+			if(!model) {
+				throw new Error("Model does not exist");
+			}
 		}
-		const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
-		if (wikiId && !wiki) {
-			throw new Error(`Cannot find wiki with ID ${wikiId}`);
+		if (wikiId) {
+			const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
+			if (!wiki) {
+				throw new Error(`Cannot find wiki with ID ${wikiId}`);
+			}
 		}
 		if (tokenId) {
 			const token = await databaseContext.tokenIconRepository.findOneById(tokenId);

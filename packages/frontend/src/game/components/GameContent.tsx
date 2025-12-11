@@ -26,15 +26,15 @@ interface GameContentProps {
 	fogStrokes: FogStroke[];
 }
 
-export const ControllerContext = createContext(null);
+export const ControllerContext = createContext<GameControllerFacade | undefined>(undefined);
 
 export default function GameContent({ currentGame, strokes, fogStrokes }: GameContentProps) {
-	const [controllerFacade, setControllerFacade] = useState<GameControllerFacade>();
+	const [controllerFacade, setControllerFacade] = useState<GameControllerFacade| undefined>(undefined);
 	// need to use ref for cleanup function
-	const controllerRef = useRef<GameControllerFacade>(controllerFacade);
+	const controllerRef = useRef<GameControllerFacade | undefined>(controllerFacade);
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [urlLoading, setUrlLoading] = useState<string>();
-	const [loadingProgress, setLoadingProgress] = useState<number>();
+	const [loadingProgress, setLoadingProgress] = useState<number>(0);
 	const { addStroke } = useAddStroke();
 	const { setModelPosition } = useSetModelPosition();
 	const { deletePositionedModel } = useDeletePositionedModel();
@@ -44,20 +44,20 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 
 	const [controlsMode, setControlsMode] = useState<string>(SELECT_MODEL_CONTROLS);
 
-	useGameMapChangeSubscription(({ map, setFog}) => controllerFacade.changeLocation(map, setFog));
-	useGameStrokeSubscription((stroke) => controllerFacade.stroke(stroke));
-	useGameModelAddedSubscription((model) => controllerFacade.addModel(model));
-	useGameModelPositionedSubscription((model) => controllerFacade.updateModel(model));
-	useGameModelDeletedSubscription((model) => controllerFacade.removeModel(model));
-	useGameFogSubscription((fogStroke) => controllerFacade.fogStroke(fogStroke));
+	useGameMapChangeSubscription(({ map, setFog}) => controllerFacade?.changeLocation(map, setFog));
+	useGameStrokeSubscription((stroke) => controllerFacade?.stroke(stroke));
+	useGameModelAddedSubscription((model) => controllerFacade?.addModel(model));
+	useGameModelPositionedSubscription((model) => controllerFacade?.updateModel(model));
+	useGameModelDeletedSubscription((model) => controllerFacade?.removeModel(model));
+	useGameFogSubscription((fogStroke) => controllerFacade?.fogStroke(fogStroke));
 
 	useEffect(() => {
 		return () => {
-			controllerRef.current.tearDown();
+			controllerRef.current?.tearDown();
 		};
 	}, []);
 
-	const setupControllerFacade = (renderCanvas: HTMLCanvasElement) => {
+	const setupControllerFacade = (renderCanvas: HTMLCanvasElement | null) => {
 		if(!renderCanvas || controllerFacade) {
 			return;
 		}
@@ -117,7 +117,7 @@ export default function GameContent({ currentGame, strokes, fogStrokes }: GameCo
 				/>
 				<GameControlsToolbar
 					controlsMode={controlsMode}
-					setControlsMode={(mode) => controllerFacade.changeControls(mode)}
+					setControlsMode={(mode) => controllerFacade?.changeControls(mode)}
 				/>
 			</div>
 		</ControllerContext.Provider>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Upload} from "antd";
+import {Upload, UploadFile} from "antd";
 import {WidgetProps} from "../WidgetProps";
 import PrimaryButton from "../PrimaryButton";
 import UploadIcon from "../icons/UploadIcon";
@@ -7,15 +7,17 @@ import {Image, Place} from "../../../types";
 import SecondaryDangerButton from "../SecondaryDangerButton";
 
 interface PictureInputProps extends WidgetProps {
-    onChange: (picture: any) => any;
+    onChange: (picture: UploadFile<any>) => any;
     initialImage: Image;
     buttonText: string;
+    revertable?: boolean;
     revertId?: string;
+    imageList?: UploadFile<any>[];
 }
 
-export default function ImageInput({onChange, initialImage, className, id, revertId, buttonText}: PictureInputProps) {
+export default function ImageInput({onChange, initialImage, className, id, revertId, buttonText, imageList, revertable = true}: PictureInputProps) {
 
-   const [fileList, setFileList] = useState([]);
+   const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
 
    useEffect(() => {
        if(initialImage){
@@ -36,13 +38,13 @@ export default function ImageInput({onChange, initialImage, className, id, rever
             }}
             multiple={false}
             listType={"picture"}
-            fileList={fileList}
+            fileList={imageList}
             onChange={async (files) => {
                 if (files.file.status === 'removed') {
                     await onChange(null);
                     setFileList([]);
                 } else {
-                    await onChange(files.file);
+                    await onChange(files.fileList[0]);
                     setFileList(files.fileList.filter(file => file.uid === files.file.uid));
                 }
 
@@ -54,7 +56,7 @@ export default function ImageInput({onChange, initialImage, className, id, rever
                 <UploadIcon/> {buttonText}
             </PrimaryButton>
         </Upload>
-        <SecondaryDangerButton
+        {revertable && <SecondaryDangerButton
             className={"margin-md-top"}
             onClick={async () => {
                 if (initialImage) {
@@ -71,7 +73,7 @@ export default function ImageInput({onChange, initialImage, className, id, rever
             id={revertId}
         >
             Revert
-        </SecondaryDangerButton>
+        </SecondaryDangerButton>}
     </div>;
 
 }

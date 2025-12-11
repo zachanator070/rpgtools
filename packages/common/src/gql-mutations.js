@@ -140,7 +140,7 @@ exports.LEAVE_GAME = (0, graphql_tag_1.default) `
 `;
 exports.ADD_MODEL = (0, graphql_tag_1.default) `
 	${gql_fragments_1.GAME_MODELS}
-	mutation addModel($gameId: ID!, $modelId: ID!, $wikiId: ID, $color: String, $tokenId: ID, $tokenType: String){
+	mutation addModel($gameId: ID!, $modelId: ID, $wikiId: ID, $color: String, $tokenId: ID, $tokenType: String){
 		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color, tokenId: $tokenId, tokenType: $tokenType){
 			_id
 			...gameModels

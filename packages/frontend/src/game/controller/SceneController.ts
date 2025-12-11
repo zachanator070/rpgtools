@@ -1,5 +1,5 @@
 import GameState from "../GameState";
-import {PositionedModel} from "../../types";
+import {Model, PositionedModel} from "../../types";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import * as THREE from "three";
@@ -62,14 +62,24 @@ export default class SceneController implements GameController {
                 return;
             }
         }
-        const model = positionedModel.model;
         // push onto cache before loading to prevent race condition from model subscription
-        this.gameState.meshedModels.push({
+        const meshedModel: MeshedModel = {
             positionedModel: {...positionedModel},
             mesh: null,
-        });
+        };
+        this.gameState.meshedModels.push(meshedModel);
 
-        const extension = model.fileName.split(".").pop();
+        if (positionedModel.model) {
+            this.renderModel(positionedModel, null);
+        } else if (positionedModel.tokenType) {
+            this.renderTokenModel(meshedModel);
+        } else {
+            throw new Error(`Positioned model ${positionedModel._id} must have either model or tokenType defined`);
+        }
+    }
+
+    renderModel = (positionedModel: PositionedModel, gltf: GLTF | THREE.Group) => {
+        const extension = positionedModel.model.fileName.split(".").pop();
 
         const loader =
             extension === "glb"
@@ -77,16 +87,16 @@ export default class SceneController implements GameController {
                 : new OBJLoader(this.loader);
 
         loader.load(
-            `/models/${model.fileId}`,
+            `/models/${positionedModel.model.fileId}`,
             (loadedModel: (GLTF | THREE.Group)) => {
                 const loadedMesh: THREE.Group =
                     extension === "glb" ? (loadedModel as GLTF).scene : loadedModel as THREE.Group;
 
                 // get bounding box and scale to match board size
                 const bbox = new THREE.Box3().setFromObject(loadedMesh);
-                const depthScale = model.depth / bbox.getSize(new THREE.Vector3()).z;
-                const widthScale = model.width / bbox.getSize(new THREE.Vector3()).x;
-                const heightScale = model.height / bbox.getSize(new THREE.Vector3()).y;
+                const depthScale = positionedModel.model.depth / bbox.getSize(new THREE.Vector3()).z;
+                const widthScale = positionedModel.model.width / bbox.getSize(new THREE.Vector3()).x;
+                const heightScale = positionedModel.model.height / bbox.getSize(new THREE.Vector3()).y;
 
                 loadedMesh.scale.set(widthScale, heightScale, depthScale);
                 loadedMesh.position.set(positionedModel.x, 0, positionedModel.z);
@@ -132,6 +142,49 @@ export default class SceneController implements GameController {
             }
         );
     }
+
+    renderTokenModel = (meshedModel: MeshedModel) => {
+        const positionedModel = meshedModel.positionedModel;
+        let geometry: THREE.BufferGeometry;
+        switch (positionedModel.tokenType) {
+            case "CIRCLE":
+                geometry = new THREE.CylinderGeometry(2, 2, 2);
+                break;
+            case "SQUARE":
+               geometry = new THREE.BoxGeometry(4, 4, 4);
+                break;
+            default:
+                throw new Error(`Unknown token type ${positionedModel.tokenType}`);
+        }
+        let material;
+        if (positionedModel.color) {
+            material = new THREE.MeshStandardMaterial({ color: parseInt("0x" + positionedModel.color.substring(1)) });
+        } else {
+            material = new THREE.MeshStandardMaterial({ color: 0x787878 });
+        }
+        if (positionedModel.tokenIcon) {
+            const textureLoader = new THREE.TextureLoader(this.loader);
+            textureLoader.loadAsync(`/images/${positionedModel.tokenIcon.image.chunks[0].fileId}`).then((texture) => {
+                texture.minFilter = THREE.LinearFilter;
+                material.map = texture;
+                this.constructTokenMaterial(geometry, material, meshedModel);
+            });
+        } else {
+            this.constructTokenMaterial(geometry, material, meshedModel);
+        }
+        
+    };
+
+    constructTokenMaterial = (geometry, material, meshedModel) => {
+        const positionedModel = meshedModel.positionedModel;
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(positionedModel.x, 1, positionedModel.z);
+        mesh.lookAt(
+            new Vector3(positionedModel.lookAtX, 1, positionedModel.lookAtZ)
+        );
+        this.gameState.scene.add(mesh);
+        meshedModel.mesh = mesh;
+    };
 
     removeModel = (positionedModel: PositionedModel) => {
         let meshedModelToRemove = null;

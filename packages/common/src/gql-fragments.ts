@@ -305,7 +305,25 @@ export const GAME_STROKE = gql`
     }
 `;
 
+export const TOKEN_ICON = gql`
+    fragment tokenIcon on TokenIcon {
+        _id
+        name
+        image {
+            _id
+            icon {
+                _id
+                chunks {
+                    _id
+                    fileId
+                }
+            }
+        }
+    }
+`;
+
 export const GAME_MODEL = gql`
+    ${TOKEN_ICON}
     fragment gameModel on PositionedModel {
         _id
         model{
@@ -326,7 +344,9 @@ export const GAME_MODEL = gql`
             _id
             name
         }
-        tokenId
+        tokenIcon{
+            ...tokenIcon
+        }
         tokenType
     }
 `;

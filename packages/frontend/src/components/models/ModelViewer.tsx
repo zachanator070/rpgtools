@@ -1,7 +1,7 @@
-import React, {Ref, RefObject, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { ModelRenderer } from "../../rendering/ModelRenderer";
 import LoadingView from "../LoadingView";
-import {Model} from "../../types";
+import {Image, Model} from "../../types";
 import PrimaryButton from "../widgets/PrimaryButton";
 import ColorInput from "../widgets/input/ColorInput";
 
@@ -11,6 +11,8 @@ interface ModelViewerProps {
 	showColorControls?: boolean;
 	onChangeColor?: (color: string) => Promise<any>;
 	container?: HTMLElement;
+	tokenImage?: Image;
+	tokenType?: string;
 }
 
 export default function ModelViewer({

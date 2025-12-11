@@ -375,13 +375,15 @@ export interface Model extends PermissionControlled {
 
 export interface PositionedModel {
     _id: string;
-    model: Model;
+    model?: Model;
     x: number;
     z: number;
     lookAtX: number;
     lookAtZ: number;
     color: string;
-    wiki: WikiPage;
+    wiki?: WikiPage;
+    tokenIcon?: TokenIcon;
+    tokenType?: string;
 }
 
 export interface PathNodeInput {

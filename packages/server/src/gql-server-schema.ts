@@ -138,7 +138,7 @@ export const typeDefs = gql`
 			size: Int!
 			strokeId: ID!
 		): Game!
-		addModel(gameId: ID!, modelId: ID!, wikiId: ID, color: String, tokenId: ID, tokenType: String): Game!
+		addModel(gameId: ID!, modelId: ID, wikiId: ID, color: String, tokenId: ID, tokenType: String): Game!
 		setModelPosition(
 			gameId: ID!
 			positionedModelId: ID!
@@ -604,14 +604,14 @@ export const typeDefs = gql`
 
 	type PositionedModel {
 		_id: ID!
-		model: Model!
+		model: Model
 		x: Float!
 		z: Float!
 		lookAtX: Float!
 		lookAtZ: Float!
 		color: String
 		wiki: WikiPage
-		tokenId: ID
+		tokenIcon: TokenIcon
 		tokenType: String
 	}
 
