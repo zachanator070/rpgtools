@@ -3,11 +3,12 @@ import {Model, PositionedModel} from "../../types";
 import {GLTF, GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 import * as THREE from "three";
-import {Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3} from "three";
+import {Material, Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3} from "three";
 import {Object3D} from "three/src/core/Object3D";
 import {MeshedModel} from '../GameState';
 import {GameController} from "./GameController";
 
+const DEFAULT_MODEL_COLOR = "#787878";
 
 export default class SceneController implements GameController {
 
@@ -113,7 +114,7 @@ export default class SceneController implements GameController {
                     if (meshedModel.positionedModel._id === positionedModel._id) {
                         meshedModel.mesh = loadedMesh;
                         if (extension === "obj") {
-                            this.setModelColor(meshedModel, "#787878");
+                            this.setModelColor(meshedModel, DEFAULT_MODEL_COLOR);
                         }
                         const meshedModelClone = {
                             positionedModel: meshedModel.positionedModel,
@@ -149,38 +150,60 @@ export default class SceneController implements GameController {
         switch (positionedModel.tokenType) {
             case "CIRCLE":
                 geometry = new THREE.CylinderGeometry(2, 2, 2);
+                geometry.translate(0, 1, 0);
                 break;
             case "SQUARE":
-               geometry = new THREE.BoxGeometry(4, 4, 4);
+                geometry = new THREE.BoxGeometry(4, 2, 4);
+                geometry.translate(0, 1, 0);
                 break;
             default:
                 throw new Error(`Unknown token type ${positionedModel.tokenType}`);
         }
-        let material;
-        if (positionedModel.color) {
-            material = new THREE.MeshStandardMaterial({ color: parseInt("0x" + positionedModel.color.substring(1)) });
-        } else {
-            material = new THREE.MeshStandardMaterial({ color: 0x787878 });
-        }
+        
+        let colorMaterial;
+        const modelColor = positionedModel.color ? positionedModel.color : DEFAULT_MODEL_COLOR;
+        colorMaterial = new THREE.MeshStandardMaterial({ color: parseInt("0x" + modelColor.substring(1)) });
         if (positionedModel.tokenIcon) {
             const textureLoader = new THREE.TextureLoader(this.loader);
-            textureLoader.loadAsync(`/images/${positionedModel.tokenIcon.image.chunks[0].fileId}`).then((texture) => {
-                texture.minFilter = THREE.LinearFilter;
-                material.map = texture;
-                this.constructTokenMaterial(geometry, material, meshedModel);
+            textureLoader.loadAsync(`/images/${positionedModel.tokenIcon.image.icon.chunks[0].fileId}`).then((texture) => {
+                const imageMaterial = new THREE.MeshBasicMaterial({
+                    color: parseInt("0x" + modelColor.substring(1)),
+                    map: texture,
+                    wireframe: false
+                });
+                imageMaterial.onBeforeCompile = function ( shader ) {
+                    const custom_map_fragment = THREE.ShaderChunk.map_fragment.replace(
+
+                        `diffuseColor *= sampledDiffuseColor;`,
+
+                        `diffuseColor = vec4( mix( diffuse, sampledDiffuseColor.rgb, sampledDiffuseColor.a ), opacity );`
+
+                    );
+                    shader.fragmentShader = shader.fragmentShader.replace( '#include <map_fragment>', custom_map_fragment );
+                };
+                const materials: Material[] = [];
+                switch (positionedModel.tokenType) {
+                    case "CIRCLE":
+                        materials.push(colorMaterial, imageMaterial, colorMaterial);
+                        break;
+                    case "SQUARE":
+                        materials.push(colorMaterial, colorMaterial, imageMaterial, colorMaterial, colorMaterial, colorMaterial);
+                        break;
+                }
+                this.constructTokenMaterial(geometry, materials, meshedModel);
             });
         } else {
-            this.constructTokenMaterial(geometry, material, meshedModel);
+            this.constructTokenMaterial(geometry, colorMaterial, meshedModel);
         }
         
     };
 
-    constructTokenMaterial = (geometry, material, meshedModel) => {
+    constructTokenMaterial = (geometry, material: Material | Material[], meshedModel) => {
         const positionedModel = meshedModel.positionedModel;
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(positionedModel.x, 1, positionedModel.z);
+        mesh.position.set(positionedModel.x, 0, positionedModel.z);
         mesh.lookAt(
-            new Vector3(positionedModel.lookAtX, 1, positionedModel.lookAtZ)
+            new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ)
         );
         this.gameState.scene.add(mesh);
         meshedModel.mesh = mesh;
@@ -220,6 +243,11 @@ export default class SceneController implements GameController {
                 break;
             }
         }
+
+        if (targetModel.positionedModel.color !== positionedModel.color) {
+            this.setModelColor(targetModel, positionedModel.color);
+        }
+
         if (!targetModel || !targetOriginal) {
             console.warn("Model not added!");
             return;
@@ -235,39 +263,55 @@ export default class SceneController implements GameController {
             new Vector3(positionedModel.lookAtX, 0, positionedModel.lookAtZ)
         );
 
-        if (targetModel.positionedModel.color !== positionedModel.color) {
-            this.setModelColor(targetModel, positionedModel.color);
-        }
-
         targetModel.positionedModel = positionedModel;
     }
 
     setModelColor = (meshedModel: MeshedModel, color: string) => {
         if (color) {
-            meshedModel.mesh.traverse(function (child: Object3D) {
-                if ((child as Mesh).isMesh) {
-                    ((child as Mesh).material as MeshStandardMaterial).color.setHex(parseInt("0x" + color.substring(1)));
-                }
-            });
+            if (meshedModel.positionedModel.tokenIcon) {
+                meshedModel.mesh.traverse(function (child: Object3D) {
+                    if ((child as Mesh).isMesh) {
+                        const materials = (child as Mesh).material as Material[];
+                        for (let material of materials as MeshStandardMaterial[]) {
+                            if (material.color) {
+                                material.color.setHex(parseInt("0x" + color.substring(1)));
+                            }
+                        }
+                    }
+                });
+            }
+            else {
+                meshedModel.mesh.traverse(function (child: Object3D) {
+                    if ((child as Mesh).isMesh) {
+                        ((child as Mesh).material as MeshStandardMaterial).color.setHex(parseInt("0x" + color.substring(1)));
+                    }
+                });
+            }
         } else {
-            this.gameState.scene.remove(meshedModel.mesh);
-            let clonedModel = null;
-            for (let model of this.gameState.originalMeshedModels) {
-                if (model.positionedModel._id === meshedModel.positionedModel._id) {
-                    clonedModel = model;
-                }
+            if (meshedModel.positionedModel.tokenType) {
+                this.setModelColor(meshedModel, DEFAULT_MODEL_COLOR);
             }
-            if (!clonedModel) {
-                console.warn("Could not find original model");
-                return;
-            }
-            meshedModel.mesh = clonedModel.mesh.clone();
-            meshedModel.mesh.traverse((node: Object3D) => {
-                if ((node as Mesh).isMesh) {
-                    (node as Mesh).material = ((node as Mesh).material as MeshBasicMaterial).clone();
+            else {
+                this.gameState.scene.remove(meshedModel.mesh);
+                let clonedModel = null;
+                for (let model of this.gameState.originalMeshedModels) {
+                    if (model.positionedModel._id === meshedModel.positionedModel._id) {
+                        clonedModel = model;
+                    }
                 }
-            });
-            this.gameState.scene.add(meshedModel.mesh);
+                if (!clonedModel) {
+                    console.warn("Could not find original model");
+                    return;
+                }
+                meshedModel.mesh = clonedModel.mesh.clone();
+                meshedModel.mesh.traverse((node: Object3D) => {
+                    if ((node as Mesh).isMesh) {
+                        (node as Mesh).material = ((node as Mesh).material as MeshBasicMaterial).clone();
+                    }
+                });
+                this.gameState.scene.add(meshedModel.mesh);
+            }
         }
+        meshedModel.positionedModel.color = color;
     };
 }

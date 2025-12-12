@@ -164,9 +164,9 @@ export default function AddModelSection() {
 					onClick={async () => {
 						await addModel({
 							gameId: currentGame._id,
-							modelId: selectedModel?.model._id,
-							wikiId: selectedModel?.wiki ? selectedModel.wiki._id : null,
-							color: modelColor,
+							modelId: selectedModel?.model._id || undefined,
+							wikiId: selectedModel?.wiki ? selectedModel.wiki._id : undefined,
+							color: modelColor || undefined,
 							tokenId: selectedTokenIcon ? selectedTokenIcon._id : undefined,
 							tokenType: addMode === 'token' ? selectedTokenType : undefined,
 						});
