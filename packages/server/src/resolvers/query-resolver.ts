@@ -134,10 +134,10 @@ export default {
 	},
 	tokenIcons: async (
 		_: any,
-		{ worldId, page }: { worldId: string, page?: number },
+		{ worldId, name, page }: { worldId: string, name?: string, page?: number },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<TokenIconService>(INJECTABLE_TYPES.TokenIconService);
-		return service.getTokenIcons(securityContext, worldId, page || 1, databaseContext);
+		return service.getTokenIcons(securityContext, worldId, name, page, databaseContext);
 	}
 };

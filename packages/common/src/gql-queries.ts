@@ -357,8 +357,8 @@ export const GET_CALENDARS = gql`
 //region TokenIcon
 
 export const GET_TOKEN_ICONS = gql`
-	query tokenIcons($worldId: ID!, $page: Int) {
-		tokenIcons(worldId: $worldId, page: $page) {
+	query tokenIcons($worldId: ID!, $name: String, $page: Int) {
+		tokenIcons(worldId: $worldId, name: $name, page: $page) {
 			docs {
 				_id
 				image {

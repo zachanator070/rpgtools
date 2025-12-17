@@ -25,8 +25,8 @@ export interface World extends PermissionControlled {
     canCreateTokens: boolean;
 }
 
-export interface WorldPaginatedResult {
-    docs: World[];
+export interface PaginatedResult<T> {
+    docs: T[];
     totalDocs: number;
     limit: number;
     page: number;
@@ -38,70 +38,17 @@ export interface WorldPaginatedResult {
     nextPage: number;
 }
 
-export interface UserPaginatedResult {
-    docs: User[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface WorldPaginatedResult extends PaginatedResult<World> {}
 
-export interface RolePaginatedResult {
-    docs: Role[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface UserPaginatedResult extends PaginatedResult<User> {}
 
-export interface WikiPagePaginatedResult {
-    docs: WikiPage[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface RolePaginatedResult extends PaginatedResult<Role> {}
 
-export interface EventWikiPaginatedResult {
-    docs: EventWiki[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface WikiPagePaginatedResult extends PaginatedResult<WikiPage> {}
 
-export interface PinPaginatedResult {
-    docs: Pin[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface EventWikiPaginatedResult extends PaginatedResult<EventWiki> {}
+
+export interface PinPaginatedResult extends PaginatedResult<Pin> {}
 
 export interface WikiPage extends PermissionControlled {
     _id: string;
@@ -300,31 +247,9 @@ export interface Game extends PermissionControlled {
     models: PositionedModel[];
 }
 
-export interface StrokesPaginated {
-    docs: Stroke[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface StrokesPaginated extends PaginatedResult<Stroke> {}
 
-export interface FogStrokesPaginated {
-    docs: FogStroke[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface FogStrokesPaginated extends PaginatedResult<FogStroke> {}
 
 export interface GameCharacter {
     _id: string;
@@ -430,15 +355,4 @@ export interface TokenIcon {
     world: World;
 }
 
-export interface TokenIconPaginatedResult {
-    docs: TokenIcon[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-    prevPage: number;
-    nextPage: number;
-}
+export interface TokenIconPaginatedResult extends PaginatedResult<TokenIcon> {}

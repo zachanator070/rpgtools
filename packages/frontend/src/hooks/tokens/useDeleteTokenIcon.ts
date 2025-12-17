@@ -1,6 +1,6 @@
 import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutation";
 import {DELETE_TOKEN_ICON} from "@rpgtools/common/src/gql-mutations";
-import useTokenIcons from "./useTokenIcons";
+import { GET_TOKEN_ICONS } from "@rpgtools/common/src/gql-queries";
 
 interface TokenIcon {
 	_id: string;
@@ -15,7 +15,6 @@ interface DeleteTokenIconResult extends GqlMutationResult<TokenIcon, DeleteToken
 }
 
 export default function useDeleteTokenIcon(callback?): DeleteTokenIconResult {
-	const {refetch} = useTokenIcons();
 	const result = useGQLMutation<TokenIcon, DeleteTokenIconVariables>(
 		DELETE_TOKEN_ICON,
 		{},
@@ -24,8 +23,8 @@ export default function useDeleteTokenIcon(callback?): DeleteTokenIconResult {
 				if (callback) {
 					await callback(data);
 				}
-				await refetch();
-			}
+			},
+			refetchQueries: [GET_TOKEN_ICONS]
 		}
 	);
 

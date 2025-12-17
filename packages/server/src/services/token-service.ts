@@ -82,7 +82,8 @@ export class TokenIconService {
 	getTokenIcons = async (
 		context: SecurityContext,
 		worldId: string,
-		page: number,
+		name: string | undefined,
+		page: number | undefined,
 		databaseContext: DatabaseContext
 	): Promise<PaginatedResult<TokenIcon>> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
@@ -95,26 +96,9 @@ export class TokenIconService {
 			throw new Error("You do not have permission to read token icons in this world");
 		}
 
-		const allTokenIcons = await databaseContext.tokenIconRepository.findAll();
-		const tokenIconsInWorld = allTokenIcons.filter(ti => ti.worldId === worldId);
+		const allTokenIcons = await databaseContext.tokenIconRepository.getAllPaginated(page, name, worldId);
 
-		const pageLimit = 10;
-		const startIndex = (page - 1) * pageLimit;
-		const endIndex = startIndex + pageLimit;
-		const paginatedTokenIcons = tokenIconsInWorld.slice(startIndex, endIndex);
-
-		return {
-			docs: paginatedTokenIcons,
-			totalDocs: tokenIconsInWorld.length,
-			limit: pageLimit,
-			page: page,
-			totalPages: Math.ceil(tokenIconsInWorld.length / pageLimit),
-			pagingCounter: startIndex + 1,
-			hasPrevPage: page > 1,
-			hasNextPage: page < Math.ceil(tokenIconsInWorld.length / pageLimit),
-			prevPage: page > 1 ? page - 1 : null,
-			nextPage: page < Math.ceil(tokenIconsInWorld.length / pageLimit) ? page + 1 : null
-		} as PaginatedResult<TokenIcon>;
+		return allTokenIcons;
 	};
 
 	bulkCreateTokenIcons = async (

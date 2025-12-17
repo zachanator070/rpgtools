@@ -6,6 +6,7 @@ import {TokenIconRepository} from "../../repository/token-icon-repository.js";
 import {INJECTABLE_TYPES} from "../../../di/injectable-types.js";
 import TokenIconFactory from "../../../domain-entities/factory/token-icon-factory.js";
 import { PaginatedResult } from "../../paginated-result.js";
+import sequelize, { Op } from "sequelize";
 
 
 @injectable()
@@ -29,8 +30,12 @@ export default class SqlTokenIconRepository extends AbstractSqlRepository<TokenI
         // No associations to update
     }
 
-    async getAllPaginated(page: number, worldId: string): Promise<PaginatedResult<TokenIcon>> {
-        return this.buildPaginatedResult(page, { worldId });
+    async getAllPaginated(page: number | undefined, name: string | undefined, worldId: string): Promise<PaginatedResult<TokenIcon>> {
+        const filters: any = [{ worldId }];
+        if(name) {
+            filters.push(sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), 'LIKE', '%' + name.toLowerCase() + '%'));
+        }
+        return this.buildPaginatedResult(page, {[Op.and]: filters}, 'name');
     }
 
 }

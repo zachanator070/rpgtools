@@ -1,65 +1,67 @@
 import React from "react";
-import TextInput from "../widgets/input/TextInput";
 import useTokenIcons from "../../hooks/tokens/useTokenIcons";
-import ItemList from "../widgets/ItemList";
 import { TokenIcon } from "../../types";
-import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
 import useDeleteTokenIcon from "../../hooks/tokens/useDeleteTokenIcon";
+import ListTable, { ColumnDefinition } from "../widgets/ListTable";
+import { useParams } from "react-router-dom";
+import PrimaryDangerButton from "../widgets/PrimaryDangerButton";
+import DeleteIcon from "../widgets/icons/DeleteIcon";
+
 
 export interface TokenListProps {
     onSelect?: (token: TokenIcon) => void;
+	allowDelete?: boolean;
 }
 
-const TokenList: React.FC<TokenListProps> = ({ onSelect }: TokenListProps) => {
-	const [filter, setFilter] = React.useState<string>("");
-    const { data, loading } = useTokenIcons();
+export default function TokenList({ onSelect, allowDelete=false }: TokenListProps) {
+	const { world_id } = useParams();
+    const { data, refetch, loading } = useTokenIcons();
 	const {deleteTokenIcon} = useDeleteTokenIcon();
-	const tokenIcons = data?.docs || [];
 
-    return (
-        <div>
-            <TextInput
-					placeholder="Filter token icons..."
-					onChange={(e) => {
-						setFilter(e.target.value);
+	const columns: ColumnDefinition<TokenIcon>[] = [
+		{
+			field: "name",
+			title: "Name",
+			searchable: true,
+		},
+		{
+			field: "image._id",
+			title: "Image",
+			render: (value: string, record: TokenIcon) => (
+				<img
+					key={value}
+					src={`/images/${record.image.icon.chunks[0].fileId}`}
+					alt={record.name || "Token Icon"}
+					style={{ width: 50, height: 50, objectFit: "contain", flexShrink: 0, cursor: onSelect ? "pointer" : "default" }}
+					onClick={() => {
+						if (onSelect) {
+							onSelect(record);
+						}
 					}}
-				/>
-				{loading ? (
-					<div>Loading token icons...</div>
-				) : tokenIcons.length === 0 ? (
-					<div style={{ color: "#999" }}>No token icons available</div>
-				) : (
-					<ItemList>
-						{tokenIcons.filter(tokenIcon => tokenIcon.name?.toLowerCase().includes(filter.toLowerCase())).map((tokenIcon) => (
-							<div
-								key={tokenIcon._id}
-								onClick={() => onSelect && onSelect(tokenIcon)}
-								style={{
-									cursor: "pointer",
-									transition: "all 0.2s ease",
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-									gap: "1em",
-								}}
-							>
-								<img
-									src={`/images/${tokenIcon.image.icon.chunks[0].fileId}`}
-									alt={tokenIcon.name || "Token Icon"}
-									style={{ width: 50, height: 50, objectFit: "contain", flexShrink: 0 }}
-								/>
-								<div style={{ fontWeight: "500" }}>{tokenIcon.name || "Unnamed"}</div>
-								<div><PrimaryDangerButton onClick={function () {
-									deleteTokenIcon({ tokenIconId: tokenIcon._id});
-								} }>Delete</PrimaryDangerButton></div>
-							</div>
-						))}
-					</ItemList>
-				)}
-
-        </div>
-        
+				/>),
+		},	
+	];
+	if (allowDelete) {
+		columns.push({
+			field: "_id",
+			title: "Delete",
+			render: (_: any, record: TokenIcon) => (
+				<PrimaryDangerButton key={record._id} onClick={async () => await deleteTokenIcon({tokenIconId: record._id})}><DeleteIcon /></PrimaryDangerButton>
+			),
+		});
+	}
+    return (
+        <ListTable<TokenIcon> 
+			data={data?.docs || []}
+			totalDocs={data?.totalDocs}
+			columns={columns}
+			fetchData={async (filters, page) => {
+				await refetch({
+					worldId: world_id,
+					name: filters.name,
+					page: page,
+				});
+			}}
+		/>
     );
 };
-
-export default TokenList;

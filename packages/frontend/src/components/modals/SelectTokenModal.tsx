@@ -11,7 +11,7 @@ interface ManageTokenIconsProps {
 	setVisible: (visible: boolean) => Promise<void>;
 }
 
-export default function ManageTokenIcons({ onChange, style, visible, setVisible }: ManageTokenIconsProps) {
+export default function SelectTokenModal({ onChange, style, visible, setVisible }: ManageTokenIconsProps) {
 
 	const handleSelectTokenIcon = async (tokenIcon: TokenIcon) => {
 		if (onChange) {
@@ -21,22 +21,15 @@ export default function ManageTokenIcons({ onChange, style, visible, setVisible 
 
 	return (
 		<FullScreenModal
-			title={"Upload New Icon"}
+			title={"Select Icon"}
 			visible={visible}
 			setVisible={setVisible}
 		>
-			<div style={{display: "flex", flexDirection: "column", gap: "1em"}}>
-				<CreateTokenForm/>
-			</div>
-		
-			<div style={{ ...style, display: "flex", flexDirection: "column", gap: "0.5em" }}>
-				<h2>Select Existing Icons</h2>
-				<TokenList
-					onSelect={async (tokenIcon) => {
-						await handleSelectTokenIcon(tokenIcon);
-					}}
-				/>
-			</div>
+			<TokenList
+				onSelect={async (tokenIcon) => {
+					await handleSelectTokenIcon(tokenIcon);
+				}}
+			/>
 		</FullScreenModal>
 	);
 }

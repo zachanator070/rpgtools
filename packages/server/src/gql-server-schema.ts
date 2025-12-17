@@ -25,7 +25,7 @@ export const typeDefs = gql`
 		
 		calendars(worldId: ID!): [Calendar!]!
 		events(worldId: ID!, relatedWikiIds: [String!], calendarIds: [String!]): WikiPagePaginatedResult!
-		tokenIcons(worldId: ID!, page: Int): TokenIconPaginatedResult!
+		tokenIcons(worldId: ID!, name: String, page: Int): TokenIconPaginatedResult!
 	}
 
 	type Mutation {

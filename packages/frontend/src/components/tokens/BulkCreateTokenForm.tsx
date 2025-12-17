@@ -5,10 +5,6 @@ import FormItem from '../widgets/input/FormItem';
 import FileInput from '../widgets/input/FileInput';
 import InputForm from '../widgets/input/InputForm';
 
-interface BulkCreateTokenFormValues {
-    file: File;
-}
-
 export default function BulkCreateTokenForm() {
     const [file, setFile] = React.useState<File | null>(null);
     const {bulkCreateTokenIcon, loading, errors} = useBulkCreateTokenIcon();
@@ -35,6 +31,6 @@ export default function BulkCreateTokenForm() {
                         }
                     } } />
             </FormItem>
-        </InputForm>
+        </InputForm>;
             
 }
