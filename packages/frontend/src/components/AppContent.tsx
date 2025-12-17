@@ -11,6 +11,7 @@ import WikiIndex from "./wiki/WikiIndex";
 import ModelView from "./models/ModelView";
 import DefaultView from "./DefaultView";
 import TimelineView from "./timeline/TimelineView";
+import TokenIconView from "./tokens/TokenIconView";
 
 export default function AppContent(){
 	const { currentWorld, loading: worldLoading } = useCurrentWorld();
@@ -38,6 +39,7 @@ export default function AppContent(){
 			<Route path={`gameLogin`} element={<GameLoginView />}/>
 			<Route path={`game/:game_id`} element={<GameView />}/>
 			<Route path={`timeline`} element={<TimelineView />}/>
+			<Route path={`tokens`} element={<TokenIconView/>}/>
 			<Route element={<DefaultView/>}/>
 		</Routes>
 	);

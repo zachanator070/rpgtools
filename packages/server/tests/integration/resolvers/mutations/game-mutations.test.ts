@@ -19,11 +19,13 @@ import {WikiPageService} from "../../../../src/services/wiki-page-service.js";
 import {ModelService} from "../../../../src/services/model-service.js";
 import {FileUpload} from "graphql-upload/processRequest.mjs";
 import {v4 as uuidv4} from 'uuid';
+import { TokenIconService } from "src/services/token-service.js";
 
 process.env.TEST_SUITE = "game-mutations-test";
 
 describe("game mutations", () => {
     const gameService = container.get<GameService>(INJECTABLE_TYPES.GameService);
+    const tokenIconService = container.get<TokenIconService>(INJECTABLE_TYPES.TokenIconService);
     const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
     const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
@@ -210,7 +212,7 @@ describe("game mutations", () => {
                         const filename = "tests/integration/resolvers/mutations/adult_blue_dragon.png";
                         const databaseContext = await dbEngine.createDatabaseContext();
                         const image = await imageService.createImage(testingContext.world._id, true, filename, fs.createReadStream(filename), databaseContext);
-                        const token = await gameService.createTokenIcon(
+                        const token = await tokenIconService.createTokenIcon(
                             testingContext.tester1SecurityContext,
                             testingContext.world._id,
                             image._id,

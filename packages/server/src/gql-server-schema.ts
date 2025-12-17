@@ -112,6 +112,7 @@ export const typeDefs = gql`
 
 		createTokenIcon(worldId: ID!, imageId: ID!, name: String): TokenIcon!
 		deleteTokenIcon(tokenIconId: ID!): TokenIcon!
+		bulkCreateTokenIcons(worldId: ID!, zipFile: Upload!): [TokenIcon!]!
 
 		createGame(worldId: ID!, password: String, characterName: String): Game!
 		joinGame(gameId: ID!, password: String, characterName: String): Game!

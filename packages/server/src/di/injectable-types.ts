@@ -1,3 +1,4 @@
+import { TokenIcon } from "src/domain-entities/token-icon.js";
 
 export const INJECTABLE_TYPES = {
 
@@ -150,6 +151,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderService: Symbol.for("WikiFolderService"),
 	WikiPageService: Symbol.for("WikiPageService"),
 	WorldService: Symbol.for("WorldService"),
+	TokenIconService: Symbol.for("TokenIconService"),
 
 	// request contexts
 	SessionContextFactory: Symbol.for("SessionContextFactory"),

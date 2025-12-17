@@ -617,6 +617,21 @@ export const CREATE_TOKEN_ICON = gql`
 	}
 `;
 
+export const BULK_CREATE_TOKEN_ICON = gql`
+	mutation bulkCreateTokenIcons($worldId: ID!, $zipFile: Upload!) {
+		bulkCreateTokenIcons(worldId: $worldId, zipFile: $zipFile) {
+			_id
+			name
+			image {
+				_id
+			}
+			world {
+				_id
+			}
+		}
+	}
+`;
+
 export const DELETE_TOKEN_ICON = gql`
 	mutation deleteTokenIcon($tokenIconId: ID!) {
 		deleteTokenIcon(tokenIconId: $tokenIconId) {

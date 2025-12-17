@@ -45,7 +45,6 @@ import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory
 import { PaginatedResult } from "../dal/paginated-result.js";
 import { FogStroke } from "../domain-entities/fog-stroke.js";
 import { Stroke } from "../domain-entities/stroke.js";
-import { TokenIcon } from "../domain-entities/token-icon.js";
 import TokenIconFactory from "../domain-entities/factory/token-icon-factory.js";
 
 export const MESSAGE_ALL_RECEIVE = "all";
@@ -644,101 +643,4 @@ export class GameService {
 		return messages;
 	};
 
-	createTokenIcon = async (
-		context: SecurityContext,
-		worldId: string,
-		imageId: string,
-		name: string | undefined,
-		databaseContext: DatabaseContext
-	): Promise<TokenIcon> => {
-		const world = await databaseContext.worldRepository.findOneById(worldId);
-		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
-		}
-
-		const image = await databaseContext.imageRepository.findOneById(imageId);
-		if (!image) {
-			throw new Error(`Image with id ${imageId} does not exist`);
-		}
-
-		const worldAuthPolicy = world.authorizationPolicy;
-		if (!(await worldAuthPolicy.canCreateTokenIcons(context))) {
-			throw new Error("You do not have permission to create token icons in this world");
-		}
-
-		if (name === '') {
-			name = undefined;
-		}
-
-		const tokenIcon = this.tokenIconFactory.build({
-			imageId: imageId,
-			worldId: worldId,
-			name: name || image.name
-		});
-
-		await databaseContext.tokenIconRepository.create(tokenIcon);
-		return tokenIcon;
-	};
-
-	deleteTokenIcon = async (
-		context: SecurityContext,
-		tokenIconId: string,
-		databaseContext: DatabaseContext
-	): Promise<TokenIcon> => {
-		const tokenIcon = await databaseContext.tokenIconRepository.findOneById(tokenIconId);
-		if (!tokenIcon) {
-			throw new Error(`TokenIcon with id ${tokenIconId} does not exist`);
-		}
-
-		const world = await databaseContext.worldRepository.findOneById(tokenIcon.worldId);
-		if (!world) {
-			throw new Error(`World with id ${tokenIcon.worldId} does not exist`);
-		}
-
-		const worldAuthPolicy = world.authorizationPolicy;
-		if (!(await worldAuthPolicy.canWriteTokenIcons(context))) {
-			throw new Error("You do not have permission to delete this token icon");
-		}
-
-		await databaseContext.tokenIconRepository.delete(tokenIcon);
-		return tokenIcon;
-	};
-
-	getTokenIcons = async (
-		context: SecurityContext,
-		worldId: string,
-		page: number,
-		databaseContext: DatabaseContext
-	): Promise<PaginatedResult<TokenIcon>> => {
-		const world = await databaseContext.worldRepository.findOneById(worldId);
-		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
-		}
-
-		const worldAuthPolicy = world.authorizationPolicy;
-		if (!(await worldAuthPolicy.canReadTokenIcons(context))) {
-			throw new Error("You do not have permission to read token icons in this world");
-		}
-
-		const allTokenIcons = await databaseContext.tokenIconRepository.findAll();
-		const tokenIconsInWorld = allTokenIcons.filter(ti => ti.worldId === worldId);
-
-		const pageLimit = 10;
-		const startIndex = (page - 1) * pageLimit;
-		const endIndex = startIndex + pageLimit;
-		const paginatedTokenIcons = tokenIconsInWorld.slice(startIndex, endIndex);
-
-		return {
-			docs: paginatedTokenIcons,
-			totalDocs: tokenIconsInWorld.length,
-			limit: pageLimit,
-			page: page,
-			totalPages: Math.ceil(tokenIconsInWorld.length / pageLimit),
-			pagingCounter: startIndex + 1,
-			hasPrevPage: page > 1,
-			hasNextPage: page < Math.ceil(tokenIconsInWorld.length / pageLimit),
-			prevPage: page > 1 ? page - 1 : null,
-			nextPage: page < Math.ceil(tokenIconsInWorld.length / pageLimit) ? page + 1 : null
-		} as PaginatedResult<TokenIcon>;
-	};
 }

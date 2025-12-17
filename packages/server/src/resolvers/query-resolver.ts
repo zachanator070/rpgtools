@@ -11,6 +11,7 @@ import {UserService} from "../services/user-service.js";
 import {WikiFolderService} from "../services/wiki-folder-service.js";
 import {RoleService} from "../services/role-service.js";
 import {WikiPageService} from "../services/wiki-page-service.js";
+import { TokenIconService } from "src/services/token-service.js";
 
 export default {
 	currentUser: (_: any, __: any, { securityContext }: SessionContext) => securityContext.user,
@@ -136,7 +137,7 @@ export default {
 		{ worldId, page }: { worldId: string, page?: number },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
-		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
+		const service = container.get<TokenIconService>(INJECTABLE_TYPES.TokenIconService);
 		return service.getTokenIcons(securityContext, worldId, page || 1, databaseContext);
 	}
 };

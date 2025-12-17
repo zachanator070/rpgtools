@@ -10,11 +10,13 @@ interface TextInputProps extends WidgetProps{
     name?: string;
     innerRef?: Ref<any>;
     defaultValue?: string;
+    placeholder?: string;
 }
 
-export default function TextInput({id, value, onChange, style, disabled, onKeyDown, name, innerRef, defaultValue}: TextInputProps) {
+export default function TextInput({id, value, onChange, style, disabled, onKeyDown, name, innerRef, defaultValue, placeholder}: TextInputProps) {
     return <Input
         id={id}
+        placeholder={placeholder}
         name={name}
         value={value}
         onChange={onChange}

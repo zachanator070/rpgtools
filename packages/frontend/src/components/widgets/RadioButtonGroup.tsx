@@ -6,12 +6,13 @@ import {RadioButtonProps} from "./RadioButton";
 interface RadioGroupProps extends WidgetProps {
     onChange: (string) => any,
     defaultValue: string,
-    children: ReactElement<RadioButtonProps> | ReactElement<RadioButtonProps>[]
+    children: ReactElement<RadioButtonProps> | ReactElement<RadioButtonProps>[],
+    style?: React.CSSProperties,
 }
 
-export default function RadioButtonGroup({onChange, defaultValue, children}: RadioGroupProps) {
+export default function RadioButtonGroup({onChange, defaultValue, children, style}: RadioGroupProps) {
 
-    return <Radio.Group onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue}>
+    return <Radio.Group onChange={(e) => onChange(e.target.value)} defaultValue={defaultValue} style={style}>
         {children}
     </Radio.Group>;
 }

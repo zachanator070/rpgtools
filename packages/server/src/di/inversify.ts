@@ -155,7 +155,6 @@ import MessageFactory from "../domain-entities/factory/game/message-factory.js";
 import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory.js";
 import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine.js";
 import SqliteDbEngine from "../dal/sql/sqlite-db-engine.js";
-import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine.js";
 import {EventWiki} from "../domain-entities/event-wiki.js";
 import EventWikiFactory from "../domain-entities/factory/event-wiki-factory.js";
 import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory.js";
@@ -201,6 +200,7 @@ import SqlStrokeRepository from "../dal/sql/repository/sql-stroke-repository.js"
 import SqlTokenIconRepository from "../dal/sql/repository/sql-token-icon-repository.js";
 import InMemoryTokenIconRepository from "../dal/in-memory/repositories/in-memory-token-icon-repository.js";
 import {TokenIconDataLoader} from "../dal/dataloaders/token-icon-data-loader.js";
+import { TokenIconService } from "../services/token-service.js";
 
 const container = new Container();
 
@@ -546,6 +546,7 @@ const bindAll = () => {
 	container.bind<WikiPageService>(INJECTABLE_TYPES.WikiPageService).to(WikiPageService);
 	container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldService);
 	container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleService);
+	container.bind<TokenIconService>(INJECTABLE_TYPES.TokenIconService).to(TokenIconService);
 
 // request contexts
 	container

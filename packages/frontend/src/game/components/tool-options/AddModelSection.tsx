@@ -2,25 +2,17 @@ import React, { useEffect, useState } from "react";
 import useAddModel from "../../../hooks/game/useAddModel";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
-import {ModeledWiki} from "../../../types";
+import {Image, ModeledWiki} from "../../../types";
 import SelectWiki from "../../../components/select/SelectWiki";
 import SelectModel from "../../../components/select/SelectModel";
 import ModelViewer from "../../../components/models/ModelViewer";
 import PrimaryButton from "../../../components/widgets/PrimaryButton";
 import RadioButtonGroup from "../../../components/widgets/RadioButtonGroup";
 import RadioButton from "../../../components/widgets/RadioButton";
-import ManageTokenIcons from "../../../components/select/ManageTokenIcons";
+import ManageTokenIcons from "../../../components/modals/ManageTokenIcons";
 import ColorInput from "../../../components/widgets/input/ColorInput";
-
-interface TokenIcon {
-	_id: string;
-	image: {
-		_id: string;
-	};
-	world: {
-		_id: string;
-	};
-}
+import { TokenIcon } from "../../../types";
+import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
 
 interface SelectedModel {
 	model: any;
@@ -39,6 +31,8 @@ export default function AddModelSection() {
 	const [addMode, setAddMode] = useState<"wiki" | "model" | "token">("wiki");
 
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
+
+	const TOKEN_ICON_SIZE = "6em";
 
 	let modelSearchSection;
 	switch(addMode) {
@@ -92,17 +86,40 @@ export default function AddModelSection() {
 			break;
 		case "token":
 			modelSearchSection = (<div style={{marginTop: "1em", marginBottom: "1em"}}>
-				<div style={{display: "flex", gap: "1em", marginBottom: "1em"}}>
-					<PrimaryButton
-						onClick={async () => {
-							setCreateTokenModalVisible(true);
-						}}
-					>
-						Select Token Icon
-					</PrimaryButton>
+				<div style={{marginBottom: "1em", display: "flex"}}>
+					<div style={{marginRight: "1em"}}>
+						{selectedTokenIcon ? (
+							<img
+								src={selectedTokenIcon.image.icon && selectedTokenIcon.image.icon.chunks && selectedTokenIcon.image.icon.chunks[0] ? `/images/${selectedTokenIcon.image.icon.chunks[0].fileId}` : ''}
+								alt={selectedTokenIcon.name || "Token Icon"}
+								style={{ width: TOKEN_ICON_SIZE, height: TOKEN_ICON_SIZE, objectFit: "contain", border: "1px solid #ccc", borderRadius: 4, background: "#fff" }}
+							/>
+						) : (
+							<div style={{ width: TOKEN_ICON_SIZE, height: TOKEN_ICON_SIZE, border: "2px dashed #aaa", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", color: "#aaa", background: "#fafafa" }}>
+								<span style={{ fontSize: 12 }}>No Icon</span>
+							</div>
+						)}
+					</div>
+					<div style={{display: "flex", gap: "1em", marginBottom: "1em", flexDirection: "column"}}>
+						<PrimaryButton
+							onClick={async () => {
+								setCreateTokenModalVisible(true);
+							}}
+						>
+							Select Token Icon
+						</PrimaryButton>
+						<PrimaryDangerButton
+							disabled={!selectedTokenIcon}
+							onClick={async () => {
+								setSelectedTokenIcon(null);
+							}}
+						>
+							Clear Icon
+						</PrimaryDangerButton>
+					</div>
 				</div>
 				<RadioButtonGroup
-					style={{marginTop: "1em"}}
+					style={{marginBottom: "1rem"}}
 					onChange={async (value: string) => {
 						setSelectedTokenType(value);
 					}}
@@ -116,7 +133,7 @@ export default function AddModelSection() {
 					</RadioButton>
 				</RadioButtonGroup>
 				<div>
-					<span className={"margin-md-right"}>Token Color:</span>
+					<span className={"margin-md-right"}>Color:</span>
 					<ColorInput
 						style={{
 							width: "100px",
