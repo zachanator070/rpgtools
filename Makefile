@@ -26,6 +26,8 @@ PROD_SERVER_CONTAINER=containers/prod-server.txt
 
 FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
+DOCKER_EXEC=docker compose run --rm dev
+
 ################
 # RUN COMMANDS #
 ################
@@ -47,7 +49,7 @@ run-postgres: .env
 	docker compose up -d postgres
 
 shell: .env
-	docker compose run --rm dev bash
+	$(DOCKER_EXEC) bash
 
 # stops and destroys any running containers
 down: .env
@@ -63,7 +65,7 @@ install:
 	sudo systemctl enable postgresql
 	sudo mkdir /etc/rpgtools
 	sudo cp .env.example /etc/rpgtools/.env
-	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=localhost/' .env
+	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=localhost/' .env
 	sudo cp rpgtools.service /lib/systemd/system
 	sudo systemctl daemon-reload
 	sudo systemctl start rpgtools
@@ -97,13 +99,13 @@ test-integration-update-snapshots: test-integration-postgres
 test-integration-postgres: .env
 	docker compose up -d postgres
 	cp .env.example $(TEST_ENV_FILE)
-	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
+	$(DOCKER_EXEC) sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server $(VITEST_OPTIONS)
 	docker compose down
 
 test-integration-sqlite: .env
 	cp .env.example $(TEST_ENV_FILE)
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
+	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
@@ -111,7 +113,7 @@ test-e2e: test-e2e-postgres test-e2e-sqlite
 
 test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 	cp .env.example .env
-	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
+	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
 	./wait_for_server.sh
 	> packages/frontend/seed.log
@@ -120,7 +122,7 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 
 test-e2e-sqlite: $(ELECTRON_EXEC)
 	cp .env.example .env
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
+	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
 	-rm ./db/rpgtools.sqlite
 	export SQLITE_DIRECTORY_PATH=db && nohup ./$(ELECTRON_EXEC) >electron.log 2>&1 &
 	./wait_for_server.sh
@@ -215,7 +217,7 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
-	docker compose run dev npm ci
+	$(DOCKER_EXEC) npm ci
 
 ################
 # BUILD SERVER #

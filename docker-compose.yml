@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
       target: dev
-    user: ${CURRENT_UID}
+    user: ${CURRENT_UID:-1000}
     environment:
       - NODE_ENV=development
     volumes:
