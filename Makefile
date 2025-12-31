@@ -19,7 +19,7 @@ ELECTRON_EXEC=out/rpgtools-linux-x64/@rpgtools-server
 ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
-DEV_SERVER_CONTAINER_SRC=packages/server/Dockerfile packages/server/tsconfig.json package-lock.json
+DEV_SERVER_CONTAINER_SRC=./Dockerfile packages/server/tsconfig.json package-lock.json
 DEV_SERVER_BRK_CONTAINER=containers/dev-server-brk.txt
 DEV_FRONTEND_CONTAINER=containers/dev-ui.txt
 PROD_SERVER_CONTAINER=containers/prod-server.txt
@@ -215,7 +215,7 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
-	npm ci
+	docker compose run dev npm ci
 
 ################
 # BUILD SERVER #
@@ -233,7 +233,7 @@ build-prod: $(PROD_SERVER_CONTAINER)
 # Builds rpgtools docker image
 $(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 	echo "Building version $(VERSION)"
-	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f ./Dockerfile --build-arg NODE_ENV=production .
 	echo $(shell docker images | grep zachanator070/rpgtools:latest | awk '{print $3}' > $(PROD_SERVER_CONTAINER) )
 
 ############

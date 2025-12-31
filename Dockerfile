@@ -1,14 +1,53 @@
-FROM node:20.17-slim
-RUN rm -rf /root/.npm
-RUN mkdir /opt/rpgtools
+# node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
+FROM node:24-slim AS base
+
+RUN apt-get update && apt-get upgrade -y && apt-get clean
+
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
+
+WORKDIR /opt/rpgtools
 RUN chown node:node /opt/rpgtools
 
 USER node
 
-WORKDIR /opt/rpgtools
+EXPOSE 3000
+
+FROM base AS dev
+
 # Used by npm to determine where to write npm cache
 ENV npm_config_cache=/opt/rpgtools/.npm
 # Used by cypress to determine where to write cypress binary .cache
 ENV HOME=/opt/rpgtools
-# Disable history in shell
-ENV HISTFILE=/dev/null
+
+CMD ["npm", "run", "--workspace=packages/server", "dev:start"]
+
+FROM base AS prod
+
+ADD  package.json .
+ADD  package-lock.json .
+
+RUN mkdir -p /opt/rpgtools/packages/common
+
+WORKDIR /opt/rpgtools/packages/common
+ADD  packages/common/package.json package.json
+ADD  packages/common/tsconfig.json tsconfig.json
+
+RUN mkdir -p /opt/rpgtools/packages/server
+
+WORKDIR /opt/rpgtools/packages/server
+ADD  packages/server/package.json package.json
+ADD  packages/server/tsconfig.json tsconfig.json
+
+WORKDIR /opt/rpgtools
+RUN npm ci
+
+ADD  packages/common/src packages/common/src
+ADD  packages/server/src packages/server/src
+
+RUN mkdir /opt/rpgtools/db
+RUN chmod o+rw /opt/rpgtools/db
+
+ADD  packages/server/dist packages/server/dist
+
+CMD ["npm", "run", "--workspace=packages/server", "start"]
