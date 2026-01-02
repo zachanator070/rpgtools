@@ -28,6 +28,8 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 DOCKER_EXEC=docker compose run --rm dev
 
+CYPRESS_EXEC=$(shell npx cypress path)
+
 ################
 # RUN COMMANDS #
 ################
@@ -111,7 +113,7 @@ test-integration-sqlite: .env
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
-test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -120,7 +122,7 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-sqlite: $(ELECTRON_EXEC)
+test-e2e-sqlite: $(ELECTRON_EXEC) $(CYPRESS_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
 	-rm ./db/rpgtools.sqlite
@@ -131,6 +133,9 @@ test-e2e-sqlite: $(ELECTRON_EXEC)
 
 run-cypress:
 	npm run -w packages/frontend cypress:open
+
+$(CYPRESS_EXEC):
+	npx cypress install --force
 
 ########################
 # TEST DATA MANAGEMENT #
