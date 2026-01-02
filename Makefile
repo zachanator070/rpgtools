@@ -28,7 +28,7 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 DOCKER_EXEC=docker compose run --rm dev
 
-CYPRESS_EXEC=$(shell npx cypress cache path)
+CYPRESS_EXEC=$(shell npx cypress cache path)/$(shell npx cypress version | sed -n 's/^Cypress package version: //p')/Cypress/Cypress
 
 ################
 # RUN COMMANDS #
