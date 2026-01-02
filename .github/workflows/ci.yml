@@ -39,7 +39,7 @@ jobs:
     - name: End-to-End Postgres Tests
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: make ci-e2e-postgres
+        run: make --debug=v --trace ci-e2e-postgres
     - uses: actions/upload-artifact@v5
       if: failure()
       with:
