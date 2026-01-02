@@ -135,6 +135,7 @@ run-cypress:
 	npm run -w packages/frontend cypress:open
 
 $(CYPRESS_EXEC):
+	echo "Installing cypress to $(CYPRESS_EXEC)"
 	npx cypress install --force
 
 ########################
