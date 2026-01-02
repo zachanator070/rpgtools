@@ -15,7 +15,7 @@ FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 
-ELECTRON_EXEC=out/rpgtools-linux-x64/@rpgtools-server
+ELECTRON_EXEC=$(shell ./dev/scripts/forge-path.sh)
 ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
