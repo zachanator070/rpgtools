@@ -118,7 +118,7 @@ $(CYPRESS_EXEC):
 	npx cypress install --force
 
 test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
-	ls -la $(CYPRESS_EXEC)
+	-ls -la $(CYPRESS_EXEC)
 	echo "Cypress executable: $(CYPRESS_EXEC)"
 	npx cypress install --force
 	ls -la $(CYPRESS_EXEC)
