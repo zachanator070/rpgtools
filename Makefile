@@ -113,8 +113,13 @@ test-integration-sqlite: .env
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
+$(CYPRESS_EXEC):
+	echo "Installing cypress to $(CYPRESS_EXEC)"
+	npx cypress install --force
+
 test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
 	echo "Cypress executable: $(CYPRESS_EXEC)"
+	npx cypress install --force
 	ls -la $(CYPRESS_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
@@ -135,10 +140,6 @@ test-e2e-sqlite: $(ELECTRON_EXEC) $(CYPRESS_EXEC)
 
 run-cypress:
 	npm run -w packages/frontend cypress:open
-
-$(CYPRESS_EXEC):
-	echo "Installing cypress to $(CYPRESS_EXEC)"
-	npx cypress install --force
 
 ########################
 # TEST DATA MANAGEMENT #
