@@ -114,6 +114,8 @@ test-integration-sqlite: .env
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
 test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
+	echo "Cypress executable: $(CYPRESS_EXEC)"
+	ls -la $(CYPRESS_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
