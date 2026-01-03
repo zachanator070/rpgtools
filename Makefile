@@ -28,7 +28,8 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 DOCKER_EXEC=docker compose run --rm dev
 
-export CYPRESS_CACHE_FOLDER := $(CURDIR)/.cypress-cache
+export CYPRESS_CACHE_FOLDER := $(CURDIR)/.cache/Cypress
+CYPRESS_EXEC=$(shell ./dev/scripts/cypress-path.sh)
 
 ################
 # RUN COMMANDS #
@@ -113,7 +114,10 @@ test-integration-sqlite: .env
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
-test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
+$(CYPRESS_EXEC):
+	npx cypress install --force
+
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -122,7 +126,7 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-sqlite: $(ELECTRON_EXEC)
+test-e2e-sqlite: $(ELECTRON_EXEC) $(CYPRESS_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
 	-rm ./db/rpgtools.sqlite
@@ -131,7 +135,7 @@ test-e2e-sqlite: $(ELECTRON_EXEC)
 	npm run -w packages/frontend test
 	pkill -f @rpgtools
 
-run-cypress:
+run-cypress: $(CYPRESS_EXEC)
 	npm run -w packages/frontend cypress:open
 
 ########################
@@ -197,7 +201,7 @@ clean-deps:
 	rm -rf packages/common/node_modules
 	-rm -rf node_modules_prod
 	-rm -rf node_modules_dev
-	-rm -rf .ccache
+	-rm -rf .cache
 
 clean-docker: down
 	-docker ps -a | grep rpgtools | awk '{print $$1}' | xargs docker rm -f
@@ -220,6 +224,7 @@ prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): .env package-lock.json
 	$(DOCKER_EXEC) npm ci
+	npx cypress install --force
 
 ################
 # BUILD SERVER #
