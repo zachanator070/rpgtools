@@ -17,5 +17,5 @@ then
   # so code changes inside the app bundle are actually picked up.
   nohup open -n "${ELECTRON_EXEC}" >${REPO_ROOT}/electron.log 2>&1 &
 else
-  nohup ./${ELECTRON_EXEC} >${REPO_ROOT}/electron.log 2>&1 &
+  nohup ${ELECTRON_EXEC} >${REPO_ROOT}/electron.log 2>&1 &
 fi
