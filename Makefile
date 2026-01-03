@@ -75,8 +75,8 @@ install:
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
 
-run-electron: $(ELECTRON_EXEC)
-	export SQLITE_DIRECTORY_PATH=db && ./$(ELECTRON_EXEC)
+run-electron: .env $(ELECTRON_EXEC)
+	./dev/scripts/run-electron-app.sh
 
 #########
 # TESTS #
@@ -127,15 +127,13 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
 	docker compose down
 
 test-e2e-sqlite: $(ELECTRON_EXEC) $(CYPRESS_EXEC)
-	cp .env.example .env
-	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
-	-rm ./db/rpgtools.sqlite
-	export SQLITE_DIRECTORY_PATH=db && nohup ./$(ELECTRON_EXEC) >electron.log 2>&1 &
+	./dev/scripts/set-sqlite-env.sh
+	./dev/scripts/run-electron-app.sh
 	./wait_for_server.sh
 	npm run -w packages/frontend test
 	pkill -f @rpgtools
 
-run-cypress: $(CYPRESS_EXEC)
+run-cypress: $(NODE_MODULES) $(CYPRESS_EXEC)
 	npm run -w packages/frontend cypress:open
 
 ########################
@@ -222,7 +220,7 @@ dev-deps: $(NODE_MODULES)
 prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
-$(NODE_MODULES): .env package-lock.json
+$(NODE_MODULES): package-lock.json
 	$(DOCKER_EXEC) npm ci
 	npx cypress install --force
 
@@ -234,7 +232,7 @@ $(NODE_MODULES): .env package-lock.json
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
-$(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS)
+$(SERVER_JS): $(NODE_MODULES) $(SERVER_TS)
 	npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
@@ -253,11 +251,11 @@ $(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 # transpiles the frontend tsx and typescript to js
 prod-ui: $(PROD_FRONTEND_JS)
 
-$(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
+$(PROD_FRONTEND_JS): $(NODE_MODULES) $(FRONTEND_TS)
 	NODE_ENV=production npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
-$(DEV_FRONTEND_JS): .env $(FRONTEND_TS) $(NODE_MODULES)
+$(DEV_FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES)
 	docker compose run --rm ui-builder npm run --workspace=packages/frontend start
 	> $(DEV_FRONTEND_JS)
 

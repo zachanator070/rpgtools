@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
+
 OS=$(uname -s)
 # lowercase the OS
 OS=$(echo "$OS" | tr '[:upper:]' '[:lower:]')
@@ -16,4 +19,4 @@ then
   EXEC_NAME="rpgtools.app"
 fi
 
-echo "out/rpgtools-${OS}-${OS_ARCH}/${EXEC_NAME}"
+echo "${REPO_ROOT}/out/rpgtools-${OS}-${OS_ARCH}/${EXEC_NAME}"
