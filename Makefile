@@ -28,7 +28,7 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 DOCKER_EXEC=docker compose run --rm dev
 
-CYPRESS_EXEC=$(shell npx cypress cache path)/$(shell npx cypress version | sed -n 's/^Cypress package version: //p')/Cypress/Cypress
+export CYPRESS_CACHE_FOLDER := $(CURDIR)/.cypress-cache
 
 ################
 # RUN COMMANDS #
@@ -113,13 +113,7 @@ test-integration-sqlite: .env
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
-$(CYPRESS_EXEC):
-	echo "Installing cypress to $(CYPRESS_EXEC)"
-	npx cypress install --force
-
-test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
-	ls -la "$(CYPRESS_EXEC)" || true
-	stat "$(CYPRESS_EXEC)" || true
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -128,7 +122,7 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-sqlite: $(ELECTRON_EXEC) $(CYPRESS_EXEC)
+test-e2e-sqlite: $(ELECTRON_EXEC)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
 	-rm ./db/rpgtools.sqlite
