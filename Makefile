@@ -222,7 +222,6 @@ prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): package-lock.json
 	$(DOCKER_EXEC) npm ci
-	npx cypress install --force
 
 ################
 # BUILD SERVER #
