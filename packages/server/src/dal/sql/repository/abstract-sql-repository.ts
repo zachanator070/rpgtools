@@ -103,11 +103,11 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
             totalDocs: totalCount,
             limit: this.PAGE_LIMIT,
             page,
-            pagingCounter: page * this.PAGE_LIMIT,
-            hasPrevPage: page > 0,
+            pagingCounter: (page - 1) * this.PAGE_LIMIT + 1,
+            hasPrevPage: page > 1,
             totalPages,
             hasNextPage: page < totalPages,
-            prevPage: page > 0 ? page -1 : null,
+            prevPage: page > 1 ? page - 1 : null,
             nextPage: page < totalPages ? page +1 : null,
             docs: await this.buildResults(results)
         };

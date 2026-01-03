@@ -13,14 +13,13 @@ import {
 	TOKEN_READ_ALL,
 	TOKEN_RW_ALL,
 } from "@rpgtools/common/src/permission-constants.js";
-import { TOKEN_ICON, WORLD } from "@rpgtools/common/src/type-constants.js";
+import { WORLD } from "@rpgtools/common/src/type-constants.js";
 import { AuthorizationService } from "../../../src/services/authorization-service.js";
 import { INJECTABLE_TYPES } from "../../../src/di/injectable-types.js";
 import { DbEngine } from "../../../src/types.js";
 import fs from "fs";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import Upload from "graphql-upload/Upload.mjs";
-import { World } from "src/domain-entities/world.js";
 import { WorldService } from "src/services/world-service.js";
 
 process.env.TEST_SUITE = "token-icon-query-test";
@@ -463,6 +462,76 @@ describe("token-icon-query", () => {
 			expect(result2.errors![0].message).toContain(
 				"You do not have permission to read token icons"
 			);
+		});
+	});
+  
+	describe("deleteTokenIcon mutation", () => {
+		let imageId: string;
+		let tokenIconId: string;
+
+		beforeEach(async () => {
+			await testingContext.reset();
+			imageId = await createTestImage(testingContext);
+			// Create a token icon to delete
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: CREATE_TOKEN_ICON,
+				variables: {
+					worldId: testingContext.world._id,
+					imageId: imageId,
+				},
+			});
+			tokenIconId = result.data?.createTokenIcon?._id;
+		});
+
+		test("successfully deletes a token icon", async () => {
+			// Delete the token icon
+			const DELETE_TOKEN_ICON = require("@rpgtools/common/src/gql-mutations.js").DELETE_TOKEN_ICON;
+			const deleteResult = await testingContext.server.executeGraphQLQuery({
+				query: DELETE_TOKEN_ICON,
+				variables: {
+					tokenIconId: tokenIconId,
+				},
+			});
+			expect(deleteResult.data?.deleteTokenIcon).toBe(true);
+
+			// Ensure it is gone
+			const getResult = await testingContext.server.executeGraphQLQuery({
+				query: GET_TOKEN_ICONS,
+				variables: {
+					worldId: testingContext.world._id,
+					page: 1,
+				},
+			});
+			expect(getResult.data?.tokenIcons.docs.find((doc: any) => doc._id === tokenIconId)).toBeUndefined();
+		});
+
+		test("cannot delete without permission", async () => {
+			// Remove all permissions for tester2
+			testingContext.mockSessionContextFactory.setCurrentUser(testingContext.tester2);
+			const DELETE_TOKEN_ICON = require("@rpgtools/common/src/gql-mutations.js").DELETE_TOKEN_ICON;
+			const deleteResult = await testingContext.server.executeGraphQLQuery({
+				query: DELETE_TOKEN_ICON,
+				variables: {
+					tokenIconId: tokenIconId,
+				},
+			});
+			expect(deleteResult.errors).toBeDefined();
+			expect(deleteResult.errors![0].message).toContain("You do not have permission to delete token icons");
+		});
+
+		test("returns error for invalid tokenIconId", async () => {
+			const DELETE_TOKEN_ICON = require("@rpgtools/common/src/gql-mutations.js").DELETE_TOKEN_ICON;
+			const deleteResult = await testingContext.server.executeGraphQLQuery({
+				query: DELETE_TOKEN_ICON,
+				variables: {
+					tokenIconId: "invalid-id",
+				},
+			});
+			expect(deleteResult.errors).toBeDefined();
+			// Accept either a generic error or a specific invalid id error
+			expect(
+				deleteResult.errors![0].message.toLowerCase()
+			).toMatch(/invalid|not found/);
 		});
 	});
 });
