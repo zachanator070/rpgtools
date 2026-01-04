@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-. ../../.env
+# This scripts seeds the database with a given dump name. It supports both Postgres and SQLite depending on the .env configuration.
 
+. ../../.env
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
@@ -27,7 +28,7 @@ then
   sqlite3 ${SQLITE_DB} .tables | awk '{printf "%s\n%s\n%s\n",$1,$2,$3}' | grep -v 'SequelizeMeta' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'
   sqlite3 -line ${SQLITE_DB} ".read ${REPO_ROOT}/dev/sqlite-dump/${DUMP_NAME}.sql"
   ${REPO_ROOT}/dev/scripts/run-electron-app.sh
-  ${REPO_ROOT}/wait_for_server.sh
+  ${REPO_ROOT}/dev/scripts/wait_for_server.sh
 else
   echo "Unable to detect database, check .env file for at least one database host defined"
   exit 1

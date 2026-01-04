@@ -15,7 +15,7 @@ FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 
-ELECTRON_EXEC=$(shell ./dev/scripts/forge-path.sh)
+ELECTRON_APP=$(shell ./dev/scripts/electron-app-location.sh)
 ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
@@ -28,8 +28,9 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 DOCKER_EXEC=docker compose run --rm dev
 
+# Cypress cache folder to avoid OS specific paths
 export CYPRESS_CACHE_FOLDER := $(CURDIR)/.cache/Cypress
-CYPRESS_EXEC=$(shell ./dev/scripts/cypress-path.sh)
+CYPRESS_BINARY=$(shell ./dev/scripts/cypress-binary-location.sh)
 
 ################
 # RUN COMMANDS #
@@ -75,7 +76,7 @@ install:
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
 
-run-electron: .env $(ELECTRON_EXEC)
+run-electron: .env $(ELECTRON_APP)
 	./dev/scripts/run-electron-app.sh
 
 #########
@@ -114,26 +115,27 @@ test-integration-sqlite: .env
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
-$(CYPRESS_EXEC):
+# Cypress binary needs to be installed at the OS level to work
+$(CYPRESS_BINARY):
 	npx cypress install --force
 
-test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_EXEC)
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_BINARY)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
-	./wait_for_server.sh
+	./dev/scripts/wait_for_server.sh
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-sqlite: $(ELECTRON_EXEC) $(CYPRESS_EXEC)
+test-e2e-sqlite: $(ELECTRON_APP) $(CYPRESS_BINARY)
 	./dev/scripts/set-sqlite-env.sh
 	./dev/scripts/run-electron-app.sh
-	./wait_for_server.sh
+	./dev/scripts/wait_for_server.sh
 	npm run -w packages/frontend test
 	pkill -f @rpgtools
 
-run-cypress: $(NODE_MODULES) $(CYPRESS_EXEC)
+run-cypress: $(NODE_MODULES) $(CYPRESS_BINARY)
 	npm run -w packages/frontend cypress:open
 
 ########################
@@ -314,9 +316,9 @@ $(ELECTRON_PACKAGE_JSON): $(SERVER_PACKAGE_JSON)
 ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) $(ELECTRON_PACKAGE_JSON)
 
 # creates executable
-electron-package: $(ELECTRON_EXEC)
+electron-package: $(ELECTRON_APP)
 
-$(ELECTRON_EXEC): $(ELECTRON_DEPS)
+$(ELECTRON_APP): $(ELECTRON_DEPS)
 	npm run electron:package
 ifeq ($(origin GITHUB_ACTIONS),environment)
 	sudo chown root:root ./out/rpgtools-linux-x64/chrome-sandbox

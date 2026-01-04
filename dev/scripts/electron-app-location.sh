@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script prints the path to the built Electron app executable depending on OS and architecture.
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 

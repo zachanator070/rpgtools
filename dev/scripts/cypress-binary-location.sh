@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+# This script prints the path to the Cypress binary depending on OS and installed Cypress version.
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"

@@ -1,5 +1,7 @@
 #!/bin/bash
-set -euo pipefail
+
+# This script is used during e2e tests to setup a predicable SQLite environment.
+# It removes old configurations, SQLite database and sets up a new .env file for SQLite.
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"

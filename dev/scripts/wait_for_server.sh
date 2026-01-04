@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# This script waits for the server to be available at http://localhost:3000
+
 attempt_counter=0
 max_attempts=15
 
