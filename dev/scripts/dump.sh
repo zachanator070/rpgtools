@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# This script dumps the database depending on the configuration in .env. It supports both Postgres and SQLite.
+
 . .env
 
 if [ ! -z "$POSTGRES_HOST" ]

@@ -15,16 +15,22 @@ FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
 
-ELECTRON_EXEC=out/rpgtools-linux-x64/@rpgtools-server
+ELECTRON_APP=$(shell ./dev/scripts/electron-app-location.sh)
 ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
 
 DEV_SERVER_CONTAINER=containers/dev-server.txt
-DEV_SERVER_CONTAINER_SRC=packages/server/Dockerfile packages/server/tsconfig.json package-lock.json
+DEV_SERVER_CONTAINER_SRC=./Dockerfile packages/server/tsconfig.json package-lock.json
 DEV_SERVER_BRK_CONTAINER=containers/dev-server-brk.txt
 DEV_FRONTEND_CONTAINER=containers/dev-ui.txt
 PROD_SERVER_CONTAINER=containers/prod-server.txt
 
 FRONTEND_PACKAGE_JSON=packages/frontend/package.json
+
+DOCKER_EXEC=docker compose run --rm dev
+
+# Cypress cache folder to avoid OS specific paths
+export CYPRESS_CACHE_FOLDER := $(CURDIR)/.cache/Cypress
+CYPRESS_BINARY=$(shell ./dev/scripts/cypress-binary-location.sh)
 
 ################
 # RUN COMMANDS #
@@ -47,7 +53,7 @@ run-postgres: .env
 	docker compose up -d postgres
 
 shell: .env
-	docker compose run --rm dev bash
+	$(DOCKER_EXEC) bash
 
 # stops and destroys any running containers
 down: .env
@@ -63,15 +69,15 @@ install:
 	sudo systemctl enable postgresql
 	sudo mkdir /etc/rpgtools
 	sudo cp .env.example /etc/rpgtools/.env
-	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=localhost/' .env
+	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=localhost/' .env
 	sudo cp rpgtools.service /lib/systemd/system
 	sudo systemctl daemon-reload
 	sudo systemctl start rpgtools
 	sudo systemctl enable rpgtools
 	echo rpgtools is now available
 
-run-electron: $(ELECTRON_EXEC)
-	export SQLITE_DIRECTORY_PATH=db && ./$(ELECTRON_EXEC)
+run-electron: .env $(ELECTRON_APP)
+	./dev/scripts/run-electron-app.sh
 
 #########
 # TESTS #
@@ -97,37 +103,39 @@ test-integration-update-snapshots: test-integration-postgres
 test-integration-postgres: .env
 	docker compose up -d postgres
 	cp .env.example $(TEST_ENV_FILE)
-	sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
+	$(DOCKER_EXEC) sed -i 's/^#POSTGRES_HOST=postgres/POSTGRES_HOST=localhost/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server $(VITEST_OPTIONS)
 	docker compose down
 
 test-integration-sqlite: .env
 	cp .env.example $(TEST_ENV_FILE)
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
+	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
-test-e2e-postgres: .env $(PROD_SERVER_CONTAINER)
+# Cypress binary needs to be installed at the OS level to work
+$(CYPRESS_BINARY):
+	npx cypress install --force
+
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_BINARY)
 	cp .env.example .env
-	sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
+	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
-	./wait_for_server.sh
+	./dev/scripts/wait_for_server.sh
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
 	docker compose down
 
-test-e2e-sqlite: $(ELECTRON_EXEC)
-	cp .env.example .env
-	sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' .env
-	-rm ./db/rpgtools.sqlite
-	export SQLITE_DIRECTORY_PATH=db && nohup ./$(ELECTRON_EXEC) >electron.log 2>&1 &
-	./wait_for_server.sh
+test-e2e-sqlite: $(ELECTRON_APP) $(CYPRESS_BINARY)
+	./dev/scripts/set-sqlite-env.sh
+	./dev/scripts/run-electron-app.sh
+	./dev/scripts/wait_for_server.sh
 	npm run -w packages/frontend test
 	pkill -f @rpgtools
 
-run-cypress:
+run-cypress: $(NODE_MODULES) $(CYPRESS_BINARY)
 	npm run -w packages/frontend cypress:open
 
 ########################
@@ -193,7 +201,7 @@ clean-deps:
 	rm -rf packages/common/node_modules
 	-rm -rf node_modules_prod
 	-rm -rf node_modules_dev
-	-rm -rf .ccache
+	-rm -rf .cache
 
 clean-docker: down
 	-docker ps -a | grep rpgtools | awk '{print $$1}' | xargs docker rm -f
@@ -214,8 +222,8 @@ dev-deps: $(NODE_MODULES)
 prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
-$(NODE_MODULES): .env package-lock.json
-	npm ci
+$(NODE_MODULES): package-lock.json
+	$(DOCKER_EXEC) npm ci
 
 ################
 # BUILD SERVER #
@@ -225,7 +233,7 @@ $(NODE_MODULES): .env package-lock.json
 server-js: $(SERVER_JS)
 
 # transpiles the server typescript to js
-$(SERVER_JS): .env $(NODE_MODULES) $(SERVER_TS)
+$(SERVER_JS): $(NODE_MODULES) $(SERVER_TS)
 	npm run -w packages/server build
 
 build-prod: $(PROD_SERVER_CONTAINER)
@@ -233,7 +241,7 @@ build-prod: $(PROD_SERVER_CONTAINER)
 # Builds rpgtools docker image
 $(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 	echo "Building version $(VERSION)"
-	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f packages/server/Dockerfile --build-arg NODE_ENV=production .
+	docker build -t zachanator070/rpgtools:latest -t zachanator070/rpgtools:$(VERSION) -f ./Dockerfile --build-arg NODE_ENV=production .
 	echo $(shell docker images | grep zachanator070/rpgtools:latest | awk '{print $3}' > $(PROD_SERVER_CONTAINER) )
 
 ############
@@ -244,11 +252,11 @@ $(PROD_SERVER_CONTAINER): containers $(PROD_FRONTEND_JS) $(SERVER_JS)
 # transpiles the frontend tsx and typescript to js
 prod-ui: $(PROD_FRONTEND_JS)
 
-$(PROD_FRONTEND_JS): .env $(NODE_MODULES) $(FRONTEND_TS)
+$(PROD_FRONTEND_JS): $(NODE_MODULES) $(FRONTEND_TS)
 	NODE_ENV=production npm run --workspace=packages/frontend start
 	> $(PROD_FRONTEND_JS)
 
-$(DEV_FRONTEND_JS): .env $(FRONTEND_TS) $(NODE_MODULES)
+$(DEV_FRONTEND_JS): $(FRONTEND_TS) $(NODE_MODULES)
 	docker compose run --rm ui-builder npm run --workspace=packages/frontend start
 	> $(DEV_FRONTEND_JS)
 
@@ -308,9 +316,9 @@ $(ELECTRON_PACKAGE_JSON): $(SERVER_PACKAGE_JSON)
 ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) $(ELECTRON_PACKAGE_JSON)
 
 # creates executable
-electron-package: $(ELECTRON_EXEC)
+electron-package: $(ELECTRON_APP)
 
-$(ELECTRON_EXEC): $(ELECTRON_DEPS)
+$(ELECTRON_APP): $(ELECTRON_DEPS)
 	npm run electron:package
 ifeq ($(origin GITHUB_ACTIONS),environment)
 	sudo chown root:root ./out/rpgtools-linux-x64/chrome-sandbox

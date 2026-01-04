@@ -1,8 +1,25 @@
 const { app, globalShortcut, BrowserWindow } = require('electron');
-const main = require('@electron/remote/main');
+const remoteMain = require('@electron/remote/main');
 const path = require('path');
 
 let mainWindow;
+
+function ensureRemoteInitialized() {
+    // Prefer the library's own initialization flag, since `initialize()` can be
+    // called from another module/path we don't control.
+    if (typeof remoteMain.isInitialized === 'function' && remoteMain.isInitialized()) {
+        return;
+    }
+    try {
+        remoteMain.initialize();
+    } catch (e) {
+        // Make initialization idempotent in case something else already called it.
+        if (e && typeof e.message === 'string' && e.message.includes('already been initialized')) {
+            return;
+        }
+        throw e;
+    }
+}
 
 function registerGlobalShortcuts() {
     globalShortcut.register("CommandOrControl+Shift+L", () => {
@@ -11,6 +28,8 @@ function registerGlobalShortcuts() {
 }
 
 function createWindow() {
+    ensureRemoteInitialized();
+
     mainWindow = new BrowserWindow({
         autoHideMenuBar: true,
         width: 640,
@@ -23,8 +42,7 @@ function createWindow() {
         }
     });
 
-    main.initialize();
-    main.enable(mainWindow.webContents);
+    remoteMain.enable(mainWindow.webContents);
 
     mainWindow.loadURL(`file://${__dirname}/index.html`);
     // mainWindow.webContents.openDevTools();

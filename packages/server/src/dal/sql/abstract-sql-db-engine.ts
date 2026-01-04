@@ -263,7 +263,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     abstract host: string;
     
     async connect(): Promise<void> {
-        console.log(`Connecting to postgres database ${this.getRedactedConnectionString()}`)
+        console.log(`Connecting to SQL database ${this.getRedactedConnectionString()}`)
         await this.createDatabaseIfNeeded(this.dbName);
         this.connection = new Sequelize(
             this.getConnectionString(),

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# This script waits for the server to be available at http://localhost:3000
+
 attempt_counter=0
 max_attempts=15
 
@@ -11,5 +13,5 @@ until curl --output /dev/null --silent --head --fail http://localhost:3000; do
 
     printf '.'
     attempt_counter=$(($attempt_counter+1))
-    sleep 5
+    sleep 1
 done
