@@ -9,27 +9,23 @@ if [ -z "$PACKAGE_VERSION" ]; then
   exit 1
 fi
 
-# Get the latest git tag
+# Get the latest git tag and strip leading 'v' if present
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null)
 if [ -z "$LATEST_TAG" ]; then
   echo "No tags found in the repository. Assuming initial version bump."
   exit 0
 fi
+LATEST_TAG_STRIPPED=${LATEST_TAG#v}
 
-# Compare the package version with the latest tag
-if [ "$PACKAGE_VERSION" == "$LATEST_TAG" ]; then
+# Compare the package version with the latest tag (ignore leading 'v')
+if [ "$PACKAGE_VERSION" == "$LATEST_TAG_STRIPPED" ]; then
   echo "Version in package.json ($PACKAGE_VERSION) has not been bumped since the latest tag ($LATEST_TAG)."
   exit 1
 fi
 
 # Check the changelog for an entry corresponding to the new version
-CHANGELOG_ENTRY=$(grep -E "^(\d+\.\d+\.\d+)" CHANGELOG.md)
-if [ -z "$CHANGELOG_ENTRY" ]; then
+ESCAPED_VERSION=$(echo "$PACKAGE_VERSION" | sed 's/\./\\./g')
+if ! grep -Eq "v?$ESCAPED_VERSION" CHANGELOG.md; then
   echo "No changelog entry found for version $PACKAGE_VERSION in CHANGELOG.md."
   exit 1
-fi
-
-if [ "$CHANGELOG_ENTRY" == "$LATEST_TAG" ]; then
-    echo "No changelog entry found for version $PACKAGE_VERSION in CHANGELOG.md."
-    exit 1
 fi
