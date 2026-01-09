@@ -3,6 +3,7 @@ import {
 	CREATE_TOKEN_ICON,
 	DELETE_TOKEN_ICON,
 	CREATE_IMAGE,
+	BULK_CREATE_TOKEN_ICON,
 } from "@rpgtools/common/src/gql-mutations.js";
 import {
 	GET_TOKEN_ICONS,
@@ -14,14 +15,13 @@ import {
 	TOKEN_READ_ALL,
 	TOKEN_RW_ALL,
 } from "@rpgtools/common/src/permission-constants.js";
-import { TOKEN_ICON, WORLD } from "@rpgtools/common/src/type-constants.js";
+import { WORLD } from "@rpgtools/common/src/type-constants.js";
 import { AuthorizationService } from "../../../../src/services/authorization-service.js";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types.js";
 import { DbEngine } from "../../../../src/types.js";
 import fs from "fs";
 import { FileUpload } from "graphql-upload/processRequest.mjs";
 import Upload from "graphql-upload/Upload.mjs";
-import { World } from "src/domain-entities/world.js";
 import { WorldService } from "src/services/world-service.js";
 
 process.env.TEST_SUITE = "token-icon-mutations-test";
@@ -233,6 +233,40 @@ describe("token-icon-mutations", () => {
 			expect(page2Result.data?.tokenIcons.docs).toHaveLength(1);
 			expect(page2Result.data?.tokenIcons.page).toBe(2);
 			expect(page2Result.data?.tokenIcons.pagingCounter).toBe(11);
+		});
+
+		test('upload token icon zip', async () => {
+			const filename = "tests/integration/resolvers/mutations/test-icons.zip";
+			assert.ok(fs.existsSync(filename), `Test zip file does not exist: ${filename}`);
+			const testFile: FileUpload = {
+				encoding: "binary",
+				mimetype: "application/zip",
+				filename: filename,
+				createReadStream: () => fs.createReadStream(filename),
+			};
+			const testUpload = new Upload();
+			testUpload.file = testFile;
+			testUpload.promise = new Promise<FileUpload>((resolve) => {
+				resolve(testFile);
+			});
+
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: BULK_CREATE_TOKEN_ICON,
+				variables: {
+					worldId: testingContext.world._id,
+					zipFile: testUpload,
+				},
+			});
+
+			expect(result.errors).toBeUndefined();
+			expect(result.data?.bulkCreateTokenIcons).toBeDefined();
+			expect(result.data?.bulkCreateTokenIcons).toHaveLength(7);
+			for (const tokenIcon of result.data?.bulkCreateTokenIcons) {
+				expect(tokenIcon._id).toBeDefined();
+				expect(tokenIcon.name).toBeDefined();
+				expect(tokenIcon.image?._id).toBeDefined();
+				expect(tokenIcon.world._id).toBe(testingContext.world._id);
+			}
 		});
 	});
 

@@ -6,7 +6,7 @@ import { DatabaseContext } from "../dal/database-context.js";
 import { PaginatedResult } from "../dal/paginated-result.js";
 import { TokenIcon } from "../domain-entities/token-icon.js";
 import { SecurityContext } from "../security/security-context.js";
-import { Readable } from "stream";
+import { Readable, PassThrough } from "stream";
 import TokenIconFactory from "../domain-entities/factory/token-icon-factory.js";
 import {Image} from "../domain-entities/image.js";
 
@@ -117,28 +117,21 @@ export class TokenIconService {
 			throw new Error("You do not have permission to create token icons in this world");
 		}
 
-		const tokenCreationPromises: Promise<TokenIcon>[] = [];
-		await new Promise((resolve: (value?: any) => any, reject: (error?: any) => any) => {
-			
-			stream
-				.pipe(unzipper.Parse())
-				.on("entry", async (entry: Entry) => {
-					tokenCreationPromises.push(this.createTokenFromEntry(entry, worldId, databaseContext));
-				})
-				.on("error", (error) => {
-					console.warn(error);
-					reject(error);
-				})
-				.on("finish", async () => {
-					resolve();
-				});
-		});
+		const tokens: TokenIcon[] = [];
+		const buffer = await this.readFile(stream);
+		const directory = await unzipper.Open.buffer(buffer);
+		for (const file of directory.files) {
+			if (file.type === 'File') {
+				tokens.push(await this.createTokenFromEntry(file, worldId, databaseContext));
+			}
+		}
 
-		return await Promise.all(tokenCreationPromises);
+		return tokens;
 	}
 
-	createTokenFromEntry = async (entry: Entry, worldId: string, databaseContext: DatabaseContext): Promise<TokenIcon> => {
-		const readStream = await this.createReadStream(entry);
+	createTokenFromEntry = async (entry: unzipper.File, worldId: string, databaseContext: DatabaseContext): Promise<TokenIcon> => {
+		const buffer = await this.readFile(entry.stream());
+		const readStream = Readable.from(buffer);
 		const filename: string = this.getFilenameFromPath(entry.path);
 		const image: Image = await this.imageService.createImage(worldId, false, filename, readStream, databaseContext);
 		const newTokenIcon = this.tokenIconFactory.build({imageId: image._id, worldId: worldId, name: filename});
@@ -147,7 +140,7 @@ export class TokenIconService {
 	}
 
 
-	readFile = async (entry: Entry): Promise<Buffer> => {
+	readFile = async (entry: Readable): Promise<Buffer> => {
 		const chunks: Buffer[] = [];
 		return await new Promise((resolve, reject) => {
 			entry.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
@@ -156,7 +149,7 @@ export class TokenIconService {
 		});
 	}
 
-	createReadStream = async (entry: Entry): Promise<Readable> => {
+	createReadStream = async (entry: Readable): Promise<Readable> => {
 		return Readable.from(await this.readFile(entry));
 	}
 

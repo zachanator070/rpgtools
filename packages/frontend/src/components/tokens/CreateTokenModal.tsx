@@ -9,6 +9,6 @@ export default function CreateTokenModal({ visibility, setVisibility }: { visibi
         visible={visibility}
         setVisible={setVisibility}
     >
-        <CreateTokenForm/>
+        <CreateTokenForm onSuccess={() => setVisibility(false)}/>
     </FullScreenModal>);
 }

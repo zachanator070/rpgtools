@@ -8,6 +8,6 @@ export default function BulkCreateTokenModal({ visibility, setVisibility }: { vi
         visible={visibility}
         setVisible={setVisibility}
     >
-        <BulkCreateTokenForm/>
+        <BulkCreateTokenForm onSuccess={() => setVisibility(false)}/>
     </FullScreenModal>;
 }

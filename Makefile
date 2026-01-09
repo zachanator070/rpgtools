@@ -90,7 +90,7 @@ TEST_ENV_FILE=packages/server/test.env
 
 test: test-unit test-integration test-e2e
 
-VITEST_OPTIONS=
+VITEST_OPTIONS?=
 
 test-unit:
 	npm run test:unit --workspace=packages/server

@@ -330,8 +330,8 @@ exports.GET_CALENDARS = (0, graphql_tag_1.default) `
 `;
 //region TokenIcon
 exports.GET_TOKEN_ICONS = (0, graphql_tag_1.default) `
-	query tokenIcons($worldId: ID!, $page: Int) {
-		tokenIcons(worldId: $worldId, page: $page) {
+	query tokenIcons($worldId: ID!, $name: String, $page: Int) {
+		tokenIcons(worldId: $worldId, name: $name, page: $page) {
 			docs {
 				_id
 				image {

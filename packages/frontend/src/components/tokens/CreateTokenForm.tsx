@@ -8,16 +8,19 @@ import FormItem from 'antd/lib/form/FormItem';
 import ImageInput from '../widgets/input/ImageInput';
 import TextInput from '../widgets/input/TextInput';
 
-export default function CreateTokenForm() {
+export default function CreateTokenForm({onSuccess}: {onSuccess?: () => any}) {
 
     const { currentWorld } = useCurrentWorld();
     const [selectedImageFile, setSelectedImageFile] = useState<UploadFile<any> | undefined | null>(undefined);
     const [tokenName, setTokenName] = useState<string | undefined>(undefined);
 
     const { createImage, loading: imageLoading, errors: imageErrors } = useCreateImage();
-    const { createTokenIcon, loading: tokenLoading, errors: tokenErrors } = useCreateTokenIcon(async () => {
+    const { createTokenIcon, loading: tokenLoading, errors: tokenErrors } = useCreateTokenIcon(async (data) => {
         setSelectedImageFile(undefined);
         setTokenName(undefined);
+        if (onSuccess && !data.errors) {
+            onSuccess();
+        }
     });
 
     return (

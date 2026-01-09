@@ -5,9 +5,13 @@ import FormItem from '../widgets/input/FormItem';
 import FileInput from '../widgets/input/FileInput';
 import InputForm from '../widgets/input/InputForm';
 
-export default function BulkCreateTokenForm() {
+export default function BulkCreateTokenForm({onSuccess}: {onSuccess?: () => any}) {
     const [file, setFile] = React.useState<File | null>(null);
-    const {bulkCreateTokenIcon, loading, errors} = useBulkCreateTokenIcon();
+    const {bulkCreateTokenIcon, loading, errors} = useBulkCreateTokenIcon((data) => {
+        if (onSuccess && !data.errors) {
+            onSuccess();
+        }
+    });
     const {world_id} = useParams();
 
     return <InputForm
