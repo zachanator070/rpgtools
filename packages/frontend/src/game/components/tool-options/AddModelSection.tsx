@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useAddModel from "../../../hooks/game/useAddModel";
 import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import { MODELED_WIKI_TYPES } from "@rpgtools/common/src/type-constants";
-import {Image, ModeledWiki} from "../../../types";
+import { ModeledWiki} from "../../../types";
 import SelectWiki from "../../../components/select/SelectWiki";
 import SelectModel from "../../../components/select/SelectModel";
 import ModelViewer from "../../../components/models/ModelViewer";
@@ -14,10 +14,17 @@ import ColorInput from "../../../components/widgets/input/ColorInput";
 import { TokenIcon } from "../../../types";
 import PrimaryDangerButton from "../../../components/widgets/PrimaryDangerButton";
 import Toggle from "../../../components/widgets/Toggle";
+import ToolTip from "../../../components/widgets/ToolTip";
 
 interface SelectedModel {
 	model: any;
 	wiki?: any;
+}
+
+enum ModelSearchMode {
+	MODEL = "model",
+	WIKI = "wiki",
+	TOKEN = "token",
 }
 
 export default function AddModelSection() {
@@ -29,35 +36,33 @@ export default function AddModelSection() {
 	const [selectedTokenType, setSelectedTokenType] = useState<string>("CIRCLE");
 	const [createTokenModalVisible, setCreateTokenModalVisible] = useState(false);
 
-	const [addMode, setAddMode] = useState<"model" | "token">("model");
-	const [modelSearch, setModelSearch] = useState<string>("model");
+	const [addMode, setAddMode] = useState<ModelSearchMode>(ModelSearchMode.MODEL);
 
 	const [modelViewerContainer, setModelViewerContainer] = useState<HTMLElement>();
 
 	const TOKEN_ICON_SIZE = "6em";
 
 	let modelSearchSection = <div style={{display: "flex", flexDirection: "column", gap: "1em"}}>
-		<div>
-			<Toggle
-				onChange={(value) => setModelSearch(value)}
-				checkedChildren={"Model Search"}
-				unCheckedChildren={"Wikis with Models Search"}
-				defaultChecked={true}
+		{addMode === ModelSearchMode.MODEL && <div style={{display: "flex", gap: "1em", alignItems: "center"}}>
+			<ToolTip title="Select a 3D model to add to the game." />
+			<SelectModel
+				onChange={async (model) => {
+					setSelectedModel({ model })
+				}}
+				showClear={false}
 			/>
-		</div>
-		{modelSearch ? <SelectModel
-			onChange={async (model) => {
-				setSelectedModel({ model })
-			}}
-			showClear={false}
-		/> : <SelectWiki
-			types={MODELED_WIKI_TYPES}
-			onChange={(wiki: ModeledWiki) => {
-				setSelectedModel({model: wiki.model, wiki});
-				setModelColor(wiki.modelColor);
-			}}
-			hasModel={true}
-		/>}
+		</div>}
+		{addMode === ModelSearchMode.WIKI && <div style={{display: "flex", gap: "1em", alignItems: "center"}}>
+			<ToolTip title="Select a wiki that has a 3D model associated with it." />
+			<SelectWiki
+				types={MODELED_WIKI_TYPES}
+				onChange={(wiki: ModeledWiki) => {
+					setSelectedModel({model: wiki.model, wiki});
+					setModelColor(wiki.modelColor);
+				}}
+				hasModel={true}
+			/>
+		</div>}
 		{selectedModel && (
 			<div ref={setModelViewerContainer}>
 				<ModelViewer
@@ -70,7 +75,7 @@ export default function AddModelSection() {
 			</div>
 		)}
 	</div>;
-	if (addMode === "token") {
+	if (addMode === ModelSearchMode.TOKEN) {
 		modelSearchSection = (<div style={{marginTop: "1em", marginBottom: "1em"}}>
 			<div style={{marginBottom: "1em", display: "flex"}}>
 				<div style={{marginRight: "1em"}}>
@@ -137,19 +142,23 @@ export default function AddModelSection() {
 		<div className={"padding-lg-top"}>
 			<div style={{display: "flex", marginBottom: "1em"}}>
 				<RadioButtonGroup 
+					style={{marginLeft: "1em", display: "inline-block"}}
 					onChange={function (string: any) {
-						setAddMode(string as "model" | "token");
+						setAddMode(string as ModelSearchMode);
 						setSelectedModel(null);
 						setModelColor(null);
 						setSelectedTokenIcon(null);
 						setSelectedTokenType("CIRCLE");
-					} } 
-					defaultValue={"model"}
+					}} 
+					defaultValue={ModelSearchMode.MODEL}
 				>
-					<RadioButton value={"model"}>
+					<RadioButton value={ModelSearchMode.MODEL}>
 						Model
 					</RadioButton>
-					<RadioButton value="token">
+					<RadioButton value={ModelSearchMode.WIKI}>
+						Wiki
+					</RadioButton>
+					<RadioButton value={ModelSearchMode.TOKEN}>
 						Token
 					</RadioButton>
 				</RadioButtonGroup>
