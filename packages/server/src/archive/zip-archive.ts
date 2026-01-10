@@ -102,12 +102,7 @@ export class ZipArchive implements Archive {
 
 	constructor() {
 		this.archive.on("warning", function (err) {
-			if (err.code === "ENOENT") {
-				console.error(err.message);
-			} else {
-				// throw error
-				throw err;
-			}
+			throw err;
 		});
 
 		this.archive.on("error", function (err) {

@@ -40,7 +40,6 @@ export class ArchiveFactory implements AbstractArchiveFactory {
 					fileReadingPromises.push(this.addEntryToRepository(entry, archive));
 				})
 				.on("error", (error) => {
-					console.warn(error);
 					reject(error);
 				})
 				.on("finish", async () => {

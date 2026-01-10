@@ -5,6 +5,7 @@ import {RoleSeeder} from "../seeders/role-seeder.js";
 import {ServerConfigSeeder} from "../seeders/server-config-seeder.js";
 import {ServerConfigService} from "../services/server-config-service.js";
 import {DatabaseContext} from "../dal/database-context.js";
+import Logger from "src/logging/logger.js";
 
 @injectable()
 export default class RpgToolsServer {
@@ -21,6 +22,9 @@ export default class RpgToolsServer {
 
     @inject(INJECTABLE_TYPES.ServerConfigService)
     serverConfigService: ServerConfigService;
+
+    @inject(INJECTABLE_TYPES.Logger)
+    logger: Logger;
 
     async seedDB(databaseContext: DatabaseContext): Promise<void> {
         const seeders: Seeder[] = [this.serverConfigSeeder, this.roleSeeder];
@@ -39,7 +43,7 @@ export default class RpgToolsServer {
         await this.seedDB(databaseContext);
         const serverConfig = await this.serverConfigService.getServerConfig(databaseContext);
         if (await this.serverConfigService.serverNeedsSetup(databaseContext)) {
-            console.warn(
+            this.logger.warn(
                 `Server needs configuration! Use unlock code ${serverConfig.unlockCode} to unlock`
             );
         }

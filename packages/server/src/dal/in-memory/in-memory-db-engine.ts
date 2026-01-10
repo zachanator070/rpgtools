@@ -26,6 +26,7 @@ import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
 import {TokenIconRepository} from "../repository/token-icon-repository.js";
+import Logger from "src/logging/logger.js";
 
 @injectable()
 export default class InMemoryDbEngine implements DbEngine {
@@ -75,6 +76,9 @@ export default class InMemoryDbEngine implements DbEngine {
     @inject(INJECTABLE_TYPES.TokenIconRepository)
     tokenIconRepository: TokenIconRepository;
 
+    @inject(INJECTABLE_TYPES.Logger)
+    logger: Logger;
+
     changeDb(name: string): Promise<void> {
         return Promise.resolve(undefined);
     }
@@ -84,7 +88,7 @@ export default class InMemoryDbEngine implements DbEngine {
     }
 
     connect(): Promise<void> {
-        console.warn('Using in memory database. All data will be erased when service restarts!');
+        this.logger.warn('Using in memory database. All data will be erased when service restarts!');
         return Promise.resolve(undefined);
     }
 

@@ -1,4 +1,4 @@
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 import {DbEngine} from "../../types.js";
 import {Sequelize} from "sequelize";
 import path from 'path';
@@ -23,7 +23,7 @@ export default class SqliteDbEngine extends AbstractSqlDbEngine implements DbEng
         const OS = process.platform;
         if (OS === 'darwin') {
             if (!path.isAbsolute(this.dbDirectory)) {
-                console.log(`dbDirectory is not absolute, making it relative to home directory: ${this.dbDirectory}`);
+                this.logger.info(`dbDirectory is not absolute, making it relative to home directory: ${this.dbDirectory}`);
                 this.dbDirectory = path.join(os.homedir(), '.rpgtools', this.dbDirectory);
             }
         }
@@ -43,10 +43,10 @@ export default class SqliteDbEngine extends AbstractSqlDbEngine implements DbEng
         // check if the parent folder exists
         if (!fs.existsSync(absPath)) {
             fs.mkdirSync(absPath, { recursive: true });
-            console.log(`Created database directory ${absPath}`);
+            this.logger.info(`Created database directory ${absPath}`);
         }
         else {
-            console.log(`Database directory ${absPath} already exists`);
+            this.logger.info(`Database directory ${absPath} already exists`);
         }
     }
 

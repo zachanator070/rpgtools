@@ -57,6 +57,7 @@
     "unist-util-visit": "^4.0.0",
     "unzipper": "^0.10.11",
     "uuid": "^8.3.2",
+    "winston": "^3.19.0",
     "ws": "^8.17.1"
   },
   "devDependencies": {
@@ -76,6 +77,7 @@
     "@types/type-is": "^1.6.3",
     "@types/unzipper": "^0.10.4",
     "@types/uuid": "^8.3.1",
+    "@types/winston": "^2.4.4",
     "@types/ws": "^8.5.4",
     "@vue/test-utils": "^2.4.6",
     "dotenv": "^16.0.3",

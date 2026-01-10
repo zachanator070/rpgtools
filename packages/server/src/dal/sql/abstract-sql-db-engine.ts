@@ -61,9 +61,8 @@ import * as initial from "./migrations/00_initial.js";
 import * as events from "./migrations/01_events.js";
 import * as related_wikis from "./migrations/02_related_wikis.js";
 import * as game_message_size from './migrations/03_game_message_size.js';
-import * as message_to_text from './migrations/04_message-to-text.js';
-import * as token_icon from './migrations/05_token-icon.js';
-import * as token_fields from './migrations/06_in-game-model-token-fields.js';
+import * as message_to_text from './migrations/04_message_to_text.js';
+import * as token_icon from './migrations/05_token_icon.js';
 import EventWikiModel from "./models/event-wiki-model.js";
 import CalendarModel from "./models/calendar-model.js";
 import AgeModel from "./models/calendar/age-model.js";
@@ -96,6 +95,7 @@ import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
 import {TokenIconRepository} from "../repository/token-icon-repository.js";
 import { DbEngine } from "src/types.js";
+import Logger from "src/logging/logger.js";
 
 
 @injectable()
@@ -150,6 +150,8 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     worldRepository: WorldRepository;
     @inject(INJECTABLE_TYPES.TokenIconRepository)
     tokenIconRepository: TokenIconRepository;
+    @inject(INJECTABLE_TYPES.Logger)
+    logger: Logger;
 
     connectAll(connection: Sequelize) {
         // Is there any better way to do this? How to handle a bunch of static methods with the same signature?
@@ -262,7 +264,12 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
             ],
             context: connection.getQueryInterface(),
             storage: new SequelizeStorage({ sequelize: connection }),
-            logger: console,
+            logger: {
+                info: (msg: Record<string, unknown>) => this.logger.info('Umzug info', msg),
+                warn: (msg: Record<string, unknown>) => this.logger.warn('Umzug warn', msg),
+                error: (msg: Record<string, unknown>) => this.logger.error('Umzug error', msg),
+                debug: (msg: Record<string, unknown>) => this.logger.debug('Umzug debug', msg),
+            },
         });
         await umzug.up();
     }
@@ -275,18 +282,18 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     abstract host: string;
     
     async connect(): Promise<void> {
-        console.log(`Connecting to SQL database ${this.getRedactedConnectionString()}`)
+        this.logger.info(`Connecting to SQL database ${this.getRedactedConnectionString()}`)
         await this.createDatabaseIfNeeded(this.dbName);
         this.connection = new Sequelize(
             this.getConnectionString(),
             {
-                logging: this.stdOutLogging.toLowerCase() === 'true' && console.log
+                logging: this.stdOutLogging.toLowerCase() === 'true' && this.logger.debug
             }
         );
 
         this.connectAll(this.connection);
 
-        console.log('Syncing table schemas');
+        this.logger.debug('Syncing table schemas');
         await this.migrate(this.connection);
     };
 
@@ -296,7 +303,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
             await this.connection.query('DROP SCHEMA public CASCADE');
             await this.connection.query('CREATE SCHEMA public');
         } catch (error) {
-            console.error('Error clearing database:', error);
+            this.logger.error('Error clearing database:', error);
         }
     }
 
