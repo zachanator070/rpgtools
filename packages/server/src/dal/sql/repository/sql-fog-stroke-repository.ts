@@ -54,6 +54,8 @@ export default class SqlFogStrokeRepository extends AbstractSqlRepository<FogStr
     }
 
     async deleteAllByGameId(id: string): Promise<void> {
+        const fogStrokes = await this.staticModel.findAll({where: {GameId: id}});
+        await PathNodeModel.destroy({where: {FogStrokeId: fogStrokes.map(f => f._id)}});
         await this.staticModel.destroy({where: {GameId: id}});
     }
 

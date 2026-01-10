@@ -45,6 +45,7 @@ import FogStrokeFactory from "../domain-entities/factory/game/fog-stroke-factory
 import { PaginatedResult } from "../dal/paginated-result.js";
 import { FogStroke } from "../domain-entities/fog-stroke.js";
 import { Stroke } from "../domain-entities/stroke.js";
+import TokenIconFactory from "../domain-entities/factory/token-icon-factory.js";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -66,6 +67,9 @@ export class GameService {
 
 	@inject(INJECTABLE_TYPES.FogStrokeFactory)
 	fogStrokeFactory: FogStrokeFactory;
+
+	@inject(INJECTABLE_TYPES.TokenIconFactory)
+	tokenIconFactory: TokenIconFactory;
 
 	createGame = async (
 		context: SecurityContext,
@@ -302,10 +306,12 @@ export class GameService {
 	addModel = async (
 		context: SecurityContext,
 		gameId: string,
-		modelId: string,
-		wikiId: string,
-		color: string,
-		databaseContext: DatabaseContext
+		modelId?: string,
+		wikiId?: string,
+		color?: string,
+		tokenId?: string,
+		tokenType?: string,
+		databaseContext?: DatabaseContext
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
@@ -314,15 +320,25 @@ export class GameService {
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
 			throw new Error("You do not have permission to change the location for this game");
 		}
-		const model = await databaseContext.modelRepository.findOneById(modelId);
-		if (!model) {
-			throw new Error("Model does not exist");
+		if (modelId) {
+			const model = await databaseContext.modelRepository.findOneById(modelId);
+			if(!model) {
+				throw new Error("Model does not exist");
+			}
 		}
-		const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
-		if (wikiId && !wiki) {
-			throw new Error(`Cannot find wiki with ID ${wikiId}`);
+		if (wikiId) {
+			const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
+			if (!wiki) {
+				throw new Error(`Cannot find wiki with ID ${wikiId}`);
+			}
 		}
-		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId);
+		if (tokenId) {
+			const token = await databaseContext.tokenIconRepository.findOneById(tokenId);
+			if (!token) {
+				throw new Error(`TokenIcon with ID ${tokenId} does not exist`);
+			}
+		}
+		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId, tokenId, tokenType);
 		game.models.push(positionedModel);
 		await databaseContext.gameRepository.update(game);
 		await this.eventPublisher.publish(GAME_MODEL_ADDED, {
@@ -626,4 +642,5 @@ export class GameService {
 		messages.push(...command.exec(executor, args, options));
 		return messages;
 	};
+
 }

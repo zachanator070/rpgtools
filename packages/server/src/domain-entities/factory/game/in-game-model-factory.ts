@@ -20,9 +20,11 @@ export default class InGameModelFactory implements EntityFactory<InGameModel, In
         lookAtX: number,
         lookAtZ: number,
         color: string,
-        wikiId: string
+        wikiId: string,
+        tokenId?: string,
+        tokenType?: string
     }): InGameModel {
-        return new InGameModel(args._id, args.modelId, args.x, args.z, args.lookAtX, args. lookAtZ, args.color, args.wikiId);
+        return new InGameModel(args._id, args.modelId, args.x, args.z, args.lookAtX, args.lookAtZ, args.color, args.wikiId, args.tokenId, args.tokenType);
     }
 
     async fromSqlModel(model: InGameModelModel): Promise<InGameModel> {
@@ -34,7 +36,9 @@ export default class InGameModelFactory implements EntityFactory<InGameModel, In
             lookAtX: model.lookAtX,
             lookAtZ: model.lookAtZ,
             color: model.color,
-            wikiId: model.wikiId
+            wikiId: model.wikiId,
+            tokenId: model.tokenId,
+            tokenType: model.tokenType
         });
     }
 }

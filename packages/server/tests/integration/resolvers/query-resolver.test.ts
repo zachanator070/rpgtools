@@ -170,7 +170,8 @@ describe("query resolver", () => {
 							wikiPage: {
 								_id: expect.any(String),
 							},
-							accessControlList: accessControlList
+							accessControlList: accessControlList,
+							canCreateTokens: true,
 						},
 					},
 					errors: undefined,
@@ -310,24 +311,24 @@ describe("query resolver", () => {
 					});
 				});
 
-				it('get my games', async () => {
-					const result = await testingContext.server.executeGraphQLQuery({
-						query: MY_GAMES,
-					});
-					expect(result).toMatchSnapshot({
-						data: {
-							myGames: expect.arrayContaining([
-								expect.objectContaining({
-									_id: expect.any(String),
-								}),
-							])
-						},
-						errors: undefined
-					});
+			it('get my games', async () => {
+				const result = await testingContext.server.executeGraphQLQuery({
+					query: MY_GAMES,
 				});
-			})
+				expect(result).toMatchSnapshot({
+					data: {
+						myGames: expect.arrayContaining([
+							expect.objectContaining({
+								_id: expect.any(String),
+							}),
+						])
+					},
+					errors: undefined
+				});
+			});
+		});
 
-			describe ('with multiple events, calendars, and referenced wikis', () => {
+		describe ('with multiple events, calendars, and referenced wikis', () => {
 
 				beforeEach(async () => {
 					await testingContext.setupEvents();

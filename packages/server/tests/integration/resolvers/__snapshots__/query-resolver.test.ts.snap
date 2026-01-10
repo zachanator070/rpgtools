@@ -261,6 +261,7 @@ exports[`query resolver > with world > with authenticated user > world 1`] = `
       "canAddModels": true,
       "canAddRoles": true,
       "canAdmin": true,
+      "canCreateTokens": true,
       "canHostGame": true,
       "canWrite": true,
       "name": "Earth",

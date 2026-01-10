@@ -116,7 +116,7 @@ export default function WikiEdit() {
 		wikiSpecificFields = <>
 			<div className="margin-lg">
 				<ImageInput
-					onChange={(file) => setUpdateWikiParams({values: {newMapImageFile: file}})}
+					onChange={(file) => setUpdateWikiParams({values: {newMapImageFile: file.originFileObj}})}
 					initialImage={(currentWiki as Place).mapImage}
 					id={'mapImageUpload'}
 					revertId={'mapImageRevert'}
@@ -284,7 +284,7 @@ export default function WikiEdit() {
 			</div>
 			<div className="margin-lg">
 				<ImageInput
-					onChange={(file) => setUpdateWikiParams({values: {newCoverImageFile: file}})}
+					onChange={(file) => setUpdateWikiParams({values: {newCoverImageFile: file.originFileObj}})}
 					initialImage={currentWiki.coverImage}
 					id={'coverImageUpload'}
 					revertId={'coverImageRevert'}

@@ -3,13 +3,15 @@ import {Image} from "../../types";
 import {CREATE_IMAGE} from "@rpgtools/common/src/gql-mutations";
 
 interface CreateImageVariables {
-	file: any;
+	file: File;
 	worldId: string;
 	chunkify: boolean;
 }
 
 interface CreateImageResult {
 	createImage: MutationMethod<Image, CreateImageVariables>;
+	loading: boolean;
+	errors: string[];
 }
 
 export default function useCreateImage(): CreateImageResult {
@@ -17,5 +19,7 @@ export default function useCreateImage(): CreateImageResult {
 	return {
 		...result,
 		createImage: result.mutate,
+		loading: result.loading,
+		errors: result.errors
 	};
 };

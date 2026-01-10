@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_CALENDARS = exports.GET_PINS = exports.GET_WORLDS = exports.GET_CURRENT_WORLD = exports.GAME_WIKI = exports.GET_FOLDER_PATH = exports.FOLDERS = exports.SEARCH_EVENTS = exports.WIKIS_IN_FOLDER = exports.SEARCH_WIKIS = exports.GET_WIKI = exports.GET_SERVER_CONFIG = exports.GET_MODELS = exports.GET_CURRENT_MAP = exports.GET_FOG_STROKES = exports.GET_STROKES = exports.MY_GAMES = exports.GET_GAME = exports.SEARCH_ROLES = exports.SEARCH_USERS = exports.GET_CURRENT_USER = void 0;
+exports.GET_TOKEN_ICONS = exports.GET_CALENDARS = exports.GET_PINS = exports.GET_WORLDS = exports.GET_CURRENT_WORLD = exports.GAME_WIKI = exports.GET_FOLDER_PATH = exports.FOLDERS = exports.SEARCH_EVENTS = exports.WIKIS_IN_FOLDER = exports.SEARCH_WIKIS = exports.GET_WIKI = exports.GET_SERVER_CONFIG = exports.GET_MODELS = exports.GET_CURRENT_MAP = exports.GET_FOG_STROKES = exports.GET_STROKES = exports.MY_GAMES = exports.GET_GAME = exports.SEARCH_ROLES = exports.SEARCH_USERS = exports.GET_CURRENT_USER = void 0;
 const graphql_tag_1 = __importDefault(require("graphql-tag"));
 const gql_fragments_1 = require("./gql-fragments");
 //region User
@@ -267,6 +267,7 @@ exports.GET_CURRENT_WORLD = (0, graphql_tag_1.default) `
 			canAddRoles
 			canHostGame
 			canAddModels
+			canCreateTokens
 			wikiPage {
 				_id
 				name
@@ -324,6 +325,37 @@ exports.GET_CALENDARS = (0, graphql_tag_1.default) `
 	query calendars($worldId: ID!) {
 		calendars(worldId: $worldId) {
 			...currentWorldCalendar
+		}
+	}
+`;
+//region TokenIcon
+exports.GET_TOKEN_ICONS = (0, graphql_tag_1.default) `
+	query tokenIcons($worldId: ID!, $name: String, $page: Int) {
+		tokenIcons(worldId: $worldId, name: $name, page: $page) {
+			docs {
+				_id
+				image {
+					_id
+					icon {
+						chunks {
+							fileId
+						}
+					}
+				}
+				world {
+					_id
+				}
+				name
+			}
+			page
+			totalPages
+			totalDocs
+			pagingCounter
+			limit
+			hasPrevPage
+			hasNextPage
+			prevPage
+			nextPage
 		}
 	}
 `;

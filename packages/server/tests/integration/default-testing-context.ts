@@ -222,6 +222,8 @@ export class DefaultTestingContext {
 			this.model._id,
 			this.otherPage._id,
 			'#ffffff',
+            null,
+            null,
 			databaseContext
 		);
 

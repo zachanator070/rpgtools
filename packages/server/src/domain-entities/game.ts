@@ -122,6 +122,8 @@ export class InGameModel {
 	public lookAtZ: number;
 	public color: string | null;
 	public wiki: string | null;
+	public tokenId?: string;
+	public tokenType?: string;
 
 	type: string;
 
@@ -133,7 +135,9 @@ export class InGameModel {
 		lookAtX: number,
 		lookAtZ: number,
 		color: string,
-		wikiId: string
+		wikiId: string,
+		tokenId?: string,
+		tokenType?: string
 	) {
 		this._id = id;
 		this.model = modelId;
@@ -143,5 +147,7 @@ export class InGameModel {
 		this.lookAtZ = lookAtZ;
 		this.color = color;
 		this.wiki = wikiId;
+		this.tokenId = tokenId;
+		this.tokenType = tokenType;
 	}
 }

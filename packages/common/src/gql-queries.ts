@@ -290,6 +290,7 @@ export const GET_CURRENT_WORLD = gql`
 			canAddRoles
 			canHostGame
 			canAddModels
+			canCreateTokens
 			wikiPage {
 				_id
 				name
@@ -352,4 +353,38 @@ export const GET_CALENDARS = gql`
 		}
 	}
 `;
+
+//region TokenIcon
+
+export const GET_TOKEN_ICONS = gql`
+	query tokenIcons($worldId: ID!, $name: String, $page: Int) {
+		tokenIcons(worldId: $worldId, name: $name, page: $page) {
+			docs {
+				_id
+				image {
+					_id
+					icon {
+						chunks {
+							fileId
+						}
+					}
+				}
+				world {
+					_id
+				}
+				name
+			}
+			page
+			totalPages
+			totalDocs
+			pagingCounter
+			limit
+			hasPrevPage
+			hasNextPage
+			prevPage
+			nextPage
+		}
+	}
+`;
+
 //endregion

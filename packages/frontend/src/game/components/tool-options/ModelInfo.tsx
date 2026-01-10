@@ -30,7 +30,7 @@ export default function ModelInfo({ setGameWikiId }: ModelInfoProps) {
 	const controllerFacade = useContext<GameControllerFacade>(ControllerContext);
 	useGameModelDeletedSubscription((model) => {
 		if (model._id === selectedPositionedModel?._id) {
-			setSelectedPositionedModel(null);
+			setSelectedPositionedModel(undefined);
 		}
 	});
 
@@ -60,9 +60,9 @@ export default function ModelInfo({ setGameWikiId }: ModelInfoProps) {
 
 	let content;
 
-	let name = null;
+	let name: string | undefined;
 	if (selectedPositionedModel) {
-		name = selectedPositionedModel.model.name;
+		name = selectedPositionedModel.model?.name;
 		if (selectedPositionedModel.wiki) {
 			name = selectedPositionedModel.wiki.name;
 		}
@@ -78,7 +78,7 @@ export default function ModelInfo({ setGameWikiId }: ModelInfoProps) {
 					<div className={"margin-lg"}>
 						<a
 							onClick={async () =>
-								await setGameWikiId(selectedPositionedModel.wiki._id)
+								await setGameWikiId(selectedPositionedModel.wiki?._id ?? "")
 							}
 						>
 							Show Wiki

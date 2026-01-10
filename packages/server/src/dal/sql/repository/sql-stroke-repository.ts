@@ -55,6 +55,8 @@ export default class SqlStrokeRepository extends AbstractSqlRepository<Stroke, S
     }
 
     async deleteAllByGameId(id: string): Promise<void> {
+        const strokes = await this.staticModel.findAll({where: {GameId: id}});
+        await PathNodeModel.destroy({where: {StrokeId: strokes.map(s => s._id)}});
         await this.staticModel.destroy({where: {GameId: id}});
     }
 

@@ -112,11 +112,13 @@ export const gameMutations = {
 			modelId,
 			wikiId,
 			color,
-		}: { gameId: string; modelId: string; wikiId: string; color: string },
+			tokenId,
+			tokenType,
+		}: { gameId: string; modelId?: string; wikiId?: string; color?: string; tokenId?: string; tokenType?: string },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<GameService>(INJECTABLE_TYPES.GameService);
-		return await databaseContext.openTransaction(async () => service.addModel(securityContext, gameId, modelId, wikiId, color, databaseContext));
+		return await databaseContext.openTransaction(async () => service.addModel(securityContext, gameId, modelId, wikiId, color, tokenId, tokenType, databaseContext));
 	},
 	setModelPosition: async (
 		_: any,

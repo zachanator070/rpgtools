@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`token-icon-query > tokenIcons query > returns empty list for empty world 1`] = `
+{
+  "data": {
+    "tokenIcons": {
+      "docs": [],
+      "hasNextPage": false,
+      "hasPrevPage": false,
+      "limit": 10,
+      "nextPage": null,
+      "page": 1,
+      "pagingCounter": 1,
+      "prevPage": null,
+      "totalDocs": 0,
+      "totalPages": Any<Number>,
+    },
+  },
+  "errors": undefined,
+}
+`;

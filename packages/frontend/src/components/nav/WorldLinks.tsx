@@ -26,6 +26,10 @@ export default function WorldLinks() {
             link: `/ui/world/${currentWorld._id}/model`
         },
         {
+            label: 'Tokens',
+            link: `/ui/world/${currentWorld._id}/tokens`
+        },
+        {
             label: 'Roles',
             link: `/ui/world/${currentWorld._id}/roles`
         },

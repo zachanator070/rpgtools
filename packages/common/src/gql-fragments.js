@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PIN_ATTRIBUTES = exports.GAME_ATTRIBUTES = exports.GAME_FOG = exports.GAME_MODELS = exports.GAME_MODEL = exports.GAME_STROKE = exports.GAME_MAP = exports.GAME_CHARACTERS = exports.GAME_MESSAGE = exports.CURRENT_WIKI_ATTRIBUTES = exports.EVENT_WIKI_ATTRIBUTES = exports.MODEL_ATTRIBUTES = exports.CURRENT_WIKI_PLACE_ATTRIBUTES = exports.SERVER_CONFIG_ROLES = exports.CURRENT_WORLD_CALENDAR = exports.CURRENT_WORLD_ROLES = exports.CURRENT_WORLD_FOLDERS = exports.CURRENT_WORLD_WIKIS = exports.ACCESS_CONTROL_LIST = exports.WIKIS_IN_FOLDER_ATTRIBUTES = void 0;
+exports.PIN_ATTRIBUTES = exports.GAME_ATTRIBUTES = exports.GAME_FOG = exports.GAME_MODELS = exports.GAME_MODEL = exports.TOKEN_ICON = exports.GAME_STROKE = exports.GAME_MAP = exports.GAME_CHARACTERS = exports.GAME_MESSAGE = exports.CURRENT_WIKI_ATTRIBUTES = exports.EVENT_WIKI_ATTRIBUTES = exports.MODEL_ATTRIBUTES = exports.CURRENT_WIKI_PLACE_ATTRIBUTES = exports.SERVER_CONFIG_ROLES = exports.CURRENT_WORLD_CALENDAR = exports.CURRENT_WORLD_ROLES = exports.CURRENT_WORLD_FOLDERS = exports.CURRENT_WORLD_WIKIS = exports.ACCESS_CONTROL_LIST = exports.WIKIS_IN_FOLDER_ATTRIBUTES = void 0;
 const graphql_tag_1 = __importDefault(require("graphql-tag"));
 exports.WIKIS_IN_FOLDER_ATTRIBUTES = `
 	...currentWorldWikis
@@ -308,7 +308,24 @@ exports.GAME_STROKE = (0, graphql_tag_1.default) `
         fill
     }
 `;
+exports.TOKEN_ICON = (0, graphql_tag_1.default) `
+    fragment tokenIcon on TokenIcon {
+        _id
+        name
+        image {
+            _id
+            icon {
+                _id
+                chunks {
+                    _id
+                    fileId
+                }
+            }
+        }
+    }
+`;
 exports.GAME_MODEL = (0, graphql_tag_1.default) `
+    ${exports.TOKEN_ICON}
     fragment gameModel on PositionedModel {
         _id
         model{
@@ -329,6 +346,10 @@ exports.GAME_MODEL = (0, graphql_tag_1.default) `
             _id
             name
         }
+        tokenIcon{
+            ...tokenIcon
+        }
+        tokenType
     }
 `;
 exports.GAME_MODELS = (0, graphql_tag_1.default) `

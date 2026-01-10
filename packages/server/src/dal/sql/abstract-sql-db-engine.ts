@@ -22,7 +22,7 @@ import {
     REGISTER_CODE,
     ROLE,
     SERVER_CONFIG,
-    STROKE, USER, WIKI_FOLDER,
+    STROKE, TOKEN_ICON, USER, WIKI_FOLDER,
     WIKI_PAGE, WORLD
 } from "@rpgtools/common/src/type-constants.js";
 import WikiPageModel from "./models/wiki-page-model.js";
@@ -38,6 +38,7 @@ import MessageModel from "./models/game/message-model.js";
 import PathNodeModel from "./models/game/path-node-model.js";
 import StrokeModel from "./models/game/stroke-model.js";
 import ImageModel from "./models/image-model.js";
+import TokenIconModel from "./models/token-icon-model.js";
 import ItemModel from "./models/item-model.js";
 import {modeledWikiAttributes} from "./models/modeled-wiki-model.js";
 import ModelModel from "./models/model-model.js";
@@ -61,6 +62,8 @@ import * as events from "./migrations/01_events.js";
 import * as related_wikis from "./migrations/02_related_wikis.js";
 import * as game_message_size from './migrations/03_game_message_size.js';
 import * as message_to_text from './migrations/04_message-to-text.js';
+import * as token_icon from './migrations/05_token-icon.js';
+import * as token_fields from './migrations/06_in-game-model-token-fields.js';
 import EventWikiModel from "./models/event-wiki-model.js";
 import CalendarModel from "./models/calendar-model.js";
 import AgeModel from "./models/calendar/age-model.js";
@@ -91,6 +94,7 @@ import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
+import {TokenIconRepository} from "../repository/token-icon-repository.js";
 import { DbEngine } from "src/types.js";
 
 
@@ -144,7 +148,9 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     wikiPageRepository: WikiPageRepository;
     @inject(INJECTABLE_TYPES.WorldRepository)
     worldRepository: WorldRepository;
-    
+    @inject(INJECTABLE_TYPES.TokenIconRepository)
+    tokenIconRepository: TokenIconRepository;
+
     connectAll(connection: Sequelize) {
         // Is there any better way to do this? How to handle a bunch of static methods with the same signature?
         // This violates the open/closed principle
@@ -166,6 +172,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
         StrokeModel.init(StrokeModel.attributes, {sequelize: connection, modelName: STROKE, freezeTableName: true});
 
         ImageModel.init(ImageModel.attributes, {sequelize: connection, modelName: IMAGE, freezeTableName: true});
+        TokenIconModel.init(TokenIconModel.attributes, {sequelize: connection, modelName: TOKEN_ICON, freezeTableName: true});
         ItemModel.init(modeledWikiAttributes, {sequelize: connection, modelName: ITEM, freezeTableName: true});
         ModelModel.init(ModelModel.attributes, {sequelize: connection, modelName: MODEL, freezeTableName: true});
         MonsterModel.init(modeledWikiAttributes, {sequelize: connection, modelName: MONSTER, freezeTableName: true});
@@ -203,6 +210,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
         PathNodeModel.connect();
         StrokeModel.connect();
         ImageModel.connect();
+        TokenIconModel.connect();
         ItemModel.connect();
         ModelModel.connect();
         MonsterModel.connect();
@@ -246,6 +254,10 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
                 {
                     name: '04_message_to_text',
                     ...message_to_text
+                },
+                {
+                    name: '05_token_icon',
+                    ...token_icon
                 }
             ],
             context: connection.getQueryInterface(),
@@ -279,7 +291,13 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     };
 
     async clearDb() : Promise<void> {
-        await this.connection.drop();
+        try {
+            // Use raw SQL to drop all tables to avoid Sequelize enum issues
+            await this.connection.query('DROP SCHEMA public CASCADE');
+            await this.connection.query('CREATE SCHEMA public');
+        } catch (error) {
+            console.error('Error clearing database:', error);
+        }
     }
 
     async disconnect(): Promise<void> {
@@ -322,6 +340,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
             this.wikiFolderRepository,
             this.wikiPageRepository,
             this.worldRepository,
+            this.tokenIconRepository
         );
     }
 }

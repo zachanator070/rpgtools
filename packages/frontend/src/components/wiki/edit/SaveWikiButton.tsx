@@ -15,8 +15,8 @@ import React from "react";
 export interface UpdateWikiParams {
     name?: string;
     type?: string;
-    newCoverImageFile?: any;
-    newMapImageFile?: any;
+    newCoverImageFile?: File;
+    newMapImageFile?: File;
     pixelsPerFoot?: number
     modelColor?: string;
     selectedModel?: Model;

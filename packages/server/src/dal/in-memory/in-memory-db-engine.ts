@@ -25,6 +25,7 @@ import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
+import {TokenIconRepository} from "../repository/token-icon-repository.js";
 
 @injectable()
 export default class InMemoryDbEngine implements DbEngine {
@@ -71,6 +72,8 @@ export default class InMemoryDbEngine implements DbEngine {
     wikiPageRepository: WikiPageRepository;
     @inject(INJECTABLE_TYPES.WorldRepository)
     worldRepository: WorldRepository;
+    @inject(INJECTABLE_TYPES.TokenIconRepository)
+    tokenIconRepository: TokenIconRepository;
 
     changeDb(name: string): Promise<void> {
         return Promise.resolve(undefined);
@@ -115,6 +118,7 @@ export default class InMemoryDbEngine implements DbEngine {
             this.wikiFolderRepository,
             this.wikiPageRepository,
             this.worldRepository,
+            this.tokenIconRepository
         );
     }
 

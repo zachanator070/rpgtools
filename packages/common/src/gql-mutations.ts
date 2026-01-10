@@ -158,8 +158,8 @@ export const LEAVE_GAME = gql`
 
 export const ADD_MODEL = gql`
 	${GAME_MODELS}
-	mutation addModel($gameId: ID!, $modelId: ID!, $wikiId: ID, $color: String){
-		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color){
+	mutation addModel($gameId: ID!, $modelId: ID, $wikiId: ID, $color: String, $tokenId: ID, $tokenType: String){
+		addModel(gameId: $gameId, modelId: $modelId, wikiId: $wikiId, color: $color, tokenId: $tokenId, tokenType: $tokenType){
 			_id
 			...gameModels
 		}
@@ -596,6 +596,46 @@ export const LOAD_5E_CONTENT = gql`
 		    rootFolder{
 			    ...currentWorldFolders
 		    }
+		}
+	}
+`;
+
+//region TokenIcon
+
+export const CREATE_TOKEN_ICON = gql`
+	mutation createTokenIcon($worldId: ID!, $imageId: ID!, $name: String) {
+		createTokenIcon(worldId: $worldId, imageId: $imageId, name: $name) {
+			_id
+			name
+			image {
+				_id
+			}
+			world {
+				_id
+			}
+		}
+	}
+`;
+
+export const BULK_CREATE_TOKEN_ICON = gql`
+	mutation bulkCreateTokenIcons($worldId: ID!, $zipFile: Upload!) {
+		bulkCreateTokenIcons(worldId: $worldId, zipFile: $zipFile) {
+			_id
+			name
+			image {
+				_id
+			}
+			world {
+				_id
+			}
+		}
+	}
+`;
+
+export const DELETE_TOKEN_ICON = gql`
+	mutation deleteTokenIcon($tokenIconId: ID!) {
+		deleteTokenIcon(tokenIconId: $tokenIconId) {
+			_id
 		}
 	}
 `;

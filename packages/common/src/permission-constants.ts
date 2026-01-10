@@ -4,6 +4,7 @@ import {
 	MODEL,
 	ROLE,
 	SERVER_CONFIG,
+	TOKEN_ICON,
 	WIKI_FOLDER,
 	WIKI_PAGE,
 	WORLD,
@@ -49,6 +50,9 @@ export const MODEL_ADMIN_ALL = "Able to change permissions for any model";
 export const CALENDAR_READ_ALL = "Read all calendars";
 export const CALENDAR_RW_ALL = "Write to any calendar";
 export const CALENDAR_ADMIN_ALL = "Able to change permissions for any calendar";
+export const TOKEN_ICON_ADD = "Able to create token icons in this world";
+export const TOKEN_READ_ALL = "Read all token icons";
+export const TOKEN_RW_ALL = "Write to any token icon";
 
 export const WORLD_PERMISSIONS = [
 	WORLD_READ,
@@ -72,7 +76,10 @@ export const WORLD_PERMISSIONS = [
 	WORLD_RW,
 	CALENDAR_READ_ALL,
 	CALENDAR_RW_ALL,
-	CALENDAR_ADMIN_ALL
+	CALENDAR_ADMIN_ALL,
+	TOKEN_ICON_ADD,
+	TOKEN_READ_ALL,
+	TOKEN_RW_ALL
 ];
 
 // calendar permissions
@@ -82,6 +89,13 @@ export const CALENDAR_READ = "Able to read this calendar";
 export const CALENDAR_ADMIN = "Able to change permissions for this calendar";
 
 export const CALENDAR_PERMISSIONS = [CALENDAR_RW, CALENDAR_READ, CALENDAR_ADMIN];
+
+// token icon permissions
+export const TOKEN_ICON_READ = "Read access to a token icon";
+export const TOKEN_ICON_RW = "Edit access to a token icon";
+export const TOKEN_ICON_ADMIN = "Able to change permissions for a token icon";
+
+export const TOKEN_ICON_PERMISSIONS = [TOKEN_ICON_READ, TOKEN_ICON_RW, TOKEN_ICON_ADMIN];
 
 // role permissions
 export const ROLE_READ = "Able to see members of this role";
@@ -149,7 +163,8 @@ export const ALL_PERMISSIONS = allPermissions.concat(
 	WIKI_FOLDER_PERMISSIONS,
 	MODEL_PERMISSIONS,
 	GAME_PERMISSIONS,
-	CALENDAR_PERMISSIONS
+	CALENDAR_PERMISSIONS,
+	TOKEN_ICON_PERMISSIONS
 );
 
 export const PUBLIC_WORLD_PERMISSIONS = [
@@ -157,6 +172,7 @@ export const PUBLIC_WORLD_PERMISSIONS = [
 	FOLDER_READ_ALL,
 	WORLD_READ,
 	MODEL_READ_ALL,
+	TOKEN_READ_ALL
 ];
 
 export const getPermissionsBySubjectType = (subjectType: string) => {
@@ -176,6 +192,8 @@ export const getPermissionsBySubjectType = (subjectType: string) => {
 		return MODEL_PERMISSIONS;
 	} else if (subjectType === CALENDAR) {
 		return CALENDAR_PERMISSIONS;
+	} else if (subjectType === TOKEN_ICON) {
+		return TOKEN_ICON_PERMISSIONS;
 	}
 	return null;
 };

@@ -29,6 +29,7 @@ export const CALENDAR = 'Calendar';
 export const AGE = 'Age';
 export const MONTH = 'Month';
 export const DAY_OF_THE_WEEK = 'DayOfTheWeek';
+export const TOKEN_ICON = 'TokenIcon';
 
 export const ALL_WIKI_TYPES = [ARTICLE, PERSON, PLACE, ITEM, MONSTER, EVENT_WIKI];
 export const MODELED_WIKI_TYPES = [PERSON, ITEM, MONSTER];

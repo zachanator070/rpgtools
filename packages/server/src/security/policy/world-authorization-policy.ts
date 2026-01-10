@@ -9,6 +9,9 @@ import {
 	WORLD_READ,
 	WORLD_READ_ALL,
 	WORLD_RW,
+	TOKEN_ICON_ADD,
+	TOKEN_READ_ALL,
+	TOKEN_RW_ALL,
 } from "@rpgtools/common/src/permission-constants.js";
 import { injectable } from "inversify";
 import {DatabaseContext} from "../../dal/database-context.js";
@@ -42,5 +45,20 @@ export class WorldAuthorizationPolicy implements EntityAuthorizationPolicy {
 
 	canWrite = async (context: SecurityContext): Promise<boolean> => {
 		return context.hasPermission(WORLD_RW, this.entity);
+	};
+
+	canCreateTokenIcons = async (context: SecurityContext): Promise<boolean> => {
+		return context.hasPermission(TOKEN_ICON_ADD, this.entity);
+	};
+
+	canReadTokenIcons = async (context: SecurityContext): Promise<boolean> => {
+		return (
+			context.hasPermission(TOKEN_READ_ALL, this.entity) ||
+			(await this.canWriteTokenIcons(context))
+		);
+	};
+
+	canWriteTokenIcons = async (context: SecurityContext): Promise<boolean> => {
+		return context.hasPermission(TOKEN_RW_ALL, this.entity);
 	};
 }

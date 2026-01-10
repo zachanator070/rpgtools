@@ -13,6 +13,7 @@ interface InputFormProps<T> extends WidgetProps {
     errors: string[];
     buttonText?: string;
     disabled?: boolean;
+
 }
 
 export default function InputForm<T>({ onSubmit, children, loading, errors, buttonText, disabled}: InputFormProps<T>) {

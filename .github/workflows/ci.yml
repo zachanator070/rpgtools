@@ -78,3 +78,11 @@ jobs:
       with:
         name: nohup_logs
         path: /home/runner/work/rpgtools/rpgtools/electron.log
+  ci-version-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Version Check
+      run: ./dev/scripts/check-version-bump.sh

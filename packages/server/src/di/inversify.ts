@@ -66,6 +66,7 @@ import { WikiFolder } from "../domain-entities/wiki-folder.js";
 import { WikiFolderDataLoader } from "../dal/dataloaders/wiki-folder-data-loader.js";
 import { WikiPage } from "../domain-entities/wiki-page.js";
 import { World } from "../domain-entities/world.js";
+import { TokenIcon } from "../domain-entities/token-icon.js";
 import { ChunkDataLoader } from "../dal/dataloaders/chunk-data-loader.js";
 import { FileDataLoader } from "../dal/dataloaders/file-data-loader.js";
 import { GameDataLoader } from "../dal/dataloaders/game-data-loader.js";
@@ -100,6 +101,7 @@ import { UserAuthorizationPolicy } from "../security/policy/user-authorization-p
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy.js";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy.js";
 import { WorldAuthorizationPolicy } from "../security/policy/world-authorization-policy.js";
+
 import {ServerProperties} from "../server/server-properties.js";
 import {NoCacheClient} from "../dal/cache/no-cache-client.js";
 import {RoleService} from "../services/role-service.js";
@@ -122,6 +124,7 @@ import {UserRepository} from "../dal/repository/user-repository.js";
 import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../dal/repository/wiki-page-repository.js";
 import {WorldRepository} from "../dal/repository/world-repository.js";
+import {TokenIconRepository} from "../dal/repository/token-icon-repository.js";
 import {ArticleRepository} from "../dal/repository/article-repository.js";
 import PostgresDbEngine from "../dal/sql/postgres-db-engine.js";
 import ArticleFactory from "../domain-entities/factory/article-factory.js";
@@ -140,6 +143,7 @@ import ServerConfigFactory from "../domain-entities/factory/server-config-factor
 import UserFactory from "../domain-entities/factory/user-factory.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 import WorldFactory from "../domain-entities/factory/world-factory.js";
+import TokenIconFactory from "../domain-entities/factory/token-icon-factory.js";
 import AclFactory from "../domain-entities/factory/acl-factory.js";
 import WikiPageFactory from "../domain-entities/factory/wiki-page-factory.js";
 import CharacterFactory from "../domain-entities/factory/game/character-factory.js";
@@ -151,7 +155,6 @@ import MessageFactory from "../domain-entities/factory/game/message-factory.js";
 import InGameModelFactory from "../domain-entities/factory/game/in-game-model-factory.js";
 import InMemoryDbEngine from "../dal/in-memory/in-memory-db-engine.js";
 import SqliteDbEngine from "../dal/sql/sqlite-db-engine.js";
-import AbstractSqlDbEngine from "../dal/sql/abstract-sql-db-engine.js";
 import {EventWiki} from "../domain-entities/event-wiki.js";
 import EventWikiFactory from "../domain-entities/factory/event-wiki-factory.js";
 import DayOfTheWeekFactory from "../domain-entities/factory/calendar/day-of-the-week-factory.js";
@@ -194,6 +197,10 @@ import SqlCalendarRepository from "../dal/sql/repository/sql-calendar-repository
 import SqlEventWikiRepository from "../dal/sql/repository/sql-event-wiki-repository.js";
 import SqlFogStrokeRepository from "../dal/sql/repository/sql-fog-stroke-repository.js";
 import SqlStrokeRepository from "../dal/sql/repository/sql-stroke-repository.js";
+import SqlTokenIconRepository from "../dal/sql/repository/sql-token-icon-repository.js";
+import InMemoryTokenIconRepository from "../dal/in-memory/repositories/in-memory-token-icon-repository.js";
+import {TokenIconDataLoader} from "../dal/dataloaders/token-icon-data-loader.js";
+import { TokenIconService } from "../services/token-service.js";
 
 const container = new Container();
 
@@ -216,6 +223,7 @@ const bindAll = () => {
 	container.bind<WikiFolder>(INJECTABLE_TYPES.WikiFolder).to(WikiFolder);
 	container.bind<World>(INJECTABLE_TYPES.World).to(World);
 	container.bind<EventWiki>(INJECTABLE_TYPES.Event).to(EventWiki);
+	container.bind<TokenIcon>(INJECTABLE_TYPES.TokenIcon).to(TokenIcon);
 
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Article);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Chunk);
@@ -235,6 +243,7 @@ const bindAll = () => {
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(EventWiki);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Calendar);
+	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(TokenIcon);
 
 // entity factories
 	container.bind<AclFactory>(INJECTABLE_TYPES.AclFactory).to(AclFactory);
@@ -291,6 +300,9 @@ const bindAll = () => {
 	container
 		.bind<EventWikiFactory>(INJECTABLE_TYPES.EventWikiFactory)
 		.to(EventWikiFactory);
+	container
+		.bind<TokenIconFactory>(INJECTABLE_TYPES.TokenIconFactory)
+		.to(TokenIconFactory);
 
 	container
 		.bind<CharacterFactory>(INJECTABLE_TYPES.CharacterFactory)
@@ -354,6 +366,7 @@ const bindAll = () => {
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(SqlCalendarRepository);
 		container.bind<FogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(SqlFogStrokeRepository);
 		container.bind<StrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(SqlStrokeRepository);
+		container.bind<TokenIconRepository>(INJECTABLE_TYPES.TokenIconRepository).to(SqlTokenIconRepository);
 
 	} else {
 		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(InMemoryArticleRepository);
@@ -383,6 +396,7 @@ const bindAll = () => {
 		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository);
 		container.bind<FogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(InMemoryFogStrokeRepository)
 		container.bind<StrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(InMemoryStrokeRepository)
+		container.bind<TokenIconRepository>(INJECTABLE_TYPES.TokenIconRepository).to(InMemoryTokenIconRepository)
 	}
 
 // authorization rule sets
@@ -499,6 +513,9 @@ const bindAll = () => {
 	container
 		.bind<StrokeRepository>(INJECTABLE_TYPES.ArchiveStrokeRepository)
 		.to(InMemoryStrokeRepository);
+	container
+		.bind<TokenIconRepository>(INJECTABLE_TYPES.ArchiveTokenIconRepository)
+		.to(InMemoryTokenIconRepository);
 
 // sql helpers
 	container.bind<SqlPermissionControlledRepository>(INJECTABLE_TYPES.SqlPermissionControlledRepository).to(SqlPermissionControlledRepository);
@@ -529,6 +546,7 @@ const bindAll = () => {
 	container.bind<WikiPageService>(INJECTABLE_TYPES.WikiPageService).to(WikiPageService);
 	container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldService);
 	container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleService);
+	container.bind<TokenIconService>(INJECTABLE_TYPES.TokenIconService).to(TokenIconService);
 
 // request contexts
 	container
@@ -595,6 +613,7 @@ const bindAll = () => {
 	container.bind<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader).to(WorldDataLoader);
 	container.bind<DataLoader<Calendar>>(INJECTABLE_TYPES.CalendarDataLoader).to(CalendarDataLoader);
 	container.bind<DataLoader<EventWiki>>(INJECTABLE_TYPES.EventDataLoader).to(EventWikiDataLoader);
+	container.bind<DataLoader<TokenIcon>>(INJECTABLE_TYPES.TokenIconDataLoader).to(TokenIconDataLoader);
 
 // seeders
 	container.bind<RoleSeeder>(INJECTABLE_TYPES.RoleSeeder).to(RoleSeeder);

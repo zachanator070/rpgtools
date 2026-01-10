@@ -19,11 +19,13 @@ import {WikiPageService} from "../../../../src/services/wiki-page-service.js";
 import {ModelService} from "../../../../src/services/model-service.js";
 import {FileUpload} from "graphql-upload/processRequest.mjs";
 import {v4 as uuidv4} from 'uuid';
+import { TokenIconService } from "src/services/token-service.js";
 
 process.env.TEST_SUITE = "game-mutations-test";
 
 describe("game mutations", () => {
     const gameService = container.get<GameService>(INJECTABLE_TYPES.GameService);
+    const tokenIconService = container.get<TokenIconService>(INJECTABLE_TYPES.TokenIconService);
     const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
     const testingContext = container.get<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContext);
     const imageService = container.get<ImageService>(INJECTABLE_TYPES.ImageService);
@@ -175,6 +177,74 @@ describe("game mutations", () => {
                             },
                         },
                         errors: undefined
+                    });
+                });
+
+                test('add model with tokenType', async () => {
+                    const result = await testingContext.server.executeGraphQLQuery({
+                        query: ADD_MODEL,
+                        variables: { gameId: testingContext.game._id, modelId: testingContext.model._id, wikiId: testingContext.otherPage._id, color: '#ffffff', tokenType: 'CIRCLE' },
+                    });
+
+                    expect(result).toMatchSnapshot({
+                        data: {
+                            addModel: {
+                                _id: expect.any(String),
+                                models: expect.arrayContaining([
+                                    expect.objectContaining({
+                                        _id: expect.any(String),
+                                        model: expect.objectContaining({
+                                            _id: expect.any(String)
+                                        }),
+                                        tokenType: 'CIRCLE'
+                                    })
+                                ])
+                            },
+                        },
+                        errors: undefined
+                    });
+                });
+
+                describe('with a token uploaded', () => {
+                    let tokenId: string;
+
+                    beforeEach(async () => {
+                        const filename = "tests/integration/resolvers/mutations/adult_blue_dragon.png";
+                        const databaseContext = await dbEngine.createDatabaseContext();
+                        const image = await imageService.createImage(testingContext.world._id, true, filename, fs.createReadStream(filename), databaseContext);
+                        const token = await tokenIconService.createTokenIcon(
+                            testingContext.tester1SecurityContext,
+                            testingContext.world._id,
+                            image._id,
+                            undefined,
+                            databaseContext
+                        );
+                        tokenId = token._id;
+                    });
+
+                    test('add model with both tokenId and tokenType', async () => {
+                        const result = await testingContext.server.executeGraphQLQuery({
+                            query: ADD_MODEL,
+                            variables: { gameId: testingContext.game._id, modelId: testingContext.model._id, wikiId: testingContext.otherPage._id, color: '#ffffff', tokenId: tokenId, tokenType: 'SQUARE' },
+                        });
+
+                        expect(result).toMatchSnapshot({
+                            data: {
+                                addModel: {
+                                    _id: expect.any(String),
+                                    models: expect.arrayContaining([
+                                        expect.objectContaining({
+                                            _id: expect.any(String),
+                                            model: expect.objectContaining({
+                                                _id: expect.any(String)
+                                            }),
+                                            tokenType: 'SQUARE'
+                                        })
+                                    ])
+                                },
+                            },
+                            errors: undefined
+                        });
                     });
                 });
 

@@ -1,3 +1,4 @@
+import { TokenIcon } from "src/domain-entities/token-icon.js";
 
 export const INJECTABLE_TYPES = {
 
@@ -23,6 +24,7 @@ export const INJECTABLE_TYPES = {
 	World: Symbol.for("World"),
 	Event: Symbol.for("Event"),
 	Calendar: Symbol.for("Calendar"),
+	TokenIcon: Symbol.for("TokenIcon"),
 
 	// entity factories
 	ArticleFactory: Symbol.for("ArticleFactory"),
@@ -45,6 +47,7 @@ export const INJECTABLE_TYPES = {
 	WorldFactory: Symbol.for("WorldFactory"),
 	EventWikiFactory: Symbol.for("EventFactory"),
 	CalendarFactory: Symbol.for("CalendarFactory"),
+	TokenIconFactory: Symbol.for("TokenIconFactory"),
 
 	CharacterFactory: Symbol.for('CharacterFactory'),
 	CharacterAttributeFactory: Symbol.for('CharacterAttributeFactory'),
@@ -78,6 +81,7 @@ export const INJECTABLE_TYPES = {
 	WorldRepository: Symbol.for("WorldRepository"),
 	EventWikiRepository: Symbol.for("EventWikiRepository"),
 	CalendarRepository: Symbol.for("CalendarRepository"),
+	TokenIconRepository: Symbol.for("TokenIconRepository"),
 	StrokeRepository: Symbol.for('StrokeRepository'),
 	FogStrokeRepository: Symbol.for('FogStrokeRepository'),
 
@@ -100,6 +104,7 @@ export const INJECTABLE_TYPES = {
 	WikiPageAuthorizationPolicy: Symbol.for("WikiPageAuthorizationPolicy"),
 	WorldAuthorizationPolicy: Symbol.for("WorldAuthorizationPolicy"),
 	CalendarAuthorizationPolicy: Symbol.for("CalendarAuthorizationPolicy"),
+	TokenIconAuthorizationPolicy: Symbol.for("TokenIconAuthorizationPolicy"),
 	FogStrokeAuthorizationPolicy: Symbol.for('FogStrokeAuthorizationPolicy'),
 	StrokeAuthorizationPolicy: Symbol.for('StrokeAuthorizationPolicy'),
 
@@ -126,6 +131,7 @@ export const INJECTABLE_TYPES = {
 	ArchiveCalendarRepository: Symbol.for("ArchiveCalendarRepository"),
 	ArchiveFogStrokeRepository: Symbol.for("ArchiveFogStrokeRepository"),
 	ArchiveStrokeRepository: Symbol.for("ArchiveStrokeRepository"),
+	ArchiveTokenIconRepository: Symbol.for("ArchiveTokenIconRepository"),
 
 	//sql helpers
 	SqlPermissionControlledRepository: Symbol.for("SqlPermissionControlledRepository"),
@@ -145,6 +151,7 @@ export const INJECTABLE_TYPES = {
 	WikiFolderService: Symbol.for("WikiFolderService"),
 	WikiPageService: Symbol.for("WikiPageService"),
 	WorldService: Symbol.for("WorldService"),
+	TokenIconService: Symbol.for("TokenIconService"),
 
 	// request contexts
 	SessionContextFactory: Symbol.for("SessionContextFactory"),
@@ -196,6 +203,7 @@ export const INJECTABLE_TYPES = {
 	WorldDataLoader: Symbol.for("WorldDataLoader"),
 	CalendarDataLoader: Symbol.for('CalendarDataLoader'),
 	EventDataLoader: Symbol.for('EventDataLoader'),
+	TokenIconDataLoader: Symbol.for('TokenIconDataLoader'),
 
 	// seeders
 	RoleSeeder: Symbol.for("RoleSeeder"),

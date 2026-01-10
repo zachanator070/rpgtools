@@ -25,6 +25,7 @@ export const typeDefs = gql`
 		
 		calendars(worldId: ID!): [Calendar!]!
 		events(worldId: ID!, relatedWikiIds: [String!], calendarIds: [String!]): WikiPagePaginatedResult!
+		tokenIcons(worldId: ID!, name: String, page: Int): TokenIconPaginatedResult!
 	}
 
 	type Mutation {
@@ -109,6 +110,10 @@ export const typeDefs = gql`
 		updatePin(pinId: ID!, pageId: ID): Pin!
 		deletePin(pinId: ID!): Pin!
 
+		createTokenIcon(worldId: ID!, imageId: ID!, name: String): TokenIcon!
+		deleteTokenIcon(tokenIconId: ID!): TokenIcon!
+		bulkCreateTokenIcons(worldId: ID!, zipFile: Upload!): [TokenIcon!]!
+
 		createGame(worldId: ID!, password: String, characterName: String): Game!
 		joinGame(gameId: ID!, password: String, characterName: String): Game!
 		leaveGame(gameId: ID!): Boolean!
@@ -134,7 +139,7 @@ export const typeDefs = gql`
 			size: Int!
 			strokeId: ID!
 		): Game!
-		addModel(gameId: ID!, modelId: ID!, wikiId: ID, color: String): Game!
+		addModel(gameId: ID!, modelId: ID, wikiId: ID, color: String, tokenId: ID, tokenType: String): Game!
 		setModelPosition(
 			gameId: ID!
 			positionedModelId: ID!
@@ -207,6 +212,7 @@ export const typeDefs = gql`
 		canAddRoles: Boolean!
 		canHostGame: Boolean!
 		canAddModels: Boolean!
+		canCreateTokens: Boolean!
 	}
 
 	type WorldPaginatedResult {
@@ -289,6 +295,19 @@ export const typeDefs = gql`
 	
 	type StrokePaginatedResult {
         docs: [Stroke!]!
+		totalDocs: Int!
+		limit: Int!
+		page: Int!
+		totalPages: Int!
+		pagingCounter: Int!
+		hasPrevPage: Boolean!
+		hasNextPage: Boolean!
+		prevPage: Int
+		nextPage: Int
+	}
+	
+	type TokenIconPaginatedResult {
+		docs: [TokenIcon!]!
 		totalDocs: Int!
 		limit: Int!
 		page: Int!
@@ -470,6 +489,13 @@ export const typeDefs = gql`
 		canWrite: Boolean!
 	}
 
+	type TokenIcon {
+		_id: ID!
+		name: String!
+		image: Image!
+		world: World!
+	}
+
 	type ServerConfig implements PermissionControlled {
 		_id: ID!
 		version: String!
@@ -579,13 +605,15 @@ export const typeDefs = gql`
 
 	type PositionedModel {
 		_id: ID!
-		model: Model!
+		model: Model
 		x: Float!
 		z: Float!
 		lookAtX: Float!
 		lookAtZ: Float!
 		color: String
 		wiki: WikiPage
+		tokenIcon: TokenIcon
+		tokenType: String
 	}
 
 	scalar Upload

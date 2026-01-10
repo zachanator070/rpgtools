@@ -14,11 +14,6 @@ import EntityMapper from "../domain-entities/entity-mapper.js";
 import FileFactory from "../domain-entities/factory/file-factory.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 
-class TempFolder {
-	children: TempFolder[] = [];
-	name: string;
-}
-
 @injectable()
 export class ArchiveFactory implements AbstractArchiveFactory {
 	@inject(INJECTABLE_TYPES.FileFactory)

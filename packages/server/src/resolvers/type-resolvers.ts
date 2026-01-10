@@ -32,6 +32,8 @@ import {EventWiki} from "../domain-entities/event-wiki.js";
 import Calendar from "../domain-entities/calendar.js";
 import {Stroke} from "../domain-entities/stroke.js";
 import {FogStroke} from "../domain-entities/fog-stroke.js";
+import { TokenIcon } from "../domain-entities/token-icon.js";
+import { token } from "morgan";
 
 const wikiPageInterfaceAttributes = {
 	world: async (page: WikiPage, _: any, {databaseContext}: SessionContext): Promise<World> => {
@@ -120,6 +122,9 @@ export const TypeResolvers = {
 			const modelFactory = container.get<ModelFactory>(INJECTABLE_TYPES.ModelFactory);
 			const testModel = modelFactory.build({world: world._id, name: "model", depth: 0, width: 0, height: 0, fileName: null, fileId: null, notes: "", acl: []});
 			return testModel.authorizationPolicy.canCreate(securityContext, databaseContext);
+		},
+		canCreateTokens: async (world: World, _: any, { securityContext }: SessionContext): Promise<boolean> => {
+			return world.authorizationPolicy.canCreateTokenIcons(securityContext);
 		},
 		...permissionControlledInterfaceAttributes,
 	},
@@ -367,6 +372,15 @@ export const TypeResolvers = {
 			const dataLoader = container.get<DataLoader<WikiPage>>(INJECTABLE_TYPES.WikiPageDataLoader);
 			return dataLoader.getDocument(model.wiki, databaseContext);
 		},
+		tokenType: async (model: InGameModel, _: any, __: SessionContext): Promise<string> => {
+			return model.tokenType;
+		},
+		tokenIcon: async (model: InGameModel, _: any, {databaseContext}: SessionContext): Promise<TokenIcon> => {
+			const dataLoader = container.get<DataLoader<TokenIcon>>(INJECTABLE_TYPES.TokenIconDataLoader);
+			if(model.tokenId){
+				return dataLoader.getDocument(model.tokenId, databaseContext);
+			}
+		}
 	},
 	Model: {
 		...permissionControlledInterfaceAttributes,
@@ -374,5 +388,15 @@ export const TypeResolvers = {
 	Upload: GraphQLUpload,
 	Calendar: {
 		...permissionControlledInterfaceAttributes,
-	}
+	},
+	TokenIcon: {
+		image: async (tokenIcon: TokenIcon, _: any, {databaseContext}: SessionContext): Promise<Image> => {
+			const dataLoader = container.get<DataLoader<Image>>(INJECTABLE_TYPES.ImageDataLoader);
+			return dataLoader.getDocument(tokenIcon.imageId, databaseContext);
+		},
+		world: async (tokenIcon: TokenIcon, _: any, {databaseContext}: SessionContext): Promise<World> => {
+			const dataLoader = container.get<DataLoader<World>>(INJECTABLE_TYPES.WorldDataLoader);
+			return dataLoader.getDocument(tokenIcon.worldId, databaseContext);
+		},
+	},
 };

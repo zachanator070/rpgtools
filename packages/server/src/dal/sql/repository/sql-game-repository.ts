@@ -156,7 +156,9 @@ export default class SqlGameRepository extends AbstractSqlRepository<Game, GameM
                 color: inGameModel.color,
                 modelId: inGameModel.model,
                 wikiId: inGameModel.wiki,
-                GameId: entity._id
+                GameId: entity._id,
+                tokenId: inGameModel.tokenId,
+                tokenType: inGameModel.tokenType
             });
             if (!inGameModel._id) {
                 // create if id doesn't exist
