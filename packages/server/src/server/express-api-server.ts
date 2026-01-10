@@ -29,7 +29,7 @@ import {ExpressCookieManager} from "./express-cookie-manager.js";
 import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
 import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
 import { ValidationError } from "sequelize";
-import Logger from "src/logging/logger.js";
+import Logger from "../logging/logger.js";
 import requestLoggerMiddleware from "./request-logger-middleware.js";
 
 @injectable()

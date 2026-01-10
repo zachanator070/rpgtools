@@ -95,7 +95,7 @@ import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
 import {TokenIconRepository} from "../repository/token-icon-repository.js";
 import { DbEngine } from "src/types.js";
-import Logger from "src/logging/logger.js";
+import Logger from "../../logging/logger.js";
 
 
 @injectable()

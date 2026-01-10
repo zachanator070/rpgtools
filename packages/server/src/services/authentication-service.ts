@@ -11,7 +11,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {ServerProperties} from "../server/server-properties.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import UserFactory from "../domain-entities/factory/user-factory.js";
-import Logger from "src/logging/logger.js";
+import Logger from "../logging/logger.js";
 
 export interface CookieConstants {
 	string: string;

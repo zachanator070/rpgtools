@@ -5,7 +5,7 @@ import {RoleSeeder} from "../seeders/role-seeder.js";
 import {ServerConfigSeeder} from "../seeders/server-config-seeder.js";
 import {ServerConfigService} from "../services/server-config-service.js";
 import {DatabaseContext} from "../dal/database-context.js";
-import Logger from "src/logging/logger.js";
+import Logger from "../logging/logger.js";
 
 @injectable()
 export default class RpgToolsServer {

@@ -26,7 +26,7 @@ import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../repository/wiki-page-repository.js";
 import {WorldRepository} from "../repository/world-repository.js";
 import {TokenIconRepository} from "../repository/token-icon-repository.js";
-import Logger from "src/logging/logger.js";
+import Logger from "../../logging/logger.js";
 
 @injectable()
 export default class InMemoryDbEngine implements DbEngine {

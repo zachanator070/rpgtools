@@ -7,7 +7,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { Role } from "../domain-entities/role.js";
 import RoleFactory from "../domain-entities/factory/role-factory.js";
 import {DatabaseContext} from "../dal/database-context.js";
-import Logger from "src/logging/logger.js";
+import Logger from "../logging/logger.js";
 
 @injectable()
 export class RoleSeeder implements Seeder {
