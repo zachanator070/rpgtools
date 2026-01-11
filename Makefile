@@ -129,7 +129,6 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_BINARY)
 	docker compose down
 
 test-e2e-sqlite: $(ELECTRON_APP) $(CYPRESS_BINARY)
-	./dev/scripts/set-sqlite-env.sh
 	./dev/scripts/run-electron-app.sh
 	./dev/scripts/wait_for_server.sh
 	npm run -w packages/frontend test
