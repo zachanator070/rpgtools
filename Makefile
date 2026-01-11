@@ -133,7 +133,6 @@ test-e2e-sqlite: $(ELECTRON_APP) $(CYPRESS_BINARY)
 	./dev/scripts/run-electron-app.sh
 	./dev/scripts/wait_for_server.sh
 	npm run -w packages/frontend test
-	pkill -f @rpgtools-server
 
 run-cypress: $(NODE_MODULES) $(CYPRESS_BINARY)
 	npm run -w packages/frontend cypress:open
