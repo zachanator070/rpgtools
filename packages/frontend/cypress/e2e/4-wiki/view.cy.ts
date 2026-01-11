@@ -1,4 +1,4 @@
-import {adminLogin, goToWiki, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToWiki, seedMiddleEarth, stopApp} from "../../util/helper";
 import {MIDDLE_EARTH_MAP_URL, MINAS_TIRITH_MAP_URL, MINAS_TIRITH_WIKI_URL} from "../../util/constants";
 
 describe('view wiki', () => {
@@ -7,6 +7,10 @@ describe('view wiki', () => {
         seedMiddleEarth();
         adminLogin();
         goToWiki();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it('view contents and images', () => {

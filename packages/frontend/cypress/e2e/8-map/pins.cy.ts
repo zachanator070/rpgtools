@@ -1,4 +1,4 @@
-import {adminLogin, goToMap, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToMap, seedMiddleEarth, stopApp} from "../../util/helper";
 import {MIDDLE_EARTH_MAP_URL, MINAS_TIRITH_MAP_URL} from "../../util/constants";
 
 
@@ -7,6 +7,10 @@ describe("map pins", () => {
         seedMiddleEarth();
         adminLogin();
         goToMap();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it('pin details', () => {

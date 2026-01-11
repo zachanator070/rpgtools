@@ -1,4 +1,4 @@
-import {adminLogin, goToRoles, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToRoles, seedMiddleEarth, stopApp} from "../../util/helper";
 
 
 describe("roles", () => {
@@ -6,6 +6,10 @@ describe("roles", () => {
         seedMiddleEarth();
         adminLogin();
         goToRoles();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it("add role", () => {

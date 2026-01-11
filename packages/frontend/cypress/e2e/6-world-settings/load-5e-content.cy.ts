@@ -1,4 +1,4 @@
-import {adminLogin, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToWorldSettings, seedMiddleEarth, stopApp} from "../../util/helper";
 import {MIDDLE_EARTH_WIKI_URL} from "../../util/constants";
 
 
@@ -7,7 +7,11 @@ describe('load 5e content', () => {
         seedMiddleEarth();
         adminLogin();
         goToWorldSettings();
-    })
+    });
+
+    after(() => {
+        stopApp();
+    });
 
     it.skip('load all', () => {
         cy.get('button').contains('Load').click();

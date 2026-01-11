@@ -1,4 +1,4 @@
-import {adminLogin, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToWorldSettings, seedMiddleEarth, stopApp} from "../../util/helper";
 
 
 describe("world settings permissions", () => {
@@ -6,6 +6,10 @@ describe("world settings permissions", () => {
         seedMiddleEarth();
         adminLogin();
         goToWorldSettings();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     describe("with role tab selected", () => {

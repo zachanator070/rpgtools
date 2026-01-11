@@ -1,4 +1,4 @@
-import {adminLogin, goToServerSettings, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToServerSettings, seedMiddleEarth, stopApp} from "../../util/helper";
 
 describe("register codes", () => {
 
@@ -6,6 +6,10 @@ describe("register codes", () => {
         seedMiddleEarth();
         adminLogin();
         goToServerSettings();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it("generate 1", () => {

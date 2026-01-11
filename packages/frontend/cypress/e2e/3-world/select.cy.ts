@@ -1,4 +1,4 @@
-import {adminLogin, goHome, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goHome, seedMiddleEarth, stopApp} from "../../util/helper";
 import {MIDDLE_EARTH_MAP_URL} from "../../util/constants";
 
 describe('select world', () => {
@@ -9,6 +9,10 @@ describe('select world', () => {
        cy.get('#worldMenu').contains('No World Selected').click();
        cy.get('a').contains('Select World').click();
    });
+
+   after(() => {
+        stopApp();
+    });
 
     it('select middle earth', () => {
         cy.get('#searchWorld').type('middle earth');

@@ -9,11 +9,15 @@ import {
 } from "./constants";
 
 export function seedNewServer() {
-    cy.exec("npm run seed:new true >> seed.log 2>> seed.log", {log: true}).its('exitCode').should('eq', 0);
+    cy.exec("npm run seed:new true >> seed.log 2>> seed.log", {log: true});
 }
 
 export function seedMiddleEarth() {
-    cy.exec("npm run seed:middle_earth true >> seed.log 2>> seed.log", {log: true}).its('exitCode').should('eq', 0);
+    cy.exec("npm run seed:middle_earth true >> seed.log 2>> seed.log", {log: true});
+}
+
+export function stopApp() {
+    cy.exec("npm run stop-app >> seed.log 2>> seed.log", {log: false});
 }
 
 export function goHome() {

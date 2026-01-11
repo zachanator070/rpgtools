@@ -1,4 +1,4 @@
-import {adminLogin, goToServerSettings, seedMiddleEarth} from '../../util/helper';
+import {adminLogin, goToServerSettings, seedMiddleEarth, stopApp} from '../../util/helper';
 import {TEST_ROLE_NAME} from "../../util/constants";
 
 describe('server permissions', () => {
@@ -7,6 +7,10 @@ describe('server permissions', () => {
         seedMiddleEarth();
         adminLogin();
         goToServerSettings();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it('add role', () => {

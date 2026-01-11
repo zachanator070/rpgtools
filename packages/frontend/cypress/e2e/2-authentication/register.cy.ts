@@ -1,4 +1,4 @@
-import {goHome, logout, seedMiddleEarth} from "../../util/helper";
+import {goHome, logout, seedMiddleEarth, stopApp} from "../../util/helper";
 import {REGISTER_CODE} from "../../util/constants";
 
 describe("register", () => {
@@ -9,6 +9,10 @@ describe("register", () => {
         goHome();
 
         cy.get('a').contains('Register').click();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it("success", () => {

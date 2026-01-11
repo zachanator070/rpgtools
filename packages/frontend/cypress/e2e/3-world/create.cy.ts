@@ -1,4 +1,4 @@
-import {adminLogin, goHome, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goHome, seedMiddleEarth, stopApp} from "../../util/helper";
 
 describe('create world', () => {
     beforeEach(() => {
@@ -7,6 +7,10 @@ describe('create world', () => {
         goHome();
         cy.get('#worldMenu').contains('No World Selected').click();
         cy.get('a').contains('New World').click();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it('success', () => {
