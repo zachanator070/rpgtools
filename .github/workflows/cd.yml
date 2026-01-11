@@ -101,7 +101,7 @@ jobs:
           overwrite: true
 
   electron-macos:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     needs: release
     steps:
       - uses: actions/setup-node@v3
