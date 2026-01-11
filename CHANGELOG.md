@@ -1,3 +1,2 @@
- ### RPG Tools v5.4.0 Changelog
- - Use logging object throughout server
- - Added winston logger
+ ### RPG Tools v5.4.1 Changelog
+ - Delete .cache directory after packaging electron

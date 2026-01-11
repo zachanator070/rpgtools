@@ -28,7 +28,8 @@ try {
             'packages/frontend',
             'packages/server/src',
             'packages/server/tests',
-            'packages/server/db'
+            'packages/server/db',
+            '.cache',
           ];
 
           for (const rel of toDelete) {
