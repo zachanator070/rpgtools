@@ -28,9 +28,9 @@ export default class PostgresDbEngine extends AbstractSqlDbEngine implements DbE
     async createDatabaseIfNeeded(name: string): Promise<void> {
         try {
             await this.executeSQL(`CREATE DATABASE "${name}"`);
-            console.log(`Database ${this.dbName} created`);
+            this.logger.info(`Database ${this.dbName} created`);
         } catch (e) {
-            console.log(`Database ${name} already exists`)
+            this.logger.info(`Database ${name} already exists`);
         }
     }
 

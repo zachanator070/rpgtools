@@ -201,6 +201,8 @@ import SqlTokenIconRepository from "../dal/sql/repository/sql-token-icon-reposit
 import InMemoryTokenIconRepository from "../dal/in-memory/repositories/in-memory-token-icon-repository.js";
 import {TokenIconDataLoader} from "../dal/dataloaders/token-icon-data-loader.js";
 import { TokenIconService } from "../services/token-service.js";
+import { WinstonLogger } from "../logging/winston-logger.js";
+import Logger from "../logging/logger.js";
 
 const container = new Container();
 
@@ -621,6 +623,9 @@ const bindAll = () => {
 
 // mappers
 	container.bind<EntityMapper>(INJECTABLE_TYPES.EntityMapper).to(EntityMapper);
+
+// logging
+	container.bind<Logger>(INJECTABLE_TYPES.Logger).to(WinstonLogger).inSingletonScope();
 }
 
 

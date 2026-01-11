@@ -11,6 +11,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {ServerProperties} from "../server/server-properties.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import UserFactory from "../domain-entities/factory/user-factory.js";
+import Logger from "../logging/logger.js";
 
 export interface CookieConstants {
 	string: string;
@@ -30,6 +31,9 @@ export class AuthenticationService {
 
 	@inject(INJECTABLE_TYPES.ServerProperties)
 	serverProperties: ServerProperties;
+
+	@inject(INJECTABLE_TYPES.Logger)
+	logger: Logger;
 
 	createTokens = async (
 		user: User,
@@ -63,7 +67,7 @@ export class AuthenticationService {
 				maxAge: REFRESH_TOKEN_MAX_AGE.string,
 			});
 		} catch (e) {
-			console.error(e);
+			this.logger.error("Error decoding refresh token", e);
 		}
 	};
 
@@ -73,7 +77,7 @@ export class AuthenticationService {
 				maxAge: ACCESS_TOKEN_MAX_AGE.string,
 			});
 		} catch (e) {
-			console.error(e);
+			this.logger.error("Error decoding access token", e);
 		}
 	};
 

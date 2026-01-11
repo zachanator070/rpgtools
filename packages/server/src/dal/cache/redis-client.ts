@@ -1,15 +1,22 @@
 import {createClient, RedisClientType} from "redis";
 import { Cache } from "../../types.js";
 import { Readable, Writable, Duplex } from "stream";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { Buffer } from "buffer";
+import Logger from "../../logging/logger.js";
+import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
 
 @injectable()
 export class RedisClient implements Cache {
 	client: RedisClientType;
 	DEFAULT_TIMEOUT = 360;
 
-	constructor() {
+	logger: Logger;
+
+	constructor(@inject(INJECTABLE_TYPES.Logger) logger: Logger) {
+		
+		this.logger = logger;
+
 		if (!process.env.REDIS_URL) {
 			throw new Error("REDIS_URL not set! Unable to connect to redis");
 		}
@@ -17,10 +24,10 @@ export class RedisClient implements Cache {
 			url: process.env.REDIS_URL,
 		});
 		this.client.on("error", (error: string) => {
-			console.log(`Error while connecting to ${process.env.REDIS_URL}: ${error}`);
+			this.logger.error(`Error while connecting to ${process.env.REDIS_URL}: ${error}`);
 		});
 		this.client.connect().then(() => {
-			console.log(`Connected to ${process.env.REDIS_URL}`);
+			this.logger.info(`Connected to ${process.env.REDIS_URL}`);
 		});
 	}
 

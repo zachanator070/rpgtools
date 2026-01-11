@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
-import http, { Server } from "http";
+import http, { request, Server } from "http";
 import { ApolloServer, GraphQLResponse } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@as-integrations/express4';
@@ -29,6 +29,8 @@ import {ExpressCookieManager} from "./express-cookie-manager.js";
 import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
 import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
 import { ValidationError } from "sequelize";
+import Logger from "../logging/logger.js";
+import requestLoggerMiddleware from "./request-logger-middleware.js";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -40,11 +42,15 @@ export class ExpressApiServer implements ApiServer {
 	webSocketServer: WebSocketServer = null;
 	sessionContextFactory: ExpressSessionContextFactory;
 
+	logger: Logger;
+
 	// use constructor injection so middleware can capture injectables
 	constructor(@inject(INJECTABLE_TYPES.SessionContextFactory)
-					sessionContextFactory: ExpressSessionContextFactory) {
+					sessionContextFactory: ExpressSessionContextFactory, 
+				@inject(INJECTABLE_TYPES.Logger) logger: Logger) {
 
 		this.sessionContextFactory = sessionContextFactory;
+		this.logger = logger;
 		
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
 
@@ -175,7 +181,7 @@ export class ExpressApiServer implements ApiServer {
 	applyMiddleware = async () => {
 		await this.gqlServer.start();
 		this.expressServer.use(bodyParser.json({limit: "5mb"}));
-		this.expressServer.use(morgan("tiny"));
+		this.expressServer.use(requestLoggerMiddleware(this.logger));
 
 		this.expressServer.use(cookieParser());
 		this.expressServer.use(graphqlUploadExpress());
@@ -188,7 +194,7 @@ export class ExpressApiServer implements ApiServer {
 				try {
 					const json = typeof body === 'string' ? JSON.parse(body) : body;
 					if (json && json.errors) {
-						console.error("GraphQL Errors:", JSON.stringify(json.errors, null, 2));
+						this.logger.error("GraphQL Errors", json.errors);
 					}
 				} catch (e) {
 					// Ignore JSON parse errors
@@ -223,7 +229,7 @@ export class ExpressApiServer implements ApiServer {
 	startListen = async () => {
 		const port = process.env.SERVER_PORT || this.DEFAULT_PORT;
 		this.httpServer.listen(port, () => {
-			console.log(`The server is running and listening at http://localhost:${port}`);
+			this.logger.info(`The server is running and listening at http://localhost:${port}`);
 		});
 	};
 

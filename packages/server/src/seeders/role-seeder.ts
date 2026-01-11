@@ -7,12 +7,16 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import { Role } from "../domain-entities/role.js";
 import RoleFactory from "../domain-entities/factory/role-factory.js";
 import {DatabaseContext} from "../dal/database-context.js";
+import Logger from "../logging/logger.js";
 
 @injectable()
 export class RoleSeeder implements Seeder {
 
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
+
+	@inject(INJECTABLE_TYPES.Logger)
+	logger: Logger;
 
 	seed = async (databaseContext: DatabaseContext): Promise<void> => {
 		let allUsersRole: Role = await databaseContext.roleRepository.findOneByName(EVERYONE);
@@ -23,7 +27,7 @@ export class RoleSeeder implements Seeder {
 			}
 			allUsersRole = this.roleFactory.build({name: EVERYONE, world: null, acl: []});
 			await databaseContext.roleRepository.create(allUsersRole);
-			console.log(`Created default role "${EVERYONE}"`);
+			this.logger.info(`Created default role "${EVERYONE}"`);
 		}
 		let loggedInRole: Role = await databaseContext.roleRepository.findOneByName(LOGGED_IN);
 		if (!loggedInRole) {
@@ -39,7 +43,7 @@ export class RoleSeeder implements Seeder {
 				principalType: ROLE
 			});
 			await databaseContext.serverConfigRepository.update(server);
-			console.log(`Created default role "${LOGGED_IN}"`);
+			this.logger.info(`Created default role "${LOGGED_IN}"`);
 		}
 	};
 }

@@ -9,6 +9,7 @@ import {MockSessionContextFactory} from "./mock-session-context-factory.js";
 import {DefaultTestingContext} from "./default-testing-context.js";
 import {TEST_INJECTABLE_TYPES} from "./injectable-types.js";
 import RpgToolsServer from "../../src/server/rpgtools-server.js";
+import Logger from '../../src/logging/logger.js';
 
 process.env.ACCESS_TOKEN_SECRET = "asdf1234";
 process.env.REFRESH_TOKEN_SECRET = "asdf1234";
@@ -25,6 +26,9 @@ container.bind<DefaultTestingContext>(TEST_INJECTABLE_TYPES.DefaultTestingContex
 
 const server = container.get<RpgToolsServer>(INJECTABLE_TYPES.RpgToolsServer);
 const dbEngine = container.get<DbEngine>(INJECTABLE_TYPES.DbEngine);
+const logger = container.get<Logger>(INJECTABLE_TYPES.Logger);
+logger.silence();
+
 
 beforeAll(async () => {
 	dbEngine.setDbHost("localhost");

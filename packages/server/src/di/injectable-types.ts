@@ -212,4 +212,5 @@ export const INJECTABLE_TYPES = {
 	// repo mapper
 	EntityMapper: Symbol.for("EntityMapper"),
 
+	Logger: Symbol.for("Logger"),
 };
