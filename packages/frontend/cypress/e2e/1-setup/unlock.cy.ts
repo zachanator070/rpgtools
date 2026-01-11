@@ -1,4 +1,4 @@
-import {goHome, seedNewServer} from "../../util/helper";
+import {goHome, seedNewServer, stopApp} from "../../util/helper";
 import {ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME, UNLOCK_CODE} from "../../util/constants";
 
 describe("Unlock server test", () => {
@@ -8,6 +8,10 @@ describe("Unlock server test", () => {
     beforeEach(() => {
         seedNewServer();
         goHome();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it("failure", () => {

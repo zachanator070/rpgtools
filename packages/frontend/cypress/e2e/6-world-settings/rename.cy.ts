@@ -1,10 +1,14 @@
-import {adminLogin, goToWorldSettings, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToWorldSettings, seedMiddleEarth, stopApp} from "../../util/helper";
 
 describe("world settings rename", () => {
     beforeEach(() => {
         seedMiddleEarth();
         adminLogin();
         goToWorldSettings();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it("rename", () => {

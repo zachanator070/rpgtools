@@ -1,4 +1,4 @@
-import {goHome, logout, seedMiddleEarth} from "../../util/helper";
+import {goHome, logout, seedMiddleEarth, stopApp} from "../../util/helper";
 import {TEST_USER_PASSWORD, TEST_USER_USERNAME} from "../../util/constants";
 
 describe("login", () => {
@@ -9,7 +9,11 @@ describe("login", () => {
         goHome();
         cy.get("a").contains("Login").click();
     });
-
+    
+    after(() => {
+        stopApp();
+    });
+    
     it("success", () => {
         cy.get("#loginEmail").type(TEST_USER_USERNAME);
         cy.get('#loginPassword').type(TEST_USER_PASSWORD);

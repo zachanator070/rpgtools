@@ -1,4 +1,4 @@
-import {goHome, adminLogin, seedMiddleEarth} from "../../util/helper";
+import {goHome, adminLogin, seedMiddleEarth, stopApp} from "../../util/helper";
 
 describe("logout", () => {
 
@@ -8,6 +8,10 @@ describe("logout", () => {
         goHome();
     });
 
+    after(() => {
+        stopApp();
+    });
+    
     it("logout", () => {
         cy.get('#logoutButton').click();
         cy.get('a').should('contain.text', 'Login');

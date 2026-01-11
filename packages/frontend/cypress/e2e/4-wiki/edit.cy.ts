@@ -1,4 +1,4 @@
-import {adminLogin, goToEditWiki, seedMiddleEarth} from "../../util/helper";
+import {adminLogin, goToEditWiki, seedMiddleEarth, stopApp} from "../../util/helper";
 import {MIDDLE_EARTH_WIKI_URL, TEST_IMAGE} from "../../util/constants";
 
 describe('edit wiki', () => {
@@ -7,6 +7,10 @@ describe('edit wiki', () => {
         seedMiddleEarth();
         adminLogin();
         goToEditWiki();
+    });
+
+    after(() => {
+        stopApp();
     });
 
     it('content change', () => {
