@@ -10,7 +10,7 @@ FRONTEND_BUILD_DEST=packages/server/dist/frontend
 
 PROD_FRONTEND_JS=packages/server/dist/frontend/production.txt
 DEV_FRONTEND_JS=packages/server/dist/frontend/development.txt
-FRONTEND_TS=$(shell find packages/frontend/src -name *.ts)
+FRONTEND_TS=$(shell find packages/frontend/src -name '*.ts')
 
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
 SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
