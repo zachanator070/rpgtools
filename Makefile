@@ -315,7 +315,7 @@ $(ELECTRON_PACKAGE_JSON): $(SERVER_PACKAGE_JSON)
 ELECTRON_DEPS=$(PROD_FRONTEND_JS) $(SERVER_JS) $(ELECTRON_PACKAGE_JSON)
 
 # creates executable
-electron-package: $(ELECTRON_APP)
+electron-package: .env $(ELECTRON_APP)
 
 $(ELECTRON_APP): $(ELECTRON_DEPS)
 	npm run electron:package
@@ -325,5 +325,5 @@ ifeq ($(origin GITHUB_ACTIONS),environment)
 endif
 
 # creates installable package
-electron-make: $(ELECTRON_DEPS)
+electron-make: .env $(ELECTRON_DEPS)
 	npm run electron:make
