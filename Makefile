@@ -10,10 +10,10 @@ FRONTEND_BUILD_DEST=packages/server/dist/frontend
 
 PROD_FRONTEND_JS=packages/server/dist/frontend/production.txt
 DEV_FRONTEND_JS=packages/server/dist/frontend/development.txt
-FRONTEND_TS=$(shell find packages/frontend/src -name '*.ts')
+FRONTEND_TS=$(wildcard packages/frontend/src/**/*.ts packages/frontend/src/*.ts)
 
 SERVER_JS=$(SERVER_BUILD_DEST)/src/index.js
-SERVER_TS=$(shell find packages/server/src -name '*.ts' -o -name '*.js' -o -name '*.cjs' -o -name '*.html')
+SERVER_TS=$(wildcard packages/server/src/**/*.ts packages/server/src/**/*.js packages/server/src/**/*.cjs packages/server/src/**/*.html packages/server/src/*.ts packages/server/src/*.js packages/server/src/*.cjs packages/server/src/*.html)
 
 ELECTRON_APP=$(shell ./dev/scripts/electron-app-location.sh)
 ELECTRON_DEB=out/make/deb/x64/rpgtools-server_$(VERSION)_amd64.deb
