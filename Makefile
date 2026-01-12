@@ -222,7 +222,7 @@ prod-deps: NODE_ENV=production
 prod-deps: $(NODE_MODULES)
 
 $(NODE_MODULES): package-lock.json
-	$(DOCKER_EXEC) npm ci
+	npm ci
 
 ################
 # BUILD SERVER #
@@ -325,5 +325,6 @@ ifeq ($(origin GITHUB_ACTIONS),environment)
 endif
 
 # creates installable package
+# Cannot use docker here because a nodejs container for windows does not exist. The GH actions runner doesn't support linux containers on windows hosts.
 electron-make: .env $(ELECTRON_DEPS)
 	npm run electron:make
