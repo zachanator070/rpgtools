@@ -14,6 +14,9 @@ import "./favicon.ico";
 import { RetryLink } from "@apollo/client/link/retry";
 import fetchSubtypes from "./fetchSubtypes";
 import {createRoot} from "react-dom/client";
+import { ThemeProvider } from "./ThemeContext";
+import { ConfigProvider } from "antd";
+import "./css/dark-mode.css";
 
 fetchSubtypes().then(possibleTypes => {
 
@@ -112,14 +115,25 @@ fetchSubtypes().then(possibleTypes => {
 		connectToDevTools: true,
 	});
 
+	// Component to wrap app with providers
+	function RootApp() {
+		return (
+			<ConfigProvider>
+				<DndProvider backend={HTML5Backend}>
+					<BrowserRouter>
+						<ApolloProvider client={client}>
+							<App />
+						</ApolloProvider>
+					</BrowserRouter>
+				</DndProvider>
+			</ConfigProvider>
+		);
+	}
+
 	const root = createRoot(document.getElementById("app"));
 	root.render(
-		<DndProvider backend={HTML5Backend}>
-			<BrowserRouter>
-				<ApolloProvider client={client}>
-					<App />
-				</ApolloProvider>
-			</BrowserRouter>
-		</DndProvider>
+		<ThemeProvider>
+			<RootApp />
+		</ThemeProvider>
 	);
 });
