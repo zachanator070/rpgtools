@@ -1,0 +1,10 @@
+/* Dropdown Dark Mode Styles */
+
+[data-theme="dark"] .ant-dropdown-menu, /* Ant Design context dropdown menu */
+[data-theme="dark"] .ant-dropdown-menu-item, /* Ant Design context dropdown menu item */
+[data-theme="dark"] .ant-btn-default  /* Ant Design dropdown button */
+{
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}

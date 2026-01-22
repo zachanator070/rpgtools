@@ -1,0 +1,21 @@
+/* Quill Editor Dark Mode Styles */
+
+[data-theme="dark"] .ql-toolbar {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .ql-editor, div.ql-editor.ql-blank::before  {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .ql-fill, .ql-stroke {
+  stroke: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ql-toolbar span {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}

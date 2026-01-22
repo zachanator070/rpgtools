@@ -1,0 +1,11 @@
+/* Popover Dark Mode Styles */
+
+[data-theme="dark"] .ant-popover-inner-content {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-popover-arrow-content {
+  background-color: var(--bg-primary) !important;
+  --antd-arrow-background-color: var(--bg-primary) !important;
+}

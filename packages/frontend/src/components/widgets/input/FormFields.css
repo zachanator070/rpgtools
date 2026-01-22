@@ -1,0 +1,22 @@
+/* Input and Select Dark Mode Styles */
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select,
+[data-theme="dark"] .ant-select-selector, /* Ant Design select component */
+[data-theme="dark"] .ant-select-item, /* Ant Design select dropdown item */
+[data-theme="dark"] .ant-select-arrow, /* Ant Design dropdown arrow */
+[data-theme="dark"] .ant-select-dropdown, /* Ant Design select dropdown */
+[data-theme="dark"] .ant-select-selection-placeholder /* Ant Design placeholder text*/
+{ 
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color-secondary) !important;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus 
+{
+    border-color: var(--text-primary) !important;
+}

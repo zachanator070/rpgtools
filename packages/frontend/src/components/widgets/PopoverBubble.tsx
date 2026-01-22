@@ -1,6 +1,7 @@
 import React from 'react';
 import {Popover} from "antd";
 import {WidgetProps} from "./WidgetProps";
+import './PopoverBubble.css';
 
 interface PopoverBubbleProps extends WidgetProps {
     children: React.ReactNode,

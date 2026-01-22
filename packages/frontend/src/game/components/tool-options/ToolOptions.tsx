@@ -11,6 +11,7 @@ import {
 	SELECT_LOCATION_CONTROLS,
 	SELECT_MODEL_CONTROLS
 } from "../../GameState";
+import './ToolOptions.css';
 
 interface ToolOptionsProps {
 	controlsMode: string;

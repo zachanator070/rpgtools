@@ -17,6 +17,7 @@ import {createRoot} from "react-dom/client";
 import { ThemeProvider } from "./ThemeContext";
 import { ConfigProvider } from "antd";
 import "./css/dark-mode.css";
+import "./components/widgets/TextAndLinks.css";
 
 fetchSubtypes().then(possibleTypes => {
 

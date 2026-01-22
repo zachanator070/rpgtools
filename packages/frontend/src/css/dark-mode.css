@@ -13,97 +13,22 @@
 }
 
 :root[data-theme="dark"] {
-  --bg-primary: #141414;
-  --bg-secondary: #1f1f1f;
+  --bg-primary: #2b2b2b;
+  --bg-secondary: #333333;
+  --bg-tertiary: #3b3b3b;
   --text-primary: #e6e6e6;
   --text-secondary: #a6a6a6;
   --border-color: #434343;
+  --border-color-secondary: #878787;
+  --border-color-tertiary: #e6e6e6;
   --shadow-color: rgba(0, 0, 0, 0.45);
   --nav-bg: #1f1f1f;
   --drawer-bg: #1f1f1f;
   --card-bg: #262626;
+  --color-tertiary: #41719e;
 }
 
-/* Apply theme to existing classes */
 [data-theme="dark"] body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
-
-[data-theme="dark"] .nav-bar {
-  background-color: var(--nav-bg);
-  border-bottom: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .drawer-content {
-  background-color: var(--drawer-bg);
-  border-right-color: var(--border-color);
-  border-left-color: var(--border-color);
-}
-
-[data-theme="dark"] .drawer-button {
-  background-color: var(--card-bg);
-  box-shadow: 0 0 0.33em var(--shadow-color);
-}
-
-[data-theme="dark"] .search-results {
-  background-color: var(--card-bg);
-}
-
-[data-theme="dark"] .message-box {
-  background-color: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .breadcrumbs {
-  background-color: var(--nav-bg);
-  border-bottom-color: var(--border-color);
-}
-
-[data-theme="dark"] .ql-toolbar {
-  background: var(--card-bg);
-  border-bottom-color: var(--border-color);
-}
-
-[data-theme="dark"] .ql-editor {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .background-white {
-  background-color: var(--card-bg);
-}
-
-[data-theme="dark"] .shadow-sm {
-  box-shadow: 0 0 1em var(--shadow-color);
-}
-
-[data-theme="dark"] .ant-tabs-tab {
-  color: var(--text-secondary);
-}
-
-[data-theme="dark"] .ant-tabs-tab-active {
-  color: var(--text-primary);
-}
-
-/* Link styling for dark mode */
-[data-theme="dark"] a, h1, h2, h3, h4, h5, h6, label {
-  color: var(--text-primary) !important;
-}
-[data-theme="dark"] a:link {
-  color: var(--text-primary) !important;
-}
-
-[data-theme="dark"] a:visited {
-  color: var(--text-secondary) !important;
-}
-
-[data-theme="dark"] a:hover {
-  color: var(--text-primary) !important;
-}
-
-[data-theme="dark"] a:active {
-  color: var(--text-primary) !important;
-}
-

@@ -2,3 +2,12 @@
     margin-left: .5em;
     margin-right: .5em;
 }
+
+[data-theme="dark"] .nav-bar {
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .shadow-sm {
+  box-shadow: 0 0 1em var(--shadow-color);
+}

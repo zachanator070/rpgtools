@@ -1,0 +1,22 @@
+/* Tabs Dark Mode Styles */
+
+[data-theme="dark"] .ant-tabs-tab {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn  {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-list-item, .ant-list-empty-text, .ant-tabs-content {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active {
+  border-bottom: none !important;
+}
+
+[data-theme="dark"] .ant-tabs-card.ant-tabs-left > .ant-tabs-nav .ant-tabs-tab-active {
+  border-right: none !important;
+}

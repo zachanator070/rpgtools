@@ -2,6 +2,7 @@ import { Table } from "antd";
 import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
 import React from "react";
 import TextInput from "./input/TextInput";
+import './ListTable.css';
 
 export interface ColumnDefinition<T> {
     field: string;

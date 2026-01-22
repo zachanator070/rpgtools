@@ -1,0 +1,5 @@
+/* Collapse Dark Mode Styles */
+
+[data-theme="dark"] .ant-collapse-header {
+  color: var(--text-primary) !important;
+}

@@ -178,10 +178,6 @@ body {
 	box-shadow: 0 0 1em;
 }
 
-.background-white {
-	background-color: white;
-}
-
 .nav-bar {
 	background-color: white;
 	z-index: 10;
@@ -251,51 +247,13 @@ div.ant-upload-list-item {
 	z-index: 9;
 }
 
-.drawer-content {
-	display: inline-block;
-	padding: 1em;
-	width: 100%;
-	height: 100%;
-	border-right: thin lightgrey solid;
-	border-left: thin lightgrey solid;
-	background-color: white;
-	overflow: auto;
-}
-
-.drawer-button {
-	display: inline-block;
-	position: absolute;
-	margin-left: 1em;
-	margin-top: 1em;
-	margin-right: 1em;
-	background-color: white;
-	border-radius: .33em;
-	padding: .33em;
-	box-shadow: 0 0 .33em;
-}
-
-.search-results {
-	position: relative;
-	top: 1em;
-	background-color: white;
-}
-
 .map-upload {
 	width: 16.5em;
 	padding: 2em;
 	margin: auto;
 }
 
-.message-box {
-	border: thin solid lightgrey;
-	border-radius: .33em;
-	padding: 1em;
-	height: 19em;
-	overflow: auto;
-}
-
 .breadcrumbs {
-	background-color: white;
 	z-index: 9;
 	padding: .33em;
 	position: relative;

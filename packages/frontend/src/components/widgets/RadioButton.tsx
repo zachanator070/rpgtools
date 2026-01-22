@@ -1,6 +1,7 @@
 import { Radio } from 'antd';
 import React from 'react';
 import {WidgetProps} from "./WidgetProps";
+import './RadioButton.css';
 
 export interface RadioButtonProps extends WidgetProps {
     value: string;

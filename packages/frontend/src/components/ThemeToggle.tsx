@@ -12,7 +12,6 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
 
   return (
     <Button
-      type="text"
       icon={theme === "light" ? <MoonOutlined /> : <SunOutlined />}
       onClick={toggleTheme}
       className={className}

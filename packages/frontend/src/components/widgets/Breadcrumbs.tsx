@@ -1,6 +1,7 @@
 import React from 'react';
 import {Breadcrumb} from "antd";
 import {WidgetProps} from "./WidgetProps";
+import './Breadcrumbs.css';
 
 interface BreadcrumbsProps extends WidgetProps {
     children: React.ReactNode

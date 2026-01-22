@@ -1,5 +1,6 @@
 import React from 'react';
 import {Timeline} from "antd";
+import './VerticalTimeline.css';
 
 interface TimelineItem {
     children: React.ReactNode;

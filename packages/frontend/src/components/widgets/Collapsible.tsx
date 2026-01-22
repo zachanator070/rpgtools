@@ -1,5 +1,6 @@
 import React from 'react';
 import {Collapse} from "antd";
+import './Collapsible.css';
 
 export default function Collapsible({title, startOpen, children}) {
     return <Collapse ghost>

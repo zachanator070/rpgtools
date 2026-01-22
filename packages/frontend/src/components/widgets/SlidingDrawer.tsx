@@ -3,6 +3,7 @@ import {Drawer} from "antd";
 import PrimaryButton from "./PrimaryButton";
 import HamburgerMenuIcon from "./icons/HamburgerMenuIcon";
 import {WidgetProps} from "./WidgetProps";
+import './SlidingDrawer.css';
 
 interface SlidingDrawerProps extends WidgetProps {
 	title?: string;
