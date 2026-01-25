@@ -17,6 +17,7 @@ import LocationIcon from "../../components/widgets/icons/LocationIcon";
 import ToolTip from "../../components/widgets/ToolTip";
 import PermissionModal from "../../components/modals/PermissionModal";
 import PeopleIcon from "../../components/widgets/icons/PeopleIcon";
+import './GameControlsToolbar.css';
 
 
 interface GameControlsToolbarProps {
@@ -126,7 +127,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 							style={{
 								padding: "10px",
 								width: "40px",
-								backgroundColor: mode === controlsMode ? "#e6f7ff" : "white",
+								backgroundColor: mode === controlsMode ? "var(--bg-secondary)" : "var(--bg-primary)",
 								borderTop: mode === controlsMode ? "3px solid #1890ff" : "none",
 								cursor: "pointer",
 							}}
@@ -157,7 +158,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 				refetch={refetchCurrentGame}
 			/>
 			<ToolTip title={"Game Permissions"}>
-				<div style={{ padding: "10px", backgroundColor: "white" }}>
+				<div style={{ padding: "10px", backgroundColor: "var(--bg-primary)" }}>
 					<a
 						onClick={() => {
 							setPermissionModalVisibility(true);
@@ -185,7 +186,7 @@ export default function GameControlsToolbar({ controlsMode, setControlsMode }: G
 					justifyContent: 'center'
 				}}
 			>
-				<div style={{ backgroundColor: "white", display: 'flex', alignItems: 'center' }}>{menu}</div>
+				<div className="game-controls-toolbar" style={{ backgroundColor: "white", display: 'flex', alignItems: 'center' }}>{menu}</div>
 				<div className={"margin-lg-left"}>
 					<LeaveGameButton />
 				</div>

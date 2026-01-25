@@ -1,0 +1,7 @@
+/* Primary Danger Button Dark Mode Styles */
+
+[data-theme="dark"] .ant-btn-dangerous {
+  background-color: #d93025 !important;
+  border-color: #d93025 !important;
+  color: var(--text-primary) !important;
+}

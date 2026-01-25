@@ -1,0 +1,3 @@
+[data-theme="dark"] .ant-comment-content-author-name {
+    color: var(--text-primary) !important;
+}

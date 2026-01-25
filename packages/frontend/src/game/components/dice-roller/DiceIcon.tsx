@@ -3,6 +3,7 @@ import {SET_BONUS_ACTION, SET_COUNT_ACTION} from "./DiceRoller";
 import ToolTip from "../../../components/widgets/ToolTip";
 import NumberBadge from "../../../components/widgets/NumberBadge";
 import NumberInput from "../../../components/widgets/input/NumberInput";
+import "./DiceIcon.css";
 
 interface DiceIconProps {
 	reducer: any;

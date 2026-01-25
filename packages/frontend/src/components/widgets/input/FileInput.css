@@ -1,0 +1,11 @@
+[data-theme="dark"] .ant-upload-span {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-upload-span:hover {
+  background-color: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .anticon path {
+  color: var(--text-primary);
+}

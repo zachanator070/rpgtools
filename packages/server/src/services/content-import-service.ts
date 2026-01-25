@@ -30,7 +30,7 @@ export class ContentImportService {
 	@inject(INJECTABLE_TYPES.WikiFolderFactory)
 	wikiFolderFactory: WikiFolderFactory;
 
-	srdZipUrl = process.env.SRD_ZIP_URL || 'https://github.com/zachanator070/rpgtools-srd/releases/download/4.0.1/rpgtools-srd-4.0.1.zip';
+	srdZipUrl = process.env.SRD_ZIP_URL || 'https://github.com/zachanator070/rpgtools-srd/releases/download/4.1.0/rpgtools-srd-4.1.0.zip';
 
 	import5eSrd = async (
 		context: SecurityContext,
@@ -79,7 +79,7 @@ export class ContentImportService {
 		try {
 			await this.processArchive(archive, folder, databaseContext, context);
 		} catch (e) {
-			throw new Error(`Error occurred while processing archive: ${e.message}`);
+			throw new Error(`Error occurred while processing archive: ${e.message}`, { cause: e });
 		}
 
 		return folder;

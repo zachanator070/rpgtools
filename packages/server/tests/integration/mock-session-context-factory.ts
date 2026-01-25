@@ -11,6 +11,9 @@ class MockCookieManager implements CookieManager {
 	clearCookie(cookie: string): void {}
 
 	setCookie(cookie: string, value: string, age: number): void {}
+	getResponseCookie(cookie: string): string | undefined {
+		return undefined;
+	}
 }
 
 @injectable()

@@ -1,6 +1,7 @@
 import React, {ReactComponentElement} from 'react';
 import {Modal} from "antd";
 import {WidgetProps} from "./WidgetProps";
+import './FullScreenModal.css';
 
 interface FullScreenModalProps extends WidgetProps {
     title: string;

@@ -10,6 +10,7 @@ import {ControllerContext} from "./GameContent";
 import {DiceType, LoadedDiceRoll} from "../controller/DiceController";
 import GameControllerFacade from "../GameControllerFacade";
 import {GameMessage} from "../../types";
+import './GameChat.css';
 
 export default function GameChat() {
 	const { currentGame } = useCurrentGame();

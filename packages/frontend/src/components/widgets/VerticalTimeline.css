@@ -1,0 +1,5 @@
+/* Timeline Dark Mode Styles */
+
+[data-theme="dark"] .ant-timeline-item {
+  color: var(--text-primary) !important;
+}

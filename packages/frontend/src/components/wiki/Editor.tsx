@@ -9,6 +9,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import LoadingView from "../LoadingView";
 import useSearchWikiPages from "../../hooks/wiki/useSearchWikiPages";
 import {useNavigate, useParams} from "react-router-dom";
+import './Editor.css';
 
 Quill.debug("error");
 
@@ -119,9 +120,6 @@ export default function Editor({ content, readOnly, onInit }: EditorProps) {
 	return (
 		<div
 			id="editor"
-			style={{
-				color: "black",
-			}}
 		/>
 	);
 };

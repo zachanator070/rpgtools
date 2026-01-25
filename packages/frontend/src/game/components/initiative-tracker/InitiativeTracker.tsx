@@ -5,6 +5,7 @@ import useCurrentGame from "../../../hooks/game/useCurrentGame";
 import useSetCharacterOrder from "../../../hooks/game/useSetCharacterOrder";
 import useGameRosterSubscription from "../../../hooks/game/useGameRosterSubscription";
 import {GameCharacter} from "../../../types";
+import './InitiativeTracker.css';
 
 export default function InitiativeTracker() {
 	const { currentGame } = useCurrentGame();
@@ -49,6 +50,7 @@ export default function InitiativeTracker() {
 				alignItems: "center",
 				height: "6em",
 			}}
+			className="initiative-tracker"
 		>
 			<InitiativeTrackerDummyCard
 				setData={setData}

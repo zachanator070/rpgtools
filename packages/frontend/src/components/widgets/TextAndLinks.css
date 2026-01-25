@@ -1,0 +1,12 @@
+/* Link Dark Mode Styles */
+
+[data-theme="dark"] a, h1, h2, h3, h4, h5, h6, label {
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] a:link, a:visited, a:hover, a:active {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] a:hover {
+  text-decoration: underline;
+}

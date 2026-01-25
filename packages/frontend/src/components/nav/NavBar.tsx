@@ -8,6 +8,8 @@ import WorldIcon from "../widgets/icons/WorldIcon";
 import ServerIcon from "../widgets/icons/ServerIcon";
 import LoginOptions from "./LoginOptions";
 import WorldLinks from "./WorldLinks";
+import { ThemeToggle } from "../ThemeToggle";
+import './NavBar.css';
 
 export default function NavBar() {
 
@@ -52,6 +54,8 @@ export default function NavBar() {
 				<div className={'navbar-item'}>
 					<LoginOptions/>
 				</div>
+
+				<ThemeToggle />
 
 			</div>
 		</div>

@@ -1,0 +1,10 @@
+/* Table Dark Mode Styles */
+
+[data-theme="dark"] .ant-table-content, .ant-table-cell {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ant-empty-normal {
+  color: var(--text-secondary) !important;
+}

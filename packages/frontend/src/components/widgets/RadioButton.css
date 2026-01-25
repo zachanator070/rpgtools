@@ -1,0 +1,6 @@
+/* Radio Button Dark Mode Styles */
+
+[data-theme="dark"] .ant-radio-button-wrapper {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}

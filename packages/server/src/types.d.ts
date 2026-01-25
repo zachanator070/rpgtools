@@ -56,6 +56,7 @@ export interface EntityFactory<T, M extends Model> {
 export interface CookieManager {
 	setCookie: (cookie: string, value: string, age: number) => void;
 	clearCookie: (cookie: string) => void;
+	getResponseCookie: (cookie: string) => string | undefined;
 }
 
 export interface SessionContext {

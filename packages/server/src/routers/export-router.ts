@@ -8,12 +8,23 @@ import {ExpressCookieManager} from "../server/express-cookie-manager.js";
 
 let ExportRouter = express.Router();
 
+// Set timeout for export requests to 10 minutes (600000 ms) to handle large exports
+ExportRouter.use((req, res, next) => {
+	req.setTimeout(1200000); // 20 minutes
+	res.setTimeout(1200000); // 20 minutes
+	next();
+});
+
 ExportRouter.get("/:model/:id", async (req, res) => {
 	const sessionFactory = container.get<SessionContextFactory>(INJECTABLE_TYPES.SessionContextFactory);
 	const cookieManager: CookieManager = new ExpressCookieManager(res);
 
-	const refreshToken: string = req.cookies["refreshToken"];
-	const accessToken: string = req.cookies["accessToken"];
+	let refreshToken: string = null;
+	let accessToken: string = null;
+	if (req.cookies) {
+		refreshToken = req.cookies["refreshToken"];
+		accessToken = req.cookies["accessToken"];
+	}
 	const sessionContext = await sessionFactory.create(accessToken, refreshToken, cookieManager);
 
 	const modelName = req.params.model;

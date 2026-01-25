@@ -1,0 +1,3 @@
+[data-theme="dark"] .ant-drawer-content {
+    background-color: var(--bg-secondary) !important;
+}

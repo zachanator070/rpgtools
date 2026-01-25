@@ -1,0 +1,5 @@
+/* Breadcrumbs Dark Mode Styles */
+
+[data-theme="dark"] .breadcrumbs {
+  border-bottom-color: var(--border-color);
+}

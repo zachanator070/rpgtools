@@ -19,7 +19,7 @@ export interface CookieConstants {
 }
 export const ACCESS_TOKEN = "accessToken";
 export const REFRESH_TOKEN = "refreshToken";
-export const ACCESS_TOKEN_MAX_AGE: CookieConstants = { string: "30m", ms: 1000 * 60 * 30 };
+export const ACCESS_TOKEN_MAX_AGE: CookieConstants = { string: "5m", ms: 1000 * 60 * 5 };
 export const REFRESH_TOKEN_MAX_AGE: CookieConstants = { string: "1d", ms: 1000 * 60 * 60 * 24 };
 
 @injectable()
@@ -116,9 +116,17 @@ export class AuthenticationService {
 		if (!user || !bcrypt.compareSync(password, user.password)) {
 			throw Error("Login failure: username or password are incorrect");
 		}
-		let tokens = await this.createTokens(user, null, databaseContext);
-		cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
-		cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
+		const refreshToken = cookieManager.getResponseCookie(REFRESH_TOKEN);
+		const accessToken = cookieManager.getResponseCookie(ACCESS_TOKEN);
+		if (!refreshToken && !accessToken) {
+			let tokens = await this.createTokens(user, null, databaseContext);
+			if (!accessToken) {
+				cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
+			}
+			if (!refreshToken) {
+				cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
+			}
+		}
 		return user;
 	};
 
