@@ -8,3 +8,8 @@
 [data-theme="dark"] .ant-modal-close-icon, .ant-modal-title {
   color: var(--text-primary) !important;
 }
+
+[data-theme="dark"] .ant-modal-confirm-content, .ant-modal-confirm-title {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}

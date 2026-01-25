@@ -7,7 +7,7 @@
 }
 
 [data-theme="dark"] .ql-editor, div.ql-editor.ql-blank::before  {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
 }
 
@@ -15,7 +15,7 @@
   stroke: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .ql-toolbar span {
+[data-theme="dark"] .ql-toolbar span, .mention {
   background: var(--card-bg) !important;
   color: var(--text-primary) !important;
 }

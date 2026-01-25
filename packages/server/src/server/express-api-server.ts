@@ -115,36 +115,6 @@ export class ExpressApiServer implements ApiServer {
 			]
 		});
 
-		this.expressServer.get("*.js", function (req: Request, res: Response, next: NextFunction) {
-			req.url = req.url + ".gz";
-			res.set("Content-Encoding", "gzip");
-			res.set("Content-Type", "text/javascript");
-			next();
-		});
-		this.expressServer.get("*.css", function (req: Request, res: Response, next: NextFunction) {
-			req.url = req.url + ".gz";
-			res.set("Content-Encoding", "gzip");
-			res.set("Content-Type", "text/css");
-			next();
-		});
-
-		this.expressServer.use(expressRequestContextMiddleware(sessionContextFactory));
-
-		this.expressServer.use("/images", ImageRouter);
-		this.expressServer.use("/models", ModelRouter);
-		this.expressServer.use("/export", ExportRouter);
-
-		const currentDir = import.meta.dirname;
-		// /opt/rpgtools/packages/server/dist/frontend
-		// need to output in the server package so electron app is packaged with UI bundle
-		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
-
-		this.expressServer.get("/ui*", (_: Request, res: Response) => {
-			return res.sendFile(path.resolve(uiPath, "index.html"));
-		});
-
-		this.expressServer.use(express.static(uiPath));
-
 		this.expressServer.set('trust proxy', process.env.NODE_ENV !== 'production');
 	}
 
@@ -219,6 +189,36 @@ export class ExpressApiServer implements ApiServer {
 				},
 			}),
 		);
+
+		this.expressServer.get("*.js", function (req: Request, res: Response, next: NextFunction) {
+			req.url = req.url + ".gz";
+			res.set("Content-Encoding", "gzip");
+			res.set("Content-Type", "text/javascript");
+			next();
+		});
+		this.expressServer.get("*.css", function (req: Request, res: Response, next: NextFunction) {
+			req.url = req.url + ".gz";
+			res.set("Content-Encoding", "gzip");
+			res.set("Content-Type", "text/css");
+			next();
+		});
+
+		this.expressServer.use(expressRequestContextMiddleware(this.sessionContextFactory));
+
+		this.expressServer.use("/images", ImageRouter);
+		this.expressServer.use("/models", ModelRouter);
+		this.expressServer.use("/export", ExportRouter);
+
+		const currentDir = import.meta.dirname;
+		// /opt/rpgtools/packages/server/dist/frontend
+		// need to output in the server package so electron app is packaged with UI bundle
+		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
+
+		this.expressServer.get("/ui*", (_: Request, res: Response) => {
+			return res.sendFile(path.resolve(uiPath, "index.html"));
+		});
+
+		this.expressServer.use(express.static(uiPath));
 
 		this.expressServer.use(cors({
 			origin: ["https://studio.apollographql.com"],
