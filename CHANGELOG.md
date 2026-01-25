@@ -1,2 +1,5 @@
- ### RPG Tools v5.4.1 Changelog
- - Delete .cache directory after packaging electron
+ ### RPG Tools v5.50 Changelog
+ - Added support for dark mode
+    - Added darkmode button in nav bar
+    - Added multitude of .css files that update styles based on the data-theme html attribute
+ - Fixed a bug where authentication headers weren't parsed before rest routers were called
