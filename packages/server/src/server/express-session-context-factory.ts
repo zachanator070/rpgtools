@@ -38,10 +38,8 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 
 		let currentUser = await this.authenticationService.getUserFromAccessToken(accessToken, databaseContext);
 
+		// if access token is invalid, try validating refresh token
 		if (!currentUser) {
-			if (cookieManager) {
-				cookieManager.clearCookie(ACCESS_TOKEN);
-			}
 
 			currentUser = await this.authenticationService.getUserFromRefreshToken(
 				refreshToken,
@@ -68,6 +66,7 @@ export class ExpressSessionContextFactory implements SessionContextFactory {
 					if (cookieManager) {
 						cookieManager.clearCookie(REFRESH_TOKEN);
 					}
+					currentUser = this.userFactory.build({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});
 				}
 			} else {
 				currentUser = this.userFactory.build({_id: uuidv4(), email: "", username: ANON_USERNAME, password: "", tokenVersion: "", currentWorld: null, roles: []});

@@ -154,6 +154,9 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use(requestLoggerMiddleware(this.logger));
 
 		this.expressServer.use(cookieParser());
+		// Apply the expressRequestContextMiddleware to set up session context for both /graphql and REST endpoints
+		this.expressServer.use(expressRequestContextMiddleware(this.sessionContextFactory));
+
 		this.expressServer.use(graphqlUploadExpress());
 
 		// Middleware to log GraphQL errors in the response
@@ -177,15 +180,8 @@ export class ExpressApiServer implements ApiServer {
 		this.expressServer.use("/graphql",
 				expressMiddleware(this.gqlServer, {
 				context: async ({req, res}: {req: Request, res: Response}) => {
-					const cookieManager: CookieManager = new ExpressCookieManager(res);
-
-					const refreshToken: string = req?.cookies["refreshToken"];
-					const accessToken: string = req?.cookies["accessToken"];
-					const context = await this.sessionContextFactory.create(accessToken, refreshToken, cookieManager);
-					if (res) {
-						res.locals.session = context;
-					}
-					return context;
+					// constructed already by the expressRequestContextMiddleware. 
+					return req.app.locals.context;
 				},
 			}),
 		);
@@ -202,8 +198,6 @@ export class ExpressApiServer implements ApiServer {
 			res.set("Content-Type", "text/css");
 			next();
 		});
-
-		this.expressServer.use(expressRequestContextMiddleware(this.sessionContextFactory));
 
 		this.expressServer.use("/images", ImageRouter);
 		this.expressServer.use("/models", ModelRouter);
