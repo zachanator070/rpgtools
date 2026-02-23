@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { existsSync } from "fs";
 import http, { request, Server } from "http";
 import { ApolloServer, GraphQLResponse } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -149,6 +150,11 @@ export class ExpressApiServer implements ApiServer {
 	}
 
 	applyMiddleware = async () => {
+		const currentDir = import.meta.dirname;
+		// /opt/rpgtools/packages/server/dist/frontend
+		// need to output in the server package so electron app is packaged with UI bundle
+		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
+
 		await this.gqlServer.start();
 		this.expressServer.use(bodyParser.json({limit: "5mb"}));
 		this.expressServer.use(requestLoggerMiddleware(this.logger));
@@ -187,26 +193,27 @@ export class ExpressApiServer implements ApiServer {
 		);
 
 		this.expressServer.get("*.js", function (req: Request, res: Response, next: NextFunction) {
-			req.url = req.url + ".gz";
-			res.set("Content-Encoding", "gzip");
-			res.set("Content-Type", "text/javascript");
+			const gzAssetPath = path.join(uiPath, `${req.path}.gz`);
+			if (existsSync(gzAssetPath)) {
+				req.url = req.url + ".gz";
+				res.set("Content-Encoding", "gzip");
+				res.set("Content-Type", "text/javascript");
+			}
 			next();
 		});
 		this.expressServer.get("*.css", function (req: Request, res: Response, next: NextFunction) {
-			req.url = req.url + ".gz";
-			res.set("Content-Encoding", "gzip");
-			res.set("Content-Type", "text/css");
+			const gzAssetPath = path.join(uiPath, `${req.path}.gz`);
+			if (existsSync(gzAssetPath)) {
+				req.url = req.url + ".gz";
+				res.set("Content-Encoding", "gzip");
+				res.set("Content-Type", "text/css");
+			}
 			next();
 		});
 
 		this.expressServer.use("/images", ImageRouter);
 		this.expressServer.use("/models", ModelRouter);
 		this.expressServer.use("/export", ExportRouter);
-
-		const currentDir = import.meta.dirname;
-		// /opt/rpgtools/packages/server/dist/frontend
-		// need to output in the server package so electron app is packaged with UI bundle
-		const uiPath = path.resolve(currentDir, '..', '..', '..', '..', 'dist', 'frontend');
 
 		this.expressServer.get("/ui*", (_: Request, res: Response) => {
 			return res.sendFile(path.resolve(uiPath, "index.html"));
