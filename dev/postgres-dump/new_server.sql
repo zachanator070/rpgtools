@@ -174,10 +174,10 @@ COPY public."Place" (_id, "pixelsPerFoot", "createdAt", "updatedAt", "mapImageId
 
 
 --
--- Data for Name: RegisterCodes; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Invite; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."RegisterCode" (_id, code, "createdAt", "updatedAt", "ServerConfigId") FROM stdin;
+COPY public."Invite" (_id, "createdAt", "updatedAt", "email", "createdByUserId") FROM stdin;
 \.
 
 

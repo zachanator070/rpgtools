@@ -25,6 +25,7 @@ import { InMemoryPinRepository } from "../dal/in-memory/repositories/in-memory-p
 import { InMemoryPlaceRepository } from "../dal/in-memory/repositories/in-memory-place-repository.js";
 import { InMemoryRoleRepository } from "../dal/in-memory/repositories/in-memory-role-repository.js";
 import { InMemoryServerConfigRepository } from "../dal/in-memory/repositories/in-memory-server-config-repository.js";
+import { InMemoryInviteRepository } from "../dal/in-memory/repositories/in-memory-invite-repository.js";
 import { InMemoryUserRepository } from "../dal/in-memory/repositories/in-memory-user-repository.js";
 import { InMemoryWikiFolderRepository } from "../dal/in-memory/repositories/in-memory-wiki-folder-repository.js";
 import { InMemoryWikiPageRepository } from "../dal/in-memory/repositories/in-memory-wiki-page-repository.js";
@@ -61,6 +62,7 @@ import { Place } from "../domain-entities/place.js";
 import { Role } from "../domain-entities/role.js";
 import { ServerConfig } from "../domain-entities/server-config.js";
 import { ServerConfigDataLoader } from "../dal/dataloaders/server-config-data-loader.js";
+import { Invite } from "../domain-entities/invite.js";
 import { User } from "../domain-entities/user.js";
 import { WikiFolder } from "../domain-entities/wiki-folder.js";
 import { WikiFolderDataLoader } from "../dal/dataloaders/wiki-folder-data-loader.js";
@@ -97,6 +99,7 @@ import { PinAuthorizationPolicy } from "../security/policy/pin-authorization-pol
 import { PlaceAuthorizationPolicy } from "../security/policy/place-authorization-policy.js";
 import { RoleAuthorizationPolicy } from "../security/policy/role-authorization-policy.js";
 import { ServerConfigAuthorizationPolicy } from "../security/policy/server-config-authorization-policy.js";
+import { InviteAuthorizationPolicy } from "../security/policy/invite-authorization-policy.js";
 import { UserAuthorizationPolicy } from "../security/policy/user-authorization-policy.js";
 import { WikiFolderAuthorizationPolicy } from "../security/policy/wiki-folder-authorization-policy.js";
 import { WikiPageAuthorizationPolicy } from "../security/policy/wiki-page-authorization-policy.js";
@@ -120,6 +123,7 @@ import {PinRepository} from "../dal/repository/pin-repository.js";
 import {PlaceRepository} from "../dal/repository/place-repository.js";
 import {RoleRepository} from "../dal/repository/role-repository.js";
 import {ServerConfigRepository} from "../dal/repository/server-config-repository.js";
+import {InviteRepository} from "../dal/repository/invite-repository.js";
 import {UserRepository} from "../dal/repository/user-repository.js";
 import {WikiFolderRepository} from "../dal/repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "../dal/repository/wiki-page-repository.js";
@@ -140,6 +144,7 @@ import PinFactory from "../domain-entities/factory/pin-factory.js";
 import PlaceFactory from "../domain-entities/factory/place-factory.js";
 import RoleFactory from "../domain-entities/factory/role-factory.js";
 import ServerConfigFactory from "../domain-entities/factory/server-config-factory.js";
+import InviteFactory from "../domain-entities/factory/invite-factory.js";
 import UserFactory from "../domain-entities/factory/user-factory.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 import WorldFactory from "../domain-entities/factory/world-factory.js";
@@ -189,6 +194,7 @@ import SqlPinRepository from "../dal/sql/repository/sql-pin-repository.js";
 import SqlPlaceRepository from "../dal/sql/repository/sql-place-repository.js";
 import SqlRoleRepository from "../dal/sql/repository/sql-role-repository.js";
 import SqlServerConfigRepository from "../dal/sql/repository/sql-server-config-repository.js";
+import SqlInviteRepository from "../dal/sql/repository/sql-invite-repository.js";
 import SqlUserRepository from "../dal/sql/repository/sql-user-repository.js";
 import SqlWikiFolderRepository from "../dal/sql/repository/sql-wiki-folder-repository.js";
 import SqlWikiPageRepository from "../dal/sql/repository/sql-wiki-page-repository.js";
@@ -221,6 +227,7 @@ const bindAll = () => {
 	container.bind<Place>(INJECTABLE_TYPES.Place).to(Place);
 	container.bind<Role>(INJECTABLE_TYPES.Role).to(Role);
 	container.bind<ServerConfig>(INJECTABLE_TYPES.ServerConfig).to(ServerConfig);
+	container.bind<Invite>(INJECTABLE_TYPES.Invite).to(Invite);
 	container.bind<User>(INJECTABLE_TYPES.User).to(User);
 	container.bind<WikiFolder>(INJECTABLE_TYPES.WikiFolder).to(WikiFolder);
 	container.bind<World>(INJECTABLE_TYPES.World).to(World);
@@ -240,6 +247,7 @@ const bindAll = () => {
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Place);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Role);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(ServerConfig);
+	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(Invite);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(User);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(WikiFolder);
 	container.bind<DomainEntity>(INJECTABLE_TYPES.DomainEntity).to(World);
@@ -288,6 +296,9 @@ const bindAll = () => {
 	container
 		.bind<ServerConfigFactory>(INJECTABLE_TYPES.ServerConfigFactory)
 		.to(ServerConfigFactory);
+	container
+		.bind<InviteFactory>(INJECTABLE_TYPES.InviteFactory)
+		.to(InviteFactory);
 	container
 		.bind<UserFactory>(INJECTABLE_TYPES.UserFactory)
 		.to(UserFactory);
@@ -356,6 +367,7 @@ const bindAll = () => {
 		container
 			.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
 			.to(SqlServerConfigRepository);
+		container.bind<InviteRepository>(INJECTABLE_TYPES.InviteRepository).to(SqlInviteRepository);
 		container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(SqlUserRepository);
 		container
 			.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
@@ -386,6 +398,7 @@ const bindAll = () => {
 		container
 			.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
 			.to(InMemoryServerConfigRepository);
+		container.bind<InviteRepository>(INJECTABLE_TYPES.InviteRepository).to(InMemoryInviteRepository);
 		container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(InMemoryUserRepository);
 		container
 			.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
@@ -441,6 +454,9 @@ const bindAll = () => {
 	container
 		.bind<ServerConfigAuthorizationPolicy>(INJECTABLE_TYPES.ServerConfigAuthorizationPolicy)
 		.to(ServerConfigAuthorizationPolicy);
+	container
+		.bind<InviteAuthorizationPolicy>(INJECTABLE_TYPES.InviteAuthorizationPolicy)
+		.to(InviteAuthorizationPolicy);
 	container
 		.bind<UserAuthorizationPolicy>(INJECTABLE_TYPES.UserAuthorizationPolicy)
 		.to(UserAuthorizationPolicy);

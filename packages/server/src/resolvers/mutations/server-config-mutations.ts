@@ -17,13 +17,13 @@ export const serverConfigMutations = {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
 		return await databaseContext.openTransaction(async () => service.unlockServer(unlockCode, email, username, password, databaseContext));
 	},
-	generateRegisterCodes: async (
+	inviteUser: async (
 		_: any,
-		{ amount }: { amount: number },
+		{ email }: { email: string },
 		{ securityContext, databaseContext }: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await databaseContext.openTransaction(async () => service.generateRegisterCodes(securityContext, amount, databaseContext));
+		return await databaseContext.openTransaction(async () => service.inviteUser(securityContext, email, databaseContext));
 	},
 	setDefaultWorld: async (
 		_: any,

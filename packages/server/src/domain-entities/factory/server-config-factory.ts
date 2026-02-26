@@ -16,7 +16,6 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
         {
             _id,
             version,
-            registerCodes,
             adminUsers,
             unlockCode,
             acl,
@@ -24,7 +23,6 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
         }: {
             _id?: string,
             version: string,
-            registerCodes: string[],
             adminUsers: string[],
             unlockCode: string,
             acl: AclEntry[],
@@ -34,19 +32,17 @@ export default class ServerConfigFactory implements EntityFactory<ServerConfig, 
         const serverConfig: ServerConfig = new ServerConfig(new ServerConfigAuthorizationPolicy(), this);
         serverConfig._id = _id;
         serverConfig.version = version;
-        serverConfig.registerCodes = registerCodes;
         serverConfig.adminUsers = adminUsers.map(user => user.toString());
         serverConfig.unlockCode = unlockCode;
         serverConfig.acl = acl;
+        serverConfig.defaultWorld = defaultWorld;
         return serverConfig;
     }
 
     async fromSqlModel(model: ServerConfigModel): Promise<ServerConfig> {
-        const registerCodes = await model.getCodes();
         return this.build({
             _id: model._id,
             version: model.version,
-            registerCodes: registerCodes.map(code => code.code),
             adminUsers: (await model.getAdmins()).map(user => user._id),
             unlockCode: model.unlockCode,
             acl: await Promise.all((await model.getAcl()).map(entry => this.aclFactory.fromSqlModel(entry))),

@@ -80,6 +80,29 @@ exports[`authentication-mutations > register bad code 1`] = `
 }
 `;
 
+exports[`authentication-mutations > register without invite 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Registration Error: Email already used",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
 exports[`authentication-mutations > with good register code available > register good 1`] = `
 {
   "data": {
@@ -152,6 +175,86 @@ exports[`authentication-mutations > with good register code available > register
         },
       ],
       "message": "Register code not valid",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > with invite emails available > register good 1`] = `
+{
+  "data": {
+    "register": {
+      "_id": Any<String>,
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`authentication-mutations > with invite emails available > register use code twice 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Registration Error: No invite exists for this email",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > with invite emails available > register use email twice 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Registration Error: Username already used",
+      "path": [
+        "register",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`authentication-mutations > with invite emails available > register use username twice 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "Registration Error: Username already used",
       "path": [
         "register",
       ],

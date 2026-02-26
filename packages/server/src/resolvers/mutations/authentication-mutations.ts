@@ -10,7 +10,6 @@ interface LoginArgs {
 }
 
 interface RegisterArgs {
-	registerCode: string;
 	email: string;
 	username: string;
 	password: string;
@@ -35,12 +34,12 @@ export const authenticationMutations: any = {
 	},
 	register: async (
 		parent: any,
-		{ registerCode, email, username, password }: RegisterArgs,
+		{ email, username, password }: RegisterArgs,
 		{ databaseContext }: SessionContext
 	) => {
 		const authenticationService = container.get<AuthenticationService>(
 			INJECTABLE_TYPES.AuthenticationService
 		);
-		return await databaseContext.openTransaction(async () => authenticationService.register(registerCode, email, username, password, databaseContext));
+		return await databaseContext.openTransaction(async () => authenticationService.registerWithInvite(email, username, password, databaseContext));
 	},
 };

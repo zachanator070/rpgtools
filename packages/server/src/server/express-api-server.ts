@@ -32,6 +32,9 @@ import {ExpressSessionContextFactory} from "./express-session-context-factory.js
 import { ValidationError } from "sequelize";
 import Logger from "../logging/logger.js";
 import requestLoggerMiddleware from "./request-logger-middleware.js";
+import {AuthenticationService} from "../services/authentication-service.js";
+import {ServerProperties} from "./server-properties.js";
+import {createSsoRouter} from "../routers/sso-router.js";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -42,16 +45,22 @@ export class ExpressApiServer implements ApiServer {
 	gqlServer: ApolloServer = null;
 	webSocketServer: WebSocketServer = null;
 	sessionContextFactory: ExpressSessionContextFactory;
+	authenticationService: AuthenticationService;
+	serverProperties: ServerProperties;
 
 	logger: Logger;
 
 	// use constructor injection so middleware can capture injectables
 	constructor(@inject(INJECTABLE_TYPES.SessionContextFactory)
 					sessionContextFactory: ExpressSessionContextFactory, 
-				@inject(INJECTABLE_TYPES.Logger) logger: Logger) {
+				@inject(INJECTABLE_TYPES.Logger) logger: Logger,
+				@inject(INJECTABLE_TYPES.AuthenticationService) authenticationService: AuthenticationService,
+				@inject(INJECTABLE_TYPES.ServerProperties) serverProperties: ServerProperties) {
 
 		this.sessionContextFactory = sessionContextFactory;
 		this.logger = logger;
+		this.authenticationService = authenticationService;
+		this.serverProperties = serverProperties;
 		
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
 
@@ -157,6 +166,7 @@ export class ExpressApiServer implements ApiServer {
 
 		await this.gqlServer.start();
 		this.expressServer.use(bodyParser.json({limit: "5mb"}));
+		this.expressServer.use(bodyParser.urlencoded({extended: true}));
 		this.expressServer.use(requestLoggerMiddleware(this.logger));
 
 		this.expressServer.use(cookieParser());
@@ -190,6 +200,11 @@ export class ExpressApiServer implements ApiServer {
 					return req.app.locals.context;
 				},
 			}),
+		);
+
+		this.expressServer.use(
+			"/auth/sso",
+			createSsoRouter(this.logger, this.authenticationService, this.serverProperties)
 		);
 
 		this.expressServer.get("*.js", function (req: Request, res: Response, next: NextFunction) {

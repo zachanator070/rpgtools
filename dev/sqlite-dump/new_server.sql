@@ -158,7 +158,7 @@ INSERT INTO ServerConfig VALUES ('9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0', '2022-1
 
 
 --
--- Data for Name: RegisterCode; Type: TABLE DATA; Schema: main; Owner: rpgtools
+-- Data for Name: Invite; Type: TABLE DATA; Schema: main; Owner: rpgtools
 --
 
 

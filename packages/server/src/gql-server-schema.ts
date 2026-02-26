@@ -30,12 +30,12 @@ export const typeDefs = gql`
 
 	type Mutation {
 		unlockServer(unlockCode: String!, email: String!, username: String!, password: String!): Boolean
-		generateRegisterCodes(amount: Int!): ServerConfig!
+		inviteUser(email: String!): Invite!
 		setDefaultWorld(worldId: ID!): ServerConfig!
 
 		login(username: String!, password: String!): User!
 		logout: String!
-		register(registerCode: String!, email: String!, username: String!, password: String!): User!
+		register(email: String!, username: String!, password: String!): User!
 		setCurrentWorld(worldId: ID!): User!
 
 		createWorld(name: String!, public: Boolean!): World!
@@ -496,10 +496,16 @@ export const typeDefs = gql`
 		world: World!
 	}
 
+	type Invite {
+		_id: ID!
+		email: String!
+	}
+
 	type ServerConfig implements PermissionControlled {
 		_id: ID!
 		version: String!
-		registerCodes: [String!]!
+		invites: [Invite!]!
+		ssoConfigured: Boolean!
 		accessControlList: [AclEntry!]!
 		canWrite: Boolean!
 		canAdmin: Boolean!

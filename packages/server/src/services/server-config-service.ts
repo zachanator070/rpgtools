@@ -5,11 +5,13 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {
 	ApiServer,
 } from "../types.js";
-import { v4 as uuidv4 } from "uuid";
 import { SecurityContext } from "../security/security-context.js";
 import {AuthenticationService} from "./authentication-service.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import RoleFactory from "../domain-entities/factory/role-factory.js";
+import InviteFactory from "../domain-entities/factory/invite-factory.js";
+import { Invite } from "../domain-entities/invite.js";
+import {ServerProperties} from "../server/server-properties.js";
 
 @injectable()
 export class ServerConfigService {
@@ -21,6 +23,12 @@ export class ServerConfigService {
 
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
+
+	@inject(INJECTABLE_TYPES.InviteFactory)
+	inviteFactory: InviteFactory;
+
+	@inject(INJECTABLE_TYPES.ServerProperties)
+	serverProperties: ServerProperties;
 
 	serverNeedsSetup = async (databaseContext: DatabaseContext): Promise<boolean> => {
 		let adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
@@ -74,7 +82,7 @@ export class ServerConfigService {
 		return true;
 	};
 
-	generateRegisterCodes = async (context: SecurityContext, amount: number, databaseContext: DatabaseContext) => {
+	inviteUser = async (context: SecurityContext, email: string, databaseContext: DatabaseContext): Promise<Invite> => {
 		const serverConfig = await databaseContext.serverConfigRepository.findOne();
 		if (!serverConfig) {
 			throw new Error("Server config doesnt exist!");
@@ -82,16 +90,34 @@ export class ServerConfigService {
 		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
 			throw new Error("You do not have permission to call this method");
 		}
-		const newCodes = Array(amount)
-			.fill("")
-			.map(() => uuidv4());
-		serverConfig.registerCodes = serverConfig.registerCodes.concat(newCodes);
-		await databaseContext.serverConfigRepository.update(serverConfig);
-		return serverConfig;
+
+		const normalizedEmail = email.trim().toLowerCase();
+		if (!normalizedEmail) {
+			throw new Error("Email is required");
+		}
+
+		if ((await databaseContext.userRepository.findByEmail(normalizedEmail)).length > 0) {
+			throw new Error("A user with this email already exists");
+		}
+
+		if ((await databaseContext.inviteRepository.findByEmail(normalizedEmail)).length > 0) {
+			throw new Error("An invite already exists for this email");
+		}
+
+		const invite = this.inviteFactory.build({
+			email: normalizedEmail,
+			createdByUserId: context.user?._id || null,
+		});
+		await databaseContext.inviteRepository.create(invite);
+		return invite;
 	};
 
 	getServerConfig = async (databaseContext: DatabaseContext) => {
 		return databaseContext.serverConfigRepository.findOne();
+	};
+
+	isSsoConfigured = (): boolean => {
+		return this.serverProperties.isSsoConfigured();
 	};
 
 	setDefaultWorld = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext) => {

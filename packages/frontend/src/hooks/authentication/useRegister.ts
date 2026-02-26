@@ -3,7 +3,6 @@ import useGQLMutation, {GqlMutationResult, MutationMethod} from "../useGQLMutati
 import {REGISTER_MUTATION} from "@rpgtools/common/src/gql-mutations";
 
 interface RegisterVariables {
-	registerCode: string;
 	email: string;
 	username: string;
 	password: string;

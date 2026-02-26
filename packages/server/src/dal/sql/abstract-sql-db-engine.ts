@@ -11,6 +11,7 @@ import {
     GAME,
     GAME_MODEL,
     IMAGE,
+    INVITE,
     ITEM,
     MESSAGE,
     MODEL,
@@ -19,7 +20,6 @@ import {
     PERSON,
     PIN,
     PLACE,
-    REGISTER_CODE,
     ROLE,
     SERVER_CONFIG,
     STROKE, TOKEN_ICON, USER, WIKI_FOLDER,
@@ -48,7 +48,7 @@ import PinModel from "./models/pin-model.js";
 import PlaceModel from "./models/place-model.js";
 import {RoleModel} from "./models/role-model.js";
 import ServerConfigModel from "./models/server-config-model.js";
-import RegisterCodeModel from "./models/register-code-model.js";
+import InviteModel from "./models/invite-model.js";
 import UserToRoleModel from "./models/user-to-role-model.js";
 import UserModel from "./models/user-model.js";
 import WikiFolderModel from "./models/wiki-folder-model.js";
@@ -63,6 +63,7 @@ import * as related_wikis from "./migrations/02_related_wikis.js";
 import * as game_message_size from './migrations/03_game_message_size.js';
 import * as message_to_text from './migrations/04_message_to_text.js';
 import * as token_icon from './migrations/05_token_icon.js';
+import * as invites from './migrations/06_invites.js';
 import EventWikiModel from "./models/event-wiki-model.js";
 import CalendarModel from "./models/calendar-model.js";
 import AgeModel from "./models/calendar/age-model.js";
@@ -88,6 +89,7 @@ import {PinRepository} from "../repository/pin-repository.js";
 import {PlaceRepository} from "../repository/place-repository.js";
 import {RoleRepository} from "../repository/role-repository.js";
 import {ServerConfigRepository} from "../repository/server-config-repository.js";
+import {InviteRepository} from "../repository/invite-repository.js";
 import StrokeRepository from "../repository/stroke-repository.js";
 import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
@@ -138,6 +140,8 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
     roleRepository: RoleRepository;
     @inject(INJECTABLE_TYPES.ServerConfigRepository)
     serverConfigRepository: ServerConfigRepository;
+    @inject(INJECTABLE_TYPES.InviteRepository)
+    inviteRepository: InviteRepository;
     @inject(INJECTABLE_TYPES.StrokeRepository)
     strokeRepository: StrokeRepository;
     @inject(INJECTABLE_TYPES.UserRepository)
@@ -183,7 +187,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
         PlaceModel.init(PlaceModel.attributes, {sequelize: connection, modelName: PLACE, freezeTableName: true});
         RoleModel.init(RoleModel.attributes, {sequelize: connection, modelName: ROLE, freezeTableName: true});
         ServerConfigModel.init(ServerConfigModel.attributes, {sequelize: connection, modelName: SERVER_CONFIG, freezeTableName: true});
-        RegisterCodeModel.init(RegisterCodeModel.attributes, {sequelize: connection, modelName: REGISTER_CODE, freezeTableName: true});
+        InviteModel.init(InviteModel.attributes, {sequelize: connection, modelName: INVITE, freezeTableName: true});
         UserToRoleModel.init(UserToRoleModel.attributes, {sequelize: connection, modelName: 'UserToRole', freezeTableName: true});
         UserModel.init(UserModel.attributes, {sequelize: connection, modelName: USER, freezeTableName: true});
         WikiFolderModel.init(WikiFolderModel.attributes, {sequelize: connection, modelName: WIKI_FOLDER, freezeTableName: true});
@@ -221,7 +225,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
         PlaceModel.connect();
         RoleModel.connect();
         ServerConfigModel.connect();
-        RegisterCodeModel.connect();
+        InviteModel.connect();
         UserModel.connect();
         WikiFolderModel.connect();
         WorldModel.connect();
@@ -260,6 +264,10 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
                 {
                     name: '05_token_icon',
                     ...token_icon
+                },
+                {
+                    name: '06_invites',
+                    ...invites
                 }
             ],
             context: connection.getQueryInterface(),
@@ -342,6 +350,7 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
             this.placeRepository,
             this.roleRepository,
             this.serverConfigRepository,
+            this.inviteRepository,
             this.strokeRepository,
             this.userRepository,
             this.wikiFolderRepository,

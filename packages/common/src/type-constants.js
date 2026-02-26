@@ -14,6 +14,7 @@ exports.CHARACTER_ATTRIBUTE = "CharacterAttribute";
 exports.CHARACTER = "Character";
 exports.GAME_MODEL = "GameModel";
 exports.REGISTER_CODE = 'RegisterCode';
+exports.INVITE = 'Invite';
 exports.FOG_STROKE = "FogStroke";
 exports.STROKE = "Stroke";
 exports.MESSAGE = "Message";

@@ -15,6 +15,7 @@ import {PinRepository} from "../repository/pin-repository.js";
 import {PlaceRepository} from "../repository/place-repository.js";
 import {RoleRepository} from "../repository/role-repository.js";
 import {ServerConfigRepository} from "../repository/server-config-repository.js";
+import {InviteRepository} from "../repository/invite-repository.js";
 import StrokeRepository from "../repository/stroke-repository.js";
 import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
@@ -45,6 +46,7 @@ export default class SQLDatabaseContext implements DatabaseContext {
     placeRepository: PlaceRepository;
     roleRepository: RoleRepository;
     serverConfigRepository: ServerConfigRepository;
+    inviteRepository: InviteRepository;
     strokeRepository: StrokeRepository;
     userRepository: UserRepository;
     wikiFolderRepository: WikiFolderRepository;
@@ -70,6 +72,7 @@ export default class SQLDatabaseContext implements DatabaseContext {
         placeRepository: PlaceRepository,
         roleRepository: RoleRepository,
         serverConfigRepository: ServerConfigRepository,
+        inviteRepository: InviteRepository,
         strokeRepository: StrokeRepository,
         userRepository: UserRepository,
         wikiFolderRepository: WikiFolderRepository,
@@ -94,6 +97,7 @@ export default class SQLDatabaseContext implements DatabaseContext {
         this.placeRepository = placeRepository;
         this.roleRepository = roleRepository;
         this.serverConfigRepository = serverConfigRepository;
+        this.inviteRepository = inviteRepository;
         this.strokeRepository = strokeRepository;
         this.userRepository = userRepository;
         this.wikiFolderRepository = wikiFolderRepository;

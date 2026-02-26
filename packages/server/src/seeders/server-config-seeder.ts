@@ -15,11 +15,7 @@ export class ServerConfigSeeder implements Seeder {
 		let server = await databaseContext.serverConfigRepository.findOne();
 		if (!server) {
 			const unlockCode: string = process.env.UNLOCK_CODE || uuidv4();
-			let registerCodes: string[] = [];
-			if (process.env.REGISTER_CODES) {
-				registerCodes = process.env.REGISTER_CODES.split(',');
-			}
-			server = this.serverConfigFactory.build({version: "1.0", registerCodes, adminUsers: [], unlockCode, acl: [], defaultWorld: null});
+			server = this.serverConfigFactory.build({version: "1.0", adminUsers: [], unlockCode, acl: [], defaultWorld: null});
 			await databaseContext.serverConfigRepository.create(server);
 		}
 	};

@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import useServerConfig from "../../hooks/server/useServerConfig";
 import LoadingView from "../LoadingView";
 import { Link } from "react-router-dom";
-import useGenerateRegisterCodes from "../../hooks/server/useGenerateRegisterCodes";
+import useInviteUser from "../../hooks/server/useInviteUser";
 import PermissionEditor from "../permissions/PermissionEditor";
 import { SERVER_CONFIG } from "@rpgtools/common/src/type-constants";
 import PrimaryButton from "../widgets/PrimaryButton";
-import NumberInput from "../widgets/input/NumberInput";
 import ItemList from "../widgets/ItemList";
 import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
 import ColumnedContent from "../widgets/ColumnedContent";
@@ -15,8 +14,8 @@ import SelectWorld from "../select/SelectWorld";
 
 export default function ServerSettings() {
 	const { serverConfig, loading, refetch } = useServerConfig();
-	const [amount, setAmount] = useState(0);
-	const { generateRegisterCodes, loading: generateLoading } = useGenerateRegisterCodes();
+	const [inviteEmail, setInviteEmail] = useState("");
+	const { inviteUser, loading: inviteLoading } = useInviteUser();
 	const {setDefaultWorld, loading: setDefaultWorldLoading} = useSetDefaultWorld();
 	const [newDefaultWorldId, setNewDefaultWorldId] = useState<string>();
 
@@ -39,28 +38,35 @@ export default function ServerSettings() {
 			<hr />
 			<ColumnedContent>
 				<>
-					<h2>Registration Codes</h2>
+					<h2>Invites</h2>
 					<ItemList
-						id={"registerCodeList"}
+						id={"inviteList"}
 					>
-						{serverConfig.registerCodes.map(item => <div key={item}>{item}</div>)}
+						{serverConfig.invites.map(item => <div key={item._id}>{item.email}</div>)}
 					</ItemList>
 				</>
 			</ColumnedContent>
 			{serverConfig.canWrite && (
 				<ColumnedContent style={{ marginTop: "2em"}}>
 					<>
-						<span className={"margin-lg-right"}>Number of codes to generate:</span>
+						<span className={"margin-lg-right"}>Invite by email:</span>
 						<span className={"margin-lg-right"}>
-							<NumberInput value={amount} onChange={(value) => setAmount(value)} id={"numberCodesToGenerate"}/>
+							<input
+								type="email"
+								id={"inviteEmail"}
+								value={inviteEmail}
+								onChange={(event) => setInviteEmail(event.target.value)}
+							/>
 						</span>
 						<PrimaryButton
-							loading={generateLoading}
+							loading={inviteLoading}
 							onClick={async () => {
-								await generateRegisterCodes({amount});
+								await inviteUser({email: inviteEmail});
+								setInviteEmail("");
+								await refetch();
 							}}
 						>
-							Generate
+							Invite
 						</PrimaryButton>
 					</>
 				</ColumnedContent>
