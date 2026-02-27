@@ -217,6 +217,7 @@ export interface ServerConfig extends PermissionControlled {
     version: string;
     invites: Invite[];
     ssoConfigured: boolean;
+    emailConfigured: boolean;
     canCreateWorlds: boolean;
     roles: Role[];
     serverNeedsSetup: boolean;

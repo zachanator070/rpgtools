@@ -156,6 +156,8 @@ export const INJECTABLE_TYPES = {
 	WikiPageService: Symbol.for("WikiPageService"),
 	WorldService: Symbol.for("WorldService"),
 	TokenIconService: Symbol.for("TokenIconService"),
+	EmailService: Symbol.for("EmailService"),
+	InviteEmailService: Symbol.for("InviteEmailService"),
 
 	// request contexts
 	SessionContextFactory: Symbol.for("SessionContextFactory"),

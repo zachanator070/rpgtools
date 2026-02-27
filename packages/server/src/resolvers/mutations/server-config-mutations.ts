@@ -25,6 +25,14 @@ export const serverConfigMutations = {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
 		return await databaseContext.openTransaction(async () => service.inviteUser(securityContext, email, databaseContext));
 	},
+	sendEmailInvite: async (
+		_: any,
+		{ email }: { email: string },
+		{ securityContext, databaseContext }: SessionContext
+	) => {
+		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+		return await databaseContext.openTransaction(async () => service.sendEmailInvite(securityContext, email, databaseContext));
+	},
 	setDefaultWorld: async (
 		_: any,
 		{ worldId }: { worldId: string },

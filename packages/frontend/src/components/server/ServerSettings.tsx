@@ -11,13 +11,16 @@ import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
 import ColumnedContent from "../widgets/ColumnedContent";
 import useSetDefaultWorld from "../../hooks/server/useSetDefaultWorld";
 import SelectWorld from "../select/SelectWorld";
+import useSendEmailInvite from "../../hooks/server/useSendEmailInvite";
 
 export default function ServerSettings() {
 	const { serverConfig, loading, refetch } = useServerConfig();
 	const [inviteEmail, setInviteEmail] = useState("");
 	const { inviteUser, loading: inviteLoading } = useInviteUser();
+	const { sendEmailInvite, loading: sendEmailInviteLoading } = useSendEmailInvite();
 	const {setDefaultWorld, loading: setDefaultWorldLoading} = useSetDefaultWorld();
 	const [newDefaultWorldId, setNewDefaultWorldId] = useState<string>();
+	const [sendingInviteEmail, setSendingInviteEmail] = useState<string | null>(null);
 
 	if (loading) {
 		return <LoadingView />;
@@ -42,7 +45,26 @@ export default function ServerSettings() {
 					<ItemList
 						id={"inviteList"}
 					>
-						{serverConfig.invites.map(item => <div key={item._id}>{item.email}</div>)}
+						{serverConfig.invites.map(item => (
+							<div key={item._id} style={{display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center"}}>
+								<span>{item.email}</span>
+								{serverConfig.canWrite && serverConfig.emailConfigured && (
+									<PrimaryButton
+										loading={sendEmailInviteLoading && sendingInviteEmail === item.email}
+										onClick={async () => {
+											setSendingInviteEmail(item.email);
+											try {
+												await sendEmailInvite({email: item.email});
+											} finally {
+												setSendingInviteEmail(null);
+											}
+										}}
+									>
+										Resend Invite
+									</PrimaryButton>
+								)}
+							</div>
+						))}
 					</ItemList>
 				</>
 			</ColumnedContent>

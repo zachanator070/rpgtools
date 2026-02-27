@@ -12,6 +12,8 @@ import RoleFactory from "../domain-entities/factory/role-factory.js";
 import InviteFactory from "../domain-entities/factory/invite-factory.js";
 import { Invite } from "../domain-entities/invite.js";
 import {ServerProperties} from "../server/server-properties.js";
+import { InviteEmailService } from "./invite-email-service.js";
+import { EmailService } from "./email-service.js";
 
 @injectable()
 export class ServerConfigService {
@@ -29,6 +31,12 @@ export class ServerConfigService {
 
 	@inject(INJECTABLE_TYPES.ServerProperties)
 	serverProperties: ServerProperties;
+
+	@inject(INJECTABLE_TYPES.InviteEmailService)
+	inviteEmailService: InviteEmailService;
+
+	@inject(INJECTABLE_TYPES.EmailService)
+	emailService: EmailService;
 
 	serverNeedsSetup = async (databaseContext: DatabaseContext): Promise<boolean> => {
 		let adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
@@ -109,7 +117,31 @@ export class ServerConfigService {
 			createdByUserId: context.user?._id || null,
 		});
 		await databaseContext.inviteRepository.create(invite);
+		await this.inviteEmailService.sendInviteEmail(normalizedEmail, context.user?.username);
 		return invite;
+	};
+
+	sendEmailInvite = async (context: SecurityContext, email: string, databaseContext: DatabaseContext): Promise<Invite> => {
+		const serverConfig = await databaseContext.serverConfigRepository.findOne();
+		if (!serverConfig) {
+			throw new Error("Server config doesnt exist!");
+		}
+		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
+			throw new Error("You do not have permission to call this method");
+		}
+
+		const normalizedEmail = email.trim().toLowerCase();
+		if (!normalizedEmail) {
+			throw new Error("Email is required");
+		}
+
+		const invites = await databaseContext.inviteRepository.findByEmail(normalizedEmail);
+		if (invites.length === 0) {
+			throw new Error("No invite exists for this email");
+		}
+
+		await this.inviteEmailService.sendInviteEmail(normalizedEmail, context.user?.username);
+		return invites[0];
 	};
 
 	getServerConfig = async (databaseContext: DatabaseContext) => {
@@ -118,6 +150,10 @@ export class ServerConfigService {
 
 	isSsoConfigured = (): boolean => {
 		return this.serverProperties.isSsoConfigured();
+	};
+
+	isEmailConfigured = (): boolean => {
+		return this.emailService.isConfigured();
 	};
 
 	setDefaultWorld = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext) => {

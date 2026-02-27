@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ANON_USERNAME} from "@rpgtools/common/src/permission-constants";
 import PrimaryButton from "../widgets/PrimaryButton";
 import useLogout from "../../hooks/authentication/useLogout";
@@ -16,6 +16,18 @@ export default function LoginOptions() {
 
     const [loginModalVisibility, setLoginModalVisibility] = useState(false);
     const [registerModalVisibility, setRegisterModalVisibility] = useState(false);
+
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        const registerParam = url.searchParams.get("register");
+        if (registerParam !== "1" && registerParam !== "true") {
+            return;
+        }
+
+        setRegisterModalVisibility(true);
+        url.searchParams.delete("register");
+        window.history.replaceState({}, "", url.toString());
+    }, []);
 
     if(userLoading || serverConfigLoading) {
         return <LoadingView/>;

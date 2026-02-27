@@ -167,6 +167,7 @@ export const GET_SERVER_CONFIG = gql`
 				email
 			}
 			ssoConfigured
+			emailConfigured
 			canCreateWorlds
 			serverNeedsSetup
 			defaultWorld {

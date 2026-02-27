@@ -49,6 +49,9 @@ run-dev: .env $(SERVER_BUILD_DEST) db containers $(DEV_SERVER_CONTAINER) $(DEV_F
 run-dev-brk: .env  $(SERVER_BUILD_DEST) db
 	docker compose up server-brk ui-builder
 
+dev-logs:
+	docker compose logs -f server ui-builder
+
 run-postgres: .env
 	docker compose up -d postgres
 

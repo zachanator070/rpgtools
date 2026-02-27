@@ -363,6 +363,14 @@ export const INVITE_USER = gql`
 		}
 	}
 `;
+export const SEND_EMAIL_INVITE = gql`
+	mutation sendEmailInvite($email: String!) {
+		sendEmailInvite(email: $email) {
+			_id
+			email
+		}
+	}
+`;
 export const UNLOCK_SERVER = gql`
 	mutation unlockServer(
 		$unlockCode: String!

@@ -23,6 +23,29 @@ exports[`server mutations > invite user no permission 1`] = `
 }
 `;
 
+exports[`server mutations > send email invite no permission 1`] = `
+{
+  "data": null,
+  "errors": [
+    {
+      "extensions": {
+        "code": "INTERNAL_SERVER_ERROR",
+      },
+      "locations": [
+        {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You do not have permission to call this method",
+      "path": [
+        "sendEmailInvite",
+      ],
+    },
+  ],
+}
+`;
+
 exports[`server mutations > set default world no permission 1`] = `
 {
   "data": null,
@@ -50,6 +73,18 @@ exports[`server mutations > with authenticated user > invite user 1`] = `
 {
   "data": {
     "inviteUser": {
+      "_id": Any<String>,
+      "email": "new-user@example.com",
+    },
+  },
+  "errors": undefined,
+}
+`;
+
+exports[`server mutations > with authenticated user > send email invite 1`] = `
+{
+  "data": {
+    "sendEmailInvite": {
       "_id": Any<String>,
       "email": "new-user@example.com",
     },

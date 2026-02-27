@@ -151,6 +151,7 @@ exports.GET_SERVER_CONFIG = (0, graphql_tag_1.default) `
 				email
 			}
 			ssoConfigured
+			emailConfigured
 			canCreateWorlds
 			serverNeedsSetup
 			defaultWorld {

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import useRegister from "../../hooks/authentication/useRegister";
 import useLogin from "../../hooks/authentication/useLogin";
 import FullScreenModal from "../widgets/FullScreenModal";
@@ -21,11 +21,24 @@ export default function RegisterModal({ visibility, setVisibility, ssoConfigured
 	const [useSsoRegistration, setUseSsoRegistration] = useState(false);
 	const [ssoErrors, setSsoErrors] = useState<string[]>([]);
 	const [ssoLoading, setSsoLoading] = useState(false);
+	const [email, setEmail] = useState("");
 
 	const { register, loading, errors } = useRegister(
 		async () => await setVisibility(false)
 	);
 	const { login, loading: loginLoading } = useLogin();
+
+	useEffect(() => {
+		if (!visibility) {
+			return;
+		}
+
+		const url = new URL(window.location.href);
+		const inviteEmail = url.searchParams.get("invite") || "";
+		if (inviteEmail) {
+			setEmail(inviteEmail);
+		}
+	}, [visibility]);
 
 	const submitSsoRegistration = async (username: string) => {
 		setSsoErrors([]);
@@ -94,7 +107,12 @@ export default function RegisterModal({ visibility, setVisibility, ssoConfigured
 				>
 					{!useSsoRegistration && (
 						<FormItem label={<>Email <MailIcon className="form-label-icon"/></>}>
-							<TextInput name="email" id="registerEmail"/>
+							<TextInput
+								name="email"
+								id="registerEmail"
+								value={email}
+								onChange={(event) => setEmail(event.target.value)}
+							/>
 						</FormItem>
 					)}
 					<FormItem label={<>Username <PersonIcon className="form-label-icon"/></>}>

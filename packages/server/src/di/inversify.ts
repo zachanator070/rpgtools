@@ -209,6 +209,8 @@ import {TokenIconDataLoader} from "../dal/dataloaders/token-icon-data-loader.js"
 import { TokenIconService } from "../services/token-service.js";
 import { WinstonLogger } from "../logging/winston-logger.js";
 import Logger from "../logging/logger.js";
+import { EmailService } from "../services/email-service.js";
+import { InviteEmailService } from "../services/invite-email-service.js";
 
 const container = new Container();
 
@@ -565,6 +567,8 @@ const bindAll = () => {
 	container.bind<WorldService>(INJECTABLE_TYPES.WorldService).to(WorldService);
 	container.bind<RoleService>(INJECTABLE_TYPES.RoleService).to(RoleService);
 	container.bind<TokenIconService>(INJECTABLE_TYPES.TokenIconService).to(TokenIconService);
+	container.bind<EmailService>(INJECTABLE_TYPES.EmailService).to(EmailService).inSingletonScope();
+	container.bind<InviteEmailService>(INJECTABLE_TYPES.InviteEmailService).to(InviteEmailService);
 
 // request contexts
 	container

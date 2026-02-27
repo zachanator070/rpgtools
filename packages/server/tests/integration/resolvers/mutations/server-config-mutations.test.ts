@@ -2,7 +2,7 @@ import { container } from "../../../../src/di/inversify.js";
 import { INJECTABLE_TYPES } from "../../../../src/di/injectable-types.js";
 import {DbEngine} from "../../../../src/types.js";
 import {DefaultTestingContext} from "../../default-testing-context.js";
-import {INVITE_USER, SET_DEFAULT_WORLD, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations.js";
+import {INVITE_USER, SEND_EMAIL_INVITE, SET_DEFAULT_WORLD, UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations.js";
 import {TEST_INJECTABLE_TYPES} from "../../injectable-types.js";
 import { SERVER_ADMIN_ROLE } from "@rpgtools/common/src/permission-constants.js";
 import { ServerConfigService } from "src/services/server-config-service.js";
@@ -151,6 +151,14 @@ describe("server mutations", () => {
 		expect(result).toMatchSnapshot();
 	});
 
+	test("send email invite no permission", async () => {
+		const result = await testingContext.server.executeGraphQLQuery({
+			query: SEND_EMAIL_INVITE,
+			variables: { email: "new-user@example.com" },
+		});
+		expect(result).toMatchSnapshot();
+	});
+
 	test("set default world no permission", async () => {
 		const result = await testingContext.server.executeGraphQLQuery({
 			query: SET_DEFAULT_WORLD,
@@ -175,6 +183,27 @@ describe("server mutations", () => {
 			expect(result).toMatchSnapshot({
 				data: {
 					inviteUser: {
+						_id: expect.any(String),
+						email: "new-user@example.com",
+					},
+				},
+				errors: undefined,
+			});
+		});
+
+		test("send email invite", async () => {
+			await testingContext.server.executeGraphQLQuery({
+				query: INVITE_USER,
+				variables: { email: "new-user@example.com" },
+			});
+
+			const result = await testingContext.server.executeGraphQLQuery({
+				query: SEND_EMAIL_INVITE,
+				variables: { email: "new-user@example.com" },
+			});
+			expect(result).toMatchSnapshot({
+				data: {
+					sendEmailInvite: {
 						_id: expect.any(String),
 						email: "new-user@example.com",
 					},

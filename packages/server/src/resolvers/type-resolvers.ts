@@ -272,6 +272,10 @@ export const TypeResolvers = {
 			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
 			return service.isSsoConfigured();
 		},
+		emailConfigured: async (): Promise<boolean> => {
+			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
+			return service.isEmailConfigured();
+		},
 		roles: async (server: ServerConfig, _: any, { securityContext, databaseContext }: SessionContext): Promise<Role[]> => {
 			const repository = databaseContext.roleRepository;
 			const roles = await repository.findAll();

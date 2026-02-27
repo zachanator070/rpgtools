@@ -335,6 +335,14 @@ exports.INVITE_USER = (0, graphql_tag_1.default) `
 		}
 	}
 `;
+exports.SEND_EMAIL_INVITE = (0, graphql_tag_1.default) `
+	mutation sendEmailInvite($email: String!) {
+		sendEmailInvite(email: $email) {
+			_id
+			email
+		}
+	}
+`;
 exports.UNLOCK_SERVER = (0, graphql_tag_1.default) `
 	mutation unlockServer(
 		$unlockCode: String!
