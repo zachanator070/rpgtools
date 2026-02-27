@@ -7,7 +7,6 @@ import TextInput from "../widgets/input/TextInput";
 import PasswordInput from "../widgets/input/PasswordInput";
 import PersonIcon from "../widgets/icons/PersonIcon";
 import KeyIcon from "../widgets/icons/KeyIcon";
-import InlineMargin from "../widgets/InlineMargin";
 import PrimaryButton from "../widgets/PrimaryButton";
 
 interface LoginModalProps {
@@ -48,12 +47,12 @@ export default function LoginModal({ visibility, setVisibility, ssoConfigured }:
 					buttonText={'Login'}
 				>
 					<FormItem
-						label={<>Username <InlineMargin size={1}><PersonIcon/></InlineMargin></> }
+						label={<>Username <PersonIcon className="form-label-icon"/></> }
 					>
 						<TextInput name={"username"} id="loginEmail"/>
 					</FormItem>
 					<FormItem
-						label={<>Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}
+						label={<>Password <KeyIcon className="form-label-icon"/></>}
 					>
 						<PasswordInput name={"password"} id="loginPassword"/>
 					</FormItem>

@@ -10,7 +10,6 @@ import PasswordInput from "../widgets/input/PasswordInput";
 import KeyIcon from "../widgets/icons/KeyIcon";
 import MailIcon from "../widgets/icons/MailIcon";
 import PersonIcon from "../widgets/icons/PersonIcon";
-import InlineMargin from "../widgets/InlineMargin";
 import useServerConfig from "../../hooks/server/useServerConfig";
 
 export default function ServerSetup() {
@@ -49,19 +48,19 @@ export default function ServerSetup() {
 					}}
 					buttonText={'Unlock'}
 				>
-					<FormItem label={<>Server Unlock Code <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
+					<FormItem label={<>Server Unlock Code <KeyIcon className="form-label-icon"/></>}>
 						<TextInput name={"unlockCode"} id="adminSecret"/>
 					</FormItem>
-					<FormItem label={<>Email <InlineMargin size={1}><MailIcon/></InlineMargin></>}>
+					<FormItem label={<>Email <MailIcon className="form-label-icon"/></>}>
 						<TextInput name={"email"} id="registerEmail"/>
 					</FormItem>
-					<FormItem label={<>Username <InlineMargin size={1}><PersonIcon/></InlineMargin></>}>
+					<FormItem label={<>Username <PersonIcon className="form-label-icon"/></>}>
 						<TextInput name={"username"} id="registerDisplayName"/>
 					</FormItem>
-					<FormItem label={<>Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
+					<FormItem label={<>Password <KeyIcon className="form-label-icon"/></>}>
 						<PasswordInput name={"password"} id="registerPassword"/>
 					</FormItem>
-					<FormItem label={<>Repeat Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}>
+					<FormItem label={<>Repeat Password <KeyIcon className="form-label-icon"/></>}>
 						<PasswordInput name={"repeatPassword"} id="registerRepeatPassword"/>
 					</FormItem>
 				</InputForm>

@@ -93,19 +93,19 @@ export default function RegisterModal({ visibility, setVisibility, ssoConfigured
 					buttonText={useSsoRegistration ? "Continue with Google" : "Register"}
 				>
 					{!useSsoRegistration && (
-						<FormItem label={<>Email <MailIcon/></>}>
+						<FormItem label={<>Email <MailIcon className="form-label-icon"/></>}>
 							<TextInput name="email" id="registerEmail"/>
 						</FormItem>
 					)}
-					<FormItem label={<>Username <PersonIcon/></>}>
+					<FormItem label={<>Username <PersonIcon className="form-label-icon"/></>}>
 						<TextInput name="username" id="registerDisplayName"/>
 					</FormItem>
 					{!useSsoRegistration && (
 						<>
-							<FormItem label={<>Password <KeyIcon/></>}>
+							<FormItem label={<>Password <KeyIcon className="form-label-icon"/></>}>
 								<PasswordInput name="password" id="registerPassword"/>
 							</FormItem>
-							<FormItem label={<>Repeat Password <KeyIcon/></>}>
+							<FormItem label={<>Repeat Password <KeyIcon className="form-label-icon"/></>}>
 								<PasswordInput name="repeatPassword" id="registerRepeatPassword"/>
 							</FormItem>
 						</>
