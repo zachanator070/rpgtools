@@ -1,0 +1,16 @@
+.themed-alert-message {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.themed-alert-message .ant-alert-message,
+.themed-alert-message .ant-alert-description,
+.themed-alert-message .ant-alert-close-text,
+.themed-alert-message .ant-alert-close-icon {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .themed-alert-message {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color-secondary);
+}
