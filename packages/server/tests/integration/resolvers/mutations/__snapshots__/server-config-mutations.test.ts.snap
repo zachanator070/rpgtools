@@ -1,28 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`server mutations > generate register codes no permission 1`] = `
-{
-  "data": null,
-  "errors": [
-    {
-      "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
-      },
-      "locations": [
-        {
-          "column": 3,
-          "line": 2,
-        },
-      ],
-      "message": "You do not have permission to call this method",
-      "path": [
-        "generateRegisterCodes",
-      ],
-    },
-  ],
-}
-`;
-
 exports[`server mutations > invite user no permission 1`] = `
 {
   "data": null,
@@ -66,20 +43,6 @@ exports[`server mutations > set default world no permission 1`] = `
       ],
     },
   ],
-}
-`;
-
-exports[`server mutations > with authenticated user > generate register codes 1`] = `
-{
-  "data": {
-    "generateRegisterCodes": {
-      "_id": Any<String>,
-      "registerCodes": ArrayContaining [
-        Any<String>,
-      ],
-    },
-  },
-  "errors": undefined,
 }
 `;
 
