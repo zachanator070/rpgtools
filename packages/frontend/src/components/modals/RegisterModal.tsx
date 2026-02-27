@@ -2,14 +2,10 @@ import React, {useEffect, useState} from "react";
 import useRegister from "../../hooks/authentication/useRegister";
 import useLogin from "../../hooks/authentication/useLogin";
 import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/input/InputForm";
-import FormItem from "../widgets/input/FormItem";
-import TextInput from "../widgets/input/TextInput";
-import PasswordInput from "../widgets/input/PasswordInput";
-import KeyIcon from "../widgets/icons/KeyIcon";
-import PersonIcon from "../widgets/icons/PersonIcon";
-import MailIcon from "../widgets/icons/MailIcon";
 import PrimaryButton from "../widgets/PrimaryButton";
+import RegisterPasswordForm from "./RegisterPasswordForm";
+import RegisterSsoForm from "./RegisterSsoForm";
+import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
 
 interface RegisterModalProps {
 	visibility: boolean;
@@ -17,8 +13,13 @@ interface RegisterModalProps {
 	ssoConfigured: boolean;
 }
 
+enum RegistrationMethod {
+	Password,
+	SSO
+}
+
 export default function RegisterModal({ visibility, setVisibility, ssoConfigured }: RegisterModalProps) {
-	const [useSsoRegistration, setUseSsoRegistration] = useState(false);
+	const [registrationMethod, setRegistrationMethod] = useState<RegistrationMethod>(null);
 	const [ssoErrors, setSsoErrors] = useState<string[]>([]);
 	const [ssoLoading, setSsoLoading] = useState(false);
 	const [email, setEmail] = useState("");
@@ -72,63 +73,67 @@ export default function RegisterModal({ visibility, setVisibility, ssoConfigured
 		}
 	};
 
+	let visibleForm = null;
+
+	if (registrationMethod === RegistrationMethod.SSO) {
+		visibleForm = (
+			<RegisterSsoForm
+				errors={ssoErrors}
+				loading={ssoLoading}
+				onSubmit={submitSsoRegistration}
+			/>
+		);
+	}
+	if (!ssoConfigured || registrationMethod === RegistrationMethod.Password) {
+		visibleForm = (
+			<RegisterPasswordForm
+				errors={errors}
+				loading={loginLoading || loading}
+				email={email}
+				setEmail={setEmail}
+				onSubmit={async ({email, username, password}) => {
+					await register({email, username, password});
+					await login({username, password});
+				}}
+			/>
+		);
+	}
+
 	return (
 		<div>
 			<FullScreenModal
-				title={useSsoRegistration ? "Register with Google" : "Register"}
+				title={registrationMethod === RegistrationMethod.SSO ? "Register with Google" : "Register Username/Password"}
 				visible={visibility}
-				setVisible={setVisibility}
+				setVisible={(visibility) => {
+					if (!visibility) {
+						setRegistrationMethod(null);
+					}
+					setVisibility(visibility);
+				}}
 			>
-				{ssoConfigured && (
-					<div className="text-align-center margin-lg-bottom">
-						{useSsoRegistration ? (
-							<PrimaryButton onClick={async () => setUseSsoRegistration(false)}>
-								Use password registration
-							</PrimaryButton>
-						) : (
-							<PrimaryButton onClick={async () => setUseSsoRegistration(true)}>
-								Register with Google
-							</PrimaryButton>
-						)}
-					</div>
-				)}
-				<InputForm
-					errors={useSsoRegistration ? ssoErrors : errors}
-					loading={useSsoRegistration ? ssoLoading : loginLoading || loading}
-					onSubmit={async ({email, username, password}) => {
-						if (useSsoRegistration) {
-							await submitSsoRegistration(username);
-							return;
-						}
-						await register({email, username, password});
-						await login({username, password});
-					}}
-					buttonText={useSsoRegistration ? "Continue with Google" : "Register"}
-				>
-					{!useSsoRegistration && (
-						<FormItem label={<>Email <MailIcon className="form-label-icon"/></>}>
-							<TextInput
-								name="email"
-								id="registerEmail"
-								value={email}
-								onChange={(event) => setEmail(event.target.value)}
-							/>
-						</FormItem>
-					)}
-					<FormItem label={<>Username <PersonIcon className="form-label-icon"/></>}>
-						<TextInput name="username" id="registerDisplayName"/>
-					</FormItem>
-					{!useSsoRegistration && (
+				<div>
+					{ssoConfigured && (
 						<>
-							<FormItem label={<>Password <KeyIcon className="form-label-icon"/></>}>
-								<PasswordInput name="password" id="registerPassword"/>
-							</FormItem>
-							<FormItem label={<>Repeat Password <KeyIcon className="form-label-icon"/></>}>
-								<PasswordInput name="repeatPassword" id="registerRepeatPassword"/>
-							</FormItem>
+							{registrationMethod === null ? (
+								<div className="text-align-center margin-lg-bottom flex" style={{justifyContent: "space-evenly"}}>
+									<PrimaryButton onClick={async () => setRegistrationMethod(RegistrationMethod.Password)}>
+										Use password registration
+									</PrimaryButton>
+									<PrimaryButton onClick={async () => setRegistrationMethod(RegistrationMethod.SSO)}>
+										Register with Google
+									</PrimaryButton>
+								</div>
+							) : (
+								<div>
+									<a onClick={async () => setRegistrationMethod(null)}>
+										<LeftArrowIcon /> Back
+									</a>
+								</div>
+							)}
 						</>
 					)}
-				</InputForm>
+				</div>
+				{visibleForm}
 			</FullScreenModal>
 		</div>
 	);
