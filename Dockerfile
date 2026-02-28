@@ -44,6 +44,7 @@ RUN npm ci
 
 ADD  packages/common/src packages/common/src
 ADD  packages/server/src packages/server/src
+ADD  packages/server/branding packages/server/branding
 
 RUN mkdir /opt/rpgtools/db
 RUN chmod o+rw /opt/rpgtools/db
