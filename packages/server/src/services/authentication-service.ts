@@ -12,6 +12,8 @@ import {ServerProperties} from "../server/server-properties.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import UserFactory from "../domain-entities/factory/user-factory.js";
 import Logger from "../logging/logger.js";
+import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants.js";
+import axios from "axios";
 
 export interface CookieConstants {
 	string: string;
@@ -113,7 +115,7 @@ export class AuthenticationService {
 		databaseContext: DatabaseContext
 	): Promise<User> => {
 		const user = await databaseContext.userRepository.findOneByUsername(username);
-		if (!user || !bcrypt.compareSync(password, user.password)) {
+		if (!user || !user.password || !bcrypt.compareSync(password, user.password)) {
 			throw Error("Login failure: username or password are incorrect");
 		}
 		const refreshToken = cookieManager.getResponseCookie(REFRESH_TOKEN);
@@ -130,6 +132,67 @@ export class AuthenticationService {
 		return user;
 	};
 
+	loginSso = async (
+		code: string,
+		state: string,
+		callbackUri: string,
+		cookieManager: CookieManager,
+		databaseContext: DatabaseContext
+	): Promise<User> => {
+		if (!this.serverProperties.isSsoConfigured()) {
+			throw new Error("SSO is not configured");
+		}
+
+		const decodedState = jwt.verify(state, this.serverProperties.ssoStateSecret) as {
+			jti?: string;
+		};
+
+		if (!decodedState?.jti) {
+			throw new Error("Invalid state token");
+		}
+
+		const email = await this.getSsoEmail(code, callbackUri);
+
+		const users = await databaseContext.userRepository.findByEmail(email);
+		if (!users || users.length === 0) {
+			throw Error("Login failure: user not found");
+		}
+		const user = users[0];
+
+		const tokens = await this.createTokens(user, user.tokenVersion, databaseContext);
+		cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
+		cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
+		return user;
+	};
+
+	registerFromSso = async (
+		code: string,
+		state: string,
+		callbackUri: string,
+		cookieManager: CookieManager,
+		databaseContext: DatabaseContext
+	): Promise<User> => {
+		if (!this.serverProperties.isSsoConfigured()) {
+			throw new Error("SSO is not configured");
+		}
+
+		const decodedState = jwt.verify(state, this.serverProperties.ssoStateSecret) as {
+			username?: string;
+			password?: string;
+		};
+		const username = this.validateAndNormalizeUsername(decodedState.username || "");
+
+		const normalizedEmail = await this.getSsoEmail(code, callbackUri);
+
+		const user = await this.registerWithInvite(normalizedEmail, username, null, databaseContext);
+
+		const tokens = await this.createTokens(user, user.tokenVersion, databaseContext);
+		cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
+		cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
+
+		return user;
+	};
+
 	logout = async (currentUser: User, cookieManager: CookieManager, databaseContext: DatabaseContext): Promise<string> => {
 		cookieManager.clearCookie(ACCESS_TOKEN);
 		cookieManager.clearCookie(REFRESH_TOKEN);
@@ -138,40 +201,102 @@ export class AuthenticationService {
 		return "success";
 	};
 
-	register = async (
-		registerCode: string,
+	registerWithInvite = async (
 		email: string,
 		username: string,
-		password: string,
+		password: string | null,
 		databaseContext: DatabaseContext
 	): Promise<User> => {
-		const config = await databaseContext.serverConfigRepository.findOne();
-		if (!config.registerCodes.includes(registerCode)) {
-			throw new Error("Register code not valid");
+		const normalizedEmail = email?.trim().toLowerCase();
+		if (!normalizedEmail) {
+			throw new Error("Registration Error: Email is required");
 		}
-		const newUser = await this.registerUser(email, username, password, databaseContext)
-		config.registerCodes = config.registerCodes.filter((code) => code !== registerCode);
-		await databaseContext.serverConfigRepository.update(config);
+
+		const invites = await databaseContext.inviteRepository.findByEmail(normalizedEmail);
+		if (invites.length === 0) {
+			throw new Error("Registration Error: No invite exists for this email");
+		}
+
+		const newUser = await this.registerUser(normalizedEmail, username, password, databaseContext);
+		for (const invite of invites) {
+			await databaseContext.inviteRepository.delete(invite);
+		}
+
+		await databaseContext.inviteRepository.deleteByEmail(normalizedEmail);
 		return newUser;
+	};
+
+	getSsoEmail = async (code: string, callbackUri: string): Promise<string> => {
+		const tokenPayload = new URLSearchParams({
+			code,
+			client_id: this.serverProperties.googleClientId,
+			client_secret: this.serverProperties.googleClientSecret,
+			redirect_uri: callbackUri,
+			grant_type: "authorization_code",
+		});
+
+		const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", tokenPayload.toString(), {
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+		});
+
+		const accessToken = tokenResponse?.data?.access_token;
+		if (!accessToken) {
+			throw new Error("Google token response missing access token");
+		}
+
+		const userInfoResponse = await axios.get("https://openidconnect.googleapis.com/v1/userinfo", {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		});
+
+		const email = String(userInfoResponse?.data?.email || "").trim().toLowerCase();
+		if (!email) {
+			throw new Error("Google user info did not include an email");
+		}
+
+		return email;
 	};
 
 	registerUser = async (
 		email: string,
 		username: string,
-		password: string,
+		password: string | null,
 		databaseContext: DatabaseContext
 	): Promise<User> => {
-		password = bcrypt.hashSync(password, this.SALT_ROUNDS);
-		let existingUsers = await databaseContext.userRepository.findByEmail(email);
+		const normalizedEmail = email?.trim().toLowerCase();
+		if (!normalizedEmail) {
+			throw Error("Registration Error: Email is required");
+		}
+
+		const normalizedUsername = this.validateAndNormalizeUsername(username);
+		const hashedPassword = password ? bcrypt.hashSync(password, this.SALT_ROUNDS) : null;
+		let existingUsers = await databaseContext.userRepository.findByEmail(normalizedEmail);
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Email already used");
 		}
-		existingUsers = await databaseContext.userRepository.findByUsername(username);
+		existingUsers = await databaseContext.userRepository.findByUsername(normalizedUsername);
 		if (existingUsers.length > 0) {
 			throw Error("Registration Error: Username already used");
 		}
-		const newUser = this.userFactory.build({ email, username, password, tokenVersion: null, currentWorld: null, roles: []});
+		const newUser = this.userFactory.build({ email: normalizedEmail, username: normalizedUsername, password: hashedPassword, tokenVersion: null, currentWorld: null, roles: []});
 		await databaseContext.userRepository.create(newUser);
 		return newUser;
+	};
+
+	validateAndNormalizeUsername = (username: string): string => {
+		if (username === null || username === undefined) {
+			throw Error("Registration Error: Username is required");
+		}
+		const normalizedUsername = username.trim();
+		if (!normalizedUsername) {
+			throw Error("Registration Error: Username is required");
+		}
+		if (normalizedUsername.toLowerCase() === ANON_USERNAME.toLowerCase()) {
+			throw Error("Registration Error: Username not allowed");
+		}
+		return normalizedUsername;
 	};
 }

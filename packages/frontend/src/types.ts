@@ -215,10 +215,17 @@ export interface ServerConfig extends PermissionControlled {
     defaultWorld: World;
     _id: string;
     version: string;
-    registerCodes: string[];
+    invites: Invite[];
+    ssoConfigured: boolean;
+    emailConfigured: boolean;
     canCreateWorlds: boolean;
     roles: Role[];
     serverNeedsSetup: boolean;
+}
+
+export interface Invite {
+    _id: string;
+    email: string;
 }
 
 export interface GameMessage {

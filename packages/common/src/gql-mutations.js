@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UPSERT_CALENDAR = exports.RENAME_WORLD = exports.CREATE_WORLD = exports.UPDATE_EVENT = exports.UPDATE_WIKI = exports.UPDATE_PLACE = exports.UPDATE_MODELED_WIKI = exports.MOVE_WIKI = exports.DELETE_WIKI = exports.CREATE_WIKI = exports.CREATE_IMAGE = exports.RENAME_FOLDER = exports.MOVE_FOLDER = exports.DELETE_FOLDER = exports.CREATE_FOLDER = exports.SET_DEFAULT_WORLD = exports.UNLOCK_SERVER = exports.GENERATE_REGISTER_CODES = exports.UPDATE_MODEL = exports.DELETE_MODEL = exports.CREATE_MODEL = exports.UPDATE_PIN = exports.DELETE_PIN = exports.CREATE_PIN = exports.SET_GAME_MAP = exports.SET_CHARACTER_ORDER = exports.SET_CHARACTER_ATTRIBUTES = exports.GAME_CHAT = exports.ADD_STROKE = exports.ADD_FOG_STROKE = exports.SET_POSITIONED_MODEL_WIKI = exports.SET_MODEL_POSITION = exports.SET_MODEL_COLOR = exports.DELETE_POSITIONED_MODEL = exports.ADD_MODEL = exports.LEAVE_GAME = exports.JOIN_GAME = exports.CREATE_GAME = exports.REVOKE_USER_PERMISSION = exports.GRANT_USER_PERMISSION = exports.SET_CURRENT_WORLD = exports.REGISTER_MUTATION = exports.REVOKE_ROLE_PERMISSION = exports.GRANT_ROLE_PERMISSION = exports.REMOVE_USER_ROLE = exports.ADD_USER_ROLE = exports.DELETE_ROLE = exports.CREATE_ROLE = exports.LOGOUT_QUERY = exports.LOGIN_QUERY = void 0;
+exports.UPSERT_CALENDAR = exports.RENAME_WORLD = exports.CREATE_WORLD = exports.UPDATE_EVENT = exports.UPDATE_WIKI = exports.UPDATE_PLACE = exports.UPDATE_MODELED_WIKI = exports.MOVE_WIKI = exports.DELETE_WIKI = exports.CREATE_WIKI = exports.CREATE_IMAGE = exports.RENAME_FOLDER = exports.MOVE_FOLDER = exports.DELETE_FOLDER = exports.CREATE_FOLDER = exports.SET_DEFAULT_WORLD = exports.UNLOCK_SERVER = exports.INVITE_USER = exports.UPDATE_MODEL = exports.DELETE_MODEL = exports.CREATE_MODEL = exports.UPDATE_PIN = exports.DELETE_PIN = exports.CREATE_PIN = exports.SET_GAME_MAP = exports.SET_CHARACTER_ORDER = exports.SET_CHARACTER_ATTRIBUTES = exports.GAME_CHAT = exports.ADD_STROKE = exports.ADD_FOG_STROKE = exports.SET_POSITIONED_MODEL_WIKI = exports.SET_MODEL_POSITION = exports.SET_MODEL_COLOR = exports.DELETE_POSITIONED_MODEL = exports.ADD_MODEL = exports.LEAVE_GAME = exports.JOIN_GAME = exports.CREATE_GAME = exports.REVOKE_USER_PERMISSION = exports.GRANT_USER_PERMISSION = exports.SET_CURRENT_WORLD = exports.REGISTER_MUTATION = exports.REVOKE_ROLE_PERMISSION = exports.GRANT_ROLE_PERMISSION = exports.REMOVE_USER_ROLE = exports.ADD_USER_ROLE = exports.DELETE_ROLE = exports.CREATE_ROLE = exports.LOGOUT_QUERY = exports.LOGIN_QUERY = void 0;
 exports.DELETE_TOKEN_ICON = exports.BULK_CREATE_TOKEN_ICON = exports.CREATE_TOKEN_ICON = exports.LOAD_5E_CONTENT = exports.IMPORT_CONTENT = exports.DELETE_CALENDAR = void 0;
 const graphql_tag_1 = __importDefault(require("graphql-tag"));
 const gql_fragments_1 = require("./gql-fragments");
@@ -74,13 +74,11 @@ exports.REVOKE_ROLE_PERMISSION = (0, graphql_tag_1.default) `
 //region User
 exports.REGISTER_MUTATION = (0, graphql_tag_1.default) `
 	mutation register(
-		$registerCode: String!
 		$email: String!
 		$username: String!
 		$password: String!
 	) {
 		register(
-			registerCode: $registerCode
 			email: $email
 			username: $username
 			password: $password
@@ -329,23 +327,29 @@ exports.UPDATE_MODEL = (0, graphql_tag_1.default) `
 `;
 //endregion
 //region Server Settings
-exports.GENERATE_REGISTER_CODES = (0, graphql_tag_1.default) `
-	mutation generateRegisterCodes($amount: Int!) {
-		generateRegisterCodes(amount: $amount) {
+exports.INVITE_USER = (0, graphql_tag_1.default) `
+	mutation inviteUser($email: String!) {
+		inviteUser(email: $email) {
 			_id
-			registerCodes
+			email
+		}
+	}
+`;
+exports.SEND_EMAIL_INVITE = (0, graphql_tag_1.default) `
+	mutation sendEmailInvite($email: String!) {
+		sendEmailInvite(email: $email) {
+			_id
+			email
 		}
 	}
 `;
 exports.UNLOCK_SERVER = (0, graphql_tag_1.default) `
 	mutation unlockServer(
-		$unlockCode: String!
 		$email: String!
 		$username: String!
 		$password: String!
 	) {
 		unlockServer(
-			unlockCode: $unlockCode
 			email: $email
 			username: $username
 			password: $password

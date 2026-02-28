@@ -10,9 +10,7 @@ import ServerConfigModel from "../dal/sql/models/server-config-model.js";
 export class ServerConfig implements PermissionControlledEntity {
 	public _id: string;
 	public version: string;
-	public registerCodes: string[];
 	public adminUsers: string[];
-	public unlockCode: string;
 	public acl: AclEntry[];
 	public defaultWorld: string;
 

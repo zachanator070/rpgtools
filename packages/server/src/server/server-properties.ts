@@ -7,6 +7,9 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 export class ServerProperties {
     accessTokenSecret: string = null;
     refreshTokenSecret: string = null;
+    ssoStateSecret: string = null;
+    googleClientId: string = process.env.GOOGLE_CLIENT_ID || null;
+    googleClientSecret: string = process.env.GOOGLE_CLIENT_SECRET || null;
 
     ACCESS_TOKEN_LENGTH = 16;
 
@@ -37,6 +40,20 @@ export class ServerProperties {
             this.refreshTokenSecret = String.fromCharCode(...new Uint8Array(bytes));
         }
 
+        if (process.env.SSO_STATE_SECRET) {
+            this.ssoStateSecret = process.env.SSO_STATE_SECRET;
+        } else {
+            this.logger.warn(
+                "environment variable SSO_STATE_SECRET is not set, restarting server may invalidate in-flight SSO registration state"
+            );
+            const bytes = crypto.randomBytes(this.ACCESS_TOKEN_LENGTH);
+            this.ssoStateSecret = String.fromCharCode(...new Uint8Array(bytes));
+        }
+
     }
+
+    isSsoConfigured = (): boolean => {
+        return !!(this.googleClientId && this.googleClientSecret);
+    };
 
 }

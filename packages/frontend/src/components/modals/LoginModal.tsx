@@ -7,14 +7,15 @@ import TextInput from "../widgets/input/TextInput";
 import PasswordInput from "../widgets/input/PasswordInput";
 import PersonIcon from "../widgets/icons/PersonIcon";
 import KeyIcon from "../widgets/icons/KeyIcon";
-import InlineMargin from "../widgets/InlineMargin";
+import PrimaryButton from "../widgets/PrimaryButton";
 
 interface LoginModalProps {
 	visibility: boolean;
 	setVisibility: (visibility: boolean) => Promise<void>;
+	ssoConfigured: boolean;
 }
 
-export default function LoginModal({ visibility, setVisibility }: LoginModalProps) {
+export default function LoginModal({ visibility, setVisibility, ssoConfigured }: LoginModalProps) {
 
 	const { login, loading, errors } = useLogin(async () => {
 		await setVisibility(false);
@@ -22,29 +23,41 @@ export default function LoginModal({ visibility, setVisibility }: LoginModalProp
 
 	return (
 		<FullScreenModal
-			title="Login"
+			title={"Login"}
 			visible={visibility}
 			setVisible={setVisibility}
 		>
-			<InputForm
-				errors={errors}
-				loading={loading}
-				onSubmit={async ({username, password}) => {
-					await login({username, password})
-				}}
-				buttonText={'Login'}
-			>
-				<FormItem
-					label={<>Username <InlineMargin size={1}><PersonIcon/></InlineMargin></> }
+			<div>
+				{ssoConfigured && (
+					<div className="margin-sm-top text-align-center">
+						<PrimaryButton id="loginWithGoogleButton" onClick={async () => window.location.assign("/auth/sso/start")}>
+							Login with Google
+						</PrimaryButton>
+						<div className="margin-lg-bottom margin-lg-top">
+							or
+						</div>
+					</div>
+				)}
+				<InputForm
+					errors={errors}
+					loading={loading}
+					onSubmit={async ({username, password}) => {
+						await login({username, password})
+					}}
+					buttonText={'Login'}
 				>
-					<TextInput name={"username"} id="loginEmail"/>
-				</FormItem>
-				<FormItem
-					label={<>Password <InlineMargin size={1}><KeyIcon/></InlineMargin></>}
-				>
-					<PasswordInput name={"password"} id="loginPassword"/>
-				</FormItem>
-			</InputForm>
+					<FormItem
+						label={<>Username <PersonIcon className="form-label-icon"/></> }
+					>
+						<TextInput name={"username"} id="loginEmail"/>
+					</FormItem>
+					<FormItem
+						label={<>Password <KeyIcon className="form-label-icon"/></>}
+					>
+						<PasswordInput name={"password"} id="loginPassword"/>
+					</FormItem>
+				</InputForm>
+			</div>
 		</FullScreenModal>
 	);
 };

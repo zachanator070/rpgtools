@@ -162,7 +162,12 @@ export const GET_SERVER_CONFIG = gql`
 		serverConfig{
 			_id
 			version
-			registerCodes
+			invites {
+				_id
+				email
+			}
+			ssoConfigured
+			emailConfigured
 			canCreateWorlds
 			serverNeedsSetup
 			defaultWorld {

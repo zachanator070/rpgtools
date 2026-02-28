@@ -13,6 +13,7 @@ import {PinRepository} from "./repository/pin-repository.js";
 import {PlaceRepository} from "./repository/place-repository.js";
 import {RoleRepository} from "./repository/role-repository.js";
 import {ServerConfigRepository} from "./repository/server-config-repository.js";
+import {InviteRepository} from "./repository/invite-repository.js";
 import {UserRepository} from "./repository/user-repository.js";
 import {WikiFolderRepository} from "./repository/wiki-folder-repository.js";
 import {WikiPageRepository} from "./repository/wiki-page-repository.js";
@@ -39,6 +40,7 @@ export abstract class DatabaseContext implements RepositoryAccessor {
     placeRepository: PlaceRepository;
     roleRepository: RoleRepository;
     serverConfigRepository: ServerConfigRepository;
+    inviteRepository: InviteRepository;
     userRepository: UserRepository;
     wikiFolderRepository: WikiFolderRepository;
     wikiPageRepository: WikiPageRepository;

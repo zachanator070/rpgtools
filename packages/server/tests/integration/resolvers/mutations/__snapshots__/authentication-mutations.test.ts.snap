@@ -57,30 +57,7 @@ exports[`authentication-mutations > login bad username 1`] = `
 }
 `;
 
-exports[`authentication-mutations > register bad code 1`] = `
-{
-  "data": null,
-  "errors": [
-    {
-      "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
-      },
-      "locations": [
-        {
-          "column": 3,
-          "line": 2,
-        },
-      ],
-      "message": "Register code not valid",
-      "path": [
-        "register",
-      ],
-    },
-  ],
-}
-`;
-
-exports[`authentication-mutations > with good register code available > register good 1`] = `
+exports[`authentication-mutations > with invite emails available > register good 1`] = `
 {
   "data": {
     "register": {
@@ -91,7 +68,7 @@ exports[`authentication-mutations > with good register code available > register
 }
 `;
 
-exports[`authentication-mutations > with good register code available > register use code twice 1`] = `
+exports[`authentication-mutations > with invite emails available > register use code twice 1`] = `
 {
   "data": null,
   "errors": [
@@ -105,7 +82,7 @@ exports[`authentication-mutations > with good register code available > register
           "line": 2,
         },
       ],
-      "message": "Register code not valid",
+      "message": "Registration Error: No invite exists for this email",
       "path": [
         "register",
       ],
@@ -114,7 +91,7 @@ exports[`authentication-mutations > with good register code available > register
 }
 `;
 
-exports[`authentication-mutations > with good register code available > register use email twice 1`] = `
+exports[`authentication-mutations > with invite emails available > register use email twice 1`] = `
 {
   "data": null,
   "errors": [
@@ -128,7 +105,7 @@ exports[`authentication-mutations > with good register code available > register
           "line": 2,
         },
       ],
-      "message": "Register code not valid",
+      "message": "Registration Error: Username already used",
       "path": [
         "register",
       ],
@@ -137,7 +114,7 @@ exports[`authentication-mutations > with good register code available > register
 }
 `;
 
-exports[`authentication-mutations > with good register code available > register use username twice 1`] = `
+exports[`authentication-mutations > with invite emails available > register use username twice 1`] = `
 {
   "data": null,
   "errors": [
@@ -151,7 +128,7 @@ exports[`authentication-mutations > with good register code available > register
           "line": 2,
         },
       ],
-      "message": "Register code not valid",
+      "message": "Registration Error: Username already used",
       "path": [
         "register",
       ],

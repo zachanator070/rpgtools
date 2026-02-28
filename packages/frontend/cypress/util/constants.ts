@@ -1,4 +1,3 @@
-export const UNLOCK_CODE = "unlock_me";
 export const REGISTER_CODE = "register_me";
 
 export const ADMIN_USERNAME = "admin";

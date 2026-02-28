@@ -11,6 +11,7 @@ export const CHARACTER_ATTRIBUTE = "CharacterAttribute";
 export const CHARACTER = "Character";
 export const GAME_MODEL = "GameModel";
 export const REGISTER_CODE = 'RegisterCode';
+export const INVITE = 'Invite';
 export const FOG_STROKE = "FogStroke";
 export const STROKE = "Stroke";
 export const MESSAGE = "Message";

@@ -33,12 +33,18 @@ export default class UserModel extends SqlModel {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                not: {args: ANON_USERNAME, msg: 'cannot save anonymous user'}
+                isValidUsername(value: string) {
+                    if (!value || !value.trim()) {
+                        throw new Error('username is required');
+                    }
+                    if (value.trim().toLowerCase() === ANON_USERNAME.toLowerCase()) {
+                        throw new Error('cannot save anonymous user');
+                    }
+                }
             }
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false
         },
         tokenVersion: {
             type: DataTypes.STRING,

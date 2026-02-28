@@ -1,59 +1,139 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import useRegister from "../../hooks/authentication/useRegister";
 import useLogin from "../../hooks/authentication/useLogin";
 import FullScreenModal from "../widgets/FullScreenModal";
-import InputForm from "../widgets/input/InputForm";
-import FormItem from "../widgets/input/FormItem";
-import TextInput from "../widgets/input/TextInput";
-import PasswordInput from "../widgets/input/PasswordInput";
-import KeyIcon from "../widgets/icons/KeyIcon";
-import PersonIcon from "../widgets/icons/PersonIcon";
-import MailIcon from "../widgets/icons/MailIcon";
+import PrimaryButton from "../widgets/PrimaryButton";
+import RegisterPasswordForm from "./RegisterPasswordForm";
+import RegisterSsoForm from "./RegisterSsoForm";
+import LeftArrowIcon from "../widgets/icons/LeftArrowIcon";
 
 interface RegisterModalProps {
 	visibility: boolean;
 	setVisibility: (visibility: boolean) => Promise<void>;
+	ssoConfigured: boolean;
 }
 
-export default function RegisterModal({ visibility, setVisibility }: RegisterModalProps) {
+enum RegistrationMethod {
+	Password,
+	SSO
+}
+
+export default function RegisterModal({ visibility, setVisibility, ssoConfigured }: RegisterModalProps) {
+	const [registrationMethod, setRegistrationMethod] = useState<RegistrationMethod>(null);
+	const [ssoErrors, setSsoErrors] = useState<string[]>([]);
+	const [ssoLoading, setSsoLoading] = useState(false);
+	const [email, setEmail] = useState("");
 
 	const { register, loading, errors } = useRegister(
 		async () => await setVisibility(false)
 	);
 	const { login, loading: loginLoading } = useLogin();
 
+	useEffect(() => {
+		if (!visibility) {
+			return;
+		}
+
+		const url = new URL(window.location.href);
+		const inviteEmail = url.searchParams.get("invite") || "";
+		if (inviteEmail) {
+			setEmail(inviteEmail);
+		}
+	}, [visibility]);
+
+	const submitSsoRegistration = async (username: string, redirectUrl?: string) => {
+		setSsoErrors([]);
+		const normalizedUsername = username?.trim();
+		if (!normalizedUsername) {
+			setSsoErrors(["Username is required"]);
+			return;
+		}
+
+		try {
+			setSsoLoading(true);
+			const response = await fetch("/auth/sso/start", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ username: normalizedUsername, redirectUrl }),
+			});
+
+			const responseBody = await response.json();
+			if (!response.ok || !responseBody?.redirectUrl) {
+				setSsoErrors([responseBody?.error || "Could not start SSO flow"]);
+				return;
+			}
+
+			window.location.assign(responseBody.redirectUrl);
+		} catch (_err) {
+			setSsoErrors(["Could not start SSO flow"]);
+		} finally {
+			setSsoLoading(false);
+		}
+	};
+
+	let visibleForm = null;
+
+	if (registrationMethod === RegistrationMethod.SSO) {
+		visibleForm = (
+			<RegisterSsoForm
+				errors={ssoErrors}
+				loading={ssoLoading}
+				onSubmit={submitSsoRegistration}
+			/>
+		);
+	}
+	if (!ssoConfigured || registrationMethod === RegistrationMethod.Password) {
+		visibleForm = (
+			<RegisterPasswordForm
+				errors={errors}
+				loading={loginLoading || loading}
+				email={email}
+				setEmail={setEmail}
+				onSubmit={async ({email, username, password}) => {
+					await register({email, username, password});
+					await login({username, password});
+				}}
+			/>
+		);
+	}
+
 	return (
 		<div>
 			<FullScreenModal
-				title="Register"
+				title={registrationMethod === RegistrationMethod.SSO ? "Register with Google" : "Register Username/Password"}
 				visible={visibility}
-				setVisible={setVisibility}
+				setVisible={(visibility) => {
+					if (!visibility) {
+						setRegistrationMethod(null);
+					}
+					setVisibility(visibility);
+				}}
 			>
-				<InputForm
-					errors={errors}
-					loading={loginLoading || loading}
-					onSubmit={async ({registerCode, email, username, password}) => {
-						await register({registerCode, email, username, password});
-						await login({username, password});
-					}}
-					buttonText={'Register'}
-				>
-					<FormItem label={<>Register Code <KeyIcon/></>}>
-						<TextInput name="registerCode" id="registerCode"/>
-					</FormItem>
-					<FormItem label={<>Email <MailIcon/></>}>
-						<TextInput name="email" id="registerEmail"/>
-					</FormItem>
-					<FormItem label={<>Username <PersonIcon/></>}>
-						<TextInput name="username" id="registerDisplayName"/>
-					</FormItem>
-					<FormItem label={<>Password <KeyIcon/></>}>
-						<PasswordInput name="password" id="registerPassword"/>
-					</FormItem>
-					<FormItem label={<>Repeat Password <KeyIcon/></>}>
-						<PasswordInput name="repeatPassword" id="registerRepeatPassword"/>
-					</FormItem>
-				</InputForm>
+				<div>
+					{ssoConfigured && (
+						<>
+							{registrationMethod === null ? (
+								<div className="text-align-center margin-lg-bottom flex" style={{justifyContent: "space-evenly"}}>
+									<PrimaryButton onClick={async () => setRegistrationMethod(RegistrationMethod.Password)}>
+										Use password registration
+									</PrimaryButton>
+									<PrimaryButton onClick={async () => setRegistrationMethod(RegistrationMethod.SSO)}>
+										Register with Google
+									</PrimaryButton>
+								</div>
+							) : (
+								<div>
+									<a onClick={async () => setRegistrationMethod(null)}>
+										<LeftArrowIcon /> Back
+									</a>
+								</div>
+							)}
+						</>
+					)}
+				</div>
+				{visibleForm}
 			</FullScreenModal>
 		</div>
 	);

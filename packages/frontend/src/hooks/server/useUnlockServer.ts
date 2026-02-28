@@ -3,10 +3,9 @@ import {UNLOCK_SERVER} from "@rpgtools/common/src/gql-mutations";
 import {GET_SERVER_CONFIG} from "@rpgtools/common/src/gql-queries";
 
 interface UnlockServerVariables {
-	unlockCode: string;
 	email: string;
 	username: string;
-	password: string;
+	password?: string | null;
 }
 
 interface UnlockServerResult extends GqlMutationResult<boolean, UnlockServerVariables>{

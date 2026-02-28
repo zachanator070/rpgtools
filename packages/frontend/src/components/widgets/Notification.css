@@ -1,0 +1,15 @@
+.themed-error-notification {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.themed-error-notification .ant-notification-notice-message,
+.themed-error-notification .ant-notification-notice-description,
+.themed-error-notification .ant-notification-notice-close {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .themed-error-notification {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color-secondary);
+}

@@ -146,7 +146,12 @@ exports.GET_SERVER_CONFIG = (0, graphql_tag_1.default) `
 		serverConfig{
 			_id
 			version
-			registerCodes
+			invites {
+				_id
+				email
+			}
+			ssoConfigured
+			emailConfigured
 			canCreateWorlds
 			serverNeedsSetup
 			defaultWorld {

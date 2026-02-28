@@ -88,13 +88,11 @@ export const REVOKE_ROLE_PERMISSION = gql`
 
 export const REGISTER_MUTATION = gql`
 	mutation register(
-		$registerCode: String!
 		$email: String!
 		$username: String!
 		$password: String!
 	) {
 		register(
-			registerCode: $registerCode
 			email: $email
 			username: $username
 			password: $password
@@ -357,23 +355,29 @@ export const UPDATE_MODEL = gql`
 
 //region Server Settings
 
-export const GENERATE_REGISTER_CODES = gql`
-	mutation generateRegisterCodes($amount: Int!) {
-		generateRegisterCodes(amount: $amount) {
+export const INVITE_USER = gql`
+	mutation inviteUser($email: String!) {
+		inviteUser(email: $email) {
 			_id
-			registerCodes
+			email
+		}
+	}
+`;
+export const SEND_EMAIL_INVITE = gql`
+	mutation sendEmailInvite($email: String!) {
+		sendEmailInvite(email: $email) {
+			_id
+			email
 		}
 	}
 `;
 export const UNLOCK_SERVER = gql`
 	mutation unlockServer(
-		$unlockCode: String!
 		$email: String!
 		$username: String!
-		$password: String!
+		$password: String
 	) {
 		unlockServer(
-			unlockCode: $unlockCode
 			email: $email
 			username: $username
 			password: $password

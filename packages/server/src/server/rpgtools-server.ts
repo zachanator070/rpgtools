@@ -41,10 +41,9 @@ export default class RpgToolsServer {
         await this.dbEngine.connect();
         const databaseContext = await this.dbEngine.createDatabaseContext();
         await this.seedDB(databaseContext);
-        const serverConfig = await this.serverConfigService.getServerConfig(databaseContext);
         if (await this.serverConfigService.serverNeedsSetup(databaseContext)) {
             this.logger.warn(
-                `Server needs configuration! Use unlock code ${serverConfig.unlockCode} to unlock`
+                "Server needs configuration! Navigate to /ui/setup to create an admin user."
             );
         }
         await this.apiServer.start();

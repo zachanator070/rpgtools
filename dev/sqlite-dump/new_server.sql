@@ -154,11 +154,11 @@ INSERT INTO AclEntry VALUES ('e97d4bd1-325e-40a2-8abb-5c1fd5d02254', '2022-11-09
 -- Data for Name: ServerConfig; Type: TABLE DATA; Schema: main; Owner: rpgtools
 --
 
-INSERT INTO ServerConfig VALUES ('9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0', '2022-11-09 01:55:19.298+00', '2022-11-09 01:55:19.322+00', '1.0', 'unlock_me', NULL);
+INSERT INTO ServerConfig VALUES ('9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0', '2022-11-09 01:55:19.298+00', '2022-11-09 01:55:19.322+00', '1.0', NULL);
 
 
 --
--- Data for Name: RegisterCode; Type: TABLE DATA; Schema: main; Owner: rpgtools
+-- Data for Name: Invite; Type: TABLE DATA; Schema: main; Owner: rpgtools
 --
 
 

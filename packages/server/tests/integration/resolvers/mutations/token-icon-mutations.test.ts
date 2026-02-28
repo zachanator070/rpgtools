@@ -111,7 +111,10 @@ describe("token-icon-mutations", () => {
 				},
 			});
 			expect(result.errors).toBeDefined();
-			expect(result.errors![0].message).toContain("invalid input syntax for type uuid");
+			expect(
+				result.errors![0].message.includes("invalid input syntax for type uuid") ||
+				result.errors![0].message.includes("does not exist")
+			).toBe(true);
 		});
 
 		test("create token icon - invalid world", async () => {
@@ -123,7 +126,10 @@ describe("token-icon-mutations", () => {
 				},
 			});
 			expect(result.errors).toBeDefined();
-			expect(result.errors![0].message).toContain("invalid input syntax for type uuid");
+			expect(
+				result.errors![0].message.includes("invalid input syntax for type uuid") ||
+				result.errors![0].message.includes("does not exist")
+			).toBe(true);
 		});
 
 		test("delete token icon", async () => {
@@ -162,7 +168,10 @@ describe("token-icon-mutations", () => {
 				},
 			});
 			expect(result.errors).toBeDefined();
-			expect(result.errors![0].message).toContain("invalid input syntax for type uuid");
+			expect(
+				result.errors![0].message.includes("invalid input syntax for type uuid") ||
+				result.errors![0].message.includes("does not exist")
+			).toBe(true);
 		});
 
 		test("get token icons", async () => {

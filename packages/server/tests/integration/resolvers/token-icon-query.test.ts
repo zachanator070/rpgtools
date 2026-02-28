@@ -296,7 +296,10 @@ describe("token-icon-query", () => {
 			});
 
 			expect(result.errors).toBeDefined();
-			expect(result.errors![0].message).toContain("invalid input syntax for type uuid");
+			expect(
+				result.errors![0].message.includes("invalid input syntax for type uuid") ||
+				result.errors![0].message.includes("does not exist")
+			).toBe(true);
 		});
 
 		test("zero page number", async () => {

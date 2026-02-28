@@ -7,8 +7,6 @@ import ServerConfigFactory from "../../../domain-entities/factory/server-config-
 import AbstractSqlRepository from "./abstract-sql-repository.js";
 import SqlPermissionControlledRepository from "./sql-permission-controlled-repository.js";
 import UserModel from "../models/user-model.js";
-import RegisterCodeModel from "../models/register-code-model.js";
-import {v4} from "uuid";
 
 
 @injectable()
@@ -25,8 +23,7 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
     async modelFactory(entity: ServerConfig | undefined): Promise<ServerConfigModel> {
         return ServerConfigModel.build({
             _id: entity._id,
-            version: entity.version,
-            unlockCode: entity.unlockCode
+            version: entity.version
         });
     }
 
@@ -34,39 +31,6 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
         await this.sqlPermissionControlledRepository.updateAssociations(entity, model);
         const adminUserModels = await UserModel.findAll({where: {_id: entity.adminUsers}});
         await model.setAdmins(adminUserModels);
-
-        const codesToSet = [];
-
-        const currentCodes = await model.getCodes();
-        for(let currentCode of currentCodes) {
-            let found = false;
-            for(let newCode of entity.registerCodes) {
-                if(currentCode.code === newCode) {
-                    found = true;
-                    codesToSet.push(currentCode);
-                }
-            }
-            if(!found) {
-                await currentCode.destroy();
-            }
-        }
-
-        for(let newCode of entity.registerCodes) {
-            let found = false;
-            for(let currentCode of currentCodes) {
-                if(currentCode.code === newCode) {
-                    found = true;
-                }
-            }
-            if(!found) {
-                codesToSet.push(await RegisterCodeModel.create({
-                    _id: v4(),
-                    code: newCode
-                }));
-            }
-        }
-
-        await model.setCodes(codesToSet);
     }
 
     async findOne(): Promise<ServerConfig> {

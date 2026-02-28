@@ -20,6 +20,7 @@ import {PinRepository} from "../repository/pin-repository.js";
 import {PlaceRepository} from "../repository/place-repository.js";
 import {RoleRepository} from "../repository/role-repository.js";
 import {ServerConfigRepository} from "../repository/server-config-repository.js";
+import {InviteRepository} from "../repository/invite-repository.js";
 import StrokeRepository from "../repository/stroke-repository.js";
 import {UserRepository} from "../repository/user-repository.js";
 import {WikiFolderRepository} from "../repository/wiki-folder-repository.js";
@@ -63,6 +64,8 @@ export default class InMemoryDbEngine implements DbEngine {
     roleRepository: RoleRepository;
     @inject(INJECTABLE_TYPES.ServerConfigRepository)
     serverConfigRepository: ServerConfigRepository;
+    @inject(INJECTABLE_TYPES.InviteRepository)
+    inviteRepository: InviteRepository;
     @inject(INJECTABLE_TYPES.StrokeRepository)
     strokeRepository: StrokeRepository;
     @inject(INJECTABLE_TYPES.UserRepository)
@@ -117,6 +120,7 @@ export default class InMemoryDbEngine implements DbEngine {
             this.placeRepository,
             this.roleRepository,
             this.serverConfigRepository,
+            this.inviteRepository,
             this.strokeRepository,
             this.userRepository,
             this.wikiFolderRepository,
