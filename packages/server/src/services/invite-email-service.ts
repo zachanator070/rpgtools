@@ -17,11 +17,9 @@ export class InviteEmailService {
 
 	private resolveBrandingAssetPath = (assetFileName: string): string | undefined => {
 		const candidates = [
-			path.resolve(process.cwd(), "packages/frontend/src/branding", assetFileName),
+			path.resolve(process.cwd(), "dist/frontend/src/branding", assetFileName),
 			path.resolve(process.cwd(), "../frontend/src/branding", assetFileName),
-			path.resolve(process.cwd(), "../../frontend/src/branding", assetFileName),
-			path.resolve(process.cwd(), "src/branding", assetFileName),
-			path.resolve(process.cwd(), "docs/images", assetFileName),
+			path.resolve(process.cwd(), "branding", assetFileName),
 		];
 
 		for (const candidate of candidates) {
