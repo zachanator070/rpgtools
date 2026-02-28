@@ -2,9 +2,6 @@ import { SERVER_ADMIN_ROLE, SERVER_PERMISSIONS } from "@rpgtools/common/src/perm
 import {ROLE} from "@rpgtools/common/src/type-constants.js";
 import { inject, injectable } from "inversify";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
-import {
-	ApiServer,
-} from "../types.js";
 import { SecurityContext } from "../security/security-context.js";
 import {AuthenticationService} from "./authentication-service.js";
 import {DatabaseContext} from "../dal/database-context.js";
@@ -19,9 +16,6 @@ import { EmailService } from "./email-service.js";
 export class ServerConfigService {
 	@inject(INJECTABLE_TYPES.AuthenticationService)
 	authenticationService: AuthenticationService;
-
-	@inject(INJECTABLE_TYPES.ApiServer)
-	server: ApiServer;
 
 	@inject(INJECTABLE_TYPES.RoleFactory)
 	roleFactory: RoleFactory;
@@ -53,7 +47,7 @@ export class ServerConfigService {
 		return serverConfig.adminUsers.length === 0;
 	};
 
-	unlockServer = async (unlockCode: string, email: string, username: string, password: string, databaseContext: DatabaseContext) => {
+	unlockServer = async (email: string, username: string, password: string | null, databaseContext: DatabaseContext) => {
 		const server = await databaseContext.serverConfigRepository.findOne();
 		if (!server) {
 			throw new Error("Server config doesnt exist!");
@@ -61,16 +55,19 @@ export class ServerConfigService {
 		if (!await this.serverNeedsSetup(databaseContext)) {
 			throw new Error("Server already unlocked!");
 		}
-		if (server.unlockCode !== unlockCode) {
-			throw new Error("Unlock code is incorrect");
-		}
 		if (server.adminUsers.length > 0) {
 			throw new Error("Server is already unlocked");
 		}
+
+		const normalizedPassword = password?.trim() || null;
+		if (!normalizedPassword && !this.serverProperties.isSsoConfigured()) {
+			throw new Error("Password is required when SSO is not configured");
+		}
+
 		const admin = await this.authenticationService.registerUser(
 			email,
 			username,
-			password,
+			normalizedPassword,
 			databaseContext
 		);
 		const adminRole = this.roleFactory.build({name: SERVER_ADMIN_ROLE, world: null, acl: []});

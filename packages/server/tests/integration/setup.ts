@@ -37,8 +37,7 @@ beforeAll(async () => {
 	const databaseContext = await dbEngine.createDatabaseContext();
 	await server.seedDB(databaseContext);
 	const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-	const serverConfig = await service.getServerConfig(databaseContext);
-	await service.unlockServer(serverConfig.unlockCode, "tester@gmail.com", "tester", "tester", databaseContext);
+	await service.unlockServer("tester@gmail.com", "tester", "tester", databaseContext);
 });
 
 afterAll(async function () {

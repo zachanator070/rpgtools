@@ -7,16 +7,17 @@ import PersonIcon from "../widgets/icons/PersonIcon";
 interface RegisterSsoFormProps {
 	errors: string[];
 	loading: boolean;
-	onSubmit: (username: string) => Promise<void>;
+	redirectUrl?: string;
+	onSubmit: (username: string, redirectUrl?: string) => Promise<void>;
 }
 
-export default function RegisterSsoForm({ errors, loading, onSubmit }: RegisterSsoFormProps) {
+export default function RegisterSsoForm({ errors, loading, redirectUrl, onSubmit }: RegisterSsoFormProps) {
 	return (
 		<InputForm
 			errors={errors}
 			loading={loading}
 			onSubmit={async ({username}) => {
-				await onSubmit(username);
+				await onSubmit(username, redirectUrl);
 			}}
 			buttonText={"Continue with Google"}
 		>

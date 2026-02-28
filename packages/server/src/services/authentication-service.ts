@@ -151,41 +151,14 @@ export class AuthenticationService {
 			throw new Error("Invalid state token");
 		}
 
-		const tokenPayload = new URLSearchParams({
-			code,
-			client_id: this.serverProperties.googleClientId,
-			client_secret: this.serverProperties.googleClientSecret,
-			redirect_uri: callbackUri,
-			grant_type: "authorization_code",
-		});
+		const email = await this.getSsoEmail(code, callbackUri);
 
-		const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", tokenPayload.toString(), {
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-		});
-
-		const accessToken = tokenResponse?.data?.access_token;
-		if (!accessToken) {
-			throw new Error("Google token response missing access token");
-		}
-
-		const userInfoResponse = await axios.get("https://openidconnect.googleapis.com/v1/userinfo", {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		const users = await databaseContext.userRepository.findByEmail(String(userInfoResponse?.data?.email || "").trim().toLowerCase());
+		const users = await databaseContext.userRepository.findByEmail(email);
 		if (!users || users.length === 0) {
 			throw Error("Login failure: user not found");
 		}
 		const user = users[0];
 
-		const email = String(userInfoResponse?.data?.email || "").trim().toLowerCase();
-		if (!email) {
-			throw new Error("Google user info did not include an email");
-		}
 		const tokens = await this.createTokens(user, user.tokenVersion, databaseContext);
 		cookieManager.setCookie(ACCESS_TOKEN, tokens.accessToken, ACCESS_TOKEN_MAX_AGE.ms);
 		cookieManager.setCookie(REFRESH_TOKEN, tokens.refreshToken, REFRESH_TOKEN_MAX_AGE.ms);
@@ -209,40 +182,7 @@ export class AuthenticationService {
 		};
 		const username = this.validateAndNormalizeUsername(decodedState.username || "");
 
-		const tokenPayload = new URLSearchParams({
-			code,
-			client_id: this.serverProperties.googleClientId,
-			client_secret: this.serverProperties.googleClientSecret,
-			redirect_uri: callbackUri,
-			grant_type: "authorization_code",
-		});
-
-		const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", tokenPayload.toString(), {
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-		});
-
-		const accessToken = tokenResponse?.data?.access_token;
-		if (!accessToken) {
-			throw new Error("Google token response missing access token");
-		}
-
-		const userInfoResponse = await axios.get("https://openidconnect.googleapis.com/v1/userinfo", {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		const email = String(userInfoResponse?.data?.email || "").trim().toLowerCase();
-		if (!email) {
-			throw new Error("Google user info did not include an email");
-		}
-
-		const normalizedEmail = email?.trim().toLowerCase();
-		if (!normalizedEmail) {
-			throw new Error("Registration Error: Email is required");
-		}
+		const normalizedEmail = await this.getSsoEmail(code, callbackUri);
 
 		const user = await this.registerWithInvite(normalizedEmail, username, null, databaseContext);
 
@@ -284,6 +224,40 @@ export class AuthenticationService {
 
 		await databaseContext.inviteRepository.deleteByEmail(normalizedEmail);
 		return newUser;
+	};
+
+	getSsoEmail = async (code: string, callbackUri: string): Promise<string> => {
+		const tokenPayload = new URLSearchParams({
+			code,
+			client_id: this.serverProperties.googleClientId,
+			client_secret: this.serverProperties.googleClientSecret,
+			redirect_uri: callbackUri,
+			grant_type: "authorization_code",
+		});
+
+		const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", tokenPayload.toString(), {
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+		});
+
+		const accessToken = tokenResponse?.data?.access_token;
+		if (!accessToken) {
+			throw new Error("Google token response missing access token");
+		}
+
+		const userInfoResponse = await axios.get("https://openidconnect.googleapis.com/v1/userinfo", {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		});
+
+		const email = String(userInfoResponse?.data?.email || "").trim().toLowerCase();
+		if (!email) {
+			throw new Error("Google user info did not include an email");
+		}
+
+		return email;
 	};
 
 	registerUser = async (

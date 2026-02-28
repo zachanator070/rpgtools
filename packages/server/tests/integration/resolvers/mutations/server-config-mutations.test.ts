@@ -63,8 +63,6 @@ describe("server mutations", () => {
 		const adminUsername = "tester";
 		const adminPassword = "tester";
 
-		const unlockCode = "asdf";
-
 		const lockServer = async () => {
 			const databaseContext = await dbEngine.createDatabaseContext();
 			const adminRole = await databaseContext.roleRepository.findOneByName(SERVER_ADMIN_ROLE);
@@ -78,7 +76,6 @@ describe("server mutations", () => {
 				await databaseContext.roleRepository.delete(adminRole);
 			}
 			const serverConfig = await databaseContext.serverConfigRepository.findOne();
-			serverConfig.unlockCode = unlockCode;
 			serverConfig.adminUsers = [];
 			await databaseContext.serverConfigRepository.update(serverConfig);
 		};
@@ -91,8 +88,7 @@ describe("server mutations", () => {
 			await lockServer();
 			const databaseContext = await dbEngine.createDatabaseContext();
 			const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-			const serverConfig = await service.getServerConfig(databaseContext);
-			await service.unlockServer(serverConfig.unlockCode, adminUserEmail, adminUsername, adminPassword, databaseContext);
+			await service.unlockServer(adminUserEmail, adminUsername, adminPassword, databaseContext);
 			await testingContext.reset();
 		});
 
@@ -100,7 +96,6 @@ describe("server mutations", () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
-					unlockCode: unlockCode,
 					email: adminUserEmail,
 					username: adminUsername,
 					password: adminPassword,
@@ -118,7 +113,6 @@ describe("server mutations", () => {
 			const firstResult = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
-					unlockCode: unlockCode,
 					email: adminUserEmail,
 					username: adminUsername,
 					password: adminPassword,
@@ -133,7 +127,6 @@ describe("server mutations", () => {
 			const secondResult = await testingContext.server.executeGraphQLQuery({
 				query: UNLOCK_SERVER,
 				variables: {
-					unlockCode: unlockCode,
 					email: adminUserEmail,
 					username: adminUsername,
 					password: adminPassword,

@@ -345,13 +345,11 @@ exports.SEND_EMAIL_INVITE = (0, graphql_tag_1.default) `
 `;
 exports.UNLOCK_SERVER = (0, graphql_tag_1.default) `
 	mutation unlockServer(
-		$unlockCode: String!
 		$email: String!
 		$username: String!
 		$password: String!
 	) {
 		unlockServer(
-			unlockCode: $unlockCode
 			email: $email
 			username: $username
 			password: $password

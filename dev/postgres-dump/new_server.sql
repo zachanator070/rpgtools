@@ -195,8 +195,8 @@ bb0c59f5-284e-4081-a84f-e7403a5b1a7e	Logged In	2022-11-09 01:55:19.32+00	2022-11
 -- Data for Name: ServerConfigs; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."ServerConfig" (_id, version, "unlockCode", "createdAt", "updatedAt") FROM stdin;
-9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0	1.0	unlock_me	2022-11-09 01:55:19.298+00	2022-11-09 01:55:19.322+00
+COPY public."ServerConfig" (_id, version, "createdAt", "updatedAt") FROM stdin;
+9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0	1.0	2022-11-09 01:55:19.298+00	2022-11-09 01:55:19.322+00
 \.
 
 

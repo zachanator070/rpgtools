@@ -41,7 +41,7 @@ export default function RegisterModal({ visibility, setVisibility, ssoConfigured
 		}
 	}, [visibility]);
 
-	const submitSsoRegistration = async (username: string) => {
+	const submitSsoRegistration = async (username: string, redirectUrl?: string) => {
 		setSsoErrors([]);
 		const normalizedUsername = username?.trim();
 		if (!normalizedUsername) {
@@ -56,7 +56,7 @@ export default function RegisterModal({ visibility, setVisibility, ssoConfigured
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ username: normalizedUsername }),
+				body: JSON.stringify({ username: normalizedUsername, redirectUrl }),
 			});
 
 			const responseBody = await response.json();

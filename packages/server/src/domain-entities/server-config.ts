@@ -11,7 +11,6 @@ export class ServerConfig implements PermissionControlledEntity {
 	public _id: string;
 	public version: string;
 	public adminUsers: string[];
-	public unlockCode: string;
 	public acl: AclEntry[];
 	public defaultWorld: string;
 

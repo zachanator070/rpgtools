@@ -13,7 +13,6 @@ import AdminUsersToServerConfigModel from "./admin-users-to-server-config-model.
 export default class ServerConfigModel extends PermissionControlledModel {
 
     declare version: string;
-    declare unlockCode: string;
     declare defaultWorldId: string;
 
     declare getAdmins: BelongsToManyGetAssociationsMixin<UserModel>;
@@ -22,10 +21,6 @@ export default class ServerConfigModel extends PermissionControlledModel {
     static attributes = {
         ...defaultAttributes,
         version: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        unlockCode: {
             type: DataTypes.STRING,
             allowNull: false
         },

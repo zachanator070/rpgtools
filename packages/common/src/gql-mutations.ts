@@ -373,13 +373,11 @@ export const SEND_EMAIL_INVITE = gql`
 `;
 export const UNLOCK_SERVER = gql`
 	mutation unlockServer(
-		$unlockCode: String!
 		$email: String!
 		$username: String!
-		$password: String!
+		$password: String
 	) {
 		unlockServer(
-			unlockCode: $unlockCode
 			email: $email
 			username: $username
 			password: $password

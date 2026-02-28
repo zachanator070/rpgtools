@@ -12,6 +12,7 @@ import MapWikiContext from "../MapWikiContext";
 import useServerConfig from "../hooks/server/useServerConfig";
 import LoadingView from "./LoadingView";
 import DefaultWorld from "./DefaultWorld";
+import GlobalError from "./GlobalError";
 
 export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();
@@ -38,6 +39,7 @@ export default function App() {
 				showMapDrawer,
 				setShowMapDrawer
 		}}>
+			<GlobalError/>
 			<Routes>
 				<Route
 					path="/ui"

@@ -29,7 +29,7 @@ export const typeDefs = gql`
 	}
 
 	type Mutation {
-		unlockServer(unlockCode: String!, email: String!, username: String!, password: String!): Boolean
+		unlockServer(email: String!, username: String!, password: String): Boolean
 		inviteUser(email: String!): Invite!
 		sendEmailInvite(email: String!): Invite!
 		setDefaultWorld(worldId: ID!): ServerConfig!

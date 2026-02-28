@@ -64,6 +64,7 @@ import * as game_message_size from './migrations/03_game_message_size.js';
 import * as message_to_text from './migrations/04_message_to_text.js';
 import * as token_icon from './migrations/05_token_icon.js';
 import * as invites from './migrations/06_invites.js';
+import * as remove_unlock_code from './migrations/07_remove_unlock_code.js';
 import EventWikiModel from "./models/event-wiki-model.js";
 import CalendarModel from "./models/calendar-model.js";
 import AgeModel from "./models/calendar/age-model.js";
@@ -268,6 +269,10 @@ export default abstract class AbstractSqlDbEngine implements DbEngine {
                 {
                     name: '06_invites',
                     ...invites
+                },
+                {
+                    name: '07_remove_unlock_code',
+                    ...remove_unlock_code
                 }
             ],
             context: connection.getQueryInterface(),

@@ -33,6 +33,7 @@ import { ValidationError } from "sequelize";
 import Logger from "../logging/logger.js";
 import requestLoggerMiddleware from "./request-logger-middleware.js";
 import {AuthenticationService} from "../services/authentication-service.js";
+import {ServerConfigService} from "../services/server-config-service.js";
 import {ServerProperties} from "./server-properties.js";
 import {createSsoRouter} from "../routers/sso-router.js";
 
@@ -46,6 +47,7 @@ export class ExpressApiServer implements ApiServer {
 	webSocketServer: WebSocketServer = null;
 	sessionContextFactory: ExpressSessionContextFactory;
 	authenticationService: AuthenticationService;
+	serverConfigService: ServerConfigService;
 	serverProperties: ServerProperties;
 
 	logger: Logger;
@@ -55,11 +57,13 @@ export class ExpressApiServer implements ApiServer {
 					sessionContextFactory: ExpressSessionContextFactory, 
 				@inject(INJECTABLE_TYPES.Logger) logger: Logger,
 				@inject(INJECTABLE_TYPES.AuthenticationService) authenticationService: AuthenticationService,
+				@inject(INJECTABLE_TYPES.ServerConfigService) serverConfigService: ServerConfigService,
 				@inject(INJECTABLE_TYPES.ServerProperties) serverProperties: ServerProperties) {
 
 		this.sessionContextFactory = sessionContextFactory;
 		this.logger = logger;
 		this.authenticationService = authenticationService;
+		this.serverConfigService = serverConfigService;
 		this.serverProperties = serverProperties;
 		
 		const schema = makeExecutableSchema({ typeDefs, resolvers: allResolvers });
@@ -204,7 +208,7 @@ export class ExpressApiServer implements ApiServer {
 
 		this.expressServer.use(
 			"/auth/sso",
-			createSsoRouter(this.logger, this.authenticationService, this.serverProperties)
+			createSsoRouter(this.logger, this.authenticationService, this.serverConfigService, this.serverProperties)
 		);
 
 		this.expressServer.get("*.js", function (req: Request, res: Response, next: NextFunction) {

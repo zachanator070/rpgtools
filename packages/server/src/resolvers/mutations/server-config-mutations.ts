@@ -7,15 +7,14 @@ export const serverConfigMutations = {
 	unlockServer: async (
 		_: any,
 		{
-			unlockCode,
 			email,
 			username,
 			password,
-		}: { unlockCode: string; email: string; username: string; password: string },
+		}: { email: string; username: string; password?: string | null },
 		{databaseContext}: SessionContext
 	) => {
 		const service = container.get<ServerConfigService>(INJECTABLE_TYPES.ServerConfigService);
-		return await databaseContext.openTransaction(async () => service.unlockServer(unlockCode, email, username, password, databaseContext));
+		return await databaseContext.openTransaction(async () => service.unlockServer(email, username, password, databaseContext));
 	},
 	inviteUser: async (
 		_: any,
