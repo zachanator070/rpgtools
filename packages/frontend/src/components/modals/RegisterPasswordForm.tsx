@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import InputForm from "../widgets/input/InputForm";
 import FormItem from "../widgets/input/FormItem";
 import TextInput from "../widgets/input/TextInput";
@@ -22,11 +22,22 @@ export default function RegisterPasswordForm({
 	setEmail,
 	onSubmit,
 }: RegisterPasswordFormProps) {
+	const [passwordError, setPasswordError] = useState<string>(null);
+
 	return (
 		<InputForm
-			errors={errors}
+			errors={[
+				...(errors || []),
+				...(passwordError ? [passwordError] : []),
+			]}
 			loading={loading}
-			onSubmit={async ({email, username, password}) => {
+			onSubmit={async ({email, username, password, repeatPassword}) => {
+				if (password !== repeatPassword) {
+					setPasswordError("Passwords do not match");
+					return;
+				}
+
+				setPasswordError(null);
 				await onSubmit({email, username, password});
 			}}
 			buttonText={"Register"}
