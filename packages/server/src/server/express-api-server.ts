@@ -128,8 +128,6 @@ export class ExpressApiServer implements ApiServer {
 				},
 			]
 		});
-
-		this.expressServer.set('trust proxy', process.env.NODE_ENV !== 'production');
 	}
 
 	executeGraphQLQuery = async (

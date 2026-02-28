@@ -39,7 +39,8 @@ export const createSsoRouter = (
 		if (!host) {
 			throw new Error("Missing host header");
 		}
-		return `${req.protocol}://${host}${callbackPath}`;
+		const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+		return `${protocol}://${host}${callbackPath}`;
 	};
 
 	const validateInternalRedirectPath = (redirectPath: unknown, fallbackPath: string): string => {
