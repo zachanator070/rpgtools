@@ -3,6 +3,7 @@ import {injectable} from "inversify";
 import { SecurityContext } from "../security/security-context.js";
 import { PaginatedResult } from "../dal/paginated-result.js";
 import {DatabaseContext} from "../dal/database-context.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class RoleService {
@@ -18,10 +19,10 @@ export class RoleService {
 		if (worldId) {
 			const world = await databaseContext.worldRepository.findOneById(worldId);
 			if (!world) {
-				throw new Error("World does not exist");
+				throw new GenericRpgToolsAPIError("World does not exist");
 			}
 			if (!(await world.authorizationPolicy.canRead(context, databaseContext))) {
-				throw new Error("You do not have permission to read this World");
+				throw new GenericRpgToolsAPIError("You do not have permission to read this World");
 			}
 		}
 

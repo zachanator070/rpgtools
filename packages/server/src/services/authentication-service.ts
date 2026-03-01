@@ -14,7 +14,7 @@ import UserFactory from "../domain-entities/factory/user-factory.js";
 import Logger from "../logging/logger.js";
 import { ANON_USERNAME } from "@rpgtools/common/src/permission-constants.js";
 import axios from "axios";
-
+import { GenericRpgToolsAPIError, InvalidInputError } from "../errors.js";
 export interface CookieConstants {
 	string: string;
 	ms: number;
@@ -116,7 +116,7 @@ export class AuthenticationService {
 	): Promise<User> => {
 		const user = await databaseContext.userRepository.findOneByUsername(username);
 		if (!user || !user.password || !bcrypt.compareSync(password, user.password)) {
-			throw Error("Login failure: username or password are incorrect");
+			throw new InvalidInputError("Login failure: username or password are incorrect");
 		}
 		const refreshToken = cookieManager.getResponseCookie(REFRESH_TOKEN);
 		const accessToken = cookieManager.getResponseCookie(ACCESS_TOKEN);
@@ -140,7 +140,7 @@ export class AuthenticationService {
 		databaseContext: DatabaseContext
 	): Promise<User> => {
 		if (!this.serverProperties.isSsoConfigured()) {
-			throw new Error("SSO is not configured");
+			throw new GenericRpgToolsAPIError("SSO is not configured");
 		}
 
 		const decodedState = jwt.verify(state, this.serverProperties.ssoStateSecret) as {
@@ -148,14 +148,14 @@ export class AuthenticationService {
 		};
 
 		if (!decodedState?.jti) {
-			throw new Error("Invalid state token");
+			throw new GenericRpgToolsAPIError("Invalid state token");
 		}
 
 		const email = await this.getSsoEmail(code, callbackUri);
 
 		const users = await databaseContext.userRepository.findByEmail(email);
 		if (!users || users.length === 0) {
-			throw Error("Login failure: user not found");
+			throw new InvalidInputError("Login failure: user not found");
 		}
 		const user = users[0];
 
@@ -173,7 +173,7 @@ export class AuthenticationService {
 		databaseContext: DatabaseContext
 	): Promise<User> => {
 		if (!this.serverProperties.isSsoConfigured()) {
-			throw new Error("SSO is not configured");
+			throw new GenericRpgToolsAPIError("SSO is not configured");
 		}
 
 		const decodedState = jwt.verify(state, this.serverProperties.ssoStateSecret) as {
@@ -209,12 +209,12 @@ export class AuthenticationService {
 	): Promise<User> => {
 		const normalizedEmail = email?.trim().toLowerCase();
 		if (!normalizedEmail) {
-			throw new Error("Registration Error: Email is required");
+			throw new InvalidInputError("Registration Error: Email is required");
 		}
 
 		const invites = await databaseContext.inviteRepository.findByEmail(normalizedEmail);
 		if (invites.length === 0) {
-			throw new Error("Registration Error: No invite exists for this email");
+			throw new InvalidInputError("Registration Error: No invite exists for this email");
 		}
 
 		const newUser = await this.registerUser(normalizedEmail, username, password, databaseContext);
@@ -243,7 +243,7 @@ export class AuthenticationService {
 
 		const accessToken = tokenResponse?.data?.access_token;
 		if (!accessToken) {
-			throw new Error("Google token response missing access token");
+			throw new GenericRpgToolsAPIError("Google token response missing access token");
 		}
 
 		const userInfoResponse = await axios.get("https://openidconnect.googleapis.com/v1/userinfo", {
@@ -254,7 +254,7 @@ export class AuthenticationService {
 
 		const email = String(userInfoResponse?.data?.email || "").trim().toLowerCase();
 		if (!email) {
-			throw new Error("Google user info did not include an email");
+			throw new GenericRpgToolsAPIError("Google user info did not include an email");
 		}
 
 		return email;
@@ -268,18 +268,18 @@ export class AuthenticationService {
 	): Promise<User> => {
 		const normalizedEmail = email?.trim().toLowerCase();
 		if (!normalizedEmail) {
-			throw Error("Registration Error: Email is required");
+			throw new InvalidInputError("Registration Error: Email is required");
 		}
 
 		const normalizedUsername = this.validateAndNormalizeUsername(username);
 		const hashedPassword = password ? bcrypt.hashSync(password, this.SALT_ROUNDS) : null;
 		let existingUsers = await databaseContext.userRepository.findByEmail(normalizedEmail);
 		if (existingUsers.length > 0) {
-			throw Error("Registration Error: Email already used");
+			throw new InvalidInputError("Registration Error: Email already used");
 		}
 		existingUsers = await databaseContext.userRepository.findByUsername(normalizedUsername);
 		if (existingUsers.length > 0) {
-			throw Error("Registration Error: Username already used");
+			throw new InvalidInputError("Registration Error: Username already used");
 		}
 		const newUser = this.userFactory.build({ email: normalizedEmail, username: normalizedUsername, password: hashedPassword, tokenVersion: null, currentWorld: null, roles: []});
 		await databaseContext.userRepository.create(newUser);
@@ -288,14 +288,14 @@ export class AuthenticationService {
 
 	validateAndNormalizeUsername = (username: string): string => {
 		if (username === null || username === undefined) {
-			throw Error("Registration Error: Username is required");
+			throw new InvalidInputError("Registration Error: Username is required");
 		}
 		const normalizedUsername = username.trim();
 		if (!normalizedUsername) {
-			throw Error("Registration Error: Username is required");
+			throw new InvalidInputError("Registration Error: Username is required");
 		}
 		if (normalizedUsername.toLowerCase() === ANON_USERNAME.toLowerCase()) {
-			throw Error("Registration Error: Username not allowed");
+			throw new InvalidInputError("Registration Error: Username not allowed");
 		}
 		return normalizedUsername;
 	};

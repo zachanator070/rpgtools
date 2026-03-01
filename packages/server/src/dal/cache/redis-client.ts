@@ -5,6 +5,7 @@ import { inject, injectable } from "inversify";
 import { Buffer } from "buffer";
 import Logger from "../../logging/logger.js";
 import { INJECTABLE_TYPES } from "../../di/injectable-types.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../../errors.js";
 
 @injectable()
 export class RedisClient implements Cache {
@@ -18,7 +19,7 @@ export class RedisClient implements Cache {
 		this.logger = logger;
 
 		if (!process.env.REDIS_URL) {
-			throw new Error("REDIS_URL not set! Unable to connect to redis");
+			throw new GenericRpgToolsAPIError("REDIS_URL not set! Unable to connect to redis");
 		}
 		this.client = createClient({
 			url: process.env.REDIS_URL,

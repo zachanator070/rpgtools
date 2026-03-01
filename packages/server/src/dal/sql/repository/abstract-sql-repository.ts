@@ -4,6 +4,7 @@ import SqlModel from "../models/sql-model.js";
 import {PaginatedResult} from "../../paginated-result.js";
 import {injectable} from "inversify";
 import {v4} from "uuid";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../../../errors.js";
 
 @injectable()
 export default abstract class AbstractSqlRepository<T extends DomainEntity, M extends SqlModel> {
@@ -94,7 +95,7 @@ export default abstract class AbstractSqlRepository<T extends DomainEntity, M ex
                 where: filter
             });
         } else if(totalCount === undefined || totalCount === null) {
-            throw Error('totalCount must be supplied if results are passed in')
+            throw new GenericRpgToolsAPIError('totalCount must be supplied if results are passed in')
         }
 
         const totalPages = Math.ceil(totalCount / this.PAGE_LIMIT);

@@ -6,6 +6,7 @@ import SqlModel from "../sql-model.js";
 import {GAME, MODEL} from "@rpgtools/common/src/type-constants.js";
 import {TOKEN_TYPES} from "@rpgtools/common/src/token-type-constants.js";
 import TokenIconModel from "../token-icon-model.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../../../../errors.js";
 
 
 export default class InGameModelModel extends SqlModel {
@@ -74,7 +75,7 @@ export default class InGameModelModel extends SqlModel {
                 isValidTokenType(value: any) {
                     const validTypes = Object.values(TOKEN_TYPES);
                     if (value && !validTypes.includes(value)) {
-                        throw new Error(`tokenType must be one of: ${validTypes.join(', ')}`);
+                        throw new GenericRpgToolsAPIError(`tokenType must be one of: ${validTypes.join(', ')}`);
                     }
                 }
             }

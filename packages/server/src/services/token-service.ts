@@ -9,6 +9,7 @@ import { SecurityContext } from "../security/security-context.js";
 import { Readable, PassThrough } from "stream";
 import TokenIconFactory from "../domain-entities/factory/token-icon-factory.js";
 import {Image} from "../domain-entities/image.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class TokenIconService {
@@ -28,17 +29,17 @@ export class TokenIconService {
 	): Promise<TokenIcon> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} does not exist`);
 		}
 
 		const image = await databaseContext.imageRepository.findOneById(imageId);
 		if (!image) {
-			throw new Error(`Image with id ${imageId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Image with id ${imageId} does not exist`);
 		}
 
 		const worldAuthPolicy = world.authorizationPolicy;
 		if (!(await worldAuthPolicy.canCreateTokenIcons(context))) {
-			throw new Error("You do not have permission to create token icons in this world");
+			throw new GenericRpgToolsAPIError("You do not have permission to create token icons in this world");
 		}
 
 		if (name === '') {
@@ -62,17 +63,17 @@ export class TokenIconService {
 	): Promise<TokenIcon> => {
 		const tokenIcon = await databaseContext.tokenIconRepository.findOneById(tokenIconId);
 		if (!tokenIcon) {
-			throw new Error(`TokenIcon with id ${tokenIconId} does not exist`);
+			throw new GenericRpgToolsAPIError(`TokenIcon with id ${tokenIconId} does not exist`);
 		}
 
 		const world = await databaseContext.worldRepository.findOneById(tokenIcon.worldId);
 		if (!world) {
-			throw new Error(`World with id ${tokenIcon.worldId} does not exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${tokenIcon.worldId} does not exist`);
 		}
 
 		const worldAuthPolicy = world.authorizationPolicy;
 		if (!(await worldAuthPolicy.canWriteTokenIcons(context))) {
-			throw new Error("You do not have permission to delete this token icon");
+			throw new GenericRpgToolsAPIError("You do not have permission to delete this token icon");
 		}
 
 		await databaseContext.tokenIconRepository.delete(tokenIcon);
@@ -88,12 +89,12 @@ export class TokenIconService {
 	): Promise<PaginatedResult<TokenIcon>> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} does not exist`);
 		}
 
 		const worldAuthPolicy = world.authorizationPolicy;
 		if (!(await worldAuthPolicy.canReadTokenIcons(context))) {
-			throw new Error("You do not have permission to read token icons in this world");
+			throw new GenericRpgToolsAPIError("You do not have permission to read token icons in this world");
 		}
 
 		const allTokenIcons = await databaseContext.tokenIconRepository.getAllPaginated(page, name, worldId);
@@ -109,12 +110,12 @@ export class TokenIconService {
 	): Promise<TokenIcon[]> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} does not exist`);
 		}
 
 		const worldAuthPolicy = world.authorizationPolicy;
 		if (!(await worldAuthPolicy.canCreateTokenIcons(context))) {
-			throw new Error("You do not have permission to create token icons in this world");
+			throw new GenericRpgToolsAPIError("You do not have permission to create token icons in this world");
 		}
 
 		const tokens: TokenIcon[] = [];

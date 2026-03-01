@@ -90,7 +90,7 @@ exports[`query resolver > with world > with authenticated user > get roles permi
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "GenericRpgToolsAPIError",
       },
       "locations": [
         {

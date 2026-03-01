@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { existsSync } from "fs";
@@ -13,7 +12,6 @@ import { inject, injectable } from "inversify";
 import {
 	ApiServer,
 	ApiServerRequest,
-	CookieManager,
 } from "../types.js";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import { ModelRouter } from "../routers/model-router.js";
@@ -26,7 +24,6 @@ import { WebSocketServer } from 'ws';
 // @ts-ignore
 import { useServer } from 'graphql-ws/use/ws';
 import cors from "cors";
-import {ExpressCookieManager} from "./express-cookie-manager.js";
 import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
 import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
 import { ValidationError } from "sequelize";
@@ -37,6 +34,7 @@ import {ServerConfigService} from "../services/server-config-service.js";
 import {ServerProperties} from "./server-properties.js";
 import {createSsoRouter} from "../routers/sso-router.js";
 import { GraphQLError, GraphQLFormattedError } from "graphql";
+import { RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -63,13 +61,16 @@ export class ExpressApiServer implements ApiServer {
 
 		const originalError = error.originalError as Error | undefined;
 		const stackTrace = originalError?.stack ?? error.stack;
-		const firstStackFrame = stackTrace
-			?.split('\n')
-			.find((line) => line.trim().startsWith('at '));
-		const isExpectedSourceError = firstStackFrame?.includes('/packages/server/src/');
 
-		if (isExpectedSourceError) {
-			return formattedError;
+		if (originalError instanceof RpgToolsAPIError) {
+			const code = originalError.constructor?.name || "RpgToolsAPIError";
+			return {
+				...formattedError,
+				extensions: {
+					...formattedError.extensions,
+					code,
+				},
+			};
 		}
 
 		this.logger.error("Internal GraphQL error", {

@@ -14,6 +14,7 @@ import {AuthorizationService} from "./authorization-service.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import FileFactory from "../domain-entities/factory/file-factory.js";
 import ModelFactory from "../domain-entities/factory/model-factory.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class ModelService {
@@ -44,10 +45,10 @@ export class ModelService {
 	) => {
 		const model = await databaseContext.modelRepository.findOneById(modelId);
 		if (!model) {
-			throw new Error(`Model with id ${modelId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model with id ${modelId} does not exist`);
 		}
 		if (!(await model.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to edit this model");
+			throw new GenericRpgToolsAPIError("You do not have permission to edit this model");
 		}
 		let fileToDelete = null;
 		if (file) {
@@ -90,7 +91,7 @@ export class ModelService {
 	) => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} does not exist`);
 		}
 
 		const model = this.modelFactory.build(
@@ -108,7 +109,7 @@ export class ModelService {
 		);
 
 		if (!(await model.authorizationPolicy.canCreate(context, databaseContext))) {
-			throw new Error("You do not have permission to add models to this world");
+			throw new GenericRpgToolsAPIError("You do not have permission to add models to this world");
 		}
 
 		fileUpload = await fileUpload;
@@ -133,10 +134,10 @@ export class ModelService {
 	deleteModel = async (context: SecurityContext, modelId: string, databaseContext: DatabaseContext) => {
 		const model = await databaseContext.modelRepository.findOneById(modelId);
 		if (!model) {
-			throw new Error(`Model with id ${modelId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model with id ${modelId} does not exist`);
 		}
 		if (!(await model.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to delete this model");
+			throw new GenericRpgToolsAPIError("You do not have permission to delete this model");
 		}
 		const games = await databaseContext.gameRepository.findWithModel(modelId);
 		for (let game of games) {

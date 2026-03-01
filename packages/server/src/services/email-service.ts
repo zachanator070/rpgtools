@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import nodemailer, { SendMailOptions, Transporter } from "nodemailer";
 import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import Logger from "../logging/logger.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 export interface EmailMessage {
 	to: string | string[];
@@ -75,7 +76,7 @@ export class EmailService {
 
 	sendEmail = async (message: EmailMessage): Promise<void> => {
 		if (!this.isConfigured()) {
-			throw new Error("SMTP is not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, and SMTP_FROM_EMAIL.");
+			throw new GenericRpgToolsAPIError("SMTP is not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, and SMTP_FROM_EMAIL.");
 		}
 
 		const transporter = this.getTransporter();

@@ -10,6 +10,7 @@ import {RoleModel} from "./role-model.js";
 import SqlModel from "./sql-model.js";
 import UserToRoleModel from "./user-to-role-model.js";
 import {WORLD} from "@rpgtools/common/src/type-constants.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../../../errors.js";
 
 
 export default class UserModel extends SqlModel {
@@ -35,10 +36,10 @@ export default class UserModel extends SqlModel {
             validate: {
                 isValidUsername(value: string) {
                     if (!value || !value.trim()) {
-                        throw new Error('username is required');
+                        throw new GenericRpgToolsAPIError('username is required');
                     }
                     if (value.trim().toLowerCase() === ANON_USERNAME.toLowerCase()) {
-                        throw new Error('cannot save anonymous user');
+                        throw new GenericRpgToolsAPIError('cannot save anonymous user');
                     }
                 }
             }

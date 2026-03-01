@@ -11,6 +11,7 @@ import {
 } from "../services/authentication-service.js";
 import { ServerConfigService } from "../services/server-config-service.js";
 import { ServerProperties } from "../server/server-properties.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 export const createSsoRouter = (
 	logger: Logger,
@@ -37,7 +38,7 @@ export const createSsoRouter = (
 	const buildCallbackUri = (req: Request, callbackPath: string): string => {
 		const host = req.get("host");
 		if (!host) {
-			throw new Error("Missing host header");
+			throw new GenericRpgToolsAPIError("Missing host header");
 		}
 		const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 		return `${protocol}://${host}${callbackPath}`;
@@ -49,7 +50,7 @@ export const createSsoRouter = (
 		}
 
 		if (typeof redirectPath !== "string") {
-			throw new Error("Invalid redirect URL");
+			throw new GenericRpgToolsAPIError("Invalid redirect URL");
 		}
 
 		const trimmedPath = redirectPath.trim();
@@ -58,11 +59,11 @@ export const createSsoRouter = (
 		}
 
 		if (!trimmedPath.startsWith("/") || trimmedPath.startsWith("//") || trimmedPath.includes("://")) {
-			throw new Error("Invalid redirect URL");
+			throw new GenericRpgToolsAPIError("Invalid redirect URL");
 		}
 
 		if (!trimmedPath.startsWith("/auth/sso/")) {
-			throw new Error("Invalid redirect URL");
+			throw new GenericRpgToolsAPIError("Invalid redirect URL");
 		}
 
 		return trimmedPath;
@@ -144,7 +145,7 @@ export const createSsoRouter = (
 			const code = String(req.query.code || "");
 			const state = String(req.query.state || "");
 			if (!code || !state) {
-				throw new Error("Missing code or state");
+				throw new GenericRpgToolsAPIError("Missing code or state");
 			}
 
 			const decodedState = jwt.verify(state, serverProperties.ssoStateSecret) as {
@@ -154,11 +155,11 @@ export const createSsoRouter = (
 			};
 
 			if (!decodedState?.jti) {
-				throw new Error("Invalid state token");
+				throw new GenericRpgToolsAPIError("Invalid state token");
 			}
 
 			if (decodedState.redirectPath !== "/auth/sso/setup") {
-				throw new Error("Invalid setup state");
+				throw new GenericRpgToolsAPIError("Invalid setup state");
 			}
 
 			const username = authenticationService.validateAndNormalizeUsername(decodedState.username || "");
@@ -166,7 +167,7 @@ export const createSsoRouter = (
 
 			const sessionContext = req.app.locals.context;
 			if (!sessionContext?.databaseContext || !sessionContext?.cookieManager) {
-				throw new Error("Could not initialize session context");
+				throw new GenericRpgToolsAPIError("Could not initialize session context");
 			}
 
 			await sessionContext.databaseContext.openTransaction(async () => {
@@ -179,7 +180,7 @@ export const createSsoRouter = (
 
 				const users = await sessionContext.databaseContext.userRepository.findByEmail(email);
 				if (!users || users.length === 0) {
-					throw new Error("Setup login failure: user not found");
+					throw new GenericRpgToolsAPIError("Setup login failure: user not found");
 				}
 
 				const user = users[0];
@@ -206,12 +207,12 @@ export const createSsoRouter = (
 			const code = String(req.query.code || "");
 			const state = String(req.query.state || "");
 			if (!code || !state) {
-				throw new Error("Missing code or state");
+				throw new GenericRpgToolsAPIError("Missing code or state");
 			}
 
 			const sessionContext = req.app.locals.context;
 			if (!sessionContext?.databaseContext || !sessionContext?.cookieManager) {
-				throw new Error("Could not initialize session context");
+				throw new GenericRpgToolsAPIError("Could not initialize session context");
 			}
 
 			await sessionContext.databaseContext.openTransaction(async () => {
@@ -241,12 +242,12 @@ export const createSsoRouter = (
 			const code = String(req.query.code || "");
 			const state = String(req.query.state || "");
 			if (!code || !state) {
-				throw new Error("Missing code or state");
+				throw new GenericRpgToolsAPIError("Missing code or state");
 			}
 
 			const sessionContext = req.app.locals.context;
 			if (!sessionContext?.databaseContext || !sessionContext?.cookieManager) {
-				throw new Error("Could not initialize session context");
+				throw new GenericRpgToolsAPIError("Could not initialize session context");
 			}
 
 			await sessionContext.databaseContext.openTransaction(async () => {

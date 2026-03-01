@@ -8,6 +8,7 @@ import { Role } from "../domain-entities/role.js";
 import RoleFactory from "../domain-entities/factory/role-factory.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import Logger from "../logging/logger.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class RoleSeeder implements Seeder {
@@ -23,7 +24,7 @@ export class RoleSeeder implements Seeder {
 		if (!allUsersRole) {
 			const server = await databaseContext.serverConfigRepository.findOne();
 			if (!server) {
-				throw new Error("Server needs to exist!");
+				throw new GenericRpgToolsAPIError("Server needs to exist!");
 			}
 			allUsersRole = this.roleFactory.build({name: EVERYONE, world: null, acl: []});
 			await databaseContext.roleRepository.create(allUsersRole);
@@ -33,7 +34,7 @@ export class RoleSeeder implements Seeder {
 		if (!loggedInRole) {
 			const server = await databaseContext.serverConfigRepository.findOne();
 			if (!server) {
-				throw new Error("Server needs to exist!");
+				throw new GenericRpgToolsAPIError("Server needs to exist!");
 			}
 			loggedInRole = this.roleFactory.build({name: LOGGED_IN, world: null, acl: []});
 			await databaseContext.roleRepository.create(loggedInRole);

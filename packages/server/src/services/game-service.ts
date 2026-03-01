@@ -46,6 +46,7 @@ import { PaginatedResult } from "../dal/paginated-result.js";
 import { FogStroke } from "../domain-entities/fog-stroke.js";
 import { Stroke } from "../domain-entities/stroke.js";
 import TokenIconFactory from "../domain-entities/factory/token-icon-factory.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 export const MESSAGE_ALL_RECEIVE = "all";
 export const MESSAGE_SERVER_USER = "Server";
@@ -80,10 +81,10 @@ export class GameService {
 	) => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} does not exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} does not exist`);
 		}
 		if (!context.hasPermission(GAME_HOST, world)) {
-			throw new Error("You do not have permission to host games on this world");
+			throw new GenericRpgToolsAPIError("You do not have permission to host games on this world");
 		}
 		const game = this.gameFactory.build(
 			{
@@ -127,10 +128,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (game.passwordHash && !bcrypt.compareSync(password, game.passwordHash)) {
-			throw new Error("Password is incorrect");
+			throw new GenericRpgToolsAPIError("Password is incorrect");
 		}
 		game.acl.push({
 			permission: GAME_READ,
@@ -154,10 +155,10 @@ export class GameService {
 	leaveGame = async (context: SecurityContext, gameId: string, databaseContext: DatabaseContext) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!game.characters.find((character) => character.player === context.user._id)) {
-			throw new Error("You are not in this game");
+			throw new GenericRpgToolsAPIError("You are not in this game");
 		}
 
 		game.characters = game.characters.filter((character) => character.player !== context.user._id);
@@ -175,11 +176,11 @@ export class GameService {
 	gameChat = async (context: SecurityContext, gameId: string, message: string, databaseContext: DatabaseContext) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		const character = game.characters.find((character) => character.player === context.user._id);
 		if (!character) {
-			throw new Error("You do not have permission to chat in this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to chat in this game");
 		}
 		const messages: Message[] = [];
 		if (message.substr(0, 1) === "/") {
@@ -206,21 +207,21 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.canWrite(context))) {
-			throw new Error("You do not have permission to change the location for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the location for this game");
 		}
 		const place = await databaseContext.placeRepository.findOneById(placeId);
 		if (!place) {
-			throw new Error("Place does not exist");
+			throw new GenericRpgToolsAPIError("Place does not exist");
 		}
 		if (!place.mapImage) {
-			throw new Error("Cannot use a location in game that does not have a map image");
+			throw new GenericRpgToolsAPIError("Cannot use a location in game that does not have a map image");
 		}
 		const newMap = await databaseContext.imageRepository.findOneById(place.mapImage);
 		if (!place.pixelsPerFoot) {
-			throw new Error("Place needs to have pixels per foot defined");
+			throw new GenericRpgToolsAPIError("Place needs to have pixels per foot defined");
 		}
 
 		const newMaxSize = Math.max(newMap.height, newMap.width);
@@ -266,10 +267,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanPaint(context))) {
-			throw new Error("You do not have permission to paint for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to paint for this game");
 		}
 		const newStroke = this.strokeFactory.build({_id: strokeId, game: game._id, path, color, size, fill, strokeType: type});
 		await databaseContext.strokeRepository.create(newStroke);
@@ -290,10 +291,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanWriteFog(context))) {
-			throw new Error("You do not have permission to edit fog for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to edit fog for this game");
 		}
 		const newStroke = this.fogStrokeFactory.build({_id: strokeId, game: game._id, path, size, strokeType: type});
 		await databaseContext.fogStrokeRepository.create(newStroke);
@@ -315,27 +316,27 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
-			throw new Error("You do not have permission to change the location for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the location for this game");
 		}
 		if (modelId) {
 			const model = await databaseContext.modelRepository.findOneById(modelId);
 			if(!model) {
-				throw new Error("Model does not exist");
+				throw new GenericRpgToolsAPIError("Model does not exist");
 			}
 		}
 		if (wikiId) {
 			const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 			if (!wiki) {
-				throw new Error(`Cannot find wiki with ID ${wikiId}`);
+				throw new GenericRpgToolsAPIError(`Cannot find wiki with ID ${wikiId}`);
 			}
 		}
 		if (tokenId) {
 			const token = await databaseContext.tokenIconRepository.findOneById(tokenId);
 			if (!token) {
-				throw new Error(`TokenIcon with ID ${tokenId} does not exist`);
+				throw new GenericRpgToolsAPIError(`TokenIcon with ID ${tokenId} does not exist`);
 			}
 		}
 		const positionedModel = new InGameModel(undefined, modelId, 0, 0, 0, 1, color, wikiId, tokenId, tokenType);
@@ -359,10 +360,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
-			throw new Error("You do not have permission to change the location for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the location for this game");
 		}
 		let positionedModel: InGameModel = null;
 		for (let model of game.models) {
@@ -371,7 +372,7 @@ export class GameService {
 			}
 		}
 		if (!positionedModel) {
-			throw new Error(`Model with id ${positionedModelId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model with id ${positionedModelId} does not exist`);
 		}
 		positionedModel.x = x;
 		positionedModel.z = z;
@@ -395,10 +396,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
-			throw new Error("You do not have permission to change the location for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
 		for (let model of game.models) {
@@ -407,7 +408,7 @@ export class GameService {
 			}
 		}
 		if (!positionedModel) {
-			throw new Error(`Model with id ${positionedModelId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model with id ${positionedModelId} does not exist`);
 		}
 		positionedModel.color = color;
 		await databaseContext.gameRepository.update(game);
@@ -427,10 +428,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
-			throw new Error("You do not have permission to change the location for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
 		for (let model of game.models) {
@@ -439,7 +440,7 @@ export class GameService {
 			}
 		}
 		if (!positionedModel) {
-			throw new Error(`Model with id ${positionedModelId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model with id ${positionedModelId} does not exist`);
 		}
 		game.models = game.models.filter((model) => model._id !== positionedModelId);
 		await databaseContext.gameRepository.update(game);
@@ -458,10 +459,10 @@ export class GameService {
 	) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.userCanModel(context))) {
-			throw new Error("You do not have permission to change the location for this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the location for this game");
 		}
 		let positionedModel = null;
 		for (let model of game.models) {
@@ -470,11 +471,11 @@ export class GameService {
 			}
 		}
 		if (!positionedModel) {
-			throw new Error(`Model with id ${positionedModelId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model with id ${positionedModelId} does not exist`);
 		}
 		const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (!wiki) {
-			throw new Error(`Cannot find wiki with ID ${wikiId}`);
+			throw new GenericRpgToolsAPIError(`Cannot find wiki with ID ${wikiId}`);
 		}
 		positionedModel.wiki = wiki._id;
 		await databaseContext.gameRepository.update(game);
@@ -487,10 +488,10 @@ export class GameService {
 	setCharacterOrder = async (context: SecurityContext, gameId: string, characters: Character[], databaseContext: DatabaseContext) => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		if (!(await game.authorizationPolicy.canWrite(context))) {
-			throw new Error("You do not have permission to change the character order for this game.");
+			throw new GenericRpgToolsAPIError("You do not have permission to change the character order for this game.");
 		}
 		const newOrder = [];
 		for (let newCharacter of characters) {
@@ -514,7 +515,7 @@ export class GameService {
 	): Promise<Game> => {
 		const game = await databaseContext.gameRepository.findOneById(gameId);
 		if (!game) {
-			throw new Error("Game does not exist");
+			throw new GenericRpgToolsAPIError("Game does not exist");
 		}
 		let userCharacter = null;
 		for (let character of game.characters) {
@@ -524,7 +525,7 @@ export class GameService {
 			}
 		}
 		if (!userCharacter) {
-			throw new Error("You are not playing in this game");
+			throw new GenericRpgToolsAPIError("You are not playing in this game");
 		}
 		userCharacter.attributes = attributes;
 
@@ -535,7 +536,7 @@ export class GameService {
 	getGame = async (context: SecurityContext, gameId: string, databaseContext: DatabaseContext): Promise<Game> => {
 		const foundGame = await databaseContext.gameRepository.findOneById(gameId);
 		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
-			throw new Error("You do not have permission to read this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this game");
 		}
 		return foundGame;
 	};
@@ -550,7 +551,7 @@ export class GameService {
 	getFogStrokes = async (gameId: string, page: number, context: SecurityContext, databaseContext: DatabaseContext): Promise<PaginatedResult<FogStroke>> => {
 		const foundGame = await databaseContext.gameRepository.findOneById(gameId);
 		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
-			throw new Error("You do not have permission to read this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this game");
 		}
 		return databaseContext.fogStrokeRepository.findAllByGameIdPaginated(gameId, page);
 	}
@@ -558,7 +559,7 @@ export class GameService {
 	getStrokes = async (gameId: string, page: number, context: SecurityContext, databaseContext: DatabaseContext): Promise<PaginatedResult<Stroke>> => {
 		const foundGame = await databaseContext.gameRepository.findOneById(gameId);
 		if (foundGame && !(await foundGame.authorizationPolicy.canRead(context))) {
-			throw new Error("You do not have permission to read this game");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this game");
 		}
 		return databaseContext.strokeRepository.findAllByGameIdPaginated(gameId, page);
 	}

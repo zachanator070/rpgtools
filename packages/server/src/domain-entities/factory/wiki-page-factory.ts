@@ -8,6 +8,7 @@ import {INJECTABLE_TYPES} from "../../di/injectable-types.js";
 import ArticleFactory from "./article-factory.js";
 import EntityMapper from "../entity-mapper.js";
 import {ALL_WIKI_TYPES} from "@rpgtools/common/src/type-constants.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../../errors.js";
 
 
 @injectable()
@@ -49,7 +50,7 @@ export default class WikiPageFactory implements EntityFactory<WikiPage, WikiPage
 
     async fromSqlModel(model: WikiPageModel): Promise<WikiPage> {
         if(!ALL_WIKI_TYPES.includes(model.type)) {
-            throw new Error(`Cannot create sql model from wiki type ${model.type}`)
+            throw new GenericRpgToolsAPIError(`Cannot create sql model from wiki type ${model.type}`)
         }
         // this should be a safe cast b/c of the type checking above
         return (await this.entityMapper.map(model.type).factory.fromSqlModel(model)) as WikiPage;

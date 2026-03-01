@@ -20,6 +20,7 @@ import PlaceFactory from "../domain-entities/factory/place-factory.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
 import Calendar, {Age} from "../domain-entities/calendar.js";
 import CalendarFactory from "../domain-entities/factory/calendar-factory.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class WorldService {
@@ -45,10 +46,10 @@ export class WorldService {
 	): Promise<World> => {
 		const server = await databaseContext.serverConfigRepository.findOne();
 		if (!server) {
-			throw new Error("Server config doesnt exist!");
+			throw new GenericRpgToolsAPIError("Server config doesnt exist!");
 		}
 		if (!securityContext.hasPermission(WORLD_CREATE, server)) {
-			throw Error(`You do not have the required permission: ${WORLD_CREATE}`);
+			throw new GenericRpgToolsAPIError(`You do not have the required permission: ${WORLD_CREATE}`);
 		}
 		return this.makeWorld(name, isPublic, securityContext, databaseContext);
 	};
@@ -56,10 +57,10 @@ export class WorldService {
 	renameWorld = async (context: SecurityContext, worldId: string, newName: string, databaseContext: DatabaseContext) => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} doesn't exist`);
 		}
 		if (!(await world.authorizationPolicy.canWrite(context))) {
-			throw new Error("You do not have permission to rename this world");
+			throw new GenericRpgToolsAPIError("You do not have permission to rename this world");
 		}
 		world.name = newName;
 		await databaseContext.worldRepository.update(world);
@@ -92,21 +93,21 @@ export class WorldService {
 	) => {
 		const map = await databaseContext.placeRepository.findOneById(mapId);
 		if (!map) {
-			throw new Error(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Wiki of type ${PLACE} with id ${mapId} does not exist`);
 		}
 
 		if (wikiId) {
 			const wiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 
 			if (!wiki) {
-				throw new Error(`Wiki with id ${wikiId} does not exist`);
+				throw new GenericRpgToolsAPIError(`Wiki with id ${wikiId} does not exist`);
 			}
 		}
 
 		const newPin = this.pinFactory.build({x, y, map: mapId, page: wikiId, world: map.world});
 
 		if (!(await newPin.authorizationPolicy.canCreate(context, databaseContext))) {
-			throw new Error(`You do not have permission to add pins to this map`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to add pins to this map`);
 		}
 
 		await databaseContext.pinRepository.create(newPin);
@@ -116,18 +117,18 @@ export class WorldService {
 	updatePin = async (context: SecurityContext, pinId: string, pageId: string, databaseContext: DatabaseContext) => {
 		const pin = await databaseContext.pinRepository.findOneById(pinId);
 		if (!pin) {
-			throw new Error(`Pin ${pinId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Pin ${pinId} does not exist`);
 		}
 
 		if (!(await pin.authorizationPolicy.canRead(context, databaseContext))) {
-			throw new Error(`You do not have permission to update this pin`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to update this pin`);
 		}
 
 		let page = null;
 		if (pageId) {
 			page = await databaseContext.wikiPageRepository.findOneById(pageId);
 			if (!page) {
-				throw new Error(`Wiki page does not exist for id ${pageId}`);
+				throw new GenericRpgToolsAPIError(`Wiki page does not exist for id ${pageId}`);
 			}
 		}
 
@@ -139,11 +140,11 @@ export class WorldService {
 	deletePin = async (context: SecurityContext, pinId: string, databaseContext: DatabaseContext) => {
 		const pin = await databaseContext.pinRepository.findOneById(pinId);
 		if (!pin) {
-			throw new Error(`Pin ${pinId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Pin ${pinId} does not exist`);
 		}
 
 		if (!(await pin.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to delete this pin`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to delete this pin`);
 		}
 
 		await databaseContext.pinRepository.delete(pin);
@@ -245,17 +246,17 @@ export class WorldService {
 					{permission: CALENDAR_ADMIN, principal: context.user._id, principalType: USER}
 				]});
 			if(!await calendar.authorizationPolicy.canCreate(context, databaseContext)) {
-				throw new Error('You do not have permission to create this calendar');
+				throw new GenericRpgToolsAPIError('You do not have permission to create this calendar');
 			}
 			await databaseContext.calendarRepository.create(calendar);
 		}
 		else {
 			calendar = await databaseContext.calendarRepository.findOneById(calendarId);
 			if(!calendar) {
-				throw new Error(`Calendar with id ${calendarId} does not exist`);
+				throw new GenericRpgToolsAPIError(`Calendar with id ${calendarId} does not exist`);
 			}
 			if(!await calendar.authorizationPolicy.canWrite(context, databaseContext)) {
-				throw new Error('You do not have permission to write to this calendar');
+				throw new GenericRpgToolsAPIError('You do not have permission to write to this calendar');
 			}
 			calendar.world = world;
 			calendar.name = name;
@@ -269,10 +270,10 @@ export class WorldService {
 	public async deleteCalendar(calendarId: string, securityContext: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
 		const calendar = await databaseContext.calendarRepository.findOneById(calendarId);
 		if(!calendar) {
-			throw new Error(`No such calendar exists with id ${calendarId}`);
+			throw new GenericRpgToolsAPIError(`No such calendar exists with id ${calendarId}`);
 		}
 		if(!await calendar.authorizationPolicy.canWrite(securityContext, databaseContext)) {
-			throw new Error(`You do not have permission to delete this calendar`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to delete this calendar`);
 		}
 		const events = await databaseContext.eventRepository.findByCalendarId(calendarId);
 		for(let event of events) {

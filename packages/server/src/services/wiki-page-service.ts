@@ -18,6 +18,7 @@ import PersonFactory from "../domain-entities/factory/person-factory.js";
 import PlaceFactory from "../domain-entities/factory/place-factory.js";
 import FileFactory from "../domain-entities/factory/file-factory.js";
 import stream from "stream";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class WikiPageService {
@@ -44,11 +45,11 @@ export class WikiPageService {
 	createWiki = async (context: SecurityContext, name: string, folderId: string, databaseContext: DatabaseContext): Promise<WikiPage> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error("Folder does not exist");
+			throw new GenericRpgToolsAPIError("Folder does not exist");
 		}
 
 		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to write to the folder ${folderId}`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to write to the folder ${folderId}`);
 		}
 
 		const newPage = this.articleFactory.build({name, world: folder.world, coverImage: null, contentId: null, acl: [], relatedWikis: []});
@@ -82,10 +83,10 @@ export class WikiPageService {
 	): Promise<WikiPage> => {
 		let wikiPage = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (!wikiPage) {
-			throw new Error(`Wiki ${wikiId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Wiki ${wikiId} does not exist`);
 		}
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to write to this page");
+			throw new GenericRpgToolsAPIError("You do not have permission to write to this page");
 		}
 
 		if (readStream) {
@@ -141,7 +142,7 @@ export class WikiPageService {
 		if (coverImageId) {
 			const image = await databaseContext.imageRepository.findOneById(coverImageId);
 			if (!image) {
-				throw new Error(`No image exists with id ${coverImageId}`);
+				throw new GenericRpgToolsAPIError(`No image exists with id ${coverImageId}`);
 			}
 		}
 		wikiPage.coverImage = coverImageId;
@@ -158,16 +159,16 @@ export class WikiPageService {
 	deleteWiki = async (context: SecurityContext, wikiId: string, databaseContext: DatabaseContext): Promise<WikiFolder> => {
 		const wikiPage = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (!wikiPage) {
-			throw new Error("Page does not exist");
+			throw new GenericRpgToolsAPIError("Page does not exist");
 		}
 
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to write to this page");
+			throw new GenericRpgToolsAPIError("You do not have permission to write to this page");
 		}
 
 		const world = await databaseContext.worldRepository.findOneByWikiPage(wikiId);
 		if (world) {
-			throw new Error("You cannot delete the main page of a world");
+			throw new GenericRpgToolsAPIError("You cannot delete the main page of a world");
 		}
 
 		const parentFolder = await databaseContext.wikiFolderRepository.findOneWithPage(wikiPage._id);
@@ -191,17 +192,17 @@ export class WikiPageService {
 	) => {
 		const place = await databaseContext.placeRepository.findOneById(placeId);
 		if (!place) {
-			throw new Error(`Place ${placeId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Place ${placeId} does not exist`);
 		}
 
 		if (!(await place.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to write to this page`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to write to this page`);
 		}
 
 		if (mapImageId) {
 			const image = await databaseContext.imageRepository.findOneById(mapImageId);
 			if (!image) {
-				throw new Error(`Image with id ${mapImageId} does not exist`);
+				throw new GenericRpgToolsAPIError(`Image with id ${mapImageId} does not exist`);
 			}
 		}
 
@@ -220,14 +221,14 @@ export class WikiPageService {
 	) => {
 		let wikiPage: ModeledPage = await databaseContext.wikiPageRepository.findOneById(wikiId) as ModeledPage;
 		if (!wikiPage) {
-			throw new Error(`Wiki ${wikiId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Wiki ${wikiId} does not exist`);
 		}
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to write to this page");
+			throw new GenericRpgToolsAPIError("You do not have permission to write to this page");
 		}
 		const foundModel = await databaseContext.modelRepository.findOneById(model);
 		if (model && !foundModel) {
-			throw new Error(`Model ${model} does not exist`);
+			throw new GenericRpgToolsAPIError(`Model ${model} does not exist`);
 		}
 		wikiPage.pageModel = model;
 		wikiPage.modelColor = color;
@@ -250,58 +251,58 @@ export class WikiPageService {
 	) => {
 		const wikiPage = await databaseContext.eventRepository.findOneById(wikiId);
 		if (!wikiPage) {
-			throw new Error(`Wiki ${wikiId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Wiki ${wikiId} does not exist`);
 		}
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to write to this page");
+			throw new GenericRpgToolsAPIError("You do not have permission to write to this page");
 		}
 		if(calendarId) {
 			const calendar = await databaseContext.calendarRepository.findOneById(calendarId);
 			if(!calendar) {
-				throw new Error(`Calendar with id ${calendarId} not found`);
+				throw new GenericRpgToolsAPIError(`Calendar with id ${calendarId} not found`);
 			}
 			wikiPage.calendar = calendarId;
 			if(age - 1 >= calendar.ages.length) {
-				throw new Error(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
+				throw new GenericRpgToolsAPIError(`Calendar ${calendarId} only has ${calendar.ages.length} ages.`)
 			}
 			if(age <= 0) {
-				throw new Error(`Age cannot be negative`)
+				throw new GenericRpgToolsAPIError(`Age cannot be negative`)
 			}
 			wikiPage.age = age;
 			const ageEntity = calendar.ages[age - 1];
 			if(year > ageEntity.numYears) {
-				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.numYears} years`);
+				throw new GenericRpgToolsAPIError(`Age ${ageEntity._id} only has ${ageEntity.numYears} years`);
 			}
 			if(year <= 0) {
-				throw new Error(`Year must be greater than 0`);
+				throw new GenericRpgToolsAPIError(`Year must be greater than 0`);
 			}
 			wikiPage.year = year;
 			if(month - 1 >= ageEntity.months.length) {
-				throw new Error(`Age ${ageEntity._id} only has ${ageEntity.months.length} months`);
+				throw new GenericRpgToolsAPIError(`Age ${ageEntity._id} only has ${ageEntity.months.length} months`);
 			}
 			if(month <= 0) {
-				throw new Error(`Month must be greater than 0`);
+				throw new GenericRpgToolsAPIError(`Month must be greater than 0`);
 			}
 			wikiPage.month = month;
 			const monthEntity = ageEntity.months[month - 1];
 			if(day > monthEntity.numDays) {
-				throw new Error(`Month ${monthEntity._id} only has ${monthEntity.numDays}`);
+				throw new GenericRpgToolsAPIError(`Month ${monthEntity._id} only has ${monthEntity.numDays}`);
 			}
 			if(day <= 0) {
-				throw new Error(`Day must be greater than 0`);
+				throw new GenericRpgToolsAPIError(`Day must be greater than 0`);
 			}
 			wikiPage.day = day;
 		}
 		if(hour < 0 || hour > 23) {
-			throw new Error('Hour must be between 0 and 23');
+			throw new GenericRpgToolsAPIError('Hour must be between 0 and 23');
 		}
 		wikiPage.hour = hour;
 		if(minute < 0 || minute > 59) {
-			throw new Error('Minute must be between 0 and 59');
+			throw new GenericRpgToolsAPIError('Minute must be between 0 and 59');
 		}
 		wikiPage.minute = minute;
 		if(second < 0 || second > 59) {
-			throw new Error('Second must be between 0 and 59');
+			throw new GenericRpgToolsAPIError('Second must be between 0 and 59');
 		}
 		wikiPage.second = second;
 		await databaseContext.eventRepository.update(wikiPage);
@@ -311,23 +312,23 @@ export class WikiPageService {
 	moveWiki = async (context: SecurityContext, wikiId: string, folderId: string, databaseContext: DatabaseContext): Promise<WikiPage> => {
 		const wikiPage = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (!wikiPage) {
-			throw new Error(`Wiki ${wikiId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Wiki ${wikiId} does not exist`);
 		}
 		if (!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to write to this page");
+			throw new GenericRpgToolsAPIError("You do not have permission to write to this page");
 		}
 
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error("Folder does not exist");
+			throw new GenericRpgToolsAPIError("Folder does not exist");
 		}
 		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to write to the folder ${folderId}`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to write to the folder ${folderId}`);
 		}
 
 		const oldFolder = await databaseContext.wikiFolderRepository.findOneWithPage(wikiId);
 		if (oldFolder && !(await oldFolder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to write to the folder ${oldFolder._id}`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to write to the folder ${oldFolder._id}`);
 		}
 
 		folder.pages.push(wikiPage._id);
@@ -340,7 +341,7 @@ export class WikiPageService {
 	getWiki = async (context: SecurityContext, wikiId: string, databaseContext: DatabaseContext): Promise<WikiPage> => {
 		let foundWiki = await databaseContext.wikiPageRepository.findOneById(wikiId);
 		if (foundWiki && !(await foundWiki.authorizationPolicy.canRead(context, databaseContext))) {
-			throw new Error(`You do not have permission to read wiki ${wikiId}`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to read wiki ${wikiId}`);
 		}
 
 		foundWiki = (await foundWiki.getRepository(databaseContext).findOneById(foundWiki._id)) as WikiPage;
@@ -351,10 +352,10 @@ export class WikiPageService {
 	searchWikis = async (context: SecurityContext, worldId: string, name: string, types: string[], canAdmin: boolean, hasModel: boolean, page: number = 1, databaseContext: DatabaseContext): Promise<PaginatedResult<WikiPage>>  => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error("World does not exist");
+			throw new GenericRpgToolsAPIError("World does not exist");
 		}
 		if (!(await world.authorizationPolicy.canRead(context, databaseContext))) {
-			throw new Error("You do not have permission to read this World");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this World");
 		}
 
 		if(!types) {
@@ -391,10 +392,10 @@ export class WikiPageService {
 	): Promise<PaginatedResult<WikiPage>> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error("Folder does not exist");
+			throw new GenericRpgToolsAPIError("Folder does not exist");
 		}
 		if (!(await folder.authorizationPolicy.canRead(context, databaseContext))) {
-			throw new Error("You do not have permission to read this folder");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this folder");
 		}
 		const results = await databaseContext.wikiPageRepository.findByIdsPaginated(folder.pages, page,"name");
 		const docs = [];
@@ -410,10 +411,10 @@ export class WikiPageService {
     async getEvents(worldId: string, securityContext: SecurityContext, databaseContext: DatabaseContext, relatedWikiIds?: string[], calendarIds?: string[], page: number = 1) : Promise<PaginatedResult<WikiPage>> {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error("World does not exist");
+			throw new GenericRpgToolsAPIError("World does not exist");
 		}
 		if (!(await world.authorizationPolicy.canRead(securityContext, databaseContext))) {
-			throw new Error("You do not have permission to read this World");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this World");
 		}
 
 		const results = await databaseContext.eventRepository.findByWorldAndContentAndCalendar(
