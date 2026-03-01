@@ -290,16 +290,13 @@ describe("token-icon-query", () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: GET_TOKEN_ICONS,
 				variables: {
-					worldId: "invalid-world-id",
+					worldId: "00000000-0000-0000-0000-000000000000",
 					page: 1,
 				},
 			});
 
 			expect(result.errors).toBeDefined();
-			expect(
-				result.errors![0].message.includes("invalid input syntax for type uuid") ||
-				result.errors![0].message.includes("does not exist")
-			).toBe(true);
+			expect(result.errors![0].message.includes("does not exist")).toBe(true);
 		});
 
 		test("zero page number", async () => {

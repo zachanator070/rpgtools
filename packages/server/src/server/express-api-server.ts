@@ -36,6 +36,7 @@ import {AuthenticationService} from "../services/authentication-service.js";
 import {ServerConfigService} from "../services/server-config-service.js";
 import {ServerProperties} from "./server-properties.js";
 import {createSsoRouter} from "../routers/sso-router.js";
+import { GraphQLError, GraphQLFormattedError } from "graphql";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -51,6 +52,41 @@ export class ExpressApiServer implements ApiServer {
 	serverProperties: ServerProperties;
 
 	logger: Logger;
+
+	private formatApolloError = (
+		formattedError: GraphQLFormattedError,
+		error: GraphQLError,
+	): GraphQLFormattedError => {
+		if (formattedError.extensions?.code !== "INTERNAL_SERVER_ERROR") {
+			return formattedError;
+		}
+
+		const originalError = error.originalError as Error | undefined;
+		const stackTrace = originalError?.stack ?? error.stack;
+		const firstStackFrame = stackTrace
+			?.split('\n')
+			.find((line) => line.trim().startsWith('at '));
+		const isExpectedSourceError = firstStackFrame?.includes('/packages/server/src/');
+
+		if (isExpectedSourceError) {
+			return formattedError;
+		}
+
+		this.logger.error("Internal GraphQL error", {
+			message: error.message,
+			path: error.path,
+			stack: stackTrace,
+		});
+
+		return {
+			...formattedError,
+			message: "Internal Server Error",
+			extensions: {
+				...formattedError.extensions,
+				code: "INTERNAL_SERVER_ERROR",
+			},
+		};
+	};
 
 	// use constructor injection so middleware can capture injectables
 	constructor(@inject(INJECTABLE_TYPES.SessionContextFactory)
@@ -88,6 +124,7 @@ export class ExpressApiServer implements ApiServer {
 			introspection: true,
 			schema,
 			csrfPrevention: true,
+			formatError: this.formatApolloError,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
 				{

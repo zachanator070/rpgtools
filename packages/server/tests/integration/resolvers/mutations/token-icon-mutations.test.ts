@@ -107,29 +107,23 @@ describe("token-icon-mutations", () => {
 				query: CREATE_TOKEN_ICON,
 				variables: {
 					worldId: testingContext.world._id,
-					imageId: "invalid-image-id",
+					imageId: "00000000-0000-0000-0000-000000000000",
 				},
 			});
 			expect(result.errors).toBeDefined();
-			expect(
-				result.errors![0].message.includes("invalid input syntax for type uuid") ||
-				result.errors![0].message.includes("does not exist")
-			).toBe(true);
+			expect(result.errors![0].message.includes("does not exist")).toBe(true);
 		});
 
 		test("create token icon - invalid world", async () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: CREATE_TOKEN_ICON,
 				variables: {
-					worldId: "invalid-world-id",
+					worldId: "00000000-0000-0000-0000-000000000000",
 					imageId: imageId,
 				},
 			});
 			expect(result.errors).toBeDefined();
-			expect(
-				result.errors![0].message.includes("invalid input syntax for type uuid") ||
-				result.errors![0].message.includes("does not exist")
-			).toBe(true);
+			expect(result.errors![0].message.includes("does not exist")).toBe(true);
 		});
 
 		test("delete token icon", async () => {
@@ -164,14 +158,11 @@ describe("token-icon-mutations", () => {
 			const result = await testingContext.server.executeGraphQLQuery({
 				query: DELETE_TOKEN_ICON,
 				variables: {
-					tokenIconId: "invalid-token-icon-id",
+					tokenIconId: "00000000-0000-0000-0000-000000000000",
 				},
 			});
 			expect(result.errors).toBeDefined();
-			expect(
-				result.errors![0].message.includes("invalid input syntax for type uuid") ||
-				result.errors![0].message.includes("does not exist")
-			).toBe(true);
+			expect(result.errors![0].message.includes("does not exist")).toBe(true);
 		});
 
 		test("get token icons", async () => {
