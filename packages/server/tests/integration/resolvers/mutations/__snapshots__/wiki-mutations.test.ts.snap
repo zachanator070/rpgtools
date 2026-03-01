@@ -84,7 +84,7 @@ exports[`wiki page mutations > with world > with authenticated user > delete wik
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "GenericRpgToolsAPIError",
       },
       "locations": [
         {

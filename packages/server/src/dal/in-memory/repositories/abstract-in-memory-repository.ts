@@ -8,6 +8,7 @@ import {PaginatedResult} from "../../paginated-result.js";
 import {injectable} from "inversify";
 import {v4 as uuidv4} from 'uuid';
 import {Repository} from "../../repository/repository.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../../../errors.js";
 
 @injectable()
 export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
@@ -26,7 +27,7 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 
 	delete = async (entity: Type): Promise<void> => {
 		if (!this.items.get(entity._id)) {
-			throw new Error(`Entity with id doesn't exists: ${entity._id}`);
+			throw new GenericRpgToolsAPIError(`Entity with id doesn't exists: ${entity._id}`);
 		}
 		this.items.delete(entity._id);
 	};

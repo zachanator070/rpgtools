@@ -11,6 +11,7 @@ import { Invite } from "../domain-entities/invite.js";
 import {ServerProperties} from "../server/server-properties.js";
 import { InviteEmailService } from "./invite-email-service.js";
 import { EmailService } from "./email-service.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class ServerConfigService {
@@ -41,7 +42,7 @@ export class ServerConfigService {
 
 		const serverConfig = await databaseContext.serverConfigRepository.findOne();
 		if (!serverConfig) {
-			throw new Error("No server config exists! Did the seeders run correctly?");
+			throw new GenericRpgToolsAPIError("No server config exists! Did the seeders run correctly?");
 		}
 
 		return serverConfig.adminUsers.length === 0;
@@ -50,18 +51,18 @@ export class ServerConfigService {
 	unlockServer = async (email: string, username: string, password: string | null, databaseContext: DatabaseContext) => {
 		const server = await databaseContext.serverConfigRepository.findOne();
 		if (!server) {
-			throw new Error("Server config doesnt exist!");
+			throw new GenericRpgToolsAPIError("Server config doesnt exist!");
 		}
 		if (!await this.serverNeedsSetup(databaseContext)) {
-			throw new Error("Server already unlocked!");
+			throw new GenericRpgToolsAPIError("Server already unlocked!");
 		}
 		if (server.adminUsers.length > 0) {
-			throw new Error("Server is already unlocked");
+			throw new GenericRpgToolsAPIError("Server is already unlocked");
 		}
 
 		const normalizedPassword = password?.trim() || null;
 		if (!normalizedPassword && !this.serverProperties.isSsoConfigured()) {
-			throw new Error("Password is required when SSO is not configured");
+			throw new GenericRpgToolsAPIError("Password is required when SSO is not configured");
 		}
 
 		const admin = await this.authenticationService.registerUser(
@@ -90,23 +91,23 @@ export class ServerConfigService {
 	inviteUser = async (context: SecurityContext, email: string, databaseContext: DatabaseContext): Promise<Invite> => {
 		const serverConfig = await databaseContext.serverConfigRepository.findOne();
 		if (!serverConfig) {
-			throw new Error("Server config doesnt exist!");
+			throw new GenericRpgToolsAPIError("Server config doesnt exist!");
 		}
 		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
-			throw new Error("You do not have permission to call this method");
+			throw new GenericRpgToolsAPIError("You do not have permission to call this method");
 		}
 
 		const normalizedEmail = email.trim().toLowerCase();
 		if (!normalizedEmail) {
-			throw new Error("Email is required");
+			throw new GenericRpgToolsAPIError("Email is required");
 		}
 
 		if ((await databaseContext.userRepository.findByEmail(normalizedEmail)).length > 0) {
-			throw new Error("A user with this email already exists");
+			throw new GenericRpgToolsAPIError("A user with this email already exists");
 		}
 
 		if ((await databaseContext.inviteRepository.findByEmail(normalizedEmail)).length > 0) {
-			throw new Error("An invite already exists for this email");
+			throw new GenericRpgToolsAPIError("An invite already exists for this email");
 		}
 
 		const invite = this.inviteFactory.build({
@@ -121,20 +122,20 @@ export class ServerConfigService {
 	sendEmailInvite = async (context: SecurityContext, email: string, databaseContext: DatabaseContext): Promise<Invite> => {
 		const serverConfig = await databaseContext.serverConfigRepository.findOne();
 		if (!serverConfig) {
-			throw new Error("Server config doesnt exist!");
+			throw new GenericRpgToolsAPIError("Server config doesnt exist!");
 		}
 		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
-			throw new Error("You do not have permission to call this method");
+			throw new GenericRpgToolsAPIError("You do not have permission to call this method");
 		}
 
 		const normalizedEmail = email.trim().toLowerCase();
 		if (!normalizedEmail) {
-			throw new Error("Email is required");
+			throw new GenericRpgToolsAPIError("Email is required");
 		}
 
 		const invites = await databaseContext.inviteRepository.findByEmail(normalizedEmail);
 		if (invites.length === 0) {
-			throw new Error("No invite exists for this email");
+			throw new GenericRpgToolsAPIError("No invite exists for this email");
 		}
 
 		await this.inviteEmailService.sendInviteEmail(normalizedEmail, context.user?.username);
@@ -156,15 +157,15 @@ export class ServerConfigService {
 	setDefaultWorld = async (context: SecurityContext, worldId: string, databaseContext: DatabaseContext) => {
 		const serverConfig = await databaseContext.serverConfigRepository.findOne();
 		if (!serverConfig) {
-			throw new Error("Server config doesnt exist!");
+			throw new GenericRpgToolsAPIError("Server config doesnt exist!");
 		}
 		if (!(await serverConfig.authorizationPolicy.canWrite(context))) {
-			throw new Error("You do not have permission to call this method");
+			throw new GenericRpgToolsAPIError("You do not have permission to call this method");
 		}
 
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if(!world) {
-			throw new Error("World could not be found.")
+			throw new GenericRpgToolsAPIError("World could not be found.")
 		}
 
 		serverConfig.defaultWorld = worldId;

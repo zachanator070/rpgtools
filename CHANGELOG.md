@@ -1,9 +1,9 @@
-## RPG Tools v6.0.0 Changelog
+## RPG Tools v6.0.1 Changelog
 ### Breaking Changes
- - Removed registration codes in favor of email invites
+N/A
 
 ### New Features
- - Implemented SSO with Google OAuth
+N/A
 
 ### Bug fixes
- - Fixed all seed errors used in dev and testing environments
+ - Fixed a bug where server errors were not logged to stdout. Logged errors now include stack traces for better debugging.

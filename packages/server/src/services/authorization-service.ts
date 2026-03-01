@@ -12,6 +12,7 @@ import { User } from "../domain-entities/user.js";
 import EntityMapper from "../domain-entities/entity-mapper.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import RoleFactory from "../domain-entities/factory/role-factory.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class AuthorizationService {
@@ -32,7 +33,7 @@ export class AuthorizationService {
 	): Promise<DomainEntity> => {
 		const user = await databaseContext.userRepository.findOneById(userId);
 		if (!user) {
-			throw new Error(`User with id ${userId} does not exist`);
+			throw new GenericRpgToolsAPIError(`User with id ${userId} does not exist`);
 		}
 		await this.grantPrincipalPermission(
 			databaseContext,
@@ -56,7 +57,7 @@ export class AuthorizationService {
 	): Promise<DomainEntity> => {
 		const user = await databaseContext.userRepository.findOneById(userId);
 		if (!user) {
-			throw new Error("User does not exist");
+			throw new GenericRpgToolsAPIError("User does not exist");
 		}
 		return await this.revokeEntityPermission(
 			databaseContext,
@@ -79,7 +80,7 @@ export class AuthorizationService {
 	): Promise<Role> => {
 		const role = await databaseContext.roleRepository.findOneById(roleId);
 		if (!role) {
-			throw new Error(`Role with id ${roleId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Role with id ${roleId} does not exist`);
 		}
 		await this.grantPrincipalPermission(
 			databaseContext,
@@ -103,7 +104,7 @@ export class AuthorizationService {
 	): Promise<Role> => {
 		const role = await databaseContext.roleRepository.findOneById(roleId);
 		if (!role) {
-			throw new Error("Role does not exist");
+			throw new GenericRpgToolsAPIError("Role does not exist");
 		}
 
 		await this.revokeEntityPermission(
@@ -121,10 +122,10 @@ export class AuthorizationService {
 	createRole = async (context: SecurityContext, worldId: string, name: string, databaseContext: DatabaseContext): Promise<Role> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error(`World with id ${worldId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`World with id ${worldId} doesn't exist`);
 		}
 		if (!context.hasPermission(ROLE_ADD, world)) {
-			throw new Error(`You do not have permission to add roles to this world`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to add roles to this world`);
 		}
 		const newRole = this.roleFactory.build({name, world: worldId, acl: []});
 		await databaseContext.roleRepository.create(newRole);
@@ -142,13 +143,13 @@ export class AuthorizationService {
 	deleteRole = async (context: SecurityContext, roleId: string, databaseContext: DatabaseContext): Promise<Role> => {
 		const role = await databaseContext.roleRepository.findOneById(roleId);
 		if (!role) {
-			throw new Error(`Role ${roleId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`Role ${roleId} doesn't exist`);
 		}
 		if (!(await role.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have write permissions for this role`);
+			throw new GenericRpgToolsAPIError(`You do not have write permissions for this role`);
 		}
 		if (role.name === WORLD_OWNER || role.name === EVERYONE || role.name === LOGGED_IN) {
-			throw new Error("You cannot delete this role");
+			throw new GenericRpgToolsAPIError("You cannot delete this role");
 		}
 		const usersWithRole = await databaseContext.userRepository.findWithRole(role._id);
 		for(let user of usersWithRole) {
@@ -167,16 +168,16 @@ export class AuthorizationService {
 	): Promise<Role> => {
 		const role = await databaseContext.roleRepository.findOneById(roleId);
 		if (!role) {
-			throw new Error(`Role ${roleId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`Role ${roleId} doesn't exist`);
 		}
 
 		const user = await databaseContext.userRepository.findOneById(userId);
 		if (!user) {
-			throw new Error(`Role ${userId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`Role ${userId} doesn't exist`);
 		}
 
 		if (!(await role.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to manage this role`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to manage this role`);
 		}
 
 		user.roles.push(role._id);
@@ -193,22 +194,22 @@ export class AuthorizationService {
 	): Promise<Role> => {
 		const role = await databaseContext.roleRepository.findOneById(roleId);
 		if (!role) {
-			throw new Error(`Role ${roleId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`Role ${roleId} doesn't exist`);
 		}
 
 		const user = await databaseContext.userRepository.findOneById(userId);
 		if (!user) {
-			throw new Error(`Role ${userId} doesn't exist`);
+			throw new GenericRpgToolsAPIError(`Role ${userId} doesn't exist`);
 		}
 
 		if (!(await role.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission to manage this role`);
+			throw new GenericRpgToolsAPIError(`You do not have permission to manage this role`);
 		}
 
 		if (role.name === WORLD_OWNER) {
 			const otherOwners = await databaseContext.userRepository.findWithRole(role._id);
 			if (otherOwners.length === 1) {
-				throw new Error("World must have at least one owner");
+				throw new GenericRpgToolsAPIError("World must have at least one owner");
 			}
 		}
 
@@ -230,7 +231,7 @@ export class AuthorizationService {
 		const entityRepository = this.mapper.map(entityType).getRepository(databaseContext);
 		const entity: DomainEntity = await entityRepository.findOneById(entityId);
 		if (!(await entity.authorizationPolicy.canAdmin(context, databaseContext))) {
-			throw new Error(
+			throw new GenericRpgToolsAPIError(
 				`You do not have permission to assign the permission "${permission}" for this subject`
 			);
 		}
@@ -255,7 +256,7 @@ export class AuthorizationService {
 		const entityRepository = this.mapper.map(entityType).getRepository(databaseContext);
 		const entity: DomainEntity = await entityRepository.findOneById(entityId);
 		if (!(await entity.authorizationPolicy.canAdmin(context, databaseContext))) {
-			throw new Error(
+			throw new GenericRpgToolsAPIError(
 				`You do not have permission to revoke the permission "${permission}"`
 			);
 		}

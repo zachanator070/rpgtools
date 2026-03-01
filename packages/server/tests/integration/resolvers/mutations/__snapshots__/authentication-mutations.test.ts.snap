@@ -17,7 +17,7 @@ exports[`authentication-mutations > login bad password 1`] = `
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "InvalidInputError",
       },
       "locations": [
         {
@@ -40,7 +40,7 @@ exports[`authentication-mutations > login bad username 1`] = `
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "InvalidInputError",
       },
       "locations": [
         {
@@ -74,7 +74,7 @@ exports[`authentication-mutations > with invite emails available > register use 
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "InvalidInputError",
       },
       "locations": [
         {
@@ -97,7 +97,7 @@ exports[`authentication-mutations > with invite emails available > register use 
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "InvalidInputError",
       },
       "locations": [
         {
@@ -120,7 +120,7 @@ exports[`authentication-mutations > with invite emails available > register use 
   "errors": [
     {
       "extensions": {
-        "code": "INTERNAL_SERVER_ERROR",
+        "code": "InvalidInputError",
       },
       "locations": [
         {

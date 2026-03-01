@@ -1,5 +1,4 @@
 import bodyParser from "body-parser";
-import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { existsSync } from "fs";
@@ -13,7 +12,6 @@ import { inject, injectable } from "inversify";
 import {
 	ApiServer,
 	ApiServerRequest,
-	CookieManager,
 } from "../types.js";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import { ModelRouter } from "../routers/model-router.js";
@@ -26,7 +24,6 @@ import { WebSocketServer } from 'ws';
 // @ts-ignore
 import { useServer } from 'graphql-ws/use/ws';
 import cors from "cors";
-import {ExpressCookieManager} from "./express-cookie-manager.js";
 import {expressRequestContextMiddleware} from "../middleware/express-request-context-middleware.js";
 import {ExpressSessionContextFactory} from "./express-session-context-factory.js";
 import { ValidationError } from "sequelize";
@@ -36,6 +33,8 @@ import {AuthenticationService} from "../services/authentication-service.js";
 import {ServerConfigService} from "../services/server-config-service.js";
 import {ServerProperties} from "./server-properties.js";
 import {createSsoRouter} from "../routers/sso-router.js";
+import { GraphQLError, GraphQLFormattedError } from "graphql";
+import { RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class ExpressApiServer implements ApiServer {
@@ -51,6 +50,44 @@ export class ExpressApiServer implements ApiServer {
 	serverProperties: ServerProperties;
 
 	logger: Logger;
+
+	private formatApolloError = (
+		formattedError: GraphQLFormattedError,
+		error: GraphQLError,
+	): GraphQLFormattedError => {
+		if (formattedError.extensions?.code !== "INTERNAL_SERVER_ERROR") {
+			return formattedError;
+		}
+
+		const originalError = error.originalError as Error | undefined;
+		const stackTrace = originalError?.stack ?? error.stack;
+
+		if (originalError instanceof RpgToolsAPIError) {
+			const code = originalError.constructor?.name || "RpgToolsAPIError";
+			return {
+				...formattedError,
+				extensions: {
+					...formattedError.extensions,
+					code,
+				},
+			};
+		}
+
+		this.logger.error("Internal GraphQL error", {
+			message: error.message,
+			path: error.path,
+			stack: stackTrace,
+		});
+
+		return {
+			...formattedError,
+			message: "Internal Server Error",
+			extensions: {
+				...formattedError.extensions,
+				code: "INTERNAL_SERVER_ERROR",
+			},
+		};
+	};
 
 	// use constructor injection so middleware can capture injectables
 	constructor(@inject(INJECTABLE_TYPES.SessionContextFactory)
@@ -88,6 +125,7 @@ export class ExpressApiServer implements ApiServer {
 			introspection: true,
 			schema,
 			csrfPrevention: true,
+			formatError: this.formatApolloError,
 			plugins: [
 				ApolloServerPluginDrainHttpServer({httpServer: this.httpServer}),
 				{

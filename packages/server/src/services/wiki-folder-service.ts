@@ -7,6 +7,7 @@ import { INJECTABLE_TYPES } from "../di/injectable-types.js";
 import {AuthorizationService} from "./authorization-service.js";
 import {DatabaseContext} from "../dal/database-context.js";
 import WikiFolderFactory from "../domain-entities/factory/wiki-folder-factory.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class WikiFolderService {
@@ -25,11 +26,11 @@ export class WikiFolderService {
 	): Promise<WikiFolder> => {
 		const parentFolder = await databaseContext.wikiFolderRepository.findOneById(parentFolderId);
 		if (!parentFolder) {
-			throw new Error("Parent folder does not exist");
+			throw new GenericRpgToolsAPIError("Parent folder does not exist");
 		}
 
 		if (!(await parentFolder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission for this folder`);
+			throw new GenericRpgToolsAPIError(`You do not have permission for this folder`);
 		}
 		const newFolder = this.wikiFolderFactory.build({name, world: parentFolder.world, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(newFolder);
@@ -56,10 +57,10 @@ export class WikiFolderService {
 	): Promise<WikiFolder> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error("Folder does not exist");
+			throw new GenericRpgToolsAPIError("Folder does not exist");
 		}
 		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have permission for this folder`);
+			throw new GenericRpgToolsAPIError(`You do not have permission for this folder`);
 		}
 
 		folder.name = name;
@@ -70,14 +71,14 @@ export class WikiFolderService {
 	deleteFolder = async (context: SecurityContext, folderId: string, databaseContext: DatabaseContext): Promise<WikiFolder> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error("Folder does not exist");
+			throw new GenericRpgToolsAPIError("Folder does not exist");
 		}
 
 		await this.checkUserWritePermissionForFolderContents(context, folderId, databaseContext);
 
 		const worlds = await databaseContext.worldRepository.findByRootFolder(folderId);
 		if (worlds.length !== 0) {
-			throw new Error("You cannot delete the root folder of a world");
+			throw new GenericRpgToolsAPIError("You cannot delete the root folder of a world");
 		}
 
 		const parent = await databaseContext.wikiFolderRepository.findOneWithChild(folderId);
@@ -97,21 +98,21 @@ export class WikiFolderService {
 	): Promise<WikiFolder> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error(`Folder with id ${folderId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Folder with id ${folderId} does not exist`);
 		}
 		const parentFolder = await databaseContext.wikiFolderRepository.findOneById(parentFolderId);
 		if (!parentFolder) {
-			throw new Error(`Folder with id ${parentFolderId} does not exist`);
+			throw new GenericRpgToolsAPIError(`Folder with id ${parentFolderId} does not exist`);
 		}
 		if (folderId === parentFolderId) {
-			throw new Error("Folder cannot be a parent of itself");
+			throw new GenericRpgToolsAPIError("Folder cannot be a parent of itself");
 		}
 
 		const currentParent = await databaseContext.wikiFolderRepository.findOneWithChild(folderId);
 
 		for (let folderToCheck of [folder, parentFolder, currentParent]) {
 			if (!(await folderToCheck.authorizationPolicy.canWrite(context, databaseContext))) {
-				throw new Error(`You do not have permission to edit folder ${folderToCheck.name}`);
+				throw new GenericRpgToolsAPIError(`You do not have permission to edit folder ${folderToCheck.name}`);
 			}
 		}
 
@@ -131,10 +132,10 @@ export class WikiFolderService {
 	): Promise<WikiFolder[]> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error("World does not exist");
+			throw new GenericRpgToolsAPIError("World does not exist");
 		}
 		if (!(await world.authorizationPolicy.canRead(context, databaseContext))) {
-			throw new Error("You do not have permission to read this World");
+			throw new GenericRpgToolsAPIError("You do not have permission to read this World");
 		}
 
 		const results = await databaseContext.wikiFolderRepository.findByWorldAndName(worldId, name);
@@ -186,7 +187,7 @@ export class WikiFolderService {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 
 		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error(`You do not have write permission for the folder ${folderId}`);
+			throw new GenericRpgToolsAPIError(`You do not have write permission for the folder ${folderId}`);
 		}
 
 		// pages are auto populated
@@ -195,7 +196,7 @@ export class WikiFolderService {
 			if (
 				!(await wikiPage.authorizationPolicy.canWrite(context, databaseContext))
 			) {
-				throw new Error(`You do not have write permission for the page ${childPage}`);
+				throw new GenericRpgToolsAPIError(`You do not have write permission for the page ${childPage}`);
 			}
 		}
 

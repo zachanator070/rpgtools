@@ -20,6 +20,7 @@ import {World} from "../domain-entities/world.js";
 import axios from 'axios';
 
 import {Readable} from "stream";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export class ContentImportService {
@@ -39,11 +40,11 @@ export class ContentImportService {
 	): Promise<World> => {
 		const world = await databaseContext.worldRepository.findOneById(worldId);
 		if (!world) {
-			throw new Error("World does not exist");
+			throw new GenericRpgToolsAPIError("World does not exist");
 		}
 		const rootFolder = await databaseContext.wikiFolderRepository.findOneById(world.rootFolder);
 		if (!(await rootFolder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to add a top level folder");
+			throw new GenericRpgToolsAPIError("You do not have permission to add a top level folder");
 		}
 		const topFolder = this.wikiFolderFactory.build({name: "5e", world: worldId, pages: [], children: [], acl: []});
 		await databaseContext.wikiFolderRepository.create(topFolder);
@@ -68,10 +69,10 @@ export class ContentImportService {
 	): Promise<WikiFolder> => {
 		const folder = await databaseContext.wikiFolderRepository.findOneById(folderId);
 		if (!folder) {
-			throw new Error("Folder does not exist");
+			throw new GenericRpgToolsAPIError("Folder does not exist");
 		}
 		if (!(await folder.authorizationPolicy.canWrite(context, databaseContext))) {
-			throw new Error("You do not have permission to add content to this folder");
+			throw new GenericRpgToolsAPIError("You do not have permission to add content to this folder");
 		}
 
 		// probably need to detect here what kind of file we are dealing with then create an archive based upon the file type
@@ -79,7 +80,7 @@ export class ContentImportService {
 		try {
 			await this.processArchive(archive, folder, databaseContext, context);
 		} catch (e) {
-			throw new Error(`Error occurred while processing archive: ${e.message}`, { cause: e });
+			throw new GenericRpgToolsAPIError(`Error occurred while processing archive: ${e.message}`, { cause: e });
 		}
 
 		return folder;

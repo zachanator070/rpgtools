@@ -1,6 +1,7 @@
 import {injectable, multiInject} from "inversify";
 import {INJECTABLE_TYPES} from "../di/injectable-types.js";
 import {DomainEntity} from "../types.js";
+import { GenericRpgToolsAPIError, RpgToolsAPIError } from "../errors.js";
 
 @injectable()
 export default class EntityMapper {
@@ -14,6 +15,6 @@ export default class EntityMapper {
                 return entity;
             }
         }
-        throw new Error(`Entity type ${type} does not map to a repository`);
+        throw new GenericRpgToolsAPIError(`Entity type ${type} does not map to a repository`);
     }
 }
