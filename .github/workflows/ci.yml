@@ -43,6 +43,11 @@ jobs:
     - uses: actions/upload-artifact@v5
       if: failure()
       with:
+        name: server-logs-postgres
+        path: /home/runner/work/rpgtools/rpgtools/artifacts/server-prod.log
+    - uses: actions/upload-artifact@v5
+      if: failure()
+      with:
         name: e2e-videos-postgres
         path: /home/runner/work/rpgtools/rpgtools/packages/frontend/cypress/videos
     - uses: actions/upload-artifact@v5

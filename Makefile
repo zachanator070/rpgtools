@@ -129,6 +129,8 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_BINARY)
 	./dev/scripts/wait_for_server.sh
 	> packages/frontend/seed.log
 	npm run -w packages/frontend test
+	mkdir -p artifacts
+	docker compose logs --no-color prod > artifacts/server-prod.log || true
 	docker compose down
 
 test-e2e-sqlite: $(ELECTRON_APP) $(CYPRESS_BINARY)
