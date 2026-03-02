@@ -90,43 +90,30 @@ export class WikiPageService {
 		}
 
 		if (readStream) {
-			const relatedWikis: Set<string> = new Set();
 			let contentFile = await databaseContext.fileRepository.findOneById(wikiPage.contentId);
 
 			if (contentFile) {
 				await databaseContext.fileRepository.delete(contentFile);
 			}
 
-			const searchingStream = new stream.PassThrough();
-			const chunks: Buffer[] = [];
-			const matchChunks = () => {
-				const current = Buffer.concat(chunks).toString('utf8');
-				const matches = current.matchAll(/\/ui\/world\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/wiki\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/view/g);
-				if(matches) {
-					for(let match of matches) {
-						relatedWikis.add(match[1]);
-					}
-				}
+			const contentBuffer = await new Promise<Buffer>((resolve, reject) => {
+				const chunks: Buffer[] = [];
+				readStream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+				readStream.on('error', reject);
+				readStream.on('end', () => resolve(Buffer.concat(chunks)));
+			});
+
+			const relatedWikis: Set<string> = new Set();
+			const matches = contentBuffer.toString('utf8').matchAll(/\/ui\/world\/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\/wiki\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\/view/g);
+			for (const match of matches) {
+				relatedWikis.add(match[1]);
 			}
-			searchingStream.on('data', (chunk) => {
-				chunks.push(Buffer.from(chunk));
-				matchChunks();
-				if(chunks.length > 3) {
-					chunks.shift();
-				}
-			});
-			searchingStream.on('end', async () => {
-				matchChunks();
-				wikiPage.relatedWikis = [...relatedWikis];
-			});
-			const finalSteam = new stream.PassThrough();
-			searchingStream.pipe(finalSteam);
-			readStream.pipe(searchingStream);
+			wikiPage.relatedWikis = [...relatedWikis];
 
 			contentFile = this.fileFactory.build(
 				{
 					filename: `wikiContent.${wikiPage._id}.json`,
-					readStream: readStream,
+					readStream: Readable.from(contentBuffer),
 					mimeType: "application/json"
 				}
 			);

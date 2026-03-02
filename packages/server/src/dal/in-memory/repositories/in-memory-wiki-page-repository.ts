@@ -4,9 +4,12 @@ import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
 import {WikiPageRepository} from "../../repository/wiki-page-repository.js";
 import {PaginatedResult} from "../../paginated-result.js";
 import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
+import {inMemoryWikiPageStore} from "./in-memory-wiki-page-store.js";
 
 @injectable()
 export class InMemoryWikiPageRepository extends AbstractInMemoryRepository<WikiPage> implements WikiPageRepository {
+
+    items = inMemoryWikiPageStore;
 
     findByIdsPaginated(ids: string[], page: number, sort?: string): Promise<PaginatedResult<WikiPage>> {
         return this.findPaginated([new FilterCondition('_id', ids, FILTER_CONDITION_OPERATOR_IN)], page, sort);
@@ -25,7 +28,7 @@ export class InMemoryWikiPageRepository extends AbstractInMemoryRepository<WikiP
 
     findOneByNameAndWorld(name: string, worldId: string): Promise<WikiPage> {
         return this.findOne([
-            new FilterCondition("name", "other page"),
+            new FilterCondition("name", name),
             new FilterCondition("world", worldId),
         ]);
     }

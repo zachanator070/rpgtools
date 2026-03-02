@@ -20,7 +20,7 @@ jobs:
       uses: GabrielBB/xvfb-action@v1
       with:
         run: make ci-unit
-  ci-integration:
+  ci-integration-postgres:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Node.js
@@ -29,10 +29,36 @@ jobs:
         node-version: 20.17.0
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Integration Tests
+    - name: Postgres Integration Tests
       uses: GabrielBB/xvfb-action@v1
       with:
-        run: make ci-integration
+        run: make ci-integration-postgres
+  ci-integration-sqlite:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.17.0
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: SQLite Integration Tests
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: make ci-integration-sqlite
+  ci-integration-in-memory:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.17.0
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: In-Memory Integration Tests
+      uses: GabrielBB/xvfb-action@v1
+      with:
+        run: make ci-integration-in-memory
   ci-e2e-postgres:
     runs-on: ubuntu-latest
     steps:

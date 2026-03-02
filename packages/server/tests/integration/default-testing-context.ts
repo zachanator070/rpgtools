@@ -120,13 +120,12 @@ export class DefaultTestingContext {
 		);
 		this.newFolder = await databaseContext.wikiFolderRepository.findOneByNameAndWorld('new folder', this.world._id);
 		await this.wikiPageService.createWiki(this.tester1SecurityContext, "new page", this.newFolder._id, databaseContext);
-		await this.wikiPageService.createWiki(
+        this.otherPage = await this.wikiPageService.createWiki(
 			this.tester1SecurityContext,
 			"other page",
 			this.world.rootFolder,
 			databaseContext
 		);
-		this.otherPage = await databaseContext.wikiPageRepository.findOneByNameAndWorld('other page', this.world._id);
 		await worldService.createPin(
 			this.tester1SecurityContext,
 			this.world.wikiPage,

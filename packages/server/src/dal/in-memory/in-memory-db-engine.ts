@@ -87,6 +87,29 @@ export default class InMemoryDbEngine implements DbEngine {
     }
 
     clearDb(): Promise<void> {
+        (this.articleRepository as any).items?.clear();
+        (this.calendarRepository as any).items?.clear();
+        (this.chunkRepository as any).items?.clear();
+        (this.eventRepository as any).items?.clear();
+        (this.fileRepository as any).items?.clear();
+        (this.fogStrokeRepository as any).items?.clear();
+        (this.gameRepository as any).items?.clear();
+        (this.imageRepository as any).items?.clear();
+        (this.itemRepository as any).items?.clear();
+        (this.modelRepository as any).items?.clear();
+        (this.monsterRepository as any).items?.clear();
+        (this.personRepository as any).items?.clear();
+        (this.pinRepository as any).items?.clear();
+        (this.placeRepository as any).items?.clear();
+        (this.roleRepository as any).items?.clear();
+        (this.serverConfigRepository as any).items?.clear();
+        (this.inviteRepository as any).items?.clear();
+        (this.strokeRepository as any).items?.clear();
+        (this.userRepository as any).items?.clear();
+        (this.wikiFolderRepository as any).items?.clear();
+        (this.wikiPageRepository as any).items?.clear();
+        (this.worldRepository as any).items?.clear();
+        (this.tokenIconRepository as any).items?.clear();
         return Promise.resolve(undefined);
     }
 

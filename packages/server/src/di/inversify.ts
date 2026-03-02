@@ -385,35 +385,38 @@ const bindAll = () => {
 		container.bind<TokenIconRepository>(INJECTABLE_TYPES.TokenIconRepository).to(SqlTokenIconRepository);
 
 	} else {
-		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(InMemoryArticleRepository);
-		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(InMemoryChunkRepository);
-		container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(InMemoryFileRepository);
-		container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(InMemoryGameRepository);
-		container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(InMemoryImageRepository);
-		container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(InMemoryItemRepository);
-		container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(InMemoryModelRepository);
-		container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(InMemoryMonsterRepository);
-		container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(InMemoryPersonRepository);
-		container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(InMemoryPinRepository);
-		container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(InMemoryPlaceRepository);
-		container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(InMemoryRoleRepository);
+		container.bind<ArticleRepository>(INJECTABLE_TYPES.ArticleRepository).to(InMemoryArticleRepository).inSingletonScope();
+		container.bind<ChunkRepository>(INJECTABLE_TYPES.ChunkRepository).to(InMemoryChunkRepository).inSingletonScope();
+		container.bind<FileRepository>(INJECTABLE_TYPES.FileRepository).to(InMemoryFileRepository).inSingletonScope();
+		container.bind<GameRepository>(INJECTABLE_TYPES.GameRepository).to(InMemoryGameRepository).inSingletonScope();
+		container.bind<ImageRepository>(INJECTABLE_TYPES.ImageRepository).to(InMemoryImageRepository).inSingletonScope();
+		container.bind<ItemRepository>(INJECTABLE_TYPES.ItemRepository).to(InMemoryItemRepository).inSingletonScope();
+		container.bind<ModelRepository>(INJECTABLE_TYPES.ModelRepository).to(InMemoryModelRepository).inSingletonScope();
+		container.bind<MonsterRepository>(INJECTABLE_TYPES.MonsterRepository).to(InMemoryMonsterRepository).inSingletonScope();
+		container.bind<PersonRepository>(INJECTABLE_TYPES.PersonRepository).to(InMemoryPersonRepository).inSingletonScope();
+		container.bind<PinRepository>(INJECTABLE_TYPES.PinRepository).to(InMemoryPinRepository).inSingletonScope();
+		container.bind<PlaceRepository>(INJECTABLE_TYPES.PlaceRepository).to(InMemoryPlaceRepository).inSingletonScope();
+		container.bind<RoleRepository>(INJECTABLE_TYPES.RoleRepository).to(InMemoryRoleRepository).inSingletonScope();
 		container
 			.bind<ServerConfigRepository>(INJECTABLE_TYPES.ServerConfigRepository)
-			.to(InMemoryServerConfigRepository);
-		container.bind<InviteRepository>(INJECTABLE_TYPES.InviteRepository).to(InMemoryInviteRepository);
-		container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(InMemoryUserRepository);
+			.to(InMemoryServerConfigRepository)
+			.inSingletonScope();
+		container.bind<InviteRepository>(INJECTABLE_TYPES.InviteRepository).to(InMemoryInviteRepository).inSingletonScope();
+		container.bind<UserRepository>(INJECTABLE_TYPES.UserRepository).to(InMemoryUserRepository).inSingletonScope();
 		container
 			.bind<WikiFolderRepository>(INJECTABLE_TYPES.WikiFolderRepository)
-			.to(InMemoryWikiFolderRepository);
+			.to(InMemoryWikiFolderRepository)
+			.inSingletonScope();
 		container
 			.bind<WikiPageRepository>(INJECTABLE_TYPES.WikiPageRepository)
-			.to(InMemoryWikiPageRepository);
-		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository);
-		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(InMemoryEventWikiRepository);
-		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository);
-		container.bind<FogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(InMemoryFogStrokeRepository)
-		container.bind<StrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(InMemoryStrokeRepository)
-		container.bind<TokenIconRepository>(INJECTABLE_TYPES.TokenIconRepository).to(InMemoryTokenIconRepository)
+			.to(InMemoryWikiPageRepository)
+			.inSingletonScope();
+		container.bind<WorldRepository>(INJECTABLE_TYPES.WorldRepository).to(InMemoryWorldRepository).inSingletonScope();
+		container.bind<EventWikiRepository>(INJECTABLE_TYPES.EventWikiRepository).to(InMemoryEventWikiRepository).inSingletonScope();
+		container.bind<CalendarRepository>(INJECTABLE_TYPES.CalendarRepository).to(InMemoryCalendarRepository).inSingletonScope();
+		container.bind<FogStrokeRepository>(INJECTABLE_TYPES.FogStrokeRepository).to(InMemoryFogStrokeRepository).inSingletonScope()
+		container.bind<StrokeRepository>(INJECTABLE_TYPES.StrokeRepository).to(InMemoryStrokeRepository).inSingletonScope()
+		container.bind<TokenIconRepository>(INJECTABLE_TYPES.TokenIconRepository).to(InMemoryTokenIconRepository).inSingletonScope()
 	}
 
 // authorization rule sets

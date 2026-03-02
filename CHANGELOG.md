@@ -1,4 +1,4 @@
-## RPG Tools v6.0.1 Changelog
+## RPG Tools v6.0.2 Changelog
 ### Breaking Changes
 N/A
 
@@ -6,4 +6,5 @@ N/A
 N/A
 
 ### Bug fixes
- - Fixed a bug where server errors were not logged to stdout. Logged errors now include stack traces for better debugging.
+ - Added tests for in-memory db engine
+ - Fixed all failing tests for in-memory db engine

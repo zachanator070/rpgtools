@@ -3,19 +3,19 @@ import { injectable } from "inversify";
 import { AbstractInMemoryRepository } from "./abstract-in-memory-repository.js";
 import {UserRepository} from "../../repository/user-repository.js";
 import {PaginatedResult} from "../../paginated-result.js";
-import {FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
+import {FILTER_CONDITION_OPERATOR_IN, FILTER_CONDITION_REGEX, FilterCondition} from "../../filter-condition.js";
 
 @injectable()
 export class InMemoryUserRepository extends AbstractInMemoryRepository<User> implements UserRepository {
 
     findByUsernamePaginated(username: string, page: number): Promise<PaginatedResult<User>> {
         return this.findPaginated([
-            new FilterCondition("username", `^${username}*`, FILTER_CONDITION_REGEX),
+            new FilterCondition("username", username, FILTER_CONDITION_REGEX),
         ], page || 1)
     }
 
     findWithRole(roleId: string): Promise<User[]> {
-        return this.find([new FilterCondition('role', roleId)]);
+        return this.find([new FilterCondition('roles', roleId, FILTER_CONDITION_OPERATOR_IN)]);
     }
 
     findOneByUsername(username: string): Promise<User> {
