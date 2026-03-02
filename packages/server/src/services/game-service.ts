@@ -13,6 +13,7 @@ import { USER } from "@rpgtools/common/src/type-constants.js";
 import { SecurityContext } from "../security/security-context.js";
 import {
 	Character,
+	CharacterAttribute,
 	Game,
 	InGameModel,
 	Message,
