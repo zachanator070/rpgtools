@@ -174,7 +174,9 @@ ci: .env $(NODE_MODULES) test
 
 ci-unit: .env $(NODE_MODULES) test-unit
 
-ci-integration: .env $(NODE_MODULES) test-integration
+ci-integration-postgres: .env $(NODE_MODULES) test-integration-postgres
+
+ci-integration-sqlite: .env $(NODE_MODULES) test-integration-sqlite
 
 ci-integration-in-memory: .env $(NODE_MODULES) test-integration-in-memory
 
