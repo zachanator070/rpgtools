@@ -2,6 +2,7 @@ import { DomainEntity} from "../../../types.js";
 import {
 	FILTER_CONDITION_OPERATOR_EQUALS,
 	FILTER_CONDITION_OPERATOR_IN,
+	FILTER_CONDITION_REGEX,
 	FilterCondition,
 } from "../../filter-condition.js";
 import {PaginatedResult} from "../../paginated-result.js";
@@ -19,6 +20,7 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	PAGE_LIMIT = 100;
 
 	create = async (entity: Type): Promise<void> => {
+		this.assignIds(entity as any, new WeakSet<object>(), false);
 		if (!entity._id) {
 			entity._id = uuidv4();
 		}
@@ -35,7 +37,26 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 	find = async (conditions: FilterCondition[], sort?: string): Promise<Type[]> => {
 		let results: Type[] = Array.from(this.items.values());
 		if (sort) {
-			results = results.sort((a: any, b: any) => a[sort].compare(b[sort]));
+			results = results.sort((a: any, b: any) => {
+				const left = a?.[sort];
+				const right = b?.[sort];
+				if (typeof left === 'string' && typeof right === 'string') {
+					return left.localeCompare(right);
+				}
+				if (left == null && right == null) {
+					return 0;
+				}
+				if (left == null) {
+					return -1;
+				}
+				if (right == null) {
+					return 1;
+				}
+				if (left === right) {
+					return 0;
+				}
+				return left > right ? 1 : -1;
+			});
 		}
 		results = this.filter(conditions, results);
 		return results;
@@ -75,19 +96,21 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 		let results = await this.find(conditions, sort);
 		const count = results.length;
 		const startIndex = (page - 1) * this.PAGE_LIMIT;
-		results = results.slice(startIndex, startIndex + 100 + 1);
+		results = results.slice(startIndex, startIndex + this.PAGE_LIMIT);
 		const totalPages = Math.ceil(count / this.PAGE_LIMIT);
-		const prevPage = page - 1 >= 1 ? page - 1 : 1;
-		const nextPage = page + 1 <= totalPages ? page + 1 : totalPages;
+		const hasPrevPage = page - 1 >= 1;
+		const hasNextPage = page + 1 <= totalPages;
+		const prevPage = hasPrevPage ? page - 1 : null;
+		const nextPage = hasNextPage ? page + 1 : null;
 		return new PaginatedResult(
 			results,
 			count,
 			this.PAGE_LIMIT,
 			page,
 			totalPages,
-			page,
-			page - 1 >= 1,
-			page + 1 <= totalPages,
+			startIndex + 1,
+			hasPrevPage,
+			hasNextPage,
 			prevPage,
 			nextPage
 		);
@@ -97,14 +120,61 @@ export abstract class AbstractInMemoryRepository<Type extends DomainEntity>
 		let results = [...resultsArray];
 		for (let filter of conditions) {
 			results = results.filter((entity: any) => {
+				const entityValue = entity[filter.field];
 				if (filter.operator === FILTER_CONDITION_OPERATOR_EQUALS) {
-					return entity[filter.field] === filter.value;
+					return entityValue === filter.value;
 				} else if (filter.operator === FILTER_CONDITION_OPERATOR_IN) {
-					return entity[filter.field].includes(filter.value);
+					if (Array.isArray(filter.value)) {
+						if (Array.isArray(entityValue)) {
+							return entityValue.some((value) => filter.value.includes(value));
+						}
+						return filter.value.includes(entityValue);
+					}
+					if (Array.isArray(entityValue)) {
+						return entityValue.includes(filter.value);
+					}
+					return false;
+				} else if (filter.operator === FILTER_CONDITION_REGEX) {
+					if (typeof entityValue !== 'string') {
+						return false;
+					}
+					try {
+						const regex = new RegExp(String(filter.value), 'i');
+						return regex.test(entityValue);
+					} catch {
+						return entityValue.toLowerCase().includes(String(filter.value).toLowerCase());
+					}
 				}
 				return false;
 			});
 		}
 		return results;
+	};
+
+	private assignIds = (value: any, visited: WeakSet<object>, inArray: boolean): void => {
+		if (!value || typeof value !== 'object') {
+			return;
+		}
+		if (visited.has(value)) {
+			return;
+		}
+		visited.add(value);
+		if (value instanceof Date || Buffer.isBuffer(value)) {
+			return;
+		}
+		if (Array.isArray(value)) {
+			for (const item of value) {
+				this.assignIds(item, visited, true);
+			}
+			return;
+		}
+
+		if (('_id' in value && !value._id) || (inArray && value.constructor === Object && !('_id' in value))) {
+			value._id = uuidv4();
+		}
+
+		for (const key of Object.keys(value)) {
+			this.assignIds(value[key], visited, false);
+		}
 	};
 }

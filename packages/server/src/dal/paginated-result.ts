@@ -7,8 +7,8 @@ export class PaginatedResult<T> {
 	pagingCounter: number;
 	hasPrevPage: boolean;
 	hasNextPage: boolean;
-	prevPage: number;
-	nextPage: number;
+	prevPage: number | null;
+	nextPage: number | null;
 
 	constructor(
 		docs: T[],
@@ -19,8 +19,8 @@ export class PaginatedResult<T> {
 		pagingCounter: number,
 		hasPrevPage: boolean,
 		hasNextPage: boolean,
-		prevPage: number,
-		nextPage: number
+		prevPage: number | null,
+		nextPage: number | null
 	) {
 		this.docs = docs;
 		this.totalDocs = totalDocs;

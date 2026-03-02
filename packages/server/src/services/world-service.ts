@@ -238,7 +238,6 @@ export class WorldService {
 	};
 
 	public async upsertCalendar(calendarId: string, world: string, name: string, ages: Age[], context: SecurityContext, databaseContext: DatabaseContext): Promise<Calendar> {
-
 		let calendar = null;
 		if(!calendarId) {
 			calendar = this.calendarFactory.build({_id: calendarId, world, name, ages, acl: [

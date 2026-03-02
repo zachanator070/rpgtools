@@ -88,7 +88,7 @@ run-electron: .env $(ELECTRON_APP)
 
 TEST_ENV_FILE=packages/server/test.env
 
-.PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-sqlite
+.PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-sqlite test-integration-in-memory
 .PHONY: test-e2e test-e2e-postgres test-e2e-sqlite run-cypress
 
 test: test-unit test-integration test-e2e
@@ -98,7 +98,7 @@ VITEST_OPTIONS?=
 test-unit:
 	npm run test:unit --workspace=packages/server
 
-test-integration: test-integration-postgres
+test-integration: test-integration-postgres test-integration-in-memory
 
 test-integration-update-snapshots: VITEST_OPTIONS:=-u
 test-integration-update-snapshots: test-integration-postgres
@@ -113,6 +113,11 @@ test-integration-postgres: .env
 test-integration-sqlite: .env
 	cp .env.example $(TEST_ENV_FILE)
 	$(DOCKER_EXEC) sed -i 's/^#SQLITE_DIRECTORY_PATH=.*/SQLITE_DIRECTORY_PATH=db/' $(TEST_ENV_FILE)
+	npm run test:integration --workspace=packages/server
+	docker compose down
+
+test-integration-in-memory: .env
+	cp .env.example $(TEST_ENV_FILE)
 	npm run test:integration --workspace=packages/server
 	docker compose down
 
@@ -162,7 +167,7 @@ seed-new: .env
 ######
 # CI #
 ######
-.PHONY: ci lint ci-unit ci-integration ci-e2e-postgres ci-e2e-sqlite
+.PHONY: ci lint ci-unit ci-integration ci-integration-in-memory ci-e2e-postgres ci-e2e-sqlite
 
 # runs all tests for continuous integration environment
 ci: .env $(NODE_MODULES) test
@@ -170,6 +175,8 @@ ci: .env $(NODE_MODULES) test
 ci-unit: .env $(NODE_MODULES) test-unit
 
 ci-integration: .env $(NODE_MODULES) test-integration
+
+ci-integration-in-memory: .env $(NODE_MODULES) test-integration-in-memory
 
 ci-e2e-postgres: .env $(NODE_MODULES) test-e2e-postgres
 
