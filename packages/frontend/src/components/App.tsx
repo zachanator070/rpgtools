@@ -69,9 +69,7 @@ export default function App() {
 						<Navigate to="/ui" replace={true}/>
 					</>}
 				/>
-				{serverConfig.serverNeedsSetup &&
-					<Route path="/ui/setup" element={<ServerSetup />}/>
-				}
+				<Route path="/ui/setup" element={<ServerSetup />}/>
 			</Routes>
 		</MapWikiContext.Provider>
 	);

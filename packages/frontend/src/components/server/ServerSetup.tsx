@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import useUnlockServer from "../../hooks/server/useUnlockServer";
 import { useNavigate } from "react-router-dom";
 import useLogin from "../../hooks/authentication/useLogin";
@@ -21,6 +21,13 @@ export default function ServerSetup() {
 	const [email, setEmail] = useState("");
 	const navigate = useNavigate();
 	const {serverConfig, refetch} = useServerConfig();
+
+	useEffect(() => {
+		if (serverConfig?.serverNeedsSetup === false) {
+			navigate('/ui');
+		}
+	}, [serverConfig?.serverNeedsSetup, navigate]);
+
 	const { login } = useLogin(async () => {
 		await refetch();
 		navigate('/');

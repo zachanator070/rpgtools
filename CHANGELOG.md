@@ -1,4 +1,4 @@
-## RPG Tools v6.0.2 Changelog
+## RPG Tools v6.0.3 Changelog
 ### Breaking Changes
 N/A
 
@@ -6,5 +6,4 @@ N/A
 N/A
 
 ### Bug fixes
- - Added tests for in-memory db engine
- - Fixed all failing tests for in-memory db engine
+ - Redirect from /ui/setup if the server does not need setup
