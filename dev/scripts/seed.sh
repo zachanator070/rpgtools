@@ -58,12 +58,21 @@ then
   TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
   echo "[${TIMESTAMP}] Terminating rpgtools"
   run_timed pkill -f @rpgtools-server
-  TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-  echo "[${TIMESTAMP}] Deleting existing data from ${SQLITE_DB}"
-  run_timed bash -c "sqlite3 ${SQLITE_DB} .tables | awk '{printf \"%s\\n%s\\n%s\\n\",\$1,\$2,\$3}' | grep -v 'SequelizeMeta' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'"
-  TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-  echo "[${TIMESTAMP}] Seeding database from dump: ${DUMP_NAME}"
-  run_timed sqlite3 -line ${SQLITE_DB} ".read ${REPO_ROOT}/dev/sqlite-dump/${DUMP_NAME}.sql"
+
+  if [ "$DUMP_NAME" = "new_server" ]
+  then
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    echo "[${TIMESTAMP}] Resetting SQLite DB for migration-based new server setup: ${SQLITE_DB}"
+    run_timed rm -f "${SQLITE_DB}"
+  else
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    echo "[${TIMESTAMP}] Deleting existing data from ${SQLITE_DB}"
+    run_timed bash -c "sqlite3 ${SQLITE_DB} .tables | awk '{printf \"%s\\n%s\\n%s\\n\",\$1,\$2,\$3}' | grep -v 'SequelizeMeta' | xargs -I{} sqlite3 ${SQLITE_DB} 'DELETE FROM {}'"
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    echo "[${TIMESTAMP}] Seeding database from dump: ${DUMP_NAME}"
+    run_timed sqlite3 -line ${SQLITE_DB} ".read ${REPO_ROOT}/dev/sqlite-dump/${DUMP_NAME}.sql"
+  fi
+
   TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
   echo "[${TIMESTAMP}] Starting rpgtools"
   run_timed ${REPO_ROOT}/dev/scripts/run-electron-app.sh
