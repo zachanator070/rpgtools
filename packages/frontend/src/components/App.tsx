@@ -13,6 +13,7 @@ import useServerConfig from "../hooks/server/useServerConfig";
 import LoadingView from "./LoadingView";
 import DefaultWorld from "./DefaultWorld";
 import GlobalError from "./GlobalError";
+import LegalPage from "./LegalPage";
 
 export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();
@@ -62,6 +63,13 @@ export default function App() {
 				<Route
 					path={'/ui/defaultWorld'}
 					element={<DefaultWorld/>}
+				/>
+				<Route
+					path={'/ui/legal'}
+					element={<>
+						<NavBar />
+						<LegalPage />
+					</>}
 				/>
 				<Route
 					path={"/"}
