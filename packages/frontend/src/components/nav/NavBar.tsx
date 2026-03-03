@@ -43,6 +43,10 @@ export default function NavBar() {
 				</div>
 
 				<div className={'navbar-item'}>
+					<Link to={'/ui/legal'}>Legal</Link>
+				</div>
+
+				<div className={'navbar-item'}>
 					{(serverConfig.canAdmin || serverConfig.canWrite) && (
 						<Link to={`/ui/serverSettings`}>
 							<ServerIcon />
