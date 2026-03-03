@@ -1,4 +1,4 @@
-## RPG Tools v6.0.2 Changelog
+## RPG Tools v6.0.3 Changelog
 ### Breaking Changes
 N/A
 
