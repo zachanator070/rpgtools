@@ -1,4 +1,4 @@
-## RPG Tools v6.0.3 Changelog
+## RPG Tools v6.0.4 Changelog
 ### Breaking Changes
 N/A
 
@@ -6,4 +6,5 @@ N/A
 N/A
 
 ### Bug fixes
- - Redirect from /ui/setup if the server does not need setup
+ - Deprecated cypress tests in favor of playwright
+ - Deleted new_server.sql in favor of restarting server to run migrations
