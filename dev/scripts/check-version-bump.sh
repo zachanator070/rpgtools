@@ -2,6 +2,12 @@
 
 # This script checks if the version in package.json has been bumped compared to the latest git tag.
 
+# Exit gracefully if PR is from dependabot
+if [ "$GITHUB_ACTOR" == "dependabot[bot]" ]; then
+  echo "PR is from dependabot. Skipping version check."
+  exit 0
+fi
+
 # Get the version from package.json using jq
 PACKAGE_VERSION=$(jq -r '.version' package.json)
 if [ -z "$PACKAGE_VERSION" ]; then
