@@ -1,10 +1,10 @@
-## RPG Tools v6.0.4 Changelog
+## RPG Tools v6.1.0 Changelog
 ### Breaking Changes
 N/A
 
 ### New Features
-N/A
+- Added legal page with nav link
+- New legal page includes TOS and Privacy Policy documents
 
 ### Bug fixes
- - Deprecated cypress tests in favor of playwright
- - Deleted new_server.sql in favor of restarting server to run migrations
+N/A
