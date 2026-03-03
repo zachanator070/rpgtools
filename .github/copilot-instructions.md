@@ -20,7 +20,7 @@ Key workflows / commands
 - Run tests:
   - Unit: `make test-unit` or `npm run test:unit --workspace=packages/server`.
   - Integration: `make test-integration` (spins up Postgres as needed). See `Makefile` for environment handling (`TEST_ENV_FILE`).
-  - E2E: `make test-e2e` (runs cypress against a running server or the electron app depending on target).
+  - E2E: `make test-e2e` (runs Playwright against a running server or the electron app depending on target).
 - Seed & dumps: `make seed-middle-earth`, `make seed-new`, or `npm run -w packages/frontend seed:middle_earth` (seed scripts in `dev/scripts`).
 
 Project-specific patterns & conventions

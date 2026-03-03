@@ -7,8 +7,8 @@ node_modules_dev/
 .env.local
 dist/
 coverage/
-packages/frontend/cypress/screenshots
-packages/frontend/cypress/videos
+packages/frontend/test-results
+packages/frontend/playwright-report
 packages/frontend/seed.log
 packages/server/test.env
 out/
@@ -20,3 +20,4 @@ profile/
 .cache
 .npm
 .DS_Store
+artifacts/

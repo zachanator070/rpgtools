@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.5 (Debian 14.5-1.pgdg110+1)
--- Dumped by pg_dump version 14.5 (Debian 14.5-1.pgdg110+1)
+-- Dumped from database version 16.3 (Debian 16.3-1.pgdg120+1)
+-- Dumped by pg_dump version 16.3 (Debian 16.3-1.pgdg120+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,16 +16,11 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
 --
--- Data for Name: AclEntries; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: AclEntry; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."AclEntry" (_id, permission, "principalType", "createdAt", "updatedAt", principal, subject) FROM stdin;
-e97d4bd1-325e-40a2-8abb-5c1fd5d02254	Create world access	Role	2022-11-09 01:55:19.325+00	2022-11-09 01:55:19.328+00	bb0c59f5-284e-4081-a84f-e7403a5b1a7e	9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0
+COPY public."AclEntry" (_id, "createdAt", "updatedAt", permission, "principalType", principal, subject) FROM stdin;
 \.
 
 
@@ -33,12 +28,36 @@ e97d4bd1-325e-40a2-8abb-5c1fd5d02254	Create world access	Role	2022-11-09 01:55:1
 -- Data for Name: AdminUsersToServerConfig; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."AdminUsersToServerConfig" ("createdAt", "updatedAt", "ServerConfigId", "UserId") FROM stdin;
+COPY public."AdminUsersToServerConfig" ("ServerConfigId", "UserId", "createdAt", "updatedAt") FROM stdin;
 \.
 
 
 --
--- Data for Name: Articles; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: World; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."World" (_id, "createdAt", "updatedAt", name, "wikiPageId", "rootFolderId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Calendar; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."Calendar" (_id, "createdAt", "updatedAt", name, "worldId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Age; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."Age" (_id, "createdAt", "updatedAt", name, index, "numYears", "calendarId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Article; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
 COPY public."Article" (_id, "createdAt", "updatedAt") FROM stdin;
@@ -46,130 +65,114 @@ COPY public."Article" (_id, "createdAt", "updatedAt") FROM stdin;
 
 
 --
--- Data for Name: CharacterAttributes; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Image; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."CharacterAttribute" (_id, name, value, "createdAt", "updatedAt", "CharacterId") FROM stdin;
+COPY public."Image" (_id, "createdAt", "updatedAt", width, height, "chunkWidth", "chunkHeight", name, "worldId", "iconId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Characters; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Place; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Character" (_id, name, color, "createdAt", "updatedAt", "GameId", "playerId") FROM stdin;
+COPY public."Place" (_id, "createdAt", "updatedAt", "pixelsPerFoot", "mapImageId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Chunks; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Chunk" (_id, x, y, width, height, "createdAt", "updatedAt", "imageId", "fileId", "ImageId") FROM stdin;
+COPY public."User" (_id, "createdAt", "updatedAt", email, username, password, "tokenVersion", "currentWorldId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Files; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Game; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."File" (_id, content, filename, "mimeType", "createdAt", "updatedAt") FROM stdin;
+COPY public."Game" (_id, "createdAt", "updatedAt", "passwordHash", "worldId", "mapId", "hostId") FROM stdin;
 \.
 
 
 --
--- Data for Name: FogStrokes; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Character; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."FogStroke" (_id, size, type, "createdAt", "updatedAt", "GameId") FROM stdin;
+COPY public."Character" (_id, "createdAt", "updatedAt", name, color, "GameId", "playerId") FROM stdin;
 \.
 
 
 --
--- Data for Name: GameModels; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: CharacterAttribute; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."GameModel" (_id, x, z, "lookAtX", "lookAtZ", color, "createdAt", "updatedAt", "GameId", "modelId", "wikiId") FROM stdin;
+COPY public."CharacterAttribute" (_id, "createdAt", "updatedAt", name, value, "CharacterId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Games; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: File; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Game" (_id, "passwordHash", "createdAt", "updatedAt", "worldId", "mapId", "hostId") FROM stdin;
+COPY public."File" (_id, "createdAt", "updatedAt", content, filename, "mimeType") FROM stdin;
 \.
 
 
 --
--- Data for Name: Images; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Chunk; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Image" (_id, width, height, "chunkWidth", "chunkHeight", name, "createdAt", "updatedAt", "worldId", "iconId") FROM stdin;
+COPY public."Chunk" (_id, "createdAt", "updatedAt", x, y, width, height, "fileId", "imageId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Items; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: DayOfTheWeek; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Item" (_id, "modelColor", "createdAt", "updatedAt", "pageModelId") FROM stdin;
+COPY public."DayOfTheWeek" (_id, "createdAt", "updatedAt", name, index, "ageId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Messages; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Event; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Message" (_id, sender, "senderUser", receiver, "receiverUser", message, "timestamp", "createdAt", "updatedAt", "GameId") FROM stdin;
+COPY public."Event" (_id, "createdAt", "updatedAt", "calendarId", age, year, month, day, hour, minute, second) FROM stdin;
 \.
 
 
 --
--- Data for Name: Models; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: FogStroke; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Model" (_id, name, depth, width, height, "fileName", notes, "createdAt", "updatedAt", "worldId", "fileId") FROM stdin;
+COPY public."FogStroke" (_id, "createdAt", "updatedAt", size, "strokeType", "GameId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Monsters; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Model; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Monster" (_id, "modelColor", "createdAt", "updatedAt", "pageModelId") FROM stdin;
+COPY public."Model" (_id, "createdAt", "updatedAt", name, depth, width, height, "fileName", notes, "worldId", "fileId") FROM stdin;
 \.
 
 
 --
--- Data for Name: PathNodes; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: TokenIcon; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."PathNode" (_id, x, y, "createdAt", "updatedAt", "FogStrokeId", "StrokeId") FROM stdin;
+COPY public."TokenIcon" (_id, "createdAt", "updatedAt", name, "imageId", "worldId") FROM stdin;
 \.
 
 
 --
--- Data for Name: People; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: GameModel; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Person" (_id, "modelColor", "createdAt", "updatedAt", "pageModelId") FROM stdin;
-\.
-
-
---
--- Data for Name: Pins; Type: TABLE DATA; Schema: public; Owner: rpgtools
---
-
-COPY public."Pin" (_id, x, y, "createdAt", "updatedAt", "mapId", "pageId", "worldId") FROM stdin;
-\.
-
-
---
--- Data for Name: Places; Type: TABLE DATA; Schema: public; Owner: rpgtools
---
-
-COPY public."Place" (_id, "pixelsPerFoot", "createdAt", "updatedAt", "mapImageId") FROM stdin;
+COPY public."GameModel" (_id, "createdAt", "updatedAt", x, z, "lookAtX", "lookAtZ", color, "GameId", "modelId", "wikiId", "tokenId", "tokenType") FROM stdin;
 \.
 
 
@@ -177,50 +180,120 @@ COPY public."Place" (_id, "pixelsPerFoot", "createdAt", "updatedAt", "mapImageId
 -- Data for Name: Invite; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Invite" (_id, "createdAt", "updatedAt", "email", "createdByUserId") FROM stdin;
+COPY public."Invite" (_id, "createdAt", "updatedAt", email, "createdByUserId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Roles; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Item; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Role" (_id, name, "createdAt", "updatedAt", "worldId") FROM stdin;
-2cbc2816-9038-450c-8d24-b259e76e93eb	Everyone	2022-11-09 01:55:19.314+00	2022-11-09 01:55:19.314+00	\N
-bb0c59f5-284e-4081-a84f-e7403a5b1a7e	Logged In	2022-11-09 01:55:19.32+00	2022-11-09 01:55:19.32+00	\N
+COPY public."Item" (_id, "createdAt", "updatedAt", "modelColor", "pageModelId") FROM stdin;
 \.
 
 
 --
--- Data for Name: ServerConfigs; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Message; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."ServerConfig" (_id, version, "createdAt", "updatedAt") FROM stdin;
-9a3e6cb4-69e5-44b6-a4c8-f5a292d0c0f0	1.0	2022-11-09 01:55:19.298+00	2022-11-09 01:55:19.322+00
+COPY public."Message" (_id, "createdAt", "updatedAt", sender, "senderUser", receiver, "receiverUser", message, "timestamp", "GameId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Strokes; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Monster; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."Stroke" (_id, color, size, fill, type, "createdAt", "updatedAt", "GameId") FROM stdin;
+COPY public."Monster" (_id, "createdAt", "updatedAt", "modelColor", "pageModelId") FROM stdin;
 \.
 
 
 --
--- Data for Name: UserToRoles; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Month; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."UserToRole" ("createdAt", "updatedAt", "UserId", "RoleId") FROM stdin;
+COPY public."Month" (_id, "createdAt", "updatedAt", name, "numDays", index, "ageId") FROM stdin;
 \.
 
 
 --
--- Data for Name: Users; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: Stroke; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."User" (_id, email, username, password, "tokenVersion", "createdAt", "updatedAt", "currentWorldId") FROM stdin;
+COPY public."Stroke" (_id, "createdAt", "updatedAt", color, size, fill, "strokeType", "GameId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: PathNode; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."PathNode" (_id, "createdAt", "updatedAt", x, y, "FogStrokeId", "StrokeId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Person; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."Person" (_id, "createdAt", "updatedAt", "modelColor", "pageModelId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: WikiPage; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."WikiPage" (_id, "createdAt", "updatedAt", name, "contentId", type, wiki, "worldId", "coverImageId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Pin; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."Pin" (_id, "createdAt", "updatedAt", x, y, "mapId", "pageId", "worldId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Role; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."Role" (_id, "createdAt", "updatedAt", name, "worldId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: SequelizeMeta; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."SequelizeMeta" (name) FROM stdin;
+\.
+
+
+--
+-- Data for Name: ServerConfig; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."ServerConfig" (_id, "createdAt", "updatedAt", version, "defaultWorldId") FROM stdin;
+00000000-0000-0000-0000-000000000001	2026-03-03 16:44:40.125939+00	2026-03-03 16:44:40.125939+00	1.0	\N
+\.
+
+
+--
+-- Data for Name: UserToRole; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."UserToRole" (id, "UserId", "RoleId", "createdAt", "updatedAt") FROM stdin;
+\.
+
+
+--
+-- Data for Name: WikiFolder; Type: TABLE DATA; Schema: public; Owner: rpgtools
+--
+
+COPY public."WikiFolder" (_id, "createdAt", "updatedAt", name, "WikiFolderId", "worldId") FROM stdin;
 \.
 
 
@@ -228,32 +301,23 @@ COPY public."User" (_id, email, username, password, "tokenVersion", "createdAt",
 -- Data for Name: WikiFolderToWikiPage; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."WikiFolderToWikiPage" ("createdAt", "updatedAt", "WikiFolderId", "WikiPageId") FROM stdin;
+COPY public."WikiFolderToWikiPage" ("WikiFolderId", "WikiPageId", "createdAt", "updatedAt") FROM stdin;
 \.
 
 
 --
--- Data for Name: WikiFolders; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Data for Name: WikiPageToWikiPage; Type: TABLE DATA; Schema: public; Owner: rpgtools
 --
 
-COPY public."WikiFolder" (_id, name, "createdAt", "updatedAt", "worldId", "WikiFolderId") FROM stdin;
+COPY public."WikiPageToWikiPage" ("WikiPageId", "relatedWikiId", "createdAt", "updatedAt") FROM stdin;
 \.
 
 
 --
--- Data for Name: WikiPages; Type: TABLE DATA; Schema: public; Owner: rpgtools
+-- Name: UserToRole_id_seq; Type: SEQUENCE SET; Schema: public; Owner: rpgtools
 --
 
-COPY public."WikiPage" (_id, name, "contentId", type, "createdAt", "updatedAt", wiki, "worldId", "coverImageId") FROM stdin;
-\.
-
-
---
--- Data for Name: Worlds; Type: TABLE DATA; Schema: public; Owner: rpgtools
---
-
-COPY public."World" (_id, name, "createdAt", "updatedAt", "wikiPageId", "rootFolderId") FROM stdin;
-\.
+SELECT pg_catalog.setval('public."UserToRole_id_seq"', 1, false);
 
 
 --

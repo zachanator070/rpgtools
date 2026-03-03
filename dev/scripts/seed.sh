@@ -22,8 +22,8 @@ fi
 
 if [ ! -z "$POSTGRES_HOST" ]
 then
-  run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -f /postgres-dump/clean.sql
-  run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -f /postgres-dump/${DUMP_NAME}.sql
+  run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -f /postgres-dump/clean.sql
+  run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -f /postgres-dump/${DUMP_NAME}.sql
 elif [ ! -z "$SQLITE_DIRECTORY_PATH" ]
 then
   # set SQLITE_DB_NAME if it is not set

@@ -1,4 +1,3 @@
-# node version 16.17.0 breaks cypress version 10.6.0, using node 16.14.0 for now
 FROM node:24-slim AS base
 
 RUN apt-get update && apt-get upgrade -y && apt-get clean
@@ -17,7 +16,7 @@ FROM base AS dev
 
 # Used by npm to determine where to write npm cache
 ENV npm_config_cache=/opt/rpgtools/.npm
-# Used by cypress to determine where to write cypress binary .cache
+# Used by tooling that writes runtime caches under user home
 ENV HOME=/opt/rpgtools
 
 CMD ["npm", "run", "--workspace=packages/server", "dev:start"]
