@@ -8,6 +8,24 @@ run_timed() {
   time -p "$@"
 }
 
+restart_active_app_service() {
+  local active_service=""
+
+  for service in server server-brk prod; do
+    if [ -n "$(docker compose ps -q "$service")" ]; then
+      active_service="$service"
+      break
+    fi
+  done
+
+  if [ -z "$active_service" ]; then
+    echo "No active app service found (server, server-brk, or prod)."
+    exit 1
+  fi
+
+  run_timed docker compose restart "$active_service"
+}
+
 . ../../.env
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
@@ -22,8 +40,15 @@ fi
 
 if [ ! -z "$POSTGRES_HOST" ]
 then
-  run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -f /postgres-dump/clean.sql
-  run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -f /postgres-dump/${DUMP_NAME}.sql
+  if [ "$DUMP_NAME" = "new_server" ]
+  then
+    run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    restart_active_app_service
+    run_timed ${REPO_ROOT}/dev/scripts/wait_for_server.sh
+  else
+    run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -f /postgres-dump/clean.sql
+    run_timed docker exec rpgtools-postgres-1 psql -U rpgtools -v ON_ERROR_STOP=1 -f /postgres-dump/${DUMP_NAME}.sql
+  fi
 elif [ ! -z "$SQLITE_DIRECTORY_PATH" ]
 then
   # set SQLITE_DB_NAME if it is not set
