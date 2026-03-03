@@ -28,9 +28,7 @@ FRONTEND_PACKAGE_JSON=packages/frontend/package.json
 
 DOCKER_EXEC=docker compose run --rm dev
 
-# Cypress cache folder to avoid OS specific paths
-export CYPRESS_CACHE_FOLDER := $(CURDIR)/.cache/Cypress
-CYPRESS_BINARY=$(shell ./dev/scripts/cypress-binary-location.sh)
+PLAYWRIGHT_BROWSERS=.cache/ms-playwright/chromium-installed
 
 ################
 # RUN COMMANDS #
@@ -89,7 +87,7 @@ run-electron: .env $(ELECTRON_APP)
 TEST_ENV_FILE=packages/server/test.env
 
 .PHONY: test test-unit test-integration test-integration-update-snapshots test-integration-postgres test-integration-sqlite test-integration-in-memory
-.PHONY: test-e2e test-e2e-postgres test-e2e-sqlite run-cypress
+.PHONY: test-e2e test-e2e-postgres test-e2e-sqlite run-playwright
 
 test: test-unit test-integration test-e2e
 
@@ -123,11 +121,13 @@ test-integration-in-memory: .env
 
 test-e2e: test-e2e-postgres test-e2e-sqlite
 
-# Cypress binary needs to be installed at the OS level to work
-$(CYPRESS_BINARY):
-	npx cypress install --force
 
-test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_BINARY)
+$(PLAYWRIGHT_BROWSERS): $(NODE_MODULES)
+	npx playwright install chromium
+	mkdir -p .cache/ms-playwright
+	touch $(PLAYWRIGHT_BROWSERS)
+
+test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(PLAYWRIGHT_BROWSERS)
 	cp .env.example .env
 	$(DOCKER_EXEC) sed -i 's/#POSTGRES_HOST=.*/POSTGRES_HOST=postgres/' .env
 	docker compose up -d prod postgres
@@ -141,14 +141,14 @@ test-e2e-postgres: .env $(PROD_SERVER_CONTAINER) $(CYPRESS_BINARY)
 	docker compose down; \
 	exit $$test_exit
 
-test-e2e-sqlite: $(ELECTRON_APP) $(CYPRESS_BINARY)
+test-e2e-sqlite: $(ELECTRON_APP) $(PLAYWRIGHT_BROWSERS)
 	./dev/scripts/set-sqlite-env.sh
 	./dev/scripts/run-electron-app.sh
 	./dev/scripts/wait_for_server.sh
 	npm run -w packages/frontend test
 
-run-cypress: $(NODE_MODULES) $(CYPRESS_BINARY)
-	npm run -w packages/frontend cypress:open
+run-playwright: $(NODE_MODULES) $(PLAYWRIGHT_BROWSERS)
+	npm run -w packages/frontend test:ui
 
 ########################
 # TEST DATA MANAGEMENT #
