@@ -23,7 +23,8 @@ export default class SqlServerConfigRepository extends AbstractSqlRepository<Ser
     async modelFactory(entity: ServerConfig | undefined): Promise<ServerConfigModel> {
         return ServerConfigModel.build({
             _id: entity._id,
-            version: entity.version
+            version: entity.version,
+            defaultWorldId: entity.defaultWorld
         });
     }
 

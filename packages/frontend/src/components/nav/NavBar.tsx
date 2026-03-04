@@ -43,6 +43,10 @@ export default function NavBar() {
 				</div>
 
 				<div className={'navbar-item'}>
+					<Link to={'/ui/home'}>Home</Link>
+				</div>
+
+				<div className={'navbar-item'}>
 					<Link to={'/ui/legal'}>Legal</Link>
 				</div>
 

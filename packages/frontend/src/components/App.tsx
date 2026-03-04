@@ -14,6 +14,7 @@ import LoadingView from "./LoadingView";
 import DefaultWorld from "./DefaultWorld";
 import GlobalError from "./GlobalError";
 import LegalPage from "./LegalPage";
+import HomePage from "./HomePage";
 
 export default function App() {
 	const [mapWikiId, setMapWikiId] = useState<string>();
@@ -23,7 +24,8 @@ export default function App() {
 	const location = useLocation();
 
 	useEffect(() => {
-		if(location.pathname !== '/ui/setup' && serverConfig && serverConfig.serverNeedsSetup) {
+		const isAlwaysPublicRoute = location.pathname === '/ui/setup' || location.pathname === '/ui/legal' || location.pathname === '/ui/home';
+		if(!isAlwaysPublicRoute && serverConfig && serverConfig.serverNeedsSetup) {
 			navigate('/ui/setup')
 		}
 	}, [location, serverConfig]);
@@ -63,6 +65,13 @@ export default function App() {
 				<Route
 					path={'/ui/defaultWorld'}
 					element={<DefaultWorld/>}
+				/>
+				<Route
+					path={'/ui/home'}
+					element={<>
+						<NavBar />
+						<HomePage />
+					</>}
 				/>
 				<Route
 					path={'/ui/legal'}
