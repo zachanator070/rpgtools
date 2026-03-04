@@ -1,10 +1,9 @@
-## RPG Tools v6.1.0 Changelog
+## RPG Tools v6.2.0 Changelog
 ### Breaking Changes
 N/A
 
 ### New Features
-- Added legal page with nav link
-- New legal page includes TOS and Privacy Policy documents
+- Added home page that supports dark mode
 
 ### Bug fixes
-N/A
+- Fixed the defaultWorld path due to serverConfig construction error

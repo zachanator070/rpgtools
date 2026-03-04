@@ -1,7 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { logout } from '../util/helper';
+import { logout, seedMiddleEarth, stopApp } from '../util/helper';
 
 test.describe('public pages', () => {
+	test.beforeAll(() => {
+		seedMiddleEarth();
+	});
+
+	test.afterAll(() => {
+		stopApp();
+	});
+
 	test.beforeEach(async ({ page }) => {
 		await logout(page);
 	});
