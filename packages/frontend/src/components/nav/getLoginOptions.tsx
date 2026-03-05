@@ -7,8 +7,9 @@ import LoadingView from "../LoadingView";
 import LoginModal from "../modals/LoginModal";
 import RegisterModal from "../modals/RegisterModal";
 import useServerConfig from "../../hooks/server/useServerConfig";
+import { NavComponent } from './NavBar';
 
-export default function LoginOptions() {
+export default function getLoginOptions(): NavComponent[] {
 
     const { logout } = useLogout();
     const { currentUser, loading: userLoading } = useCurrentUser();
@@ -30,44 +31,42 @@ export default function LoginOptions() {
     }, []);
 
     if(userLoading || serverConfigLoading) {
-        return <LoadingView/>;
+        return [{ key: 'loading', component: <LoadingView/> }];
     }
 
     const ssoConfigured = !!serverConfig?.ssoConfigured;
-    return <>
-        {currentUser.username !== ANON_USERNAME ?
-            <span>
-				<span className="margin-md-right" id={'userGreeting'}>Hello {currentUser.username}</span>
-				<span>
-					<PrimaryButton id="logoutButton" onClick={async () => logout()}>
-						Logout
-					</PrimaryButton>
-				</span>
-			</span>
-        :
-            <div>
+    const loggedIn = currentUser.username !== ANON_USERNAME;
+    const options: NavComponent[] = [];
+
+    if(loggedIn) {
+        options.push({
+            key: 'logout',
+            component: <PrimaryButton id="logoutButton" onClick={async () => logout()}>Logout</PrimaryButton>
+        });
+    } else {
+        options.push({
+            key: 'login',
+            component: <>
                 <LoginModal
                     setVisibility={async (visibility: boolean) => setLoginModalVisibility(visibility)}
                     visibility={loginModalVisibility}
                     ssoConfigured={ssoConfigured}
                 />
+                <a href="#" onClick={async () => setLoginModalVisibility(true)}>Login</a>
+            </>
+        });
+        options.push({
+            key: 'register',
+            component: <>
                 <RegisterModal
                     setVisibility={async (visibility: boolean) => setRegisterModalVisibility(visibility)}
                     visibility={registerModalVisibility}
                     ssoConfigured={ssoConfigured}
                 />
-                <div className="text-align-right margin-sm-top ">
-                    <>
-                        <a href="#" onClick={async () => setLoginModalVisibility(true)}>
-                            Login
-                        </a>
-                        <span className={"margin-md-left margin-md-right"}>or</span>
-                        <a href="#" onClick={async () => setRegisterModalVisibility(true)}>
-                            Register
-                        </a>
-                    </>
-                </div>
-            </div>
+                <a href="#" onClick={async () => setRegisterModalVisibility(true)}>Register</a>
+            </>
+        });
     }
-    </>
+
+    return options;
 }
