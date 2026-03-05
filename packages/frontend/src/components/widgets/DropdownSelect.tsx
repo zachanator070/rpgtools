@@ -2,6 +2,7 @@ import React from 'react';
 import {Select} from "antd";
 import {WidgetProps} from "./WidgetProps";
 import SpinIcon from "./icons/SpinIcon";
+import "./input/FormFields.css";
 
 interface DropdownSelectOption {
     value: string | number;

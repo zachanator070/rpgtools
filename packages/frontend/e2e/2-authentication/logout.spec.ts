@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { adminLogin, goHome, seedMiddleEarth, stopApp } from '../util/helper';
+import { adminLogin, goHome, openRightMenuIfCollapsed, seedMiddleEarth, stopApp } from '../util/helper';
 
 test.describe('logout', () => {
   test.beforeAll(() => {
@@ -16,7 +16,9 @@ test.describe('logout', () => {
   });
 
   test('logout', async ({ page }) => {
+    await openRightMenuIfCollapsed(page);
     await page.locator('#logoutButton').click();
+    await openRightMenuIfCollapsed(page);
     await expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
   });
 });

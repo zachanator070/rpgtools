@@ -2,15 +2,16 @@ import React from 'react';
 import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import VerticalBar from "../widgets/VerticalBar";
 import {Link} from "react-router-dom";
+import { NavComponent } from './NavBar';
 
-export default function WorldLinks({compact}: {compact?: boolean}) {
+export default function getWorldLinks(): NavComponent[]{
     const {currentWorld} = useCurrentWorld();
     interface LinkData {
         label: string;
         link: string;
     }
     if(!currentWorld) {
-        return <></>;
+        return [];
     }
     const links: LinkData[] = [
         {
@@ -42,30 +43,9 @@ export default function WorldLinks({compact}: {compact?: boolean}) {
             link: `/ui/world/${currentWorld._id}/timeline`
         }
     ];
-
-    if (compact) {
-        return <>
-            {links.map((link, index) => (
-                <div key={index}>
-                    <Link to={link.link}>{link.label}</Link>
-                </div>
-            ))}
-        </>;
-    }
-
-    return <>
-        {currentWorld &&
-            <div>
-                {
-                    links.map(
-                        (link, index) => <span key={index}>
-                            <VerticalBar/>
-                            <Link to={link.link}>{link.label}</Link>
-                        </span>
-                    )
-                }
-                <VerticalBar/>
-            </div>
-        }
-    </>;
+    
+    return links.map((link, index) => ({
+        key: `worldLink-${index}`,
+        component: <Link to={link.link}>{link.label}</Link>
+    }));
 }

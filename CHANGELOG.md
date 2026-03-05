@@ -1,9 +1,9 @@
-## RPG Tools v6.3.0 Changelog
+## RPG Tools v6.3.1 Changelog
 ### Breaking Changes
 N/A
 
 ### New Features
-- Made nav bar links collapsable when view port is too small
+N/A
 
 ### Bug fixes
-N/A
+- Collapsed navbar menus apear earlier and spacing is better between navbar links
