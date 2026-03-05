@@ -58,4 +58,26 @@ test.describe('public pages', () => {
 		await expect(page.getByRole('heading', { name: 'Terms of Service' })).toBeVisible();
 		await expect(page.getByRole('heading', { name: 'Privacy Policy' })).toBeVisible();
 	});
+
+	test('navbar collapses around search on narrow screens', async ({ page }) => {
+		await page.setViewportSize({ width: 700, height: 900 });
+		await page.goto('/ui/home');
+
+		await expect(page.locator('#navLeftCollapseButton')).toBeVisible();
+		await expect(page.locator('#navRightCollapseButton')).toBeVisible();
+		await expect(page.locator('#worldMenu')).toBeHidden();
+		await expect(page.getByRole('link', { name: 'Home' })).not.toBeVisible();
+		await expect(page.getByRole('link', { name: 'Legal' })).not.toBeVisible();
+
+		await page.locator('#navLeftCollapseButton').click();
+		await expect(page.locator('#worldMenu')).toBeVisible();
+
+		await page.locator('#navRightCollapseButton').click();
+		await expect(page.locator('#worldMenu')).toBeHidden();
+		await expect(page.getByRole('link', { name: 'Legal' })).toBeVisible();
+		await page.getByRole('link', { name: 'Legal' }).click();
+
+		await expect(page).toHaveURL(/\/ui\/legal$/);
+		await expect(page.getByRole('heading', { name: 'Terms of Service' })).toBeVisible();
+	});
 });

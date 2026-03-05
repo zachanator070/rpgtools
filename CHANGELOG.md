@@ -1,9 +1,9 @@
-## RPG Tools v6.2.0 Changelog
+## RPG Tools v6.3.0 Changelog
 ### Breaking Changes
 N/A
 
 ### New Features
-- Added home page that supports dark mode
+- Made nav bar links collapsable when view port is too small
 
 ### Bug fixes
-- Fixed the defaultWorld path due to serverConfig construction error
+N/A

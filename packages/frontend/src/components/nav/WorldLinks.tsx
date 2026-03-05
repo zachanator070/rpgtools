@@ -3,7 +3,7 @@ import useCurrentWorld from "../../hooks/world/useCurrentWorld";
 import VerticalBar from "../widgets/VerticalBar";
 import {Link} from "react-router-dom";
 
-export default function WorldLinks() {
+export default function WorldLinks({compact}: {compact?: boolean}) {
     const {currentWorld} = useCurrentWorld();
     interface LinkData {
         label: string;
@@ -42,6 +42,17 @@ export default function WorldLinks() {
             link: `/ui/world/${currentWorld._id}/timeline`
         }
     ];
+
+    if (compact) {
+        return <>
+            {links.map((link, index) => (
+                <div key={index}>
+                    <Link to={link.link}>{link.label}</Link>
+                </div>
+            ))}
+        </>;
+    }
+
     return <>
         {currentWorld &&
             <div>

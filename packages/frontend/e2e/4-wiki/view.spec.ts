@@ -34,9 +34,11 @@ test.describe('view wiki', () => {
   });
 
   test('see on map link', async ({ page }) => {
+    test.slow();
     await page.goto(MINAS_TIRITH_WIKI_URL);
 
     await expect(page).toHaveURL(MINAS_TIRITH_WIKI_URL);
+    await expect(page.locator('a', { hasText: 'See on map' }).first()).toBeVisible();
     await page.locator('a', { hasText: 'See on map' }).first().click();
     await expect(page).toHaveURL(new RegExp(MIDDLE_EARTH_MAP_URL));
   });

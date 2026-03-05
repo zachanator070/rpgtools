@@ -7,6 +7,6 @@ interface SecondaryButtonProps extends WidgetProps {
     onClick?: (e: React.MouseEvent<HTMLElement>) => any;
 }
 
-export default function SecondaryButton({children, onClick}: SecondaryButtonProps) {
-    return <Button onClick={(e) => onClick(e)}>{children}</Button>
+export default function SecondaryButton({id, className, style, children, onClick}: SecondaryButtonProps) {
+    return <Button id={id} className={className} style={style} onClick={(e) => onClick(e)}>{children}</Button>
 }

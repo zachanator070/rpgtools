@@ -16,7 +16,7 @@ export default function FolderTree({ folder }: FolderTreeProps){
 	const [expanded, setExpanded] = useState([]);
 	const expand = (id: string) => {setExpanded([...expanded, id])};
 	const collapse = (id: string) => {setExpanded([...expanded].filter(otherId => otherId !== id))};
-	const {getFolderPath} = useGetFolderPath({wikiId: wiki_id});
+	const {getFolderPath, loading} = useGetFolderPath({wikiId: wiki_id});
 
 	useEffect(() => {
 		if(getFolderPath && expanded.length === 0) {
@@ -24,10 +24,14 @@ export default function FolderTree({ folder }: FolderTreeProps){
 		}
 	}, [getFolderPath]);
 
+	if(loading) {
+		return <div>Loading...</div>;
+	}
+
 	return (
 		<div>
 			<WikiFolderTreeExpanded.Provider value={{expanded, expand, collapse}}>
-				<FolderNode folderId={folder._id}/>
+				{folder && <FolderNode folderId={folder._id}/>}
 			</WikiFolderTreeExpanded.Provider>
 		</div>
 	);
