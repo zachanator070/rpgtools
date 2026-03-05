@@ -59,6 +59,20 @@ export async function goHome(page: Page) {
   await page.goto('http://localhost:3000/');
 }
 
+export async function openLeftMenuIfCollapsed(page: Page) {
+  const leftCollapseButton = page.locator('#navLeftCollapseButton');
+  if (await leftCollapseButton.isVisible()) {
+    await leftCollapseButton.click();
+  }
+}
+
+export async function openRightMenuIfCollapsed(page: Page) {
+  const rightCollapseButton = page.locator('#navRightCollapseButton');
+  if (await rightCollapseButton.isVisible()) {
+    await rightCollapseButton.click();
+  }
+}
+
 export async function logout(page: Page) {
   await page.request.post('http://localhost:3000/graphql', {
     data: {

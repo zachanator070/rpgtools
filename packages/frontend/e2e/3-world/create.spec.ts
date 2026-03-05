@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { adminLogin, goHome, seedMiddleEarth, stopApp } from '../util/helper';
+import { adminLogin, goHome, openLeftMenuIfCollapsed, seedMiddleEarth, stopApp } from '../util/helper';
 
 test.describe('create world', () => {
   test.beforeAll(() => {
@@ -13,6 +13,7 @@ test.describe('create world', () => {
   test.beforeEach(async ({ page }) => {
     await adminLogin(page);
     await goHome(page);
+    await openLeftMenuIfCollapsed(page);
     await page.locator('#worldMenu', { hasText: 'No World Selected' }).click();
     await page.locator('a', { hasText: 'New World' }).click();
   });

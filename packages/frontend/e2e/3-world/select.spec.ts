@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { MIDDLE_EARTH_MAP_URL } from '../util/constants';
-import { adminLogin, goHome, seedMiddleEarth, stopApp } from '../util/helper';
+import { adminLogin, goHome, openLeftMenuIfCollapsed, seedMiddleEarth, stopApp } from '../util/helper';
 
 test.describe('select world', () => {
   test.beforeAll(() => {
@@ -14,6 +14,7 @@ test.describe('select world', () => {
   test.beforeEach(async ({ page }) => {
     await adminLogin(page);
     await goHome(page);
+    await openLeftMenuIfCollapsed(page);
     await page.locator('#worldMenu').click();
     await page.locator('a', { hasText: 'Select World' }).click();
   });
