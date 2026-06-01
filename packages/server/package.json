@@ -89,6 +89,6 @@
     "lodash": "^4.17.21",
     "request": "^2.88.2",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.13"
+    "vitest": "^4.1.0"
   }
 }
